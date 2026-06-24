@@ -1,0 +1,35 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "classified_blocks": [
+          {
+            "source_heading": "",
+            "source_text_excerpt": "",
+            "classification": "unit",
+            "confidence": 0,
+            "parent_chapter": ""
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 2: Heading Classification - IX - Geography - Contemporary India - I\nReturn compact JSON only.\nClassify headings and content blocks for this class only.\n\nRules:\n- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown\n- a valid chapter should be short and source-grounded\n- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter\n- classify from structural and textual signals, not just heading style\n- do not output units created by the model\n- do not create unit_name\n- do not rename parent_unit\n- only classify the existing Stage 1 items as chapter/topic/subtopic\n- source_text_excerpt must be at most 180 characters\n- no explanations\n- no repeated raw text\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"Geography - Contemporary India - I\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Physical Features and Environment\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"India – Size and Location\",\n        \"Physical Features of India\",\n        \"Drainage\",\n        \"Climate\"\n      ],\n      \"topics\": [\n        \"Location impacts climate and time\",\n        \"Trading relationships with neighbours\",\n        \"Time meridian (82.5E)\",\n        \"Strategic partner position\",\n        \"Physical features influencing livelihoods\",\n        \"Geological processes\",\n        \"River systems and lakes\",\n        \"Monsoon winds effect\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Natural Vegetation, Wildlife and Population\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Natural Vegetation and Wildlife\",\n        \"Population\"\n      ],\n      \"topics\": [\n        \"Inter-relationship between components of physical environment\",\n        \"Uneven distribution of population\",\n        \"Factors affecting population density\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"\",\n          \"source_text_excerpt\": \"\",\n          \"classification\": \"unit\",\n          \"confidence\": 0,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

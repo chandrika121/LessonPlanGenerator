@@ -1,0 +1,160 @@
+Stage 3: Curriculum Normalization - X - History - India and the Contemporary World - II
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "History - India and the Contemporary World - II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Events and Processes",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "The Rise of Nationalism in Europe",
+        "Nationalism in India"
+      ],
+      "topics": [
+        "Impact on nation states",
+        "Social movements and idea of nationalism",
+        "Reasons for First World War",
+        "Collective belonging",
+        "Strategies by Gandhiji",
+        "Effects of First World War (Khilafat & Non-Cooperation)"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Livelihoods, Economies and Societies",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "The Making of a Global World",
+        "The Age of Industrialisation"
+      ],
+      "topics": [
+        "Pre-modern world to conquest",
+        "19th century (1815-1914) to globalisation",
+        "Destructive impact of colonialism on livelihoods",
+        "Economic, political, social features pre/post industrialization"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Everyday Life, Culture and Politics",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Print Culture and the Modern World"
+      ],
+      "topics": [
+        "Development of print from East Asia to Europe/India",
+        "Handwritten manuscripts vs print technology",
+        "Role of Print revolution"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Events and Processes",
+          "source_text_excerpt": "Unit covering events and processes in history.",
+          "classification": "unit",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "The Rise of Nationalism in Europe",
+          "source_text_excerpt": "Chapter on the rise of nationalism in Europe.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Nationalism in India",
+          "source_text_excerpt": "Chapter detailing nationalism movements in India.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "classified_blocks": [
+        {
+          "source_heading": "Livelihoods, Economies and Societies",
+          "source_text_excerpt": "Unit focusing on livelihoods and economies.",
+          "classification": "unit",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "The Making of a Global World",
+          "source_text_excerpt": "Chapter about the making of a global world.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "The Age of Industrialisation",
+          "source_text_excerpt": "Chapter covering the age of industrialization.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "classified_blocks": [
+        {
+          "source_heading": "Everyday Life, Culture and Politics",
+          "source_text_excerpt": "Unit on everyday life, culture and politics.",
+          "classification": "unit",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Print Culture and the Modern World",
+          "source_text_excerpt": "Chapter discussing print culture in modern times.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

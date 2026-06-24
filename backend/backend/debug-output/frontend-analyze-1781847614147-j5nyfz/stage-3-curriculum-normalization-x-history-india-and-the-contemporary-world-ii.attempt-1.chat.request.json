@@ -1,0 +1,56 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "chapters": [
+          {
+            "source_chapter_name": "",
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - X - History - India and the Contemporary World - II\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- Stage 3 is a restructuring step, not a content generation step\n- Preserve the source hierarchy exactly\n- long paragraph-like chapter names must be reclassified into topics\n- use unit_id from Stage 1 only\n- use only chapter names already present in Stage 1 possible_chapters\n- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name\n- never create new class names, subject names, unit names, or chapter names\n- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented\n- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units\n\nRaw class extraction:\n{\n  \"class_name\": \"X\",\n  \"subject\": \"History - India and the Contemporary World - II\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Events and Processes\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"The Rise of Nationalism in Europe\",\n        \"Nationalism in India\"\n      ],\n      \"topics\": [\n        \"Impact on nation states\",\n        \"Social movements and idea of nationalism\",\n        \"Reasons for First World War\",\n        \"Collective belonging\",\n        \"Strategies by Gandhiji\",\n        \"Effects of First World War (Khilafat & Non-Cooperation)\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Livelihoods, Economies and Societies\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"The Making of a Global World\",\n        \"The Age of Industrialisation\"\n      ],\n      \"topics\": [\n        \"Pre-modern world to conquest\",\n        \"19th century (1815-1914) to globalisation\",\n        \"Destructive impact of colonialism on livelihoods\",\n        \"Economic, political, social features pre/post industrialization\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Everyday Life, Culture and Politics\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Print Culture and the Modern World\"\n      ],\n      \"topics\": [\n        \"Development of print from East Asia to Europe/India\",\n        \"Handwritten manuscripts vs print technology\",\n        \"Role of Print revolution\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Events and Processes\",\n          \"source_text_excerpt\": \"Unit covering events and processes in history.\",\n          \"classification\": \"unit\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"The Rise of Nationalism in Europe\",\n          \"source_text_excerpt\": \"Chapter on the rise of nationalism in Europe.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.85,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Nationalism in India\",\n          \"source_text_excerpt\": \"Chapter detailing nationalism movements in India.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.85,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Livelihoods, Economies and Societies\",\n          \"source_text_excerpt\": \"Unit focusing on livelihoods and economies.\",\n          \"classification\": \"unit\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"The Making of a Global World\",\n          \"source_text_excerpt\": \"Chapter about the making of a global world.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.85,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"The Age of Industrialisation\",\n          \"source_text_excerpt\": \"Chapter covering the age of industrialization.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.85,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Everyday Life, Culture and Politics\",\n          \"source_text_excerpt\": \"Unit on everyday life, culture and politics.\",\n          \"classification\": \"unit\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Print Culture and the Modern World\",\n          \"source_text_excerpt\": \"Chapter discussing print culture in modern times.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.85,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"chapters\": [\n        {\n          \"source_chapter_name\": \"\",\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

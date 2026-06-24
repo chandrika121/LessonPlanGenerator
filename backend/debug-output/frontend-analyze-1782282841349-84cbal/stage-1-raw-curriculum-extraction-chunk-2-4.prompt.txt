@@ -1,0 +1,55 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract only concise curriculum facts needed to build the hierarchy.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units and chapters in this input
+- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 2 of 4; extract only what is present in this chunk
+
+Curriculum source text:
+--- Page 5 ---
+5 Theme: The World of the Living Unit II: Organization in the Living World Cell - Basic Unit of life: Cell as a basic unit of life; prokaryotic and eukaryotic cells, multicellular organisms; cell membrane and cell wall, cell organelles and cell inclusions; chloroplast, mitochondria, vacuoles, endoplasmic reticulum, Golgi apparatus; nucleus, chromosomes - basic structure, number. Tissues, Organs, Organ System, Organism: Structure and functions of animal and plant tissues (only four types of tissues in animals; Meristematic and Permanent tissues in plants). The following topics are included in the syllabus but will be assessed only formatively to reinforce understanding without adding to summative assessments. The reduces academic stress while ensuring meaningful learning. Schools can integrate these with existing chapters as they align well. Relevant NCERT textual material is enclosed for reference. Health and Diseases: Health and its failure. Infectious and Non-infectious diseases, their causes and manifestation. Diseases caused by microbes (Virus, Bacteria and Protozoans) and their prevention; Principles of treatment and prevention. Pulse Polio programmes. Theme: Moving Things, People and Ideas Unit III: Motion, Force and Work Motion: Distance and displacement, velocity; uniform and non-uniform motion along a straight line; acceleration, distance-time and velocity-time graphs for uniform motion and uniformly accelerated motion, elementary idea of uniform circular motion. Force and Newton’s laws: Force and Motion, Newton’s Laws of Motion, Action and Reaction forces, Inertia of a body, Inertia and mass, Momentum, Force and Acceleration. The following topic is included in the syllabus but will be assessed only formatively to reinforce understanding without adding to summative assessments. The reduces academic stress while ensuring meaningful learning. Schools can integrate this with existing chapters as they align well. Relevant NCERT textual material is enclosed for reference. Elementary idea of conservation of Momentum
+
+--- Page 6 ---
+6 Gravitation: Gravitation; Universal Law of Gravitation, Force of Gravitation of the earth (gravity), Acceleration due to Gravity; Mass and Weight; Free fall. Floatation: Thrust and Pressure. Archimedes’ Principle; Buoyancy. Work, Energy and Power: Work done by a Force, Energy, power; Kinetic and Potential energy; Lawof conservation of energy (excluding commercial unit of Energy). Sound: Nature of sound and its propagation in various media, speed of sound, range of hearing in humans; ultrasound; reflection of sound; echo. Theme: Food Unit IV: Food Production Plant and animal breeding and selection for quality improvement and management; Use of fertilizersand manures; Protection from pests and diseases; Organic farming. Note for Teachers: The NCERT text books present information in boxes across the book. These help students to get conceptual clarity. However, the information in these boxes would not be assessed in the year-end examination. PRACTICALS Practicals should be conducted alongside the concepts taught in theory classes. (LIST OF EXPERIMENTS) 1. Preparation of: Unit-I a) a true solution of common salt, sugar and alum b) a suspension of soil, chalk powder and fine sand in water c) a colloidal solution of starch in water and egg albumin/milk in water and distinguish between these on the basis of  transparency  filtration criterion  stability 2. Preparation of Unit-I a) A mixture b) A compound using iron filings and sulphur powder and distinguishing between these on the basis of:  appearance, i.e., homogeneity and heterogeneity
+
+--- Page 7 ---
+7  behaviour towards a magnet  behaviour towards carbon disulphide as a solvent  effect of heat 3. Perform the following reactions and classify them as physical or chemical changes: Unit-I a) Iron with copper sulphate solution in water b) Burning of magnesium ribbon in air c) Zinc with dilute sulphuric acid d) Heating of copper sulphate crystals e) Sodium sulphate with barium chloride in the form of their solutions in water 4. Preparation of stained temporary mounts of (a) onion peel, (b) human cheek cells & to record observations and draw their labeled diagrams Unit - II 5. Identification of Parenchyma, Collenchyma and Sclerenchyma tissues in plants, striped, smooth and cardiac muscle fibers and nerve cells in animals, from prepared slides. Draw their labeled diagrams. Unit-II 6. Determination of the melting point of ice and the boiling point of water. Unit-I 7. Verification of the laws of reflection of sound. Unit-III 8. Determination of the density of solid (denser than water) by using a spring balance and a measuring cylinder. Unit-III 9. Establishing the relation between the loss in weight of a solid when fully immersed in Unit-III a) Tap water b) Strongly salty water with the weight of water displaced by it by taking at least two different solids. 10. Determination of the speed of a pulse propagated through a stretched string/ slinky (helical spring). Unit-III 11. Verification of the law of conservation of mass in a chemical reaction. Unit-III
+
+--- Page 8 ---
+8 COURSE STRUCTURE CLASS X (2025-26) (Annual Examination) Time: 03 Hours Marks: 80 Unit No. Unit Marks I Chemical Substances-Nature and Behaviour 25 II World of Living 25 III Natural Phenomena 12 IV Effects of Current 13 V Natural Resources 05 Total 80 Internal assessment 20 Grand Total 100 Theme: Materials Unit I: Chemical Substances - Nature and Behaviour Chemical Reactions and Equations: Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction. Acids, Bases and Salts: Acids and Bases – definitions in terms of furnishing of H+ and OH– ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale (Definition relating to logarithm not required), importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching powder, Baking soda, Washing soda and Plaster of Paris. Metals and Non-metals: Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention. Carbon and its Compounds: Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature of alkanes, alkenes, alkyne and carbon compounds containing functional groups (halogens, alcohol, ketones, aldehydes). Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid (only properties and uses), soaps and detergents.

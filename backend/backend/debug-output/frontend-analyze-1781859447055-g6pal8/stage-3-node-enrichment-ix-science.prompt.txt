@@ -1,0 +1,1241 @@
+Stage 3: Node Enrichment - IX - Science
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Science",
+  "part_or_section": "Annual Examination Structure",
+  "raw_nodes": [],
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Matter - Its Nature and Behaviour",
+      "marks": 25,
+      "explicit_chapters": [
+        "Matter in Our Surroundings",
+        "Is Matter Around Us Pure",
+        "Atoms and Molecules"
+      ],
+      "headings": [
+        "Definition of matter; Particulate Nature of Matter; States of Matter: solid, liquid and gas and their characteristics; change of state- melting (absorption of heat), freezing, evaporation (cooling by evaporation), condensation, sublimation.",
+        "Elements, compounds and mixtures. Heterogeneous and homogenous mixtures, colloids and suspensions. Physical and chemical changes (excluding separating the components of a mixture); Pure and Impure substances.",
+        "Atoms and molecules, Law of Chemical Combination, Chemical formula of common compounds, Atomic and molecular masses. Structure of atom: Sub-atomic particles: Electrons, protons and neutrons, Models of atom; Valency, Atomic Number and Mass Number, Isotopes and Isobars."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Matter in Our Surroundings",
+        "Is Matter Around Us Pure",
+        "Atoms and Molecules"
+      ],
+      "subtopics": [
+        "States of matter, change of state",
+        "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+        "Physical and chemical changes",
+        "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+      ],
+      "key_concepts": [
+        "Particulate Nature of Matter",
+        "Law of Chemical Combination",
+        "Atomic Structure (Bohr's model)",
+        "Valency"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Organization in the Living World",
+      "marks": 22,
+      "explicit_chapters": [
+        "Cell - Basic Unit of life",
+        "Tissues, Organs, Organ System, Organism"
+      ],
+      "headings": [
+        "Cell as a basic unit of life; prokaryotic and eukaryotic cells, multicellular organisms; cell membrane and cell wall, cell organelles and cell inclusions; chloroplast, mitochondria, vacuoles, endoplasmic reticulum, Golgi apparatus; nucleus, chromosomes - basic structure, number.",
+        "Structure and functions of animal and plant tissues (only four types of tissues in animals; Meristematic and Permanent tissues in plants)."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Cell Structure",
+        "Tissues"
+      ],
+      "subtopics": [
+        "Prokaryotic vs Eukaryotic cells",
+        "Organelles (Nucleus, Mitochondria, etc.)",
+        "Animal tissues (4 types)",
+        "Plant tissues (Meristematic and Permanent)"
+      ],
+      "key_concepts": [
+        "Cell as basic unit of life",
+        "Semi-permeability of cell membrane"
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Motion, Force and Work",
+      "marks": 27,
+      "explicit_chapters": [
+        "Motion",
+        "Force and Newton's laws",
+        "Gravitation",
+        "Floatation",
+        "Work, Energy and Power",
+        "Sound"
+      ],
+      "headings": [
+        "Distance and displacement, velocity; uniform and non-uniform motion along a straight line; acceleration, distance-time and velocity-time graphs for uniform motion and uniformly accelerated motion, elementary idea of uniform circular motion.",
+        "Force and Motion, Newton's Laws of Motion, Action and Reaction forces, Inertia of a body, Inertia and mass, Momentum, Force and Acceleration.",
+        "Gravitation; Universal Law of Gravitation, Force of Gravitation of the earth (gravity), Acceleration due to Gravity; Mass and Weight; Free fall.",
+        "Thrust and Pressure. Archimedes' Principle; Buoyancy.",
+        "Work done by a Force, Energy, power; Kinetic and Potential energy; Lawof conservation of energy (excluding commercial unit of Energy).",
+        "Nature of sound and its propagation in various media, speed of sound, range of hearing in humans; ultrasound; reflection of sound; echo."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Motion",
+        "Force and Newton's Laws",
+        "Gravitation",
+        "Floatation",
+        "Work Energy Power",
+        "Sound"
+      ],
+      "subtopics": [
+        "Distance, displacement, velocity-time graphs",
+        "Newton's laws (1st, 2nd, 3rd)",
+        "Universal Law of Gravitation",
+        "Archimedes' Principle",
+        "Conservation of Energy",
+        "Reflection and Echo"
+      ],
+      "key_concepts": [
+        "Uniform Circular Motion",
+        "Inertia",
+        "Acceleration due to Gravity",
+        "Buoyancy",
+        "Law of Conservation of Energy"
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Food; Food Production",
+      "marks": 6,
+      "explicit_chapters": [
+        "Plant and animal breeding"
+      ],
+      "headings": [
+        "Plant and animal breeding and selection for quality improvement and management; Use of fertilizersand manures; Protection from pests and diseases; Organic farming."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Food Production"
+      ],
+      "subtopics": [
+        "Breeding",
+        "Fertilizers and Manures",
+        "Pest protection",
+        "Organic farming"
+      ],
+      "key_concepts": []
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "IX",
+  "subject": "Science",
+  "part_or_section": "Annual Examination Structure",
+  "detected_structure": "unit_chapter_topic",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Matter - Its Nature and Behaviour",
+      "marks": 25,
+      "explicit_chapters": [
+        "Matter in Our Surroundings",
+        "Is Matter Around Us Pure",
+        "Atoms and Molecules"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "Definition of matter; Particulate Nature of Matter; States of Matter: solid, liquid and gas and their characteristics; change of state- melting (absorption of heat), freezing, evaporation (cooling by evaporation), condensation, sublimation.",
+        "Elements, compounds and mixtures. Heterogeneous and homogenous mixtures, colloids and suspensions. Physical and chemical changes (excluding separating the components of a mixture); Pure and Impure substances.",
+        "Atoms and molecules, Law of Chemical Combination, Chemical formula of common compounds, Atomic and molecular masses. Structure of atom: Sub-atomic particles: Electrons, protons and neutrons, Models of atom; Valency, Atomic Number and Mass Number, Isotopes and Isobars."
+      ],
+      "topics": [
+        "Matter in Our Surroundings",
+        "Is Matter Around Us Pure",
+        "Atoms and Molecules"
+      ],
+      "subtopics": [
+        "States of matter, change of state",
+        "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+        "Physical and chemical changes",
+        "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+      ],
+      "key_concepts": [
+        "Particulate Nature of Matter",
+        "Law of Chemical Combination",
+        "Atomic Structure (Bohr's model)",
+        "Valency"
+      ],
+      "chapter_candidates": [
+        {
+          "node_id": "U1-C1",
+          "title": "Matter in Our Surroundings",
+          "level": "chapter",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Matter in Our Surroundings",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C2",
+          "title": "Is Matter Around Us Pure",
+          "level": "chapter",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Is Matter Around Us Pure",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C3",
+          "title": "Atoms and Molecules",
+          "level": "chapter",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Atoms and Molecules",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U1",
+          "title": "Matter - Its Nature and Behaviour",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "Matter - Its Nature and Behaviour"
+        },
+        {
+          "node_id": "U1-C1",
+          "title": "Matter in Our Surroundings",
+          "level": "chapter",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Matter in Our Surroundings",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C2",
+          "title": "Is Matter Around Us Pure",
+          "level": "chapter",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Is Matter Around Us Pure",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C3",
+          "title": "Atoms and Molecules",
+          "level": "chapter",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Atoms and Molecules",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-T1",
+          "title": "Matter in Our Surroundings",
+          "level": "topic",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Matter in Our Surroundings"
+        },
+        {
+          "node_id": "U1-T2",
+          "title": "Is Matter Around Us Pure",
+          "level": "topic",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Is Matter Around Us Pure"
+        },
+        {
+          "node_id": "U1-T3",
+          "title": "Atoms and Molecules",
+          "level": "topic",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Atoms and Molecules"
+        },
+        {
+          "node_id": "U1-S1",
+          "title": "States of matter, change of state",
+          "level": "subtopic",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "States of matter, change of state"
+        },
+        {
+          "node_id": "U1-S2",
+          "title": "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+          "level": "subtopic",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Mixtures (heterogeneous/homogenous), colloids, suspensions"
+        },
+        {
+          "node_id": "U1-S3",
+          "title": "Physical and chemical changes",
+          "level": "subtopic",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Physical and chemical changes"
+        },
+        {
+          "node_id": "U1-S4",
+          "title": "Sub-atomic particles, Models of atom, Isotopes and Isobars",
+          "level": "subtopic",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+        },
+        {
+          "node_id": "U1-K1",
+          "title": "Particulate Nature of Matter",
+          "level": "key_concept",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Particulate Nature of Matter"
+        },
+        {
+          "node_id": "U1-K2",
+          "title": "Law of Chemical Combination",
+          "level": "key_concept",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Law of Chemical Combination"
+        },
+        {
+          "node_id": "U1-K3",
+          "title": "Atomic Structure (Bohr's model)",
+          "level": "key_concept",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Atomic Structure (Bohr's model)"
+        },
+        {
+          "node_id": "U1-K4",
+          "title": "Valency",
+          "level": "key_concept",
+          "parent": "Matter - Its Nature and Behaviour",
+          "source_text": "Valency"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Organization in the Living World",
+      "marks": 22,
+      "explicit_chapters": [
+        "Cell - Basic Unit of life",
+        "Tissues, Organs, Organ System, Organism"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "Cell as a basic unit of life; prokaryotic and eukaryotic cells, multicellular organisms; cell membrane and cell wall, cell organelles and cell inclusions; chloroplast, mitochondria, vacuoles, endoplasmic reticulum, Golgi apparatus; nucleus, chromosomes - basic structure, number.",
+        "Structure and functions of animal and plant tissues (only four types of tissues in animals; Meristematic and Permanent tissues in plants)."
+      ],
+      "topics": [
+        "Cell Structure",
+        "Tissues"
+      ],
+      "subtopics": [
+        "Prokaryotic vs Eukaryotic cells",
+        "Organelles (Nucleus, Mitochondria, etc.)",
+        "Animal tissues (4 types)",
+        "Plant tissues (Meristematic and Permanent)"
+      ],
+      "key_concepts": [
+        "Cell as basic unit of life",
+        "Semi-permeability of cell membrane"
+      ],
+      "chapter_candidates": [
+        {
+          "node_id": "U2-C1",
+          "title": "Cell - Basic Unit of life",
+          "level": "chapter",
+          "parent": "Organization in the Living World",
+          "source_text": "Cell - Basic Unit of life",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C2",
+          "title": "Tissues, Organs, Organ System, Organism",
+          "level": "chapter",
+          "parent": "Organization in the Living World",
+          "source_text": "Tissues, Organs, Organ System, Organism",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U2",
+          "title": "Organization in the Living World",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "Organization in the Living World"
+        },
+        {
+          "node_id": "U2-C1",
+          "title": "Cell - Basic Unit of life",
+          "level": "chapter",
+          "parent": "Organization in the Living World",
+          "source_text": "Cell - Basic Unit of life",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C2",
+          "title": "Tissues, Organs, Organ System, Organism",
+          "level": "chapter",
+          "parent": "Organization in the Living World",
+          "source_text": "Tissues, Organs, Organ System, Organism",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-T1",
+          "title": "Cell Structure",
+          "level": "topic",
+          "parent": "Organization in the Living World",
+          "source_text": "Cell Structure"
+        },
+        {
+          "node_id": "U2-T2",
+          "title": "Tissues",
+          "level": "topic",
+          "parent": "Organization in the Living World",
+          "source_text": "Tissues"
+        },
+        {
+          "node_id": "U2-S1",
+          "title": "Prokaryotic vs Eukaryotic cells",
+          "level": "subtopic",
+          "parent": "Organization in the Living World",
+          "source_text": "Prokaryotic vs Eukaryotic cells"
+        },
+        {
+          "node_id": "U2-S2",
+          "title": "Organelles (Nucleus, Mitochondria, etc.)",
+          "level": "subtopic",
+          "parent": "Organization in the Living World",
+          "source_text": "Organelles (Nucleus, Mitochondria, etc.)"
+        },
+        {
+          "node_id": "U2-S3",
+          "title": "Animal tissues (4 types)",
+          "level": "subtopic",
+          "parent": "Organization in the Living World",
+          "source_text": "Animal tissues (4 types)"
+        },
+        {
+          "node_id": "U2-S4",
+          "title": "Plant tissues (Meristematic and Permanent)",
+          "level": "subtopic",
+          "parent": "Organization in the Living World",
+          "source_text": "Plant tissues (Meristematic and Permanent)"
+        },
+        {
+          "node_id": "U2-K1",
+          "title": "Cell as basic unit of life",
+          "level": "key_concept",
+          "parent": "Organization in the Living World",
+          "source_text": "Cell as basic unit of life"
+        },
+        {
+          "node_id": "U2-K2",
+          "title": "Semi-permeability of cell membrane",
+          "level": "key_concept",
+          "parent": "Organization in the Living World",
+          "source_text": "Semi-permeability of cell membrane"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Motion, Force and Work",
+      "marks": 27,
+      "explicit_chapters": [
+        "Motion",
+        "Force and Newton's laws",
+        "Gravitation",
+        "Floatation",
+        "Work, Energy and Power",
+        "Sound"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "Distance and displacement, velocity; uniform and non-uniform motion along a straight line; acceleration, distance-time and velocity-time graphs for uniform motion and uniformly accelerated motion, elementary idea of uniform circular motion.",
+        "Force and Motion, Newton's Laws of Motion, Action and Reaction forces, Inertia of a body, Inertia and mass, Momentum, Force and Acceleration.",
+        "Gravitation; Universal Law of Gravitation, Force of Gravitation of the earth (gravity), Acceleration due to Gravity; Mass and Weight; Free fall.",
+        "Thrust and Pressure. Archimedes' Principle; Buoyancy.",
+        "Work done by a Force, Energy, power; Kinetic and Potential energy; Lawof conservation of energy (excluding commercial unit of Energy).",
+        "Nature of sound and its propagation in various media, speed of sound, range of hearing in humans; ultrasound; reflection of sound; echo."
+      ],
+      "topics": [
+        "Motion",
+        "Force and Newton's Laws",
+        "Gravitation",
+        "Floatation",
+        "Work Energy Power",
+        "Sound"
+      ],
+      "subtopics": [
+        "Distance, displacement, velocity-time graphs",
+        "Newton's laws (1st, 2nd, 3rd)",
+        "Universal Law of Gravitation",
+        "Archimedes' Principle",
+        "Conservation of Energy",
+        "Reflection and Echo"
+      ],
+      "key_concepts": [
+        "Uniform Circular Motion",
+        "Inertia",
+        "Acceleration due to Gravity",
+        "Buoyancy",
+        "Law of Conservation of Energy"
+      ],
+      "chapter_candidates": [
+        {
+          "node_id": "U3-C1",
+          "title": "Motion",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Motion",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C2",
+          "title": "Force and Newton's laws",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Force and Newton's laws",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C3",
+          "title": "Gravitation",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Gravitation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C4",
+          "title": "Floatation",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Floatation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C5",
+          "title": "Work, Energy and Power",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Work, Energy and Power",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C6",
+          "title": "Sound",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Sound",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U3",
+          "title": "Motion, Force and Work",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "Motion, Force and Work"
+        },
+        {
+          "node_id": "U3-C1",
+          "title": "Motion",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Motion",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C2",
+          "title": "Force and Newton's laws",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Force and Newton's laws",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C3",
+          "title": "Gravitation",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Gravitation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C4",
+          "title": "Floatation",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Floatation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C5",
+          "title": "Work, Energy and Power",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Work, Energy and Power",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C6",
+          "title": "Sound",
+          "level": "chapter",
+          "parent": "Motion, Force and Work",
+          "source_text": "Sound",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-T1",
+          "title": "Motion",
+          "level": "topic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Motion"
+        },
+        {
+          "node_id": "U3-T2",
+          "title": "Force and Newton's Laws",
+          "level": "topic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Force and Newton's Laws"
+        },
+        {
+          "node_id": "U3-T3",
+          "title": "Gravitation",
+          "level": "topic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Gravitation"
+        },
+        {
+          "node_id": "U3-T4",
+          "title": "Floatation",
+          "level": "topic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Floatation"
+        },
+        {
+          "node_id": "U3-T5",
+          "title": "Work Energy Power",
+          "level": "topic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Work Energy Power"
+        },
+        {
+          "node_id": "U3-T6",
+          "title": "Sound",
+          "level": "topic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Sound"
+        },
+        {
+          "node_id": "U3-S1",
+          "title": "Distance, displacement, velocity-time graphs",
+          "level": "subtopic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Distance, displacement, velocity-time graphs"
+        },
+        {
+          "node_id": "U3-S2",
+          "title": "Newton's laws (1st, 2nd, 3rd)",
+          "level": "subtopic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Newton's laws (1st, 2nd, 3rd)"
+        },
+        {
+          "node_id": "U3-S3",
+          "title": "Universal Law of Gravitation",
+          "level": "subtopic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Universal Law of Gravitation"
+        },
+        {
+          "node_id": "U3-S4",
+          "title": "Archimedes' Principle",
+          "level": "subtopic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Archimedes' Principle"
+        },
+        {
+          "node_id": "U3-S5",
+          "title": "Conservation of Energy",
+          "level": "subtopic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Conservation of Energy"
+        },
+        {
+          "node_id": "U3-S6",
+          "title": "Reflection and Echo",
+          "level": "subtopic",
+          "parent": "Motion, Force and Work",
+          "source_text": "Reflection and Echo"
+        },
+        {
+          "node_id": "U3-K1",
+          "title": "Uniform Circular Motion",
+          "level": "key_concept",
+          "parent": "Motion, Force and Work",
+          "source_text": "Uniform Circular Motion"
+        },
+        {
+          "node_id": "U3-K2",
+          "title": "Inertia",
+          "level": "key_concept",
+          "parent": "Motion, Force and Work",
+          "source_text": "Inertia"
+        },
+        {
+          "node_id": "U3-K3",
+          "title": "Acceleration due to Gravity",
+          "level": "key_concept",
+          "parent": "Motion, Force and Work",
+          "source_text": "Acceleration due to Gravity"
+        },
+        {
+          "node_id": "U3-K4",
+          "title": "Buoyancy",
+          "level": "key_concept",
+          "parent": "Motion, Force and Work",
+          "source_text": "Buoyancy"
+        },
+        {
+          "node_id": "U3-K5",
+          "title": "Law of Conservation of Energy",
+          "level": "key_concept",
+          "parent": "Motion, Force and Work",
+          "source_text": "Law of Conservation of Energy"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Food; Food Production",
+      "marks": 6,
+      "explicit_chapters": [
+        "Plant and animal breeding"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "Plant and animal breeding and selection for quality improvement and management; Use of fertilizersand manures; Protection from pests and diseases; Organic farming."
+      ],
+      "topics": [
+        "Food Production"
+      ],
+      "subtopics": [
+        "Breeding",
+        "Fertilizers and Manures",
+        "Pest protection",
+        "Organic farming"
+      ],
+      "key_concepts": [],
+      "chapter_candidates": [
+        {
+          "node_id": "U4-C1",
+          "title": "Plant and animal breeding",
+          "level": "chapter",
+          "parent": "Food; Food Production",
+          "source_text": "Plant and animal breeding",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U4",
+          "title": "Food; Food Production",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "Food; Food Production"
+        },
+        {
+          "node_id": "U4-C1",
+          "title": "Plant and animal breeding",
+          "level": "chapter",
+          "parent": "Food; Food Production",
+          "source_text": "Plant and animal breeding",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U4-T1",
+          "title": "Food Production",
+          "level": "topic",
+          "parent": "Food; Food Production",
+          "source_text": "Food Production"
+        },
+        {
+          "node_id": "U4-S1",
+          "title": "Breeding",
+          "level": "subtopic",
+          "parent": "Food; Food Production",
+          "source_text": "Breeding"
+        },
+        {
+          "node_id": "U4-S2",
+          "title": "Fertilizers and Manures",
+          "level": "subtopic",
+          "parent": "Food; Food Production",
+          "source_text": "Fertilizers and Manures"
+        },
+        {
+          "node_id": "U4-S3",
+          "title": "Pest protection",
+          "level": "subtopic",
+          "parent": "Food; Food Production",
+          "source_text": "Pest protection"
+        },
+        {
+          "node_id": "U4-S4",
+          "title": "Organic farming",
+          "level": "subtopic",
+          "parent": "Food; Food Production",
+          "source_text": "Organic farming"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    }
+  ],
+  "raw_nodes": [
+    {
+      "node_id": "U1",
+      "title": "Matter - Its Nature and Behaviour",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "Matter - Its Nature and Behaviour"
+    },
+    {
+      "node_id": "U1-C1",
+      "title": "Matter in Our Surroundings",
+      "level": "chapter",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Matter in Our Surroundings",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-C2",
+      "title": "Is Matter Around Us Pure",
+      "level": "chapter",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Is Matter Around Us Pure",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-C3",
+      "title": "Atoms and Molecules",
+      "level": "chapter",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Atoms and Molecules",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-T1",
+      "title": "Matter in Our Surroundings",
+      "level": "topic",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Matter in Our Surroundings"
+    },
+    {
+      "node_id": "U1-T2",
+      "title": "Is Matter Around Us Pure",
+      "level": "topic",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Is Matter Around Us Pure"
+    },
+    {
+      "node_id": "U1-T3",
+      "title": "Atoms and Molecules",
+      "level": "topic",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Atoms and Molecules"
+    },
+    {
+      "node_id": "U1-S1",
+      "title": "States of matter, change of state",
+      "level": "subtopic",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "States of matter, change of state"
+    },
+    {
+      "node_id": "U1-S2",
+      "title": "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+      "level": "subtopic",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Mixtures (heterogeneous/homogenous), colloids, suspensions"
+    },
+    {
+      "node_id": "U1-S3",
+      "title": "Physical and chemical changes",
+      "level": "subtopic",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Physical and chemical changes"
+    },
+    {
+      "node_id": "U1-S4",
+      "title": "Sub-atomic particles, Models of atom, Isotopes and Isobars",
+      "level": "subtopic",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+    },
+    {
+      "node_id": "U1-K1",
+      "title": "Particulate Nature of Matter",
+      "level": "key_concept",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Particulate Nature of Matter"
+    },
+    {
+      "node_id": "U1-K2",
+      "title": "Law of Chemical Combination",
+      "level": "key_concept",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Law of Chemical Combination"
+    },
+    {
+      "node_id": "U1-K3",
+      "title": "Atomic Structure (Bohr's model)",
+      "level": "key_concept",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Atomic Structure (Bohr's model)"
+    },
+    {
+      "node_id": "U1-K4",
+      "title": "Valency",
+      "level": "key_concept",
+      "parent": "Matter - Its Nature and Behaviour",
+      "source_text": "Valency"
+    },
+    {
+      "node_id": "U2",
+      "title": "Organization in the Living World",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "Organization in the Living World"
+    },
+    {
+      "node_id": "U2-C1",
+      "title": "Cell - Basic Unit of life",
+      "level": "chapter",
+      "parent": "Organization in the Living World",
+      "source_text": "Cell - Basic Unit of life",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U2-C2",
+      "title": "Tissues, Organs, Organ System, Organism",
+      "level": "chapter",
+      "parent": "Organization in the Living World",
+      "source_text": "Tissues, Organs, Organ System, Organism",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U2-T1",
+      "title": "Cell Structure",
+      "level": "topic",
+      "parent": "Organization in the Living World",
+      "source_text": "Cell Structure"
+    },
+    {
+      "node_id": "U2-T2",
+      "title": "Tissues",
+      "level": "topic",
+      "parent": "Organization in the Living World",
+      "source_text": "Tissues"
+    },
+    {
+      "node_id": "U2-S1",
+      "title": "Prokaryotic vs Eukaryotic cells",
+      "level": "subtopic",
+      "parent": "Organization in the Living World",
+      "source_text": "Prokaryotic vs Eukaryotic cells"
+    },
+    {
+      "node_id": "U2-S2",
+      "title": "Organelles (Nucleus, Mitochondria, etc.)",
+      "level": "subtopic",
+      "parent": "Organization in the Living World",
+      "source_text": "Organelles (Nucleus, Mitochondria, etc.)"
+    },
+    {
+      "node_id": "U2-S3",
+      "title": "Animal tissues (4 types)",
+      "level": "subtopic",
+      "parent": "Organization in the Living World",
+      "source_text": "Animal tissues (4 types)"
+    },
+    {
+      "node_id": "U2-S4",
+      "title": "Plant tissues (Meristematic and Permanent)",
+      "level": "subtopic",
+      "parent": "Organization in the Living World",
+      "source_text": "Plant tissues (Meristematic and Permanent)"
+    },
+    {
+      "node_id": "U2-K1",
+      "title": "Cell as basic unit of life",
+      "level": "key_concept",
+      "parent": "Organization in the Living World",
+      "source_text": "Cell as basic unit of life"
+    },
+    {
+      "node_id": "U2-K2",
+      "title": "Semi-permeability of cell membrane",
+      "level": "key_concept",
+      "parent": "Organization in the Living World",
+      "source_text": "Semi-permeability of cell membrane"
+    },
+    {
+      "node_id": "U3",
+      "title": "Motion, Force and Work",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "Motion, Force and Work"
+    },
+    {
+      "node_id": "U3-C1",
+      "title": "Motion",
+      "level": "chapter",
+      "parent": "Motion, Force and Work",
+      "source_text": "Motion",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U3-C2",
+      "title": "Force and Newton's laws",
+      "level": "chapter",
+      "parent": "Motion, Force and Work",
+      "source_text": "Force and Newton's laws",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U3-C3",
+      "title": "Gravitation",
+      "level": "chapter",
+      "parent": "Motion, Force and Work",
+      "source_text": "Gravitation",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U3-C4",
+      "title": "Floatation",
+      "level": "chapter",
+      "parent": "Motion, Force and Work",
+      "source_text": "Floatation",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U3-C5",
+      "title": "Work, Energy and Power",
+      "level": "chapter",
+      "parent": "Motion, Force and Work",
+      "source_text": "Work, Energy and Power",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U3-C6",
+      "title": "Sound",
+      "level": "chapter",
+      "parent": "Motion, Force and Work",
+      "source_text": "Sound",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U3-T1",
+      "title": "Motion",
+      "level": "topic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Motion"
+    },
+    {
+      "node_id": "U3-T2",
+      "title": "Force and Newton's Laws",
+      "level": "topic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Force and Newton's Laws"
+    },
+    {
+      "node_id": "U3-T3",
+      "title": "Gravitation",
+      "level": "topic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Gravitation"
+    },
+    {
+      "node_id": "U3-T4",
+      "title": "Floatation",
+      "level": "topic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Floatation"
+    },
+    {
+      "node_id": "U3-T5",
+      "title": "Work Energy Power",
+      "level": "topic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Work Energy Power"
+    },
+    {
+      "node_id": "U3-T6",
+      "title": "Sound",
+      "level": "topic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Sound"
+    },
+    {
+      "node_id": "U3-S1",
+      "title": "Distance, displacement, velocity-time graphs",
+      "level": "subtopic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Distance, displacement, velocity-time graphs"
+    },
+    {
+      "node_id": "U3-S2",
+      "title": "Newton's laws (1st, 2nd, 3rd)",
+      "level": "subtopic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Newton's laws (1st, 2nd, 3rd)"
+    },
+    {
+      "node_id": "U3-S3",
+      "title": "Universal Law of Gravitation",
+      "level": "subtopic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Universal Law of Gravitation"
+    },
+    {
+      "node_id": "U3-S4",
+      "title": "Archimedes' Principle",
+      "level": "subtopic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Archimedes' Principle"
+    },
+    {
+      "node_id": "U3-S5",
+      "title": "Conservation of Energy",
+      "level": "subtopic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Conservation of Energy"
+    },
+    {
+      "node_id": "U3-S6",
+      "title": "Reflection and Echo",
+      "level": "subtopic",
+      "parent": "Motion, Force and Work",
+      "source_text": "Reflection and Echo"
+    },
+    {
+      "node_id": "U3-K1",
+      "title": "Uniform Circular Motion",
+      "level": "key_concept",
+      "parent": "Motion, Force and Work",
+      "source_text": "Uniform Circular Motion"
+    },
+    {
+      "node_id": "U3-K2",
+      "title": "Inertia",
+      "level": "key_concept",
+      "parent": "Motion, Force and Work",
+      "source_text": "Inertia"
+    },
+    {
+      "node_id": "U3-K3",
+      "title": "Acceleration due to Gravity",
+      "level": "key_concept",
+      "parent": "Motion, Force and Work",
+      "source_text": "Acceleration due to Gravity"
+    },
+    {
+      "node_id": "U3-K4",
+      "title": "Buoyancy",
+      "level": "key_concept",
+      "parent": "Motion, Force and Work",
+      "source_text": "Buoyancy"
+    },
+    {
+      "node_id": "U3-K5",
+      "title": "Law of Conservation of Energy",
+      "level": "key_concept",
+      "parent": "Motion, Force and Work",
+      "source_text": "Law of Conservation of Energy"
+    },
+    {
+      "node_id": "U4",
+      "title": "Food; Food Production",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "Food; Food Production"
+    },
+    {
+      "node_id": "U4-C1",
+      "title": "Plant and animal breeding",
+      "level": "chapter",
+      "parent": "Food; Food Production",
+      "source_text": "Plant and animal breeding",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U4-T1",
+      "title": "Food Production",
+      "level": "topic",
+      "parent": "Food; Food Production",
+      "source_text": "Food Production"
+    },
+    {
+      "node_id": "U4-S1",
+      "title": "Breeding",
+      "level": "subtopic",
+      "parent": "Food; Food Production",
+      "source_text": "Breeding"
+    },
+    {
+      "node_id": "U4-S2",
+      "title": "Fertilizers and Manures",
+      "level": "subtopic",
+      "parent": "Food; Food Production",
+      "source_text": "Fertilizers and Manures"
+    },
+    {
+      "node_id": "U4-S3",
+      "title": "Pest protection",
+      "level": "subtopic",
+      "parent": "Food; Food Production",
+      "source_text": "Pest protection"
+    },
+    {
+      "node_id": "U4-S4",
+      "title": "Organic farming",
+      "level": "subtopic",
+      "parent": "Food; Food Production",
+      "source_text": "Organic farming"
+    }
+  ]
+}

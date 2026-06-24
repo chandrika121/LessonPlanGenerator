@@ -1,0 +1,460 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Units and Measurements",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Motion in a Straight Line",
+        "Laws of Motion"
+      ]
+    },
+    {
+      "topic": "Motion in a Straight Line",
+      "prerequisites": [
+        "Units and Measurements"
+      ],
+      "dependent_topics": [
+        "Motion in a Plane",
+        "Work, Energy and Power"
+      ]
+    },
+    {
+      "topic": "Motion in a Plane",
+      "prerequisites": [
+        "Motion in a Straight Line"
+      ],
+      "dependent_topics": [
+        "Laws of Motion",
+        "Gravitation"
+      ]
+    },
+    {
+      "topic": "Laws of Motion",
+      "prerequisites": [
+        "Motion in a Plane"
+      ],
+      "dependent_topics": [
+        "Work, Energy and Power",
+        "System of Particles and Rotational Motion"
+      ]
+    },
+    {
+      "topic": "Work, Energy and Power",
+      "prerequisites": [
+        "Laws of Motion"
+      ],
+      "dependent_topics": [
+        "Gravitation",
+        "Thermodynamics"
+      ]
+    },
+    {
+      "topic": "System of Particles and Rotational Motion",
+      "prerequisites": [
+        "Laws of Motion"
+      ],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Gravitation",
+      "prerequisites": [
+        "Motion in a Plane",
+        "Work, Energy and Power"
+      ],
+      "dependent_topics": [
+        "Properties of Bulk Matter"
+      ]
+    },
+    {
+      "topic": "Mechanical Properties of Solids/Fluids",
+      "prerequisites": [],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Thermal Properties of Matter",
+      "prerequisites": [
+        "Gravitation"
+      ],
+      "dependent_topics": [
+        "Kinetic Theory"
+      ]
+    },
+    {
+      "topic": "Thermodynamics",
+      "prerequisites": [
+        "Work, Energy and Power"
+      ],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Kinetic Theory",
+      "prerequisites": [
+        "Thermal Properties of Matter"
+      ],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Oscillations",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Waves"
+      ]
+    },
+    {
+      "topic": "Waves",
+      "prerequisites": [
+        "Oscillations"
+      ],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Electric Charges and Fields",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Electrostatic Potential and Capacitance"
+      ]
+    },
+    {
+      "topic": "Current Electricity",
+      "prerequisites": [
+        "Electric Charges and Fields"
+      ],
+      "dependent_topics": [
+        "Moving Charges and Magnetism"
+      ]
+    },
+    {
+      "topic": "Magnetism and Matter",
+      "prerequisites": [],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Electromagnetic Induction",
+      "prerequisites": [
+        "Current Electricity"
+      ],
+      "dependent_topics": [
+        "Alternating Current"
+      ]
+    },
+    {
+      "topic": "Alternating Current",
+      "prerequisites": [
+        "Electromagnetic Induction"
+      ],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Electromagnetic Waves",
+      "prerequisites": [],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Ray Optics and Optical Instruments",
+      "prerequisites": [
+        "Electromagnetic Waves"
+      ],
+      "dependent_topics": [
+        "Wave Optics"
+      ]
+    },
+    {
+      "topic": "Dual Nature of Radiation and Matter",
+      "prerequisites": [],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Atoms",
+      "prerequisites": [
+        "Dual Nature of Radiation and Matter"
+      ],
+      "dependent_topics": [
+        "Nuclei"
+      ]
+    },
+    {
+      "topic": "Semiconductor Electronics",
+      "prerequisites": [],
+      "dependent_topics": []
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "difficulty_level": "Low",
+      "concept_density": "Foundational concepts of measurement systems, SI units, significant figures, uncertainty analysis, dimensional analysis.",
+      "estimated_teaching_hours": 6,
+      "estimated_sessions": 3,
+      "practical_requirement": "Vernier calipers and screw gauge measurements",
+      "assessment_requirement": "Summative assessment on SI units and error calculation"
+    },
+    {
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Straight Line",
+      "difficulty_level": "Medium",
+      "concept_density": "Calculus-based motion, graphical interpretation of velocity-time and position-time graphs.",
+      "estimated_teaching_hours": 10,
+      "equations_sessions": 5,
+      "practical_requirement": "Graph plotting for L-T relationship in pendulum experiments",
+      "assessment_requirement": "Problem-solving on uniformly accelerated motion"
+    },
+    {
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Plane",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Vector operations, resolution of vectors, projectile and circular motion analysis.",
+      "estimated_teaching_hours": 12,
+      "equations_sessions": 6,
+      "practical_requirement": "Parallelogram law for vector addition/subtraction experiments",
+      "assessment_requirement": "Summative assessment on 2D kinematics"
+    },
+    {
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Newton's laws, momentum conservation, friction dynamics.",
+      "estimated_teaching_hours": 14,
+      "equations_sessions": 7,
+      "practical_requirement": "Limiting friction and force constant experiments",
+      "assessment_requirement": "Summative assessment on equilibrium and collision problems"
+    },
+    {
+      "unit_name": "Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power",
+      "difficulty_level": "High",
+      "concept_density": "Work-energy theorem, potential energy, conservation laws in collisions.",
+      "estimated_teaching_hours": 12,
+      "equations_sessions": 6,
+      "practical_requirement": "Conservation of energy on inclined plane experiments",
+      "assessment_requirement": "Summative assessment with high weightage (17 marks)"
+    },
+    {
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion",
+      "difficulty_level": "High",
+      "concept_density": "Center of mass, torque, angular momentum conservation.",
+      "estimated_teaching_hours": 14,
+      "equations_sessions": 7,
+      "practical_requirement": "Sonometer experiments for frequency-length relations",
+      "assessment_requirement": "Summative assessment on rotational dynamics"
+    },
+    {
+      "unit_name": "Gravitation",
+      "chapter_name": "Gravitation",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Kepler's laws, gravitational potential energy, orbital mechanics.",
+      "estimated_teaching_hours": 10,
+      "equations_sessions": 5,
+      "practical_requirement": "Speed of sound in air using resonance tube (related to wave properties)",
+      "assessment_requirement": "Summative assessment on satellite motion"
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids/Fluids",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Stress-strain, Hooke's law, viscosity, Bernoulli's theorem.",
+      "estimated_teaching_hours": 16,
+      "equations_sessions": 8,
+      "practical_requirement": "Surface tension and capillary rise experiments",
+      "assessment_requirement": "Summative assessment with high weightage (20 marks)"
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "difficulty_level": "Medium",
+      "concept_density": "Specific heat, calorimetry, modes of heat transfer.",
+      "estimated_teaching_hours": 12,
+      "equations_sessions": 6,
+      "practical_requirement": "Cooling curve and bi-metallic strip experiments",
+      "assessment_requirement": "Summative assessment on thermal expansion"
+    },
+    {
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Thermodynamics",
+      "difficulty_level": "High",
+      "concept_density": "Laws of thermodynamics, state variables, gaseous processes.",
+      "estimated_teaching_hours": 14,
+      "equations_sessions": 7,
+      "practical_requirement": "Factors affecting heat loss experiments",
+      "assessment_requirement": "Summative assessment on cyclic and adiabatic processes"
+    },
+    {
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Kinetic Theory",
+      "difficulty_level": "High",
+      "concept_density": "Molecular motion, RMS speed, degrees of freedom.",
+      "estimated_teaching_hours": 10,
+      "equations_sessions": 5,
+      "practical_requirement": "Factors affecting rate of heat loss experiments",
+      "assessment_requirement": "Summative assessment on equipartition theorem"
+    },
+    {
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations",
+      "difficulty_level": "Medium-High",
+      "concept_density": "SHM characteristics, energy in oscillation.",
+      "estimated_teaching_hours": 12,
+      "equations_sessions": 6,
+      "practical_requirement": "Simple pendulum experiments for L-T graphs",
+      "assessment_requirement": "Summative assessment on SHM equations"
+    },
+    {
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Wave properties, superposition principle.",
+      "estimated_teaching_hours": 10,
+      "equations_sessions": 5,
+      "practical_requirement": "Sonometer experiments for frequency and tension relations",
+      "assessment_requirement": "Summative assessment on wave behavior"
+    },
+    {
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Chapter–1: Electric Charges and Fields",
+      "difficulty_level": "High",
+      "concept_density": "Coulomb's law, electric fields, Gauss's theorem.",
+      "estimated_teaching_hours": 14,
+      "equations_sessions": 7,
+      "practical_requirement": "Charge induction experiments on Styrofoam balls",
+      "assessment_requirement": "Summative assessment with high weightage (16 marks)"
+    },
+    {
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Chapter–2: Electrostatic Potential and Capacitance",
+      "difficulty_level": "High",
+      "concept_density": "Electric potential, dielectrics, capacitor combinations.",
+      "estimated_teaching_hours": 14,
+      "equations_sessions": 7,
+      "practical_requirement": "Refractive index experiments using lenses (related to optics)",
+      "assessment_requirement": "Summative assessment on energy stored in capacitors"
+    },
+    {
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Chapter–3: Current Electricity",
+      "difficulty_level": "High",
+      "concept_density": "Drift velocity, Kirchhoff's rules, Wheatstone bridge.",
+      "estimated_teaching_hours": 14,
+      "equations_sessions": 7,
+      "practical_requirement": "Internal resistance/EMF variation projects",
+      "assessment_requirement": "Summative assessment on circuit analysis"
+    },
+    {
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Chapter–4: Moving Charges and Magnetism",
+      "difficulty_level": "High",
+      "concept_density": "Biot-Savart law, Ampere's law, magnetic dipoles.",
+      "estimated_teaching_hours": 16,
+      "equations_sessions": 8,
+      "practical_requirement": "Earth's magnetic field studies using compass needles",
+      "assessment_requirement": "Summative assessment with high weightage (17 marks)"
+    },
+    {
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Chapter–5: Magnetism and Matter",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Bar magnet properties, magnetic materials.",
+      "estimated_teaching_hours": 10,
+      "equations_sessions": 5,
+      "practical_requirement": "Magnetic field line plotting experiments",
+      "assessment_requirement": "Summative assessment on material behavior"
+    },
+    {
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Chapter–6: Electromagnetic Induction",
+      "difficulty_level": "High",
+      "concept_density": "Faraday's laws, Lenz's law.",
+      "estimated_teaching_hours": 12,
+      "equations_sessions": 6,
+      "practical_requirement": "Self-inductance dependence experiments",
+      "assessment_requirement": "Summative assessment on induced EMF"
+    },
+    {
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Chapter–7: Alternating Current",
+      "difficulty_level": "High",
+      "concept_density": "RMS values, LCR circuits, resonance.",
+      "estimated_teaching_hours": 14,
+      "equations_sessions": 7,
+      "practical_requirement": "Transformer design and voltage ratio investigations",
+      "assessment_requirement": "Summative assessment on AC circuit analysis"
+    },
+    {
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_name": "Chapter–8: Electromagnetic Waves",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Displacement current, EM spectrum.",
+      "estimated_teaching_hours": 10,
+      "equations_sessions": 5,
+      "practical_requirement": "Angle of deviation experiments with hollow prisms",
+      "assessment_requirement": "Summative assessment with high weightage (18 marks)"
+    },
+    {
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Chapter–9: Ray Optics and Optical Instruments",
+      "difficulty_level": "High",
+      "concept_density": "Reflection, refraction, lens formulas.",
+      "estimated_teaching_hours": 16,
+      "equations_sessions": 8,
+      "practical_requirement": "Refractive index experiments using plane mirrors and lenses",
+      "assessment_requirement": "Summative assessment on optical instruments"
+    },
+    {
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Chapter–10: Wave Optics",
+      "difficulty_level": "High",
+      "concept_density": "Huygen's principle, interference, diffraction.",
+      "estimated_teaching_hours": 14,
+      "equations_sessions": 7,
+      "practical_requirement": "Interference pattern observation experiments",
+      "assessment_requirement": "Summative assessment on fringe width derivation"
+    },
+    {
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_name": "Chapter–11: Dual Nature of Radiation and Matter",
+      "difficulty_level": "High",
+      "concept_density": "Photoelectric effect, de-Broglie wavelength.",
+      "estimated_teaching_hours": 12,
+      "equations_sessions": 6,
+      "practical_requirement": "LDR behavior with light intensity experiments",
+      "assessment_requirement": "Summative assessment with high weightage (12 marks)"
+    },
+    {
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Chapter–12: Atoms",
+      "difficulty_level": "High",
+      "concept_density": "Bohr model, hydrogen spectrum.",
+      "estimated_teaching_hours": 10,
+      "equations_sessions": 5,
+      "practical_requirement": "Spectra analysis projects (related to atomic models)",
+      "assessment_requirement": "Summative assessment on orbital calculations"
+    },
+    {
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Chapter–13: Nuclei",
+      "difficulty_level": "High",
+      "concept_density": "Nuclear composition, binding energy curve.",
+      "estimated_teaching_hours": 10,
+      "equations_sessions": 5,
+      "practical_requirement": "Binding energy variation analysis projects",
+      "assessment_requirement": "Summative assessment on fission/fusion concepts"
+    },
+    {
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Energy bands, p-n junctions, rectification.",
+      "estimated_teaching_hours": 8,
+      "equations_sessions": 4,
+      "practical_requirement": "Diode characteristic curve experiments (related to simple circuits)",
+      "assessment_requirement": "Summative assessment with high weightage (7 marks)"
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [],
+    "invalid_chapter_names": [
+      "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits"
+    ]
+  }
+}

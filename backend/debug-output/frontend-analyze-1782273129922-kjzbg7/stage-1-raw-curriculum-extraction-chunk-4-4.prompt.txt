@@ -1,0 +1,58 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract only concise curriculum facts needed to build the hierarchy.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units and chapters in this input
+- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 4 of 4; extract only what is present in this chunk
+
+Curriculum source text:
+--- Page 19 ---
+3. To study effect of intensity of light (by varying distance of the source) on an LDR. 4. To observe refraction and lateral deviation of a beam of light incident obliquely on a glass slab. 5. To observe diffraction of light due to a thin slit. 6. To study the nature and size of the image formed by a (i) convex lens, or (ii) concave mirror, on a screen by using a candle and a screen (for different distances of the candle from the lens/mirror). 7. To obtain a lens combination with the specified focal length by using two lenses from the given set of lenses. Suggested Investigatory Projects 1. To study various factors on which the internal resistance/EMF of a cell depends. 2. To study the variations in current flowing in a circuit containing an LDR because of a variation in (a) the power of the incandescent lamp, used to 'illuminate' the LDR (keeping all the lamps at a fixed distance). (b) the distance of an incandescent lamp (of fixed power) used to 'illuminate' the LDR. 3. To find the refractive indices of (a) water (b) oil (transparent) using a plane mirror, an equiconvex lens (made from a glass of known refractive index) and an adjustable object needle. 4. To investigate the relation between the ratio of (i) output and input voltage and (ii) number of turns in the secondary coil and primary coil of a self-designed transformer. 5. To investigate the dependence of the angle of deviation on the angle of incidence using a hollow prism filled one by one, with different transparent fluids. 6. To estimate the charge induced on each one of the two identical Styrofoam (or pith) balls suspended in a vertical plane by making use of Coulomb's law. 7. To study the factor on which the self-inductance of a coil depends by observing the effect of this coil, when put in series with a resistor/(bulb) in a circuit fed up by an A.C. source of adjustable frequency. 8. To study the earth's magnetic field using a compass needle -bar magnet by plotting magnetic field lines and tangent galvanometer.
+
+--- Page 20 ---
+Practical Examination for Visually Impaired Students of Classes XI and XII Evaluation Scheme Time 2 hours Max. Marks: 30 Identification/Familiarity with the apparatus 5 marks Written test (based on given/prescribed practicals) 10 marks Practical Record 5 marks Viva 10 marks Total 30 marks General Guidelines  The practical examination will be of two-hour duration.  A separate list of ten experiments is included here.  The written examination in practicals for these students will be conducted at the time of practical examination of all other students.  The written test will be of 30 minutes duration.  The question paper given to the students should be legibly typed. It should contain a total of 15 practical skill based very short answer type questions. A student would be required to answer any 10 questions.  A writer may be allowed to such students as per CBSE examination rules.  All questions included in the question papers should be related to the listed practicals.  Every question should require about two minutes to be answered.  These students are also required to maintain a practical file. A student is expected to record at least five of the listed experiments as per the specific instructions for each subject. These practicals should be duly checked and signed by the internal examiner.  The format of writing any experiment in the practical file should include aim, apparatus required, simple theory, procedure, related practical skills, precautions etc.  Questions may be generated jointly by the external/internal examiners and used for assessment.  The viva questions may include questions based on basic theory/principle/concept, apparatus/ materials/chemicals required, procedure, precautions, sources of error etc.
+
+--- Page 21 ---
+Class XII A. Items for Identification/ familiarity with the apparatus for assessment in practicals (All experiments) Meter scale, general shape of the voltmeter/ammeter, battery/power supply, connecting wires, standard resistances, connecting wires, voltmeter/ammeter, meter bridge, screw gauge, jockey Galvanometer, Resistance Box, standard Resistance, connecting wires, Potentiometer, jockey, Galvanometer, Lechlanche cell, Daniell cell [simple distinction between the two vis-à-vis their outer (glass and copper) containers], rheostat connecting wires, Galvanometer, resistance box, Plug-in and tapping keys, connecting wires battery/power supply, Diode, Resistor (Wire-wound or carbon ones with two wires connected to two ends), capacitors (one or two types), Inductors, Simple electric/electronic bell, battery/power supply, Plug- in and tapping keys, Convex lens, concave lens, convex mirror, concave mirror, Core/hollow wooden cylinder, insulated wire, ferromagnetic rod, Transformer core, insulated wire. B. List of Practicals 1. To determine the resistance per cm of a given wire by plotting a graph between voltage and current. 2. To verify the laws of combination (series/parallel combination) of resistances by Ohm’s law. 3. To find the resistance of a given wire / standard resistor using a meter bridge. 4. To determine the resistance of a galvanometer by half deflection method. 5. To identify a resistor, capacitor, inductor and diode from a mixed collection of such items. 6. To observe the difference between (i) a convex lens and a concave lens (ii) a convex mirror and a concave mirror and to estimate the likely difference between the power of two given convex /concave lenses. 7. To design an inductor coil and to know the effect of (i) change in the number of turns (ii) Introduction of ferromagnetic material as its core material on the inductance of the coil. 8. To design a (i) step up (ii) step down transformer on a given core and know the relation between its input and output voltages.
+
+--- Page 22 ---
+Note: The above practicals may be carried out in an experiential manner rather than recording observations. Prescribed Books: 1. Physics, Class XI, Part -I and II, Published by NCERT. 2. Physics, Class XII, Part -I and II, Published by NCERT. 3. Laboratory Manual of Physics for class XII Published by NCERT. 4. The list of other related books and manuals brought out by NCERT (consider multimedia also). Note: The content indicated in NCERT textbooks as excluded for the year 2026-27 is not to be tested by schools and will not be assessed in the Board examinations 2026-27.
+
+--- Page 23 ---
+QUESTION PAPER DESIGN Theory (Class: XI/XII) Maximum Marks: 70 Duration: 3 hrs. S No. Typology of Questions Total Marks Approximate Percentage 1 Remembering : Exhibit memory of previously learned material by recalling facts, terms, basic concepts, and answers. Understanding : Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas 27 38 % 2 Applying : Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way. 22 32% 3 Analysing : Examine and break information into parts by identifying motives or causes. Make inferences and find evidence to support generalizations Evaluating: Present and defend opinions by making judgments about information, validity of ideas, or quality of work based on a set of criteria. Creating : Compile information together in a different way by combining elements in a new pattern or proposing alternative solutions. 21 30% Total Marks 70 100 Practical 30 Gross Total 100 Note: The above template is only a sample. Suitable internal variations may be made for generating similar templates keeping the overall weightage to different form of questions and typology of questions same . For more details kindly refer to Sample Question Paper of class XII for the year 2026- 27 to be published by CBSE at its website.

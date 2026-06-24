@@ -1,0 +1,64 @@
+Stage 2: Heading Classification - IX - Geography - Contemporary India - I
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- do not output units created by the model
+- do not create unit_name
+- do not rename parent_unit
+- only classify the existing Stage 1 items as chapter/topic/subtopic
+- if classification is chapter, source_heading must exactly come from Stage 1 extracted headings for this class
+- never rewrite, summarize, merge, or invent chapter names
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Geography - Contemporary India - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical Features and Environment",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "India – Size and Location",
+        "Physical Features of India",
+        "Drainage",
+        "Climate"
+      ],
+      "topics": [
+        "Location impacts climate",
+        "Time meridian (82.5E)",
+        "Strategic partner position",
+        "Geological processes",
+        "River systems and lakes",
+        "Monsoon winds and temperatures"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Natural Vegetation, Wildlife and Population",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Natural Vegetation and Wildlife",
+        "Population"
+      ],
+      "topics": [
+        "Inter-relationship between environment and culture",
+        "Uneven distribution of population",
+        "Factors affecting density"
+      ],
+      "subtopics": []
+    }
+  ]
+}

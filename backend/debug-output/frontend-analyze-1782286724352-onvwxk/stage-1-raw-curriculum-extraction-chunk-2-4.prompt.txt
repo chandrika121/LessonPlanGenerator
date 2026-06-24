@@ -1,0 +1,55 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract only concise curriculum facts needed to build the hierarchy.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units and chapters in this input
+- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 2 of 4; extract only what is present in this chunk
+
+Curriculum source text:
+--- Page 5 ---
+5 Unit-V Human Physiology Chapter-14: Breathing and Exchange of Gases Respiratory organs in animals (recall only); Respiratory system in humans; mechanism of breathing and its regulation in humans - exchange of gases, transport of gases and regulation of respiration, respiratory volume; disorders related to respiration - asthma, emphysema, occupational respiratory disorders. Chapter-15: Body Fluids and Circulation Composition of blood, blood groups, coagulation of blood; composition of lymph and its function; human circulatory system - Structure of human heart and blood vessels; cardiac cycle, cardiac output, ECG; double circulation; regulation of cardiac activity; disorders of circulatory system - hypertension, coronary artery disease, angina pectoris, heart failure. Chapter-16: Excretory Products and their Elimination Modes of excretion - ammonotelism, ureotelism, uricotelism; human excretory system – structure and function; urine formation, osmoregulation; regulation of kidney function - renin - angiotensin, atrial natriuretic factor, ADH and diabetes insipidus; role of other organs in excretion; disorders - uremia, renal failure, renal calculi, nephritis; dialysis and artificial kidney, kidney transplant. Chapter-17: Locomotion and Movement Types of movement - ciliary, flagellar, muscular; skeletal muscle, contractile proteins and muscle contraction; skeletal system and its functions; joints; disorders of muscular and skeletal systems - myasthenia gravis, tetany, muscular dystrophy, arthritis, osteoporosis, gout. Chapter-18: Neural Control and Coordination Neuron and nerves; Nervous system in humans - central nervous system; peripheral nervous system and visceral nervous system; generation and conduction of nerve impulse Chapter- 19: Chemical Coordination and Integration Endocrine glands and hormones; human endocrine system - hypothalamus, pituitary, pineal, thyroid, parathyroid, adrenal, pancreas, gonads; mechanism of hormone action (elementary idea); role of hormones as messengers and regulators, hypo - and hyperactivity and related disorders; dwarfism, acromegaly, cretinism, goiter, exophthalmic goitre, diabetes, Addison's disease.
+
+--- Page 6 ---
+6 The following topics are included in the syllabus but will be assessed only formatively to reinforce understanding without adding to summative assessments. The reduces academic stress while ensuring meaningful learning. Schools can integrate these with existing chapters as they align well. Relevant NCERT textual material is enclosed for reference. Digestion and Absorption (Please Refer to CBSE Reading Material) Alimentary canal and digestive glands, role of digestive enzymes and gastrointestinal hormones; Peristalsis, digestion, absorption and assimilation of proteins, carbohydrates and fats; calorific values of proteins, carbohydrates and fats; egestion; nutritional and digestive disorders - PEM, indigestion, constipation, vomiting, jaundice, diarrhea. PRACTICALS Time: 03 Hours Max. Marks: 30 Evaluation Scheme Marks One Major Experiment Part A (Experiment No- 1,3,7,8) 5 Marks One Minor Experiment Part A (Experiment No- 6,9,10,11,12,13) 4 Marks Slide Preparation Part A (Experiment No- 2,4,5) 5 Marks Spotting Part B 7 Marks Practical Record + Viva Voce (Credit to the student’s work over the academic session may be given) 4 Marks Project Record + Viva Voce 5 Marks Total 30 Marks A: List of Experiments 1. Study and describe locally available common flowering plants, from family Solanaceae (Poaceae, Asteraceae or Brassicaceae can be substituted in case of particular geographical location) including dissection and display of floral whorls, anther and ovary to show number of chambers (floral formulae and floral diagrams), type of root (tap and adventitious); type of stem (herbaceous and woody); leaf (arrangement, shape, venation, simple and compound). 2. Preparation and study of T.S. of dicot and monocot roots and stems (primary). 3. Study of osmosis by potato osmometer. 4. Study of plasmolysis in epidermal peels (e.g. Rhoeo/lily leaves or flashy scale leaves of onion bulb). 5. Study of distribution of stomata on the upper and lower surfaces of leaves. 6. Comparative study of the rates of transpiration in the upper and lower surfaces of
+
+--- Page 7 ---
+7 leaves. 7. Test for the presence of sugar, starch, proteins and fats in suitable plant and animal materials. 8. Separation of plant pigments through paper chromatography. 9. Study of the rate of respiration in flower buds/leaf tissue and germinating seeds. 10. Test for presence of urea in urine. 11. Test for presence of sugar in urine. 12. Test for presence of albumin in urine. 13. Test for presence of bile salts in urine. B. Study and Observe the following (spotting): 1. Parts of a compound microscope. 2. Specimens/slides/models and identification with reasons - Bacteria, Oscillatoria, Spirogyra, Rhizopus , mushroom, yeast, liverwort, moss, fern, pine, one monocotyledonous plant, one dicotyledonous plant and one lichen. 3. Virtual specimens/slides/models and identifying features of - Amoeba, Hydra, liver fluke, Ascaris , leech, earthworm, prawn, silkworm, honey bee, snail, starfish, shark, rohu, frog, lizard, pigeon and rabbit. 4. Mitosis in onion root tip cells and animal’s cells (grasshopper) from permanent slides. 5. Types of inflorescence (cymose and racemose). 6. Human skeleton and different types of joints with the help of virtual images/models only. Practical Examination for Visually Impaired Students Class XI Note: The ‘Evaluation schemes’ and ‘General Guidelines’ for visually impaired students as given for Class XII may be followed. A. Items for Identification/Familiarity with the apparatus /equipment /animal and plant material / chemicals for assessment in practicals (All experiments) B. Equipment - compound microscope, test tube, petri dish, chromatography paper, chromatography chamber, beaker, scalpel Chemical – alcohol Models – Model of Human skeleton to show – Ball and socket joints of girdles and limbs, Rib cage, Honeycomb, Mollusc shell, Pigeon and Star fish, cockroach Specimen / Fresh Material – mushroom, succulents such as Aloe vera / kalenchoe, raisins, potatoes, seeds of monocot and dicot- maize and gram or any other plant, plants of Solanaceae - Brinjal, Petunia, any other
+
+--- Page 8 ---
+8 C. List of Practicals 1. Study locally available common flowering plants of the family – Solanaceae and identify type of stem (Herbaceous or Woody), type of leaves (Compound or Simple). 2. Study the parts of a compound microscope- eye piece and objective lens, mirror, stage, coarse and fine adjustment knobs. 3. Differentiate between monocot and dicot plants on the basis of venation patterns. 4. Study the following parts of human skeleton (Model): Ball and socket joints of thigh and shoulder 5. Rib cage 6. Study honeybee/butterfly, snail/sheik snail through shell, Starfish, Pigeon (through models). 7. Identify the given specimen of a fungus – mushroom, gymnosperm-pine cone. 8. Identify and relate the experimental set up with the aim of experiment: For Potato Osmometer/endosmosis in raisins. Note: The above practicals may be carried out in an experiential manner rather than only recording observations. Prescribed Books: 1. Biology Class-XI, Published by NCERT 2. Other related books and manuals brought out by NCERT (including multimedia). 3. Biology supplementary Material (Revised). Available on CBSE Website. 4. Reading Material Biology Class XI.

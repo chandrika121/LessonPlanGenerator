@@ -1,0 +1,64 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "subject": "",
+    "units": [
+      {
+        "unit_id": "",
+        "unit_name": "",
+        "marks": null,
+        "chapters": [
+          {
+            "chapter_id": "",
+            "chapter_name": "",
+            "source_heading": "",
+            "is_normalized": false,
+            "confidence": 0,
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - IX - Economics\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- Stage 3 is a restructuring step, not a content generation step\n- Preserve the source hierarchy exactly\n- Keep class_name exactly as in raw extraction\n- Keep subject exactly as in raw extraction\n- Keep every unit_name exactly as in raw extraction\n- long paragraph-like chapter names must be reclassified into topics\n- chapter names must remain source-grounded\n- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks\n- never create new chapter names from topics or subtopics\n- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true\n- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented\n- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"Economics\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Production and Resources\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"The Story of Village Palampur\",\n        \"People as Resource\"\n      ],\n      \"topics\": [\n        \"Requirements of production and interdependence\",\n        \"Farming and non-farming activities correlation\",\n        \"Factors impacting economic development\",\n        \"Equitable society solutions\",\n        \"Quality of population factors\",\n        \"Government schemes effect on people\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Challenges and Security\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Poverty as a Challenge\",\n        \"Food Security in India\"\n      ],\n      \"topics\": [\n        \"Reasons for poverty (rural/urban)\",\n        \"Efficacy of government to eradicate poverty\",\n        \"Link between education and poverty\",\n        \"Continuity of supply aspects\",\n        \"PDS features addressing FSI\",\n        \"Impact of Green Revolution\",\n        \"Causes and effect of famines\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"class_name\": \"IX\",\n  \"units\": [\n    {\n      \"unit_name\": \"Production and Resources\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"The Story of Village Palampur\",\n          \"source_text_excerpt\": \"Chapter title regarding village economy, production factors, and land use patterns.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Production and Resources\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"People as Resource\",\n          \"source_text_excerpt\": \"Chapter title discussing population quality, labor force participation, and human capital.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Production and Resources\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Requirements of production and interdependence\",\n          \"source_text_excerpt\": \"Topic covering land, labor, capital, and physical resources needed for economic activities.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Production and Resources\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Farming and non-farming activities correlation\",\n          \"source_text_excerpt\": \"Topic analyzing the relationship between agricultural work and other economic sectors.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Production and Resources\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Factors impacting economic development\",\n          \"source_text_excerpt\": \"Topic detailing land quality, human capital formation, infrastructure availability.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Production and Resources\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Equitable society solutions\",\n          \"source_text_excerpt\": \"Topic exploring strategies for fair distribution of resources and opportunities.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Production and Resources\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Quality of population factors\",\n          \"source_text_excerpt\": \"Topic examining health, education levels, and skill development as economic drivers.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Production and Resources\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Government schemes effect on people\",\n          \"source_text_excerpt\": \"Topic assessing the impact of state interventions on livelihoods and economic status.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Production and Resources\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_name\": \"Challenges and Security\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Poverty as a Challenge\",\n          \"source_text_excerpt\": \"Chapter title addressing causes, measurement, and government measures against poverty.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Food Security in India\",\n          \"source_text_excerpt\": \"Chapter title covering food availability, access issues, PDS system, and buffer stocks.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Reasons for poverty (rural/urban)\",\n          \"source_text_excerpt\": \"Topic analyzing structural causes of low income in different geographic contexts.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Efficacy of government to eradicate poverty\",\n          \"source_text_excerpt\": \"Topic evaluating the success rate of various anti-poverty programs and policies.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Link between education and poverty\",\n          \"source_text_excerpt\": \"Topic discussing how educational attainment correlates with income generation.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Continuity of supply aspects\",\n          \"source_text_excerpt\": \"Topic examining the consistency of food availability throughout the year.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"PDS features addressing FSI\",\n          \"source_text_excerpt\": \"Topic detailing Public Distribution System mechanisms for Food Security Issues.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Impact of Green Revolution\",\n          \"source_text_excerpt\": \"Topic analyzing agricultural productivity changes and associated economic shifts.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Causes and effect of famines\",\n          \"source_text_excerpt\": \"Topic exploring historical instances of food scarcity and their socio-economic impacts.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.92,\n          \"parent_unit\": \"Challenges and Security\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"subject\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"unit_name\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"\",\n          \"chapter_name\": \"\",\n          \"source_heading\": \"\",\n          \"is_normalized\": false,\n          \"confidence\": 0,\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

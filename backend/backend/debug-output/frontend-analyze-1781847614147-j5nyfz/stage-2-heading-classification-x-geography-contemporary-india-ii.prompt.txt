@@ -1,0 +1,77 @@
+Stage 2: Heading Classification - X - Geography - Contemporary India - II
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- do not output units created by the model
+- do not create unit_name
+- do not rename parent_unit
+- only classify the existing Stage 1 items as chapter/topic/subtopic
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Geography - Contemporary India - II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Resources and Development",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Resources and Development"
+      ],
+      "topics": [
+        "Interdependence of resources",
+        "Planning for judicious utilisation",
+        "Non-optimal land utilization in India"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Environment and Agriculture",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Forest and Wildlife Resources",
+        "Water Resources",
+        "Agriculture"
+      ],
+      "topics": [
+        "Conserving forests and wildlife for ecology",
+        "Grazing and wood cutting impact",
+        "Multipurpose projects supporting water requirements",
+        "Role of agriculture in economy/society",
+        "Challenges faced by farming community"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Industries and Economy",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Minerals and Energy Resources",
+        "Manufacturing Industries",
+        "Lifelines of National Economy"
+      ],
+      "topics": [
+        "Impact on environment and sustainable development strategies",
+        "Types of manufacturing industries (input, process, product)",
+        "Raw material availability vs location",
+        "Transportation as lifeline of economy"
+      ],
+      "subtopics": []
+    }
+  ]
+}

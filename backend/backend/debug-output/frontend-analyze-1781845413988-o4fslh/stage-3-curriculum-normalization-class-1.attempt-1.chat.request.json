@@ -1,0 +1,63 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_id": "",
+        "unit_name": "",
+        "marks": null,
+        "chapters": [
+          {
+            "chapter_id": "",
+            "chapter_name": "",
+            "source_heading": "",
+            "is_normalized": false,
+            "confidence": 0,
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - Class 1\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- long paragraph-like chapter names must be reclassified into topics\n- chapter names must remain source-grounded\n- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks\n- never create new chapter names from topics or subtopics\n- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true\n- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"History - India and the Contemporary World - I\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Events and Processes\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"The French Revolution\",\n        \"Socialism in Europe and the Russian Revolution\",\n        \"Nazism and the Rise of Hitler\"\n      ],\n      \"topics\": [\n        \"Impact on European countries\",\n        \"Quest for imperialism and First World War\",\n        \"Rise of communism and collectivization\",\n        \"Role of philosophers and leaders\",\n        \"Treaty of Versailles\",\n        \"Genocidal war\"\n      ],\n      \"subtopics\": [\n        \"Map pointing: France, Central Powers, Allied Powers (WWI)\",\n        \"Map pointing: Axis Powers, Allied Powers (WWII)\"\n      ]\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Livelihoods, Economies and Societies\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Forest Society and Colonialism\",\n        \"Pastoralists in the Modern World\"\n      ],\n      \"topics\": [\n        \"Nomadic societies\",\n        \"Impact of colonialism on pastoralists\",\n        \"Rebellions in forest areas\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"class_name\": \"IX\",\n  \"units\": [\n    {\n      \"unit_name\": \"Events and Processes\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"The French Revolution\",\n          \"source_text_excerpt\": \"Chapter title: The French Revolution. Source-grounded historical event.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Socialism in Europe and the Russian Revolution\",\n          \"source_text_excerpt\": \"Chapter title: Socialism in Europe and the Russian Revolution.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Nazism and the Rise of Hitler\",\n          \"source_text_excerpt\": \"Chapter title: Nazism and the Rise of Hitler.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Impact on European countries\",\n          \"source_text_excerpt\": \"Topic: Impact on European countries within the French Revolution unit.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Quest for imperialism and First World War\",\n          \"source_text_excerpt\": \"Topic: Quest for imperialism and First World War.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Rise of communism and collectivization\",\n          \"source_text_excerpt\": \"Topic: Rise of communism and collectivization.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Role of philosophers and leaders\",\n          \"source_text_excerpt\": \"Topic: Role of philosophers and leaders.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Treaty of Versailles\",\n          \"source_text_excerpt\": \"Topic: Treaty of Versailles.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Genocidal war\",\n          \"source_text_excerpt\": \"Topic: Genocidal war.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Map pointing: France, Central Powers, Allied Powers (WWI)\",\n          \"source_text_excerpt\": \"Subtopic: Map pointing details for WWI.\",\n          \"classification\": \"subtopic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Map pointing: Axis Powers, Allied Powers (WWII)\",\n          \"source_text_excerpt\": \"Subtopic: Map pointing details for WWII.\",\n          \"classification\": \"subtopic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_name\": \"Livelihoods, Economies and Societies\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Forest Society and Colonialism\",\n          \"source_text_excerpt\": \"Chapter title: Forest Society and Colonialism.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Livelihoods, Economies and Societies\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Pastoralists in the Modern World\",\n          \"source_text_excerpt\": \"Chapter title: Pastoralists in the Modern World.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Livelihoods, Economies and Societies\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Nomadic societies\",\n          \"source_text_excerpt\": \"Topic: Nomadic societies.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Livelihoods, Economies and Societies\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Impact of colonialism on pastoralists\",\n          \"source_text_excerpt\": \"Topic: Impact of colonialism on pastoralists.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Livelihoods, Economies and Societies\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Rebellions in forest areas\",\n          \"source_text_excerpt\": \"Topic: Rebellions in forest areas.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Livelihoods, Economies and Societies\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"unit_name\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"\",\n          \"chapter_name\": \"\",\n          \"source_heading\": \"\",\n          \"is_normalized\": false,\n          \"confidence\": 0,\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

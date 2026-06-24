@@ -1,0 +1,72 @@
+Stage 2: Heading Classification - Class 6
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Geography - Contemporary India - II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Resources and Development",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Resources and Development",
+        "Forest and Wildlife Resources",
+        "Water resources"
+      ],
+      "topics": [
+        "Interdependence of resources",
+        "Planning for judicious utilization",
+        "Conserving forests and wildlife",
+        "Multipurpose projects",
+        "Impact of grazing and wood cutting"
+      ],
+      "subsections": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Economic Activities",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Agriculture",
+        "Minerals and energy Resources",
+        "Manufacturing Industries"
+      ],
+      "topics": [
+        "Role of agriculture in economy",
+        "Challenges faced by farming community",
+        "Impact of manufacturing on environment",
+        "Types of industries based on input/processes"
+      ],
+      "subsections": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Transport and Economy",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Lifelines of National Economy"
+      ],
+      "topics": [
+        "Roadways and railways impact on national economy",
+        "Challenges in road/rail sector"
+      ],
+      "subsections": []
+    }
+  ]
+}

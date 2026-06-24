@@ -1,0 +1,140 @@
+Stage 3: Curriculum Normalization - Class 5
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- Keep class_name exactly as in raw extraction
+- Keep subject exactly as in raw extraction
+- Keep every unit_name exactly as in raw extraction
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "History - India and the Contemporary World - II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Events and Processes",
+      "marks": 20,
+      "headings": [
+        "Chapter I The Rise of Nationalism in Europe",
+        "Chapter II Nationalism in India"
+      ],
+      "possible_chapters": [
+        "The Rise of Nationalism in Europe",
+        "Nationalism in India"
+      ],
+      "topics": [],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Livelihoods, Economies and Societies",
+      "marks": 0,
+      "headings": [
+        "Chapter III The Making of a Global World",
+        "Chapter IV The Age of Industrialisation"
+      ],
+      "possible_chapters": [
+        "The Making of a Global World",
+        "The Age of Industrialisation"
+      ],
+      "topics": [],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Everyday Life, Culture and politics",
+      "marks": 0,
+      "headings": [
+        "Chapter V Print Culture and the Modern world"
+      ],
+      "possible_chapters": [
+        "Print Culture and the Modern World"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "Class 5",
+  "units": [
+    {
+      "unit_name": "Events and Processes",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter I The Rise of Nationalism in Europe",
+          "source_text_excerpt": "The Rise of Nationalism in Europe. A chapter on the historical development of nationalism.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter II Nationalism in India",
+          "source_text_excerpt": "Nationalism in India. A chapter detailing the rise of nationalist movements.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Livelihoods, Economies and Societies",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter III The Making of a Global World",
+          "source_text_excerpt": "The Making of a Global World. A chapter on global economic integration.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Livelihoods, Economies and Societies",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter IV The Age of Industrialisation",
+          "source_text_excerpt": "The Age of Industrialisation. A chapter covering the industrial revolution.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Livelihoods, Economies and Societies",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Everyday Life, Culture and politics",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter V Print Culture and the Modern world",
+          "source_text_excerpt": "Print Culture and the Modern World. A chapter on the impact of printing.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Everyday Life, Culture and politics",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

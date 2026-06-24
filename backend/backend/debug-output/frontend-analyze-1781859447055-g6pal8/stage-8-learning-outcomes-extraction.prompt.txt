@@ -1,0 +1,3342 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8: Learning Outcomes Extraction
+- Extract explicit or clearly stated learning outcomes only.
+- Map outcomes to existing unit/chapter/topic entities from the normalized structure.
+
+Normalized structure:
+{
+  "document_metadata": {
+    "board": "CBSE",
+    "subject": "Science",
+    "class": "IX and X",
+    "grade": "9, 10",
+    "stream": "",
+    "academic_year": "2025-26",
+    "total_pages": "13"
+  },
+  "source_hierarchy": {
+    "document_metadata": {
+      "board": "CBSE",
+      "subject": "Science",
+      "class": "IX and X",
+      "grade": "9, 10",
+      "stream": "",
+      "academic_year": "2025-26",
+      "total_pages": "13"
+    },
+    "classes": [
+      {
+        "class_name": "IX",
+        "subject": "Science",
+        "part_or_section": "Annual Examination Structure",
+        "detected_structure": "unit_chapter_topic",
+        "units": [
+          {
+            "unit_id": "U1",
+            "unit_name": "Matter - Its Nature and Behaviour",
+            "marks": 25,
+            "explicit_chapters": [
+              "Matter in Our Surroundings",
+              "Is Matter Around Us Pure",
+              "Atoms and Molecules"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "Definition of matter; Particulate Nature of Matter; States of Matter: solid, liquid and gas and their characteristics; change of state- melting (absorption of heat), freezing, evaporation (cooling by evaporation), condensation, sublimation.",
+              "Elements, compounds and mixtures. Heterogeneous and homogenous mixtures, colloids and suspensions. Physical and chemical changes (excluding separating the components of a mixture); Pure and Impure substances.",
+              "Atoms and molecules, Law of Chemical Combination, Chemical formula of common compounds, Atomic and molecular masses. Structure of atom: Sub-atomic particles: Electrons, protons and neutrons, Models of atom; Valency, Atomic Number and Mass Number, Isotopes and Isobars."
+            ],
+            "topics": [
+              "Matter in Our Surroundings",
+              "Is Matter Around Us Pure",
+              "Atoms and Molecules"
+            ],
+            "subtopics": [
+              "States of matter, change of state",
+              "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+              "Physical and chemical changes",
+              "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+            ],
+            "key_concepts": [
+              "Particulate Nature of Matter",
+              "Law of Chemical Combination",
+              "Atomic Structure (Bohr's model)",
+              "Valency"
+            ],
+            "chapter_candidates": [
+              {
+                "node_id": "U1-C1",
+                "title": "Matter in Our Surroundings",
+                "level": "chapter",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Matter in Our Surroundings",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C2",
+                "title": "Is Matter Around Us Pure",
+                "level": "chapter",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Is Matter Around Us Pure",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C3",
+                "title": "Atoms and Molecules",
+                "level": "chapter",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Atoms and Molecules",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U1",
+                "title": "Matter - Its Nature and Behaviour",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "Matter - Its Nature and Behaviour"
+              },
+              {
+                "node_id": "U1-C1",
+                "title": "Matter in Our Surroundings",
+                "level": "chapter",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Matter in Our Surroundings",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C2",
+                "title": "Is Matter Around Us Pure",
+                "level": "chapter",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Is Matter Around Us Pure",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C3",
+                "title": "Atoms and Molecules",
+                "level": "chapter",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Atoms and Molecules",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-T1",
+                "title": "Matter in Our Surroundings",
+                "level": "topic",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Matter in Our Surroundings"
+              },
+              {
+                "node_id": "U1-T2",
+                "title": "Is Matter Around Us Pure",
+                "level": "topic",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Is Matter Around Us Pure"
+              },
+              {
+                "node_id": "U1-T3",
+                "title": "Atoms and Molecules",
+                "level": "topic",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Atoms and Molecules"
+              },
+              {
+                "node_id": "U1-S1",
+                "title": "States of matter, change of state",
+                "level": "subtopic",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "States of matter, change of state"
+              },
+              {
+                "node_id": "U1-S2",
+                "title": "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+                "level": "subtopic",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Mixtures (heterogeneous/homogenous), colloids, suspensions"
+              },
+              {
+                "node_id": "U1-S3",
+                "title": "Physical and chemical changes",
+                "level": "subtopic",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Physical and chemical changes"
+              },
+              {
+                "node_id": "U1-S4",
+                "title": "Sub-atomic particles, Models of atom, Isotopes and Isobars",
+                "level": "subtopic",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+              },
+              {
+                "node_id": "U1-K1",
+                "title": "Particulate Nature of Matter",
+                "level": "key_concept",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Particulate Nature of Matter"
+              },
+              {
+                "node_id": "U1-K2",
+                "title": "Law of Chemical Combination",
+                "level": "key_concept",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Law of Chemical Combination"
+              },
+              {
+                "node_id": "U1-K3",
+                "title": "Atomic Structure (Bohr's model)",
+                "level": "key_concept",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Atomic Structure (Bohr's model)"
+              },
+              {
+                "node_id": "U1-K4",
+                "title": "Valency",
+                "level": "key_concept",
+                "parent": "Matter - Its Nature and Behaviour",
+                "source_text": "Valency"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U2",
+            "unit_name": "Organization in the Living World",
+            "marks": 22,
+            "explicit_chapters": [
+              "Cell - Basic Unit of life",
+              "Tissues, Organs, Organ System, Organism"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "Cell as a basic unit of life; prokaryotic and eukaryotic cells, multicellular organisms; cell membrane and cell wall, cell organelles and cell inclusions; chloroplast, mitochondria, vacuoles, endoplasmic reticulum, Golgi apparatus; nucleus, chromosomes - basic structure, number.",
+              "Structure and functions of animal and plant tissues (only four types of tissues in animals; Meristematic and Permanent tissues in plants)."
+            ],
+            "topics": [
+              "Cell Structure",
+              "Tissues"
+            ],
+            "subtopics": [
+              "Prokaryotic vs Eukaryotic cells",
+              "Organelles (Nucleus, Mitochondria, etc.)",
+              "Animal tissues (4 types)",
+              "Plant tissues (Meristematic and Permanent)"
+            ],
+            "key_concepts": [
+              "Cell as basic unit of life",
+              "Semi-permeability of cell membrane"
+            ],
+            "chapter_candidates": [
+              {
+                "node_id": "U2-C1",
+                "title": "Cell - Basic Unit of life",
+                "level": "chapter",
+                "parent": "Organization in the Living World",
+                "source_text": "Cell - Basic Unit of life",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C2",
+                "title": "Tissues, Organs, Organ System, Organism",
+                "level": "chapter",
+                "parent": "Organization in the Living World",
+                "source_text": "Tissues, Organs, Organ System, Organism",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U2",
+                "title": "Organization in the Living World",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "Organization in the Living World"
+              },
+              {
+                "node_id": "U2-C1",
+                "title": "Cell - Basic Unit of life",
+                "level": "chapter",
+                "parent": "Organization in the Living World",
+                "source_text": "Cell - Basic Unit of life",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C2",
+                "title": "Tissues, Organs, Organ System, Organism",
+                "level": "chapter",
+                "parent": "Organization in the Living World",
+                "source_text": "Tissues, Organs, Organ System, Organism",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-T1",
+                "title": "Cell Structure",
+                "level": "topic",
+                "parent": "Organization in the Living World",
+                "source_text": "Cell Structure"
+              },
+              {
+                "node_id": "U2-T2",
+                "title": "Tissues",
+                "level": "topic",
+                "parent": "Organization in the Living World",
+                "source_text": "Tissues"
+              },
+              {
+                "node_id": "U2-S1",
+                "title": "Prokaryotic vs Eukaryotic cells",
+                "level": "subtopic",
+                "parent": "Organization in the Living World",
+                "source_text": "Prokaryotic vs Eukaryotic cells"
+              },
+              {
+                "node_id": "U2-S2",
+                "title": "Organelles (Nucleus, Mitochondria, etc.)",
+                "level": "subtopic",
+                "parent": "Organization in the Living World",
+                "source_text": "Organelles (Nucleus, Mitochondria, etc.)"
+              },
+              {
+                "node_id": "U2-S3",
+                "title": "Animal tissues (4 types)",
+                "level": "subtopic",
+                "parent": "Organization in the Living World",
+                "source_text": "Animal tissues (4 types)"
+              },
+              {
+                "node_id": "U2-S4",
+                "title": "Plant tissues (Meristematic and Permanent)",
+                "level": "subtopic",
+                "parent": "Organization in the Living World",
+                "source_text": "Plant tissues (Meristematic and Permanent)"
+              },
+              {
+                "node_id": "U2-K1",
+                "title": "Cell as basic unit of life",
+                "level": "key_concept",
+                "parent": "Organization in the Living World",
+                "source_text": "Cell as basic unit of life"
+              },
+              {
+                "node_id": "U2-K2",
+                "title": "Semi-permeability of cell membrane",
+                "level": "key_concept",
+                "parent": "Organization in the Living World",
+                "source_text": "Semi-permeability of cell membrane"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U3",
+            "unit_name": "Motion, Force and Work",
+            "marks": 27,
+            "explicit_chapters": [
+              "Motion",
+              "Force and Newton's laws",
+              "Gravitation",
+              "Floatation",
+              "Work, Energy and Power",
+              "Sound"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "Distance and displacement, velocity; uniform and non-uniform motion along a straight line; acceleration, distance-time and velocity-time graphs for uniform motion and uniformly accelerated motion, elementary idea of uniform circular motion.",
+              "Force and Motion, Newton's Laws of Motion, Action and Reaction forces, Inertia of a body, Inertia and mass, Momentum, Force and Acceleration.",
+              "Gravitation; Universal Law of Gravitation, Force of Gravitation of the earth (gravity), Acceleration due to Gravity; Mass and Weight; Free fall.",
+              "Thrust and Pressure. Archimedes' Principle; Buoyancy.",
+              "Work done by a Force, Energy, power; Kinetic and Potential energy; Lawof conservation of energy (excluding commercial unit of Energy).",
+              "Nature of sound and its propagation in various media, speed of sound, range of hearing in humans; ultrasound; reflection of sound; echo."
+            ],
+            "topics": [
+              "Motion",
+              "Force and Newton's Laws",
+              "Gravitation",
+              "Floatation",
+              "Work Energy Power",
+              "Sound"
+            ],
+            "subtopics": [
+              "Distance, displacement, velocity-time graphs",
+              "Newton's laws (1st, 2nd, 3rd)",
+              "Universal Law of Gravitation",
+              "Archimedes' Principle",
+              "Conservation of Energy",
+              "Reflection and Echo"
+            ],
+            "key_concepts": [
+              "Uniform Circular Motion",
+              "Inertia",
+              "Acceleration due to Gravity",
+              "Buoyancy",
+              "Law of Conservation of Energy"
+            ],
+            "chapter_candidates": [
+              {
+                "node_id": "U3-C1",
+                "title": "Motion",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Motion",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C2",
+                "title": "Force and Newton's laws",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Force and Newton's laws",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C3",
+                "title": "Gravitation",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Gravitation",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C4",
+                "title": "Floatation",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Floatation",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C5",
+                "title": "Work, Energy and Power",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Work, Energy and Power",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C6",
+                "title": "Sound",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Sound",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U3",
+                "title": "Motion, Force and Work",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "Motion, Force and Work"
+              },
+              {
+                "node_id": "U3-C1",
+                "title": "Motion",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Motion",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C2",
+                "title": "Force and Newton's laws",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Force and Newton's laws",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C3",
+                "title": "Gravitation",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Gravitation",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C4",
+                "title": "Floatation",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Floatation",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C5",
+                "title": "Work, Energy and Power",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Work, Energy and Power",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C6",
+                "title": "Sound",
+                "level": "chapter",
+                "parent": "Motion, Force and Work",
+                "source_text": "Sound",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-T1",
+                "title": "Motion",
+                "level": "topic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Motion"
+              },
+              {
+                "node_id": "U3-T2",
+                "title": "Force and Newton's Laws",
+                "level": "topic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Force and Newton's Laws"
+              },
+              {
+                "node_id": "U3-T3",
+                "title": "Gravitation",
+                "level": "topic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Gravitation"
+              },
+              {
+                "node_id": "U3-T4",
+                "title": "Floatation",
+                "level": "topic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Floatation"
+              },
+              {
+                "node_id": "U3-T5",
+                "title": "Work Energy Power",
+                "level": "topic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Work Energy Power"
+              },
+              {
+                "node_id": "U3-T6",
+                "title": "Sound",
+                "level": "topic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Sound"
+              },
+              {
+                "node_id": "U3-S1",
+                "title": "Distance, displacement, velocity-time graphs",
+                "level": "subtopic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Distance, displacement, velocity-time graphs"
+              },
+              {
+                "node_id": "U3-S2",
+                "title": "Newton's laws (1st, 2nd, 3rd)",
+                "level": "subtopic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Newton's laws (1st, 2nd, 3rd)"
+              },
+              {
+                "node_id": "U3-S3",
+                "title": "Universal Law of Gravitation",
+                "level": "subtopic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Universal Law of Gravitation"
+              },
+              {
+                "node_id": "U3-S4",
+                "title": "Archimedes' Principle",
+                "level": "subtopic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Archimedes' Principle"
+              },
+              {
+                "node_id": "U3-S5",
+                "title": "Conservation of Energy",
+                "level": "subtopic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Conservation of Energy"
+              },
+              {
+                "node_id": "U3-S6",
+                "title": "Reflection and Echo",
+                "level": "subtopic",
+                "parent": "Motion, Force and Work",
+                "source_text": "Reflection and Echo"
+              },
+              {
+                "node_id": "U3-K1",
+                "title": "Uniform Circular Motion",
+                "level": "key_concept",
+                "parent": "Motion, Force and Work",
+                "source_text": "Uniform Circular Motion"
+              },
+              {
+                "node_id": "U3-K2",
+                "title": "Inertia",
+                "level": "key_concept",
+                "parent": "Motion, Force and Work",
+                "source_text": "Inertia"
+              },
+              {
+                "node_id": "U3-K3",
+                "title": "Acceleration due to Gravity",
+                "level": "key_concept",
+                "parent": "Motion, Force and Work",
+                "source_text": "Acceleration due to Gravity"
+              },
+              {
+                "node_id": "U3-K4",
+                "title": "Buoyancy",
+                "level": "key_concept",
+                "parent": "Motion, Force and Work",
+                "source_text": "Buoyancy"
+              },
+              {
+                "node_id": "U3-K5",
+                "title": "Law of Conservation of Energy",
+                "level": "key_concept",
+                "parent": "Motion, Force and Work",
+                "source_text": "Law of Conservation of Energy"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U4",
+            "unit_name": "Food; Food Production",
+            "marks": 6,
+            "explicit_chapters": [
+              "Plant and animal breeding"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "Plant and animal breeding and selection for quality improvement and management; Use of fertilizersand manures; Protection from pests and diseases; Organic farming."
+            ],
+            "topics": [
+              "Food Production"
+            ],
+            "subtopics": [
+              "Breeding",
+              "Fertilizers and Manures",
+              "Pest protection",
+              "Organic farming"
+            ],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U4-C1",
+                "title": "Plant and animal breeding",
+                "level": "chapter",
+                "parent": "Food; Food Production",
+                "source_text": "Plant and animal breeding",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U4",
+                "title": "Food; Food Production",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "Food; Food Production"
+              },
+              {
+                "node_id": "U4-C1",
+                "title": "Plant and animal breeding",
+                "level": "chapter",
+                "parent": "Food; Food Production",
+                "source_text": "Plant and animal breeding",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U4-T1",
+                "title": "Food Production",
+                "level": "topic",
+                "parent": "Food; Food Production",
+                "source_text": "Food Production"
+              },
+              {
+                "node_id": "U4-S1",
+                "title": "Breeding",
+                "level": "subtopic",
+                "parent": "Food; Food Production",
+                "source_text": "Breeding"
+              },
+              {
+                "node_id": "U4-S2",
+                "title": "Fertilizers and Manures",
+                "level": "subtopic",
+                "parent": "Food; Food Production",
+                "source_text": "Fertilizers and Manures"
+              },
+              {
+                "node_id": "U4-S3",
+                "title": "Pest protection",
+                "level": "subtopic",
+                "parent": "Food; Food Production",
+                "source_text": "Pest protection"
+              },
+              {
+                "node_id": "U4-S4",
+                "title": "Organic farming",
+                "level": "subtopic",
+                "parent": "Food; Food Production",
+                "source_text": "Organic farming"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          }
+        ],
+        "raw_nodes": [
+          {
+            "node_id": "U1",
+            "title": "Matter - Its Nature and Behaviour",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "Matter - Its Nature and Behaviour"
+          },
+          {
+            "node_id": "U1-C1",
+            "title": "Matter in Our Surroundings",
+            "level": "chapter",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Matter in Our Surroundings",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U1-C2",
+            "title": "Is Matter Around Us Pure",
+            "level": "chapter",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Is Matter Around Us Pure",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U1-C3",
+            "title": "Atoms and Molecules",
+            "level": "chapter",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Atoms and Molecules",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U1-T1",
+            "title": "Matter in Our Surroundings",
+            "level": "topic",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Matter in Our Surroundings"
+          },
+          {
+            "node_id": "U1-T2",
+            "title": "Is Matter Around Us Pure",
+            "level": "topic",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Is Matter Around Us Pure"
+          },
+          {
+            "node_id": "U1-T3",
+            "title": "Atoms and Molecules",
+            "level": "topic",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Atoms and Molecules"
+          },
+          {
+            "node_id": "U1-S1",
+            "title": "States of matter, change of state",
+            "level": "subtopic",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "States of matter, change of state"
+          },
+          {
+            "node_id": "U1-S2",
+            "title": "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+            "level": "subtopic",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Mixtures (heterogeneous/homogenous), colloids, suspensions"
+          },
+          {
+            "node_id": "U1-S3",
+            "title": "Physical and chemical changes",
+            "level": "subtopic",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Physical and chemical changes"
+          },
+          {
+            "node_id": "U1-S4",
+            "title": "Sub-atomic particles, Models of atom, Isotopes and Isobars",
+            "level": "subtopic",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+          },
+          {
+            "node_id": "U1-K1",
+            "title": "Particulate Nature of Matter",
+            "level": "key_concept",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Particulate Nature of Matter"
+          },
+          {
+            "node_id": "U1-K2",
+            "title": "Law of Chemical Combination",
+            "level": "key_concept",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Law of Chemical Combination"
+          },
+          {
+            "node_id": "U1-K3",
+            "title": "Atomic Structure (Bohr's model)",
+            "level": "key_concept",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Atomic Structure (Bohr's model)"
+          },
+          {
+            "node_id": "U1-K4",
+            "title": "Valency",
+            "level": "key_concept",
+            "parent": "Matter - Its Nature and Behaviour",
+            "source_text": "Valency"
+          },
+          {
+            "node_id": "U2",
+            "title": "Organization in the Living World",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "Organization in the Living World"
+          },
+          {
+            "node_id": "U2-C1",
+            "title": "Cell - Basic Unit of life",
+            "level": "chapter",
+            "parent": "Organization in the Living World",
+            "source_text": "Cell - Basic Unit of life",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2-C2",
+            "title": "Tissues, Organs, Organ System, Organism",
+            "level": "chapter",
+            "parent": "Organization in the Living World",
+            "source_text": "Tissues, Organs, Organ System, Organism",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2-T1",
+            "title": "Cell Structure",
+            "level": "topic",
+            "parent": "Organization in the Living World",
+            "source_text": "Cell Structure"
+          },
+          {
+            "node_id": "U2-T2",
+            "title": "Tissues",
+            "level": "topic",
+            "parent": "Organization in the Living World",
+            "source_text": "Tissues"
+          },
+          {
+            "node_id": "U2-S1",
+            "title": "Prokaryotic vs Eukaryotic cells",
+            "level": "subtopic",
+            "parent": "Organization in the Living World",
+            "source_text": "Prokaryotic vs Eukaryotic cells"
+          },
+          {
+            "node_id": "U2-S2",
+            "title": "Organelles (Nucleus, Mitochondria, etc.)",
+            "level": "subtopic",
+            "parent": "Organization in the Living World",
+            "source_text": "Organelles (Nucleus, Mitochondria, etc.)"
+          },
+          {
+            "node_id": "U2-S3",
+            "title": "Animal tissues (4 types)",
+            "level": "subtopic",
+            "parent": "Organization in the Living World",
+            "source_text": "Animal tissues (4 types)"
+          },
+          {
+            "node_id": "U2-S4",
+            "title": "Plant tissues (Meristematic and Permanent)",
+            "level": "subtopic",
+            "parent": "Organization in the Living World",
+            "source_text": "Plant tissues (Meristematic and Permanent)"
+          },
+          {
+            "node_id": "U2-K1",
+            "title": "Cell as basic unit of life",
+            "level": "key_concept",
+            "parent": "Organization in the Living World",
+            "source_text": "Cell as basic unit of life"
+          },
+          {
+            "node_id": "U2-K2",
+            "title": "Semi-permeability of cell membrane",
+            "level": "key_concept",
+            "parent": "Organization in the Living World",
+            "source_text": "Semi-permeability of cell membrane"
+          },
+          {
+            "node_id": "U3",
+            "title": "Motion, Force and Work",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "Motion, Force and Work"
+          },
+          {
+            "node_id": "U3-C1",
+            "title": "Motion",
+            "level": "chapter",
+            "parent": "Motion, Force and Work",
+            "source_text": "Motion",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-C2",
+            "title": "Force and Newton's laws",
+            "level": "chapter",
+            "parent": "Motion, Force and Work",
+            "source_text": "Force and Newton's laws",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-C3",
+            "title": "Gravitation",
+            "level": "chapter",
+            "parent": "Motion, Force and Work",
+            "source_text": "Gravitation",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-C4",
+            "title": "Floatation",
+            "level": "chapter",
+            "parent": "Motion, Force and Work",
+            "source_text": "Floatation",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-C5",
+            "title": "Work, Energy and Power",
+            "level": "chapter",
+            "parent": "Motion, Force and Work",
+            "source_text": "Work, Energy and Power",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-C6",
+            "title": "Sound",
+            "level": "chapter",
+            "parent": "Motion, Force and Work",
+            "source_text": "Sound",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-T1",
+            "title": "Motion",
+            "level": "topic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Motion"
+          },
+          {
+            "node_id": "U3-T2",
+            "title": "Force and Newton's Laws",
+            "level": "topic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Force and Newton's Laws"
+          },
+          {
+            "node_id": "U3-T3",
+            "title": "Gravitation",
+            "level": "topic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Gravitation"
+          },
+          {
+            "node_id": "U3-T4",
+            "title": "Floatation",
+            "level": "topic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Floatation"
+          },
+          {
+            "node_id": "U3-T5",
+            "title": "Work Energy Power",
+            "level": "topic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Work Energy Power"
+          },
+          {
+            "node_id": "U3-T6",
+            "title": "Sound",
+            "level": "topic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Sound"
+          },
+          {
+            "node_id": "U3-S1",
+            "title": "Distance, displacement, velocity-time graphs",
+            "level": "subtopic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Distance, displacement, velocity-time graphs"
+          },
+          {
+            "node_id": "U3-S2",
+            "title": "Newton's laws (1st, 2nd, 3rd)",
+            "level": "subtopic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Newton's laws (1st, 2nd, 3rd)"
+          },
+          {
+            "node_id": "U3-S3",
+            "title": "Universal Law of Gravitation",
+            "level": "subtopic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Universal Law of Gravitation"
+          },
+          {
+            "node_id": "U3-S4",
+            "title": "Archimedes' Principle",
+            "level": "subtopic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Archimedes' Principle"
+          },
+          {
+            "node_id": "U3-S5",
+            "title": "Conservation of Energy",
+            "level": "subtopic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Conservation of Energy"
+          },
+          {
+            "node_id": "U3-S6",
+            "title": "Reflection and Echo",
+            "level": "subtopic",
+            "parent": "Motion, Force and Work",
+            "source_text": "Reflection and Echo"
+          },
+          {
+            "node_id": "U3-K1",
+            "title": "Uniform Circular Motion",
+            "level": "key_concept",
+            "parent": "Motion, Force and Work",
+            "source_text": "Uniform Circular Motion"
+          },
+          {
+            "node_id": "U3-K2",
+            "title": "Inertia",
+            "level": "key_concept",
+            "parent": "Motion, Force and Work",
+            "source_text": "Inertia"
+          },
+          {
+            "node_id": "U3-K3",
+            "title": "Acceleration due to Gravity",
+            "level": "key_concept",
+            "parent": "Motion, Force and Work",
+            "source_text": "Acceleration due to Gravity"
+          },
+          {
+            "node_id": "U3-K4",
+            "title": "Buoyancy",
+            "level": "key_concept",
+            "parent": "Motion, Force and Work",
+            "source_text": "Buoyancy"
+          },
+          {
+            "node_id": "U3-K5",
+            "title": "Law of Conservation of Energy",
+            "level": "key_concept",
+            "parent": "Motion, Force and Work",
+            "source_text": "Law of Conservation of Energy"
+          },
+          {
+            "node_id": "U4",
+            "title": "Food; Food Production",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "Food; Food Production"
+          },
+          {
+            "node_id": "U4-C1",
+            "title": "Plant and animal breeding",
+            "level": "chapter",
+            "parent": "Food; Food Production",
+            "source_text": "Plant and animal breeding",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U4-T1",
+            "title": "Food Production",
+            "level": "topic",
+            "parent": "Food; Food Production",
+            "source_text": "Food Production"
+          },
+          {
+            "node_id": "U4-S1",
+            "title": "Breeding",
+            "level": "subtopic",
+            "parent": "Food; Food Production",
+            "source_text": "Breeding"
+          },
+          {
+            "node_id": "U4-S2",
+            "title": "Fertilizers and Manures",
+            "level": "subtopic",
+            "parent": "Food; Food Production",
+            "source_text": "Fertilizers and Manures"
+          },
+          {
+            "node_id": "U4-S3",
+            "title": "Pest protection",
+            "level": "subtopic",
+            "parent": "Food; Food Production",
+            "source_text": "Pest protection"
+          },
+          {
+            "node_id": "U4-S4",
+            "title": "Organic farming",
+            "level": "subtopic",
+            "parent": "Food; Food Production",
+            "source_text": "Organic farming"
+          }
+        ]
+      },
+      {
+        "class_name": "X",
+        "subject": "Science",
+        "part_or_section": "Annual Examination Structure",
+        "detected_structure": "unit_chapter_topic",
+        "units": [
+          {
+            "unit_id": "U1",
+            "unit_name": "Chemical Substances-Nature and Behaviour",
+            "marks": 25,
+            "explicit_chapters": [
+              "Chemical Reactions and Equations",
+              "Acids, Bases and Salts",
+              "Metals and Non-metals",
+              "Carbon and its Compounds"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction.",
+              "Acids and Bases – definitions in terms of furnishing of H+ and OH– ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale... importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching powder, Baking soda, Washing soda and Plaster of Paris.",
+              "Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention.",
+              "Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature... Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid..."
+            ],
+            "topics": [
+              "Chemical Reactions",
+              "Acids Bases Salts",
+              "Metals Non-metals",
+              "Carbon Compounds"
+            ],
+            "subtopics": [
+              "Types of reactions (Combination, Decomposition, etc.)",
+              "pH scale and neutralization",
+              "Reactivity series",
+              "Covalent bonds, Hydrocarbons, Functional groups"
+            ],
+            "key_concepts": [
+              "Balanced Chemical Equations",
+              "Oxidation-Reduction",
+              "Ionic Compounds",
+              "Homologous Series"
+            ],
+            "chapter_candidates": [
+              {
+                "node_id": "U1-C1",
+                "title": "Chemical Reactions and Equations",
+                "level": "chapter",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Chemical Reactions and Equations",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C2",
+                "title": "Acids, Bases and Salts",
+                "level": "chapter",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Acids, Bases and Salts",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C3",
+                "title": "Metals and Non-metals",
+                "level": "chapter",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Metals and Non-metals",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C4",
+                "title": "Carbon and its Compounds",
+                "level": "chapter",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Carbon and its Compounds",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U1",
+                "title": "Chemical Substances-Nature and Behaviour",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "Chemical Substances-Nature and Behaviour"
+              },
+              {
+                "node_id": "U1-C1",
+                "title": "Chemical Reactions and Equations",
+                "level": "chapter",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Chemical Reactions and Equations",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C2",
+                "title": "Acids, Bases and Salts",
+                "level": "chapter",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Acids, Bases and Salts",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C3",
+                "title": "Metals and Non-metals",
+                "level": "chapter",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Metals and Non-metals",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C4",
+                "title": "Carbon and its Compounds",
+                "level": "chapter",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Carbon and its Compounds",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-T1",
+                "title": "Chemical Reactions",
+                "level": "topic",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Chemical Reactions"
+              },
+              {
+                "node_id": "U1-T2",
+                "title": "Acids Bases Salts",
+                "level": "topic",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Acids Bases Salts"
+              },
+              {
+                "node_id": "U1-T3",
+                "title": "Metals Non-metals",
+                "level": "topic",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Metals Non-metals"
+              },
+              {
+                "node_id": "U1-T4",
+                "title": "Carbon Compounds",
+                "level": "topic",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Carbon Compounds"
+              },
+              {
+                "node_id": "U1-S1",
+                "title": "Types of reactions (Combination, Decomposition, etc.)",
+                "level": "subtopic",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Types of reactions (Combination, Decomposition, etc.)"
+              },
+              {
+                "node_id": "U1-S2",
+                "title": "pH scale and neutralization",
+                "level": "subtopic",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "pH scale and neutralization"
+              },
+              {
+                "node_id": "U1-S3",
+                "title": "Reactivity series",
+                "level": "subtopic",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Reactivity series"
+              },
+              {
+                "node_id": "U1-S4",
+                "title": "Covalent bonds, Hydrocarbons, Functional groups",
+                "level": "subtopic",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Covalent bonds, Hydrocarbons, Functional groups"
+              },
+              {
+                "node_id": "U1-K1",
+                "title": "Balanced Chemical Equations",
+                "level": "key_concept",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Balanced Chemical Equations"
+              },
+              {
+                "node_id": "U1-K2",
+                "title": "Oxidation-Reduction",
+                "level": "key_concept",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Oxidation-Reduction"
+              },
+              {
+                "node_id": "U1-K3",
+                "title": "Ionic Compounds",
+                "level": "key_concept",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Ionic Compounds"
+              },
+              {
+                "node_id": "U1-K4",
+                "title": "Homologous Series",
+                "level": "key_concept",
+                "parent": "Chemical Substances-Nature and Behaviour",
+                "source_text": "Homologous Series"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U2",
+            "unit_name": "World of Living",
+            "marks": 25,
+            "explicit_chapters": [
+              "Life processes",
+              "Control and co-ordination in animals and plants",
+              "Reproduction",
+              "Heredity and Evolution"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "'Living Being'. Basic concept of nutrition, respiration, transport and excretion in plants and animals.",
+              "Tropic movements in plants; Introduction of plant hormones; Control and co-ordination in animals: Nervous system; Voluntary, involuntary and reflex action; Chemical co-ordination: animal hormones.",
+              "Reproduction in animals and plants (asexual and sexual) reproductive health - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and women's health.",
+              "Heredity; Mendel's contribution- Laws for inheritance of traits: Sex determination; brief introduction."
+            ],
+            "topics": [
+              "Life Processes",
+              "Control and Co-ordination",
+              "Reproduction",
+              "Heredity and Evolution"
+            ],
+            "subtopics": [
+              "Nutrition, Respiration, Transport, Excretion",
+              "Nervous system, Plant hormones",
+              "Family planning, Reproductive health",
+              "Mendel's Laws, Sex determination"
+            ],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U2-C1",
+                "title": "Life processes",
+                "level": "chapter",
+                "parent": "World of Living",
+                "source_text": "Life processes",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C2",
+                "title": "Control and co-ordination in animals and plants",
+                "level": "chapter",
+                "parent": "World of Living",
+                "source_text": "Control and co-ordination in animals and plants",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C3",
+                "title": "Reproduction",
+                "level": "chapter",
+                "parent": "World of Living",
+                "source_text": "Reproduction",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C4",
+                "title": "Heredity and Evolution",
+                "level": "chapter",
+                "parent": "World of Living",
+                "source_text": "Heredity and Evolution",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U2",
+                "title": "World of Living",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "World of Living"
+              },
+              {
+                "node_id": "U2-C1",
+                "title": "Life processes",
+                "level": "chapter",
+                "parent": "World of Living",
+                "source_text": "Life processes",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C2",
+                "title": "Control and co-ordination in animals and plants",
+                "level": "chapter",
+                "parent": "World of Living",
+                "source_text": "Control and co-ordination in animals and plants",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C3",
+                "title": "Reproduction",
+                "level": "chapter",
+                "parent": "World of Living",
+                "source_text": "Reproduction",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C4",
+                "title": "Heredity and Evolution",
+                "level": "chapter",
+                "parent": "World of Living",
+                "source_text": "Heredity and Evolution",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-T1",
+                "title": "Life Processes",
+                "level": "topic",
+                "parent": "World of Living",
+                "source_text": "Life Processes"
+              },
+              {
+                "node_id": "U2-T2",
+                "title": "Control and Co-ordination",
+                "level": "topic",
+                "parent": "World of Living",
+                "source_text": "Control and Co-ordination"
+              },
+              {
+                "node_id": "U2-T3",
+                "title": "Reproduction",
+                "level": "topic",
+                "parent": "World of Living",
+                "source_text": "Reproduction"
+              },
+              {
+                "node_id": "U2-T4",
+                "title": "Heredity and Evolution",
+                "level": "topic",
+                "parent": "World of Living",
+                "source_text": "Heredity and Evolution"
+              },
+              {
+                "node_id": "U2-S1",
+                "title": "Nutrition, Respiration, Transport, Excretion",
+                "level": "subtopic",
+                "parent": "World of Living",
+                "source_text": "Nutrition, Respiration, Transport, Excretion"
+              },
+              {
+                "node_id": "U2-S2",
+                "title": "Nervous system, Plant hormones",
+                "level": "subtopic",
+                "parent": "World of Living",
+                "source_text": "Nervous system, Plant hormones"
+              },
+              {
+                "node_id": "U2-S3",
+                "title": "Family planning, Reproductive health",
+                "level": "subtopic",
+                "parent": "World of Living",
+                "source_text": "Family planning, Reproductive health"
+              },
+              {
+                "node_id": "U2-S4",
+                "title": "Mendel's Laws, Sex determination",
+                "level": "subtopic",
+                "parent": "World of Living",
+                "source_text": "Mendel's Laws, Sex determination"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U3",
+            "unit_name": "Natural Phenomena",
+            "marks": 12,
+            "explicit_chapters": [
+              "Reflection of light by curved surfaces",
+              "Refraction"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "Images formed by spherical mirrors, centre of curvature, principal axis, principal focus, focal length, mirror formula (Derivation not required), magnification.",
+              "Laws of refraction, refractive index. Refraction of light by spherical lens; Image formed by spherical lenses; Lens formula (Derivation not required); Magnification. Power of a lens. Functioning of a lens in human eye, defects of vision and their corrections...",
+              "Refraction of light through a prism, dispersion of light, scattering of light..."
+            ],
+            "topics": [
+              "Reflection",
+              "Refraction",
+              "Lenses"
+            ],
+            "subtopics": [
+              "Spherical mirrors (Concave/Convex)",
+              "Mirror formula, Magnification",
+              "Lens formula, Power of lens",
+              "Dispersion and Scattering"
+            ],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U3-C1",
+                "title": "Reflection of light by curved surfaces",
+                "level": "chapter",
+                "parent": "Natural Phenomena",
+                "source_text": "Reflection of light by curved surfaces",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C2",
+                "title": "Refraction",
+                "level": "chapter",
+                "parent": "Natural Phenomena",
+                "source_text": "Refraction",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U3",
+                "title": "Natural Phenomena",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "Natural Phenomena"
+              },
+              {
+                "node_id": "U3-C1",
+                "title": "Reflection of light by curved surfaces",
+                "level": "chapter",
+                "parent": "Natural Phenomena",
+                "source_text": "Reflection of light by curved surfaces",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C2",
+                "title": "Refraction",
+                "level": "chapter",
+                "parent": "Natural Phenomena",
+                "source_text": "Refraction",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-T1",
+                "title": "Reflection",
+                "level": "topic",
+                "parent": "Natural Phenomena",
+                "source_text": "Reflection"
+              },
+              {
+                "node_id": "U3-T2",
+                "title": "Refraction",
+                "level": "topic",
+                "parent": "Natural Phenomena",
+                "source_text": "Refraction"
+              },
+              {
+                "node_id": "U3-T3",
+                "title": "Lenses",
+                "level": "topic",
+                "parent": "Natural Phenomena",
+                "source_text": "Lenses"
+              },
+              {
+                "node_id": "U3-S1",
+                "title": "Spherical mirrors (Concave/Convex)",
+                "level": "subtopic",
+                "parent": "Natural Phenomena",
+                "source_text": "Spherical mirrors (Concave/Convex)"
+              },
+              {
+                "node_id": "U3-S2",
+                "title": "Mirror formula, Magnification",
+                "level": "subtopic",
+                "parent": "Natural Phenomena",
+                "source_text": "Mirror formula, Magnification"
+              },
+              {
+                "node_id": "U3-S3",
+                "title": "Lens formula, Power of lens",
+                "level": "subtopic",
+                "parent": "Natural Phenomena",
+                "source_text": "Lens formula, Power of lens"
+              },
+              {
+                "node_id": "U3-S4",
+                "title": "Dispersion and Scattering",
+                "level": "subtopic",
+                "parent": "Natural Phenomena",
+                "source_text": "Dispersion and Scattering"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U4",
+            "unit_name": "Effects of Current",
+            "marks": 13,
+            "explicit_chapters": [
+              "Electric current",
+              "Ohm's law",
+              "Magnetic effects of current"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "Electric current, potential difference and electric current. Ohm's law; Resistance, Resistivity, Factors on which the resistance of a conductor depends.",
+              "Series combination of resistors, parallel combination of resistors... Heating effect of electric current... Electric power...",
+              "Magnetic field, field lines, field due to a current carrying conductor, field due to current carrying coil or solenoid; Force on current carrying conductor, Fleming's Left Hand Rule..."
+            ],
+            "topics": [
+              "Electric Current",
+              "Ohm's Law and Resistance",
+              "Magnetic Effects"
+            ],
+            "subtopics": [
+              "Series/Parallel combinations",
+              "Heating effect, Electric power (P=VI)",
+              "Fleming's Left Hand Rule",
+              "AC vs DC"
+            ],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U4-C1",
+                "title": "Electric current",
+                "level": "chapter",
+                "parent": "Effects of Current",
+                "source_text": "Electric current",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U4-C2",
+                "title": "Ohm's law",
+                "level": "chapter",
+                "parent": "Effects of Current",
+                "source_text": "Ohm's law",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U4-C3",
+                "title": "Magnetic effects of current",
+                "level": "chapter",
+                "parent": "Effects of Current",
+                "source_text": "Magnetic effects of current",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U4",
+                "title": "Effects of Current",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "Effects of Current"
+              },
+              {
+                "node_id": "U4-C1",
+                "title": "Electric current",
+                "level": "chapter",
+                "parent": "Effects of Current",
+                "source_text": "Electric current",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U4-C2",
+                "title": "Ohm's law",
+                "level": "chapter",
+                "parent": "Effects of Current",
+                "source_text": "Ohm's law",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U4-C3",
+                "title": "Magnetic effects of current",
+                "level": "chapter",
+                "parent": "Effects of Current",
+                "source_text": "Magnetic effects of current",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U4-T1",
+                "title": "Electric Current",
+                "level": "topic",
+                "parent": "Effects of Current",
+                "source_text": "Electric Current"
+              },
+              {
+                "node_id": "U4-T2",
+                "title": "Ohm's Law and Resistance",
+                "level": "topic",
+                "parent": "Effects of Current",
+                "source_text": "Ohm's Law and Resistance"
+              },
+              {
+                "node_id": "U4-T3",
+                "title": "Magnetic Effects",
+                "level": "topic",
+                "parent": "Effects of Current",
+                "source_text": "Magnetic Effects"
+              },
+              {
+                "node_id": "U4-S1",
+                "title": "Series/Parallel combinations",
+                "level": "subtopic",
+                "parent": "Effects of Current",
+                "source_text": "Series/Parallel combinations"
+              },
+              {
+                "node_id": "U4-S2",
+                "title": "Heating effect, Electric power (P=VI)",
+                "level": "subtopic",
+                "parent": "Effects of Current",
+                "source_text": "Heating effect, Electric power (P=VI)"
+              },
+              {
+                "node_id": "U4-S3",
+                "title": "Fleming's Left Hand Rule",
+                "level": "subtopic",
+                "parent": "Effects of Current",
+                "source_text": "Fleming's Left Hand Rule"
+              },
+              {
+                "node_id": "U4-S4",
+                "title": "AC vs DC",
+                "level": "subtopic",
+                "parent": "Effects of Current",
+                "source_text": "AC vs DC"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U5",
+            "unit_name": "Natural Resources",
+            "marks": 5,
+            "explicit_chapters": [
+              "Our environment"
+            ],
+            "possible_chapters": [],
+            "headings": [
+              "Eco-system, Environmental problems, Ozone depletion, waste production and their solutions. Biodegradable and non-biodegradable substances."
+            ],
+            "topics": [
+              "Environment"
+            ],
+            "subtopics": [
+              "Ozone depletion",
+              "Waste management",
+              "Biodegradable vs Non-biodegradable"
+            ],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U5-C1",
+                "title": "Our environment",
+                "level": "chapter",
+                "parent": "Natural Resources",
+                "source_text": "Our environment",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U5",
+                "title": "Natural Resources",
+                "level": "unit",
+                "parent": "Science",
+                "source_text": "Natural Resources"
+              },
+              {
+                "node_id": "U5-C1",
+                "title": "Our environment",
+                "level": "chapter",
+                "parent": "Natural Resources",
+                "source_text": "Our environment",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U5-T1",
+                "title": "Environment",
+                "level": "topic",
+                "parent": "Natural Resources",
+                "source_text": "Environment"
+              },
+              {
+                "node_id": "U5-S1",
+                "title": "Ozone depletion",
+                "level": "subtopic",
+                "parent": "Natural Resources",
+                "source_text": "Ozone depletion"
+              },
+              {
+                "node_id": "U5-S2",
+                "title": "Waste management",
+                "level": "subtopic",
+                "parent": "Natural Resources",
+                "source_text": "Waste management"
+              },
+              {
+                "node_id": "U5-S3",
+                "title": "Biodegradable vs Non-biodegradable",
+                "level": "subtopic",
+                "parent": "Natural Resources",
+                "source_text": "Biodegradable vs Non-biodegradable"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          }
+        ],
+        "raw_nodes": [
+          {
+            "node_id": "U1",
+            "title": "Chemical Substances-Nature and Behaviour",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "Chemical Substances-Nature and Behaviour"
+          },
+          {
+            "node_id": "U1-C1",
+            "title": "Chemical Reactions and Equations",
+            "level": "chapter",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Chemical Reactions and Equations",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U1-C2",
+            "title": "Acids, Bases and Salts",
+            "level": "chapter",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Acids, Bases and Salts",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U1-C3",
+            "title": "Metals and Non-metals",
+            "level": "chapter",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Metals and Non-metals",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U1-C4",
+            "title": "Carbon and its Compounds",
+            "level": "chapter",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Carbon and its Compounds",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U1-T1",
+            "title": "Chemical Reactions",
+            "level": "topic",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Chemical Reactions"
+          },
+          {
+            "node_id": "U1-T2",
+            "title": "Acids Bases Salts",
+            "level": "topic",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Acids Bases Salts"
+          },
+          {
+            "node_id": "U1-T3",
+            "title": "Metals Non-metals",
+            "level": "topic",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Metals Non-metals"
+          },
+          {
+            "node_id": "U1-T4",
+            "title": "Carbon Compounds",
+            "level": "topic",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Carbon Compounds"
+          },
+          {
+            "node_id": "U1-S1",
+            "title": "Types of reactions (Combination, Decomposition, etc.)",
+            "level": "subtopic",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Types of reactions (Combination, Decomposition, etc.)"
+          },
+          {
+            "node_id": "U1-S2",
+            "title": "pH scale and neutralization",
+            "level": "subtopic",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "pH scale and neutralization"
+          },
+          {
+            "node_id": "U1-S3",
+            "title": "Reactivity series",
+            "level": "subtopic",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Reactivity series"
+          },
+          {
+            "node_id": "U1-S4",
+            "title": "Covalent bonds, Hydrocarbons, Functional groups",
+            "level": "subtopic",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Covalent bonds, Hydrocarbons, Functional groups"
+          },
+          {
+            "node_id": "U1-K1",
+            "title": "Balanced Chemical Equations",
+            "level": "key_concept",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Balanced Chemical Equations"
+          },
+          {
+            "node_id": "U1-K2",
+            "title": "Oxidation-Reduction",
+            "level": "key_concept",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Oxidation-Reduction"
+          },
+          {
+            "node_id": "U1-K3",
+            "title": "Ionic Compounds",
+            "level": "key_concept",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Ionic Compounds"
+          },
+          {
+            "node_id": "U1-K4",
+            "title": "Homologous Series",
+            "level": "key_concept",
+            "parent": "Chemical Substances-Nature and Behaviour",
+            "source_text": "Homologous Series"
+          },
+          {
+            "node_id": "U2",
+            "title": "World of Living",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "World of Living"
+          },
+          {
+            "node_id": "U2-C1",
+            "title": "Life processes",
+            "level": "chapter",
+            "parent": "World of Living",
+            "source_text": "Life processes",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2-C2",
+            "title": "Control and co-ordination in animals and plants",
+            "level": "chapter",
+            "parent": "World of Living",
+            "source_text": "Control and co-ordination in animals and plants",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2-C3",
+            "title": "Reproduction",
+            "level": "chapter",
+            "parent": "World of Living",
+            "source_text": "Reproduction",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2-C4",
+            "title": "Heredity and Evolution",
+            "level": "chapter",
+            "parent": "World of Living",
+            "source_text": "Heredity and Evolution",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2-T1",
+            "title": "Life Processes",
+            "level": "topic",
+            "parent": "World of Living",
+            "source_text": "Life Processes"
+          },
+          {
+            "node_id": "U2-T2",
+            "title": "Control and Co-ordination",
+            "level": "topic",
+            "parent": "World of Living",
+            "source_text": "Control and Co-ordination"
+          },
+          {
+            "node_id": "U2-T3",
+            "title": "Reproduction",
+            "level": "topic",
+            "parent": "World of Living",
+            "source_text": "Reproduction"
+          },
+          {
+            "node_id": "U2-T4",
+            "title": "Heredity and Evolution",
+            "level": "topic",
+            "parent": "World of Living",
+            "source_text": "Heredity and Evolution"
+          },
+          {
+            "node_id": "U2-S1",
+            "title": "Nutrition, Respiration, Transport, Excretion",
+            "level": "subtopic",
+            "parent": "World of Living",
+            "source_text": "Nutrition, Respiration, Transport, Excretion"
+          },
+          {
+            "node_id": "U2-S2",
+            "title": "Nervous system, Plant hormones",
+            "level": "subtopic",
+            "parent": "World of Living",
+            "source_text": "Nervous system, Plant hormones"
+          },
+          {
+            "node_id": "U2-S3",
+            "title": "Family planning, Reproductive health",
+            "level": "subtopic",
+            "parent": "World of Living",
+            "source_text": "Family planning, Reproductive health"
+          },
+          {
+            "node_id": "U2-S4",
+            "title": "Mendel's Laws, Sex determination",
+            "level": "subtopic",
+            "parent": "World of Living",
+            "source_text": "Mendel's Laws, Sex determination"
+          },
+          {
+            "node_id": "U3",
+            "title": "Natural Phenomena",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "Natural Phenomena"
+          },
+          {
+            "node_id": "U3-C1",
+            "title": "Reflection of light by curved surfaces",
+            "level": "chapter",
+            "parent": "Natural Phenomena",
+            "source_text": "Reflection of light by curved surfaces",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-C2",
+            "title": "Refraction",
+            "level": "chapter",
+            "parent": "Natural Phenomena",
+            "source_text": "Refraction",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-T1",
+            "title": "Reflection",
+            "level": "topic",
+            "parent": "Natural Phenomena",
+            "source_text": "Reflection"
+          },
+          {
+            "node_id": "U3-T2",
+            "title": "Refraction",
+            "level": "topic",
+            "parent": "Natural Phenomena",
+            "source_text": "Refraction"
+          },
+          {
+            "node_id": "U3-T3",
+            "title": "Lenses",
+            "level": "topic",
+            "parent": "Natural Phenomena",
+            "source_text": "Lenses"
+          },
+          {
+            "node_id": "U3-S1",
+            "title": "Spherical mirrors (Concave/Convex)",
+            "level": "subtopic",
+            "parent": "Natural Phenomena",
+            "source_text": "Spherical mirrors (Concave/Convex)"
+          },
+          {
+            "node_id": "U3-S2",
+            "title": "Mirror formula, Magnification",
+            "level": "subtopic",
+            "parent": "Natural Phenomena",
+            "source_text": "Mirror formula, Magnification"
+          },
+          {
+            "node_id": "U3-S3",
+            "title": "Lens formula, Power of lens",
+            "level": "subtopic",
+            "parent": "Natural Phenomena",
+            "source_text": "Lens formula, Power of lens"
+          },
+          {
+            "node_id": "U3-S4",
+            "title": "Dispersion and Scattering",
+            "level": "subtopic",
+            "parent": "Natural Phenomena",
+            "source_text": "Dispersion and Scattering"
+          },
+          {
+            "node_id": "U4",
+            "title": "Effects of Current",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "Effects of Current"
+          },
+          {
+            "node_id": "U4-C1",
+            "title": "Electric current",
+            "level": "chapter",
+            "parent": "Effects of Current",
+            "source_text": "Electric current",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U4-C2",
+            "title": "Ohm's law",
+            "level": "chapter",
+            "parent": "Effects of Current",
+            "source_text": "Ohm's law",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U4-C3",
+            "title": "Magnetic effects of current",
+            "level": "chapter",
+            "parent": "Effects of Current",
+            "source_text": "Magnetic effects of current",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U4-T1",
+            "title": "Electric Current",
+            "level": "topic",
+            "parent": "Effects of Current",
+            "source_text": "Electric Current"
+          },
+          {
+            "node_id": "U4-T2",
+            "title": "Ohm's Law and Resistance",
+            "level": "topic",
+            "parent": "Effects of Current",
+            "source_text": "Ohm's Law and Resistance"
+          },
+          {
+            "node_id": "U4-T3",
+            "title": "Magnetic Effects",
+            "level": "topic",
+            "parent": "Effects of Current",
+            "source_text": "Magnetic Effects"
+          },
+          {
+            "node_id": "U4-S1",
+            "title": "Series/Parallel combinations",
+            "level": "subtopic",
+            "parent": "Effects of Current",
+            "source_text": "Series/Parallel combinations"
+          },
+          {
+            "node_id": "U4-S2",
+            "title": "Heating effect, Electric power (P=VI)",
+            "level": "subtopic",
+            "parent": "Effects of Current",
+            "source_text": "Heating effect, Electric power (P=VI)"
+          },
+          {
+            "node_id": "U4-S3",
+            "title": "Fleming's Left Hand Rule",
+            "level": "subtopic",
+            "parent": "Effects of Current",
+            "source_text": "Fleming's Left Hand Rule"
+          },
+          {
+            "node_id": "U4-S4",
+            "title": "AC vs DC",
+            "level": "subtopic",
+            "parent": "Effects of Current",
+            "source_text": "AC vs DC"
+          },
+          {
+            "node_id": "U5",
+            "title": "Natural Resources",
+            "level": "unit",
+            "parent": "Science",
+            "source_text": "Natural Resources"
+          },
+          {
+            "node_id": "U5-C1",
+            "title": "Our environment",
+            "level": "chapter",
+            "parent": "Natural Resources",
+            "source_text": "Our environment",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U5-T1",
+            "title": "Environment",
+            "level": "topic",
+            "parent": "Natural Resources",
+            "source_text": "Environment"
+          },
+          {
+            "node_id": "U5-S1",
+            "title": "Ozone depletion",
+            "level": "subtopic",
+            "parent": "Natural Resources",
+            "source_text": "Ozone depletion"
+          },
+          {
+            "node_id": "U5-S2",
+            "title": "Waste management",
+            "level": "subtopic",
+            "parent": "Natural Resources",
+            "source_text": "Waste management"
+          },
+          {
+            "node_id": "U5-S3",
+            "title": "Biodegradable vs Non-biodegradable",
+            "level": "subtopic",
+            "parent": "Natural Resources",
+            "source_text": "Biodegradable vs Non-biodegradable"
+          }
+        ]
+      }
+    ]
+  },
+  "classes": [
+    {
+      "class_name": "IX",
+      "subject": "Science",
+      "part_or_section": "Annual Examination Structure",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Matter - Its Nature and Behaviour",
+          "marks": 25,
+          "explicit_chapters": [
+            "Matter in Our Surroundings",
+            "Is Matter Around Us Pure",
+            "Atoms and Molecules"
+          ],
+          "headings": [
+            "Definition of matter; Particulate Nature of Matter; States of Matter: solid, liquid and gas and their characteristics; change of state- melting (absorption of heat), freezing, evaporation (cooling by evaporation), condensation, sublimation.",
+            "Elements, compounds and mixtures. Heterogeneous and homogenous mixtures, colloids and suspensions. Physical and chemical changes (excluding separating the components of a mixture); Pure and Impure substances.",
+            "Atoms and molecules, Law of Chemical Combination, Chemical formula of common compounds, Atomic and molecular masses. Structure of atom: Sub-atomic particles: Electrons, protons and neutrons, Models of atom; Valency, Atomic Number and Mass Number, Isotopes and Isobars."
+          ],
+          "topics": [
+            "Matter in Our Surroundings",
+            "Is Matter Around Us Pure",
+            "Atoms and Molecules"
+          ],
+          "subtopics": [
+            "States of matter, change of state",
+            "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+            "Physical and chemical changes",
+            "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+          ],
+          "key_concepts": [
+            "Particulate Nature of Matter",
+            "Law of Chemical Combination",
+            "Atomic Structure (Bohr's model)",
+            "Valency"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Matter in Our Surroundings",
+              "source_chapter_name": "Matter in Our Surroundings",
+              "source_heading": "Matter in Our Surroundings",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "States of matter, change of state"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Matter in Our Surroundings"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Is Matter Around Us Pure",
+              "source_chapter_name": "Is Matter Around Us Pure",
+              "source_heading": "Is Matter Around Us Pure",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Mixtures (heterogeneous/homogenous), colloids, suspensions",
+                "Physical and chemical changes"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Is Matter Around Us Pure"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Atoms and Molecules",
+              "source_chapter_name": "Atoms and Molecules",
+              "source_heading": "Atoms and Molecules",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Sub-atomic particles, Models of atom, Isotopes and Isobars"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Atoms and Molecules"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Organization in the Living World",
+          "marks": 22,
+          "explicit_chapters": [
+            "Cell - Basic Unit of life",
+            "Tissues, Organs, Organ System, Organism"
+          ],
+          "headings": [
+            "Cell as a basic unit of life; prokaryotic and eukaryotic cells, multicellular organisms; cell membrane and cell wall, cell organelles and cell inclusions; chloroplast, mitochondria, vacuoles, endoplasmic reticulum, Golgi apparatus; nucleus, chromosomes - basic structure, number.",
+            "Structure and functions of animal and plant tissues (only four types of tissues in animals; Meristematic and Permanent tissues in plants)."
+          ],
+          "topics": [
+            "Cell Structure",
+            "Tissues"
+          ],
+          "subtopics": [
+            "Prokaryotic vs Eukaryotic cells",
+            "Organelles (Nucleus, Mitochondria, etc.)",
+            "Animal tissues (4 types)",
+            "Plant tissues (Meristematic and Permanent)"
+          ],
+          "key_concepts": [
+            "Cell as basic unit of life",
+            "Semi-permeability of cell membrane"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Cell - Basic Unit of life",
+              "source_chapter_name": "Cell - Basic Unit of life",
+              "source_heading": "Cell - Basic Unit of life",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Prokaryotic vs Eukaryotic cells",
+                "Organelles (Nucleus, Mitochondria, etc.)"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Cell - Basic Unit of life"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Tissues, Organs, Organ System, Organism",
+              "source_chapter_name": "Tissues, Organs, Organ System, Organism",
+              "source_heading": "Tissues, Organs, Organ System, Organism",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Animal tissues (4 types)",
+                "Plant tissues (Meristematic and Permanent)"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Tissues, Organs, Organ System, Organism"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Motion, Force and Work",
+          "marks": 27,
+          "explicit_chapters": [
+            "Motion",
+            "Force and Newton's laws",
+            "Gravitation",
+            "Floatation",
+            "Work, Energy and Power",
+            "Sound"
+          ],
+          "headings": [
+            "Distance and displacement, velocity; uniform and non-uniform motion along a straight line; acceleration, distance-time and velocity-time graphs for uniform motion and uniformly accelerated motion, elementary idea of uniform circular motion.",
+            "Force and Motion, Newton's Laws of Motion, Action and Reaction forces, Inertia of a body, Inertia and mass, Momentum, Force and Acceleration.",
+            "Gravitation; Universal Law of Gravitation, Force of Gravitation of the earth (gravity), Acceleration due to Gravity; Mass and Weight; Free fall.",
+            "Thrust and Pressure. Archimedes' Principle; Buoyancy.",
+            "Work done by a Force, Energy, power; Kinetic and Potential energy; Lawof conservation of energy (excluding commercial unit of Energy).",
+            "Nature of sound and its propagation in various media, speed of sound, range of hearing in humans; ultrasound; reflection of sound; echo."
+          ],
+          "topics": [
+            "Motion",
+            "Force and Newton's Laws",
+            "Gravitation",
+            "Floatation",
+            "Work Energy Power",
+            "Sound"
+          ],
+          "subtopics": [
+            "Distance, displacement, velocity-time graphs",
+            "Newton's laws (1st, 2nd, 3rd)",
+            "Universal Law of Gravitation",
+            "Archimedes' Principle",
+            "Conservation of Energy",
+            "Reflection and Echo"
+          ],
+          "key_concepts": [
+            "Uniform Circular Motion",
+            "Inertia",
+            "Acceleration due to Gravity",
+            "Buoyancy",
+            "Law of Conservation of Energy"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Motion",
+              "source_chapter_name": "Motion",
+              "source_heading": "Motion",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Distance, displacement, velocity-time graphs"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Motion"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Force and Newton's laws",
+              "source_chapter_name": "Force and Newton's laws",
+              "source_heading": "Force and Newton's laws",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Newton's laws (1st, 2nd, 3rd)"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Force and Newton's laws"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Gravitation",
+              "source_chapter_name": "Gravitation",
+              "source_heading": "Gravitation",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Universal Law of Gravitation"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Gravitation"
+            },
+            {
+              "chapter_id": "C4",
+              "chapter_name": "Floatation",
+              "source_chapter_name": "Floatation",
+              "source_heading": "Floatation",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Archimedes' Principle"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Floatation"
+            },
+            {
+              "chapter_id": "C5",
+              "chapter_name": "Work, Energy and Power",
+              "source_chapter_name": "Work, Energy and Power",
+              "source_heading": "Work, Energy and Power",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Conservation of Energy"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Work, Energy and Power"
+            },
+            {
+              "chapter_id": "C6",
+              "chapter_name": "Sound",
+              "source_chapter_name": "Sound",
+              "source_heading": "Sound",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Reflection and Echo"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Sound"
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Food; Food Production",
+          "marks": 6,
+          "explicit_chapters": [
+            "Plant and animal breeding"
+          ],
+          "headings": [
+            "Plant and animal breeding and selection for quality improvement and management; Use of fertilizersand manures; Protection from pests and diseases; Organic farming."
+          ],
+          "topics": [
+            "Food Production"
+          ],
+          "subtopics": [
+            "Breeding",
+            "Fertilizers and Manures",
+            "Pest protection",
+            "Organic farming"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Plant and animal breeding",
+              "source_chapter_name": "Plant and animal breeding",
+              "source_heading": "Plant and animal breeding",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Breeding",
+                "Fertilizers and Manures",
+                "Pest protection",
+                "Organic farming"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Plant and animal breeding"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [
+        {
+          "title": "Particulate Nature of Matter",
+          "related_unit": "Matter - Its Nature and Behaviour",
+          "related_chapter": "Matter in Our Surroundings",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Law of Chemical Combination",
+          "related_unit": "Matter - Its Nature and Behaviour",
+          "related_chapter": "Atoms and Molecules",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Atomic Structure (Bohr's model)",
+          "related_unit": "Matter - Its Nature and Behaviour",
+          "related_chapter": "Atoms and Molecules",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Valency",
+          "related_unit": "Matter - Its Nature and Behaviour",
+          "related_chapter": "Atoms and Molecules",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Cell as basic unit of life",
+          "related_unit": "Organization in the Living World",
+          "related_chapter": "Cell - Basic Unit of life",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Semi-permeability of cell membrane",
+          "related_unit": "Organization in the Living World",
+          "related_chapter": "Cell - Basic Unit of life",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Uniform Circular Motion",
+          "related_unit": "Motion, Force and Work",
+          "related_chapter": "Motion",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Inertia",
+          "related_unit": "Motion, Force and Work",
+          "related_chapter": "Force and Newton's laws",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Acceleration due to Gravity",
+          "related_unit": "Motion, Force and Work",
+          "related_chapter": "Gravitation",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Buoyancy",
+          "related_unit": "Motion, Force and Work",
+          "related_chapter": "Floatation",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Law of Conservation of Energy",
+          "related_unit": "Motion, Force and Work",
+          "related_chapter": "Work, Energy and Power",
+          "assessment_status": "formative"
+        }
+      ],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [
+          "Tissues, Organs, Organ System, Organism"
+        ],
+        "unit_count": 4,
+        "chapter_count": 12
+      }
+    },
+    {
+      "class_name": "X",
+      "subject": "Science",
+      "part_or_section": "Annual Examination Structure",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Chemical Substances-Nature and Behaviour",
+          "marks": 25,
+          "explicit_chapters": [
+            "Chemical Reactions and Equations",
+            "Acids, Bases and Salts",
+            "Metals and Non-metals",
+            "Carbon and its Compounds"
+          ],
+          "headings": [
+            "Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction.",
+            "Acids and Bases – definitions in terms of furnishing of H+ and OH– ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale... importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching powder, Baking soda, Washing soda and Plaster of Paris.",
+            "Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention.",
+            "Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature... Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid..."
+          ],
+          "topics": [
+            "Chemical Reactions",
+            "Acids Bases Salts",
+            "Metals Non-metals",
+            "Carbon Compounds"
+          ],
+          "subtopics": [
+            "Types of reactions (Combination, Decomposition, etc.)",
+            "pH scale and neutralization",
+            "Reactivity series",
+            "Covalent bonds, Hydrocarbons, Functional groups"
+          ],
+          "key_concepts": [
+            "Balanced Chemical Equations",
+            "Oxidation-Reduction",
+            "Ionic Compounds",
+            "Homologous Series"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chemical Reactions and Equations",
+              "source_chapter_name": "Chemical Reactions and Equations",
+              "source_heading": "Chemical Reactions and Equations",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Chemical Reactions"
+              ],
+              "subtopics": [
+                "Types of reactions (Combination, Decomposition, etc.)"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chemical Reactions and Equations"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Acids, Bases and Salts",
+              "source_chapter_name": "Acids, Bases and Salts",
+              "source_heading": "Acids, Bases and Salts",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Acids Bases Salts"
+              ],
+              "subtopics": [
+                "pH scale and neutralization"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Acids, Bases and Salts"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Metals and Non-metals",
+              "source_chapter_name": "Metals and Non-metals",
+              "source_heading": "Metals and Non-metals",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Metals Non-metals"
+              ],
+              "subtopics": [
+                "Reactivity series"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Metals and Non-metals"
+            },
+            {
+              "chapter_id": "C4",
+              "chapter_name": "Carbon and its Compounds",
+              "source_chapter_name": "Carbon and its Compounds",
+              "source_heading": "Carbon and its Compounds",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Carbon Compounds"
+              ],
+              "subtopics": [
+                "Covalent bonds, Hydrocarbons, Functional groups"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Carbon and its Compounds"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "World of Living",
+          "marks": 25,
+          "explicit_chapters": [
+            "Life processes",
+            "Control and co-ordination in animals and plants",
+            "Reproduction",
+            "Heredity and Evolution"
+          ],
+          "headings": [
+            "'Living Being'. Basic concept of nutrition, respiration, transport and excretion in plants and animals.",
+            "Tropic movements in plants; Introduction of plant hormones; Control and co-ordination in animals: Nervous system; Voluntary, involuntary and reflex action; Chemical co-ordination: animal hormones.",
+            "Reproduction in animals and plants (asexual and sexual) reproductive health - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and women's health.",
+            "Heredity; Mendel's contribution- Laws for inheritance of traits: Sex determination; brief introduction."
+          ],
+          "topics": [
+            "Life Processes",
+            "Control and Co-ordination",
+            "Reproduction",
+            "Heredity and Evolution"
+          ],
+          "subtopics": [
+            "Nutrition, Respiration, Transport, Excretion",
+            "Nervous system, Plant hormones",
+            "Family planning, Reproductive health",
+            "Mendel's Laws, Sex determination"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Life processes",
+              "source_chapter_name": "Life processes",
+              "source_heading": "Life processes",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Life Processes"
+              ],
+              "subtopics": [
+                "Nutrition, Respiration, Transport, Excretion"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Life processes"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Control and co-ordination in animals and plants",
+              "source_chapter_name": "Control and co-ordination in animals and plants",
+              "source_heading": "Control and co-ordination in animals and plants",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Control and Co-ordination"
+              ],
+              "subtopics": [
+                "Nervous system, Plant hormones"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Control and co-ordination in animals and plants"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Reproduction",
+              "source_chapter_name": "Reproduction",
+              "source_heading": "Reproduction",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Reproduction"
+              ],
+              "subtopics": [
+                "Family planning, Reproductive health"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Reproduction"
+            },
+            {
+              "chapter_id": "C4",
+              "chapter_name": "Heredity and Evolution",
+              "source_chapter_name": "Heredity and Evolution",
+              "source_heading": "Heredity and Evolution",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Heredity and Evolution"
+              ],
+              "subtopics": [
+                "Mendel's Laws, Sex determination"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Heredity and Evolution"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Natural Phenomena",
+          "marks": 12,
+          "explicit_chapters": [
+            "Reflection of light by curved surfaces",
+            "Refraction"
+          ],
+          "headings": [
+            "Images formed by spherical mirrors, centre of curvature, principal axis, principal focus, focal length, mirror formula (Derivation not required), magnification.",
+            "Laws of refraction, refractive index. Refraction of light by spherical lens; Image formed by spherical lenses; Lens formula (Derivation not required); Magnification. Power of a lens. Functioning of a lens in human eye, defects of vision and their corrections...",
+            "Refraction of light through a prism, dispersion of light, scattering of light..."
+          ],
+          "topics": [
+            "Reflection",
+            "Refraction",
+            "Lenses"
+          ],
+          "subtopics": [
+            "Spherical mirrors (Concave/Convex)",
+            "Mirror formula, Magnification",
+            "Lens formula, Power of lens",
+            "Dispersion and Scattering"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Reflection of light by curved surfaces",
+              "source_chapter_name": "Reflection of light by curved surfaces",
+              "source_heading": "Reflection of light by curved surfaces",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Reflection"
+              ],
+              "subtopics": [
+                "Spherical mirrors (Concave/Convex)",
+                "Mirror formula, Magnification"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Reflection of light by curved surfaces"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Refraction",
+              "source_chapter_name": "Refraction",
+              "source_heading": "Refraction",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Refraction",
+                "Lenses"
+              ],
+              "subtopics": [
+                "Lens formula, Power of lens",
+                "Dispersion and Scattering"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Refraction"
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Effects of Current",
+          "marks": 13,
+          "explicit_chapters": [
+            "Electric current",
+            "Ohm's law",
+            "Magnetic effects of current"
+          ],
+          "headings": [
+            "Electric current, potential difference and electric current. Ohm's law; Resistance, Resistivity, Factors on which the resistance of a conductor depends.",
+            "Series combination of resistors, parallel combination of resistors... Heating effect of electric current... Electric power...",
+            "Magnetic field, field lines, field due to a current carrying conductor, field due to current carrying coil or solenoid; Force on current carrying conductor, Fleming's Left Hand Rule..."
+          ],
+          "topics": [
+            "Electric Current",
+            "Ohm's Law and Resistance",
+            "Magnetic Effects"
+          ],
+          "subtopics": [
+            "Series/Parallel combinations",
+            "Heating effect, Electric power (P=VI)",
+            "Fleming's Left Hand Rule",
+            "AC vs DC"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Electric current",
+              "source_chapter_name": "Electric current",
+              "source_heading": "Electric current",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Electric Current"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Electric current"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Ohm's law",
+              "source_chapter_name": "Ohm's law",
+              "source_heading": "Ohm's law",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Ohm's Law and Resistance"
+              ],
+              "subtopics": [
+                "Series/Parallel combinations",
+                "Heating effect, Electric power (P=VI)"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Ohm's law"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Magnetic effects of current",
+              "source_chapter_name": "Magnetic effects of current",
+              "source_heading": "Magnetic effects of current",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Magnetic Effects"
+              ],
+              "subtopics": [
+                "Fleming's Left Hand Rule",
+                "AC vs DC"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Magnetic effects of current"
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Natural Resources",
+          "marks": 5,
+          "explicit_chapters": [
+            "Our environment"
+          ],
+          "headings": [
+            "Eco-system, Environmental problems, Ozone depletion, waste production and their solutions. Biodegradable and non-biodegradable substances."
+          ],
+          "topics": [
+            "Environment"
+          ],
+          "subtopics": [
+            "Ozone depletion",
+            "Waste management",
+            "Biodegradable vs Non-biodegradable"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Our environment",
+              "source_chapter_name": "Our environment",
+              "source_heading": "Our environment",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Environment"
+              ],
+              "subtopics": [
+                "Ozone depletion",
+                "Waste management",
+                "Biodegradable vs Non-biodegradable"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Our environment"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [],
+      "validation_report": {
+        "suspicious_chapter_names": [
+          "Control and co-ordination in animals and plants",
+          "Reflection of light by curved surfaces"
+        ],
+        "long_chapter_names_reclassified": [],
+        "unit_count": 5,
+        "chapter_count": 13
+      }
+    }
+  ],
+  "practicals": [
+    {
+      "title": "Preparation of solutions (Class IX)",
+      "source_text": "1. Preparation of: Unit-I a) a true solution of common salt, sugar and alum b) a suspension of soil, chalk powder and fine sand in water c) a colloidal solution of starch in water and egg albumin/milk in water",
+      "related_unit": "Matter - Its Nature and Behaviour (Unit I)",
+      "related_chapter": "Is Matter Around Us Pure"
+    },
+    {
+      "title": "Preparation of mixture/compound (Class IX)",
+      "source_text": "2. Preparation of Unit-I a) A mixture b) A compound using iron filings and sulphur powder",
+      "related_unit": "Matter - Its Nature and Behaviour (Unit I)",
+      "related_chapter": "Is Matter Around Us Pure"
+    },
+    {
+      "title": "Physical/Chemical changes reactions (Class IX)",
+      "source_text": "3. Perform the following reactions... Iron with copper sulphate solution... Burning of magnesium ribbon...",
+      "related_unit": "Matter - Its Nature and Behaviour (Unit I)",
+      "related_chapter": "Atoms and Molecules"
+    },
+    {
+      "title": "Stained temporary mounts (Class IX)",
+      "source_text": "4. Preparation of stained temporary mounts of (a) onion peel, (b) human cheek cells",
+      "related_unit": "Organization in the Living World (Unit II)",
+      "related_chapter": "Cell - Basic Unit of life"
+    },
+    {
+      "title": "Identification of tissues (Class IX)",
+      "source_text": "5. Identification of Parenchyma, Collenchyma and Sclerenyma tissues in plants... muscle fibers...",
+      "related_unit": "Organization in the Living World (Unit II)",
+      "related_chapter": "Tissues"
+    },
+    {
+      "title": "Melting/Boiling point determination (Class IX)",
+      "source_text": "6. Determination of the melting point of ice and the boiling point of water.",
+      "related_unit": "Matter - Its Nature and Behaviour (Unit I)",
+      "related_chapter": "Atoms and Molecules"
+    },
+    {
+      "title": "Laws of reflection of sound (Class IX)",
+      "source_text": "7. Verification of the laws of reflection of sound.",
+      "related_unit": "Motion, Force and Work (Unit III)",
+      "related_chapter": "Sound"
+    },
+    {
+      "title": "Density determination (Class IX)",
+      "source_text": "8. Determination of the density of solid... by using a spring balance...",
+      "related_unit": "Motion, Force and Work (Unit III)",
+      "related_chapter": "Gravitation"
+    },
+    {
+      "title": "Archimedes' Principle verification (Class IX)",
+      "source_text": "9. Establishing the relation between the loss in weight of a solid when fully immersed...",
+      "related_unit": "Motion, Force and Work (Unit III)",
+      "related_chapter": "Floatation"
+    },
+    {
+      "title": "Speed of pulse propagation (Class IX)",
+      "source_text": "10. Determination of the speed of a pulse propagated through a stretched string/slinky",
+      "related_unit": "Motion, Force and Work (Unit III)",
+      "related_chapter": "Sound"
+    },
+    {
+      "title": "Conservation of mass verification (Class IX)",
+      "source_text": "11. Verification of the law of conservation of mass in a chemical reaction.",
+      "related_unit": "Matter - Its Nature and Behaviour (Unit I)",
+      "related_chapter": "Atoms and Molecules"
+    },
+    {
+      "title": "pH determination (Class X)",
+      "source_text": "1. A. Finding the pH of the following samples by using pH paper/universal indicator: Dilute Hydrochloric Acid, Dilute NaOH solution...",
+      "related_unit": "Chemical Substances-Nature and Behaviour (Unit I)",
+      "related_chapter": "Acids, Bases and Salts"
+    },
+    {
+      "title": "Properties of acids/bases reactions (Class X)",
+      "source_text": "2. Performing and observing the following reactions... Action of water on quicklime...",
+      "related_unit": "Chemical Substances-Nature and Behaviour (Unit I)",
+      "related_chapter": "Metals and Non-metals"
+    },
+    {
+      "title": "Reactivity series experiment (Class X)",
+      "source_text": "3. Observing the action of Zn, Fe, Cu and Al metals on salt solutions...",
+      "related_unit": "Chemical Substances-Nature and Behaviour (Unit I)",
+      "related_chapter": "Metals and Non-metals"
+    },
+    {
+      "title": "Ohm's Law verification (Class X)",
+      "source_text": "4. Studying the dependence of potential difference (V) across a resistor on the current (I)... plotting a graph between V and I.",
+      "related_unit": "Effects of Current (Unit IV)",
+      "related_chapter": "Ohm's law"
+    },
+    {
+      "title": "Equivalent resistance (Class X)",
+      "source_text": "5. Determination of the equivalent resistance of two resistors when connected in series and parallel.",
+      "related_unit": "Effects of Current (Unit IV)",
+      "related_chapter": "Series combination"
+    },
+    {
+      "title": "Stomata observation (Class X)",
+      "source_text": "6. Preparing a temporary mount of a leaf peel to show stomata.",
+      "related_unit": "World of Living (Unit II)",
+      "related_chapter": "Life processes"
+    },
+    {
+      "title": "CO2 in respiration experiment (Class X)",
+      "source_text": "7. Experimentally show that carbon dioxide is given out during respiration.",
+      "related_unit": "World of Living (Unit II)",
+      "related_chapter": "Life processes"
+    },
+    {
+      "title": "Acetic acid properties (Class X)",
+      "source_text": "8. Study of the following properties of acetic acid... Odour, solubility in water...",
+      "related_unit": "Chemical Substances-Nature and Behaviour (Unit I)",
+      "related_chapter": "Carbon and its Compounds"
+    },
+    {
+      "title": "Soap cleaning capacity (Class X)",
+      "source_text": "9. Study of the comparative cleaning capacity of a sample of soap in soft and hard water.",
+      "related_unit": "Chemical Substances-Nature and Behaviour (Unit I)",
+      "related_chapter": "Carbon and its Compounds"
+    },
+    {
+      "title": "Focal length determination (Class X)",
+      "source_text": "10. Determination of the focal length of: Concave mirror, Convex lens...",
+      "related_unit": "Natural Phenomena (Unit III)",
+      "related_chapter": "Reflection/Refraction"
+    },
+    {
+      "title": "Glass slab refraction tracing (Class X)",
+      "source_text": "11. Tracing the path of a ray of light passing through a rectangular glass slab...",
+      "related_unit": "Natural Phenomena (Unit III)",
+      "related_chapter": "Refraction"
+    },
+    {
+      "title": "Binary fission/Budding study (Class X)",
+      "source_text": "12. Studying (a) binary fission in Amoeba, and (b) budding in yeast...",
+      "related_unit": "World of Living (Unit II)",
+      "related_chapter": "Reproduction"
+    },
+    {
+      "title": "Prism refraction tracing (Class X)",
+      "source_text": "13. Tracing the path of the rays of light through a glass prism.",
+      "related_unit": "Natural Phenomena (Unit III)",
+      "related_chapter": "Refraction"
+    },
+    {
+      "title": "Embryo identification (Class X)",
+      "source_text": "14. Identification of the different parts of an embryo of a dicot seed...",
+      "related_unit": "World of Living (Unit II)",
+      "related_chapter": "Reproduction"
+    }
+  ],
+  "activities": [
+    {
+      "title": "Periodic Assessment Methods",
+      "source_text": "Diverse methods of assessment as per the need of the class dynamics and curriculum transaction. These may include - short tests, oral test, quiz, concept maps, projects, posters, presentations and enquiry based scientific investigations etc.",
+      "related_unit": "",
+      "related_chapter": ""
+    }
+  ],
+  "projects": [
+    {
+      "title": "Portfolio",
+      "source_text": "For 5 marks - Portfolio that includes classwork and other sample of student's work.",
+      "related_unit": "",
+      "related_chapter": ""
+    },
+    {
+      "title": "Projects in Assessment Methods",
+      "source_text": "Diverse methods... projects, posters, presentations...",
+      "related_unit": "",
+      "related_chapter": ""
+    }
+  ],
+  "assessment_information": {
+    "marks_distribution": [
+      "Annual Examination: 80 Marks (Class IX and X)",
+      "Internal Assessment: 20 Marks",
+      "Grand Total: 100 Marks",
+      "Periodic Assessment: 5 marks + 5 marks = 10 marks",
+      "Practical/Laboratory Work: 5 marks",
+      "Portfolio: 5 marks"
+    ],
+    "excluded_or_non_assessed_content": [
+      "Information in NCERT text book boxes (not assessed in year-end examination)",
+      "Separating the components of a mixture (Physical and chemical changes section - Class IX Unit I)",
+      "Commercial unit of Energy (Work, Energy and Power section - Class IX Unit III)",
+      "Derivation of Mirror Formula",
+      "Derivation of Lens Formula",
+      "Definition relating to logarithm for pH scale"
+    ],
+    "teacher_notes": [
+      "The NCERT text books present information in boxes across the book. These help students to get conceptual clarity. However, the information in these boxes would not be assessed in the year-end examination.",
+      "Formative topics (Health and Diseases; Conservation of Momentum) are included to reinforce understanding without adding to summative assessments.",
+      "Schools can integrate formative topics with existing chapters as they align well."
+    ]
+  },
+  "teacher_notes": [
+    "The NCERT text books present information in boxes across the book. These help students to get conceptual clarity. However, the information in these boxes would not be assessed in the year-end examination.",
+    "Formative topics (Health and Diseases; Conservation of Momentum) are included to reinforce understanding without adding to summative assessments.",
+    "Schools can integrate formative topics with existing chapters as they align well."
+  ],
+  "excluded_content": [
+    "Information in NCERT text book boxes (not assessed in year-end examination)",
+    "Separating the components of a mixture (Physical and chemical changes section - Class IX Unit I)",
+    "Commercial unit of Energy (Work, Energy and Power section - Class IX Unit III)",
+    "Derivation of Mirror Formula",
+    "Derivation of Lens Formula",
+    "Definition relating to logarithm for pH scale"
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "suspicious_chapter_names": [
+      "Control and co-ordination in animals and plants",
+      "Reflection of light by curved surfaces"
+    ],
+    "long_chapter_names_reclassified": [
+      "Tissues, Organs, Organ System, Organism"
+    ],
+    "units_validated": 9,
+    "chapters_validated": 26,
+    "invalid_units": [],
+    "invalid_chapters": []
+  }
+}
+
+Curriculum source text:
+--- Page 1 ---
+1 SCIENCE Subject Code – 086 Classes IX and X (2025-26) Science Education aims to achieve Scientific understanding of the natural and physical world; Capacities for scientific inquiry; Understanding the evolution of scientific knowledge; Interdisciplinary understanding between science and other curricular areas; Understanding of the relationship between Science, Technology and, Society; Scientific temper and Creativity. The present syllabus has been designed around seven broad themes viz. Food; Materials; The World of the Living; How Things Work; Moving Things, People and Ideas; Natural Phenomenon and Natural Resources. The Curricular Goals of Science at the Secondary Stage move from the concrete nature of the Middle Stage towards abstraction - from perceptual and practical concepts to theoretical concepts. The Learning Standards (Curricular Goals and Competencies) for Science as an integrated curricular area, in alignment with the National Curriculum Framework 2023 are as follows: CG - 1 Explores the world of matter, its interactions, and properties at the atomic level C - 1.1 Describes classification of elements in the Periodic Table, and explains how compounds (including carbon compounds) are formed based on atomic structure (Bohr’s model) and properties (valency) C - 1.2 Investigates the nature and properties of chemical substances (distillation, crystallisation, chromatography, centrifugation, types and propert ies of mixtures, solutions, colloids, and suspensions) C - 1.3 Describes and represents chemical interactions and changes using symbols and chemical equations (acid and base, metal, and non - metal, reversible, and irreversible) CG - 2 Explores the physical w orld around them, and understands scientific principles and laws based on observations and analysis C - 2.1 Applies Newton’s laws to explain the effect of forces (change in state of motion – displacement and direction, velocity and acceleration, uniform circ ular motion, acceleration due to gravity) and analyses graphical and mathematical representations of motion in one dimension C - 2.2 Explains the relationship between mass and weight using universal law of gravitation and connect it to laws of motion C - 2.3 Manipulates the position of object and properties of lenses (focus, centre of curvature) to observe image characteristics and correspondence with a ray diagram, and extends this understanding to a combination of lenses (telescope, microscope) C - 2.4 Manip ulates and analyses different characteristics of the circuit (current, voltage, resistance) and mathematises their relationship (Ohm’s law), and applies it to everyday usage (electricity bill, short circuit, safety measures) C - 2.5 Defines work in scientif ic terms, and represents the relationship
+
+--- Page 2 ---
+2 between potential and kinetic energy (conservation of energy) in mathematical expressions C - 2.6 Demonstrates the principle of mechanical advantage by constructing simple machines (system of levers and pulleys) C - 2 .7 Describes the origin and properties of sound (wavelength, frequency, amplitude) and differences in what we hear as it propagates through different instruments CG - 3 Explores the structure and function of the living world at the cellular level C - 3.1 Explains the role of cellular components (nucleus, mitochondria, endoplasmic reticulum, vacuoles, chloroplast, cell wall), including the semi - permeability of cell membrane in making cell the structural basis of living organisms and functional basis o f life processes C - 3.2 Analyses similarities and differences in the life processes involved in nutrition (photosynthesis in plants; absorption of nutrients in fungi; digestion in animals), transport (transport of water in plants; circulation in animals), exchange of materials (respiration and excretion), and reproduction C - 3.3 Describes mechanisms of heredity (in terms of DNA, genes, chromosomes) and variation (as changes in the sequence of DNA) CG - 4 Explores interconnectedness between organisms and the ir environment C - 4.1 Applies the knowledge of cellular diversity in organisms along with the ecological role organisms play (autotrophic or heterotrophic nutrition) to classify them into five - kingdoms C - 4.2 Illustrates different levels of organisations of living organisms (from molecules to organisms) C - 4.3 Analyses different levels of biological organisation from organisms to ecosystems and biomes along with interactions that take place at each level C - 4.4 Analyses patterns of inheritance of traits in t erms of Mendel’s laws and its consequences at a population level (using models and/or simulations) C - 4.5 Analyses evidences of biological evolution demonstrating the consequences of the process of natural selection in terms of changes: in allele frequency in population, structure, and function of organisms CG - 5 Draws linkages between scientific knowledge and knowledge across other curricular areas C - 5.1 Explores how literature and the arts have influenced Science C - 5.2 Examines a case study related to the use of Science in human life from the perspective of Social Sciences and ethics (e.g., Marie Curie, Jenner, treatment of patients with mental illness, the story of the atomic bomb, green revolution and GMOs, conse rvation of biodiversity) C - 5.3 Applies scientific principles to explain phenomena in other subjects (sound pitch, octave, and amplitude in music; use of muscles in dance form and sports) CG - 6 Understands and appreciates the contribution of India through history and the present times to the overall C - 6.1 Knows and explains the significant contributions of India to all matters (concepts, explanations, methods) that are studied within the curric ulum in an integrated manner
+
+--- Page 3 ---
+3 field of Science, including the disciplines that constitute it CG - 7 Develops awareness of the most current discoveries, ideas, and frontiers in all areas of scientific knowledge in order to appreciate that Science is ever evolving, and that there are still many unanswered questions C - 7.1 States concepts that represent the most current understanding of the matter being studied, ranging from mere familiarity to conceptual understanding of the matter as appropriate to the developmental stage of the students C - 7.2 States questions relat ed to matters in the curriculum for which current scientific understanding is well recognised to be inadequate CG - 8 Explores the nature of Science by doing Science C - 8.1 Develops accurate and appropriate models (including geometric, mathematical, graphical) to represent real - life events and phenomena using scientific principles and use these models to manipulate variables and predict results C - 8.2 Designs and implem ents a plan for scientific inquiry (formulates hypotheses, makes predictions, identifies variables, accurately uses scientific instruments, represents data, primary and secondary, in multiple modes, draws inferences based on data and understanding of scien tific concepts, theories, laws, and principles, communicates findings using scientific terminology) It is important to note that the Curricular Goals are interdependent, and not separate curricular pieces of study. (Reference: National Curriculum Framework for School Education – 2023.) The competencies, as defined by the NCFSE 2023, are designed to encompass the entire secondary stage (classes IX-XII). Attainment of the competencies shall be done through transaction of the curriculum using appropriate pedagogy; these shall be assessed through an integrated evaluation scheme. General Instructions for Assessment: 1. There will be an Annual Examination based on the entire syllabus. 2. The Annual Examination will be of 80 marks and 20 marks weightage shall be for Internal Assessment. 3. For Internal Assessment: i) There will be Periodic Assessment that would include:  For 5 marks- Three periodic tests conducted by the school. Average of the best two tests to be taken that will have a weightage of 05 marks towards the final result.  For 5 marks - Diverse methods of assessment as per the need of the class dynamics and curriculum transaction. These may include - short tests, oral test, quiz, concept maps, projects, posters, presentations and enquiry based
+
+--- Page 4 ---
+4 scientific investigations etc. and use of rubrics for assessing them objectively. This will also have a weightage of 05 marks towards the final result. ii) For 5 marks - Practical / Laboratory work that is done throughout the year. The students should maintain record of the same. Practical Assessment should be continuous. All practical work listed in the syllabus must be completed. iii) For 5 marks - Portfolio that includes classwork and other sample of student’s work. COURSE STRUCTURE CLASS IX (2025-26) (Annual Examination) Time: 03 Hours Marks: 80 Unit No. Unit Marks I Matter - Its Nature and Behaviour 25 II Organization in the Living World 22 III Motion, Force and Work 27 IV Food; Food Production 06 Total 80 Internal assessment 20 Grand Total 100 Theme: Materials Unit I: Matter-Nature and Behaviour Matter in Our Surroundings: Definition of matter; Particulate Nature of Matter; States of Matter: solid, liquid and gas and their characteristics; change of state- melting (absorption of heat), freezing, evaporation (cooling by evaporation), condensation, sublimation. Is Matter Around Us Pure: Elements, compounds and mixtures. Heterogeneous and homogenous mixtures, colloids and suspensions. Physical and chemical changes (excluding separating the components of a mixture); Pure and Impure substances. Atoms and Molecules: Atoms and molecules, Law of Chemical Combination, Chemical formula of common compounds, Atomic and molecular masses. Structure of atom: Sub-atomic particles: Electrons, protons and neutrons, Models of atom; Valency, Atomic Number and Mass Number, Isotopes and Isobars.
+
+--- Page 5 ---
+5 Theme: The World of the Living Unit II: Organization in the Living World Cell - Basic Unit of life: Cell as a basic unit of life; prokaryotic and eukaryotic cells, multicellular organisms; cell membrane and cell wall, cell organelles and cell inclusions; chloroplast, mitochondria, vacuoles, endoplasmic reticulum, Golgi apparatus; nucleus, chromosomes - basic structure, number. Tissues, Organs, Organ System, Organism: Structure and functions of animal and plant tissues (only four types of tissues in animals; Meristematic and Permanent tissues in plants). The following topics are included in the syllabus but will be assessed only formatively to reinforce understanding without adding to summative assessments. The reduces academic stress while ensuring meaningful learning. Schools can integrate these with existing chapters as they align well. Relevant NCERT textual material is enclosed for reference. Health and Diseases: Health and its failure. Infectious and Non-infectious diseases, their causes and manifestation. Diseases caused by microbes (Virus, Bacteria and Protozoans) and their prevention; Principles of treatment and prevention. Pulse Polio programmes. Theme: Moving Things, People and Ideas Unit III: Motion, Force and Work Motion: Distance and displacement, velocity; uniform and non-uniform motion along a straight line; acceleration, distance-time and velocity-time graphs for uniform motion and uniformly accelerated motion, elementary idea of uniform circular motion. Force and Newton’s laws: Force and Motion, Newton’s Laws of Motion, Action and Reaction forces, Inertia of a body, Inertia and mass, Momentum, Force and Acceleration. The following topic is included in the syllabus but will be assessed only formatively to reinforce understanding without adding to summative assessments. The reduces academic stress while ensuring meaningful learning. Schools can integrate this with existing chapters as they align well. Relevant NCERT textual material is enclosed for reference. Elementary idea of conservation of Momentum
+
+--- Page 6 ---
+6 Gravitation: Gravitation; Universal Law of Gravitation, Force of Gravitation of the earth (gravity), Acceleration due to Gravity; Mass and Weight; Free fall. Floatation: Thrust and Pressure. Archimedes’ Principle; Buoyancy. Work, Energy and Power: Work done by a Force, Energy, power; Kinetic and Potential energy; Lawof conservation of energy (excluding commercial unit of Energy). Sound: Nature of sound and its propagation in various media, speed of sound, range of hearing in humans; ultrasound; reflection of sound; echo. Theme: Food Unit IV: Food Production Plant and animal breeding and selection for quality improvement and management; Use of fertilizersand manures; Protection from pests and diseases; Organic farming. Note for Teachers: The NCERT text books present information in boxes across the book. These help students to get conceptual clarity. However, the information in these boxes would not be assessed in the year-end examination. PRACTICALS Practicals should be conducted alongside the concepts taught in theory classes. (LIST OF EXPERIMENTS) 1. Preparation of: Unit-I a) a true solution of common salt, sugar and alum b) a suspension of soil, chalk powder and fine sand in water c) a colloidal solution of starch in water and egg albumin/milk in water and distinguish between these on the basis of  transparency  filtration criterion  stability 2. Preparation of Unit-I a) A mixture b) A compound using iron filings and sulphur powder and distinguishing between these on the basis of:  appearance, i.e., homogeneity and heterogeneity
+
+--- Page 7 ---
+7  behaviour towards a magnet  behaviour towards carbon disulphide as a solvent  effect of heat 3. Perform the following reactions and classify them as physical or chemical changes: Unit-I a) Iron with copper sulphate solution in water b) Burning of magnesium ribbon in air c) Zinc with dilute sulphuric acid d) Heating of copper sulphate crystals e) Sodium sulphate with barium chloride in the form of their solutions in water 4. Preparation of stained temporary mounts of (a) onion peel, (b) human cheek cells & to record observations and draw their labeled diagrams Unit - II 5. Identification of Parenchyma, Collenchyma and Sclerenchyma tissues in plants, striped, smooth and cardiac muscle fibers and nerve cells in animals, from prepared slides. Draw their labeled diagrams. Unit-II 6. Determination of the melting point of ice and the boiling point of water. Unit-I 7. Verification of the laws of reflection of sound. Unit-III 8. Determination of the density of solid (denser than water) by using a spring balance and a measuring cylinder. Unit-III 9. Establishing the relation between the loss in weight of a solid when fully immersed in Unit-III a) Tap water b) Strongly salty water with the weight of water displaced by it by taking at least two different solids. 10. Determination of the speed of a pulse propagated through a stretched string/ slinky (helical spring). Unit-III 11. Verification of the law of conservation of mass in a chemical reaction. Unit-III
+
+--- Page 8 ---
+8 COURSE STRUCTURE CLASS X (2025-26) (Annual Examination) Time: 03 Hours Marks: 80 Unit No. Unit Marks I Chemical Substances-Nature and Behaviour 25 II World of Living 25 III Natural Phenomena 12 IV Effects of Current 13 V Natural Resources 05 Total 80 Internal assessment 20 Grand Total 100 Theme: Materials Unit I: Chemical Substances - Nature and Behaviour Chemical Reactions and Equations: Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction. Acids, Bases and Salts: Acids and Bases – definitions in terms of furnishing of H+ and OH– ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale (Definition relating to logarithm not required), importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching powder, Baking soda, Washing soda and Plaster of Paris. Metals and Non-metals: Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention. Carbon and its Compounds: Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature of alkanes, alkenes, alkyne and carbon compounds containing functional groups (halogens, alcohol, ketones, aldehydes). Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid (only properties and uses), soaps and detergents.
+
+--- Page 9 ---
+9 Theme: The World of the Living Unit II: World of Living Life processes: ‘Living Being’. Basic concept of nutrition, respiration, transport and excretion in plants and animals. Control and co-ordination in animals and plants: Tropic movements in plants; Introduction of plant hormones; Control and co-ordination in animals: Nervous system; Voluntary, involuntary and reflex action; Chemical co-ordination: animal hormones. Reproduction: Reproduction in animals and plants (asexual and sexual) reproductive health - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and women’s health. Heredity and Evolution: Heredity; Mendel’s contribution- Laws for inheritance of traits: Sex determination; brief introduction. Theme: Natural Phenomena Unit III: Natural Phenomena Reflection of light by curved surfaces; Images formed by spherical mirrors, centre of curvature, principal axis, principal focus, focal length, mirror formula (Derivation not required), magnification. Refraction; Laws of refraction, refractive index. Refraction of light by spherical lens; Image formed by spherical lenses; Lens formula (Derivation not required); Magnification. Power of a lens. Functioning of a lens in human eye, defects of vision and their corrections, applications of spherical mirrors and lenses. Refraction of light through a prism, dispersion of light, scattering of light, applications in daily life (excluding colour of the sun at sunrise and sunset). Theme: How Things Work Unit IV: Effects of Current Electric current, potential difference and electric current. Ohm’s law; Resistance, Resistivity, Factors on which the resistance of a conductor depends. Series combination of resistors, parallel combination of resistors and its applications in daily life. Heating effect of electric current and its applications in daily life. Electric power, Interrelation between P, V, I and R. Magnetic effects of current: Magnetic field, field lines, field due to a current carrying conductor, field due to current carrying coil or solenoid; Force on current carrying
+
+--- Page 10 ---
+10 conductor, Fleming’s Left Hand Rule, Direct current. Alternating current: frequency of AC. Advantage of AC over DC. Domestic electric circuits. Theme: Natural Resources Unit V: Natural Resources Our environment: Eco-system, Environmental problems, Ozone depletion, waste production and their solutions. Biodegradable and non-biodegradable substances. Note for the Teachers: The NCERT text books present information in boxes across the book. These help students to get conceptual clarity. However, the information in these boxes would not be assessed in the year-end examination. PRACTICALS Practical should be conducted alongside the concepts taught in theory classes. LIST OF EXPERIMENTS 1. A. Finding the pH of the following samples by using pH paper/universal indicator: Unit-I a) Dilute Hydrochloric Acid b) Dilute NaOH solution c) Dilute Ethanoic Acid solution d) Lemon juice e) Water f) Dilute Hydrogen Carbonate solution B. Studying the properties of acids and bases (HCl & NaOH) on the basis of their reaction with: Unit-I a) Litmus solution (Blue/Red) b) Zinc metal c) Solid sodium carbonate 2. Performing and observing the following reactions and classifying them into: Unit-I a) Combination reaction b) Decomposition reaction c) Displacement reaction d) Double displacement reaction  Action of water on quicklime  Action of heat on ferrous sulphate crystals  Iron nails kept in copper sulphate solution  Reaction between sodium sulphate and barium chloride solutions
+
+--- Page 11 ---
+11 3. Observing the action of Zn, Fe, Cu and Al metals on the following salt solutions: Unit-I a) ZnSO 4 (aq) b) FeSO 4 (aq) c) CuSO 4 (aq) d) Al 2 (SO 4 ) 3 (aq) Arranging Zn, Fe, Cu and Al (metals) in the decreasing order of reactivity based on the above result. 4. Studying the dependence of potential difference (V) across a resistor on the current (I) passing through it and determine its resistance. Also plotting a graph between V and I. Unit-IV 5. Determination of the equivalent resistance of two resistors when connected in series and parallel. Unit-IV 6. Preparing a temporary mount of a leaf peel to show stomata. Unit- II 7. Experimentally show that carbon dioxide is given out during respiration. Unit-II 8. Study of the following properties of acetic acid (ethanoic acid): Unit- I a) Odour b) solubility in water c) effect on litmus d) reaction with Sodium Hydrogen Carbonate 9. Study of the comparative cleaning capacity of a sample of soap in soft and hard water. Unit- I 10. Determination of the focal length of: Unit-III a) Concave mirror b) Convex lens by obtaining the image of a distant object. 11. Tracing the path of a ray of light passing through a rectangular glass slab for different angles of incidence. Measure the angle of incidence, angle of refraction, angle of emergence and interpret the result. Unit - III 12. Studying (a) binary fission in Amoeba, and (b) budding in yeast and Hydra with the help of prepared slides. Unit-II 13. Tracing the path of the rays of light through a glass prism. Unit-III 14. Identification of the different parts of an embryo of a dicot seed (pea, gram or red kidney bean). Unit-II
+
+--- Page 12 ---
+12 PRESCRIBED BOOKS:  Science-Textbook for class IX-NCERT Publication  Science-Text book for class X- NCERT Publication  Assessment of Practical Skills in Science-Class IX - CBSE Publication  Assessment of Practical Skills in Science- Class X- CBSE Publication  Laboratory Manual-Science-Class IX, NCERT Publication  Laboratory Manual-Science-Class X, NCERT Publication  Exemplar Problems Class IX – NCERT Publication  Exemplar Problems Class X – NCERT Publication  Reading Material – Science – Class IX – CBSE
+
+--- Page 13 ---
+13 Question Paper Design (Theory) Class X (2025-26) Science (086) Theory (80 marks) Competencies Total Demonstrate Knowledge and Understanding 50 % Application of Knowledge/Concepts 30 % Formulate, Analyze, Evaluate and Create 20 % Note:  Typology of Questions: VSA including objective type questions, Assertion – Reasoning type questions; SA; LA; Source-based/ Case-based/ Passage-based/ Integrated assessment questions.  An internal choice of approximately 33% would be provided. Internal Assessment (20 Marks)  Periodic Assessment - 05 marks + 05 marks  Subject Enrichment (Practical Work) - 05 marks  Portfolio - 05 marks Suggestive verbs for various competencies  Demonstrate Knowledge and Understanding State, name, list, identify, define, suggest, describe, outline, summarize, etc.  Application of Knowledge/Concepts Calculate, illustrate, show, adapt, explain, distinguish, etc.  Formulate, Analyze, Evaluate and Create Interpret, analyze, compare, contrast, examine, evaluate, discuss, construct, etc.

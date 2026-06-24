@@ -1,0 +1,193 @@
+Stage 3: Curriculum Normalization - Class 2
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Geography - Contemporary India - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical Features and Environment",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "India – Size and Location",
+        "Physical Features of India",
+        "Drainage",
+        "Climate",
+        "Natural Vegetation and Wildlife"
+      ],
+      "topics": [
+        "Location impacts climate and time",
+        "Trading relationships with neighbors",
+        "Time meridian (82.5E)",
+        "Physical features influence livelihoods",
+        "Geological processes",
+        "River systems and lakes",
+        "Monsoon winds and rainfall"
+      ],
+      "subtopics": [
+        "Map pointing: States, Capitals, Tropic of Cancer, Standard Meridian, Neighbouring Countries",
+        "Map pointing: Mountain Ranges (Karakoram, Zanskar, Shivalik, Aravali, Vindhya, Satpura, Ghats)",
+        "Map pointing: Peaks (K2, Kanchan Junga, Anai Mudi), Plateaus, Coastal Plains",
+        "Map pointing: Rivers (Indus, Ganges, Sutlej, Narmada, Tapti, Kaveri, Krishna, Godavari, Mahanadi)",
+        "Map pointing: Lakes (Wular, Pulicat, Sambar, Chilika)"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Population and Resources",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Population"
+      ],
+      "topics": [
+        "Uneven distribution of population",
+        "Factors affecting density"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "IX",
+  "units": [
+    {
+      "unit_name": "Physical Features and Environment",
+      "classified_blocks": [
+        {
+          "source_heading": "India – Size and Location",
+          "source_text_excerpt": "Location impacts climate, time meridian (82.5E), trading relationships with neighbors.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Physical Features of India",
+          "source_text_excerpt": "Geological processes influence livelihoods; mountain ranges include Karakoram, Zanskar.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Drainage",
+          "source_text_excerpt": "River systems include Indus, Ganges; lakes include Wular, Chilika.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Climate",
+          "source_text_excerpt": "Monsoon winds determine rainfall patterns across the region.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Natural Vegetation and Wildlife",
+          "source_text_excerpt": "Vegetation types vary by climate; wildlife habitats depend on physical features.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Location impacts climate and time",
+          "source_text_excerpt": "Trading relationships with neighbors; Time meridian (82.5E).",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Map pointing: States, Capitals, Tropic of Cancer, Standard Meridian, Neighbouring Countries",
+          "source_text_excerpt": "Identify states, capitals, tropic, meridian on map.",
+          "classification": "subtopic",
+          "confidence": 0.95,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Map pointing: Mountain Ranges (Karakoram, Zanskar, Shivalik, Aravali, Vindhya, Satpura, Ghats)",
+          "source_text_excerpt": "Locate major mountain ranges on the map.",
+          "classification": "subtopic",
+          "confidence": 0.95,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Map pointing: Peaks (K2, Kanchan Junga, Anai Mudi), Plateaus, Coastal Plains",
+          "source_text_excerpt": "Identify peaks, plateaus, coastal plains on map.",
+          "classification": "subtopic",
+          "confidence": 0.95,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Map pointing: Rivers (Indus, Ganges, Sutlej, Narmada, Tapti, Kaveri, Krishna, Godavari, Mahanadi)",
+          "source_text_excerpt": "Locate major river systems on the map.",
+          "classification": "subtopic",
+          "confidence": 0.95,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Map pointing: Lakes (Wular, Pulicat, Sambar, Chilika)",
+          "source_text_excerpt": "Identify major lakes on the map.",
+          "classification": "subtopic",
+          "confidence": 0.95,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Population and Resources",
+      "classified_blocks": [
+        {
+          "source_heading": "Population",
+          "source_text_excerpt": "Uneven distribution of population; factors affecting density.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Population and Resources",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Uneven distribution of population",
+          "source_text_excerpt": "Factors affecting density vary by region.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Population and Resources",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

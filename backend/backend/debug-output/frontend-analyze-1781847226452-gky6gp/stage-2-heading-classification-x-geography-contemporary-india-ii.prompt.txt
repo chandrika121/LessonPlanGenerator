@@ -1,0 +1,50 @@
+Stage 2: Heading Classification - X - Geography - Contemporary India - II
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- do not output units created by the model
+- do not create unit_name
+- do not rename parent_unit
+- only classify the existing Stage 1 items as chapter/topic/subtopic
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Geography - Contemporary India - II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Resources and Development of India",
+      "marks": 20,
+      "headings": [
+        "Chapter 1 Resources and Development",
+        "Chapter 2 Forest and Wildlife Resources",
+        "Chapter 3 Water resources",
+        "Chapter 4 Agriculture",
+        "Chapter 5 Minerals and energy Resources",
+        "Chapter 6 Manufacturing Industries",
+        "Chapter 7 Lifelines of National Economy"
+      ],
+      "possible_chapters": [
+        "Resources and Development",
+        "Forest and Wildlife Resources",
+        "Water resources",
+        "Agriculture",
+        "Minerals and Energy Resources",
+        "Manufacturing Industries",
+        "Lifelines of National Economy"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}

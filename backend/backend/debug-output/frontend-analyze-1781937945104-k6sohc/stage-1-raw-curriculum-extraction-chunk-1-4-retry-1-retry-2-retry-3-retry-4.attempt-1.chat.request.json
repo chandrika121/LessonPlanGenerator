@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 1500
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output intentionally small and concise\n- Never include topics, subtopics, key concepts, activities, projects, practical details, raw nodes, or long prose\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 1 of 4.1.1.2.2; extract only what is present in this chunk\n\n\nCurriculum source text:\nnal Motion Unit-VI Gravitation Chapter–7: Gravitation Unit–VII Properties of Bulk Matter 20 Chapter–8: Mechanical Properties of Solids Chapter–9: Mechanical Properties of Fluids Chapter–10: Thermal Properties of Matter Unit–VIII Thermodynamics Chapter–11: Thermodynamics Unit–IX Behaviour of Perfect Gases and Kinetic Theory of Gases Chapter–12: Kinetic Theory Unit–X Oscillations and Waves 10 Chapter–13: Oscillations Chapter–14: Waves Total 70 Class XI - 2026-27 (Theory)\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}

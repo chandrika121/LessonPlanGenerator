@@ -1,0 +1,174 @@
+Stage 3: Curriculum Normalization - IX - Economics
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Economics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Production and Resources",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "The Story of Village Palampur"
+      ],
+      "topics": [
+        "Requirements of production",
+        "Interdependence of requirements",
+        "Farming and non-farming activities correlation"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Challenges in Economy",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "People as Resource",
+        "Poverty as a Challenge",
+        "Food Security in India"
+      ],
+      "topics": [
+        "Quality of population and government schemes",
+        "Reasons for poverty (rural/urban)",
+        "Efficacy to eradicate poverty",
+        "Link between education and poverty",
+        "Continuity of supply, PDS features",
+        "Impact of Green Revolution"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "The Story of Village Palampur",
+          "source_text_excerpt": "The Story of Village Palampur is a chapter in the IX Economics curriculum covering production and resources.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Requirements of production",
+          "source_text_excerpt": "This topic discusses land, labor, capital, and entrepreneurship as the four factors of production.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Interdependence of requirements",
+          "source_text_excerpt": "This topic explains how land, labor, capital, and entrepreneurship rely on each other for production.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Farming and non-farming activities correlation",
+          "source_text_excerpt": "This topic analyzes the relationship between agricultural work and other economic activities in villages.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "classified_blocks": [
+        {
+          "source_heading": "People as Resource",
+          "source_text_excerpt": "This chapter explores human beings as the most productive resource in an economy.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Poverty as a Challenge",
+          "source_text_excerpt": "This chapter examines the causes and consequences of poverty in India.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Food Security in India",
+          "source_text_excerpt": "This chapter discusses the mechanisms ensuring food availability for all citizens.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Quality of population and government schemes",
+          "source_text_excerpt": "This topic evaluates how human capital development impacts economic growth through various policies.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Reasons for poverty (rural/urban)",
+          "source_text_excerpt": "This topic identifies structural and economic factors leading to rural and urban deprivation.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Efficacy to eradicate poverty",
+          "source_text_excerpt": "This topic assesses the success of anti-poverty programs and strategies.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Link between education and poverty",
+          "source_text_excerpt": "This topic explores the correlation between educational attainment and economic status.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Continuity of supply, PDS features",
+          "source_text_excerpt": "This topic details the Public Distribution System and its role in food security.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Impact of Green Revolution",
+          "source_text_excerpt": "This topic analyzes the agricultural changes and economic effects resulting from technological advancements.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

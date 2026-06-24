@@ -1,0 +1,37 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_name": "",
+        "classified_blocks": [
+          {
+            "source_heading": "",
+            "source_text_excerpt": "",
+            "classification": "unit",
+            "confidence": 0,
+            "parent_unit": "",
+            "parent_chapter": ""
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 2: Heading Classification - Class 8\nReturn compact JSON only.\nClassify headings and content blocks for this class only.\n\nRules:\n- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown\n- a valid chapter should be short and source-grounded\n- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter\n- classify from structural and textual signals, not just heading style\n- source_text_excerpt must be at most 180 characters\n- no explanations\n- no repeated raw text\n\nRaw class extraction:\n{\n  \"class_name\": \"X\",\n  \"subject\": \"Economics - Understanding Economic Development\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Development and Economy\",\n      \"marks\": 20,\n      \"headings\": [\n        \"Chapter 1 Development\",\n        \"Chapter 2 Sectors of the Indian Economy\",\n        \"Chapter 3 Money and Credit\",\n        \"Chapter 4 Globalisation and the Indian Economy\"\n      ],\n      \"possible_chapters\": [\n        \"Development\",\n        \"Sectors of the Indian Economy\",\n        \"Money and Credit\",\n        \"Globalisation and the Indian Economy\"\n      ],\n      \"topics\": [],\n      \"subtopics\": []\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_name\": \"\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"\",\n          \"source_text_excerpt\": \"\",\n          \"classification\": \"unit\",\n          \"confidence\": 0,\n          \"parent_unit\": \"\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

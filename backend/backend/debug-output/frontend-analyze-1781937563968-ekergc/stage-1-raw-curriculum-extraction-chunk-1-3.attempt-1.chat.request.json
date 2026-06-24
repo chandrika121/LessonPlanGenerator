@@ -1,0 +1,122 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "raw_nodes": [
+      {
+        "title": "",
+        "level": "",
+        "parent": "",
+        "source_text": ""
+      }
+    ],
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "raw_nodes": [
+          {
+            "title": "",
+            "level": "",
+            "parent": "",
+            "source_text": ""
+          }
+        ],
+        "units": [
+          {
+            "unit_id": "U1",
+            "unit_name": "Unit heading from source",
+            "marks": null,
+            "explicit_chapters": [
+              ""
+            ],
+            "headings": [
+              ""
+            ],
+            "possible_chapters": [
+              ""
+            ],
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "key_concepts": [
+              ""
+            ]
+          }
+        ]
+      }
+    ],
+    "formative_only_content": [
+      {
+        "title": "",
+        "source_text": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "practicals": [
+      {
+        "title": "",
+        "source_text": "",
+        "related_unit": "",
+        "related_chapter": ""
+      }
+    ],
+    "activities": [
+      {
+        "title": "",
+        "source_text": "",
+        "related_unit": "",
+        "related_chapter": ""
+      }
+    ],
+    "projects": [
+      {
+        "title": "",
+        "source_text": "",
+        "related_unit": "",
+        "related_chapter": ""
+      }
+    ],
+    "assessment_information": {
+      "marks_distribution": [
+        ""
+      ],
+      "excluded_or_non_assessed_content": [
+        ""
+      ],
+      "teacher_notes": [
+        ""
+      ]
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 3072
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract all curriculum text into structured raw entities without losing content.\n\nCapture:\n- document_metadata\n- raw nodes with title, level, parent, source_text\n- class / grade\n- subject\n- units\n- explicit chapters\n- headings\n- possible chapters\n- topics\n- subtopics\n- key concepts\n- formative-only content\n- practicals\n- activities\n- projects\n- assessment information\n- marks distribution\n- notes for teachers\n- excluded / non-assessed content\n\nRules:\n- Preserve source hierarchy exactly as it appears\n- Extract raw nodes as document-structure evidence before any interpretation\n- Do not decide final hierarchy only from bold text or heading style\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 1 of 3; extract only what is present in this chunk\n\n\nCurriculum source text:\n--- Page 1 ---\nPHYSICS Subject Code – 042 Class XI-XII (2025-26) Senior Secondary stage of school education is a stage of transition from general education to discipline-based focus on curriculum. The present updated syllabus keeps in view the rigor and depth of disciplinary approach as well as the comprehension level of learners. Due care has also been taken that the syllabus is comparable to the international standards. Salient features of the syllabus include:  Emphasis on basic conceptual understanding of the content.  Emphasis on use of SI units, symbols, nomenclature of physical quantities and formulations as per international standards.  Providing logical sequencing of units of the subject matter and proper placement of concepts with their linkage for better learning.  Reducing the curriculum load by eliminating overlapping of concepts/content within the discipline and other disciplines.  Promotion of process-skills, problem-solving abilities and applications of Physics concepts. Besides, the syllabus also attempts to Strengthen the concepts developed at the secondary stage to provide firm foundation for further learning in the subject. Expose the learners to different processes used in Physics-related industrial and technological applications. Develop process-skills and experimental, observational, manipulative, decision making and investigatory skills in the learners. Promote problem solving abilities and creative thinking in learners. Develop conceptual competence in the learners and make them realize and appreciate the interface of Physics with other disciplines. Class XI-XII (2026-27)\n\n--- Page 2 ---\nPHYSICS (Code No. 042) COURSE STRUCTURE Time: 3 hrs. Max Marks: 70 UNIT CHAPTERS MARKS Unit–I Physical World and Measurement 23 Chapter–1: Units and Measurements Unit-II Kinematics Chapter–2: Motion in a Straight Line Chapter–3: Motion in a Plane Unit–III Laws of Motion Chapter–4: Laws of Motion Unit–IV Work, Energy and Power 17 Chapter–5: Work, Energy and Power Unit–V Motion of System of Particles and Rigid Body Chapter–6: System of Particles and Rotational Motion Unit-VI Gravitation Chapter–7: Gravitation Unit–VII Properties of Bulk Matter 20 Chapter–8: Mechanical Properties of Solids Chapter–9: Mechanical Properties of Fluids Chapter–10: Thermal Properties of Matter Unit–VIII Thermodynamics Chapter–11: Thermodynamics Unit–IX Behaviour of Perfect Gases and Kinetic Theory of Gases Chapter–12: Kinetic Theory Unit–X Oscillations and Waves 10 Chapter–13: Oscillations Chapter–14: Waves Total 70 Class XI - 2026-27 (Theory)\n\n--- Page 3 ---\nUnit I: Physical World and Measurements Chapter–1: Units and Measurements Need for measurement: Units of measurement; systems of units; SI units, fundamental and derived units. significant figures, Determining the uncertainty in result . Dimensions of physical quantities, dimensional analysis and its applications. Unit II: Kinematics Chapter–2: Motion in a Straight Line Frame of reference, Motion in a straight line, Elementary concepts of differentiation and integration for describing motion, uniform and non- uniform motion, average speed and average velocity and instantaneous velocity, uniformly accelerated motion, velocity - time and position-time graphs. Relations for uniformly accelerated motion (graphical and calculus treatment). Chapter–3: Motion in a Plane Scalar and vector quantities; position and displacement vectors, general vectors and their notations; equality of vectors, multiplication of vectors by a real number; addition and subtraction of vectors, Unit vector; resolution of a vector in a plane, rectangular components, Scalar and Vector product of vectors. Motion in a plane, cases of uniform velocity and uniform acceleration- projectile motion, uniform circular motion. Unit III: Laws of Motion Chapter–4: Laws of Motion Intuitive concept of force, Inertia, Newton's first law of motion; momentum and Newton's second law of motion; impulse; Newton's third law of motion. Law of conservation of linear momentum and its applications. Equilibrium of concurrent forces, Static and kinetic friction, laws of friction, rolling friction, lubrication. Dynamics of uniform circular motion: Centripetal force, examples of circular motion (vehicle on a level circular road, vehicle on a banked road).\n\n--- Page 4 ---\nUnit IV: Work, Energy and Power Chapter– 5: Work, Energy and Power Work done by a constant force and a variable force; kinetic energy, work- energy theorem, power. Notion of potential energy, potential energy of a spring, conservative forces: non-conservative forces, motion in a vertical circle; elastic and inelastic collisions in one and two dimensions. Unit V: Motion of System of Particles and Rigid Body Chapter–6: System of Particles and Rotational Motion Centre of mass of a two-particle system, momentum conservation and Centre of mass motion. Centre of mass of a rigid body; centre of mass of a uniform rod. Moment of a force, torque, angular momentum, law of conservation of angular momentum and its applications. Equilibrium of rigid bodies, rigid body rotation and equations of rotational motion, comparison of linear and rotational motions. Moment of inertia, radius of gyration, values of moments of inertia for simple geometrical objects (no derivation). Unit VI: Gravitation Chapter – 7: Gravitation Kepler's laws of planetary motion, universal law of gravitation. Acceleration due to gravity and its variation with altitude and depth. Gravitational potential energy and gravitational potential, escape speed, orbital velocity of a satellite, energy of an orbiting satellite. Unit VII: Properties of Bulk Matter Chapter–8: Mechanical Properties of Solids Elasticity, Stress-strain relationship, Hooke's law, Young’s modulus, bulk modulus, shear modulus of rigidity (qualitative idea only), Poisson's ratio; elastic energy. Application of elastic behavior of materials (qualitative idea only).\n\n--- Page 5 ---\nChapter–9: Mechanical Properties of Fluids Pressure due to a fluid column; Pascal's law and its applications (hydraulic lift and hydraulic brakes), effect of gravity on fluid pressure. Viscosity, Stokes' law, terminal velocity, streamline and turbulent flow, critical velocity, Bernoulli's theorem and its simple applications (Torricelli's law and Dynamic lift). Surface energy and surface tension, angle of contact, excess of pressure across a curved surface, application of surface tension ideas to drops, bubbles and capillary rise. Chapter–10: Thermal Properties of Matter Heat, temperature, thermal expansion; thermal expansion of solids, liquids and gases, anomalous expansion of water; specific heat capacity; Cp, Cv - calorimetry; change of state - latent heat capacity. Heat transfer-conduction, convection and radiation, thermal conductivity, qualitative ideas of Blackbody radiation, Wein's displacement Law, Stefan's law. Unit VIII: Thermodynamics Chapter–11: Thermodynamics Thermal equilibrium and definition of temperature, zeroth law of thermodynamics, heat, work and internal energy. First law of thermodynamics, Second law of thermodynamics: Thermodynamic state variable and equation of state. Change of condition of gaseous state - isothermal, adiabatic, reversible, irreversible, and cyclic processes. Unit IX: Behavior of Perfect Gases and Kinetic Theory of Gases Chapter–12: Kinetic Theory Equation of state of a perfect gas, work done in compressing a gas. Kinetic theory of gases - assumptions, concept of pressure. Kinetic interpretation of temperature; rms speed of gas molecules; degrees of freedom, law of equi-partition of energy (statement only) and application to specific heat capacities of gases; concept of mean free path, Avogadro's number.\n\n--- Page 6 ---\nUnit X: Oscillations and Waves Chapter–13: Oscillations Periodic motion - time period, frequency, displacement as a function of time, periodic functions and their applications. Simple harmonic motion (S.H.M), uniform circular motion and its equations of motion; phase; oscillations of a loaded spring- restoring force and force constant; energy in S.H.M. Kinetic and potential energies; simple pendulum derivation of expression for its time period. Chapter–14: Waves Wave motion: Transverse and longitudinal waves, speed of travelling wave, displacement relation for a progressive wave, principle of superposition of waves, reflection of waves, standing waves in strings and organ pipes, fundamental mode and harmonics, Beats.\n\n--- Page 7 ---\nPRACTICALS The record, to be submitted by the students, at the time of their annual examination, has to include: • Record of at least 8 Experiments [with 4 from each section], to be performed by the students. • Record of at least 6 Activities [with 3 each from section A and section B], to be performed by the students. • Report of the project carried out by the students. EVALUATION SCHEME Time 3 hours Max. Marks: 30 Topic Marks Two experiments one from each section 7+7 Practical record (experiment and activities) 5 One activity from any section 3 Investigatory Project 3 Viva on experiments, activities and project 5 Total 30 SECTION–A Experiments 1. To measure diameter of a small spherical/cylindrical body and to measure internal diameter and depth of a given beaker/calorimeter using Vernier Callipers and hence find its volume. 2. To measure diameter of a given wire and thickness of a given sheet using screw gauge. 3. To determine volume of an irregular lamina using screw gauge. 4. To determine radius of curvature of a given spherical surface by a spherometer. 5. To determine the mass of two different objects using a beam balance. 6. To find the weight of a given body using parallelogram law of vectors.\n\n--- Page 8 ---\n7. Using a simple pendulum, plot its graph and use it to find the effective length of second's pendulum. 8. To study variation of time period of a simple pendulum of a given length by taking bobs of same size but different masses and interpret the result. 9. To study the relationship between force of limiting friction and normal reaction and to find the co- efficient of friction between a block and a horizontal surface. 10. To find the downward force, along an inclined plane, acting on a roller due to gravitational pull of the earth and study its relationship with the angle of inclination θ by plotting graph between force and Sinθ. Activities 1. To make a paper scale of given least count, e.g., 0.2cm, 0.5 cm. 2. To determine mass of a given body using a metre scale by principle of moments. 3. To plot a graph for a given set of data, with proper choice of scales and error bars. 4. To measure the force of limiting friction for rolling of a roller on a horizontal plane. 5. To study the variation in range of a projectile with angle of projection. 6. To study the conservation of energy of a ball rolling down on an inclined plane (using a double inclined plane). 7. To study dissipation of energy of a simple pendulum by plotting a graph between square of amplitude and time.\n\n--- Page 9 ---\nSECTION–B Experiments 1. To determine Young's modulus of elasticity of the material of a given wire. 2. To find the force constant of a helical spring by plotting a graph between load and extension. 3. To study the variation in volume with pressure for a sample of air at constant temperature by plotting graphs between P and V, and between P and 1/V. 4. To determine the surface tension of water by capillary rise method. 5. To determine the coefficient of viscosity of a given viscous liquid by measuring terminal velocity of a given spherical body. 6. To study the relationship between the temperature of a hot body and time by plotting a cooling curve. 7. To determine specific heat capacity of a given solid by method of mixtures. 8. To study the relation between frequency and length of a given wire under constant tension using sonometer. 9. To study the relation between the length of a given wire and tension for constant frequency using sonometer. 10. To f\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"raw_nodes\": [\n    {\n      \"title\": \"\",\n      \"level\": \"\",\n      \"parent\": \"\",\n      \"source_text\": \"\"\n    }\n  ],\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"raw_nodes\": [\n        {\n          \"title\": \"\",\n          \"level\": \"\",\n          \"parent\": \"\",\n          \"source_text\": \"\"\n        }\n      ],\n      \"units\": [\n        {\n          \"unit_id\": \"U1\",\n          \"unit_name\": \"Unit heading from source\",\n          \"marks\": null,\n          \"explicit_chapters\": [\n            \"\"\n          ],\n          \"headings\": [\n            \"\"\n          ],\n          \"possible_chapters\": [\n            \"\"\n          ],\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"key_concepts\": [\n            \"\"\n          ]\n        }\n      ]\n    }\n  ],\n  \"formative_only_content\": [\n    {\n      \"title\": \"\",\n      \"source_text\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"practicals\": [\n    {\n      \"title\": \"\",\n      \"source_text\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\"\n    }\n  ],\n  \"activities\": [\n    {\n      \"title\": \"\",\n      \"source_text\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\"\n    }\n  ],\n  \"projects\": [\n    {\n      \"title\": \"\",\n      \"source_text\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\"\n    }\n  ],\n  \"assessment_information\": {\n    \"marks_distribution\": [\n      \"\"\n    ],\n    \"excluded_or_non_assessed_content\": [\n      \"\"\n    ],\n    \"teacher_notes\": [\n      \"\"\n    ]\n  }\n}"
+    }
+  ]
+}

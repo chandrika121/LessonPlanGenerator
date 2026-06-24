@@ -1,0 +1,37 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_name": "",
+        "classified_blocks": [
+          {
+            "source_heading": "",
+            "source_text_excerpt": "",
+            "classification": "unit",
+            "confidence": 0,
+            "parent_unit": "",
+            "parent_chapter": ""
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 2: Heading Classification - Class 2\nReturn compact JSON only.\nClassify headings and content blocks for this class only.\n\nRules:\n- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown\n- a valid chapter should be short and source-grounded\n- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter\n- classify from structural and textual signals, not just heading style\n- source_text_excerpt must be at most 180 characters\n- no explanations\n- no repeated raw text\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"Geography - Contemporary India - I\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Physical Features and Environment\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"India – Size and Location\",\n        \"Physical Features of India\",\n        \"Drainage\",\n        \"Climate\",\n        \"Natural Vegetation and Wildlife\"\n      ],\n      \"topics\": [\n        \"Location impacts climate and time\",\n        \"Trading relationships with neighbors\",\n        \"Time meridian (82.5E)\",\n        \"Physical features influence livelihoods\",\n        \"Geological processes\",\n        \"River systems and lakes\",\n        \"Monsoon winds and rainfall\"\n      ],\n      \"subtopics\": [\n        \"Map pointing: States, Capitals, Tropic of Cancer, Standard Meridian, Neighbouring Countries\",\n        \"Map pointing: Mountain Ranges (Karakoram, Zanskar, Shivalik, Aravali, Vindhya, Satpura, Ghats)\",\n        \"Map pointing: Peaks (K2, Kanchan Junga, Anai Mudi), Plateaus, Coastal Plains\",\n        \"Map pointing: Rivers (Indus, Ganges, Sutlej, Narmada, Tapti, Kaveri, Krishna, Godavari, Mahanadi)\",\n        \"Map pointing: Lakes (Wular, Pulicat, Sambar, Chilika)\"\n      ]\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Population and Resources\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Population\"\n      ],\n      \"topics\": [\n        \"Uneven distribution of population\",\n        \"Factors affecting density\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_name\": \"\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"\",\n          \"source_text_excerpt\": \"\",\n          \"classification\": \"unit\",\n          \"confidence\": 0,\n          \"parent_unit\": \"\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

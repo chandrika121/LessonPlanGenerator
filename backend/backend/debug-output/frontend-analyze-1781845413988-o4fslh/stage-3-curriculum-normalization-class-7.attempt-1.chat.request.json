@@ -1,0 +1,63 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_id": "",
+        "unit_name": "",
+        "marks": null,
+        "chapters": [
+          {
+            "chapter_id": "",
+            "chapter_name": "",
+            "source_heading": "",
+            "is_normalized": false,
+            "confidence": 0,
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - Class 7\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- long paragraph-like chapter names must be reclassified into topics\n- chapter names must remain source-grounded\n- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks\n- never create new chapter names from topics or subtopics\n- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true\n- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented\n\nRaw class extraction:\n{\n  \"class_name\": \"X\",\n  \"subject\": \"Political Science - Democratic Politics-II\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Power and Democracy\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Power-sharing Federalism\",\n        \"Gender, Religion and Caste\"\n      ],\n      \"topics\": [\n        \"Need for power sharing in democracy\",\n        \"Challenges in Belgium and Sri Lanka\",\n        \"Federalism in India\",\n        \"Role of Gender, religion and Caste in Democracy\"\n      ],\n      \"subsections\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Political Systems\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Political Parties\",\n        \"Outcomes of Democracy\"\n      ],\n      \"topics\": [\n        \"Process of parties getting elected\",\n        \"Right to vote and duties as citizens\",\n        \"Success depends on quality of government, economic well-being, inequality\"\n      ],\n      \"subsections\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"class_name\": \"Class 7\",\n  \"units\": [\n    {\n      \"unit_name\": \"Power and Democracy\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Need for power sharing in democracy\",\n          \"source_text_excerpt\": \"The need for power-sharing arises to ensure stability, prevent conflict, and accommodate diversity within a democratic framework.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Power and Democracy\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Challenges in Belgium and Sri Lanka\",\n          \"source_text_excerpt\": \"Belgium faced linguistic tensions while Sri Lanka experienced ethnic conflict due to unequal power distribution among groups.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Power and Democracy\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Federalism in India\",\n          \"source_text_excerpt\": \"India adopted federalism to manage its vast diversity through power-sharing between central and state governments.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Power and Democracy\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Role of Gender, religion and Caste in Democracy\",\n          \"source_text_excerpt\": \"Gender, religious, and caste identities significantly influence political participation and representation in democratic systems.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Power and Democracy\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_name\": \"Political Systems\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Process of parties getting elected\",\n          \"source_text_excerpt\": \"Election processes involve campaigning, voting mechanisms, and the role of political parties in contesting for power.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Political Systems\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Right to vote and duties as citizens\",\n          \"source_text_excerpt\": \"Citizens exercise their right to vote while fulfilling civic duties essential for a functioning democracy.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Political Systems\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Success depends on quality of government, economic well-being, inequality\",\n          \"source_text_excerpt\": \"Democratic success is measured by the quality of governance, level of economic development, and reduction in social inequalities.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Political Systems\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"unit_name\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"\",\n          \"chapter_name\": \"\",\n          \"source_heading\": \"\",\n          \"is_normalized\": false,\n          \"confidence\": 0,\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

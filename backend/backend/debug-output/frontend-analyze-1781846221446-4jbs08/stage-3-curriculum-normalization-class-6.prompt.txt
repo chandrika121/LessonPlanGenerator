@@ -1,0 +1,128 @@
+Stage 3: Curriculum Normalization - Class 6
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- Keep class_name exactly as in raw extraction
+- Keep subject exactly as in raw extraction
+- Keep every unit_name exactly as in raw extraction
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Geography - Contemporary India - II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Resources and Development of India",
+      "marks": 20,
+      "headings": [
+        "Chapter 1 Resources and Development",
+        "Chapter 2 Forest and Wildlife Resources",
+        "Chapter 3 Water resources",
+        "Chapter 4 Agriculture",
+        "Chapter 5 Minerals and energy Resources",
+        "Chapter 6 Manufacturing Industries",
+        "Chapter 7 Lifelines of National Economy"
+      ],
+      "possible_chapters": [
+        "Resources and Development",
+        "Forest and Wildlife Resources",
+        "Water resources",
+        "Agriculture",
+        "Minerals and Energy Resources",
+        "Manufacturing Industries",
+        "Lifelines of National Economy"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "Class 6",
+  "units": [
+    {
+      "unit_name": "Resources and Development of India",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter 1 Resources and Development",
+          "source_text_excerpt": "Chapter 1 Resources and Development",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Resources and Development of India",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 2 Forest and Wildlife Resources",
+          "source_text_excerpt": "Chapter 2 Forest and Wildlife Resources",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Resources and Development of India",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 3 Water resources",
+          "source_text_excerpt": "Chapter 3 Water resources",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Resources and Development of India",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 4 Agriculture",
+          "source_text_excerpt": "Chapter 4 Agriculture",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Resources and Development of India",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 5 Minerals and energy Resources",
+          "source_text_excerpt": "Chapter 5 Minerals and energy Resources",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Resources and Development of India",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 6 Manufacturing Industries",
+          "source_text_excerpt": "Chapter 6 Manufacturing Industries",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Resources and Development of India",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 7 Lifelines of National Economy",
+          "source_text_excerpt": "Chapter 7 Lifelines of National Economy",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Resources and Development of India",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

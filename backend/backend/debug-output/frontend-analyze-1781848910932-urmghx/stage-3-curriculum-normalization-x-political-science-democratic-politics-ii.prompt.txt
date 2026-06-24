@@ -1,0 +1,90 @@
+Stage 3: Curriculum Normalization - X - Political Science - Democratic Politics-II
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Political Science - Democratic Politics-II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Democracy and Governance",
+      "marks": 20,
+      "headings": [
+        "Chapter 1 Power-sharing Federalism",
+        "Chapter 3 Gender, Religion and Caste",
+        "Chapter 4 Political Parties",
+        "Chapter 5 Outcomes of Democracy"
+      ],
+      "possible_chapters": [
+        "Power-sharing Federalism",
+        "Gender, Religion and Caste",
+        "Political Parties",
+        "Outcomes of Democracy"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter 1 Power-sharing Federalism",
+          "source_text_excerpt": "Power-sharing Federalism is a key concept in democratic governance.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 3 Gender, Religion and Caste",
+          "source_text_excerpt": "Gender, religion and caste influence political participation.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 4 Political Parties",
+          "source_text_excerpt": "Political parties are essential for democratic functioning.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 5 Outcomes of Democracy",
+          "source_text_excerpt": "Outcomes of democracy include accountability and legitimacy.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

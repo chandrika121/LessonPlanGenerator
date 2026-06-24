@@ -1,0 +1,35 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "classified_blocks": [
+          {
+            "source_heading": "",
+            "source_text_excerpt": "",
+            "classification": "unit",
+            "confidence": 0,
+            "parent_chapter": ""
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 2: Heading Classification - IX - Science\nReturn compact JSON only.\nClassify headings and content blocks for this class only.\n\nRules:\n- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown\n- a valid chapter should be short and source-grounded\n- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter\n- classify from structural and textual signals, not just heading style\n- do not output units created by the model\n- do not create unit_name\n- do not rename parent_unit\n- only classify the existing Stage 1 items as chapter/topic/subtopic\n- if classification is chapter, source_heading must exactly come from Stage 1 extracted headings for this class\n- never rewrite, summarize, merge, or invent chapter names\n- source_text_excerpt must be at most 180 characters\n- no explanations\n- no repeated raw text\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"Science\",\n  \"part_or_section\": \"Annual Examination (80 Marks)\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Matter - Its Nature and Behaviour\",\n      \"marks\": 25,\n      \"explicit_chapters\": [],\n      \"headings\": [\n        \"Theme: Materials\",\n        \"Unit I: Matter-Nature and Behaviour\"\n      ],\n      \"possible_chapters\": [\n        \"Matter in Our Surroundings\",\n        \"Is Matter Around Us Pure\",\n        \"Atoms and Molecules\",\n        \"Structure of atom\"\n      ],\n      \"topics\": [\n        \"Definition of matter; Particulate Nature of Matter; States of Matter (solid, liquid, gas); change of state (melting, freezing, evaporation, condensation, sublimation)\",\n        \"Elements, compounds and mixtures. Heterogeneous and homogenous mixtures, colloids and suspensions\",\n        \"Physical and chemical changes\",\n        \"Atoms and molecules; Law of Chemical Combination; Chemical formulae; Atomic and molecular masses\",\n        \"Sub-atomic particles (Electrons, protons, neutrons); Models of atom; Valency; Atomic Number and Mass Number; Isotopes and Isobars\"\n      ],\n      \"subtopics\": [\n        \"Absorption of heat in melting; Cooling by evaporation\",\n        \"Pure and Impure substances\",\n        \"Chemical formula of common compounds\"\n      ],\n      \"key_concepts\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Organization in the Living World\",\n      \"marks\": 22,\n      \"explicit_chapters\": [],\n      \"headings\": [\n        \"Theme: The World of the Living\",\n        \"Unit II: Organization in the Living World\"\n      ],\n      \"possible_chapters\": [\n        \"Cell - Basic Unit of life\",\n        \"Tissues, Organs, Organ System, Organism\"\n      ],\n      \"topics\": [\n        \"Prokaryotic and eukaryotic cells; multicellular organisms\",\n        \"Cell membrane and cell wall; cell organelles (chloroplast, mitochondria, vacuoles, endoplasmic reticulum, Golgi apparatus); nucleus, chromosomes\"\n      ],\n      \"subtopics\": [\n        \"Structure and functions of animal tissues (four types)\",\n        \"Meristematic and Permanent tissues in plants\",\n        \"Health and Diseases: Infectious and Non-infectious diseases; Microbes (Virus, Bacteria, Protozoans); Pulse Polio programmes\"\n      ],\n      \"key_concepts\": []\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Motion, Force and Work\",\n      \"marks\": 27,\n      \"explicit_chapters\": [],\n      \"headings\": [\n        \"Theme: Moving Things, People and Ideas\",\n        \"Unit III: Motion, Force and Work\"\n      ],\n      \"possible_chapters\": [\n        \"Motion\",\n        \"Force and Newton's laws\",\n        \"Gravitation\",\n        \"Floatation\",\n        \"Work, Energy and Power\",\n        \"Sound\"\n      ],\n      \"topics\": [\n        \"Distance, displacement, velocity; uniform and non-uniform motion; acceleration; graphs (distance-time, velocity-time); circular motion\",\n        \"Newton's Laws of Motion; Action-Reaction forces; Inertia; Momentum; Force-Acceleration relationship\",\n        \"Universal Law of Gravitation; Acceleration due to Gravity; Mass vs Weight; Free fall\",\n        \"Thrust and Pressure; Archimedes' Principle; Buoyancy\",\n        \"Work done by a Force; Energy (Kinetic, Potential); Power; Conservation of energy\",\n        \"Nature of sound; propagation; speed of sound; ultrasound; reflection; echo\"\n      ],\n      \"subtopics\": [\n        \"Elementary idea of conservation of Momentum\",\n        \"Excluding commercial unit of Energy in Law of conservation of energy\"\n      ],\n      \"key_concepts\": []\n    },\n    {\n      \"unit_id\": \"U4\",\n      \"unit_name\": \"Food; Food Production\",\n      \"marks\": 6,\n      \"explicit_chapters\": [],\n      \"headings\": [\n        \"Theme: Food\",\n        \"Unit IV: Food Production\"\n      ],\n      \"possible_chapters\": [\n        \"Plant and animal breeding\",\n        \"Fertilizers and manures\",\n        \"Protection from pests and diseases\",\n        \"Organic farming\"\n      ],\n      \"topics\": [],\n      \"subtopics\": [],\n      \"key_concepts\": []\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"\",\n          \"source_text_excerpt\": \"\",\n          \"classification\": \"unit\",\n          \"confidence\": 0,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -1,0 +1,316 @@
+Stage 3: Curriculum Normalization - Class 1
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- long paragraph-like chapter names must be reclassified into topics
+- if no clear chapter exists under a unit, create a normalized short chapter and mark is_normalized = true
+- keep chapter names compact and academic
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Science",
+  "part_or_section": "Annual Examination (80 Marks)",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Matter - Its Nature and Behaviour",
+      "marks": 25,
+      "headings": [
+        "Theme: Materials",
+        "Unit I: Matter-Nature and Behaviour"
+      ],
+      "possible_chapters": [
+        "Matter in Our Surroundings",
+        "Is Matter Around Us Pure",
+        "Atoms and Molecules",
+        "Structure of atom"
+      ],
+      "topics": [
+        "Definition of matter; Particulate Nature of Matter; States of Matter (solid, liquid, gas); change of state (melting, freezing, evaporation, condensation, sublimation)",
+        "Elements, compounds and mixtures. Heterogeneous and homogenous mixtures, colloids and suspensions",
+        "Physical and chemical changes",
+        "Atoms and molecules; Law of Chemical Combination; Chemical formulae; Atomic and molecular masses",
+        "Sub-atomic particles (Electrons, protons, neutrons); Models of atom; Valency; Atomic Number and Mass Number; Isotopes and Isobars"
+      ],
+      "subtopics": [
+        "Absorption of heat in melting; cooling by evaporation",
+        "Pure and Impure substances",
+        "Excluding separating the components of a mixture"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Organization in the Living World",
+      "marks": 22,
+      "headings": [
+        "Theme: The World of the Living",
+        "Unit II: Organization in the Living World"
+      ],
+      "possible_chapters": [
+        "Cell - Basic Unit of life",
+        "Tissues, Organs, Organ System, Organism"
+      ],
+      "topics": [
+        "Prokaryotic and eukaryotic cells; multicellular organisms",
+        "Cell membrane and cell wall; cell organelles (chloroplast, mitochondria, vacuoles, endoplasmic reticulum, Golgi apparatus); nucleus; chromosomes"
+      ],
+      "subtopics": [
+        "Structure and functions of animal tissues (four types)",
+        "Meristematic and Permanent tissues in plants",
+        "Organs and Organ Systems"
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Motion, Force and Work",
+      "marks": 27,
+      "headings": [
+        "Theme: Moving Things, People and Ideas",
+        "Unit III: Motion, Force and Work"
+      ],
+      "possible_chapters": [
+        "Motion",
+        "Force and Newton's laws",
+        "Gravitation",
+        "Floatation",
+        "Work, Energy and Power",
+        "Sound"
+      ],
+      "topics": [
+        "Distance, displacement, velocity; uniform and non-uniform motion; acceleration; distance-time and velocity-time graphs; uniform circular motion",
+        "Newton's Laws of Motion; Action and Reaction forces; Inertia; Momentum; Force and Acceleration",
+        "Universal Law of Gravitation; Gravity; Acceleration due to Gravity; Mass and Weight; Free fall",
+        "Thrust, Pressure; Archimedes' Principle; Buoyancy",
+        "Work done by a Force; Energy (Kinetic and Potential); Power; Conservation of energy",
+        "Nature of sound; propagation in media; speed of sound; range of hearing; ultrasound; reflection; echo"
+      ],
+      "subtopics": [
+        "Excluding commercial unit of Energy",
+        "Elementary idea of conservation of Momentum (Formative only)"
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Food; Food Production",
+      "marks": 6,
+      "headings": [
+        "Theme: Food",
+        "Unit IV: Food Production"
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Plant and animal breeding and selection for quality improvement and management",
+        "Use of fertilizers and manures",
+        "Protection from pests and diseases",
+        "Organic farming"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "IX",
+  "units": [
+    {
+      "unit_name": "Matter - Its Nature and Behaviour",
+      "classified_blocks": [
+        {
+          "source_heading": "Theme: Materials",
+          "source_text_excerpt": "Theme: Materials",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Matter - Its Nature and Behaviour",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Unit I: Matter-Nature and Behaviour",
+          "source_text_excerpt": "Unit I: Matter-Nature and Behaviour",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_unit": "",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Matter in Our Surroundings",
+          "source_text_excerpt": "Definition of matter; Particulate Nature of Matter; States of Matter (solid, liquid, gas); change of state...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Matter - Its Nature and Behaviour",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Is Matter Around Us Pure",
+          "source_text_excerpt": "Elements, compounds and mixtures. Heterogeneous and homogenous mixtures...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Matter - Its Nature and Behaviour",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Atoms and Molecules",
+          "source_text_excerpt": "Physical and chemical changes; Atoms and molecules...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Matter - Its Nature and Behaviour",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Structure of atom",
+          "source_text_excerpt": "Atoms and molecules; Law of Chemical Combination... Sub-atomic particles...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Matter - Its Nature and Behaviour",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Organization in the Living World",
+      "classified_blocks": [
+        {
+          "source_heading": "Theme: The World of the Living",
+          "source_text_excerpt": "Theme: The World of the Living",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Organization in the Living World",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Unit II: Organization in the Living World",
+          "source_text_excerpt": "Unit II: Organization in the Living World",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_unit": "",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Cell - Basic Unit of life",
+          "source_text_excerpt": "Prokaryotic and eukaryotic cells; multicellular organisms...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Organization in the Living World",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Tissues, Organs, Organ System, Organism",
+          "source_text_excerpt": "Cell membrane and cell wall; cell organelles...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Organization in the Living World",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Motion, Force and Work",
+      "classified_blocks": [
+        {
+          "source_heading": "Theme: Moving Things, People and Ideas",
+          "source_text_excerpt": "Theme: Moving Things, People and Ideas",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Motion, Force and Work",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Unit III: Motion, Force and Work",
+          "source_text_excerpt": "Unit III: Motion, Force and Work",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_unit": "",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Motion",
+          "source_text_excerpt": "Distance, displacement, velocity; uniform and non-uniform motion...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Motion, Force and Work",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Force and Newton's laws",
+          "source_text_excerpt": "Newton's Laws of Motion; Action and Reaction forces...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Motion, Force and Work",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Gravitation",
+          "source_text_excerpt": "Universal Law of Gravitation; Gravity...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Motion, Force and Work",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Floatation",
+          "source_text_excerpt": "Thrust, Pressure; Archimedes' Principle...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Motion, Force and Work",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Work, Energy and Power",
+          "source_text_excerpt": "Work done by a Force; Energy...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Motion, Force and Work",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Sound",
+          "source_text_excerpt": "Nature of sound; propagation in media...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Motion, Force and Work",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Food; Food Production",
+      "classified_blocks": [
+        {
+          "source_heading": "Theme: Food",
+          "source_text_excerpt": "Theme: Food",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Food; Food Production",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Unit IV: Food Production",
+          "source_text_excerpt": "Unit IV: Food Production",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_unit": "",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Food; Food Production",
+          "source_text_excerpt": "Plant and animal breeding... Use of fertilizers...",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Food; Food Production",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

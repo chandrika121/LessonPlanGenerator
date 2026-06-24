@@ -1,0 +1,26 @@
+Stage 1: Raw Curriculum Extraction
+Return JSON only.
+Disable reasoning and answer directly.
+Extract only concise curriculum facts needed to build the hierarchy.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output intentionally small and concise
+- Never include topics, subtopics, key concepts, activities, projects, practical details, raw nodes, or long prose
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 2 of 4.1.2; extract only what is present in this chunk
+
+
+Curriculum source text:
+--- Page 9 ---
+SECTION–B Experiments 1. To determine Young's modulus of elasticity of the material of a given wire. 2. To find the force constant of a helical spring by plotting a graph between load and extension. 3. To study the variation in volume with pressure for a sample of air at constant temperature by plotting graphs between P and V, and between P and 1/V. 4. To determine the surface tension of water by capillary rise method. 5. To determine the coefficient of viscosity of a given viscous liquid by measuring terminal velocity of a given spherical body. 6. To study the relationship between the temperature of a hot body and time by plotting a cooling curve. 7. To determine specific heat capacity of a given solid by method of mixtures. 8. To study the relation between frequency and length of a given wire under constant tension using sonometer. 9. To study the relation between the length of a given wire and tension for constant frequency using sonometer. 10. To find the speed of sound in air at room temperature using a resonance tube by two resonance positions. Activities 1. To observe change of state and plot a cooling curve for molten wax. 2. To observe and explain the effect of heating on a bi-metallic strip. 3. To note the change in level of liquid in a container on heating and interpret the observations. 4. To study the effect of detergent on surface tension of water by observing capillary rise. 5. To study the factors affecting the rate of loss of heat of a liquid. 6. To study the effect of load on depression of a suitably clamped metre scale loaded at (i) its end (ii) in the middle. 7. To observe the decrease in pressure with increase in velocity of a fluid.

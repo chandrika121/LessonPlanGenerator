@@ -1,0 +1,55 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract only concise curriculum facts needed to build the hierarchy.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units and chapters in this input
+- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 3 of 9; extract only what is present in this chunk
+
+Curriculum source text:
+--- Page 9 ---
+9 ⮚ Compare and Contrast working of democracies of India and some other countries and discuss differences and similarities in each country. ⮚ Analyse and infer on the different historical processes and forces that have contributed for the promotion of democracy Chapter 2- Constitutional Design Learning Outcomes- The students will be able to  Discuss and describe the situation that led to creation of Indian Constitution  Enumerate the essential features that need to be kept in mind while drafting a constitution.  Examine the guiding values that created the Indian constitution  Comprehend the roles and responsibilities as citizens of India. Chapter 3- Electoral Politics Learning Outcomes- The students will be able to  Analyse the implications of power of vote and power of recall.  Summarise the essential features of the Indian Electoral system.  Examine the rationale for adopting the present Indian Electoral System. Chapter 4- Working of Institutions Learning Outcomes- The students will be able to ⮚ Examine the roles, responsibilities, and interdependency of all the 3 organs of the Government. ⮚ Appreciate the parliamentary system of executive’s accountability to the legislature. ⮚ Summarise and evaluate the rule of law in India. Chapter 5- Democratic Rights Learning Outcomes- The students will be able to  Summarise the importance of fundamental rights and duties in the light of the nation’s glory.  Analyse and recognise the role of a responsible citizen while performing their prescribed duties versus claiming rights. ECONOMICS Chapter 1- The Story of Village Palampur Learning Outcomes- The students will be able to  Enlist the requirements of production and comprehend the interdependence of these requirements.  Correlate farming and non-farming activities to economic growth.  Comprehend how the significance of conditions of farming and the factors of production impact economic development.  Find solutions to foster an equitable society.
+
+--- Page 10 ---
+10 Chapter 2- People as Resource Learning Outcomes- The students will be able to ⮚ Evaluate the reasons that contribute to the quality of population. ⮚ Observe different government schemes and see their effect on the people there. Chapter 3- Poverty as a Challenge Learning Outcomes- The students will be able to ⮚ Comprehend the reasons for poverty in the rural and urban areas. ⮚ Evaluate the efficacy of the government to eradicate poverty. ⮚ Correlate the link between education and poverty. Chapter 4- Food Security in India Learning Outcomes- The students will be able to ⮚ Comprehend various aspects of food security that will ensure continuity of supply ⮚ Enumerate the different features of PDS that directly address FSI. ⮚ Analyse and infer the impact of the Green Revolution. ⮚ Analyse causes and effect of famines in food security during pre and post independent India. CLASS IX (2025-26) MAP WORK Subject Chapter List of Areas to be located /labeled/identified on the map History French Revolution Outline political map of France. Locate/label/ identify. ● Bordeaux, Nantes, Paris and Marseille Socialism in Europe and the Russian Revolution Outline political map of the World. Locate/label/identify Major countries of First World War: Central Powers: Germany, Austria-Hungary, Turkey (Ottoman Empire). Allied Powers – France, England, Russia and USA Nazism and the Rise of Hitler Outline Political Map of World. Locate/label/ identify Major countries of Second World War Axis: Powers – Germany, Italy, Japan Allied Powers – UK, France, Former USSR, USA Geography India : size and location ● India – States and Capitals ● Tropic of Cancer, Standard Meridian (Location and Labeling) ● Neighbouring Countries India physical features ● Mountain Ranges: The Karakoram, The Zanskar, The Shivalik, The Aravali, The Vindhya, The Satpura, Western and Eastern Ghats ● Mountain Peaks-K2, Kanchan Junga, Anai Mudi
+
+--- Page 11 ---
+11 ● Plateau – Deccan Plateau, Chota Nagpur Plateau, Malwa Plateau ● Coastal Plains – Konkan, Malabar, Coromandel & Northen Circar (Location and Labelling) Drainage system Rivers (Identification only) ● The Himalayan River Systems – Indus, Ganges & Sutlej ● The Peninsular Rivers – The Narmada, The Tapti, The Kaveri, The Krishna, The Godavari, The Mahanadi ● Lakes – Wular, Pulicat, Sambar, Chilika Climate ● Annual rainfall in India, Monsoon wind direction Population ● Population density of all states ● The state having highest and lowest density of population Note- The Maps available in the website of Govt. of India may be used. CLASS IX (2025-26) INTERNAL ASSESSMENT: 20 MARKS Type of Assessment Description Marks Periodic Assessment Pen Paper Test 5 Multiple Assessment Quiz, debate, role play, viva-voce, group discussion, visual expression, interactive bulletin boards, gallery walks, exit cards, concept maps, peer assessment, self- assessment etc. through interdisciplinary project 5 Subject Enrichment Activity Project work (Interdisciplinary)-Disaster Management 5 Portfolio Classroom, work done (activities/assignments) reflections, narrations, journals etc. Achievements of the student in the subject throughout the year. Participation of the student in different activities like Heritage India quiz etc. 5 CLASS IX PRESCRIBED TEXT BOOKS S. No. Subject Name of the Book Publisher 1 History India and the Contemporary World-I NCERT 2 Political Science Democratic Politics-I NCERT 3 Geography Contemporary India-I NCERT 4 Economics Economics NCERT 5 Disaster Management Together, towards a safer India- Part II CBSE
+
+--- Page 12 ---
+12 CLASS X -2025-26 COURSE STRUCTURE History (India and the Contemporary World - II) 20 Marks inclusive of map pointing Section Chapter No. Chapter name Marks I Events and processes I The Rise of Nationalism in Europe 18+2 map pointing II Nationalism in India II Livelihoods, Economies and Societies III The Making of a Global World ( To be evaluated in the Board Examination Subtopics: 1 to 1.3 Pre Modern World to Conquest, disease and trade) Interdisciplinary project as part of multiple assessments (Internally assessed for 5 marks) Subtopics 2 to 4.4 –The nineteenth century (1815-1914) to end of Bretton Woods & the beginning of “Globalisation” IV The Age of Industrialisation ( To be assessed as part of Periodic Assessment only ) III. Everyday Life, Culture and politics V Print Culture and the Modern world Geography (Contemporary India - II) Marks - 20 inclusive map pointing Chapter No. Chapter Name Marks 1 Resources and Development 17+3 map pointing 2 Forest and Wildlife Resources 3 Water resources 4 Agriculture 5 Minerals and energy Resources 6 Manufacturing Industries 7 Lifelines of National Economy (Only map pointing to be evaluated in the Board Examination)

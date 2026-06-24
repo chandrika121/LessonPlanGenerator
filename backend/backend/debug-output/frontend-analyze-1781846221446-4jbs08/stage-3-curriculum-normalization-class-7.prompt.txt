@@ -1,0 +1,98 @@
+Stage 3: Curriculum Normalization - Class 7
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- Keep class_name exactly as in raw extraction
+- Keep subject exactly as in raw extraction
+- Keep every unit_name exactly as in raw extraction
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Political Science - Democratic Politics-II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Democracy and Governance",
+      "marks": 20,
+      "headings": [
+        "Chapter I Power-sharing Federalism",
+        "Chapter II Gender, Religion and Caste",
+        "Chapter III Political Parties",
+        "Chapter IV Outcomes of Democracy"
+      ],
+      "possible_chapters": [
+        "Power-sharing Federalism",
+        "Gender, Religion and Caste",
+        "Political Parties",
+        "Outcomes of Democracy"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "Class 7",
+  "units": [
+    {
+      "unit_name": "Democracy and Governance",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter I Power-sharing Federalism",
+          "source_text_excerpt": "Power-sharing is a key feature of democracy. It ensures that no single group dominates the political system.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Democracy and Governance",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter II Gender, Religion and Caste",
+          "source_text_excerpt": "Social divisions like gender, religion, and caste affect political outcomes in democracies.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Democracy and Governance",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter III Political Parties",
+          "source_text_excerpt": "Political parties are essential for democracy as they organize elections and formulate policies.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Democracy and Governance",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter IV Outcomes of Democracy",
+          "source_text_excerpt": "This chapter discusses whether democracy delivers better outcomes compared to other forms of government.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Democracy and Governance",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

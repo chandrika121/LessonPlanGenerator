@@ -1,0 +1,56 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "chapters": [
+          {
+            "source_chapter_name": "",
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - IX - History - India and the Contemporary World - I\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- Stage 3 is a restructuring step, not a content generation step\n- Preserve the source hierarchy exactly\n- long paragraph-like chapter names must be reclassified into topics\n- use unit_id from Stage 1 only\n- use only chapter names already present in Stage 1 possible_chapters\n- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name\n- never create new class names, subject names, unit names, or chapter names\n- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented\n- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"History - India and the Contemporary World - I\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Events and Processes\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"The French Revolution\",\n        \"Socialism in Europe and the Russian Revolution\",\n        \"Nazism and the Rise of Hitler\"\n      ],\n      \"topics\": [\n        \"Impact on European countries\",\n        \"Quest for imperialism and First World War\",\n        \"Rise of communism and collectivization\",\n        \"Role of philosophers and leaders\",\n        \"Treaty of Versailles\",\n        \"Genocidal war\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Livelihood, Economies and Societies\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Forest Society and Colonialism\",\n        \"Pastoralists in the Modern World\"\n      ],\n      \"topics\": [\n        \"Nomadic societies\",\n        \"Climatic conditions and topography\",\n        \"Impact of colonialism on pastoralists\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Events and Processes\",\n          \"source_text_excerpt\": \"Unit covering major historical events including the French Revolution, socialism in Europe, Russian Revolution, Nazism, and Hitler.\",\n          \"classification\": \"unit\",\n          \"confidence\": 1,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"The French Revolution\",\n          \"source_text_excerpt\": \"A major historical event involving the overthrow of the monarchy in France and significant social changes.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Socialism in Europe and the Russian Revolution\",\n          \"source_text_excerpt\": \"The rise of socialist ideologies across Europe culminating in the Bolshevik revolution in Russia.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Nazism and the Rise of Hitler\",\n          \"source_text_excerpt\": \"The emergence of National Socialism in Germany under Adolf Hitler's leadership.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Impact on European countries\",\n          \"source_text_excerpt\": \"Analysis of how the French Revolution influenced neighboring nations and altered political landscapes.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Quest for imperialism and First World War\",\n          \"source_text_excerpt\": \"The drive for colonial expansion leading to global conflict known as the Great War.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Rise of communism and collectivization\",\n          \"source_text_excerpt\": \"The establishment of communist regimes in Russia and the forced consolidation of agriculture.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Role of philosophers and leaders\",\n          \"source_text_excerpt\": \"Key figures who shaped revolutionary thought and political movements during this era.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Treaty of Versailles\",\n          \"source_text_excerpt\": \"The peace treaty that officially ended World War I and imposed terms on Germany.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Genocidal war\",\n          \"source_text_excerpt\": \"The systematic destruction of populations during the conflicts described in this unit.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Livelihood, Economies and Societies\",\n          \"source_text_excerpt\": \"Unit examining the relationship between economic systems, social structures, and environmental factors.\",\n          \"classification\": \"unit\",\n          \"confidence\": 1,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Forest Society and Colonialism\",\n          \"source_text_excerpt\": \"The impact of colonial rule on indigenous forest-dwelling communities.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Pastoralists in the Modern World\",\n          \"source_text_excerpt\": \"The evolution and challenges faced by nomadic pastoralist groups in contemporary times.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Nomadic societies\",\n          \"source_text_excerpt\": \"Groups characterized by their movement and lack of permanent settlement.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Climatic conditions and topography\",\n          \"source_text_excerpt\": \"Environmental factors influencing the livelihoods of pastoralist communities.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Impact of colonialism on pastoralists\",\n          \"source_text_excerpt\": \"How British and other colonial policies disrupted traditional nomadic lifestyles.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"chapters\": [\n        {\n          \"source_chapter_name\": \"\",\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

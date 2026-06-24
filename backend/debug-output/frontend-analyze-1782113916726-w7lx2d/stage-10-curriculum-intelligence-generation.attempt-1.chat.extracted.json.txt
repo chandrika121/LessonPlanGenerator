@@ -1,0 +1,256 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Some Basic Concepts of Chemistry",
+      "prerequisites": [],
+      "dependent_topics": ["Structure of Atom", "Chemical Bonding and Molecular Structure"]
+    },
+    {
+      "topic": "Structure of Atom",
+      "prerequisites": ["Some Basic Concepts of Chemistry"],
+      "dependent_topics": ["Classification of Elements and Periodicity in Properties", "Chemical Bonding and Molecular Structure"]
+    },
+    {
+      "topic": "Classification of Elements and Periodicity in Properties",
+      "prerequisites": ["Structure of Atom"],
+      "dependent_topics": ["d-and f-Block Elements", "Coordination Compounds"]
+    },
+    {
+      "topic": "Chemical Bonding and Molecular Structure",
+      "prerequisites": ["Some Basic Concepts of Chemistry", "Structure of Atom"],
+      "dependent_topics": ["Hydrocarbons", "Alcohols, Phenols and Ethers", "Coordination Compounds"]
+    },
+    {
+      "topic": "Thermodynamics",
+      "prerequisites": [],
+      "dependent_topics": ["Equilibrium", "Chemical Kinetics"]
+    },
+    {
+      "topic": "Equilibrium",
+      "prerequisites": ["Some Basic Concepts of Chemistry", "Thermodynamics"],
+      "dependent_topics": ["Solutions", "Electrochemistry", "Ionic Equilibria (Acids/Bases)"]
+    },
+    {
+      "topic": "Redox Reactions",
+      "prerequisites": [],
+      "dependent_topics": ["Electrochemistry", "d-and f-Block Elements"]
+    },
+    {
+      "topic": "Organic Chemistry: Some basic Principles and Techniques",
+      "prerequisites": ["Some Basic Concepts of Chemistry"],
+      "dependent_topics": ["Hydrocarbons", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers"]
+    },
+    {
+      "topic": "Hydrocarbons",
+      "prerequisites": ["Organic Chemistry: Some basic Principles and Techniques"],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Solutions",
+      "prerequisites": ["Some Basic Concepts of Chemistry", "Equilibrium"],
+      "dependent_topics": ["Electrochemistry"]
+    },
+    {
+      "topic": "Chemical Kinetics",
+      "prerequisites": [],
+      "dependent_topics": []
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "chapter_name": "Some Basic Concepts of Chemistry",
+      "difficulty_level": "Foundational / Low",
+      "concept_density": "High (Definitions, Laws, Calculations)",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Measurement and Uncertainty exercises",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Structure of Atom",
+      "chapter_name": "Structure of Atom",
+      "difficulty_level": "Moderate / High (Abstract)",
+      "concept_density": "High (Quantum Mechanics, Models)",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Spectrum analysis concepts",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "chapter_name": "Classification of Elements and Periodicity in Properties",
+      "difficulty_level": "Moderate (Pattern Recognition)",
+      "concept_density": "High (Trends, Configurations)",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Periodic table trends analysis",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "chapter_name": "Chemical Bonding and Molecular Structure",
+      "difficulty_level": "High (Spatial Reasoning)",
+      "concept_density": "Very High (Theories, Geometry)",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Molecular model building",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Chemical Thermodynamics",
+      "difficulty_level": "High (Mathematical)",
+      "concept_density": "Moderate to High (Equations, Laws)",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Calorimetry concepts",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Equilibrium",
+      "chapter_name": "Equilibrium",
+      "difficulty_level": "High (Dynamic Systems)",
+      "concept_density": "Very High (Constants, Shifts)",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "pH and Equilibrium shifts",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Redox Reactions",
+      "chapter_name": "Redox Reactions",
+      "difficulty_level": "Moderate (Procedural)",
+      "concept_density": "Moderate (Balancing, Oxidation States)",
+      "estimated_teaching_hours": 10,
+      "estimated_sessions": 5,
+      "practical_requirement": "Redox titration basics",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapter_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "difficulty_level": "Moderate (Nomenclature, Mechanisms)",
+      "concept_density": "High (Rules, Isomerism)",
+      "estimated_teaching_hours": 18,
+      "estimated_sessions": 9,
+      "practical_requirement": "Qualitative analysis of organics",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Hydrocarbons",
+      "chapter_name": "Hydrocarbons",
+      "difficulty_level": "High (Reaction Mechanisms)",
+      "concept_density": "Very High (Reactions, Isomers)",
+      "estimated_teaching_hours": 20,
+      "estimated_sessions": 10,
+      "practical_requirement": "Tests for unsaturation",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Solutions",
+      "chapter_name": "Solutions",
+      "difficulty_level": "Moderate (Calculations)",
+      "concept_density": "High (Colligative Properties)",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Molar mass determination experiments",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Electrochemistry",
+      "chapter_name": "Electrochemistry",
+      "difficulty_level": "High (Nernst Equation)",
+      "concept_density": "Very High (Cells, Conductance)",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Conductivity and Cell potential",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Chemical Kinetics",
+      "chapter_name": "Chemical Kinetics",
+      "difficulty_level": "High (Mathematical Derivations)",
+      "concept_density": "Moderate to High (Rate Laws, Arrhenius)",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Reaction rate experiments",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "d-and f-Block Elements",
+      "chapter_name": "d-and f-Block Elements",
+      "difficulty_level": "Moderate (Properties)",
+      "concept_density": "High (Electronic Config, Oxidation States)",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Color and magnetic property tests",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Coordination Compounds",
+      "chapter_name": "Coordination Compounds",
+      "difficulty_level": "High (Nomenclature, Bonding)",
+      "concept_density": "Very High (Isomerism, Theories)",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Synthesis of coordination compounds",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Haloalkanes and Haloarenes",
+      "chapter_name": "Haloalkanes and Haloarenes",
+      "difficulty_level": "Moderate to High (Substitution/Elimination)",
+      "concept_density": "High (Mechanisms, Reactivity)",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Preparation of haloalkanes",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Alcohols, Phenols and Ethers",
+      "chapter_name": "Alcohols, Phenols and Ethers",
+      "difficulty_level": "Moderate to High (Acidity/Reactivity)",
+      "concept_density": "High (Preparation, Reactions)",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Tests for alcohols and phenols",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Aldehydes, Ketones and Carboxylic Acids",
+      "chapter_name": "Carbonyl Compounds / Carboxylic Acids",
+      "difficulty_level": "High (Nucleophilic Addition)",
+      "concept_density": "Very High (Reactions, Synthesis)",
+      "estimated_teaching_hours": 20,
+      "estimated_sessions": 10,
+      "practical_requirement": "Preparation of derivatives",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Amines",
+      "chapter_name": "Amines",
+      "difficulty_level": "Moderate to High (Basicity, Diazonium)",
+      "concept_density": "High (Synthesis, Reactions)",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Diazotization reactions",
+      "assessment_requirement": "Summative"
+    },
+    {
+      "unit_name": "Biomolecules",
+      "chapter_name": "Biomolecules",
+      "difficulty_level": "Moderate (Structures)",
+      "concept_density": "High (Polymers, Functions)",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Qualitative tests for biomolecules",
+      "assessment_requirement": "Summative"
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [],
+    "invalid_chapter_names": []
+  }
+}

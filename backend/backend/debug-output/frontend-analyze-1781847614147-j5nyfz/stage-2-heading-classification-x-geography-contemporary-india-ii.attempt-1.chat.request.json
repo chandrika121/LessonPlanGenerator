@@ -1,0 +1,35 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "classified_blocks": [
+          {
+            "source_heading": "",
+            "source_text_excerpt": "",
+            "classification": "unit",
+            "confidence": 0,
+            "parent_chapter": ""
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 2: Heading Classification - X - Geography - Contemporary India - II\nReturn compact JSON only.\nClassify headings and content blocks for this class only.\n\nRules:\n- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown\n- a valid chapter should be short and source-grounded\n- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter\n- classify from structural and textual signals, not just heading style\n- do not output units created by the model\n- do not create unit_name\n- do not rename parent_unit\n- only classify the existing Stage 1 items as chapter/topic/subtopic\n- source_text_excerpt must be at most 180 characters\n- no explanations\n- no repeated raw text\n\nRaw class extraction:\n{\n  \"class_name\": \"X\",\n  \"subject\": \"Geography - Contemporary India - II\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Resources and Development\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Resources and Development\"\n      ],\n      \"topics\": [\n        \"Interdependence of resources\",\n        \"Planning for judicious utilisation\",\n        \"Non-optimal land utilization in India\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Environment and Agriculture\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Forest and Wildlife Resources\",\n        \"Water Resources\",\n        \"Agriculture\"\n      ],\n      \"topics\": [\n        \"Conserving forests and wildlife for ecology\",\n        \"Grazing and wood cutting impact\",\n        \"Multipurpose projects supporting water requirements\",\n        \"Role of agriculture in economy/society\",\n        \"Challenges faced by farming community\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Industries and Economy\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Minerals and Energy Resources\",\n        \"Manufacturing Industries\",\n        \"Lifelines of National Economy\"\n      ],\n      \"topics\": [\n        \"Impact on environment and sustainable development strategies\",\n        \"Types of manufacturing industries (input, process, product)\",\n        \"Raw material availability vs location\",\n        \"Transportation as lifeline of economy\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"\",\n          \"source_text_excerpt\": \"\",\n          \"classification\": \"unit\",\n          \"confidence\": 0,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

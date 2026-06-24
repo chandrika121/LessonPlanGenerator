@@ -1,0 +1,321 @@
+Stage 3: Node Enrichment - Class XII - Biology
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XII",
+  "subject": "Biology",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "VI Reproduction",
+      "marks": 16,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Sexual Reproduction in Flowering Plants",
+          "source_chapter_name": "Sexual Reproduction in Flowering Plants",
+          "source_heading": "Sexual Reproduction in Flowering Plants",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Human Reproduction",
+          "source_chapter_name": "Human Reproduction",
+          "source_heading": "Human Reproduction",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Reproductive Health",
+          "source_chapter_name": "Reproductive Health",
+          "source_heading": "Reproductive Health",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "VII Genetics and Evolution",
+      "marks": 20,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Principles of Inheritance and Variation",
+          "source_chapter_name": "Principles of Inheritance and Variation",
+          "source_heading": "Principles of Inheritance and Variation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Molecular Basis of Inheritance",
+          "source_chapter_name": "Molecular Basis of Inheritance",
+          "source_heading": "Molecular Basis of Inheritance",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Evolution",
+          "source_chapter_name": "Evolution",
+          "source_heading": "Evolution",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "VIII Biology and Human Welfare",
+      "marks": 12,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Human Health and Diseases",
+          "source_chapter_name": "Human Health and Diseases",
+          "source_heading": "Human Health and Diseases",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Microbes in Human Welfare",
+          "source_chapter_name": "Microbes in Human Welfare",
+          "source_heading": "Microbes in Human Welfare",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "IX Biotechnology and its Applications",
+      "marks": 12,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Biotechnology - Principles and Processes",
+          "source_chapter_name": "Biotechnology - Principles and Processes",
+          "source_heading": "Biotechnology - Principles and Processes",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Biotechnology and its Applications",
+          "source_chapter_name": "Biotechnology and its Applications",
+          "source_heading": "Biotechnology and its Applications",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "X Ecology and Environment",
+      "marks": 10,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Organisms and Populations",
+          "source_chapter_name": "Organisms and Populations",
+          "source_heading": "Organisms and Populations",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Ecosystem",
+          "source_chapter_name": "Ecosystem",
+          "source_heading": "Ecosystem",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Biodiversity and its Conservation",
+          "source_chapter_name": "Biodiversity and its Conservation",
+          "source_heading": "Biodiversity and its Conservation",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XII",
+  "subject": "Biology",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "VI Reproduction",
+      "marks": 16,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Sexual Reproduction in Flowering Plants",
+          "source_chapter_name": "Sexual Reproduction in Flowering Plants",
+          "source_heading": "Sexual Reproduction in Flowering Plants",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Human Reproduction",
+          "source_chapter_name": "Human Reproduction",
+          "source_heading": "Human Reproduction",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Reproductive Health",
+          "source_chapter_name": "Reproductive Health",
+          "source_heading": "Reproductive Health",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "VII Genetics and Evolution",
+      "marks": 20,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Principles of Inheritance and Variation",
+          "source_chapter_name": "Principles of Inheritance and Variation",
+          "source_heading": "Principles of Inheritance and Variation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Molecular Basis of Inheritance",
+          "source_chapter_name": "Molecular Basis of Inheritance",
+          "source_heading": "Molecular Basis of Inheritance",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Evolution",
+          "source_chapter_name": "Evolution",
+          "source_heading": "Evolution",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "VIII Biology and Human Welfare",
+      "marks": 12,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Human Health and Diseases",
+          "source_chapter_name": "Human Health and Diseases",
+          "source_heading": "Human Health and Diseases",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Microbes in Human Welfare",
+          "source_chapter_name": "Microbes in Human Welfare",
+          "source_heading": "Microbes in Human Welfare",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "IX Biotechnology and its Applications",
+      "marks": 12,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Biotechnology - Principles and Processes",
+          "source_chapter_name": "Biotechnology - Principles and Processes",
+          "source_heading": "Biotechnology - Principles and Processes",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Biotechnology and its Applications",
+          "source_chapter_name": "Biotechnology and its Applications",
+          "source_heading": "Biotechnology and its Applications",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "X Ecology and Environment",
+      "marks": 10,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Organisms and Populations",
+          "source_chapter_name": "Organisms and Populations",
+          "source_heading": "Organisms and Populations",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Ecosystem",
+          "source_chapter_name": "Ecosystem",
+          "source_heading": "Ecosystem",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Biodiversity and its Conservation",
+          "source_chapter_name": "Biodiversity and its Conservation",
+          "source_heading": "Biodiversity and its Conservation",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+--- Page 6 ---
+6 The following topics are included in the syllabus but will be assessed only formatively to reinforce understanding without adding to summative assessments. The reduces academic stress while ensuring meaningful learning. Schools can integrate these with existing chapters as they align well. Relevant NCERT textual material is enclosed for reference. Digestion and Absorption (Please Refer to CBSE Reading Material) Alimentary canal and digestive glands, role of digestive enzymes and gastrointestinal hormones; Peristalsis, digestion, absorption and assimilation of proteins, carbohydrates and fats; calorific values of proteins, carbohydrates and fats; egestion; nutritional and digestive disorders - PEM, indigestion, constipation, vomiting, jaundice, diarrhea. PRACTICALS Time: 03 Hours Max. Marks: 30 Evaluation Scheme Marks One Major Experiment Part A (Experiment No- 1,3,7,8) 5 Marks One Minor Experiment Part A (Experiment No- 6,9,10,11,12,13) 4 Marks Slide Preparation Part A (Experiment No- 2,4,5) 5 Marks Spotting Part B 7 Marks Practical Record + Viva Voce (Credit to the student’s work over the academic session may be given) 4 Marks Project Record + Viva Voce 5 Marks Total 30 Marks A: List of Experiments 1. Study and describe locally available common flowering plants, from family Solanaceae (Poaceae, Asteraceae or Brassicaceae can be substituted in case of particular geographical location) including dissection and display of floral whorls, anther and ovary to show number of chambers (floral formulae and floral diagrams), type of root (tap and adventitious); type of stem (herbaceous and woody); leaf (arrangement, shape, venation, simple and compound). 2. Preparation and study of T.S. of dicot and monocot roots and stems (primary). 3. Study of osmosis by potato osmometer. 4. Study of plasmolysis in epidermal peels (e.g. Rhoeo/lily leaves or flashy scale leaves of onion bulb). 5. Study of distribution of stomata on the upper and lower surfaces of leaves. 6. Comparative study of the rates of transpiration in the upper and lower surfaces of
+
+--- Page 7 ---
+7 leaves. 7. Test for the presence of sugar, starch, proteins and fats in suitable plant and animal materials. 8. Separation of plant pigments through paper chromatography. 9. Study of the rate of respiration in flower buds/leaf tissue and germinating seeds. 10. Test for presence of urea in urine. 11. Test for presence of sugar in urine. 12. Test for presence of albumin in urine. 13. Test for presence of bile salts in urine. B. Study and Observe the following (spotting): 1. Parts of a compound microscope. 2. Specimens/slides/models and identification with reasons - Bacteria, Oscillatoria, Spirogyra, Rhizopus , mushroom, yeast, liverwort, moss, fern, pine, one monocotyledonous plant, one dicotyledonous plant and one lichen. 3. Virtual specimens/slides/models and identifying features of - Amoeba, Hydra, liver fluke, Ascaris , leech, earthworm, prawn, silkworm, honey bee, snail, starfish, shark, rohu, frog, lizard, pigeon and rabbit. 4. Mitosis in onion root tip cells and animal’s cells (grasshopper) from permanent slides. 5. Types of inflorescence (cymose and racemose). 6. Human skeleton and different types of joints with the help of virtual images/models only. Practical Examination for Visually Impaired Students Class XI Note: The ‘Evaluation schemes’ and ‘General Guidelines’ for visually impaired students as given for Class XII may be followed. A. Items for Identification/Familiarity with the apparatus /equipment /animal and plant material / chemicals for assessment in practicals (All experiments) B. Equipment - compound microscope, test tube, petri dish, chromatography paper, chromatography chamber, beaker, scalpel Chemical – alcohol Models – Model of Human skeleton to show – Ball and socket joints of girdles and limbs, Rib cage, Honeycomb, Mollusc shell, Pigeon and Star fish, cockroach Specimen / Fresh Material – mushroom, succulents such as Aloe vera / kalenchoe, raisins, potatoes, seeds of monocot and dicot- maize and gram or any other plant, plants of Solanaceae - Brinjal, Petunia, any other
+
+--- Page 8 ---
+8 C. List of Practicals 1. Study locally available common flowering plants of the family – Solanaceae and identify type of stem (Herbaceous or Woody), type of leaves (Compound or Simple). 2. Study the parts of a compound microscope- eye piece and objective lens, mirror, stage, coarse and fine adjustment knobs. 3. Differentiate between monocot and dicot plants on the basis of venation patterns. 4. Study the following parts of human skeleton (Model): Ball and socket joints of thigh and shoulder 5. Rib cage 6. Study honeybee/butterfly, snail/sheik snail through shell, Starfish, Pigeon (through models). 7. Identify the given specimen of a fungus – mushroom, gymnosperm-pine cone. 8. Identify and relate the experimental set up with the aim of experiment: For Potato Osmometer/endosmosis in raisins. Note: The above practicals may be carried out in an experiential manner rather than only recording observations. Prescribed Books: 1. Biology Class-XI, Published by NCERT 2. Other related books and manuals brought out by NCERT (including multimedia). 3. Biology supplementary Material (Revised). Available on CBSE Website. 4. Reading Material Biology Class XI.
+
+--- Page 9 ---
+9 COURSE STRUCTURE CLASS XII (2026 - 27) (THEORY) Time: 03 Hours Max. Marks: 70 Unit Title Marks VI Reproduction 16 VII Genetics and Evolution 20 VIII Biology and Human Welfare 12 IX Biotechnology and its Applications 12 X Ecology and Environment 10 Total 70 Unit-VI Reproduction Chapter-1: Sexual Reproduction in Flowering Plants Flower structure; development of male and female gametophytes; pollination - types, agencies and examples; out breeding devices; pollen-pistil interaction; double fertilization; post fertilization events - development of endosperm and embryo, development of seed and formation of fruit; special modes- apomixis, parthenocarpy, polyembryony; Significance of seed dispersal and fruit formation. Chapter-2: Human Reproduction Male and female reproductive systems; microscopic anatomy of testis and ovary; gametogenesis -spermatogenesis and oogenesis; menstrual cycle; fertilisation, embryo development upto blastocyst formation, implantation; pregnancy and placenta formation (elementary idea); parturition (elementary idea); lactation (elementary idea). Chapter-3: Reproductive Health Need for reproductive health and prevention of Sexually Transmitted Diseases (STDs); birth control - need and methods, contraception and medical termination of pregnancy (MTP); amniocentesis; infertility and assisted reproductive technologies - IVF, ZIFT, GIFT (elementary idea for general awareness).
+
+--- Page 10 ---
+10 Unit-VII Genetics and Evolution Chapter-4: Principles of Inheritance and Variation Heredity and variation: Mendelian inheritance; deviations from Mendelism – incomplete dominance, co-dominance, multiple alleles and inheritance of blood groups, pleiotropy; elementary idea of polygenic inheritance; chromosome theory of inheritance; chromosomes and genes; Sex determination - in humans, birds and honey bee; linkage and crossing over; sex linked inheritance - haemophilia, colour blindness; Mendelian disorders in humans - thalassemia; chromosomal disorders in humans; Down's syndrome, Turner's and Klinefelter's syndromes. Chapter-5: Molecular Basis of Inheritance Search for genetic material and DNA as genetic material; Structure of DNA and RNA; DNA packaging; DNA replication; Central Dogma; transcription, genetic code, translation; gene expression and regulation - lac operon; Genome, Human and rice genome projects; DNA fingerprinting. Chapter-6: Evolution Origin of life; biological evolution and evidences for biological evolution (paleontology, comparative anatomy, embryology and molecular evidences); Darwin's contribution, modern synthetic theory of evolution; mechanism of evolution - variation (mutation and recombination)

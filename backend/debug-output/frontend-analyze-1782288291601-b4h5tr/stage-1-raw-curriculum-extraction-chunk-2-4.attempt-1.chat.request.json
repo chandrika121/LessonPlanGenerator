@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units and chapters in this input\n- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 2 of 4; extract only what is present in this chunk\n\nCurriculum source text:\n--- Page 5 ---\n• Trial balance: objectives, meaning and preparation (Scope: Trial balance with balance method only ) • Errors: classification-errors of omission, commission, principles, and compensating; their effect on Trial Balance. • Detection and rectification of errors; (i) Errors which do not affect trial balance (ii) Errors which affect trial balance • preparation of suspense account. belong to the current year but may happen in next year. • appreciate the difference between reserve and reserve fund. • state the need and objectives of preparing trial balance and develop the skill of preparing trial balance. • appreciate that errors may be committed during the process of accounting. • understand the meaning of different types of errors and their effect on trial balance. • develop the skill of identification and location of errors and their rectification and preparation of suspense account. Part B: Financial Accounting - II Unit 3: Financial Statements of Sole Proprietorship Units/Topics Learning Outcomes Financial Statements Meaning, objectives and importance; Revenue and Capital Receipts; Revenue and Capital Expenditure; Deferred Revenue expenditure. Opening journal entry. Trading and Profit and Loss Account: Gross Profit, Operating profit and Net profit. Preparation. Balance Sheet: need, grouping and marshalling of assets and liabilities. Preparation. Adjustments in preparation of financial statements with respect to closing stock, outstanding expenses, prepaid expenses, accrued income, income received in advance, depreciation, bad debts, provision for doubtful debts, provision for discount on debtors, Abnormal loss, Goods taken for personal use/staff welfare, interest on capital and managers commission. Preparation of Trading and Profit and Loss account and Balance Sheet of a sole proprietorship with adjustments. Incomplete Records After going through this Unit, the students will be able to: • state the meaning of financial statements the • purpose of preparing financial statements. • state the meaning of gross profit, operating profit and net profit and develop the skill of preparing trading and profit and loss account. • explain the need for preparing balance sheet. • understand the technique of grouping and marshalling of assets and liabilities. • appreciate that there may be certain items other than those shown in trial balance which may need adjustments while preparing financial statements. • develop the understanding and skill to do adjustments for items and their presentation in financial statements like depreciation, closing stock, provisions, abnormal loss etc. • develop the skill of preparation of trading and profit and loss account and balance sheet.\n\n--- Page 6 ---\nFeatures, reasons and limitations. Ascertainment of Profit/Loss by Statement of Affairs method. (excluding conversion method) Part C: Project Work (Any One) 1. Collection of source documents, preparation of vouchers, recording of transactions with the help of vouchers. 2. Preparation of Bank Reconciliation Statement with the given cash book and the pass book with twenty to twenty-five transactions. 3. Comprehensive project of any sole proprietorship business. This may state with journal entries and their ledgering, preparation of Trial balance. Trading and Profit and Loss Account and Balance Sheet. Expenses, incomes and profit (loss), assets and liabilities are to be depicted using pie chart / bar diagram. This may include simple GST related transactions.\n\n--- Page 7 ---\nPROJECT WORK It is suggested to undertake this project after completing the unit on preparation of financial statements. The student(s) will be allowed to select any business of their choice or develop the transaction of imaginary business. The project is to run through the chapters and make the project an interesting process. The amounts should emerge as more realistic and closer to reality. Specific Guidelines for Teachers Give a list of options to the students to select a business form. You can add to the given list: 1. A beauty parlour 10. Men's wear 19. A coffee shop 2. Men's saloon 11. Ladies wear 20. A music shop 3. A tailoring shop 12. Kiddies wear 21. A juice shop 4. A canteen 13. A Saree shop 22. A school canteen 5. A cake shop 14. Artificial jewellery shop 23. An ice cream parlour 6. A confectionery shop 15. A small restaurant 24. A sandwich shop 7. A chocolate shop 16. A sweet shop 25. A flower shop 8. A dry cleaner 17. A grocery shop 9. A stationery shop 18. A shoe shop After selection, advise the student(s) to visit a shop in the locality (this will help them to settle on a realistic amounts different items. The student(s) would be able to see the things as they need to invest in furniture, decor, lights, machines, computers etc. A suggested list of different item is given below. 1. Rent 19. Wages and Salary 2. Advance rent [approximately three months] 20. Newspaper and magazines 3. Electricity deposit 21. Petty expenses 4. Electricity bill 22. Tea expenses 5. Electricity fitting 23. Packaging expenses 6. Water bill 24. Transport 7. Water connection security deposit 25. Delivery cycle or a vehicle purchased 8. Water fittings 26. Registration 9. Telephone bill 27. Insurance 10. Telephone security deposit 28. Auditors fee 11. Telephone instrument 29. Repairs & Maintenance 12. Furniture 30. Depreciations 13. Computers 31. Air conditioners 14. Internet connection 32. Fans and lights 15. Stationery 33. Interior decorations 16. Advertisements 34. Refrigerators 17. Glow sign 35. Purchase and sales 18. Rates and Taxes At this stage, performas of bulk of originality and ledger may be provided to the students and they may be asked to complete the same. In the next step the students are expected to prepare the trial balance and the financial statements.\n\n--- Page 8 ---\nSuggested Question Paper Design Accountancy (Subject Code 055) Class XI (2025-26) Theory: 80 Marks 3 hrs. Project: 20 Marks S N Typology of Questions Marks Percentage 1 Remembering and Understanding : Exhibit memory of previously learned material by recalling facts, terms, basic concepts, and answers. Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas 32 40% 3 Applying : Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way. 24 30% 4 Analysing, Evaluating and Creating: Examine and break information into parts by identifying motives or causes. Make inferences and find evidence to support generalizations. Present and defend opinions by making judgments about information, validity of ideas, or quality of work based on a set of criteria. Compile information together in a different way by combining elements in a new pattern or proposing alternative solutions. 24 30% TOTAL 80 100% Class XI (2026-2027)\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}

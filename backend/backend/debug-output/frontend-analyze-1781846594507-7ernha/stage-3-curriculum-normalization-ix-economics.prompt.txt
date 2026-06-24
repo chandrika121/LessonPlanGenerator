@@ -1,0 +1,227 @@
+Stage 3: Curriculum Normalization - IX - Economics
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- Keep class_name exactly as in raw extraction
+- Keep subject exactly as in raw extraction
+- Keep every unit_name exactly as in raw extraction
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Economics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Production and Resources",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "The Story of Village Palampur",
+        "People as Resource"
+      ],
+      "topics": [
+        "Requirements of production and interdependence",
+        "Farming and non-farming activities correlation",
+        "Factors impacting economic development",
+        "Equitable society solutions",
+        "Quality of population factors",
+        "Government schemes effect on people"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Challenges and Security",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Poverty as a Challenge",
+        "Food Security in India"
+      ],
+      "topics": [
+        "Reasons for poverty (rural/urban)",
+        "Efficacy of government to eradicate poverty",
+        "Link between education and poverty",
+        "Continuity of supply aspects",
+        "PDS features addressing FSI",
+        "Impact of Green Revolution",
+        "Causes and effect of famines"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "IX",
+  "units": [
+    {
+      "unit_name": "Production and Resources",
+      "classified_blocks": [
+        {
+          "source_heading": "The Story of Village Palampur",
+          "source_text_excerpt": "Chapter title regarding village economy, production factors, and land use patterns.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Production and Resources",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "People as Resource",
+          "source_text_excerpt": "Chapter title discussing population quality, labor force participation, and human capital.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Production and Resources",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Requirements of production and interdependence",
+          "source_text_excerpt": "Topic covering land, labor, capital, and physical resources needed for economic activities.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Production and Resources",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Farming and non-farming activities correlation",
+          "source_text_excerpt": "Topic analyzing the relationship between agricultural work and other economic sectors.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Production and Resources",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Factors impacting economic development",
+          "source_text_excerpt": "Topic detailing land quality, human capital formation, infrastructure availability.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Production and Resources",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Equitable society solutions",
+          "source_text_excerpt": "Topic exploring strategies for fair distribution of resources and opportunities.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Production and Resources",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Quality of population factors",
+          "source_text_excerpt": "Topic examining health, education levels, and skill development as economic drivers.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Production and Resources",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Government schemes effect on people",
+          "source_text_excerpt": "Topic assessing the impact of state interventions on livelihoods and economic status.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Production and Resources",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Challenges and Security",
+      "classified_blocks": [
+        {
+          "source_heading": "Poverty as a Challenge",
+          "source_text_excerpt": "Chapter title addressing causes, measurement, and government measures against poverty.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Food Security in India",
+          "source_text_excerpt": "Chapter title covering food availability, access issues, PDS system, and buffer stocks.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Reasons for poverty (rural/urban)",
+          "source_text_excerpt": "Topic analyzing structural causes of low income in different geographic contexts.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Efficacy of government to eradicate poverty",
+          "source_text_excerpt": "Topic evaluating the success rate of various anti-poverty programs and policies.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Link between education and poverty",
+          "source_text_excerpt": "Topic discussing how educational attainment correlates with income generation.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Continuity of supply aspects",
+          "source_text_excerpt": "Topic examining the consistency of food availability throughout the year.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "PDS features addressing FSI",
+          "source_text_excerpt": "Topic detailing Public Distribution System mechanisms for Food Security Issues.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Impact of Green Revolution",
+          "source_text_excerpt": "Topic analyzing agricultural productivity changes and associated economic shifts.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Causes and effect of famines",
+          "source_text_excerpt": "Topic exploring historical instances of food scarcity and their socio-economic impacts.",
+          "classification": "topic",
+          "confidence": 0.92,
+          "parent_unit": "Challenges and Security",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

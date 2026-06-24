@@ -1,0 +1,60 @@
+Stage 2: Heading Classification - Class 1
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "History - India and the Contemporary World - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Events and Processes",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "The French Revolution",
+        "Socialism in Europe and the Russian Revolution",
+        "Nazism and the Rise of Hitler"
+      ],
+      "topics": [
+        "Impact on European countries",
+        "Quest for imperialism and First World War",
+        "Rise of communism and collectivization",
+        "Role of philosophers and leaders",
+        "Treaty of Versailles",
+        "Genocidal war"
+      ],
+      "subtopics": [
+        "Map pointing: France, Central Powers, Allied Powers (WWI)",
+        "Map pointing: Axis Powers, Allied Powers (WWII)"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Livelihoods, Economies and Societies",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Forest Society and Colonialism",
+        "Pastoralists in the Modern World"
+      ],
+      "topics": [
+        "Nomadic societies",
+        "Impact of colonialism on pastoralists",
+        "Rebellions in forest areas"
+      ],
+      "subtopics": []
+    }
+  ]
+}

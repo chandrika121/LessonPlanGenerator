@@ -1,0 +1,166 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8B - Class XII
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XII",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit 1: Solutions",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Solutions"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electrochemistry"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Kinetics"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "d -and f -Block Elements"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordination Compounds"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit 1: Solutions",
+      "chapter_id": "C1",
+      "chapter_name": "Solutions"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapter_id": "C1",
+      "chapter_name": "Electrochemistry"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapter_id": "C1",
+      "chapter_name": "Chemical Kinetics"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapter_id": "C1",
+      "chapter_name": "d -and f -Block Elements"
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapter_id": "C1",
+      "chapter_name": "Coordination Compounds"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C10",
+      "title": "Solutions",
+      "description": "Develop conceptual foundations to express concentration, understand solubility, and apply colligative properties.",
+      "competencies": [
+        "Calculate molar mass using colligative properties and distinguish between ideal and non-ideal solutions."
+      ],
+      "unit_name": "Unit 1: Solutions",
+      "chapter_name": "Solutions"
+    },
+    {
+      "code": "C11",
+      "title": "Electrochemistry",
+      "description": "Enable learners to represent electrochemical phenomena and apply Nernst equation for cell potential calculations.",
+      "competencies": [
+        "Analyze galvanic cells, electrolytic cells, batteries, fuel cells, and corrosion processes."
+      ],
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapter_name": "Electrochemistry"
+    },
+    {
+      "code": "C12",
+      "title": "Chemical Kinetics",
+      "description": "Develop problem-solving skills to analyze factors influencing reaction rates and temperature dependence.",
+      "competencies": [
+        "Apply integrated rate equations and collision theory of chemical reactions."
+      ],
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapter_name": "Chemical Kinetics"
+    },
+    {
+      "code": "C13",
+      "title": "d and f Block Elements",
+      "description": "Enable learners to identify patterns in transition elements, lanthanoids, and actinoids regarding electronic configuration and properties.",
+      "competencies": [
+        "Correlate position in periodic table with general properties of d-block and f-block elements."
+      ],
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapter_name": "d -and f -Block Elements"
+    },
+    {
+      "code": "C14",
+      "title": "Coordination Compounds",
+      "description": "Enable learners to represent coordination compounds using IUPAC nomenclature and understand bonding theories.",
+      "competencies": [
+        "Apply Werner's theory, identify isomerism, and analyze metal carbonyl bonding."
+      ],
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapter_name": "Coordination Compounds"
+    }
+  ]
+}

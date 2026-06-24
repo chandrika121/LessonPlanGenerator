@@ -1,0 +1,148 @@
+Stage 3: Curriculum Normalization - IX - Geography - Contemporary India - I
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- Keep class_name exactly as in raw extraction
+- Keep subject exactly as in raw extraction
+- Keep every unit_name exactly as in raw extraction
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Geography - Contemporary India - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical Features and Environment",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "India – Size and Location",
+        "Physical Features of India",
+        "Drainage",
+        "Climate"
+      ],
+      "topics": [
+        "Location impact on climate and time",
+        "Trading relationships with neighbours",
+        "Time meridian (82.5E)",
+        "Strategic partner position",
+        "Physical features influencing livelihoods, culture, biodiversity",
+        "Geological processes in formation of physical features",
+        "Lake systems and ecology",
+        "River systems role",
+        "Monsoon winds effect on rainfall"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Natural Vegetation, Wildlife and Population",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Natural Vegetation and Wildlife",
+        "Population"
+      ],
+      "topics": [
+        "Interdisciplinary project with History Chapter IV",
+        "Uneven distribution of population factors",
+        "Factors affecting population density"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "IX",
+  "units": [
+    {
+      "unit_name": "Physical Features and Environment",
+      "classified_blocks": [
+        {
+          "source_heading": "India – Size and Location",
+          "source_text_excerpt": "Location impact on climate and time, Trading relationships with neighbours, Time meridian (82.5E), Strategic partner position.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Physical features influencing livelihoods, culture, biodiversity",
+          "source_text_excerpt": "Geological processes in formation of physical features.",
+          "classification": "topic",
+          "confidence": 0.85,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Lake systems and ecology",
+          "source_text_excerpt": "River systems role.",
+          "classification": "topic",
+          "confidence": 0.85,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Monsoon winds effect on rainfall",
+          "source_text_excerpt": "",
+          "classification": "topic",
+          "confidence": 0.85,
+          "parent_unit": "Physical Features and Environment",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Natural Vegetation, Wildlife and Population",
+      "classified_blocks": [
+        {
+          "source_heading": "Interdisciplinary project with History Chapter IV",
+          "source_text_excerpt": "",
+          "classification": "project",
+          "confidence": 0.95,
+          "parent_unit": "Natural Vegetation, Wildlife and Population",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Uneven distribution of population factors",
+          "source_text_excerpt": "",
+          "classification": "topic",
+          "confidence": 0.85,
+          "parent_unit": "Natural Vegetation, Wildlife and Population",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Factors affecting population density",
+          "source_text_excerpt": "",
+          "classification": "topic",
+          "confidence": 0.85,
+          "parent_unit": "Natural Vegetation, Wildlife and Population",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

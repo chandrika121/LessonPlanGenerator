@@ -1,0 +1,214 @@
+Stage 2: Heading Classification - Class IX - Mathematics
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- do not output units created by the model
+- do not create unit_name
+- do not rename parent_unit
+- only classify the existing Stage 1 items as chapter/topic/subtopic
+- if classification is chapter, source_heading must exactly come from Stage 1 extracted headings for this class
+- never rewrite, summarize, merge, or invent chapter names
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "Class IX",
+  "subject": "Mathematics",
+  "part_or_section": "Secondary Stage Curriculum",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Number System",
+      "marks": 7,
+      "explicit_chapters": [
+        "Number System"
+      ],
+      "headings": [],
+      "possible_chapters": [],
+      "topics": [
+        "Introduction to rational numbers",
+        "Representation of rational numbers on the number line",
+        "Density of rational numbers and its proof",
+        "Finding rational numbers between any two rational numbers",
+        "Decimal representation of rational numbers",
+        "Introduction to irrational numbers",
+        "Proof of irrationality of √2 and √3",
+        "The square root spiral"
+      ],
+      "subtopics": [
+        "Computing decimal expansions systematically",
+        "Reasoning about numbers using step-by-step logical procedures",
+        "Representing rational and irrational numbers through algorithms and visual models"
+      ],
+      "key_concepts": [
+        "Rational numbers properties",
+        "Irrational numbers proof",
+        "Square root spiral construction",
+        "Computational thinking in number representation"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Algebra",
+      "marks": 20,
+      "explicit_chapters": [
+        "Introduction to Polynomials",
+        "Sequences and Progressions",
+        "Exploring Algebraic Identities",
+        "Linear Equations in Two Variables"
+      ],
+      "headings": [],
+      "possible_chapters": [],
+      "topics": [
+        "Algebraic expressions, Definition of polynomial, Degree, Linear polynomials and applications",
+        "Sequences: Explicit/Recursive rules, Arithmetic Progressions (AP), Geometric Progressions (GP)",
+        "Fractals, Tower of Hanoi puzzle",
+        "Revisiting identities, Factorisation using identities, Visualising factorisation with algebra tiles",
+        "Linear equations in two variables: Graphical representation, Slope-intercept form, Pair of linear equations"
+      ],
+      "subtopics": [
+        "Modelling linear growth and decay",
+        "Visualising relationships (slope/y-intercept)",
+        "Computational thinking for patterns",
+        "Determining nth terms for AP/GP",
+        "Solving contextualised problems using equations",
+        "Substitution and elimination methods"
+      ],
+      "key_concepts": [
+        "Polynomial degree and coefficients",
+        "Linear relationships modelling",
+        "Sequence patterns (AP/GP)",
+        "Algebraic identities factorisation",
+        "Consistency and inconsistency of linear equations"
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Coordinate Geometry",
+      "marks": 4,
+      "explicit_chapters": [
+        "Coordinate Geometry"
+      ],
+      "headings": [],
+      "possible_chapters": [],
+      "topics": [
+        "Brief history of coordinate geometry",
+        "The 2-D Cartesian coordinate system",
+        "Distance between two points in the 2-D plane",
+        "Midpoint of the line-segment"
+      ],
+      "subtopics": [
+        "Specifying locations and relative positions using coordinates",
+        "Representing floor plans on a grid",
+        "Computing distance and midpoint",
+        "Checking collinearity and right-angled triangles via coordinates"
+      ],
+      "key_concepts": [
+        "Cartesian system application",
+        "Distance formula derivation/application",
+        "Midpoint calculation",
+        "Geometric properties verification using coordinates"
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Geometry",
+      "marks": 25,
+      "explicit_chapters": [
+        "Introduction to Euclid's Geometry: Axioms and Postulates",
+        "Lines and Angles",
+        "Triangles – Congruence Theorems",
+        "4-gons (Quadrilaterals)",
+        "Circles"
+      ],
+      "headings": [],
+      "possible_chapters": [],
+      "topics": [
+        "History of geometry, Baudhayana's Sulbasutras, Euclid's definitions and postulates",
+        "Rays, angles, intersecting lines, parallelism theorems (linear pair, vertically opposite)",
+        "Congruence conditions: SAS, SSS, ASA, RHS, AAS; Isosceles triangles",
+        "Parallelograms properties, Midpoint theorem, Central symmetry",
+        "Circle definitions, Chords, Angles subtended by arcs, Cyclic quadrilaterals"
+      ],
+      "subtopics": [
+        "Axiomatic structure and proofs without words",
+        "Proofs using Euclid's axioms for triangles/quadrilaterals/circles",
+        "Geometric constructions (bisectors, squares)",
+        "Propositions and their converses",
+        "Congruence validity conditions (SSA exceptions)"
+      ],
+      "key_concepts": [
+        "Euclidean geometry foundations",
+        "Triangle rigidity and stability",
+        "Parallelogram characterisations",
+        "Circle theorems (chords, angles, cyclic points)",
+        "Logical reasoning in geometric proofs"
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Mensuration",
+      "marks": 14,
+      "explicit_chapters": [
+        "Area and Perimeter",
+        "Surface Area and Volume"
+      ],
+      "headings": [],
+      "possible_chapters": [],
+      "topics": [
+        "Perimeter of shapes, Introduction to Pi (irrationality), Length of an arc",
+        "Heron's formula, Brahmagupta's formula for cyclic quadrilaterals",
+        "Area and volume of cuboids, cubes, cylinders, cones, pyramids, spheres"
+      ],
+      "subtopics": [
+        "Squaring a rectangle (Baudhayana)",
+        "Derivation of circle area",
+        "Sector and segment areas",
+        "Surface area calculations for 3D solids",
+        "Generalisation vs special cases in formulae"
+      ],
+      "key_concepts": [
+        "Perimeter and circumference concepts",
+        "Area derivation via decomposition",
+        "Volume of composite solids",
+        "Computational thinking in calculation strategies"
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Statistics and Probability",
+      "marks": 10,
+      "explicit_chapters": [
+        "Statistics",
+        "Introduction to Probability"
+      ],
+      "headings": [],
+      "possible_chapters": [],
+      "topics": [
+        "Graphical representation of data (stacked bar graphs)",
+        "Measures of central tendency: Mean, Median, Mode, Weighted average",
+        "Concept of probability and randomness",
+        "Empirical vs Theoretical probability"
+      ],
+      "subtopics": [
+        "Interpreting statistical investigative questions",
+        "Probability scale application",
+        "Tree diagrams and tables for events",
+        "Simulation and pattern recognition in random experiments"
+      ],
+      "key_concepts": [
+        "Data visualisation techniques",
+        "Central tendency analysis",
+        "Randomness and likelihood estimation",
+        "Sample space and event definition"
+      ]
+    }
+  ]
+}

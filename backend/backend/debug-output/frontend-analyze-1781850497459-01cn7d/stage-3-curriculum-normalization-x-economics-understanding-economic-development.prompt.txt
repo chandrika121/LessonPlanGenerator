@@ -1,0 +1,258 @@
+Stage 3: Curriculum Normalization - X - Economics - Understanding Economic Development
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Economics - Understanding Economic Development",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Development and Sectors",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Development"
+      ],
+      "topics": [
+        "Setting developmental Goals",
+        "Per capita income as indicator",
+        "Multiple perspectives on development need"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Economic Structure and Finance",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Sectors of the Indian Economy"
+      ],
+      "topics": [
+        "Contribution to overall growth",
+        "Organised vs Unorganised sectors employment",
+        "Public and Private sector roles"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Money, Credit and Globalisation",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Money and Credit"
+      ],
+      "topics": [
+        "Medium of exchange from ancient times",
+        "Sources of credit",
+        "Self-help groups for rural women"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Globalisation and Consumer Rights",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Globalisation and the Indian Economy"
+      ],
+      "topics": [
+        "Concept of globalisation definition/evolution",
+        "Drivers of globalisation (G20 role)",
+        "Production across countries, WTO, Fair Globalisation"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Development and Sectors",
+          "source_text_excerpt": "Unit covering Development, Per capita income as indicator, Multiple perspectives on development need.",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Development",
+          "source_text_excerpt": "Possible chapter title for unit U1 focusing on Development and Sectors.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": "U1"
+        },
+        {
+          "source_heading": "Setting developmental Goals",
+          "source_text_excerpt": "Topic discussing the goals set for development within the unit.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Per capita income as indicator",
+          "source_text_excerpt": "Topic explaining per capita income usage as an economic development indicator.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Multiple perspectives on development need",
+          "source_text_excerpt": "Topic exploring various viewpoints regarding the necessity of development.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "classified_blocks": [
+        {
+          "source_heading": "Economic Structure and Finance",
+          "source_text_excerpt": "Unit covering Sectors of the Indian Economy, Contribution to growth, Organised vs Unorganised sectors.",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Sectors of the Indian Economy",
+          "source_text_excerpt": "Possible chapter title for unit U2 focusing on sectors and finance.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": "U2"
+        },
+        {
+          "source_heading": "Contribution to overall growth",
+          "source_text_excerpt": "Topic analyzing how different sectors contribute to the economy's overall growth.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Organised vs Unorganised sectors employment",
+          "source_text_excerpt": "Topic comparing employment conditions in organised and unorganised economic sectors.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Public and Private sector roles",
+          "source_text_excerpt": "Topic detailing the distinct functions of public and private sectors in the economy.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "classified_blocks": [
+        {
+          "source_heading": "Money, Credit and Globalisation",
+          "source_text_excerpt": "Unit covering Money and Credit, Medium of exchange, Sources of credit, Self-help groups.",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Money and Credit",
+          "source_text_excerpt": "Possible chapter title for unit U3 focusing on monetary systems and credit.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": "U3"
+        },
+        {
+          "source_heading": "Medium of exchange from ancient times",
+          "source_text_excerpt": "Topic tracing the historical evolution of money as a medium of exchange.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Sources of credit",
+          "source_text_excerpt": "Topic identifying various sources from which individuals and businesses obtain credit.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Self-help groups for rural women",
+          "source_text_excerpt": "Topic discussing the role of self-help groups in empowering rural women economically.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "classified_blocks": [
+        {
+          "source_heading": "Globalisation and Consumer Rights",
+          "source_text_excerpt": "Unit covering Globalisation, Drivers of globalisation, Production across countries, WTO.",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Globalisation and the Indian Economy",
+          "source_text_excerpt": "Possible chapter title for unit U4 focusing on globalisation impacts.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": "U4"
+        },
+        {
+          "source_heading": "Concept of globalisation definition/evolution",
+          "source_text_excerpt": "Topic defining the concept and explaining its historical evolution.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Drivers of globalisation (G20 role)",
+          "source_text_excerpt": "Topic analyzing the key drivers behind globalisation and the specific role of G20.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Production across countries, WTO, Fair Globalisation",
+          "source_text_excerpt": "Topic covering international production dynamics, the World Trade Organization's function.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

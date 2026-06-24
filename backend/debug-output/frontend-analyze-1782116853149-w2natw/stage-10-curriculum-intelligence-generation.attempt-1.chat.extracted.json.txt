@@ -1,0 +1,361 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Units and Measurements",
+      "prerequisites": [],
+      "dependent_topics": ["Motion in a Straight Line", "Mechanical Properties of Solids"]
+    },
+    {
+      "topic": "Motion in a Straight Line",
+      "prerequisites": ["Units and Measurements"],
+      "dependent_topics": ["Laws of Motion", "Work, Energy and Power"]
+    },
+    {
+      "topic": "Motion in a Plane",
+      "prerequisites": ["Motion in a Straight Line", "Vector Algebra"],
+      "dependent_topics": ["Projectile Motion Applications", "Circular Motion"]
+    },
+    {
+      "topic": "Laws of Motion",
+      "prerequisites": ["Motion in a Straight Line", "Vectors"],
+      "dependent_topics": ["Work, Energy and Power", "Friction Analysis"]
+    },
+    {
+      "topic": "Work, Energy and Power",
+      "prerequisites": ["Laws of Motion", "Kinematics"],
+      "dependent_topics": ["Conservation Laws Applications", "Collisions"]
+    },
+    {
+      "topic": "System of Particles and Rotational Motion",
+      "prerequisites": ["Centre of Mass Concepts", "Linear Momentum"],
+      "dependent_topics": ["Torque Analysis", "Angular Momentum Conservation"]
+    },
+    {
+      "topic": "Gravitation",
+      "prerequisites": ["Universal Law of Gravitation", "Kepler's Laws"],
+      "dependent_topics": ["Satellite Dynamics", "Escape Velocity Calculations"]
+    },
+    {
+      "topic": "Mechanical Properties of Solids/Fluids",
+      "prerequisites": ["Stress-Strain Concepts", "Pressure Definitions"],
+      "dependent_topics": ["Elasticity Applications", "Bernoulli's Theorem"]
+    },
+    {
+      "topic": "Thermal Properties of Matter",
+      "prerequisites": ["Heat and Temperature Basics", "Specific Heat Capacity"],
+      "dependent_topics": ["Phase Changes", "Heat Transfer Mechanisms"]
+    },
+    {
+      "topic": "Thermodynamics",
+      "prerequisites": ["Zeroth Law", "First Law of Thermodynamics"],
+      "dependent_topics": ["Second Law Applications", "Cyclic Processes"]
+    },
+    {
+      "topic": "Kinetic Theory",
+      "prerequisites": ["Gas Laws", "Molecular Motion Concepts"],
+      "dependent_topics": ["Equipartition Theorem", "Mean Free Path Analysis"]
+    },
+    {
+      "topic": "Oscillations and Waves",
+      "prerequisites": ["Periodic Motion Basics", "SHM Equations"],
+      "dependent_topics": ["Wave Propagation", "Interference Patterns"]
+    },
+    {
+      "topic": "Electric Charges and Fields",
+      "prerequisites": ["Basic Charge Concepts", "Coulomb's Law"],
+      "dependent_topics": ["Gauss's Theorem Applications", "Electrostatic Potential"]
+    },
+    {
+      "topic": "Current Electricity",
+      "prerequisites": ["Electric Current Basics", "Ohm's Law"],
+      "dependent_topics": ["Kirchhoff's Laws", "Circuit Analysis Techniques"]
+    },
+    {
+      "topic": "Magnetic Effects of Current and Magnetism",
+      "prerequisites": ["Biot-Savart Law", "Ampere's Circuital Law"],
+      "dependent_topics": ["Force on Moving Charges", "Torque on Dipoles"]
+    },
+    {
+      "topic": "Electromagnetic Induction and AC",
+      "prerequisites": ["Faraday's Laws", "Lenz's Law"],
+      "dependent_topics": ["AC Circuit Analysis", "Transformer Principles"]
+    },
+    {
+      "topic": "Electromagnetic Waves",
+      "prerequisites": ["Displacement Current Concept", "Maxwell's Equations Basics"],
+      "dependent_topics": ["EM Spectrum Applications", "Wave Propagation Characteristics"]
+    },
+    {
+      "topic": "Ray Optics and Optical Instruments",
+      "prerequisites": ["Reflection Laws", "Refraction Laws"],
+      "dependent_topics": ["Lens Maker's Formula", "Optical Instrument Design"]
+    },
+    {
+      "topic": "Wave Optics",
+      "prerequisites": ["Huygens' Principle", "Interference Basics"],
+      "dependent_topics": ["Diffraction Patterns", "Coherence Concepts"]
+    },
+    {
+      "topic": "Dual Nature of Radiation and Matter",
+      "prerequisites": ["Photoelectric Effect Observations", "Particle Nature of Light"],
+      "dependent_topics": ["de-Broglie Relation", "Matter Wave Applications"]
+    },
+    {
+      "topic": "Atoms and Nuclei",
+      "prerequisites": ["Atomic Models (Rutherford/Bohr)", "Nuclear Composition Basics"],
+      "dependent_topics": ["Binding Energy Curves", "Fission/Fusion Processes"]
+    },
+    {
+      "topic": "Semiconductor Electronics",
+      "prerequisites": ["Energy Band Theory", "p-n Junction Formation"],
+      "dependent_topics": ["Diode Characteristics", "Rectification Circuits"]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "difficulty_level": "Low",
+      "concept_density": "Foundational concepts of SI units, significant figures, dimensional analysis.",
+      "estimated_teaching_hours": 6,
+      "estimated_sessions": 3,
+      "practical_requirement": "Vernier Calipers and Screw Gauge measurements.",
+      "assessment_requirement": "Basic calculation problems on dimensions and errors."
+    },
+    {
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Straight Line",
+      "difficulty_level": "Medium",
+      "concept_density": "Differentiation/Integration for motion, uniform acceleration equations.",
+      "estimated_teaching_hours": 10,
+      "estimated_sessions": 5,
+      "practical_requirement": "Graph plotting and error analysis in kinematics experiments.",
+      "assessment_requirement": "Problem-solving on uniformly accelerated motion."
+    },
+    {
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Plane",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Vector algebra, projectile motion, relative velocity.",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Projectile range experiments and vector resolution activities.",
+      "assessment_requirement": "Complex problem solving involving vectors."
+    },
+    {
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Newton's laws, friction types, momentum conservation.",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Friction coefficient determination and force analysis experiments.",
+      "assessment_requirement": "Application of Newton's laws to dynamic systems."
+    },
+    {
+      "unit_name": "Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Work-energy theorem, potential energy curves, collisions.",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Conservation of energy experiments and collision studies.",
+      "assessment_requirement": "Energy conservation problem solving."
+    },
+    {
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion",
+      "difficulty_level": "High",
+      "concept_density": "Torque, angular momentum, moment of inertia calculations.",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Rotational motion experiments and center of mass determination.",
+      "assessment_requirement": "Complex rotational dynamics problems."
+    },
+    {
+      "unit_name": "Gravitation",
+      "chapter_name": "Gravitation",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Universal law, gravitational potential, satellite motion.",
+      "estimated_teaching_hours": 10,
+      "estimated_sessions": 5,
+      "practical_requirement": "Orbital mechanics calculations and Kepler's laws verification.",
+      "assessment_requirement": "Application of gravitation formulas to celestial bodies."
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids/Fluids",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Elasticity, viscosity, surface tension, Bernoulli's theorem.",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Young's modulus and surface tension experiments.",
+      "assessment_requirement": "Fluid dynamics problem solving."
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "difficulty_level": "Medium",
+      "concept_density": "Heat transfer, specific heat, thermal expansion.",
+      "estimated_teaching_hours": 10,
+      "estimated_sessions": 5,
+      "practical_requirement": "Calorimetry and cooling curve experiments.",
+      "assessment_requirement": "Thermodynamic process calculations."
+    },
+    {
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Thermodynamics",
+      "difficulty_level": "High",
+      "concept_density": "Laws of thermodynamics, cyclic processes, entropy concepts.",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Heat engine efficiency experiments and gas law verification.",
+      "assessment_requirement": "Application of first and second laws."
+    },
+    {
+      "unit_name": "Behaviour of Perfect Gases",
+      "chapter_name": "Kinetic Theory",
+      "difficulty_level": "High",
+      "concept_density": "Molecular motion, degrees of freedom, equipartition theorem.",
+      "estimated_teaching_hours": 10,
+      "estimated_sessions": 5,
+      "practical_requirement": "Gas law experiments and kinetic theory derivations.",
+      "assessment_requirement": "Statistical mechanics applications."
+    },
+    {
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations",
+      "difficulty_level": "Medium-High",
+      "concept_density": "SHM equations, energy in oscillation, damped motion.",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Simple pendulum and spring-mass experiments.",
+      "assessment_requirement": "Derivation of SHM parameters."
+    },
+    {
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "difficulty_level": "High",
+      "concept_density": "Wave propagation, superposition, standing waves.",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Sonometer experiments and wave interference demonstrations.",
+      "assessment_requirement": "Standing wave analysis."
+    },
+    {
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Coulomb's law, electric field lines, Gauss's theorem.",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Electrostatic force experiments and field mapping.",
+      "assessment_requirement": "Gauss's law applications."
+    },
+    {
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electrostatic Potential and Capacitance",
+      "difficulty_level": "High",
+      "concept_density": "Potential energy, dielectrics, capacitor combinations.",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Capacitor charging/discharging experiments.",
+      "assessment_requirement": "Energy storage calculations."
+    },
+    {
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Ohm's law, Kirchhoff's rules, internal resistance.",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Meter bridge and potentiometer experiments.",
+      "assessment_requirement": "Complex circuit analysis."
+    },
+    {
+      "unit_name": "Unit-III Magnetic Effects",
+      "chapter_name": "Moving Charges and Magnetism",
+      "difficulty_level": "High",
+      "concept_density": "Biot-Savart law, Lorentz force, magnetic dipoles.",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Galvanometer conversion and field mapping experiments.",
+      "assessment_requirement": "Force calculations on moving charges."
+    },
+    {
+      "unit_name": "Unit-IV Electromagnetic Induction",
+      "chapter_name": "Electromagnetic Induction and AC",
+      "difficulty_level": "High",
+      "concept_density": "Faraday's laws, Lenz's law, AC circuits, resonance.",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Induction experiments and transformer construction.",
+      "assessment_requirement": "AC circuit analysis."
+    },
+    {
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_name": "Electromagnetic Waves",
+      "difficulty_level": "Medium-High",
+      "concept_density": "EM spectrum, displacement current, wave properties.",
+      "estimated_teaching_hours": 8,
+      "estimated_sessions": 4,
+      "practical_requirement": "Spectrum identification and basic EM wave demonstrations.",
+      "assessment_requirement": "Properties of different EM regions."
+    },
+    {
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Reflection/refraction, lens formulas, optical instruments.",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Focal length determination and instrument assembly.",
+      "assessment_requirement": "Image formation calculations."
+    },
+    {
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Wave Optics",
+      "difficulty_level": "High",
+      "concept_density": "Huygens' principle, interference, diffraction.",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Young's double slit and diffraction experiments.",
+      "assessment_requirement": "Interference pattern analysis."
+    },
+    {
+      "unit_name": "Unit–VII Dual Nature",
+      "chapter_name": "Dual Nature of Radiation and Matter",
+      "difficulty_level": "High",
+      "concept_density": "Photoelectric effect, de-Broglie waves.",
+      "estimated_teaching_hours": 10,
+      "estimated_sessions": 5,
+      "practical_requirement": "Photoelectric effect demonstrations and LDR experiments.",
+      "assessment_requirement": "Particle-wave duality problems."
+    },
+    {
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Atoms and Nuclei",
+      "difficulty_level": "High",
+      "concept_density": "Bohr model, nuclear binding energy, fission/fusion.",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Spectral line analysis and nuclear reaction simulations.",
+      "assessment_requirement": "Nuclear physics calculations."
+    },
+    {
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Semiconductor Electronics",
+      "difficulty_level": "Medium-High",
+      "concept_density": "Energy bands, p-n junctions, rectification.",
+      "estimated_teaching_hours": 10,
+      "estimated_sessions": 5,
+      "practical_requirement": "Diode characteristic curves and circuit assembly.",
+      "assessment_requirement": "Rectifier circuit analysis."
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [],
+    "invalid_chapter_names": []
+  }
+}

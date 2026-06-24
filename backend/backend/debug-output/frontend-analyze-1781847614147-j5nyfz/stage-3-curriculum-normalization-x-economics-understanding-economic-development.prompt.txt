@@ -1,0 +1,150 @@
+Stage 3: Curriculum Normalization - X - Economics - Understanding Economic Development
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Economics - Understanding Economic Development",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Development and Sectors",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Development"
+      ],
+      "topics": [
+        "Setting developmental Goals",
+        "Per capita income as indicator",
+        "Multiple perspectives on development need"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Economic Structure and Finance",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Sectors of the Indian Economy",
+        "Money and Credit"
+      ],
+      "topics": [
+        "Contribution to overall growth",
+        "Organised vs unorganised sectors employment",
+        "Public and Private sector roles",
+        "Money as medium exchange",
+        "Sources of credit, Self-help groups role"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Globalisation",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Globalisation and the Indian Economy"
+      ],
+      "topics": [
+        "Concept, definition, evolution of globalisation",
+        "Key drivers shaping economic landscape",
+        "Role of G20 in light of India's role"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Development and Sectors",
+          "source_text_excerpt": "Unit covering development goals, per capita income as indicator, and multiple perspectives on development need.",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Development",
+          "source_text_excerpt": "Short source-grounded heading for the unit content.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": "U1"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "classified_blocks": [
+        {
+          "source_heading": "Economic Structure and Finance",
+          "source_text_excerpt": "Unit covering sectors of Indian economy, money and credit concepts.",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Sectors of the Indian Economy",
+          "source_text_excerpt": "Short source-grounded heading for sector analysis content.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": "U2"
+        },
+        {
+          "source_heading": "Money and Credit",
+          "source_text_excerpt": "Short source-grounded heading for financial concepts content.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": "U2"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "classified_blocks": [
+        {
+          "source_heading": "Globalisation",
+          "source_text_excerpt": "Unit covering globalisation concepts, drivers, and G20 role.",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Globalisation and the Indian Economy",
+          "source_text_excerpt": "Short source-grounded heading for globalisation content.",
+          "classification": "chapter",
+          "confidence": 0.85,
+          "parent_chapter": "U3"
+        }
+      ]
+    }
+  ]
+}

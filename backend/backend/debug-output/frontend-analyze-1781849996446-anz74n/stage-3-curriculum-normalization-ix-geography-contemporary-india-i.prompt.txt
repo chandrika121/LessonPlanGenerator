@@ -1,0 +1,99 @@
+Stage 3: Curriculum Normalization - IX - Geography - Contemporary India - I
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Geography - Contemporary India - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical and Human Geography of India",
+      "marks": 20,
+      "headings": [
+        "Chapter 1 India – Size and Location",
+        "Chapter 2 Physical Features of India",
+        "Chapter 3 Drainage",
+        "Chapter 4 Climate Natural Vegetation and Wildlife",
+        "Chapter 5 Population"
+      ],
+      "possible_chapters": [
+        "India – Size and Location",
+        "Physical Features of India",
+        "Drainage",
+        "Climate Natural Vegetation and Wildlife",
+        "Population"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter 1 India – Size and Location",
+          "source_text_excerpt": "India – Size and Location",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 2 Physical Features of India",
+          "source_text_excerpt": "Physical Features of India",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 3 Drainage",
+          "source_text_excerpt": "Drainage",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 4 Climate Natural Vegetation and Wildlife",
+          "source_text_excerpt": "Climate Natural Vegetation and Wildlife",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 5 Population",
+          "source_text_excerpt": "Population",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+Stage 3: Curriculum Normalization - IX - Economics
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Economics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Indian Economy and Development",
+      "marks": 20,
+      "headings": [
+        "Chapter 1 The Story of Village Palampur",
+        "Chapter 2 People as Resource",
+        "Chapter 3 Poverty as a Challenge",
+        "Chapter 4 Food Security in India"
+      ],
+      "possible_chapters": [
+        "The Story of Village Palampur",
+        "People as Resource",
+        "Poverty as a Challenge",
+        "Food Security in India"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Indian Economy and Development",
+          "source_text_excerpt": "Unit covering Indian economy, development challenges, resources, poverty, and food security.",
+          "classification": "unit",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 1 The Story of Village Palampur",
+          "source_text_excerpt": "The Story of Village Palampur: An overview of a village's economy and production.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 2 People as Resource",
+          "source_text_excerpt": "People as Resource: Understanding human capital in economic development.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 3 Poverty as a Challenge",
+          "source_text_excerpt": "Poverty as a Challenge: Analyzing causes and measures to reduce poverty.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 4 Food Security in India",
+          "source_text_excerpt": "Food Security in India: Ensuring access to food for all citizens.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_name": "",
+        "classified_blocks": [
+          {
+            "source_heading": "",
+            "source_text_excerpt": "",
+            "classification": "unit",
+            "confidence": 0,
+            "parent_unit": "",
+            "parent_chapter": ""
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 2: Heading Classification - X - Geography - Contemporary India - II\nReturn compact JSON only.\nClassify headings and content blocks for this class only.\n\nRules:\n- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown\n- a valid chapter should be short and source-grounded\n- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter\n- classify from structural and textual signals, not just heading style\n- source_text_excerpt must be at most 180 characters\n- no explanations\n- no repeated raw text\n\nRaw class extraction:\n{\n  \"class_name\": \"X\",\n  \"subject\": \"Geography - Contemporary India - II\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Resources and Development\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Resources and Development\"\n      ],\n      \"topics\": [\n        \"Resource interdependence and planning necessity\",\n        \"Rationale for development of resources\",\n        \"Non-optimal land utilization analysis\",\n        \"Remedial measures for underutilized resources\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Environment and Agriculture\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Forest and Wildlife Resources\",\n        \"Water Resources\",\n        \"Agriculture\"\n      ],\n      \"topics\": [\n        \"Conserving forests/wildlife interdependency for ecology\",\n        \"Role of grazing/wood cutting in degradation\",\n        \"Reasons for biodiversity conservation under sustainable development\",\n        \"Impact of developmental works on forests\",\n        \"Water resource conservation reasons\",\n        \"Multipurpose projects supporting water requirements\",\n        \"Crucial role of agriculture in economy/society\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Industries and Economy Lifelines\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Minerals and Energy Resources\",\n        \"Manufacturing Industries\",\n        \"Lifelines of National Economy\"\n      ],\n      \"topics\": [\n        \"Impact of manufacturing on environment strategies for sustainability\",\n        \"Differentiation between types of industries based on input/process/product\",\n        \"Relation between raw material availability and industry location\",\n        \"Transportation as lifeline of economy\",\n        \"Challenges in roadways/railway sector\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_name\": \"\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"\",\n          \"source_text_excerpt\": \"\",\n          \"classification\": \"unit\",\n          \"confidence\": 0,\n          \"parent_unit\": \"\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+Stage 3: Curriculum Normalization - X - Economics - Understanding Economic Development
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Economics - Understanding Economic Development",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Development and Economy",
+      "marks": 20,
+      "headings": [
+        "Chapter 1 Development",
+        "Chapter 2 Sectors of the Indian Economy",
+        "Chapter 3 Money and Credit",
+        "Chapter 4 Globalisation and the Indian Economy"
+      ],
+      "possible_chapters": [
+        "Development",
+        "Sectors of the Indian Economy",
+        "Money and Credit",
+        "Globalisation and the Indian Economy"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter 1 Development",
+          "source_text_excerpt": "Development and Economy - Chapter 1: Development. This chapter explores the concept of development, focusing on income growth versus broader well-being indicators.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 2 Sectors of the Indian Economy",
+          "source_text_excerpt": "Development and Economy - Chapter 2: Sectors of the Indian Economy. Discusses primary, secondary, and tertiary sectors with a focus on employment patterns.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 3 Money and Credit",
+          "source_text_excerpt": "Development and Economy - Chapter 3: Money and Credit. Covers the role of money in transactions, credit functions, and formal vs informal lending sources.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 4 Globalisation and the Indian Economy",
+          "source_text_excerpt": "Development and Economy - Chapter 4: Globalisation and the Indian Economy. Examines how global integration impacts domestic markets, production, and consumer choices.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

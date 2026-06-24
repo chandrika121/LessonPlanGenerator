@@ -1,0 +1,498 @@
+Stage 3: Curriculum Normalization - Class IX - Mathematics
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class IX",
+  "subject": "Mathematics",
+  "part_or_section": "Curriculum Structure and Question Paper Design",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Number System",
+      "marks": 7,
+      "headings": [
+        "Introduction to rational numbers",
+        "Representation of rational numbers on the number line",
+        "Density of rational numbers and its proof",
+        "Finding rational numbers between any two rational numbers",
+        "Decimal representation of rational numbers",
+        "Introduction to irrational numbers",
+        "Proof of irrationality of √2 and √3",
+        "The square root spiral"
+      ],
+      "possible_chapters": [
+        "Number System"
+      ],
+      "topics": [
+        "Rational Numbers",
+        "Irrational Numbers",
+        "Density of Rational Numbers",
+        "Decimal Representation",
+        "Square Root Spiral"
+      ],
+      "subtopics": [
+        "Introduction to rational numbers",
+        "Representation on number line",
+        "Proof of density",
+        "Finding numbers between two rationals",
+        "Decimal representation computation",
+        "Concept of irrationality",
+        "Proofs for √2 and √3",
+        "Construction of square root spiral"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Algebra",
+      "marks": 20,
+      "headings": [
+        "Introduction to Polynomials",
+        "Sequences and Progressions",
+        "Exploring Algebraic Identities",
+        "Linear Equations in Two Variables"
+      ],
+      "possible_chapters": [
+        "Introduction to Polynomials",
+        "Sequences and Progressions",
+        "Exploring Algebraic Identities",
+        "Linear Equations in Two Variables"
+      ],
+      "topics": [
+        "Polynomials",
+        "Algebraic Expressions",
+        "Sequences and Patterns",
+        "Arithmetic and Geometric Progressions",
+        "Fractals and Tower of Hanoi",
+        "Algebraic Identities",
+        "Factorisation",
+        "Linear Equations"
+      ],
+      "subtopics": [
+        "Definition, degree, terms, coefficients",
+        "Linear growth/decay modelling",
+        "Slope and y-intercept (y = ax + b)",
+        "Graphing linear equations",
+        "Explicit vs Recursive rules",
+        "nth term of AP and GP",
+        "Applications in fractals",
+        "Tower of Hanoi puzzle",
+        "Visualising identities with geometric models",
+        "Factorisation using tiles",
+        "Simplifying rational expressions",
+        "Graphical method for pairs of equations",
+        "Consistency and inconsistency",
+        "Substitution and elimination methods"
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Coordinate Geometry",
+      "marks": 4,
+      "headings": [
+        "Brief history of coordinate geometry",
+        "The 2-D Cartesian coordinate system",
+        "Distance between two points in the 2-D plane",
+        "Midpoint of the line-segment"
+      ],
+      "possible_chapters": [
+        "Coordinate Geometry"
+      ],
+      "topics": [
+        "Cartesian System",
+        "Distance Formula",
+        "Midpoint Formula"
+      ],
+      "subtopics": [
+        "History of coordinate geometry",
+        "2-D Cartesian system basics",
+        "Computing distance between points",
+        "Determining collinearity using coordinates",
+        "Finding midpoint position",
+        "Checking for right-angled triangles via coordinates"
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Geometry",
+      "marks": 25,
+      "headings": [
+        "Introduction to Euclid's Geometry: Axioms and Postulates",
+        "Lines and Angles",
+        "Triangles – Congruence Theorems",
+        "4-gons (Quadrilaterals)",
+        "Circles"
+      ],
+      "possible_chapters": [
+        "Introduction to Euclid's Geometry",
+        "Lines and Angles",
+        "Congruence of Triangles",
+        "Properties of Quadrilaterals",
+        "Geometry of Circles"
+      ],
+      "topics": [
+        "Euclidean Axioms",
+        "Angles and Lines",
+        "Triangle Congruence",
+        "Quadrilateral Properties",
+        "Circle Theorems"
+      ],
+      "subtopics": [
+        "History of geometry (India, Egypt, Greece)",
+        "Baudhayana's Sulbasutras constructions",
+        "Euclid's 5 postulates and definitions",
+        "Rays, measures, intersecting lines",
+        "Linear pair theorem, vertically opposite angles",
+        "Parallelism transitivity",
+        "SAS, SSS, ASA, RHS, AAS congruence conditions",
+        "Isosceles triangle properties",
+        "Propositions and converses (counter-examples)",
+        "Parallelogram theorems and proofs",
+        "Midpoint theorem for triangles and quadrilaterals",
+        "Symmetry in 4-gons",
+        "Circle definitions (chord, diameter, radius, arc)",
+        "Angles subtended by chords/arcs",
+        "Cyclic points and quadrilaterals",
+        "Concentricity of circumcircles"
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Mensuration",
+      "marks": 14,
+      "headings": [
+        "Area and Perimeter",
+        "Surface Area and Volume"
+      ],
+      "possible_chapters": [
+        "Perimeter of Shapes",
+        "Heron's Formula",
+        "Brahmagupta's Formula",
+        "Circumference and Arc Length",
+        "Area of Sectors and Segments",
+        "Surface Area and Volume of Solids"
+      ],
+      "topics": [
+        "Perimeter and Circumference",
+        "Areas (Triangles, Rectangles, Parallelograms)",
+        "Heron's Formula",
+        "Brahmagupta's Formula",
+        "Area of Circle Sectors",
+        "Surface Area and Volume"
+      ],
+      "subtopics": [
+        "Perimeter of shapes and circles",
+        "Introduction to Pi (Archimedes, Aryabhata)",
+        "Length of an arc",
+        "Heron's formula derivation and application",
+        "Squaring a rectangle (Baudhayana)",
+        "Area of circle sector/segment",
+        "Generalisation vs Special case in formulas",
+        "Surface area/volume of Cuboids, Cubes, Cylinders, Cones, Pyramids, Spheres"
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Statistics and Probability",
+      "marks": 10,
+      "headings": [
+        "Graphical representation of data",
+        "Measures of central tendency",
+        "Concept of probability and randomness"
+      ],
+      "possible_chapters": [
+        "Statistics",
+        "Probability"
+      ],
+      "topics": [
+        "Data Representation",
+        "Central Tendency (Mean, Median, Mode)",
+        "Empirical Probability",
+        "Theoretical Probability"
+      ],
+      "subtopics": [
+        "Collecting and organising data",
+        "Weighted average computation",
+        "Stacked bar graphs interpretation",
+        "Probability scale usage",
+        "Randomness concept",
+        "Tree diagrams and tables for probability",
+        "Sample space and events"
+      ]
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Number System",
+          "source_text_excerpt": "Unit covering rational and irrational numbers, density proofs, decimal representations, square root spiral.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Introduction to rational numbers",
+          "source_text_excerpt": "Basic introduction and definition of rational numbers within the number system unit.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Number System"
+        },
+        {
+          "source_heading": "Representation of rational numbers on the number line",
+          "source_text_excerpt": "Methods and techniques for plotting rational numbers accurately on a linear scale.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Number System"
+        },
+        {
+          "source_heading": "Density of rational numbers and its proof",
+          "source_text_excerpt": "Mathematical proofs demonstrating the density property between any two rational numbers.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Number System"
+        },
+        {
+          "source_heading": "Finding rational numbers between any two rational numbers",
+          "source_text_excerpt": "Procedural methods to identify intermediate rational values within a given interval.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Number System"
+        },
+        {
+          "source_heading": "Decimal representation of rational numbers",
+          "source_text_excerpt": "Conversion and classification of rational numbers into terminating or recurring decimals.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Number System"
+        },
+        {
+          "source_heading": "Introduction to irrational numbers",
+          "source_text_excerpt": "Definition and characteristics distinguishing irrational numbers from rational ones.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Number System"
+        },
+        {
+          "source_heading": "Proof of irrationality of √2 and √3",
+          "source_text_excerpt": "Rigorous mathematical proofs establishing the non-rational nature of square roots.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Number System"
+        },
+        {
+          "source_heading": "The square root spiral",
+          "source_text_excerpt": "Geometric construction illustrating the visualization of irrational numbers.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Number System"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "classified_blocks": [
+        {
+          "source_heading": "Introduction to Polynomials",
+          "source_text_excerpt": "Unit covering polynomials, algebraic identities, sequences, and linear equations.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Sequences and Progressions",
+          "source_text_excerpt": "Study of arithmetic and geometric progressions including nth term formulas.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Introduction to Polynomials"
+        },
+        {
+          "source_heading": "Exploring Algebraic Identities",
+          "source_text_excerpt": "Derivation and application of standard algebraic identities with geometric models.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Introduction to Polynomials"
+        },
+        {
+          "source_heading": "Linear Equations in Two Variables",
+          "source_text_excerpt": "Graphical and algebraic methods for solving systems of linear equations.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Introduction to Polynomials"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "classified_blocks": [
+        {
+          "source_heading": "Coordinate Geometry",
+          "source_text_excerpt": "Unit covering history, Cartesian system, distance formula, and midpoint calculations.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Brief history of coordinate geometry",
+          "source_text_excerpt": "Historical context and development of the Cartesian plane system.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Coordinate Geometry"
+        },
+        {
+          "source_heading": "The 2-D Cartesian coordinate system",
+          "source_text_excerpt": "Fundamentals of axes, quadrants, and plotting points in a two-dimensional plane.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Coordinate Geometry"
+        },
+        {
+          "source_heading": "Distance between two points in the 2-D plane",
+          "source_text_excerpt": "Derivation and application of the distance formula for coordinate pairs.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Coordinate Geometry"
+        },
+        {
+          "source_heading": "Midpoint of the line-segment",
+          "source_text_excerpt": "Calculating the center point between two coordinates and related geometric properties.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Coordinate Geometry"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "classified_blocks": [
+        {
+          "source_heading": "Geometry",
+          "source_text_excerpt": "Unit covering Euclid's axioms, lines, angles, triangles, quadrilaterals, and circles.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Introduction to Euclid's Geometry: Axioms and Postulates",
+          "source_text_excerpt": "Foundational definitions, axioms, postulates, and historical context of geometry.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Geometry"
+        },
+        {
+          "source_heading": "Lines and Angles",
+          "source_text_excerpt": "Properties of intersecting lines, parallelism, linear pairs, and vertically opposite angles.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Geometry"
+        },
+        {
+          "source_heading": "Triangles – Congruence Theorems",
+          "source_text_excerpt": "Conditions for triangle congruence including SAS, SSS, ASA, RHS, and AAS.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Geometry"
+        },
+        {
+          "source_heading": "4-gons (Quadrilaterals)",
+          "source_text_excerpt": "Theorems regarding parallelograms, midpoints, symmetry, and properties of four-sided figures.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Geometry"
+        },
+        {
+          "source_heading": "Circles",
+          "source_text_excerpt": "Definitions of chords, arcs, sectors; cyclic quadrilaterals and angle theorems.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Geometry"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "classified_blocks": [
+        {
+          "source_heading": "Mensuration",
+          "source_text_excerpt": "Unit covering perimeter, area formulas including Heron's and Brahmagupta's, surface areas.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Area and Perimeter",
+          "source_text_excerpt": "Formulas for perimeter of shapes, circumference, arc length, and area calculations.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Mensuration"
+        },
+        {
+          "source_heading": "Surface Area and Volume",
+          "source_text_excerpt": "Calculations for surface areas and volumes of various solids like cubes, cylinders, cones.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Mensuration"
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "classified_blocks": [
+        {
+          "source_heading": "Statistics and Probability",
+          "source_text_excerpt": "Unit covering data representation, central tendency measures, probability concepts.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Graphical representation of data",
+          "source_text_excerpt": "Methods for collecting, organizing, and displaying data using stacked bar graphs.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Statistics and Probability"
+        },
+        {
+          "source_heading": "Measures of central tendency",
+          "source_text_excerpt": "Computation and interpretation of mean, median, mode, and weighted averages.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Statistics and Probability"
+        },
+        {
+          "source_heading": "Concept of probability and randomness",
+          "source_text_excerpt": "Theoretical vs empirical probability, sample spaces, events, tree diagrams.",
+          "classification": "subtopic",
+          "confidence": 0.9,
+          "parent_chapter": "Statistics and Probability"
+        }
+      ]
+    }
+  ]
+}

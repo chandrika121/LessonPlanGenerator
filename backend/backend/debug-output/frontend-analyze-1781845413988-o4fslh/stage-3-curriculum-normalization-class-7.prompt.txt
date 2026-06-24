@@ -1,0 +1,135 @@
+Stage 3: Curriculum Normalization - Class 7
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Political Science - Democratic Politics-II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Power and Democracy",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Power-sharing Federalism",
+        "Gender, Religion and Caste"
+      ],
+      "topics": [
+        "Need for power sharing in democracy",
+        "Challenges in Belgium and Sri Lanka",
+        "Federalism in India",
+        "Role of Gender, religion and Caste in Democracy"
+      ],
+      "subsections": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Political Systems",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Political Parties",
+        "Outcomes of Democracy"
+      ],
+      "topics": [
+        "Process of parties getting elected",
+        "Right to vote and duties as citizens",
+        "Success depends on quality of government, economic well-being, inequality"
+      ],
+      "subsections": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "Class 7",
+  "units": [
+    {
+      "unit_name": "Power and Democracy",
+      "classified_blocks": [
+        {
+          "source_heading": "Need for power sharing in democracy",
+          "source_text_excerpt": "The need for power-sharing arises to ensure stability, prevent conflict, and accommodate diversity within a democratic framework.",
+          "classification": "topic",
+          "confidence": 0.95,
+          "parent_unit": "Power and Democracy",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Challenges in Belgium and Sri Lanka",
+          "source_text_excerpt": "Belgium faced linguistic tensions while Sri Lanka experienced ethnic conflict due to unequal power distribution among groups.",
+          "classification": "topic",
+          "confidence": 0.95,
+          "parent_unit": "Power and Democracy",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Federalism in India",
+          "source_text_excerpt": "India adopted federalism to manage its vast diversity through power-sharing between central and state governments.",
+          "classification": "topic",
+          "confidence": 0.95,
+          "parent_unit": "Power and Democracy",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Role of Gender, religion and Caste in Democracy",
+          "source_text_excerpt": "Gender, religious, and caste identities significantly influence political participation and representation in democratic systems.",
+          "classification": "topic",
+          "confidence": 0.95,
+          "parent_unit": "Power and Democracy",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Political Systems",
+      "classified_blocks": [
+        {
+          "source_heading": "Process of parties getting elected",
+          "source_text_excerpt": "Election processes involve campaigning, voting mechanisms, and the role of political parties in contesting for power.",
+          "classification": "topic",
+          "confidence": 0.95,
+          "parent_unit": "Political Systems",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Right to vote and duties as citizens",
+          "source_text_excerpt": "Citizens exercise their right to vote while fulfilling civic duties essential for a functioning democracy.",
+          "classification": "topic",
+          "confidence": 0.95,
+          "parent_unit": "Political Systems",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Success depends on quality of government, economic well-being, inequality",
+          "source_text_excerpt": "Democratic success is measured by the quality of governance, level of economic development, and reduction in social inequalities.",
+          "classification": "topic",
+          "confidence": 0.95,
+          "parent_unit": "Political Systems",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

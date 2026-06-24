@@ -1,0 +1,42 @@
+Stage 2: Heading Classification - Class 2
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Geography - Contemporary India - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical and Human Geography of India",
+      "marks": 20,
+      "headings": [
+        "Chapter 1 India – Size and Location",
+        "Chapter 2 Physical Features of India",
+        "Chapter 3 Drainage",
+        "Chapter 4 Climate Natural Vegetation and Wildlife",
+        "Chapter 5 Population"
+      ],
+      "possible_chapters": [
+        "India – Size and Location",
+        "Physical Features of India",
+        "Drainage",
+        "Climate Natural Vegetation and Wildlife",
+        "Population"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}

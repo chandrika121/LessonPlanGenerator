@@ -1,0 +1,177 @@
+Stage 3: Curriculum Normalization - X - Political Science - Democratic Politics - II
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- Keep class_name exactly as in raw extraction
+- Keep subject exactly as in raw extraction
+- Keep every unit_name exactly as in raw extraction
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Political Science - Democratic Politics - II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Power Sharing and Federalism",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Power-sharing (Federalism)",
+        "Gender, Religion and Caste"
+      ],
+      "topics": [
+        "Need for power sharing in democracy",
+        "Challenges faced by Belgium/Sri Lanka",
+        "Comparison of India with Sri Lanka/Belgium",
+        "Purpose of power sharing preserving unity/stability",
+        "Federalism practice in India",
+        "Policies strengthening federalism"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Social Dynamics and Democracy Outcomes",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Political Parties",
+        "Outcomes of Democracy"
+      ],
+      "topics": [
+        "Role/differences of Gender/Religion/Caste in democracy",
+        "Healthy vs unhealthy expressions based on differences",
+        "Process of parties getting elected",
+        "Significance of right to vote and citizen duties",
+        "Role/purpose/no. of Political Parties"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "X",
+  "units": [
+    {
+      "unit_name": "Power Sharing and Federalism",
+      "classified_blocks": [
+        {
+          "source_heading": "Need for power sharing in democracy",
+          "source_text_excerpt": "Understanding why power sharing is essential to maintain stability and unity within a democratic framework.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Power Sharing and Federalism",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Challenges faced by Belgium/Sri Lanka",
+          "source_text_excerpt": "Analysis of ethnic conflicts and political failures in Belgium and Sri Lanka regarding power distribution.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Power Sharing and Federalism",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Comparison of India with Sri Lanka/Belgium",
+          "source_text_excerpt": "Comparative study highlighting how India's federal structure differs from the challenges in neighboring countries.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Power Sharing and Federalism",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Purpose of power sharing preserving unity/stability",
+          "source_text_excerpt": "Exploring how inclusive governance prevents conflict and ensures long-term political stability in diverse societies.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Power Sharing and Federalism",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Federalism practice in India",
+          "source_text_excerpt": "Detailed examination of the implementation of federal principles within the Indian political system.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Power Sharing and Federalism",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Policies strengthening federalism",
+          "source_text_excerpt": "Review of specific legislative measures that reinforce the federal structure in India.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Power Sharing and Federalism",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Social Dynamics and Democracy Outcomes",
+      "classified_blocks": [
+        {
+          "source_heading": "Role/differences of Gender/Religion/Caste in democracy",
+          "source_text_excerpt": "Investigating how social identities influence political participation and democratic outcomes.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Social Dynamics and Democracy Outcomes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Healthy vs unhealthy expressions based on differences",
+          "source_text_excerpt": "Distinguishing between constructive social diversity and divisive political mobilization.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Social Dynamics and Democracy Outcomes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Process of parties getting elected",
+          "source_text_excerpt": "Overview of electoral mechanisms and the procedural steps for political party success.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Social Dynamics and Democracy Outcomes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Significance of right to vote and citizen duties",
+          "source_text_excerpt": "The importance of voting rights as a fundamental democratic tool and the responsibilities accompanying them.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Social Dynamics and Democracy Outcomes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Role/purpose/no. of Political Parties",
+          "source_text_excerpt": "Defining the functions of political parties in a democracy and analyzing their structural necessity.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Social Dynamics and Democracy Outcomes",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

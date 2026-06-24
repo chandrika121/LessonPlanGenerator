@@ -1,0 +1,63 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_id": "",
+        "unit_name": "",
+        "marks": null,
+        "chapters": [
+          {
+            "chapter_id": "",
+            "chapter_name": "",
+            "source_heading": "",
+            "is_normalized": false,
+            "confidence": 0,
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - Class 8\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- long paragraph-like chapter names must be reclassified into topics\n- chapter names must remain source-grounded\n- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks\n- never create new chapter names from topics or subtopics\n- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true\n- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented\n\nRaw class extraction:\n{\n  \"class_name\": \"X\",\n  \"subject\": \"Economics - Understanding Economic Development\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Development and Sectors\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Development\",\n        \"Sectors of the Indian Economy\"\n      ],\n      \"topics\": [\n        \"Setting developmental Goals\",\n        \"Per capita income as indicator\",\n        \"Economic activities in different sectors\",\n        \"Organised and unorganised sectors employment\"\n      ],\n      \"subsections\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Finance and Globalisation\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Money and Credit\",\n        \"Globalisation and the Indian Economy\"\n      ],\n      \"topics\": [\n        \"Money as medium of exchange\",\n        \"Sources of Credit\",\n        \"Self-help groups for rural women\",\n        \"Concept, definition, evolution of globalisation\",\n        \"Role of G20\"\n      ],\n      \"subsections\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"class_name\": \"Class 8\",\n  \"units\": [\n    {\n      \"unit_name\": \"Development and Sectors\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Setting developmental Goals\",\n          \"source_text_excerpt\": \"Understanding the goals of development such as higher income, better health, education, and equality.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Development and Sectors\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Per capita income as indicator\",\n          \"source_text_excerpt\": \"Analyzing per capita income to compare economic development across different regions or countries.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Development and Sectors\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Economic activities in different sectors\",\n          \"source_text_excerpt\": \"Categorizing economic activities into primary, secondary, tertiary, and quaternary sectors.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Development and Sectors\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Organised and unorganised sectors employment\",\n          \"source_text_excerpt\": \"Distinguishing between jobs in the organised sector with legal protection and those in the unorganised sector.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Development and Sectors\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_name\": \"Finance and Globalisation\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Money as medium of exchange\",\n          \"source_text_excerpt\": \"Exploring the functions of money, including its role in facilitating trade and storing value.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Finance and Globalisation\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Sources of Credit\",\n          \"source_text_excerpt\": \"Identifying various sources where individuals can obtain loans for personal or business needs.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Finance and Globalisation\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Self-help groups for rural women\",\n          \"source_text_excerpt\": \"Examining how self-help groups empower rural women by providing access to small loans.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Finance and Globalisation\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Concept, definition, evolution of globalisation\",\n          \"source_text_excerpt\": \"Defining globalisation as the process of increasing interconnectedness among countries.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Finance and Globalisation\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Role of G20\",\n          \"source_text_excerpt\": \"Discussing the significance of the Group of Twenty in global economic governance.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Finance and Globalisation\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"unit_name\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"\",\n          \"chapter_name\": \"\",\n          \"source_heading\": \"\",\n          \"is_normalized\": false,\n          \"confidence\": 0,\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

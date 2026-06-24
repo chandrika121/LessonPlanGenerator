@@ -1,0 +1,268 @@
+Stage 3: Node Enrichment - Class XI - Economics
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XI",
+  "subject": "Economics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Introduction",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Introduction",
+          "source_chapter_name": "Introduction",
+          "source_heading": "Introduction",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Collection, Organisation and Presentation of Data",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Collection, Organisation and Presentation of Data",
+          "source_chapter_name": "Collection, Organisation and Presentation of Data",
+          "source_heading": "Collection, Organisation and Presentation of Data",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Statistical Tools and Interpretation",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistical Tools and Interpretation",
+          "source_chapter_name": "Statistical Tools and Interpretation",
+          "source_heading": "Statistical Tools and Interpretation",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Introduction",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Introduction",
+          "source_chapter_name": "Introduction",
+          "source_heading": "Introduction",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Consumer's Equilibrium and Demand",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Consumer's Equilibrium and Demand",
+          "source_chapter_name": "Consumer's Equilibrium and Demand",
+          "source_heading": "Consumer's Equilibrium and Demand",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Producer Behaviour and Supply",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Producer Behaviour and Supply",
+          "source_chapter_name": "Producer Behaviour and Supply",
+          "source_heading": "Producer Behaviour and Supply",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Perfect Competition - Price Determination and simple applications",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Perfect Competition - Price Determination and simple applications",
+          "source_chapter_name": "Perfect Competition - Price Determination and simple applications",
+          "source_heading": "Perfect Competition - Price Determination and simple applications",
+          "source_type": "unit_fallback"
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XI",
+  "subject": "Economics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Introduction",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Introduction",
+          "source_chapter_name": "Introduction",
+          "source_heading": "Introduction",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Collection, Organisation and Presentation of Data",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Collection, Organisation and Presentation of Data",
+          "source_chapter_name": "Collection, Organisation and Presentation of Data",
+          "source_heading": "Collection, Organisation and Presentation of Data",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Statistical Tools and Interpretation",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistical Tools and Interpretation",
+          "source_chapter_name": "Statistical Tools and Interpretation",
+          "source_heading": "Statistical Tools and Interpretation",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Introduction",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Introduction",
+          "source_chapter_name": "Introduction",
+          "source_heading": "Introduction",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Consumer's Equilibrium and Demand",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Consumer's Equilibrium and Demand",
+          "source_chapter_name": "Consumer's Equilibrium and Demand",
+          "source_heading": "Consumer's Equilibrium and Demand",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Producer Behaviour and Supply",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Producer Behaviour and Supply",
+          "source_chapter_name": "Producer Behaviour and Supply",
+          "source_heading": "Producer Behaviour and Supply",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Perfect Competition - Price Determination and simple applications",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Perfect Competition - Price Determination and simple applications",
+          "source_chapter_name": "Perfect Competition - Price Determination and simple applications",
+          "source_heading": "Perfect Competition - Price Determination and simple applications",
+          "source_type": "unit_fallback"
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+--- Page 1 ---
+1 ECONOMICS (Subject Code 030) Class XI-XII (2025-26) Rationale Economics is one of the social sciences, which has great influence on every human being. As economic life and the economy go through changes, the need to ground education in children’s own experience becomes essential. While doing so, it is imperative to provide them opportunities to acquire analytical skills to observe and understand the economic realities. At senior secondary stage, the learners are in a position to understand abstract ideas, exercise the power of thinking and to develop their own perception. It is at this stage, the learners are exposed to the rigour of the discipline of economics in a systematic way. The economics courses are introduced in such a way that in the initial stage, the learners are introduced to the economic realities that the nation is facing today along with some basic statistical tools to understand these broader economic realities. In the later stage, the learners are introduced to economics as a theory of abstraction. The economics courses also contain many projects and activities. These will provide opportunities for the learners to explore various economic issues both from their day-to-day life and also from issues, which are broader and invisible in nature. The academic skills that they learn in these courses would help to develop the projects and activities. The syllabus is also expected to provide opportunities to use information and communication technologies to facilitate their learning process. Objectives: • Understanding of some basic economic concepts and development of economic reasoning which the learners can apply in their day-to-day life as citizens, workers and consumers. • Realisation of learners’ role in nation building and sensitivity to the economic issues that the nation is facing today. • Equipment with basic tools of economics and statistics to analyse economic issues. This is pertinent for even those who may not pursue this course beyond senior secondary stage. • Development of understanding that there can be more than one view on any economic issue and necessary skills to argue logically with reasoning. Class XI-XII (2026-27)
+
+--- Page 2 ---
+2 ECONOMICS (Subject Code 030) CLASS – XI (2025-26) Theory: 80 Marks 3 Hours Project: 20 Marks Units Marks Part A Statistics for Economics Introduction 15 Collection, Organisation and Presentation of Data Statistical Tools and Interpretation 25 40 Part B Introductory Microeconomics Introduction 04 Consumer's Equilibrium and Demand 14 Producer Behaviour and Supply 14 Forms of Market and Price Determination under perfect competition with simple applications 08 40 Part C Project Work 20 Part A: Statistics for Economics In this course, the learners are expected to acquire skills in collection, organisation and presentation of quantitative and qualitative information pertaining to various simple economic aspects systematically. It also intends to provide some basic statistical tools to analyse, and interpret any economic information and draw appropriate inferences. In this process, the learners are also expected to understand the behaviour of various economic data. Unit 1: Introduction What is Economics? Meaning, scope, functions and importance of statistics in Economics Unit 2: Collection, Organisation and Presentation of data Collection of data - sources of data - primary and secondary; how basic data is collected with concepts of Sampling; methods of collecting data; some important sources of secondary data: Census of India and National Sample Survey Organisation. Organisation of Data : Meaning and types of variables; Frequency Distribution. Class - XI (2026-27)
+
+--- Page 3 ---
+3 Presentation of Data : Tabular Presentation and Diagrammatic Presentation of Data: (i) Geometric forms (bar diagrams and pie diagrams), (ii) Frequency diagrams (histogram, polygon and Ogive) and (iii) Arithmetic line graphs (time series graph). Unit 3: Statistical Tools and Interpretation For all the numerical problems and solutions, the appropriate economic interpretation may be attempted. This means, the students need to solve the problems and provide interpretation for the results derived. Measures of Central Tendency - Arithmetic mean, Median and Mode Correlation – meaning and properties, scatter diagram; measures of correlation - Karl Pearson's method (two variables ungrouped data) Spearman's rank correlation (Non-Repeated Ranks and Repeated Ranks). Introduction to Index Numbers - meaning, types - Wholesale Price Index, Consumer Price Index and index of industrial production, uses of index numbers; Inflation and Index Numbers, Simple Aggregative Method. Part B: Introductory Microeconomics Unit 4: Introduction Meaning of microeconomics and macroeconomics; positive and normative economics What is an economy? Central problems of an economy: what, how and for whom to produce; concepts of Production Possibility Frontier and Opportunity Cost. Unit 5: Consumer's Equilibrium and Demand Consumer's equilibrium - meaning of Utility, Marginal Utility, Law of Diminishing Marginal Utility, conditions of consumer's equilibrium using marginal utility analysis. Indifference curve analysis of consumer's equilibrium-the consumer's budget (budget set and budget line), preferences of the consumer (indifference curve, indifference map) and conditions of consumer's equilibrium. Demand, market demand, determinants of demand, demand schedule, demand curve and its slope, movement along and shifts in the demand curve; price elasticity of demand - factors affecting price elasticity of demand; measurement of price elasticity of demand – percentage-change method and total expenditure method.
+
+--- Page 4 ---
+4 Unit 6: Producer Behaviour and Supply Meaning of Production Function – Short-Run and Long-Run Total Product, Average Product and Marginal Product. Returns to a Factor Cost – Short run costs - Total Cost, Total Fixed Cost, Total Variable Cost; Average Cost; Average Fixed Cost, Average Variable Cost and Marginal Cost - meaning and their relationships. Revenue – Total Revenue, Average Revenue and Marginal Revenue - meaning and their relationship. Producer's Equilibrium - meaning and its conditions in terms of Marginal Revenue- Marginal Cost. Supply, market supply, determinants of supply, supply schedule, supply curve and its slope, movements along and shifts in supply curve, price elasticity of supply; measurement of price elasticity of supply - percentage-change method. Unit 7: Perfect Competition - Price Determination and simple applications. Perfect competition - Features; Determination of market equilibrium and effects of shifts in demand and supply. (Short Run Only) Simple Applications of Demand and Supply: Price ceiling, Price floor. Part C: Project in Economics Guidelines as given in Class XII curriculum
+
+--- Page 5 ---
+5 Suggested Question Paper Design Economics (Subject Code 030) Class XI (2025-26) March 2026 Examination Marks: 80 Duration: 3 hrs. SN Typology of Questions Marks Percentage 1 Remembering and Understanding : Exhibit memory of previously learned material by recalling facts, terms, basic concepts, and answers. Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas 32 40% 2 Applying : Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way. 24 30% 3 Analysing, Evaluating and Creating: Examine and break information into parts by identifying motives or causes. Make inferences and find evidence to support generalizations. Present and defend opinions by making judgments about information, validity of ideas, or quality of work based on a set of criteria. Compile information together in a different way by combining elements in a new pattern or proposing alternative solutions. 24 30% Total 80 100% Class XI (2026-27)
+
+--- Page 6 ---
+6 ECONOMICS (Subject Code 030) CLASS 

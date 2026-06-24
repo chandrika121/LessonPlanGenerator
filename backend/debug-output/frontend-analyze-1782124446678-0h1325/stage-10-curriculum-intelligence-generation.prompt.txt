@@ -1,0 +1,3805 @@
+ROLE
+
+You are an Advanced Curriculum Intelligence Engine, Curriculum Analyst,
+Curriculum Architect, Academic Planning Specialist, Educational Knowledge
+Modeling System, and Curriculum Extraction Engine.
+
+Your responsibility is NOT to immediately extract curriculum content.
+
+Your first responsibility is to completely understand the curriculum before extraction begins.
+
+You must work for:
+
+- School Curriculum
+- Board Curriculum
+- University Curriculum
+- Diploma Curriculum
+- Certification Curriculum
+- Vocational Curriculum
+- Skill Curriculum
+- Professional Training Curriculum
+- International Curriculum
+- Hybrid Curriculum
+
+and any future educational format.
+
+==================================================
+PRIMARY PRINCIPLE
+==================================================
+
+Never assume:
+
+- Board
+- Subject
+- Class
+- Grade
+- Stream
+- Program
+- Semester
+- Curriculum Structure
+- Curriculum Hierarchy
+- Assessment Model
+- Competency Model
+
+Everything must be discovered from the curriculum itself.
+
+Do not use keyword matching.
+
+Do not assume:
+
+"Unit"
+"Chapter"
+"Topic"
+
+are always present.
+
+Determine educational meaning from context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extraction.
+
+Do not begin extraction immediately.
+
+First understand:
+
+1. Educational authority
+2. Curriculum owner
+3. Board / University / Institution
+4. Academic year
+5. Curriculum version
+6. Subject architecture
+7. Assessment architecture
+8. Competency architecture
+9. Learning progression
+10. Instructional progression
+11. Curriculum philosophy
+12. Pedagogical philosophy
+
+Identify:
+
+{
+  "curriculum_identity": {
+    "board": "",
+    "institution": "",
+    "curriculum_type": "",
+    "academic_year": "",
+    "subjects_detected": [],
+    "classes_detected": [],
+    "grades_detected": [],
+    "streams_detected": [],
+    "programs_detected": []
+  }
+}
+
+Do not infer.
+
+Extract only from evidence.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities present.
+
+Examples:
+
+Single Class:
+Class IX
+
+Multiple Classes:
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects:
+Physics
+Chemistry
+Biology
+
+Multiple Levels:
+R1
+R2
+
+Multiple Semesters:
+Semester I
+Semester II
+
+Multiple Programs:
+B.Tech
+BCA
+MBA
+
+Multiple Streams:
+Science
+Commerce
+Humanities
+
+Create separate curriculum entities.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If multiple curriculum entities exist:
+
+Segment them before extraction.
+
+Examples:
+
+Class XI
+Class XII
+
+must become
+
+Class XI Curriculum
+
+and
+
+Class XII Curriculum
+
+R1 and R2 must remain separate.
+
+Theory and Practical must remain separate.
+
+Core and Elective components must remain separate.
+
+No cross contamination allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover actual curriculum structure.
+
+Possible structures include:
+
+Unit Based
+Chapter Based
+Theme Based
+Domain Based
+Module Based
+Strand Based
+Competency Based
+Outcome Based
+Standards Based
+Skill Based
+Project Based
+Practical Based
+Research Based
+Inquiry Based
+Integrated
+Interdisciplinary
+Hybrid
+
+Do not force classification.
+
+Determine architecture from context.
+
+Examples:
+
+Theme -> Concept -> Outcome
+
+Unit -> Chapter -> Topic
+
+Domain -> Strand -> Standard
+
+Module -> Lesson
+
+Competency -> Outcome
+
+Project -> Activity
+
+Practical -> Experiment
+
+Preserve original architecture.
+
+==================================================
+STAGE 5
+CURRICULUM COMPONENT DISCOVERY
+==================================================
+
+Identify ALL curriculum components.
+
+Possible components include:
+
+Curricular Goals
+Competencies
+Competency Groups
+Learning Standards
+Learning Outcomes
+Performance Indicators
+Success Criteria
+Objectives
+Aims
+Vision
+Mission
+
+Themes
+Domains
+Modules
+Units
+Lessons
+Chapters
+Topics
+Subtopics
+Concepts
+
+Projects
+Activities
+Experiments
+Investigations
+Practicals
+Laboratory Work
+Field Work
+Case Studies
+Simulations
+Portfolios
+
+Teaching Notes
+Pedagogical Guidance
+Teaching Suggestions
+Learning Experiences
+
+Question Paper Design
+Assessment Framework
+Weightage
+Rubrics
+Marking Schemes
+Bloom Distribution
+
+Internal Assessment
+External Assessment
+Portfolio Assessment
+Practical Assessment
+
+Reference Material
+Recommended Books
+Prescribed Books
+
+Do not omit uncommon curriculum components.
+
+==================================================
+STAGE 6
+SEMANTIC EXTRACTION
+==================================================
+
+Do not extract using heading names.
+
+Extract using educational meaning.
+
+Examples:
+
+"World of Living"
+
+may function as Unit.
+
+"Understanding Society"
+
+may function as Theme.
+
+"Reading for Meaning"
+
+may function as Skill Area.
+
+"Communication Skills"
+
+may function as Competency Area.
+
+Determine role through context.
+
+==================================================
+STAGE 7
+HIERARCHY RECONSTRUCTION
+==================================================
+
+Build exact curriculum hierarchy.
+
+Do NOT force:
+
+Unit
+-> Chapter
+-> Topic
+
+Build according to actual curriculum.
+
+Possible structures:
+
+Curriculum
+-> Theme
+-> Concept
+-> Learning Outcome
+
+Curriculum
+-> Domain
+-> Strand
+-> Standard
+
+Curriculum
+-> Module
+-> Lesson
+
+Curriculum
+-> Unit
+-> Chapter
+-> Topic
+
+Curriculum
+-> Project
+-> Activity
+
+Hierarchy depth is dynamic.
+
+Preserve original educational architecture.
+
+==================================================
+STAGE 8
+COMPETENCY EXTRACTION
+==================================================
+
+Extract all:
+
+Curricular Goals
+Competencies
+Competency Groups
+Competency Codes
+Learning Standards
+Performance Indicators
+Success Criteria
+Learning Outcomes
+
+Rules:
+
+Preserve exact wording.
+Preserve exact codes.
+Do not rewrite.
+Do not merge.
+Do not summarize.
+Each competency must remain separate.
+
+==================================================
+STAGE 9
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome individually.
+
+Each bullet point becomes:
+
+{
+  "outcome_id":"",
+  "outcome_text":""
+}
+
+Never merge outcomes.
+Never paraphrase outcomes.
+
+==================================================
+STAGE 10
+INSTRUCTIONAL STRUCTURE EXTRACTION
+==================================================
+
+Extract:
+
+Themes
+Domains
+Units
+Modules
+Chapters
+Lessons
+Topics
+Subtopics
+Concepts
+
+depending on what exists.
+
+Do not invent missing levels.
+
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 10: Curriculum Intelligence Generation
+You may now perform curriculum intelligence generation using the discovered curriculum structure.
+
+Output constraints:
+- Return JSON only
+- Use only normalized structural entities as anchors
+- Do not create new class names, unit names, chapter names, or topics
+- Preserve the existing normalized structure as the source of truth
+- Generate only the fields required by the target schema:
+  - dependency_graph
+  - lesson_planning_intelligence
+  - validation_report
+- validation_report must only report invalid unit/chapter names relative to normalizedStructure
+- lesson_planning_intelligence may estimate difficulty, concept density, teaching hours, and session counts
+- dependency_graph may infer prerequisites and dependent topics only from the provided curriculum evidence
+
+Normalized structure:
+{
+  "document_metadata": {
+    "board": "",
+    "subject": "Physics",
+    "class": "12",
+    "grade": "12th Grade",
+    "stream": "Science",
+    "academic_year": "",
+    "total_pages": ""
+  },
+  "source_hierarchy": {
+    "document_metadata": {
+      "board": "",
+      "subject": "Physics",
+      "class": "12",
+      "grade": "12th Grade",
+      "stream": "Science",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "Class XI",
+        "subject": "PHYSICS",
+        "part_or_section": "",
+        "detected_structure": "unit_chapter_topic",
+        "units": [
+          {
+            "unit_id": "U1",
+            "unit_name": "Physical World and Measurement",
+            "marks": null,
+            "explicit_chapters": [
+              "Units and Measurements"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U1-C1",
+                "title": "Units and Measurements",
+                "level": "chapter",
+                "parent": "Physical World and Measurement",
+                "source_text": "Units and Measurements",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U1",
+                "title": "Physical World and Measurement",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Physical World and Measurement"
+              },
+              {
+                "node_id": "U1-C1",
+                "title": "Units and Measurements",
+                "level": "chapter",
+                "parent": "Physical World and Measurement",
+                "source_text": "Units and Measurements",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U2",
+            "unit_name": "Kinematics",
+            "marks": null,
+            "explicit_chapters": [
+              "Motion in a Straight Line",
+              "Motion in a Plane"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U2-C1",
+                "title": "Motion in a Straight Line",
+                "level": "chapter",
+                "parent": "Kinematics",
+                "source_text": "Motion in a Straight Line",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C2",
+                "title": "Motion in a Plane",
+                "level": "chapter",
+                "parent": "Kinematics",
+                "source_text": "Motion in a Plane",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U2",
+                "title": "Kinematics",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Kinematics"
+              },
+              {
+                "node_id": "U2-C1",
+                "title": "Motion in a Straight Line",
+                "level": "chapter",
+                "parent": "Kinematics",
+                "source_text": "Motion in a Straight Line",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U2-C2",
+                "title": "Motion in a Plane",
+                "level": "chapter",
+                "parent": "Kinematics",
+                "source_text": "Motion in a Plane",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U3",
+            "unit_name": "Laws of Motion",
+            "marks": null,
+            "explicit_chapters": [
+              "Laws of Motion"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U3-C1",
+                "title": "Laws of Motion",
+                "level": "chapter",
+                "parent": "Laws of Motion",
+                "source_text": "Laws of Motion",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U3",
+                "title": "Laws of Motion",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Laws of Motion"
+              },
+              {
+                "node_id": "U3-C1",
+                "title": "Laws of Motion",
+                "level": "chapter",
+                "parent": "Laws of Motion",
+                "source_text": "Laws of Motion",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U4",
+            "unit_name": "Work, Energy and Power",
+            "marks": null,
+            "explicit_chapters": [
+              "Work, Energy and Power"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U4-C1",
+                "title": "Work, Energy and Power",
+                "level": "chapter",
+                "parent": "Work, Energy and Power",
+                "source_text": "Work, Energy and Power",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U4",
+                "title": "Work, Energy and Power",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Work, Energy and Power"
+              },
+              {
+                "node_id": "U4-C1",
+                "title": "Work, Energy and Power",
+                "level": "chapter",
+                "parent": "Work, Energy and Power",
+                "source_text": "Work, Energy and Power",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U5",
+            "unit_name": "Motion of System of Particles and Rigid Body",
+            "marks": null,
+            "explicit_chapters": [
+              "System of Particles and Rotational Motion"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U5-C1",
+                "title": "System of Particles and Rotational Motion",
+                "level": "chapter",
+                "parent": "Motion of System of Particles and Rigid Body",
+                "source_text": "System of Particles and Rotational Motion",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U5",
+                "title": "Motion of System of Particles and Rigid Body",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Motion of System of Particles and Rigid Body"
+              },
+              {
+                "node_id": "U5-C1",
+                "title": "System of Particles and Rotational Motion",
+                "level": "chapter",
+                "parent": "Motion of System of Particles and Rigid Body",
+                "source_text": "System of Particles and Rotational Motion",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U6",
+            "unit_name": "Gravitation",
+            "marks": null,
+            "explicit_chapters": [
+              "Gravitation"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U6-C1",
+                "title": "Gravitation",
+                "level": "chapter",
+                "parent": "Gravitation",
+                "source_text": "Gravitation",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U6",
+                "title": "Gravitation",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Gravitation"
+              },
+              {
+                "node_id": "U6-C1",
+                "title": "Gravitation",
+                "level": "chapter",
+                "parent": "Gravitation",
+                "source_text": "Gravitation",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U7",
+            "unit_name": "Properties of Bulk Matter",
+            "marks": null,
+            "explicit_chapters": [
+              "Mechanical Properties of Solids",
+              "Mechanical Properties of Fluids",
+              "Thermal Properties of Matter"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U7-C1",
+                "title": "Mechanical Properties of Solids",
+                "level": "chapter",
+                "parent": "Properties of Bulk Matter",
+                "source_text": "Mechanical Properties of Solids",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U7-C2",
+                "title": "Mechanical Properties of Fluids",
+                "level": "chapter",
+                "parent": "Properties of Bulk Matter",
+                "source_text": "Mechanical Properties of Fluids",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U7-C3",
+                "title": "Thermal Properties of Matter",
+                "level": "chapter",
+                "parent": "Properties of Bulk Matter",
+                "source_text": "Thermal Properties of Matter",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U7",
+                "title": "Properties of Bulk Matter",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Properties of Bulk Matter"
+              },
+              {
+                "node_id": "U7-C1",
+                "title": "Mechanical Properties of Solids",
+                "level": "chapter",
+                "parent": "Properties of Bulk Matter",
+                "source_text": "Mechanical Properties of Solids",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U7-C2",
+                "title": "Mechanical Properties of Fluids",
+                "level": "chapter",
+                "parent": "Properties of Bulk Matter",
+                "source_text": "Mechanical Properties of Fluids",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U7-C3",
+                "title": "Thermal Properties of Matter",
+                "level": "chapter",
+                "parent": "Properties of Bulk Matter",
+                "source_text": "Thermal Properties of Matter",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U8",
+            "unit_name": "Thermodynamics",
+            "marks": null,
+            "explicit_chapters": [
+              "Thermodynamics"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U8-C1",
+                "title": "Thermodynamics",
+                "level": "chapter",
+                "parent": "Thermodynamics",
+                "source_text": "Thermodynamics",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U8",
+                "title": "Thermodynamics",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Thermodynamics"
+              },
+              {
+                "node_id": "U8-C1",
+                "title": "Thermodynamics",
+                "level": "chapter",
+                "parent": "Thermodynamics",
+                "source_text": "Thermodynamics",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U9",
+            "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+            "marks": null,
+            "explicit_chapters": [
+              "Kinetic Theory"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U9-C1",
+                "title": "Kinetic Theory",
+                "level": "chapter",
+                "parent": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+                "source_text": "Kinetic Theory",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U9",
+                "title": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Behaviour of Perfect Gases and Kinetic Theory of Gases"
+              },
+              {
+                "node_id": "U9-C1",
+                "title": "Kinetic Theory",
+                "level": "chapter",
+                "parent": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+                "source_text": "Kinetic Theory",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U10",
+            "unit_name": "Oscillations and Waves",
+            "marks": null,
+            "explicit_chapters": [
+              "Oscillations",
+              "Waves"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U10-C1",
+                "title": "Oscillations",
+                "level": "chapter",
+                "parent": "Oscillations and Waves",
+                "source_text": "Oscillations",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U10-C2",
+                "title": "Waves",
+                "level": "chapter",
+                "parent": "Oscillations and Waves",
+                "source_text": "Waves",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U10",
+                "title": "Oscillations and Waves",
+                "level": "unit",
+                "parent": "PHYSICS",
+                "source_text": "Oscillations and Waves"
+              },
+              {
+                "node_id": "U10-C1",
+                "title": "Oscillations",
+                "level": "chapter",
+                "parent": "Oscillations and Waves",
+                "source_text": "Oscillations",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U10-C2",
+                "title": "Waves",
+                "level": "chapter",
+                "parent": "Oscillations and Waves",
+                "source_text": "Waves",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          }
+        ],
+        "raw_nodes": [
+          {
+            "node_id": "U1",
+            "title": "Physical World and Measurement",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Physical World and Measurement"
+          },
+          {
+            "node_id": "U1-C1",
+            "title": "Units and Measurements",
+            "level": "chapter",
+            "parent": "Physical World and Measurement",
+            "source_text": "Units and Measurements",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2",
+            "title": "Kinematics",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Kinematics"
+          },
+          {
+            "node_id": "U2-C1",
+            "title": "Motion in a Straight Line",
+            "level": "chapter",
+            "parent": "Kinematics",
+            "source_text": "Motion in a Straight Line",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2-C2",
+            "title": "Motion in a Plane",
+            "level": "chapter",
+            "parent": "Kinematics",
+            "source_text": "Motion in a Plane",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3",
+            "title": "Laws of Motion",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Laws of Motion"
+          },
+          {
+            "node_id": "U3-C1",
+            "title": "Laws of Motion",
+            "level": "chapter",
+            "parent": "Laws of Motion",
+            "source_text": "Laws of Motion",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U4",
+            "title": "Work, Energy and Power",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Work, Energy and Power"
+          },
+          {
+            "node_id": "U4-C1",
+            "title": "Work, Energy and Power",
+            "level": "chapter",
+            "parent": "Work, Energy and Power",
+            "source_text": "Work, Energy and Power",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U5",
+            "title": "Motion of System of Particles and Rigid Body",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Motion of System of Particles and Rigid Body"
+          },
+          {
+            "node_id": "U5-C1",
+            "title": "System of Particles and Rotational Motion",
+            "level": "chapter",
+            "parent": "Motion of System of Particles and Rigid Body",
+            "source_text": "System of Particles and Rotational Motion",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U6",
+            "title": "Gravitation",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Gravitation"
+          },
+          {
+            "node_id": "U6-C1",
+            "title": "Gravitation",
+            "level": "chapter",
+            "parent": "Gravitation",
+            "source_text": "Gravitation",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U7",
+            "title": "Properties of Bulk Matter",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Properties of Bulk Matter"
+          },
+          {
+            "node_id": "U7-C1",
+            "title": "Mechanical Properties of Solids",
+            "level": "chapter",
+            "parent": "Properties of Bulk Matter",
+            "source_text": "Mechanical Properties of Solids",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U7-C2",
+            "title": "Mechanical Properties of Fluids",
+            "level": "chapter",
+            "parent": "Properties of Bulk Matter",
+            "source_text": "Mechanical Properties of Fluids",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U7-C3",
+            "title": "Thermal Properties of Matter",
+            "level": "chapter",
+            "parent": "Properties of Bulk Matter",
+            "source_text": "Thermal Properties of Matter",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U8",
+            "title": "Thermodynamics",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Thermodynamics"
+          },
+          {
+            "node_id": "U8-C1",
+            "title": "Thermodynamics",
+            "level": "chapter",
+            "parent": "Thermodynamics",
+            "source_text": "Thermodynamics",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U9",
+            "title": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Behaviour of Perfect Gases and Kinetic Theory of Gases"
+          },
+          {
+            "node_id": "U9-C1",
+            "title": "Kinetic Theory",
+            "level": "chapter",
+            "parent": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+            "source_text": "Kinetic Theory",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U10",
+            "title": "Oscillations and Waves",
+            "level": "unit",
+            "parent": "PHYSICS",
+            "source_text": "Oscillations and Waves"
+          },
+          {
+            "node_id": "U10-C1",
+            "title": "Oscillations",
+            "level": "chapter",
+            "parent": "Oscillations and Waves",
+            "source_text": "Oscillations",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U10-C2",
+            "title": "Waves",
+            "level": "chapter",
+            "parent": "Oscillations and Waves",
+            "source_text": "Waves",
+            "source_type": "explicit_chapter"
+          }
+        ]
+      },
+      {
+        "class_name": "Class XII",
+        "subject": "Physics",
+        "part_or_section": "",
+        "detected_structure": "unit_chapter_topic",
+        "units": [
+          {
+            "unit_id": "U1",
+            "unit_name": "Unit–I Electrostatics",
+            "marks": 16,
+            "explicit_chapters": [
+              "Chapter–1: Electric Charges and Fields",
+              "Chapter–2: Electrostatic Potential and Capacitance"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U1-C1",
+                "title": "Chapter–1: Electric Charges and Fields",
+                "level": "chapter",
+                "parent": "Unit–I Electrostatics",
+                "source_text": "Chapter–1: Electric Charges and Fields",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C2",
+                "title": "Chapter–2: Electrostatic Potential and Capacitance",
+                "level": "chapter",
+                "parent": "Unit–I Electrostatics",
+                "source_text": "Chapter–2: Electrostatic Potential and Capacitance",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U1",
+                "title": "Unit–I Electrostatics",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit–I Electrostatics"
+              },
+              {
+                "node_id": "U1-C1",
+                "title": "Chapter–1: Electric Charges and Fields",
+                "level": "chapter",
+                "parent": "Unit–I Electrostatics",
+                "source_text": "Chapter–1: Electric Charges and Fields",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U1-C2",
+                "title": "Chapter–2: Electrostatic Potential and Capacitance",
+                "level": "chapter",
+                "parent": "Unit–I Electrostatics",
+                "source_text": "Chapter–2: Electrostatic Potential and Capacitance",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U2",
+            "unit_name": "Unit-II Current Electricity",
+            "marks": null,
+            "explicit_chapters": [
+              "Chapter–3: Current Electricity"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U2-C1",
+                "title": "Chapter–3: Current Electricity",
+                "level": "chapter",
+                "parent": "Unit-II Current Electricity",
+                "source_text": "Chapter–3: Current Electricity",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U2",
+                "title": "Unit-II Current Electricity",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit-II Current Electricity"
+              },
+              {
+                "node_id": "U2-C1",
+                "title": "Chapter–3: Current Electricity",
+                "level": "chapter",
+                "parent": "Unit-II Current Electricity",
+                "source_text": "Chapter–3: Current Electricity",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U3",
+            "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+            "marks": 17,
+            "explicit_chapters": [
+              "Chapter–4: Moving Charges and Magnetism",
+              "Chapter–5: Magnetism and Matter"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U3-C1",
+                "title": "Chapter–4: Moving Charges and Magnetism",
+                "level": "chapter",
+                "parent": "Unit-III Magnetic Effects of Current and Magnetism",
+                "source_text": "Chapter–4: Moving Charges and Magnetism",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C2",
+                "title": "Chapter–5: Magnetism and Matter",
+                "level": "chapter",
+                "parent": "Unit-III Magnetic Effects of Current and Magnetism",
+                "source_text": "Chapter–5: Magnetism and Matter",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U3",
+                "title": "Unit-III Magnetic Effects of Current and Magnetism",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit-III Magnetic Effects of Current and Magnetism"
+              },
+              {
+                "node_id": "U3-C1",
+                "title": "Chapter–4: Moving Charges and Magnetism",
+                "level": "chapter",
+                "parent": "Unit-III Magnetic Effects of Current and Magnetism",
+                "source_text": "Chapter–4: Moving Charges and Magnetism",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U3-C2",
+                "title": "Chapter–5: Magnetism and Matter",
+                "level": "chapter",
+                "parent": "Unit-III Magnetic Effects of Current and Magnetism",
+                "source_text": "Chapter–5: Magnetism and Matter",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U4",
+            "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+            "marks": null,
+            "explicit_chapters": [
+              "Chapter–6: Electromagnetic Induction",
+              "Chapter–7: Alternating Current"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U4-C1",
+                "title": "Chapter–6: Electromagnetic Induction",
+                "level": "chapter",
+                "parent": "Unit-IV Electromagnetic Induction and Alternating Currents",
+                "source_text": "Chapter–6: Electromagnetic Induction",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U4-C2",
+                "title": "Chapter–7: Alternating Current",
+                "level": "chapter",
+                "parent": "Unit-IV Electromagnetic Induction and Alternating Currents",
+                "source_text": "Chapter–7: Alternating Current",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U4",
+                "title": "Unit-IV Electromagnetic Induction and Alternating Currents",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit-IV Electromagnetic Induction and Alternating Currents"
+              },
+              {
+                "node_id": "U4-C1",
+                "title": "Chapter–6: Electromagnetic Induction",
+                "level": "chapter",
+                "parent": "Unit-IV Electromagnetic Induction and Alternating Currents",
+                "source_text": "Chapter–6: Electromagnetic Induction",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U4-C2",
+                "title": "Chapter–7: Alternating Current",
+                "level": "chapter",
+                "parent": "Unit-IV Electromagnetic Induction and Alternating Currents",
+                "source_text": "Chapter–7: Alternating Current",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U5",
+            "unit_name": "Unit–V Electromagnetic Waves",
+            "marks": 18,
+            "explicit_chapters": [
+              "Chapter–8: Electromagnetic Waves"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U5-C1",
+                "title": "Chapter–8: Electromagnetic Waves",
+                "level": "chapter",
+                "parent": "Unit–V Electromagnetic Waves",
+                "source_text": "Chapter–8: Electromagnetic Waves",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U5",
+                "title": "Unit–V Electromagnetic Waves",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit–V Electromagnetic Waves"
+              },
+              {
+                "node_id": "U5-C1",
+                "title": "Chapter–8: Electromagnetic Waves",
+                "level": "chapter",
+                "parent": "Unit–V Electromagnetic Waves",
+                "source_text": "Chapter–8: Electromagnetic Waves",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U6",
+            "unit_name": "Unit–VI Optics",
+            "marks": null,
+            "explicit_chapters": [
+              "Chapter–9: Ray Optics and Optical Instruments",
+              "Chapter–10: Wave Optics"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U6-C1",
+                "title": "Chapter–9: Ray Optics and Optical Instruments",
+                "level": "chapter",
+                "parent": "Unit–VI Optics",
+                "source_text": "Chapter–9: Ray Optics and Optical Instruments",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U6-C2",
+                "title": "Chapter–10: Wave Optics",
+                "level": "chapter",
+                "parent": "Unit–VI Optics",
+                "source_text": "Chapter–10: Wave Optics",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U6",
+                "title": "Unit–VI Optics",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit–VI Optics"
+              },
+              {
+                "node_id": "U6-C1",
+                "title": "Chapter–9: Ray Optics and Optical Instruments",
+                "level": "chapter",
+                "parent": "Unit–VI Optics",
+                "source_text": "Chapter–9: Ray Optics and Optical Instruments",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U6-C2",
+                "title": "Chapter–10: Wave Optics",
+                "level": "chapter",
+                "parent": "Unit–VI Optics",
+                "source_text": "Chapter–10: Wave Optics",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U7",
+            "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+            "marks": 12,
+            "explicit_chapters": [
+              "Chapter–11: Dual Nature of Radiation and Matter"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U7-C1",
+                "title": "Chapter–11: Dual Nature of Radiation and Matter",
+                "level": "chapter",
+                "parent": "Unit–VII Dual Nature of Radiation and Matter",
+                "source_text": "Chapter–11: Dual Nature of Radiation and Matter",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U7",
+                "title": "Unit–VII Dual Nature of Radiation and Matter",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit–VII Dual Nature of Radiation and Matter"
+              },
+              {
+                "node_id": "U7-C1",
+                "title": "Chapter–11: Dual Nature of Radiation and Matter",
+                "level": "chapter",
+                "parent": "Unit–VII Dual Nature of Radiation and Matter",
+                "source_text": "Chapter–11: Dual Nature of Radiation and Matter",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U8",
+            "unit_name": "Unit-VIII Atoms and Nuclei",
+            "marks": null,
+            "explicit_chapters": [
+              "Chapter–12: Atoms",
+              "Chapter–13: Nuclei"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U8-C1",
+                "title": "Chapter–12: Atoms",
+                "level": "chapter",
+                "parent": "Unit-VIII Atoms and Nuclei",
+                "source_text": "Chapter–12: Atoms",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U8-C2",
+                "title": "Chapter–13: Nuclei",
+                "level": "chapter",
+                "parent": "Unit-VIII Atoms and Nuclei",
+                "source_text": "Chapter–13: Nuclei",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U8",
+                "title": "Unit-VIII Atoms and Nuclei",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit-VIII Atoms and Nuclei"
+              },
+              {
+                "node_id": "U8-C1",
+                "title": "Chapter–12: Atoms",
+                "level": "chapter",
+                "parent": "Unit-VIII Atoms and Nuclei",
+                "source_text": "Chapter–12: Atoms",
+                "source_type": "explicit_chapter"
+              },
+              {
+                "node_id": "U8-C2",
+                "title": "Chapter–13: Nuclei",
+                "level": "chapter",
+                "parent": "Unit-VIII Atoms and Nuclei",
+                "source_text": "Chapter–13: Nuclei",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          },
+          {
+            "unit_id": "U9",
+            "unit_name": "Unit–IX Electronic Devices",
+            "marks": 7,
+            "explicit_chapters": [
+              "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits"
+            ],
+            "possible_chapters": [],
+            "headings": [],
+            "topics": [],
+            "subtopics": [],
+            "key_concepts": [],
+            "chapter_candidates": [
+              {
+                "node_id": "U9-C1",
+                "title": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+                "level": "chapter",
+                "parent": "Unit–IX Electronic Devices",
+                "source_text": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "source_nodes": [
+              {
+                "node_id": "U9",
+                "title": "Unit–IX Electronic Devices",
+                "level": "unit",
+                "parent": "Physics",
+                "source_text": "Unit–IX Electronic Devices"
+              },
+              {
+                "node_id": "U9-C1",
+                "title": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+                "level": "chapter",
+                "parent": "Unit–IX Electronic Devices",
+                "source_text": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+                "source_type": "explicit_chapter"
+              }
+            ],
+            "structure_type": "unit_chapter_topic"
+          }
+        ],
+        "raw_nodes": [
+          {
+            "node_id": "U1",
+            "title": "Unit–I Electrostatics",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit–I Electrostatics"
+          },
+          {
+            "node_id": "U1-C1",
+            "title": "Chapter–1: Electric Charges and Fields",
+            "level": "chapter",
+            "parent": "Unit–I Electrostatics",
+            "source_text": "Chapter–1: Electric Charges and Fields",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U1-C2",
+            "title": "Chapter–2: Electrostatic Potential and Capacitance",
+            "level": "chapter",
+            "parent": "Unit–I Electrostatics",
+            "source_text": "Chapter–2: Electrostatic Potential and Capacitance",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U2",
+            "title": "Unit-II Current Electricity",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit-II Current Electricity"
+          },
+          {
+            "node_id": "U2-C1",
+            "title": "Chapter–3: Current Electricity",
+            "level": "chapter",
+            "parent": "Unit-II Current Electricity",
+            "source_text": "Chapter–3: Current Electricity",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3",
+            "title": "Unit-III Magnetic Effects of Current and Magnetism",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit-III Magnetic Effects of Current and Magnetism"
+          },
+          {
+            "node_id": "U3-C1",
+            "title": "Chapter–4: Moving Charges and Magnetism",
+            "level": "chapter",
+            "parent": "Unit-III Magnetic Effects of Current and Magnetism",
+            "source_text": "Chapter–4: Moving Charges and Magnetism",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U3-C2",
+            "title": "Chapter–5: Magnetism and Matter",
+            "level": "chapter",
+            "parent": "Unit-III Magnetic Effects of Current and Magnetism",
+            "source_text": "Chapter–5: Magnetism and Matter",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U4",
+            "title": "Unit-IV Electromagnetic Induction and Alternating Currents",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit-IV Electromagnetic Induction and Alternating Currents"
+          },
+          {
+            "node_id": "U4-C1",
+            "title": "Chapter–6: Electromagnetic Induction",
+            "level": "chapter",
+            "parent": "Unit-IV Electromagnetic Induction and Alternating Currents",
+            "source_text": "Chapter–6: Electromagnetic Induction",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U4-C2",
+            "title": "Chapter–7: Alternating Current",
+            "level": "chapter",
+            "parent": "Unit-IV Electromagnetic Induction and Alternating Currents",
+            "source_text": "Chapter–7: Alternating Current",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U5",
+            "title": "Unit–V Electromagnetic Waves",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit–V Electromagnetic Waves"
+          },
+          {
+            "node_id": "U5-C1",
+            "title": "Chapter–8: Electromagnetic Waves",
+            "level": "chapter",
+            "parent": "Unit–V Electromagnetic Waves",
+            "source_text": "Chapter–8: Electromagnetic Waves",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U6",
+            "title": "Unit–VI Optics",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit–VI Optics"
+          },
+          {
+            "node_id": "U6-C1",
+            "title": "Chapter–9: Ray Optics and Optical Instruments",
+            "level": "chapter",
+            "parent": "Unit–VI Optics",
+            "source_text": "Chapter–9: Ray Optics and Optical Instruments",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U6-C2",
+            "title": "Chapter–10: Wave Optics",
+            "level": "chapter",
+            "parent": "Unit–VI Optics",
+            "source_text": "Chapter–10: Wave Optics",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U7",
+            "title": "Unit–VII Dual Nature of Radiation and Matter",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit–VII Dual Nature of Radiation and Matter"
+          },
+          {
+            "node_id": "U7-C1",
+            "title": "Chapter–11: Dual Nature of Radiation and Matter",
+            "level": "chapter",
+            "parent": "Unit–VII Dual Nature of Radiation and Matter",
+            "source_text": "Chapter–11: Dual Nature of Radiation and Matter",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U8",
+            "title": "Unit-VIII Atoms and Nuclei",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit-VIII Atoms and Nuclei"
+          },
+          {
+            "node_id": "U8-C1",
+            "title": "Chapter–12: Atoms",
+            "level": "chapter",
+            "parent": "Unit-VIII Atoms and Nuclei",
+            "source_text": "Chapter–12: Atoms",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U8-C2",
+            "title": "Chapter–13: Nuclei",
+            "level": "chapter",
+            "parent": "Unit-VIII Atoms and Nuclei",
+            "source_text": "Chapter–13: Nuclei",
+            "source_type": "explicit_chapter"
+          },
+          {
+            "node_id": "U9",
+            "title": "Unit–IX Electronic Devices",
+            "level": "unit",
+            "parent": "Physics",
+            "source_text": "Unit–IX Electronic Devices"
+          },
+          {
+            "node_id": "U9-C1",
+            "title": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+            "level": "chapter",
+            "parent": "Unit–IX Electronic Devices",
+            "source_text": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+            "source_type": "explicit_chapter"
+          }
+        ]
+      }
+    ]
+  },
+  "classes": [
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Physical World and Measurement",
+          "marks": null,
+          "explicit_chapters": [
+            "Units and Measurements"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Units and Measurements",
+              "source_chapter_name": "Units and Measurements",
+              "source_heading": "Units and Measurements",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Need for measurement, Units of measurement, Systems of units"
+              ],
+              "key_concepts": [
+                "SI units (fundamental and derived), Significant figures, Uncertainty in result, Dimensions of physical quantities, Dimensional analysis and applications"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Units and Measurements"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Kinematics",
+          "marks": null,
+          "explicit_chapters": [
+            "Motion in a Straight Line",
+            "Motion in a Plane"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Motion in a Straight Line",
+              "source_chapter_name": "Motion in a Straight Line",
+              "source_heading": "Motion in a Straight Line",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Frame of reference, Motion description using differentiation and integration"
+              ],
+              "key_concepts": [
+                "Uniform and non-uniform motion, Average speed/velocity, Instantaneous velocity, Uniformly accelerated motion, Velocity-time and position-time graphs, Relations for uniformly accelerated motion (graphical and calculus)"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Motion in a Straight Line"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Motion in a Plane",
+              "source_chapter_name": "Motion in a Plane",
+              "source_heading": "Motion in a Plane",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Scalar and vector quantities, Vector operations (addition, subtraction, multiplication by scalar)"
+              ],
+              "key_concepts": [
+                "Position and displacement vectors, Equality of vectors, Unit vectors, Resolution in a plane, Rectangular components, Scalar and Vector products, Projectile motion, Uniform circular motion"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Motion in a Plane"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Laws of Motion",
+          "marks": null,
+          "explicit_chapters": [
+            "Laws of Motion"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Laws of Motion",
+              "source_chapter_name": "Laws of Motion",
+              "source_heading": "Laws of Motion",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Force and Inertia, Newton's Laws"
+              ],
+              "key_concepts": [
+                "Newton's first law (Inertia), Momentum and second law, Impulse, Third law, Conservation of linear momentum, Equilibrium of concurrent forces, Static and kinetic friction, Rolling friction, Lubrication, Centripetal force in uniform circular motion"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Laws of Motion"
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Work, Energy and Power",
+          "marks": null,
+          "explicit_chapters": [
+            "Work, Energy and Power"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Work, Energy and Power",
+              "source_chapter_name": "Work, Energy and Power",
+              "source_heading": "Work, Energy and Power",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Work done by constant and variable forces"
+              ],
+              "key_concepts": [
+                "Kinetic energy, Work-energy theorem, Power, Potential energy (including spring), Conservative vs non-conservative forces, Motion in vertical circle, Elastic and inelastic collisions (1D and 2D)"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Work, Energy and Power"
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Motion of System of Particles and Rigid Body",
+          "marks": null,
+          "explicit_chapters": [
+            "System of Particles and Rotational Motion"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "System of Particles and Rotational Motion",
+              "source_chapter_name": "System of Particles and Rotational Motion",
+              "source_heading": "System of Particles and Rotational Motion",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Centre of mass, Torque and Angular momentum"
+              ],
+              "key_concepts": [
+                "CM of two-particle system and rigid bodies (uniform rod), Conservation of CM motion, Moment of force (Torque), Law of conservation of angular momentum, Equilibrium of rigid bodies, Rigid body rotation equations, Linear vs rotational motions comparison, Moment of inertia, Radius of gyration"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "System of Particles and Rotational Motion"
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Gravitation",
+          "marks": null,
+          "explicit_chapters": [
+            "Gravitation"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Gravitation",
+              "source_chapter_name": "Gravitation",
+              "source_heading": "Gravitation",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Planetary motion and Universal law"
+              ],
+              "key_concepts": [
+                "Kepler's laws, Universal law of gravitation, Acceleration due to gravity (variation with altitude/depth), Gravitational potential energy and potential, Escape speed, Orbital velocity of satellite, Energy of orbiting satellite"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Gravitation"
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "Properties of Bulk Matter",
+          "marks": null,
+          "explicit_chapters": [
+            "Mechanical Properties of Solids",
+            "Mechanical Properties of Fluids",
+            "Thermal Properties of Matter"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Mechanical Properties of Solids",
+              "source_chapter_name": "Mechanical Properties of Solids",
+              "source_heading": "Mechanical Properties of Solids",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Elasticity and Stress-strain"
+              ],
+              "key_concepts": [
+                "Hooke's law, Young’s modulus, Bulk modulus, Shear modulus (rigidity), Poisson's ratio, Elastic energy, Applications of elastic behavior"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Mechanical Properties of Solids"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Mechanical Properties of Fluids",
+              "source_chapter_name": "Mechanical Properties of Fluids",
+              "source_heading": "Mechanical Properties of Fluids",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Fluid pressure and flow properties"
+              ],
+              "key_concepts": [
+                "Pressure due to fluid column, Pascal's law (hydraulic lift/brakes), Viscosity, Stokes' law, Terminal velocity, Streamline/turbulent flow, Critical velocity, Bernoulli's theorem (Torricelli's law/Dynamic lift), Surface tension and energy, Angle of contact, Excess pressure across curved surface"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Mechanical Properties of Fluids"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Thermal Properties of Matter",
+              "source_chapter_name": "Thermal Properties of Matter",
+              "source_heading": "Thermal Properties of Matter",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Heat, Temperature and Expansion"
+              ],
+              "key_concepts": [
+                "Specific heat capacity (Cp, Cv), Calorimetry, Change of state (latent heat), Heat transfer modes (Conduction, Convection, Radiation), Thermal conductivity, Blackbody radiation concepts, Wein's displacement Law, Stefan's law"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Thermal Properties of Matter"
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Thermodynamics",
+          "marks": null,
+          "explicit_chapters": [
+            "Thermodynamics"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Thermodynamics",
+              "source_chapter_name": "Thermodynamics",
+              "source_heading": "Thermodynamics",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Laws of Thermodynamics"
+              ],
+              "key_concepts": [
+                "Zeroth law (Temperature), First law (Heat, Work, Internal Energy), Second law, State variables and equation of state, Gaseous processes: Isothermal, Adiabatic, Reversible/Irreversible, Cyclic processes"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Thermodynamics"
+            }
+          ]
+        },
+        {
+          "unit_id": "U9",
+          "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+          "marks": null,
+          "explicit_chapters": [
+            "Kinetic Theory"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Kinetic Theory",
+              "source_chapter_name": "Kinetic Theory",
+              "source_heading": "Kinetic Theory",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Perfect gas and Kinetic theory assumptions"
+              ],
+              "key_concepts": [
+                "Equation of state, Work done in compression, Concept of pressure (kinetic), Temperature interpretation, RMS speed, Degrees of freedom, Law of equipartition of energy, Specific heat capacities, Mean free path, Avogadro's number"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Kinetic Theory"
+            }
+          ]
+        },
+        {
+          "unit_id": "U10",
+          "unit_name": "Oscillations and Waves",
+          "marks": null,
+          "explicit_chapters": [
+            "Oscillations",
+            "Waves"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Oscillations",
+              "source_chapter_name": "Oscillations",
+              "source_heading": "Oscillations",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [
+                "Periodic motion and SHM"
+              ],
+              "key_concepts": [
+                "Time period, Frequency, Displacement as function of time, Periodic functions, Simple Harmonic Motion (S.H.M), Uniform circular motion relation to S.H.M"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Oscillations"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Waves",
+              "source_chapter_name": "Waves",
+              "source_heading": "Waves",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Wave motion concepts"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Waves"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [],
+        "unit_count": 10,
+        "chapter_count": 14
+      }
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Unit–I Electrostatics",
+          "marks": 16,
+          "explicit_chapters": [
+            "Chapter–1: Electric Charges and Fields",
+            "Chapter–2: Electrostatic Potential and Capacitance"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–1: Electric Charges and Fields",
+              "source_chapter_name": "Chapter–1: Electric Charges and Fields",
+              "source_heading": "Chapter–1: Electric Charges and Fields",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Electric Charges and Conservation of Charge"
+              ],
+              "subtopics": [
+                "Coulomb's Law, Superposition Principle, Continuous Charge Distribution"
+              ],
+              "key_concepts": [
+                "Force between point charges, Electric Field, Dipole Torque",
+                "Gauss's Theorem Applications (Wire, Plane, Shell)"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–1: Electric Charges and Fields"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Chapter–2: Electrostatic Potential and Capacitance",
+              "source_chapter_name": "Chapter–2: Electrostatic Potential and Capacitance",
+              "source_heading": "Chapter–2: Electrostatic Potential and Capacitance",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Electric Potential and Energy"
+              ],
+              "subtopics": [
+                "Potential due to Point Charge/Dipole, Equipotential Surfaces",
+                "Conductors/Insulators, Dielectrics, Polarization"
+              ],
+              "key_concepts": [
+                "Capacitance and Combinations (Series/Parallel)",
+                "Energy Stored in Capacitor"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–2: Electrostatic Potential and Capacitance"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Unit-II Current Electricity",
+          "marks": null,
+          "explicit_chapters": [
+            "Chapter–3: Current Electricity"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–3: Current Electricity",
+              "source_chapter_name": "Chapter–3: Current Electricity",
+              "source_heading": "Chapter–3: Current Electricity",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Current and Drift Velocity"
+              ],
+              "subtopics": [
+                "Ohm's Law, V-I Characteristics, Resistivity/Conductivity",
+                "Temperature Dependence of Resistance"
+              ],
+              "key_concepts": [
+                "Internal Resistance, EMF vs Potential Difference",
+                "Kirchhoff's Rules and Wheatstone Bridge"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–3: Current Electricity"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+          "marks": 17,
+          "explicit_chapters": [
+            "Chapter–4: Moving Charges and Magnetism",
+            "Chapter–5: Magnetism and Matter"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–4: Moving Charges and Magnetism",
+              "source_chapter_name": "Chapter–4: Moving Charges and Magnetism",
+              "source_heading": "Chapter–4: Moving Charges and Magnetism",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Magnetic Field Concepts"
+              ],
+              "subtopics": [
+                "Biot-Savart Law, Ampere's Law Applications (Wire/Solenoid)",
+                "Force on Moving Charge and Current Carrying Conductor"
+              ],
+              "key_concepts": [
+                "Torque on Current Loop, Magnetic Dipole Moment",
+                "Moving Coil Galvanometer Conversion"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–4: Moving Charges and Magnetism"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Chapter–5: Magnetism and Matter",
+              "source_chapter_name": "Chapter–5: Magnetism and Matter",
+              "source_heading": "Chapter–5: Magnetism and Matter",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Bar Magnets and Solenoids"
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Qualitative treatment of Bar Magnet as Equivalent Solenoid"
+              ],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–5: Magnetism and Matter"
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+          "marks": null,
+          "explicit_chapters": [
+            "Chapter–6: Electromagnetic Induction",
+            "Chapter–7: Alternating Current"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–6: Electromagnetic Induction",
+              "source_chapter_name": "Chapter–6: Electromagnetic Induction",
+              "source_heading": "Chapter–6: Electromagnetic Induction",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–6: Electromagnetic Induction"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Chapter–7: Alternating Current",
+              "source_chapter_name": "Chapter–7: Alternating Current",
+              "source_heading": "Chapter–7: Alternating Current",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–7: Alternating Current"
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Unit–V Electromagnetic Waves",
+          "marks": 18,
+          "explicit_chapters": [
+            "Chapter–8: Electromagnetic Waves"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–8: Electromagnetic Waves",
+              "source_chapter_name": "Chapter–8: Electromagnetic Waves",
+              "source_heading": "Chapter–8: Electromagnetic Waves",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–8: Electromagnetic Waves"
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Unit–VI Optics",
+          "marks": null,
+          "explicit_chapters": [
+            "Chapter–9: Ray Optics and Optical Instruments",
+            "Chapter–10: Wave Optics"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–9: Ray Optics and Optical Instruments",
+              "source_chapter_name": "Chapter–9: Ray Optics and Optical Instruments",
+              "source_heading": "Chapter–9: Ray Optics and Optical Instruments",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–9: Ray Optics and Optical Instruments"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Chapter–10: Wave Optics",
+              "source_chapter_name": "Chapter–10: Wave Optics",
+              "source_heading": "Chapter–10: Wave Optics",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–10: Wave Optics"
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+          "marks": 12,
+          "explicit_chapters": [
+            "Chapter–11: Dual Nature of Radiation and Matter"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–11: Dual Nature of Radiation and Matter",
+              "source_chapter_name": "Chapter–11: Dual Nature of Radiation and Matter",
+              "source_heading": "Chapter–11: Dual Nature of Radiation and Matter",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–11: Dual Nature of Radiation and Matter"
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Unit-VIII Atoms and Nuclei",
+          "marks": null,
+          "explicit_chapters": [
+            "Chapter–12: Atoms",
+            "Chapter–13: Nuclei"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–12: Atoms",
+              "source_chapter_name": "Chapter–12: Atoms",
+              "source_heading": "Chapter–12: Atoms",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–12: Atoms"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Chapter–13: Nuclei",
+              "source_chapter_name": "Chapter–13: Nuclei",
+              "source_heading": "Chapter–13: Nuclei",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–13: Nuclei"
+            }
+          ]
+        },
+        {
+          "unit_id": "U9",
+          "unit_name": "Unit–IX Electronic Devices",
+          "marks": 7,
+          "explicit_chapters": [
+            "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits"
+          ],
+          "headings": [],
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+              "source_chapter_name": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+              "source_heading": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+              "source_type": "explicit_chapter",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [
+        {
+          "title": "",
+          "related_unit": "",
+          "related_chapter": "",
+          "assessment_status": "formative"
+        }
+      ],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [
+          "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits"
+        ],
+        "unit_count": 9,
+        "chapter_count": 14
+      }
+    }
+  ],
+  "practicals": [
+    {
+      "title": "To measure diameter of a small spherical/cylindrical body and to measure internal diameter and depth of a given beaker/calorimeter using Vernier Callipers and hence find its volume.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To measure diameter of a given wire and thickness of a given sheet using screw gauge.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine volume of an irregular lamina using screw gauge.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine radius of curvature of a given spherical surface by a spherometer.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine the mass of two different objects using a beam balance.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To find the weight of a given body using parallelogram law of vectors.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "Using a simple pendulum, plot its graph and use it to find the effective length of second's pendulum.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study variation of time period of a simple pendulum of a given length by taking bobs of same size but different masses and interpret the result.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the relationship between force of limiting friction and normal reaction and to find the co- efficient of friction between a block and a horizontal surface.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To find the downward force, along an inclined plane, acting on a roller due to gravitational pull of the earth and study its relationship with the angle of inclination θ by plotting graph between force and Sinθ.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine Young's modulus of elasticity of the material of a given wire.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To find the force constant of a helical spring by plotting a graph between load and extension.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the variation in volume with pressure for a sample of air at constant temperature by plotting graphs between P and V, and between P and 1/V.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine the surface tension of water by capillary rise method.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine the coefficient of viscosity of a given viscous liquid by measuring terminal velocity of a given spherical body.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the relationship between the temperature of a hot body and time by plotting a cooling curve.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine specific heat capacity of a given solid by method of mixtures.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the relation between frequency and length of a given wire under constant tension using sonometer.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the relation between the length of a given wire and tension for constant frequency using sonometer.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To find the speed of sound in air at room temperature using a resonance tube by two resonance positions.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    }
+  ],
+  "activities": [
+    {
+      "type": "activity",
+      "title": "To make a paper scale of given least count, e.g., 0.2cm, 0.5 cm.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To determine mass of a given body using a metre scale by principle of moments.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To plot a graph for a given set of data, with proper choice of scales and error bars.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To measure the force of limiting friction for rolling of a roller on a horizontal plane.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the variation in range of a projectile with angle of projection.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the conservation of energy of a ball rolling down on an inclined plane (using a double inclined plane).",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study dissipation of energy of a simple pendulum by plotting a graph between square of amplitude and time.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To observe change of state and plot a cooling curve for molten wax.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To observe and explain the effect of heating on a bi-metallic strip.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To note the change in level of liquid in a container on heating and interpret the observations.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the effect of detergent on surface tension of water by observing capillary rise.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the factors affecting the rate of loss of heat of a liquid.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the effect of load on depression of a suitably clamped metre scale loaded at (i) its end (ii) in the middle.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To observe the decrease in pressure with increase in velocity of a fluid.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    }
+  ],
+  "projects": [
+    {
+      "title": "Investigatory Project",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Report of the project carried out by students. Suggested projects include studying internal resistance/EMF variations, LDR current variation, refractive indices, transformer relations, etc."
+    }
+  ],
+  "assessment_information": {
+    "marks_distribution": [
+      {
+        "component": "Theory",
+        "max_marks": 70,
+        "duration_hours": 3
+      },
+      {
+        "component": "Practicals",
+        "max_marks": 30,
+        "duration_hours": 2
+      }
+    ],
+    "question_paper_design": [
+      {
+        "typology": "Remembering & Understanding",
+        "marks": 27,
+        "percentage": "38%"
+      },
+      {
+        "typology": "Applying",
+        "marks": 22,
+        "percentage": "32%"
+      },
+      {
+        "typology": "Analysing & Evaluating & Creating",
+        "marks": 21,
+        "percentage": "30%"
+      }
+    ],
+    "competency_weightage": [
+      {
+        "level": "Remembering",
+        "description": "Exhibit memory of previously learned material by recalling facts, terms, basic concepts"
+      },
+      {
+        "level": "Understanding",
+        "description": "Demonstrate understanding by organizing, comparing, translating, interpreting ideas"
+      },
+      {
+        "level": "Applying",
+        "description": "Solve problems to new situations using acquired knowledge and rules"
+      },
+      {
+        "level": "Analysing/Evaluating/Creating",
+        "description": "Examine, break information into parts, make judgments, propose alternative solutions"
+      }
+    ],
+    "internal_assessment": [
+      {
+        "note": "Content excluded in NCERT textbooks for 2026-27 is not to be tested by schools and will not be assessed."
+      },
+      {
+        "focus": "Internal variations may be made keeping overall weightage same"
+      }
+    ],
+    "practical_assessment": [
+      {
+        "component": "Experiments",
+        "marks": 14,
+        "details": "Two experiments (one from each section), Max Marks: 7+7"
+      },
+      {
+        "component": "Practical Record",
+        "marks": 5,
+        "details": "Record of at least 8 Experiments and 6 Activities"
+      },
+      {
+        "component": "Activity",
+        "marks": 3,
+        "details": "One activity from any section"
+      },
+      {
+        "component": "Viva Voce",
+        "marks": 5,
+        "details": "On experiments, activities and project"
+      }
+    ],
+    "project_assessment": [
+      {
+        "type": "Investigatory Project",
+        "max_marks": 3,
+        "requirement": "Report of the project carried out by students. Suggested projects include studying internal resistance/EMF variations, LDR current variation, refractive indices, transformer relations, etc."
+      }
+    ]
+  },
+  "teacher_notes": [],
+  "excluded_content": [],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "suspicious_chapter_names": [],
+    "long_chapter_names_reclassified": [
+      "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits"
+    ],
+    "units_validated": 19,
+    "chapters_validated": 28,
+    "invalid_units": [],
+    "invalid_chapters": []
+  }
+}
+
+Stage 6 competencies:
+{
+  "competency_groups": [
+    {
+      "code": "U1-C1",
+      "title": "Physical World and Measurement - Units and Measurements",
+      "description": "Competencies related to measurement systems, SI units, significant figures, uncertainty analysis, dimensional analysis, and their applications.",
+      "competencies": [
+        "Identify fundamental and derived SI units for physical quantities",
+        "Apply rules of significant figures in calculations involving measured values",
+        "Determine the uncertainty in results based on instrument precision",
+        "Perform dimensional analysis to verify equations and derive relationships between physical quantities"
+      ],
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements"
+    },
+    {
+      "code": "U2-C1",
+      "title": "Kinematics - Motion in a Straight Line",
+      "description": "Competencies related to describing motion using differentiation and integration, analyzing uniform and non-uniform motion, and interpreting kinematic graphs.",
+      "competencies": [
+        "Describe motion of an object moving along a straight line using frame of reference concepts",
+        "Apply calculus (differentiation/integration) to derive relations for uniformly accelerated motion",
+        "Interpret velocity-time and position-time graphs to analyze motion characteristics",
+        "Distinguish between average speed, average velocity, and instantaneous velocity"
+      ],
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Straight Line"
+    },
+    {
+      "code": "U2-C2",
+      "title": "Kinematics - Motion in a Plane",
+      "description": "Competencies related to vector operations, resolution of vectors, and analysis of projectile motion and uniform circular motion.",
+      "competencies": [
+        "Perform addition, subtraction, and scalar multiplication of vectors using rectangular components",
+        "Calculate dot product (scalar) and cross product (vector) of two vectors in a plane",
+        "Analyze the trajectory of projectiles under gravity assuming constant acceleration",
+        "Derive expressions for velocity and position in uniform circular motion"
+      ],
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Plane"
+    },
+    {
+      "code": "U3-C1",
+      "title": "Laws of Motion - Newton's Laws and Friction",
+      "description": "Competencies related to understanding inertia, momentum, impulse, conservation laws, equilibrium conditions, and frictional forces.",
+      "competencies": [
+        "Explain the concept of force and inertia using Newton's First Law",
+        "Apply Newton's Second Law (F=ma) and Third Law to solve dynamics problems involving collisions",
+        "Use the principle of conservation of linear momentum in isolated systems",
+        "Analyze equilibrium conditions for concurrent forces including static, kinetic, rolling friction, and lubrication"
+      ],
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion"
+    },
+    {
+      "code": "U4-C1",
+      "title": "Work, Energy and Power - Conservation Laws",
+      "description": "Competencies related to work-energy theorem, potential energy concepts, conservative forces, and collision analysis.",
+      "competencies": [
+        "Calculate work done by constant and variable forces using integration or graphical methods",
+        "Apply the Work-Energy Theorem to relate net work to change in kinetic energy",
+        "Distinguish between conservative and non-conservative forces based on path independence of work",
+        "Analyze elastic and inelastic collisions (1D and 2D) conserving momentum and/or kinetic energy"
+      ],
+      "unit_name": "Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power"
+    },
+    {
+      "code": "U5-C1",
+      "title": "System of Particles and Rotational Motion - Dynamics",
+      "description": "Competencies related to center of mass motion, torque, angular momentum conservation, rotational kinematics, and moment of inertia.",
+      "competencies": [
+        "Determine the position of the center of mass for systems of particles and rigid bodies (e.g., uniform rod)",
+        "Apply Newton's Second Law for rotation: Torque = I * alpha",
+        "Use conservation of angular momentum to analyze rotational interactions",
+        "Calculate moment of inertia and radius of gyration for simple geometrical objects"
+      ],
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion"
+    },
+    {
+      "code": "U6-C1",
+      "title": "Gravitation - Universal Law and Orbital Mechanics",
+      "description": "Competencies related to Kepler's laws, gravitational potential energy, escape speed, and satellite motion.",
+      "competencies": [
+        "Apply Newton's Universal Law of Gravitation to calculate forces between celestial bodies",
+        "Analyze the variation of acceleration due to gravity with altitude and depth from Earth's surface",
+        "Calculate orbital velocity and escape speed for satellites orbiting a planet",
+        "Relate gravitational potential energy to work done against gravitational force"
+      ],
+      "unit_name": "Gravitation",
+      "chapter_name": "Gravitation"
+    },
+    {
+      "code": "U7-C1",
+      "title": "Properties of Bulk Matter - Solids and Fluids",
+      "description": "Competencies related to elasticity, stress-strain relationships, fluid pressure, viscosity, surface tension, and Bernoulli's theorem.",
+      "competencies": [
+        "Apply Hooke's Law and calculate Young’s modulus, bulk modulus, shear modulus, and Poisson's ratio",
+        "Analyze the behavior of fluids under hydrostatic conditions using Pascal's law",
+        "Calculate terminal velocity and apply Stokes' law for viscous drag on spherical bodies",
+        "Use Bernoulli's theorem to analyze fluid flow in pipes and explain phenomena like dynamic lift"
+      ],
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids / Fluids"
+    },
+    {
+      "code": "U7-C3",
+      "title": "Thermal Properties - Heat and Thermodynamics Basics",
+      "description": "Competencies related to specific heat, calorimetry, phase changes, modes of heat transfer, and blackbody radiation laws.",
+      "competencies": [
+        "Calculate heat required for temperature change using specific heat capacity (Cp, Cv)",
+        "Apply the principle of calorimetry to solve problems involving mixing substances",
+        "Analyze latent heat effects during phase transitions (melting/boiling)",
+        "Compare conduction, convection, and radiation as modes of heat transfer"
+      ],
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter"
+    },
+    {
+      "code": "U8-C1",
+      "title": "Thermodynamics - Laws and Processes",
+      "description": "Competencies related to thermodynamic state variables, laws of thermodynamics, and analysis of gaseous processes.",
+      "competencies": [
+        "Apply the Zeroth Law to define temperature and thermal equilibrium",
+        "Use the First Law (conservation of energy) for closed systems involving heat and work",
+        "Analyze reversible/irreversible isothermal and adiabatic processes in ideal gases",
+        "Evaluate efficiency and performance of cyclic thermodynamic engines"
+      ],
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Thermodynamics"
+    },
+    {
+      "code": "U9-C1",
+      "title": "Kinetic Theory - Gas Behavior",
+      "description": "Competencies related to the kinetic theory of gases, molecular speed distributions, and equipartition theorem.",
+      "competencies": [
+        "Derive pressure exerted by an ideal gas using kinetic theory assumptions",
+        "Calculate root-mean-square (rms) speed and mean free path of gas molecules",
+        "Apply the law of equipartition of energy to determine specific heat capacities of gases"
+      ],
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Kinetic Theory"
+    },
+    {
+      "code": "U10-C1",
+      "title": "Oscillations - Simple Harmonic Motion",
+      "description": "Competencies related to periodic motion, SHM equations, energy in oscillation, and simple pendulums.",
+      "competencies": [
+        "Identify conditions for Simple Harmonic Motion (SHM) and derive its differential equation",
+        "Analyze the relationship between uniform circular motion and SHM using phase concepts",
+        "Calculate time period of a loaded spring and a simple pendulum"
+      ],
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations"
+    },
+    {
+      "code": "U10-C2",
+      "title": "Waves - Wave Motion and Superposition",
+      "description": "Competencies related to wave types, superposition principle, standing waves, beats, and interference.",
+      "competencies": [
+        "Distinguish between transverse and longitudinal waves and their propagation speeds"
+      ],
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves"
+    },
+    {
+      "code": "U1-C2",
+      "title": "Electrostatics - Charges, Fields, and Flux",
+      "description": "Competencies related to Coulomb's law, electric fields due to various charge distributions, Gauss's theorem applications, and dipoles.",
+      "competencies": [
+        "Calculate electrostatic force between point charges using superposition principle"
+      ],
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Chapter–1: Electric Charges and Fields"
+    },
+    {
+      "code": "U2-C3",
+      "title": "Electrostatic Potential - Energy and Capacitance",
+      "description": "Competencies related to electric potential, equipotential surfaces, dielectrics, capacitor combinations, and energy storage.",
+      "competencies": [
+        "Calculate electric potential due to point charges, dipoles, and systems of charges"
+      ],
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Chapter–2: Electrostatic Potential and Capacitance"
+    },
+    {
+      "code": "U3-C4",
+      "title": "Current Electricity - Ohm's Law and Circuits",
+      "description": "Competencies related to drift velocity, resistivity, internal resistance of cells, Kirchhoff's laws, and Wheatstone bridge.",
+      "competencies": [
+        "Apply Ohm's law to analyze linear and non-linear V-I characteristics"
+      ],
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Chapter–3: Current Electricity"
+    },
+    {
+      "code": "U4-C5",
+      "title": "Magnetism - Fields, Forces, and Torque",
+      "description": "Competencies related to Biot-Savart law, Ampere's law, magnetic forces on charges/conductors, torque on dipoles, and galvanometer conversion.",
+      "competencies": [
+        "Calculate magnetic field due to current-carrying conductors using symmetry arguments"
+      ],
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Chapter–4: Moving Charges and Magnetism / Chapter–5: Magnetism and Matter"
+    },
+    {
+      "code": "U5-C6",
+      "title": "Electromagnetic Induction - Faraday's Laws",
+      "description": "Competencies related to induced EMF, Lenz's law, self/mutual induction, AC circuits (reactance/impedance), and resonance.",
+      "competencies": [
+        "Apply Faraday's Law of Electromagnetic Induction to calculate induced emf"
+      ],
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Chapter–6: Electromagnetic Induction / Chapter–7: Alternating Current"
+    },
+    {
+      "code": "U6-C8",
+      "title": "Electromagnetic Waves - Spectrum and Properties",
+      "description": "Competencies related to displacement current, transverse nature of EM waves, and characteristics of the electromagnetic spectrum.",
+      "competencies": [
+        "Explain the generation of electromagnetic waves through oscillating charges"
+      ],
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_name": "Chapter–8: Electromagnetic Waves"
+    },
+    {
+      "code": "U7-C9",
+      "title": "Optics - Ray and Wave Optics",
+      "description": "Competencies related to reflection/refraction, lens/mirror formulas, optical instruments, interference, diffraction, and Huygens' principle.",
+      "competencies": [
+        "Apply mirror and lens formulas to determine image properties"
+      ],
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Chapter–9: Ray Optics / Chapter–10: Wave Optics"
+    },
+    {
+      "code": "U8-C11",
+      "title": "Dual Nature - Photoelectric Effect and Matter Waves",
+      "description": "Competencies related to photoelectric effect, Einstein's equation, de-Broglie wavelength, and particle-wave duality.",
+      "competencies": [
+        "Explain the experimental observations of the photoelectric effect using quantum theory"
+      ],
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_name": "Chapter–11: Dual Nature of Radiation and Matter"
+    },
+    {
+      "code": "U9-C12",
+      "title": "Atoms - Rutherford and Bohr Models",
+      "description": "Competencies related to atomic structure, scattering experiments, energy levels in hydrogen atom, and spectral lines.",
+      "competencies": [
+        "Describe the limitations of classical physics leading to quantum models"
+      ],
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Chapter–12: Atoms / Chapter–13: Nuclei"
+    },
+    {
+      "code": "U9-C14",
+      "title": "Electronic Devices - Semiconductors and Diodes",
+      "description": "Competencies related to energy bands, p-n junctions, diode characteristics (forward/reverse bias), rectification, and basic semiconductor devices.",
+      "competencies": [
+        "Analyze the I-V characteristics of a p-n junction diode in forward and reverse bias"
+      ],
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits"
+    }
+  ]
+}
+
+Stage 7 assessment:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      {
+        "component": "Theory",
+        "max_marks": 70,
+        "duration_hours": 3
+      },
+      {
+        "component": "Practicals",
+        "max_marks": 30,
+        "duration_hours": 2
+      }
+    ],
+    "question_paper_design": [
+      {
+        "typology": "Remembering & Understanding",
+        "marks": 27,
+        "percentage": "38%"
+      },
+      {
+        "typology": "Applying",
+        "marks": 22,
+        "percentage": "32%"
+      },
+      {
+        "typology": "Analysing & Evaluating & Creating",
+        "marks": 21,
+        "percentage": "30%"
+      }
+    ],
+    "competency_weightage": [
+      {
+        "level": "Remembering",
+        "description": "Exhibit memory of previously learned material by recalling facts, terms, basic concepts"
+      },
+      {
+        "level": "Understanding",
+        "description": "Demonstrate understanding by organizing, comparing, translating, interpreting ideas"
+      },
+      {
+        "level": "Applying",
+        "description": "Solve problems to new situations using acquired knowledge and rules"
+      },
+      {
+        "level": "Analysing/Evaluating/Creating",
+        "description": "Examine, break information into parts, make judgments, propose alternative solutions"
+      }
+    ],
+    "internal_assessment": [
+      {
+        "note": "Content excluded in NCERT textbooks for 2026-27 is not to be tested by schools and will not be assessed."
+      },
+      {
+        "focus": "Internal variations may be made keeping overall weightage same"
+      }
+    ],
+    "practical_assessment": [
+      {
+        "component": "Experiments",
+        "marks": 14,
+        "details": "Two experiments (one from each section), Max Marks: 7+7"
+      },
+      {
+        "component": "Practical Record",
+        "marks": 5,
+        "details": "Record of at least 8 Experiments and 6 Activities"
+      },
+      {
+        "component": "Activity",
+        "marks": 3,
+        "details": "One activity from any section"
+      },
+      {
+        "component": "Viva Voce",
+        "marks": 5,
+        "details": "On experiments, activities and project"
+      }
+    ],
+    "project_assessment": [
+      {
+        "type": "Investigatory Project",
+        "max_marks": 3,
+        "requirement": "Report of the project carried out by students. Suggested projects include studying internal resistance/EMF variations, LDR current variation, refractive indices, transformer relations, etc."
+      }
+    ]
+  }
+}
+
+Stage 8 learning outcomes:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "topic": "Need for measurement, Units of measurement, Systems of units, SI units, significant figures, Determining the uncertainty in result, Dimensions of physical quantities, dimensional analysis and its applications",
+      "outcomes": [
+        "Understand the need for measurement and systems of units.",
+        "Identify fundamental and derived SI units.",
+        "Apply rules for significant figures and determine uncertainty in results.",
+        "Perform dimensional analysis to check the correctness of physical equations."
+      ]
+    },
+    {
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Straight Line",
+      "topic": "Frame of reference, Motion description using differentiation and integration, Uniform and non-uniform motion, Average speed/velocity, Instantaneous velocity, Velocity-time and position-time graphs, Relations for uniformly accelerated motion (graphical and calculus)",
+      "outcomes": [
+        "Describe motion in a straight line using frame of reference.",
+        "Apply elementary concepts of differentiation and integration to describe motion.",
+        "Distinguish between uniform and non-uniform motion.",
+        "Interpret velocity-time and position-time graphs."
+      ]
+    },
+    {
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Plane",
+      "topic": "Scalar and vector quantities, Vector operations (addition, subtraction, multiplication by scalar), Position and displacement vectors, Unit vectors, Resolution in a plane, Rectangular components, Scalar and Vector products, Projectile motion, Uniform circular motion",
+      "outcomes": [
+        "Differentiate between scalar and vector quantities.",
+        "Perform vector addition, subtraction, and resolution in a plane.",
+        "Analyze projectile motion and uniform circular motion."
+      ]
+    },
+    {
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "topic": "Force and Inertia, Newton's Laws, Momentum and Impulse, Conservation of linear momentum, Equilibrium of concurrent forces, Static and kinetic friction, Rolling friction, Lubrication, Centripetal force in uniform circular motion",
+      "outcomes": [
+        "State and apply Newton's three laws of motion.",
+        "Explain the concept of inertia and conservation of linear momentum.",
+        "Analyze equilibrium conditions for concurrent forces.",
+        "Differentiate between static, kinetic, and rolling friction."
+      ]
+    },
+    {
+      "unit_name": "Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power",
+      "topic": "Work done by constant and variable forces, Kinetic energy, Work-energy theorem, Power, Potential energy (including spring), Conservative vs non-conservative forces, Motion in vertical circle, Elastic and inelastic collisions (1D and 2D)",
+      "outcomes": [
+        "Calculate work done by constant and variable forces.",
+        "Apply the work-energy theorem to solve problems involving kinetic energy.",
+        "Differentiate between conservative and non-conservative forces.",
+        "Analyze elastic and inelastic collisions."
+      ]
+    },
+    {
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion",
+      "topic": "Centre of mass, Torque and Angular momentum, Conservation of CM motion, Moment of force (Torque), Law of conservation of angular momentum, Equilibrium of rigid bodies, Rigid body rotation equations, Linear vs rotational motions comparison, Moment of inertia, Radius of gyration",
+      "outcomes": [
+        "Determine the center of mass for systems and rigid bodies.",
+        "Apply laws of torque and conservation of angular momentum.",
+        "Compare linear motion with rotational motion parameters."
+      ]
+    },
+    {
+      "unit_name": "Gravitation",
+      "chapter_name": "Gravitation",
+      "topic": "Planetary motion and Universal law, Kepler's laws, Acceleration due to gravity (variation with altitude/depth), Gravitational potential energy and potential, Escape speed, Orbital velocity of satellite, Energy of orbiting satellite",
+      "outcomes": [
+        "State Kepler's laws of planetary motion.",
+        "Apply the universal law of gravitation.",
+        "Calculate escape speed and orbital velocity."
+      ]
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids",
+      "topic": "Elasticity and Stress-strain, Hooke's law, Young’s modulus, Bulk modulus, Shear modulus (rigidity), Poisson's ratio, Elastic energy, Applications of elastic behavior",
+      "outcomes": [
+        "Explain the stress-strain relationship.",
+        "Calculate moduli of elasticity (Young's, Bulk, Shear)."
+      ]
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids",
+      "topic": "Fluid pressure and flow properties, Pressure due to fluid column, Pascal's law (hydraulic lift/brakes), Viscosity, Stokes' law, Terminal velocity, Streamline/turbulent flow, Critical velocity, Bernoulli's theorem (Torricelli's law/Dynamic lift), Surface tension and energy, Angle of contact",
+      "outcomes": [
+        "Apply Pascal's law to hydraulic systems.",
+        "Analyze fluid dynamics using Bernoulli's theorem.",
+        "Explain phenomena related to surface tension."
+      ]
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "topic": "Heat, Temperature and Expansion, Specific heat capacity (Cp, Cv), Calorimetry, Change of state (latent heat), Heat transfer modes (Conduction, Convection, Radiation), Thermal conductivity, Blackbody radiation concepts, Wein's displacement Law, Stefan's law",
+      "outcomes": [
+        "Distinguish between temperature and heat.",
+        "Apply laws governing thermal expansion and specific heats.",
+        "Analyze different modes of heat transfer."
+      ]
+    },
+    {
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Thermodynamics",
+      "topic": "Laws of Thermodynamics, Zeroth law (Temperature), First law (Heat, Work, Internal Energy), Second law, State variables and equation of state, Gaseous processes: Isothermal, Adiabatic, Reversible/Irreversible, Cyclic processes",
+      "outcomes": [
+        "State the laws of thermodynamics.",
+        "Analyze gaseous processes (isothermal, adiabatic).",
+        "Apply concepts of internal energy and work in cyclic processes."
+      ]
+    },
+    {
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Kinetic Theory",
+      "topic": "Perfect gas and Kinetic theory assumptions, Equation of state, Work done in compression, Concept of pressure (kinetic), Temperature interpretation, RMS speed, Degrees of freedom, Law of equipartition of energy, Specific heat capacities, Mean free path, Avogadro's number",
+      "outcomes": [
+        "Derive the kinetic theory explanation for gas pressure.",
+        "Apply the law of equipartition of energy to specific heats."
+      ]
+    },
+    {
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations",
+      "topic": "Periodic motion and SHM, Time period, Frequency, Displacement as function of time, Simple Harmonic Motion (S.H.M), Uniform circular motion relation to S.H.M, Energy in S.H.M., Kinetic and potential energies, Simple pendulum derivation",
+      "outcomes": [
+        "Define simple harmonic motion and its characteristics.",
+        "Derive the expression for the time period of a simple pendulum."
+      ]
+    },
+    {
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "topic": "Wave motion concepts, Transverse and longitudinal waves, Speed of travelling wave, Displacement relation for progressive wave, Principle of superposition, Reflection, Standing waves in strings and organ pipes, Fundamental mode and harmonics, Beats",
+      "outcomes": [
+        "Distinguish between transverse and longitudinal waves.",
+        "Apply the principle of superposition to standing waves."
+      ]
+    },
+    {
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Chapter–1: Electric Charges and Fields",
+      "topic": "Electric charges, Conservation of charge, Coulomb's law, Superposition principle, Continuous Charge Distribution, Electric field, Dipole Torque, Gauss's Theorem Applications (Wire, Plane, Shell)",
+      "outcomes": [
+        "Apply Coulomb's law to calculate forces between point charges.",
+        "Use Gauss's theorem to find electric fields for symmetric charge distributions."
+      ]
+    },
+    {
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Chapter–2: Electrostatic Potential and Capacitance",
+      "topic": "Electric potential, Equipotential surfaces, Electric dipole energy, Dielectrics, Polarization, Capacitors (Series/Parallel), Energy stored in capacitor",
+      "outcomes": [
+        "Calculate electric potential due to point charges and dipoles.",
+        "Analyze the behavior of capacitors with dielectric media."
+      ]
+    },
+    {
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Chapter–3: Current Electricity",
+      "topic": "Current, Drift Velocity, Ohm's Law, Resistivity/Conductivity, Temperature Dependence of Resistance, Internal Resistance, EMF vs Potential Difference, Kirchhoff's Rules and Wheatstone Bridge",
+      "outcomes": [
+        "Apply Ohm's law to linear and non-linear circuits.",
+        "Use Kirchhoff's rules to solve complex circuit problems."
+      ]
+    },
+    {
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Chapter–4: Moving Charges and Magnetism",
+      "topic": "Magnetic Field Concepts, Biot-Savart Law, Ampere's Law Applications (Wire/Solenoid), Force on Moving Charge/Conductor, Torque on Current Loop, Magnetic Dipole Moment, Galvanometer Conversion",
+      "outcomes": [
+        "Calculate magnetic fields using Biot-Savart and Ampere's laws.",
+        "Analyze the motion of charged particles in magnetic fields."
+      ]
+    },
+    {
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Chapter–5: Magnetism and Matter",
+      "topic": "Bar Magnets, Solenoids as equivalent magnets, Magnetic properties (Para-, Dia-, Ferro-magnetic), Effect of temperature on magnetic properties",
+      "outcomes": [
+        "Classify materials based on their magnetic properties."
+      ]
+    },
+    {
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Chapter–6: Electromagnetic Induction",
+      "topic": "Faraday's laws, Lenz's Law, Self and mutual induction",
+      "outcomes": [
+        "Apply Faraday's law to calculate induced EMF."
+      ]
+    },
+    {
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Chapter–7: Alternating Current",
+      "topic": "Peak/RMS values, Reactance/Impedance, LCR circuits (phasors), Resonance, Power in AC circuits, Wattless current, Transformers",
+      "outcomes": [
+        "Analyze series resonance in LCR circuits."
+      ]
+    },
+    {
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_name": "Chapter–8: Electromagnetic Waves",
+      "topic": "Displacement current, Characteristics of EM waves, Transverse nature (qualitative), Electromagnetic spectrum and uses",
+      "outcomes": [
+        "Describe the characteristics of electromagnetic waves."
+      ]
+    },
+    {
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Chapter–9: Ray Optics and Optical Instruments",
+      "topic": "Reflection, Spherical mirrors, Refraction, Total internal reflection, Lenses (Thin lens formula), Prism, Microscopes and Telescopes",
+      "outcomes": [
+        "Apply mirror and lens formulas to solve optical problems."
+      ]
+    },
+    {
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Chapter–10: Wave Optics",
+      "topic": "Wave front, Huygen's principle, Interference (Young's double slit), Diffraction due to single slit",
+      "outcomes": [
+        "Explain interference and diffraction phenomena using wave theory."
+      ]
+    },
+    {
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_name": "Chapter–11: Dual Nature of Radiation and Matter",
+      "topic": "Photoelectric effect, Einstein's equation, Particle nature of light, de-Broglie relation (Matter waves)",
+      "outcomes": [
+        "Explain the photoelectric effect experimentally."
+      ]
+    },
+    {
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Chapter–12: Atoms",
+      "topic": "Rutherford's model, Bohr model of hydrogen atom, Hydrogen line spectra (qualitative)",
+      "outcomes": [
+        "Describe the postulates of Bohr's atomic model."
+      ]
+    },
+    {
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Chapter–13: Nuclei",
+      "topic": "Nuclear force, Mass-energy relation, Binding energy per nucleon, Nuclear fission, Nuclear fusion",
+      "outcomes": [
+        "Explain the concept of binding energy and its variation with mass number."
+      ]
+    },
+    {
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits",
+      "topic": "Energy bands (Conductors/Semiconductors/Insulators), p-n junction diode characteristics, Rectifiers",
+      "outcomes": [
+        "Analyze the I-V characteristics of a semiconductor diode."
+      ]
+    }
+  ]
+}
+
+Stage 9 activities/projects/practicals:
+{
+  "activities": [
+    {
+      "type": "activity",
+      "title": "To make a paper scale of given least count, e.g., 0.2cm, 0.5 cm.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To determine mass of a given body using a metre scale by principle of moments.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To plot a graph for a given set of data, with proper choice of scales and error bars.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To measure the force of limiting friction for rolling of a roller on a horizontal plane.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the variation in range of a projectile with angle of projection.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the conservation of energy of a ball rolling down on an inclined plane (using a double inclined plane).",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study dissipation of energy of a simple pendulum by plotting a graph between square of amplitude and time.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To observe change of state and plot a cooling curve for molten wax.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To observe and explain the effect of heating on a bi-metallic strip.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To note the change in level of liquid in a container on heating and interpret the observations.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the effect of detergent on surface tension of water by observing capillary rise.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the factors affecting the rate of loss of heat of a liquid.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To study the effect of load on depression of a suitably clamped metre scale loaded at (i) its end (ii) in the middle.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "type": "activity",
+      "title": "To observe the decrease in pressure with increase in velocity of a fluid.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    }
+  ],
+  "projects": [
+    {
+      "title": "Investigatory Project",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Report of the project carried out by students. Suggested projects include studying internal resistance/EMF variations, LDR current variation, refractive indices, transformer relations, etc."
+    }
+  ],
+  "practicals": [
+    {
+      "title": "To measure diameter of a small spherical/cylindrical body and to measure internal diameter and depth of a given beaker/calorimeter using Vernier Callipers and hence find its volume.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To measure diameter of a given wire and thickness of a given sheet using screw gauge.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine volume of an irregular lamina using screw gauge.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine radius of curvature of a given spherical surface by a spherometer.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine the mass of two different objects using a beam balance.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To find the weight of a given body using parallelogram law of vectors.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "Using a simple pendulum, plot its graph and use it to find the effective length of second's pendulum.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study variation of time period of a simple pendulum of a given length by taking bobs of same size but different masses and interpret the result.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the relationship between force of limiting friction and normal reaction and to find the co- efficient of friction between a block and a horizontal surface.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To find the downward force, along an inclined plane, acting on a roller due to gravitational pull of the earth and study its relationship with the angle of inclination θ by plotting graph between force and Sinθ.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine Young's modulus of elasticity of the material of a given wire.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To find the force constant of a helical spring by plotting a graph between load and extension.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the variation in volume with pressure for a sample of air at constant temperature by plotting graphs between P and V, and between P and 1/V.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine the surface tension of water by capillary rise method.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine the coefficient of viscosity of a given viscous liquid by measuring terminal velocity of a given spherical body.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the relationship between the temperature of a hot body and time by plotting a cooling curve.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To determine specific heat capacity of a given solid by method of mixtures.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the relation between frequency and length of a given wire under constant tension using sonometer.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To study the relation between the length of a given wire and tension for constant frequency using sonometer.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    },
+    {
+      "title": "To find the speed of sound in air at room temperature using a resonance tube by two resonance positions.",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": ""
+    }
+  ]
+}

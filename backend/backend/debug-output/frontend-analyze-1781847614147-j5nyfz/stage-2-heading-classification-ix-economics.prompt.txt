@@ -1,0 +1,60 @@
+Stage 2: Heading Classification - IX - Economics
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- do not output units created by the model
+- do not create unit_name
+- do not rename parent_unit
+- only classify the existing Stage 1 items as chapter/topic/subtopic
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Economics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Production and Resources",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "The Story of Village Palampur"
+      ],
+      "topics": [
+        "Requirements of production",
+        "Interdependence of requirements",
+        "Farming and non-farming activities correlation"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Challenges in Economy",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "People as Resource",
+        "Poverty as a Challenge",
+        "Food Security in India"
+      ],
+      "topics": [
+        "Quality of population and government schemes",
+        "Reasons for poverty (rural/urban)",
+        "Efficacy to eradicate poverty",
+        "Link between education and poverty",
+        "Continuity of supply, PDS features",
+        "Impact of Green Revolution"
+      ],
+      "subtopics": []
+    }
+  ]
+}

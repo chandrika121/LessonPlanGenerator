@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units and chapters in this input\n- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 6 of 9; extract only what is present in this chunk\n\nCurriculum source text:\n--- Page 21 ---\n21 Weightage to Type of Questions Type of Questions Marks (80) Percent age 1 Mark- MCQs (20x1) (Inclusive Of Assertion, Reason, Differentiation & Stem) 20 25% 2 Marks- Long Answer Questions (4x2) (Knowledge, Understanding, Application, Analysis, Evaluation, Synthesis & Create) 8 10% 3 Marks- Long Answer Questions (5x3) (Knowledge, Understanding, Application, Analysis, Evaluation, Synthesis & Create) 15 18.75% 4 Marks- Case Study Questions (3x4) (Knowledge, Understanding, Application, Analysis, Evaluation, Synthesis & Create) 12 15% 5 Mark- Long Answer Questions (4x5) (Knowledge, Understanding, Application, Analysis, Evaluation, Synthesis & Create) 20 25% Map Pointing 5 6.25% Weightage to Competency Levels Sr. No. Competencies Marks (80) Percent- age 1 Remembering and Understanding : Exhibiting memory of previously learned material by recalling facts, terms, basic concepts, and answers; Demonstrating understanding of facts and ideas by organizing, translating, interpreting, giving descriptions and stating main ideas. 24 30% 2 Applying : Solving problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way. 11 13.25% 3 Analysing, Evaluating and Creating : Examining and breaking information into parts by identifying motives or causes; Making inferences and finding evidence to support generalizations; Presenting and defending opinions by making judgments about information, validity of ideas, or quality of work based on a set of criteria. Compiling information together in a different way by combining elements in a new pattern or proposing alternative solutions. 40 50% 4 Map Skill 5 6.25% Total 80 100%\n\n--- Page 22 ---\n22 CLASS X (2025-26) GUIDELINES FOR INTERNAL ASSESSMENT: 20 MARKS Type of Assessment Description Marks Periodic Assessment Pen Paper Test. 5 Multiple Assessment Quiz, debate, role play, viva, group discussion, visual expression, interactive bulletin boards, gallery walks, exit cards, concept maps, peer assessment, Self- assessment etc. through Interdisciplinary project 5 Subject Enrichment Activity Project Work on Consumer Rights OR Social Issues OR Sustainable Development (Interdisciplinary) 5 Portfolio Classwork, Work done (activities/ assignments) reflections, narrations, journals, etc. Achievements of the student in the subject throughout the year Participation of the student in different activities like heritage India quiz 5 CLASS X PRESCRIBED TEXTBOOKS S.No. Subject Name of the Book Publisher 1 History India and the Contemporary World-II NCERT 2 Political Science Democratic Politics-II NCERT 3 Geography Contemporary India-II NCERT 4 Economics Understanding Economic Development NCERT 5 Disaster Management Together, towards a safer India- Part III CBSE\n\n--- Page 23 ---\n23 ANNEXURE I Project Work: Class IX Project work Competencies Every student must undertake one project on Disaster Management Objectives: The main objectives of giving project work on Disaster Management to the students are to:  To create awareness in them about different disasters, their consequences and management  To prepare them in advance to face such situations  To ensure their participation in disaster risk reduction plans  To enable them to create awareness and preparedness among the community.  The project work helps in enhancing the Life Skills of the students.  Various forms of art must be integrated in the project work. The students will develop the following competencies:  Collaboration  Use analytical skills.  Evaluate the situations during disasters.  Synthesize the information.  Find creative solutions.  Strategies the order of solutions.  Use the right communication skills. Guidelines: To realise the expected objectives, it would be required of the principals / teachers to muster support from various local authorities and organisations like the Disaster Management Authorities, Relief, Rehabilitation and the Disaster Management Departments of the States, Office of the District Magistrate/ Deputy Commissioners, Fire Service, Police, Civil Defence etc. in the area where the schools are located. The project carried out by the students should subsequently be shared among themselves through interactive sessions such as exhibitions, panel discussions, etc. The distribution of marks over different rubrics relating to Project Work is as follows: S.no Aspects Mar ks a Content accuracy and originality 2 b Competencies exhibited and Presentation 2 c Viva-Voce 1 ⮚ All documents pertaining to assessment under this activity should be meticulously maintained by the schools. ⮚ A Summary Report should be prepared highlighting:  objectives realized through individual work and group interactions.  calendar of activities.  innovative ideas generated in the process.  list of questions asked in viva voce.\n\n--- Page 24 ---\n24 ⮚ It is to be noted here by all the teachers and students that the projects and models prepared should be made from eco-friendly products without incurring too much expenditure. ⮚ The Project Report can be handwritten or digital. ⮚ The Project Work needs to enhance cognitive, affective and psychomotor skills of the learners. It will include self-assessment and peer assessment, and progress of the child in project-based and inquiry-based learning, art integrated activities, experiments, models, quizzes, role plays, group work, portfolios, etc., along with teacher assessment. (NEP-2020) ⮚ The Project work can culminate in the form of PowerPoint Presentation/Exhibition/Skit/albums/files/song and dance or culture show /story telling/debate/panel discussion, paper presentation and whichever is suitable to Visually Impaired Candidates.) ⮚ The record of the project work (internal assessment) should be kept for a period of three months for verification, if any.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}

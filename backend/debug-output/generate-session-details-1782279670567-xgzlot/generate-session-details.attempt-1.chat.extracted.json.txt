@@ -1,0 +1,108 @@
+{
+  "id": "PHY-XI-12-S01",
+  "sessionNumber": 1,
+  "title": "Magnetism and Matter: From Bar Magnets to Earth's Field",
+  "duration": 45,
+  "learningOutcomes": [
+    "Define magnetic dipole moment and distinguish between magnetization intensity (I) and magnetic field strength (H).",
+    "Derive the expression for the torque on a bar magnet in a uniform magnetic field.",
+    "Explain the behavior of paramagnetic, diamagnetic, and ferromagnetic materials based on atomic dipoles.",
+    "Analyze Earth's magnetic elements: Declination, Inclination (Dip), and Horizontal Component."
+  ],
+  "introduction": "Teacher holds a bar magnet near a compass. 'Why does the needle always point North-South even when I move it around? Is there an invisible force field connecting our classroom to the center of the Earth?' Ask students: 'If you cut this magnet in half, do you get isolated North and South poles, or two smaller magnets?' This inquiry sets the stage for understanding magnetic dipoles versus electric monopoles.",
+  "theory": {
+    "overview": "This session introduces Magnetism and Matter (Chapter 5), focusing on how materials respond to external magnetic fields. We explore the concept of magnetization, the classification of magnetic substances based on their susceptibility, and the vector nature of Earth's magnetic field which acts as a giant bar magnet.",
+    "keyPoints": [
+      "Magnetic dipoles are fundamental; isolated monopoles do not exist in classical physics.",
+      "Materials are classified into Diamagnetic (repelled), Paramagnetic (weakly attracted), and Ferromagnetic (strongly attracted) based on magnetic susceptibility ($\\chi$).",
+      "Earth's magnetism is defined by three elements: Declination, Inclination, and Horizontal Component ($B_H = B \\cos \\delta$).",
+      "The potential energy of a dipole in an external field determines its stability (aligned vs. anti-aligned)."
+    ],
+    "detailedContent": "We begin with the Bar Magnet as a magnetic dipole. The torque $\\tau = mB \\sin \\theta$ acts to align the moment $m$ with the field $B$. We discuss Magnetic Permeability ($\\mu$) and Susceptibility ($\\chi_m$). For diamagnetic materials (e.g., Bismuth), induced dipoles oppose the external field. Paramagnetic materials (e.g., Aluminum) have permanent dipoles that align partially with the field, overcoming thermal agitation. Ferromagnetic materials (Iron, Nickel) exhibit domains; below the Curie temperature ($T_c$), these domains align spontaneously to create strong magnetism. Finally, we model Earth as a dipole tilted at 11.3° from the rotational axis, defining Declination (angle between magnetic and geographic meridian) and Inclination/Dip (vertical angle of field lines)."
+  },
+  "activities": [
+    {
+      "name": "The Domain Alignment Simulation",
+      "instructions": [
+        "Distribute small compass needles or iron filings to groups.",
+        "Students place a bar magnet under a sheet of paper with sprinkled iron filings and tap gently to visualize field lines.",
+        "Ask students to predict the behavior if they heat the magnet (simulating Curie temperature) using a safe warm water bath for a separate demo, then observe cooling effects on alignment."
+      ],
+      "durationMinutes": 10
+    }
+  ],
+  "materials": {
+    "ppt": {
+      "title": "Chapter 5: Magnetism and Matter - Foundations",
+      "slides": [
+        {
+          "slideTitle": "Magnetic Dipoles vs. Electric Monopoles",
+          "bulletPoints": [
+            "No magnetic monopoles exist (Gauss's Law for Magnetism).",
+            "Dipole moment $m = q_m \\cdot 2l$.",
+            "Torque equation: $\\vec{\\tau} = \\vec{m} \\times \\vec{B}$."
+          ]
+        },
+        {
+          "slideTitle": "Classification of Magnetic Materials",
+          "bulletPoints": [
+            "Diamagnetic: $-1 < \\chi_m < 0$ (e.g., Cu, Au).",
+            "Paramagnetic: $\\chi_m > 0$, small (e.g., Al, Na).",
+            "Ferromagnetic: $\\chi_m \\gg 1$ (e.g., Fe, Co), exhibits hysteresis."
+          ]
+        },
+        {
+          "slideTitle": "Earth's Magnetic Field Elements",
+          "bulletPoints": [
+            "Declination ($D$): Angle between magnetic and geographic North.",
+            "Inclination/Dip ($\\delta$): Vertical angle of field lines.",
+            "Horizontal Component: $B_H = B \\cos \\delta$."
+          ]
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Study Guide Nodes: Magnetism and Matter",
+      "keyInformation": [
+        "Formula Sheet: Torque, Potential Energy ($U = -mB\\cos\\theta$), Oscillation period of a magnet.",
+        "Comparison Table: Properties of Dia/Para/Ferro materials including Curie Law application.",
+        "Vector Diagrams: Earth's magnetic field components."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Plan Outline for Session 1",
+      "sections": [
+        "Introduction (5 mins): Hook and Inquiry Question.",
+        "Core Theory (20 mins): Dipoles, Susceptibility, Earth's Field.",
+        "Activity/Demo (10 mins): Iron Filings & Domain visualization.",
+        "Assessment (7 mins): Quick Quiz on concepts.",
+        "Homework Assignment (3 mins): Problem set distribution."
+      ]
+    }
+  },
+  "homework": {
+    "task": "Solve the following problems: 1) Calculate the magnetic moment of a solenoid with 200 turns, area $5 \\times 10^{-4} m^2$, carrying 3A. 2) Explain why a diamagnetic material moves from stronger to weaker parts of an external field.",
+    "estimatedTimeMinutes": 30
+  },
+  "assessment": {
+    "questions": [
+      "What is the value of magnetic susceptibility ($\\chi_m$) for a perfect diamagnet?",
+      "If a bar magnet with dipole moment $m$ is placed in a uniform field $B$, at what angle does it have maximum potential energy?",
+      "Name one material that exhibits ferromagnetism and state its Curie temperature behavior."
+    ],
+    "answerKey": [
+      "-1 (or approaches -1 for superconductors/perfect diamagnets).",
+      "$\\theta = 180^\\circ$ (Anti-parallel alignment), where $U = +mB$. Maximum potential energy occurs when the dipole is opposite to the field.",
+      "Iron, Nickel, or Cobalt. Above the Curie temperature ($T_c$), ferromagnetic materials lose their spontaneous magnetization and become paramagnetic."
+    ]
+  },
+  "assignment": {
+    "taskDescription": "Write a short paragraph (150 words) explaining why Earth's magnetic field is not static over geological time scales, referencing the concept of 'Magnetism in Matter' and domain alignment reversals.",
+    "rubric": [
+      "Correctly identifies that domains can flip or reverse polarity over long periods.",
+      "Connects atomic-level dipole behavior to macroscopic planetary fields.",
+      "Uses correct terminology (e.g., Curie temperature, magnetic reversal)."
+    ],
+    "answerKey": "Students should explain that Earth's core acts as a giant dynamo. Over millions of years, the alignment of magnetic domains in the molten iron core can reverse due to convection currents and rotation changes, leading to geomagnetic reversals where North becomes South. This is supported by paleomagnetism data showing rock layers with reversed magnetization."
+  }
+}

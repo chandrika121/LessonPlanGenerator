@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units and chapters in this input\n- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 2 of 4; extract only what is present in this chunk\n\nCurriculum source text:\n--- Page 5 ---\n5 D.Chemical Equilibrium Any one of the following experiments:  Study the shift in equilibrium between ferric ions and thiocyanate ions by increasing/decreasing the concentration of either of the ions.  Study the shift in equilibrium between [Co(H 2 O) 6 ] 2+ and chloride ions by changing the concentration of either of the ions. E. Quantitative Estimation 1. Using a mechanical balance/electronic balance. 2. Preparation of standard solution of Oxalic acid. 3. Determination of strength of a given solution of Sodium hydroxide by titrating it against standard solution of Oxalic acid. 4. Preparation of standard solution of Sodium carbonate. 5. Determination of strength of a given solution of hydrochloric acid by titrating it against standard Sodium Carbonate solution. F. Qualitative Analysis 1. Determination of one anion and one cation in a given salt Cations: 𝑷𝒃 𝟐+ , 𝑪𝒖 𝟐+ , 𝑨𝒍 𝟑+ , 𝑭𝒆 𝟑+ , 𝑴𝒏 𝟐+ , 𝑵𝒊 𝟐+ , 𝒁𝒏 𝟐+ , 𝑪𝒐 𝟐+ , 𝑪𝒂 𝟐+ , 𝑺𝒓 𝟐+ , 𝑩𝒂 𝟐+ , 𝑴𝒈 𝟐+ , 𝑵𝑯 𝟒 + Anions: 𝑪𝑶 𝟑 𝟐− , 𝐒 𝟐− , 𝐒𝐎 𝟑 𝟐− , 𝑵𝑶 𝟑 − , 𝑵𝑶 𝟐 − , 𝐂𝐥 − , 𝐁𝐫 − , 𝐈 − , 𝑺𝑶 𝟒 𝟐− , 𝑷𝑶 𝟒 𝟑− , 𝐂𝐇 𝟑 𝐂𝐎𝐎 − (Note: Insoluble salts excluded) 2. Detection of -Nitrogen, Sulphur, Chlorine in organic compounds. PROJECTS Scientific investigations involving laboratory testing and collecting information from other sources. A few suggested Projects a) Checking the bacterial contamination in drinking water by testing sulphide ion b) Study of the methods of purification of water c) Testing the hardness, presence of Iron, Fluoride, Chloride, etc., depending upon the regional variation in drinking water and study of causes of presence of these ions above permissible limit (if any). d) Investigation of the foaming capacity of different washing soaps and the effect of addition of Sodium carbonate on it e) Study the acidity of different samples of tea leaves. f) Determination of the rate of evaporation of different liquids g) Study the effect of acids and bases on the tensile strength of fibers. h) Study of acidity of fruit and vegetable juices.\n\n--- Page 6 ---\n6 Note: Any other investigatory project, which involves about 10 periods of work, can be chosen with the approval of the teacher. Practical Examination for Visually Challenged Students Class XI Note: Same Evaluation scheme and general guidelines for visually challenged students as given for Class XII may be followed. List of apparatus for identification for assessment in practicals (All experiments) Beaker, tripod stand, wire gauze, glass rod, funnel, filter paper, Bunsen burner, test tube, test tube stands, dropper, test tube holder, ignition tube, china dish, tongs, standard flask, pipette, burette, conical flask, clamp stand, dropper, wash bottle • Odor detection in qualitative analysis. • Procedure/Setup of the apparatus. List of Experiments A. Characterization and Purification of Chemical Substances Crystallization of an impure sample of any one of the following: copper sulphate, benzoic acid. B. Experiments based on pH 1. Determination of pH of some solutions obtained from fruit juices, solutions of known and varied concentrations of acids, bases and salts using pH paper. 2. Comparing the pH of solutions of strong and weak acids of same concentration. C. Chemical Equilibrium 1. Study the shift in equilibrium between ferric ions and thiocyanate ions by increasing/decreasing the concentration of either ions. 2. Study the shift in equilibrium between [Co(H 2 O) 6 ] 2+ and chloride ions by changing the concentration of either of the ions. D. Quantitative estimation 1. Preparation of standard solution of oxalic acid. 2. Determination of molarity of a given solution of sodium hydroxide by titrating it against standard solution of oxalic acid. E. Qualitative Analysis 1. Determination of one anion and one cation in a given salt Cations - 𝑵𝑯 𝟒 + Anions: 𝑪𝑶 𝟑 𝟐− , 𝐒 𝟐− , 𝐒𝐎 𝟑 𝟐− , , 𝐂𝐥 − , 𝐂𝐇 𝟑 𝐂𝐎𝐎 − (Note: insoluble salts excluded) 2. Detection of Nitrogen in the given organic compound. 3. Detection of Halogen in the given organic compound.\n\n--- Page 7 ---\n7 Note: The above practical may be carried out in an experiential manner rather than recording observations. Prescribed Books: 1. Chemistry Part – I, Class-XI, Published by NCERT. 2. Chemistry Part – II, Class-XI, Published by NCERT. 3. Manual of Microscale Chemistry laboratory kit, Published by NCERT Links for NCERT textbooks: 1. https://ncert.nic.in/textbook.php?kech1=0-6 2. https://ncert.nic.in/textbook.php?kech2=0-3 3. https://ncert.nic.in/division/dek/pdf/Manual_01.pdf\n\n--- Page 8 ---\n8 COURSE STRUCTURE CLASS XII THEORY Time: 3 Hours Total Marks: 70 S. No. Title Marks 1 Solutions 7 2 Electrochemistry 9 3 Chemical Kinetics 7 4 d -and f -Block Elements 7 5 Coordination Compounds 7 6 Haloalkanes and Haloarenes 6 7 Alcohols, Phenols and Ethers 6 8 Aldehydes, Ketones and Carboxylic Acids 8 9 Amines 6 10 Biomolecules 7 Total 70 Unit 1: Solutions Types of Solutions, Expression of Concentration of Solutions, Solubility, Vapour Pressure of Liquid Solutions, Ideal and Non –Ideal Solutions, Colligative Properties and Determination of Molar Mass, Abnormal Molecular Masses. Unit 2: Electrochemistry Electrochemical Cells, Galvanic Cells, Nernst Equation, Conductance of Electrolytic solutions, Electrolytic Cells and Electrolysis, Batteries, Fuel Cells, Corrosion. Unit 3: Chemical Kinetics Rate of a Chemical reaction, factors influencing rate of reaction, integrated rate equations, Temperature Dependence of the rate of a reaction, Collision theory of Chemical Reactions Unit 4: d and f Block Elements Position in the Periodic Table, Electronic configuration of the d-Block Elements, General properties of the Transition Elements (d-Block), Some Important Compounds of Transition Elements, The Lanthanoids, The Actinoids, Some Applications of d- and f- Block Elements. Unit 5: Coordination Compounds Werner’s Theory of Coordination Compound, Definition of Some important terms pertaining to Coordination Compounds, Nomenclature of Coordination Compounds. Isomerism in Coordination Compounds, Bonding in coordination compounds, Bonding in Metal Carbonyls, Importance and Applications of Coordination Compounds.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "chapters": [
+          {
+            "source_chapter_name": "",
+            "source_type": "explicit_chapter",
+            "node_type": "chapter",
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "key_concepts": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Node Enrichment - Class IX - Mathematics - Retry\nReturn compact JSON only.\nEnrich and label ONLY the existing document nodes for this class.\n\nOutput rules:\n- Use only the provided structure hierarchy\n- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n- output chapter count must equal input chapter count\n\nNode rules:\n- Stage 3 may label or enrich nodes but must never create hierarchy\n- Preserve the provided hierarchy exactly\n- use unit_id from Stage 2 only\n- keep every chapter source_chapter_name exactly as provided\n- do not create new chapters\n- do not split chapters\n- do not merge chapters\n- do not rename chapters\n- do not reclassify chapters as topics\n- do not reclassify topics as chapters\n- the chapter list provided in input is the source of truth\n- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts\n- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback\n- never create new class names, subject names, unit names, or chapter names\n- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters\n- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented\n- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module\n- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units\n\nRaw class extraction:\n{\n  \"class_name\": \"Class IX\",\n  \"subject\": \"Mathematics\",\n  \"part_or_section\": \"\",\n  \"units\": []\n}\n\nDocument structure hierarchy for this class:\n{\n  \"class_name\": \"Class IX\",\n  \"subject\": \"Mathematics\",\n  \"part_or_section\": \"\",\n  \"units\": []\n}\n\nCurriculum source text:\n--- Page 1 ---\nMathematics Class IX (2026 – 27) Introduction: The Mathematics curriculum for the Secondary stage has been redesigned in alignment with the National Education Policy 2020 and the National Curriculum Framework for School Education (NCF – SE) 2023, prioritizing deep conceptual understanding and logical reasoning. The revised syllabus places strong emphasis on developing core mathematical competencies, including problem-solving, visualisation, mathematical modelling, mathematical communication, computational thinking, and data analytics. The syllabus integrate Indian Knowledge System with contemporary mathematical knowledge, highlighting the rich contributions of Indian mathematicians to foster a sense of pride and historical context. A deliberate shift from rote learning to competency-based education ensures that students build deep conceptual understanding and logical reasoning rather than mere procedural fluency. Greater emphasis has been laid on the integration of real-life applications and experiential learning, encouraging students to connect mathematical concepts with everyday situations and cross-disciplinary contexts. Greater emphasis has been laid on competency based learning outcomes encouraging students to connect mathematical concepts with everyday situations and inter-disciplinary contexts. Continuous and holistic assessment through projects, activities, and investigations forms an integral part of the learning process, moving beyond summative examinations. At the secondary stage, the curriculum focuses on developing essential global mathematical competencies, including mathematical representation through quantities and relations, mathematical modelling and algorithm building, and effective mathematical communication. The study of the number system, algebra, geometry, mensuration, statistics and probability is designed to build a strong foundation for higher education while enhancing functional life skills. The curriculum thus aims to build rich mathematical learning frameworks not only for higher academic pursuits but also for the practical demands of life in a rapidly changing, data-driven world. Objectives: The broad objectives of teaching Mathematics at the secondary stage are to help the learners to:  develop logical thinking, critical reasoning, and a structured approach to problem-solving;  build the ability to recognise, analyse, and solve diverse problems with confidence and adaptability;  communicate mathematical ideas effectively using appropriate language, symbols, and representations;  appreciate the beauty, history, and real-life relevance of Mathematics as a discipline;  connect mathematical concepts to fields such as Science, Technology, Engineering, and Economics;  engage in both collaborative and independent mathematical exploration and learning;  develop habits of precision, accuracy, and logical consistency in mathematical work;  build confidence to explore, experiment, and grow in mathematical understanding without fear of failure.\n\n--- Page 2 ---\nCurricular Goals (CGs) and Competencies (Cs) from the NCF-SE 2023 CG-1: Understands numbers (natural, whole, integer, rational, irrational, and real), ways of representing numbers, relationships amongst numbers, and number sets. C-1.1 Develops understanding of numbers, including the set of real numbers and its properties. CG-2: Builds deductive and inductive logic to prove theorems related to numbers and their relationships (such as ‘2 is an irrational number’, a recursion relation for Virahanka numbers, a formula for the sum of the first n square numbers). C-2.1 Understanding of powers (radical powers) and exponents. CG-3: Discovers and proves algebraic identities and models real-life situations in the form of equations to solve them. C-3.1 States and proves remainder theorem, factor theorem, and division algorithm. C-3.2 Models and solves contextualised problems using equations (for example, simultaneous linear equations in two variables or single polynomial equations), and draws conclusions about a situation being modelled. C-3.3 Learns Brahmagupta’s quadratic formula (in both symbolic and poetic form) and its derivation, and uses it to solve some of the poetic puzzles of Bhaskara as well as modern-day problems. CG-4: Analyses characteristics and properties of two-dimensional geometric shapes, and develops mathematical arguments to explain geometric relationships. C-4.1 Describes relationships including congruence of two-dimensional geometric shapes (such as lines, angles, triangles) to make and test conjectures and solve problems. C-4.2 Proves theorems using Euclid’s axioms and postulates for triangles and quadrilaterals, and applies them to solve geometric problems. C-4.3 Proves theorems about the geometry of a circle, including its chords, subtended angles, inscribed polygons, and area in terms of pi. C-4.4 Understands the irrationality of pi, the best approximations to be discovered over human history, \n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"chapters\": [\n        {\n          \"source_chapter_name\": \"\",\n          \"source_type\": \"explicit_chapter\",\n          \"node_type\": \"chapter\",\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"key_concepts\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

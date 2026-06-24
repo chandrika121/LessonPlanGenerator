@@ -1,0 +1,63 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_id": "",
+        "unit_name": "",
+        "marks": null,
+        "chapters": [
+          {
+            "chapter_id": "",
+            "chapter_name": "",
+            "source_heading": "",
+            "is_normalized": false,
+            "confidence": 0,
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - Class 6\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- long paragraph-like chapter names must be reclassified into topics\n- chapter names must remain source-grounded\n- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks\n- never create new chapter names from topics or subtopics\n- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true\n- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented\n\nRaw class extraction:\n{\n  \"class_name\": \"X\",\n  \"subject\": \"Geography - Contemporary India - II\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Resources and Development\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Resources and Development\",\n        \"Forest and Wildlife Resources\",\n        \"Water resources\"\n      ],\n      \"topics\": [\n        \"Interdependence of resources\",\n        \"Planning for judicious utilization\",\n        \"Conserving forests and wildlife\",\n        \"Multipurpose projects\",\n        \"Impact of grazing and wood cutting\"\n      ],\n      \"subsections\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Economic Activities\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Agriculture\",\n        \"Minerals and energy Resources\",\n        \"Manufacturing Industries\"\n      ],\n      \"topics\": [\n        \"Role of agriculture in economy\",\n        \"Challenges faced by farming community\",\n        \"Impact of manufacturing on environment\",\n        \"Types of industries based on input/processes\"\n      ],\n      \"subsections\": []\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Transport and Economy\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Lifelines of National Economy\"\n      ],\n      \"topics\": [\n        \"Roadways and railways impact on national economy\",\n        \"Challenges in road/rail sector\"\n      ],\n      \"subsections\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"class_name\": \"Class 6\",\n  \"units\": [\n    {\n      \"unit_name\": \"Resources and Development\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Interdependence of resources\",\n          \"source_text_excerpt\": \"Interdependence of resources refers to how different types of natural resources rely on each other for sustainable use.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Resources and Development\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Planning for judicious utilization\",\n          \"source_text_excerpt\": \"Planning ensures that resources are used efficiently to meet current needs without compromising future availability.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Resources and Development\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Conserving forests and wildlife\",\n          \"source_text_excerpt\": \"Conservation involves protecting forest ecosystems and animal species from threats like deforestation.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Resources and Development\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Multipurpose projects\",\n          \"source_text_excerpt\": \"These are dams built to serve multiple functions such as irrigation, power generation, flood control.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Resources and Development\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Impact of grazing and wood cutting\",\n          \"source_text_excerpt\": \"Overgrazing by livestock and excessive wood cutting lead to soil erosion and loss of biodiversity.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Resources and Development\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_name\": \"Economic Activities\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Role of agriculture in economy\",\n          \"source_text_excerpt\": \"Agriculture provides food, raw materials for industries, and employment to a large section of the population.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Economic Activities\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Challenges faced by farming community\",\n          \"source_text_excerpt\": \"Farmers face challenges like low productivity, lack of irrigation facilities, and fluctuating market prices.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Economic Activities\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Impact of manufacturing on environment\",\n          \"source_text_excerpt\": \"Industrial activities often result in pollution and resource depletion if not managed sustainably.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Economic Activities\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Types of industries based on input/processes\",\n          \"source_text_excerpt\": \"Industries are classified as agro-based or mineral-based depending on the raw materials they use.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Economic Activities\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_name\": \"Transport and Economy\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Roadways and railways impact on national economy\",\n          \"source_text_excerpt\": \"Efficient transport networks facilitate trade, reduce costs, and connect remote areas to markets.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Transport and Economy\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Challenges in road/rail sector\",\n          \"source_text_excerpt\": \"Issues include overcrowding, aging infrastructure, safety concerns, and maintenance backlogs.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Transport and Economy\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"unit_name\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"\",\n          \"chapter_name\": \"\",\n          \"source_heading\": \"\",\n          \"is_normalized\": false,\n          \"confidence\": 0,\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

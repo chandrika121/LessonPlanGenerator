@@ -1,0 +1,26 @@
+Stage 1: Raw Curriculum Extraction
+Return JSON only.
+Disable reasoning and answer directly.
+Extract only concise curriculum facts needed to build the hierarchy.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output intentionally small and concise
+- Never include topics, subtopics, key concepts, activities, projects, practical details, raw nodes, or long prose
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 1 of 4.1.1.2; extract only what is present in this chunk
+
+
+Curriculum source text:
+--- Page 2 ---
+PHYSICS (Code No. 042) COURSE STRUCTURE Time: 3 hrs. Max Marks: 70 UNIT CHAPTERS MARKS Unit–I Physical World and Measurement 23 Chapter–1: Units and Measurements Unit-II Kinematics Chapter–2: Motion in a Straight Line Chapter–3: Motion in a Plane Unit–III Laws of Motion Chapter–4: Laws of Motion Unit–IV Work, Energy and Power 17 Chapter–5: Work, Energy and Power Unit–V Motion of System of Particles and Rigid Body Chapter–6: System of Particles and Rotational Motion Unit-VI Gravitation Chapter–7: Gravitation Unit–VII Properties of Bulk Matter 20 Chapter–8: Mechanical Properties of Solids Chapter–9: Mechanical Properties of Fluids Chapter–10: Thermal Properties of Matter Unit–VIII Thermodynamics Chapter–11: Thermodynamics Unit–IX Behaviour of Perfect Gases and Kinetic Theory of Gases Chapter–12: Kinetic Theory Unit–X Oscillations and Waves 10 Chapter–13: Oscillations Chapter–14: Waves Total 70 Class XI - 2026-27 (Theory)

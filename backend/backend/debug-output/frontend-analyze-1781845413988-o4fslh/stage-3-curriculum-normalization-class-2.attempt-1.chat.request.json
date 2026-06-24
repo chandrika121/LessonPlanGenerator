@@ -1,0 +1,63 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_id": "",
+        "unit_name": "",
+        "marks": null,
+        "chapters": [
+          {
+            "chapter_id": "",
+            "chapter_name": "",
+            "source_heading": "",
+            "is_normalized": false,
+            "confidence": 0,
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - Class 2\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- long paragraph-like chapter names must be reclassified into topics\n- chapter names must remain source-grounded\n- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks\n- never create new chapter names from topics or subtopics\n- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true\n- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"Geography - Contemporary India - I\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Physical Features and Environment\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"India – Size and Location\",\n        \"Physical Features of India\",\n        \"Drainage\",\n        \"Climate\",\n        \"Natural Vegetation and Wildlife\"\n      ],\n      \"topics\": [\n        \"Location impacts climate and time\",\n        \"Trading relationships with neighbors\",\n        \"Time meridian (82.5E)\",\n        \"Physical features influence livelihoods\",\n        \"Geological processes\",\n        \"River systems and lakes\",\n        \"Monsoon winds and rainfall\"\n      ],\n      \"subtopics\": [\n        \"Map pointing: States, Capitals, Tropic of Cancer, Standard Meridian, Neighbouring Countries\",\n        \"Map pointing: Mountain Ranges (Karakoram, Zanskar, Shivalik, Aravali, Vindhya, Satpura, Ghats)\",\n        \"Map pointing: Peaks (K2, Kanchan Junga, Anai Mudi), Plateaus, Coastal Plains\",\n        \"Map pointing: Rivers (Indus, Ganges, Sutlej, Narmada, Tapti, Kaveri, Krishna, Godavari, Mahanadi)\",\n        \"Map pointing: Lakes (Wular, Pulicat, Sambar, Chilika)\"\n      ]\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Population and Resources\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Population\"\n      ],\n      \"topics\": [\n        \"Uneven distribution of population\",\n        \"Factors affecting density\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"class_name\": \"IX\",\n  \"units\": [\n    {\n      \"unit_name\": \"Physical Features and Environment\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"India – Size and Location\",\n          \"source_text_excerpt\": \"Location impacts climate, time meridian (82.5E), trading relationships with neighbors.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Physical Features of India\",\n          \"source_text_excerpt\": \"Geological processes influence livelihoods; mountain ranges include Karakoram, Zanskar.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Drainage\",\n          \"source_text_excerpt\": \"River systems include Indus, Ganges; lakes include Wular, Chilika.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Climate\",\n          \"source_text_excerpt\": \"Monsoon winds determine rainfall patterns across the region.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Natural Vegetation and Wildlife\",\n          \"source_text_excerpt\": \"Vegetation types vary by climate; wildlife habitats depend on physical features.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Location impacts climate and time\",\n          \"source_text_excerpt\": \"Trading relationships with neighbors; Time meridian (82.5E).\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Map pointing: States, Capitals, Tropic of Cancer, Standard Meridian, Neighbouring Countries\",\n          \"source_text_excerpt\": \"Identify states, capitals, tropic, meridian on map.\",\n          \"classification\": \"subtopic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Map pointing: Mountain Ranges (Karakoram, Zanskar, Shivalik, Aravali, Vindhya, Satpura, Ghats)\",\n          \"source_text_excerpt\": \"Locate major mountain ranges on the map.\",\n          \"classification\": \"subtopic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Map pointing: Peaks (K2, Kanchan Junga, Anai Mudi), Plateaus, Coastal Plains\",\n          \"source_text_excerpt\": \"Identify peaks, plateaus, coastal plains on map.\",\n          \"classification\": \"subtopic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Map pointing: Rivers (Indus, Ganges, Sutlej, Narmada, Tapti, Kaveri, Krishna, Godavari, Mahanadi)\",\n          \"source_text_excerpt\": \"Locate major river systems on the map.\",\n          \"classification\": \"subtopic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Map pointing: Lakes (Wular, Pulicat, Sambar, Chilika)\",\n          \"source_text_excerpt\": \"Identify major lakes on the map.\",\n          \"classification\": \"subtopic\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Physical Features and Environment\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_name\": \"Population and Resources\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Population\",\n          \"source_text_excerpt\": \"Uneven distribution of population; factors affecting density.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Population and Resources\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Uneven distribution of population\",\n          \"source_text_excerpt\": \"Factors affecting density vary by region.\",\n          \"classification\": \"topic\",\n          \"confidence\": 0.9,\n          \"parent_unit\": \"Population and Resources\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"unit_name\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"\",\n          \"chapter_name\": \"\",\n          \"source_heading\": \"\",\n          \"is_normalized\": false,\n          \"confidence\": 0,\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

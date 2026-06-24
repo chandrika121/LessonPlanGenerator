@@ -1,0 +1,272 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8A - Class XI
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Some Basic Concepts of Chemistry"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Structure of Atom",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Structure of Atom"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Classification of Elements and Periodicity in Properties"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Bonding and Molecular Structure"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Thermodynamics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Thermodynamics"
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Equilibrium",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Equilibrium"
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Redox Reactions",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Redox Reactions"
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Organic Chemistry: Some basic Principles and Techniques"
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Hydrocarbons",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Hydrocarbons"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "chapter_id": "C1",
+      "chapter_name": "Some Basic Concepts of Chemistry"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Structure of Atom",
+      "chapter_id": "C1",
+      "chapter_name": "Structure of Atom"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "chapter_id": "C1",
+      "chapter_name": "Classification of Elements and Periodicity in Properties"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "chapter_id": "C1",
+      "chapter_name": "Chemical Bonding and Molecular Structure"
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Thermodynamics",
+      "chapter_id": "C1",
+      "chapter_name": "Thermodynamics"
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Equilibrium",
+      "chapter_id": "C1",
+      "chapter_name": "Equilibrium"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Redox Reactions",
+      "chapter_id": "C1",
+      "chapter_name": "Redox Reactions"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapter_id": "C1",
+      "chapter_name": "Organic Chemistry: Some basic Principles and Techniques"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Hydrocarbons",
+      "chapter_id": "C1",
+      "chapter_name": "Hydrocarbons"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C1",
+      "title": "Conceptual Foundations and Measurement",
+      "description": "Equip learners with tools to understand the working of Chemistry, develop conceptual foundations, enable representation at macroscopic/molecular/symbolic levels, identify patterns, and inculcate problem-solving skills.",
+      "competencies": [
+        "Understand nature of matter, properties, measurement, uncertainty, laws of combination, atomic theory",
+        "Apply mole concept, molar masses, percentage composition, stoichiometry calculations",
+        "Represent chemical phenomena at macroscopic, molecular, and symbolic levels"
+      ],
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "chapter_name": "Some Basic Concepts of Chemistry"
+    },
+    {
+      "code": "C2",
+      "title": "Atomic Structure and Quantum Mechanics",
+      "description": "Enable learners to identify patterns underlying chemical phenomena through understanding atomic models, quantum mechanics, and electronic configurations.",
+      "competencies": [
+        "Trace discovery of sub-atomic particles and evolution from Bohr's model to Quantum Mechanical Model"
+      ],
+      "unit_name": "Structure of Atom",
+      "chapter_name": "Structure of Atom"
+    },
+    {
+      "code": "C3",
+      "title": "Periodic Classification and Trends",
+      "description": "Enable learners to identify patterns in element properties through classification, periodic law, electronic configuration, and trends across blocks.",
+      "competencies": [
+        "Apply modern periodic law and understand genesis of periodic classification"
+      ],
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "chapter_name": "Classification of Elements and Periodicity in Properties"
+    },
+    {
+      "code": "C4",
+      "title": "Chemical Bonding Theories",
+      "description": "Enable learners to represent chemical phenomena at molecular levels using various bonding theories.",
+      "competencies": [
+        "Apply Kossel-Lewis approach, VSEPR theory, Valence Bond Theory, Hybridisation, and Molecular Orbital Theory"
+      ],
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "chapter_name": "Chemical Bonding and Molecular Structure"
+    },
+    {
+      "code": "C5",
+      "title": "Thermodynamics and Spontaneity",
+      "description": "Enable learners to apply thermodynamic principles including enthalpy, entropy, Gibbs energy, and spontaneity.",
+      "competencies": [
+        "Apply concepts of calorimetry, reaction enthalpies, spontaneity, and equilibrium via Gibbs Energy"
+      ],
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Thermodynamics"
+    },
+    {
+      "code": "C6",
+      "title": "Chemical Equilibrium Principles",
+      "description": "Enable learners to identify patterns in equilibrium states and factors affecting them.",
+      "competencies": [
+        "Apply Law of Chemical Equilibrium, understand homogeneous/heterogeneous equilibria, relationship between K, Q, G"
+      ],
+      "unit_name": "Equilibrium",
+      "chapter_name": "Equilibrium"
+    },
+    {
+      "code": "C7",
+      "title": "Redox and Electrode Processes",
+      "description": "Enable learners to represent redox phenomena in terms of electron transfer.",
+      "competencies": [
+        "Apply classical ideas, oxidation numbers, and electrode processes"
+      ],
+      "unit_name": "Redox Reactions",
+      "chapter_name": "Redox Reactions"
+    },
+    {
+      "code": "C8",
+      "title": "Organic Chemistry Fundamentals",
+      "description": "Enable learners to represent organic compounds structurally and understand reaction mechanisms.",
+      "competencies": [
+        "Apply structural representations, nomenclature, isomerism concepts, and fundamental reaction mechanism principles"
+      ],
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapter_name": "Organic Chemistry: Some basic Principles and Techniques"
+    },
+    {
+      "code": "C9",
+      "title": "Hydrocarbon Classification and Properties",
+      "description": "Enable learners to classify hydrocarbons and understand their properties.",
+      "competencies": [
+        "Classify alkanes, alkenes, alkynes, aromatic hydrocarbons"
+      ],
+      "unit_name": "Hydrocarbons",
+      "chapter_name": "Hydrocarbons"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": [
+    {
+      "id": "unique-id",
+      "sessionNumber": 1,
+      "title": "Vibrant and clear session title",
+      "duration": 45,
+      "learningOutcomes": [
+        "Primary goals of this specific session"
+      ]
+    }
+  ],
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Create a high-level lesson plan outline dividing the following material into EXACTLY 50 sessions, each of 45 minutes.\n    Subject: Mathematics\n    Grade/Level: Class IX / 9 / IX\n    Academic Term / Units Selected: Term 1 - Whole Term\n    Specific chapters / topic focus: [\"Number System\",\"Introduction to Polynomials\",\"Sequences and Progressions\",\"Exploring Algebraic Identities\",\"Linear Equations in Two Variables\",\"Coordinate Geometry\"]\n    \n    Return a structured JSON list of the sessions containing the session number, titles, and target learning outcomes which fits the overall scope. This will serve as the roadmap.\n\nReturn valid JSON only. Match this target schema shape exactly:\n[\n  {\n    \"id\": \"unique-id\",\n    \"sessionNumber\": 1,\n    \"title\": \"Vibrant and clear session title\",\n    \"duration\": 45,\n    \"learningOutcomes\": [\n      \"Primary goals of this specific session\"\n    ]\n  }\n]"
+    }
+  ]
+}

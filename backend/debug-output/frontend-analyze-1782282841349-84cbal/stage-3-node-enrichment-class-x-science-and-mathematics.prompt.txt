@@ -1,0 +1,251 @@
+Stage 3: Node Enrichment - Class X - Science and Mathematics
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class X",
+  "subject": "Science and Mathematics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U2",
+      "unit_name": "Organization in the Living World",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Cell - Basic Unit of life",
+          "source_chapter_name": "Cell - Basic Unit of life",
+          "source_heading": "Cell - Basic Unit of life",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Tissues, Organs, Organ System, Organism",
+          "source_chapter_name": "Tissues, Organs, Organ System, Organism",
+          "source_heading": "Tissues, Organs, Organ System, Organism",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Health and Diseases",
+          "source_chapter_name": "Health and Diseases",
+          "source_heading": "Health and Diseases",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Motion, Force and Work",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Motion",
+          "source_chapter_name": "Motion",
+          "source_heading": "Motion",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Force and Newton's laws",
+          "source_chapter_name": "Force and Newton's laws",
+          "source_heading": "Force and Newton's laws",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Gravitation",
+          "source_chapter_name": "Gravitation",
+          "source_heading": "Gravitation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "Floatation",
+          "source_chapter_name": "Floatation",
+          "source_heading": "Floatation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C5",
+          "chapter_name": "Work, Energy and Power",
+          "source_chapter_name": "Work, Energy and Power",
+          "source_heading": "Work, Energy and Power",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C6",
+          "chapter_name": "Sound",
+          "source_chapter_name": "Sound",
+          "source_heading": "Sound",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Food Production",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Plant and animal breeding, fertilizers, pests, organic farming",
+          "source_chapter_name": "Plant and animal breeding, fertilizers, pests, organic farming",
+          "source_heading": "Plant and animal breeding, fertilizers, pests, organic farming",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class X",
+  "subject": "Science and Mathematics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U2",
+      "unit_name": "Organization in the Living World",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Cell - Basic Unit of life",
+          "source_chapter_name": "Cell - Basic Unit of life",
+          "source_heading": "Cell - Basic Unit of life",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Tissues, Organs, Organ System, Organism",
+          "source_chapter_name": "Tissues, Organs, Organ System, Organism",
+          "source_heading": "Tissues, Organs, Organ System, Organism",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Health and Diseases",
+          "source_chapter_name": "Health and Diseases",
+          "source_heading": "Health and Diseases",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Motion, Force and Work",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Motion",
+          "source_chapter_name": "Motion",
+          "source_heading": "Motion",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Force and Newton's laws",
+          "source_chapter_name": "Force and Newton's laws",
+          "source_heading": "Force and Newton's laws",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Gravitation",
+          "source_chapter_name": "Gravitation",
+          "source_heading": "Gravitation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "Floatation",
+          "source_chapter_name": "Floatation",
+          "source_heading": "Floatation",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C5",
+          "chapter_name": "Work, Energy and Power",
+          "source_chapter_name": "Work, Energy and Power",
+          "source_heading": "Work, Energy and Power",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C6",
+          "chapter_name": "Sound",
+          "source_chapter_name": "Sound",
+          "source_heading": "Sound",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Food Production",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Plant and animal breeding, fertilizers, pests, organic farming",
+          "source_chapter_name": "Plant and animal breeding, fertilizers, pests, organic farming",
+          "source_heading": "Plant and animal breeding, fertilizers, pests, organic farming",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+--- Page 7 ---
+7  behaviour towards a magnet  behaviour towards carbon disulphide as a solvent  effect of heat 3. Perform the following reactions and classify them as physical or chemical changes: Unit-I a) Iron with copper sulphate solution in water b) Burning of magnesium ribbon in air c) Zinc with dilute sulphuric acid d) Heating of copper sulphate crystals e) Sodium sulphate with barium chloride in the form of their solutions in water 4. Preparation of stained temporary mounts of (a) onion peel, (b) human cheek cells & to record observations and draw their labeled diagrams Unit - II 5. Identification of Parenchyma, Collenchyma and Sclerenchyma tissues in plants, striped, smooth and cardiac muscle fibers and nerve cells in animals, from prepared slides. Draw their labeled diagrams. Unit-II 6. Determination of the melting point of ice and the boiling point of water. Unit-I 7. Verification of the laws of reflection of sound. Unit-III 8. Determination of the density of solid (denser than water) by using a spring balance and a measuring cylinder. Unit-III 9. Establishing the relation between the loss in weight of a solid when fully immersed in Unit-III a) Tap water b) Strongly salty water with the weight of water displaced by it by taking at least two different solids. 10. Determination of the speed of a pulse propagated through a stretched string/ slinky (helical spring). Unit-III 11. Verification of the law of conservation of mass in a chemical reaction. Unit-III
+
+--- Page 8 ---
+8 COURSE STRUCTURE CLASS X (2025-26) (Annual Examination) Time: 03 Hours Marks: 80 Unit No. Unit Marks I Chemical Substances-Nature and Behaviour 25 II World of Living 25 III Natural Phenomena 12 IV Effects of Current 13 V Natural Resources 05 Total 80 Internal assessment 20 Grand Total 100 Theme: Materials Unit I: Chemical Substances - Nature and Behaviour Chemical Reactions and Equations: Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction. Acids, Bases and Salts: Acids and Bases – definitions in terms of furnishing of H+ and OH– ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale (Definition relating to logarithm not required), importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching powder, Baking soda, Washing soda and Plaster of Paris. Metals and Non-metals: Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention. Carbon and its Compounds: Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature of alkanes, alkenes, alkyne and carbon compounds containing functional groups (halogens, alcohol, ketones, aldehydes). Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid (only properties and uses), soaps and detergents.
+
+--- Page 9 ---
+9 Theme: The World of the Living Unit II: World of Living Life processes: ‘Living Being’. Basic concept of nutrition, respiration, transport and excretion in plants and animals. Control and co-ordination in animals and plants: Tropic movements in plants; Introduction of plant hormones; Control and co-ordination in animals: Nervous system; Voluntary, involuntary and reflex action; Chemical co-ordination: animal hormones. Reproduction: Reproduction in animals and plants (asexual and sexual) reproductive health - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and women’s health. Heredity and Evolution: Heredity; Mendel’s contribution- Laws for inheritance of traits: Sex determination; brief introduction. Theme: Natural Phenomena Unit III: Natural Phenomena Reflection of light by curved surfaces; Images formed by spherical mirrors, centre of curvature, principal axis, principal focus, focal length, mirror formula (Derivation not required), magnification. Refraction; Laws of refraction, refractive index. Refraction of light by spherical lens; Image formed by spherical lenses; Lens formula (Derivation not required); Magnification. Power of a lens. Functioning of a lens in human eye, defects of vision and their corrections, applications of spherical mirrors and lenses. Refraction of light through a prism, dispersion of light, scattering of light, applications in daily life (excluding colour of the sun at sunrise and sunset). Theme: How Things Work Unit IV: Effects of Current Electric current, potential difference and electric current. Ohm’s law; Resistance, Resistivity, Factors on which the resistance of a conductor depends. Series combination of resistors, parallel combination of resistors and its applications in daily life. Heating effect of electric current and its applications in daily life. Electric power, Interrelation between P, V, I and R. Magnetic effects of current: Magnetic field, field lines, field due to a current carrying conductor, field due to current carrying coil or solenoid; Force on current carrying
+
+--- Page 10 ---
+10 conductor, Fleming’s Left Hand Rule, Direct current. Alternating current: frequency of AC. Advantage of AC over DC. Domestic electric circuits. Theme: Natural Resources Unit V: Natural Resources Our environment: Eco-system, Environmental problems, Ozone depletion, waste production and their solutions. Biodegradable and non-biodegradable substances. Note for the Teachers: The NCERT text books present information in boxes across the book. These help students to get conceptual clarity. However, the information in these boxes would not be assessed in the year-end examination. PRACTICALS Practical should be conducted alongside the concepts taught in theory classes. LIST OF EXPERIMENTS 1. A. Finding the pH of the following samples by using pH paper/universal indicator: Unit-I a) Dilute Hydrochloric Acid b) Dilute NaOH solution c) Dilute Ethanoic Acid solution d) Lemon juice e) Water f) Dilute Hydrogen Carbonate solution B. Studying the properties of acids and bases (HCl & NaOH) on the basis of their reaction with: Unit-I a) Litmus solution (Blue/Red) b) Zinc metal c) Solid sodium carbonate 2. Performing and observing the following reactions and classifying them into: Unit-I a) Combination reaction b) Decomposition reaction c) Displacement reaction d) Double displacement reaction  Action of water on quicklime  Action of heat on ferrous sulphate crystals  Iron nails kept in copper sulphate solution  Reaction between sodium sulphate and barium chloride solutions
+
+--- Page 11 ---
+11 3. Observing the action of Zn, Fe, Cu and Al metals on the following salt solutions: Unit-I a) ZnSO 4 (aq) b) FeSO 4 (aq) c) CuSO 4 (aq) d) Al 2 (SO 4 ) 3 (aq) Arranging Zn, Fe, Cu and Al (metals) in the decreasing order of reactivity based on the above result. 4. Studying the dependence of potential difference (V) across a resistor on the current (I) passing through it and determine its resistance. Also plotting a graph between V and I. Unit-IV 5. Determination of the equivalent resistance of two resistors when connected in series and parallel. Unit-IV 6. Preparing a temporary mount of a leaf peel to show stomata. Unit- II 7. Experimentally show that carbon dioxide is given out during respiration. Unit-II 8. Study of the following properties of acetic acid (ethanoic acid): Unit- I a) Odour b) solubility in water c) effect on litmus d) reaction with Sodium Hydrogen Carbonate 9. Study of the comparative cleaning capacity of a sample of soap in soft and hard water. Unit- I 10. Determination of the focal length of: Unit-III a) Concave mirror b) Convex lens by obtaining the image of a distant object. 11. Tracing the path of a ray of light passing through a rectangular

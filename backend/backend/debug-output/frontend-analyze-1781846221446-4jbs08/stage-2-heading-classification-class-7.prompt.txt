@@ -1,0 +1,40 @@
+Stage 2: Heading Classification - Class 7
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Political Science - Democratic Politics-II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Democracy and Governance",
+      "marks": 20,
+      "headings": [
+        "Chapter I Power-sharing Federalism",
+        "Chapter II Gender, Religion and Caste",
+        "Chapter III Political Parties",
+        "Chapter IV Outcomes of Democracy"
+      ],
+      "possible_chapters": [
+        "Power-sharing Federalism",
+        "Gender, Religion and Caste",
+        "Political Parties",
+        "Outcomes of Democracy"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+Stage 3: Curriculum Normalization - Class 6
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Geography - Contemporary India - II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Resources and Development",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Resources and Development",
+        "Forest and Wildlife Resources",
+        "Water resources"
+      ],
+      "topics": [
+        "Interdependence of resources",
+        "Planning for judicious utilization",
+        "Conserving forests and wildlife",
+        "Multipurpose projects",
+        "Impact of grazing and wood cutting"
+      ],
+      "subsections": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Economic Activities",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Agriculture",
+        "Minerals and energy Resources",
+        "Manufacturing Industries"
+      ],
+      "topics": [
+        "Role of agriculture in economy",
+        "Challenges faced by farming community",
+        "Impact of manufacturing on environment",
+        "Types of industries based on input/processes"
+      ],
+      "subsections": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Transport and Economy",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Lifelines of National Economy"
+      ],
+      "topics": [
+        "Roadways and railways impact on national economy",
+        "Challenges in road/rail sector"
+      ],
+      "subsections": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "Class 6",
+  "units": [
+    {
+      "unit_name": "Resources and Development",
+      "classified_blocks": [
+        {
+          "source_heading": "Interdependence of resources",
+          "source_text_excerpt": "Interdependence of resources refers to how different types of natural resources rely on each other for sustainable use.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Resources and Development",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Planning for judicious utilization",
+          "source_text_excerpt": "Planning ensures that resources are used efficiently to meet current needs without compromising future availability.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Resources and Development",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Conserving forests and wildlife",
+          "source_text_excerpt": "Conservation involves protecting forest ecosystems and animal species from threats like deforestation.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Resources and Development",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Multipurpose projects",
+          "source_text_excerpt": "These are dams built to serve multiple functions such as irrigation, power generation, flood control.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Resources and Development",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Impact of grazing and wood cutting",
+          "source_text_excerpt": "Overgrazing by livestock and excessive wood cutting lead to soil erosion and loss of biodiversity.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Resources and Development",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Economic Activities",
+      "classified_blocks": [
+        {
+          "source_heading": "Role of agriculture in economy",
+          "source_text_excerpt": "Agriculture provides food, raw materials for industries, and employment to a large section of the population.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Economic Activities",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Challenges faced by farming community",
+          "source_text_excerpt": "Farmers face challenges like low productivity, lack of irrigation facilities, and fluctuating market prices.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Economic Activities",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Impact of manufacturing on environment",
+          "source_text_excerpt": "Industrial activities often result in pollution and resource depletion if not managed sustainably.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Economic Activities",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Types of industries based on input/processes",
+          "source_text_excerpt": "Industries are classified as agro-based or mineral-based depending on the raw materials they use.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Economic Activities",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Transport and Economy",
+      "classified_blocks": [
+        {
+          "source_heading": "Roadways and railways impact on national economy",
+          "source_text_excerpt": "Efficient transport networks facilitate trade, reduce costs, and connect remote areas to markets.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Transport and Economy",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Challenges in road/rail sector",
+          "source_text_excerpt": "Issues include overcrowding, aging infrastructure, safety concerns, and maintenance backlogs.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Transport and Economy",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

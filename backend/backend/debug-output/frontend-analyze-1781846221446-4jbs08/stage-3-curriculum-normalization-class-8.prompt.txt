@@ -1,0 +1,98 @@
+Stage 3: Curriculum Normalization - Class 8
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- Keep class_name exactly as in raw extraction
+- Keep subject exactly as in raw extraction
+- Keep every unit_name exactly as in raw extraction
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Economics - Understanding Economic Development",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Development and Economy",
+      "marks": 20,
+      "headings": [
+        "Chapter 1 Development",
+        "Chapter 2 Sectors of the Indian Economy",
+        "Chapter 3 Money and Credit",
+        "Chapter 4 Globalisation and the Indian Economy"
+      ],
+      "possible_chapters": [
+        "Development",
+        "Sectors of the Indian Economy",
+        "Money and Credit",
+        "Globalisation and the Indian Economy"
+      ],
+      "topics": [],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "Class 8",
+  "units": [
+    {
+      "unit_name": "Development and Economy",
+      "classified_blocks": [
+        {
+          "source_heading": "Chapter 1 Development",
+          "source_text_excerpt": "Chapter 1 Development: Understanding economic development indicators.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Development and Economy",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 2 Sectors of the Indian Economy",
+          "source_text_excerpt": "Chapter 2 Sectors of the Indian Economy: Primary, secondary, tertiary.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Development and Economy",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 3 Money and Credit",
+          "source_text_excerpt": "Chapter 3 Money and Credit: Functions of money and credit systems.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Development and Economy",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Chapter 4 Globalisation and the Indian Economy",
+          "source_text_excerpt": "Chapter 4 Globalisation and the Indian Economy: Impact of global trade.",
+          "classification": "chapter",
+          "confidence": 0.9,
+          "parent_unit": "Development and Economy",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

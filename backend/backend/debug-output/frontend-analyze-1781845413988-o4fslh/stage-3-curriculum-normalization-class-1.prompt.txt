@@ -1,0 +1,213 @@
+Stage 3: Curriculum Normalization - Class 1
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "History - India and the Contemporary World - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Events and Processes",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "The French Revolution",
+        "Socialism in Europe and the Russian Revolution",
+        "Nazism and the Rise of Hitler"
+      ],
+      "topics": [
+        "Impact on European countries",
+        "Quest for imperialism and First World War",
+        "Rise of communism and collectivization",
+        "Role of philosophers and leaders",
+        "Treaty of Versailles",
+        "Genocidal war"
+      ],
+      "subtopics": [
+        "Map pointing: France, Central Powers, Allied Powers (WWI)",
+        "Map pointing: Axis Powers, Allied Powers (WWII)"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Livelihoods, Economies and Societies",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Forest Society and Colonialism",
+        "Pastoralists in the Modern World"
+      ],
+      "topics": [
+        "Nomadic societies",
+        "Impact of colonialism on pastoralists",
+        "Rebellions in forest areas"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "IX",
+  "units": [
+    {
+      "unit_name": "Events and Processes",
+      "classified_blocks": [
+        {
+          "source_heading": "The French Revolution",
+          "source_text_excerpt": "Chapter title: The French Revolution. Source-grounded historical event.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Socialism in Europe and the Russian Revolution",
+          "source_text_excerpt": "Chapter title: Socialism in Europe and the Russian Revolution.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Nazism and the Rise of Hitler",
+          "source_text_excerpt": "Chapter title: Nazism and the Rise of Hitler.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Impact on European countries",
+          "source_text_excerpt": "Topic: Impact on European countries within the French Revolution unit.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Quest for imperialism and First World War",
+          "source_text_excerpt": "Topic: Quest for imperialism and First World War.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Rise of communism and collectivization",
+          "source_text_excerpt": "Topic: Rise of communism and collectivization.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Role of philosophers and leaders",
+          "source_text_excerpt": "Topic: Role of philosophers and leaders.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Treaty of Versailles",
+          "source_text_excerpt": "Topic: Treaty of Versailles.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Genocidal war",
+          "source_text_excerpt": "Topic: Genocidal war.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Map pointing: France, Central Powers, Allied Powers (WWI)",
+          "source_text_excerpt": "Subtopic: Map pointing details for WWI.",
+          "classification": "subtopic",
+          "confidence": 0.95,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Map pointing: Axis Powers, Allied Powers (WWII)",
+          "source_text_excerpt": "Subtopic: Map pointing details for WWII.",
+          "classification": "subtopic",
+          "confidence": 0.95,
+          "parent_unit": "Events and Processes",
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_name": "Livelihoods, Economies and Societies",
+      "classified_blocks": [
+        {
+          "source_heading": "Forest Society and Colonialism",
+          "source_text_excerpt": "Chapter title: Forest Society and Colonialism.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Livelihoods, Economies and Societies",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Pastoralists in the Modern World",
+          "source_text_excerpt": "Chapter title: Pastoralists in the Modern World.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Livelihoods, Economies and Societies",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Nomadic societies",
+          "source_text_excerpt": "Topic: Nomadic societies.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Livelihoods, Economies and Societies",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Impact of colonialism on pastoralists",
+          "source_text_excerpt": "Topic: Impact of colonialism on pastoralists.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Livelihoods, Economies and Societies",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Rebellions in forest areas",
+          "source_text_excerpt": "Topic: Rebellions in forest areas.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_unit": "Livelihoods, Economies and Societies",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

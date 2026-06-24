@@ -1,0 +1,35 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "classified_blocks": [
+          {
+            "source_heading": "",
+            "source_text_excerpt": "",
+            "classification": "unit",
+            "confidence": 0,
+            "parent_chapter": ""
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 2: Heading Classification - X - Political Science - Democratic Politics-II\nReturn compact JSON only.\nClassify headings and content blocks for this class only.\n\nRules:\n- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown\n- a valid chapter should be short and source-grounded\n- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter\n- classify from structural and textual signals, not just heading style\n- do not output units created by the model\n- do not create unit_name\n- do not rename parent_unit\n- only classify the existing Stage 1 items as chapter/topic/subtopic\n- if classification is chapter, source_heading must exactly come from Stage 1 extracted headings for this class\n- never rewrite, summarize, merge, or invent chapter names\n- source_text_excerpt must be at most 180 characters\n- no explanations\n- no repeated raw text\n\nRaw class extraction:\n{\n  \"class_name\": \"X\",\n  \"subject\": \"Political Science - Democratic Politics-II\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Democracy and Governance\",\n      \"marks\": 20,\n      \"headings\": [\n        \"Chapter 1 Power-sharing Federalism\",\n        \"Chapter 3 Gender, Religion and Caste\",\n        \"Chapter 4 Political Parties\",\n        \"Chapter 5 Outcomes of Democracy\"\n      ],\n      \"possible_chapters\": [\n        \"Power-sharing Federalism\",\n        \"Gender, Religion and Caste\",\n        \"Political Parties\",\n        \"Outcomes of Democracy\"\n      ],\n      \"topics\": [],\n      \"subtopics\": []\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"\",\n          \"source_text_excerpt\": \"\",\n          \"classification\": \"unit\",\n          \"confidence\": 0,\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

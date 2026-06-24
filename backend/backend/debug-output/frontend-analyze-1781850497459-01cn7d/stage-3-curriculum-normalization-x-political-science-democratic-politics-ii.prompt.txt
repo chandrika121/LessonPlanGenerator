@@ -1,0 +1,158 @@
+Stage 3: Curriculum Normalization - X - Political Science - Democratic Politics-II
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- Stage 3 is a restructuring step, not a content generation step
+- Preserve the source hierarchy exactly
+- long paragraph-like chapter names must be reclassified into topics
+- use unit_id from Stage 1 only
+- use only chapter names already present in Stage 1 possible_chapters
+- if a unit has no possible_chapters, use exactly one fallback chapter with source_chapter_name equal to the unit name
+- never create new class names, subject names, unit names, or chapter names
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Political Science - Democratic Politics-II",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Power Sharing and Federalism",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Power-sharing (Federalism)",
+        "Gender, Religion and Caste"
+      ],
+      "topics": [
+        "Need for power sharing in democracy",
+        "Challenges in Belgium and Sri Lanka",
+        "Comparison of India with other countries",
+        "Role of Gender, religion and caste in democracy"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Political Parties and Outcomes",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Political Parties",
+        "Outcomes of Democracy"
+      ],
+      "topics": [
+        "Process of parties getting elected",
+        "Right to vote and duties as citizens",
+        "Success factors: quality of government, economic well-being, inequality"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "units": [
+    {
+      "unit_id": "U1",
+      "classified_blocks": [
+        {
+          "source_heading": "Power-sharing (Federalism)",
+          "source_text_excerpt": "Power-sharing is a key feature of democracy, ensuring that different groups have representation.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Gender, Religion and Caste",
+          "source_text_excerpt": "Democracy must address issues of gender, religion, and caste to ensure equal participation.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Need for power sharing in democracy",
+          "source_text_excerpt": "Power sharing is necessary to reduce conflict and ensure stability in diverse societies.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Challenges in Belgium and Sri Lanka",
+          "source_text_excerpt": "Belgium and Sri Lanka faced challenges due to ethnic divisions affecting power sharing.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Comparison of India with other countries",
+          "source_text_excerpt": "India's approach to federalism is compared with other nations to highlight unique features.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Role of Gender, religion and caste in democracy",
+          "source_text_excerpt": "The role of gender, religion, and caste is crucial for understanding democratic outcomes.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "classified_blocks": [
+        {
+          "source_heading": "Political Parties",
+          "source_text_excerpt": "Political parties are essential for organizing elections and forming governments in democracy.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Outcomes of Democracy",
+          "source_text_excerpt": "Democracy leads to outcomes such as accountability and responsiveness in governance.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Process of parties getting elected",
+          "source_text_excerpt": "The process involves campaigning, voting, and the eventual formation of a government.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Right to vote and duties as citizens",
+          "source_text_excerpt": "Citizens have the right to vote but also bear responsibilities towards their community.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Success factors: quality of government, economic well-being, inequality",
+          "source_text_excerpt": "Democracy's success depends on good governance, economic stability, and reduced inequality.",
+          "classification": "topic",
+          "confidence": 0.9,
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

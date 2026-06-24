@@ -1,0 +1,64 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "subject": "",
+    "units": [
+      {
+        "unit_id": "",
+        "unit_name": "",
+        "marks": null,
+        "chapters": [
+          {
+            "chapter_id": "",
+            "chapter_name": "",
+            "source_heading": "",
+            "is_normalized": false,
+            "confidence": 0,
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Curriculum Normalization - Class 1\nReturn compact JSON only.\nNormalize ONLY theory curriculum structure for this class.\n\nOutput rules:\n- Normalize only class_name, subject, units, chapters, topics, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n\nClassification rules:\n- Stage 3 is a restructuring step, not a content generation step\n- Preserve the source hierarchy exactly\n- Keep class_name exactly as in raw extraction\n- Keep subject exactly as in raw extraction\n- Keep every unit_name exactly as in raw extraction\n- long paragraph-like chapter names must be reclassified into topics\n- chapter names must remain source-grounded\n- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks\n- never create new chapter names from topics or subtopics\n- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true\n- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented\n- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"History - India and the Contemporary World - I\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Events and Processes\",\n      \"marks\": 20,\n      \"headings\": [\n        \"Chapter-1 The French Revolution\",\n        \"Chapter 2 Socialism in Europe and the Russian Revolution\",\n        \"Chapter 3 Nazism and the Rise of Hitler\"\n      ],\n      \"possible_chapters\": [\n        \"The French Revolution\",\n        \"Socialism in Europe and the Russian Revolution\",\n        \"Nazism and the Rise of Hitler\"\n      ],\n      \"topics\": [],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Livelihood, Economies and Societies\",\n      \"marks\": 0,\n      \"headings\": [\n        \"Chapter 4 Forest Society and Colonialism\",\n        \"Chapter 5 Pastoralists in the Modern World\"\n      ],\n      \"possible_chapters\": [\n        \"Forest Society and Colonialism\",\n        \"Pastoralists in the Modern World\"\n      ],\n      \"topics\": [],\n      \"subtopics\": []\n    }\n  ]\n}\n\nHeading classification for this class:\n{\n  \"class_name\": \"IX\",\n  \"units\": [\n    {\n      \"unit_name\": \"Events and Processes\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Chapter-1 The French Revolution\",\n          \"source_text_excerpt\": \"The French Revolution was a period of radical social and political upheaval in France that lasted from 1789 until 1799.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Chapter 2 Socialism in Europe and the Russian Revolution\",\n          \"source_text_excerpt\": \"Socialism emerged as a response to industrial capitalism, culminating in the Russian Revolution which established the first socialist state.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Chapter 3 Nazism and the Rise of Hitler\",\n          \"source_text_excerpt\": \"Nazism rose in Germany during the interwar period, led by Adolf Hitler, leading to World War II.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Events and Processes\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    },\n    {\n      \"unit_name\": \"Livelihood, Economies and Societies\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"Chapter 4 Forest Society and Colonialism\",\n          \"source_text_excerpt\": \"Colonial policies drastically altered forest societies by restricting access to resources and imposing new laws on local populations.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Livelihood, Economies and Societies\",\n          \"parent_chapter\": \"\"\n        },\n        {\n          \"source_heading\": \"Chapter 5 Pastoralists in the Modern World\",\n          \"source_text_excerpt\": \"Pastoral communities faced significant challenges from colonial land laws that restricted their traditional migration routes.\",\n          \"classification\": \"chapter\",\n          \"confidence\": 0.95,\n          \"parent_unit\": \"Livelihood, Economies and Societies\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"subject\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"unit_name\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"\",\n          \"chapter_name\": \"\",\n          \"source_heading\": \"\",\n          \"is_normalized\": false,\n          \"confidence\": 0,\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

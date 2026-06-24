@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units and chapters in this input\n- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 5 of 9; extract only what is present in this chunk\n\nCurriculum source text:\n--- Page 17 ---\n17 ⮚ Evaluate the development goals with reference to their efficacy, implemental strategies, relevance to current requirements of the nation. ⮚ Compare the per capita income of some countries and infer reasons for the variance. ⮚ Analyse the multiple perspectives on the need of development. Chapter 2- Sectors of the Indian Economy Learning Outcome- The students will be able to ⮚ Analyse and infer how the economic activities in different sectors contribute to the overall growth and development of the Indian economy. ⮚ Propose solutions to identified problems in different sectors based on their understanding. ⮚ Summarise how the organised and unorganised sectors are providing employment ⮚ Enumerate the role of the unorganised sector in impacting Per Capita Income currently and propose suggestive steps to reduce the unorganised sector for more productive contributions to GDP. ⮚ Enumerate and infer the essential role of the Public and Private sectors Chapter 3- Money and Credit Learning Outcome- The students will be able to ⮚ Enumerate how money plays as a medium exchange in all transactions of goods and services from ancient times to the present times. ⮚ Analyse and infer various sources of Credit. ⮚ Summarise the significance and role of self-help groups in the betterment of the economic condition of rural people/ women. Chapter- 4. Globalisation and the Indian Economy Subtopics: What is Globalisation? Factors that have enabled Globalisation . Interdisciplinary Project with chapter 3 of History: “The making of a Global World”. And chapter 7 of Geography: “Lifelines of National Economy” Subtopics: i. Production across the countries ii. World Trade Organisation iii. The Struggle for a Fair Globalisation Refer Annexure III-B Learning Outcome- The students will be able to ⮚ Enumerate the concept of globalisation and its definition, evolution, and impact on the global economy. ⮚ Evaluate the key role of the key major drivers of globalisation and their role in shaping the global economic landscape in various countries. ⮚ Comprehend the significance of role of G20 and its significance in the light of India's role. 5. Project work - Consumer Rights OR Social Issues OR Sustainable Development Learning Outcome- Refer Annexure III\n\n--- Page 18 ---\n18 CLASS X (2025-26) MAP WORK Subject Name of the Chapter List of areas to be located/ labeled/ identified on the map History Nationalism in India I. Congress sessions:  1920 Calcutta  1920 Nagpur  1927 Madras session II. 3 Satyagraha movements:  Kheda  Champaran  Ahmedabad mill workers III. Jallianwala Bagh IV. Dandi March Geography Resources and Development Identify Major Soil Types Water Resources Locating and Labeling:  Salal  Bhakra Nangal  Tehri  Rana Pratap Sagar  Sardar Sarovar  Hirakund  Nagarjun Sagar  Tungabhadra Agriculture Identify:  Major areas of Rice and Wheat  Largest/Major producer states of Sugarcane, Tea, Coffee,  Rubber, Cotton and Jute Minerals and Energy Resources Identify: Iron Ore Mines  Mayurbhanj  Durg  Bailadila  Bellary  Kudremukh Coal Mines  Raniganj  Bokaro  Talcher  Neyveli Oil Fields  Digboi  Naharkatia  Mumbai High  Bassien  Kalol Ankaleshwar Locate and label: Power Plants Thermal  Namrup  Singrauli  Ramagundam Nuclear  Narora  Kakrapara  Tarapur  Kalpakkam\n\n--- Page 19 ---\n19 Manufacturing Industries  Manufacturing Industries (Locating and labeling only)  Cotton textile Industries: a. Mumbai, b. Indore, c. Surat, d. Kanpur, e. Coimbatore  Iron and Steel Plants: a. Durgapur, b. Bokaro, c. Jamshedpur, d. Bhilai, e. Vijayanagar, f. Salem  Software technology Parks: a. Noida, b. Gandhi- nagar, c. Mumbai, d. Pune, e. Hyderabad, f. Bengaluru, g. Chennai,h. Thiruvananthapuram Lifelines of National Economy Locating and Labeling a. Major Sea Ports • Kandla • Mumbai • Marmagao • New Mangalore • Kochi • Tuticorin • Chennai • Visakhapatnam • Paradip • Haldia b. International Airports  Amritsar (Raja Sansi-Sri Guru Ram Das ji)  Delhi (Indira Gandhi)  Mumbai (Chhatrapati Shivaji)  Chennai (Meenambakkam)  Kolkata (Netaji Subhash Chandra Bose)  Hyderabad (Rajiv Gandhi) Note 1. Items of Locating and Labelling may also be given for Identification. 2. The Maps available in the website of Govt. of India may be used.\n\n--- Page 20 ---\n20 CLASS X QUESTION PAPER DESIGN Subject Wise Weightage Subject Syllabus Marks (80) Percentage History  The Rise of Nationalism in Europe.  Nationalism in India:  The Making of a Global World Sub topics 1 to 1.3  Print Culture and the Modern World  Map pointing 18+2 25% Political Science  Power – sharing  Federalism  Gender, Religion and Caste  Political Parties  Outcomes of Democracy 20 25% Geography  Resources and Development  Forest and Wildlife Resources  Water Resources  Agriculture  Mineral& Energy resources  Manufacturing industries.  Lifelines of National Economy (map pointing)  Map pointing 17+3 25% Economics  Development  Sectors of the Indian Economy  Money and Credit  Globalisation and The Indian Economy Sub topics:  What is Globalisation?  Factors that have enabled Globalisation 20 25%\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}

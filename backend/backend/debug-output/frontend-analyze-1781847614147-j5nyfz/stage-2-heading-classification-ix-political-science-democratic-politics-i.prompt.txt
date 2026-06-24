@@ -1,0 +1,64 @@
+Stage 2: Heading Classification - IX - Political Science - Democratic Politics - I
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- do not output units created by the model
+- do not create unit_name
+- do not rename parent_unit
+- only classify the existing Stage 1 items as chapter/topic/subtopic
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Political Science - Democratic Politics - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Democracy and Constitutional Design",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "What is Democracy? Why Democracy?",
+        "Constitutional Design"
+      ],
+      "topics": [
+        "Structural components of democracy",
+        "Comparison with other countries",
+        "Historical processes promoting democracy",
+        "Creation of Indian Constitution",
+        "Guiding values and essential features",
+        "Roles and responsibilities as citizens"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Institutions and Rights",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Electoral Politics",
+        "Working of Institutions",
+        "Democratic Rights"
+      ],
+      "topics": [
+        "Power of vote and recall",
+        "Indian Electoral system features",
+        "Roles, responsibilities, interdependency of 3 organs",
+        "Parliamentary system accountability",
+        "Rule of law in India",
+        "Fundamental rights and duties"
+      ],
+      "subtopics": []
+    }
+  ]
+}

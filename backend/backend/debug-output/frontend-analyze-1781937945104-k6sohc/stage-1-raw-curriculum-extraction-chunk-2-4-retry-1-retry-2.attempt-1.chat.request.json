@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 1500
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output intentionally small and concise\n- Never include topics, subtopics, key concepts, activities, projects, practical details, raw nodes, or long prose\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 2 of 4.1.2; extract only what is present in this chunk\n\n\nCurriculum source text:\n--- Page 9 ---\nSECTION–B Experiments 1. To determine Young's modulus of elasticity of the material of a given wire. 2. To find the force constant of a helical spring by plotting a graph between load and extension. 3. To study the variation in volume with pressure for a sample of air at constant temperature by plotting graphs between P and V, and between P and 1/V. 4. To determine the surface tension of water by capillary rise method. 5. To determine the coefficient of viscosity of a given viscous liquid by measuring terminal velocity of a given spherical body. 6. To study the relationship between the temperature of a hot body and time by plotting a cooling curve. 7. To determine specific heat capacity of a given solid by method of mixtures. 8. To study the relation between frequency and length of a given wire under constant tension using sonometer. 9. To study the relation between the length of a given wire and tension for constant frequency using sonometer. 10. To find the speed of sound in air at room temperature using a resonance tube by two resonance positions. Activities 1. To observe change of state and plot a cooling curve for molten wax. 2. To observe and explain the effect of heating on a bi-metallic strip. 3. To note the change in level of liquid in a container on heating and interpret the observations. 4. To study the effect of detergent on surface tension of water by observing capillary rise. 5. To study the factors affecting the rate of loss of heat of a liquid. 6. To study the effect of load on depression of a suitably clamped metre scale loaded at (i) its end (ii) in the middle. 7. To observe the decrease in pressure with increase in velocity of a fluid.\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}

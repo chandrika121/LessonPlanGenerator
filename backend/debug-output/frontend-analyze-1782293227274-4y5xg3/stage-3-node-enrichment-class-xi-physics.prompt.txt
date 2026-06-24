@@ -1,0 +1,428 @@
+Stage 3: Node Enrichment - Class XI - PHYSICS
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XI",
+  "subject": "PHYSICS",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical World and Measurement",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Units and Measurements",
+          "source_chapter_name": "Units and Measurements",
+          "source_heading": "Units and Measurements",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Kinematics",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Motion in a Straight Line",
+          "source_chapter_name": "Motion in a Straight Line",
+          "source_heading": "Motion in a Straight Line",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Motion in a Plane",
+          "source_chapter_name": "Motion in a Plane",
+          "source_heading": "Motion in a Plane",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Laws of Motion",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Laws of Motion",
+          "source_chapter_name": "Laws of Motion",
+          "source_heading": "Laws of Motion",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Work, Energy and Power",
+      "part_or_section": "",
+      "marks": 17,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Work, Energy and Power",
+          "source_chapter_name": "Work, Energy and Power",
+          "source_heading": "Work, Energy and Power",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "System of Particles and Rotational Motion",
+          "source_chapter_name": "System of Particles and Rotational Motion",
+          "source_heading": "System of Particles and Rotational Motion",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Gravitation",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Gravitation",
+          "source_chapter_name": "Gravitation",
+          "source_heading": "Gravitation",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Properties of Bulk Matter",
+      "part_or_section": "",
+      "marks": 20,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Mechanical Properties of Solids",
+          "source_chapter_name": "Mechanical Properties of Solids",
+          "source_heading": "Mechanical Properties of Solids",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Mechanical Properties of Fluids",
+          "source_chapter_name": "Mechanical Properties of Fluids",
+          "source_heading": "Mechanical Properties of Fluids",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Thermal Properties of Matter",
+          "source_chapter_name": "Thermal Properties of Matter",
+          "source_heading": "Thermal Properties of Matter",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Thermodynamics",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Thermodynamics",
+          "source_chapter_name": "Thermodynamics",
+          "source_heading": "Thermodynamics",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Kinetic Theory",
+          "source_chapter_name": "Kinetic Theory",
+          "source_heading": "Kinetic Theory",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Oscillations and Waves",
+      "part_or_section": "",
+      "marks": 10,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Oscillations",
+          "source_chapter_name": "Oscillations",
+          "source_heading": "Oscillations",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Waves",
+          "source_chapter_name": "Waves",
+          "source_heading": "Waves",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XI",
+  "subject": "PHYSICS",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical World and Measurement",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Units and Measurements",
+          "source_chapter_name": "Units and Measurements",
+          "source_heading": "Units and Measurements",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Kinematics",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Motion in a Straight Line",
+          "source_chapter_name": "Motion in a Straight Line",
+          "source_heading": "Motion in a Straight Line",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Motion in a Plane",
+          "source_chapter_name": "Motion in a Plane",
+          "source_heading": "Motion in a Plane",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Laws of Motion",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Laws of Motion",
+          "source_chapter_name": "Laws of Motion",
+          "source_heading": "Laws of Motion",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Work, Energy and Power",
+      "part_or_section": "",
+      "marks": 17,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Work, Energy and Power",
+          "source_chapter_name": "Work, Energy and Power",
+          "source_heading": "Work, Energy and Power",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "System of Particles and Rotational Motion",
+          "source_chapter_name": "System of Particles and Rotational Motion",
+          "source_heading": "System of Particles and Rotational Motion",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Gravitation",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Gravitation",
+          "source_chapter_name": "Gravitation",
+          "source_heading": "Gravitation",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Properties of Bulk Matter",
+      "part_or_section": "",
+      "marks": 20,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Mechanical Properties of Solids",
+          "source_chapter_name": "Mechanical Properties of Solids",
+          "source_heading": "Mechanical Properties of Solids",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Mechanical Properties of Fluids",
+          "source_chapter_name": "Mechanical Properties of Fluids",
+          "source_heading": "Mechanical Properties of Fluids",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Thermal Properties of Matter",
+          "source_chapter_name": "Thermal Properties of Matter",
+          "source_heading": "Thermal Properties of Matter",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Thermodynamics",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Thermodynamics",
+          "source_chapter_name": "Thermodynamics",
+          "source_heading": "Thermodynamics",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "part_or_section": "",
+      "marks": null,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Kinetic Theory",
+          "source_chapter_name": "Kinetic Theory",
+          "source_heading": "Kinetic Theory",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Oscillations and Waves",
+      "part_or_section": "",
+      "marks": 10,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Oscillations",
+          "source_chapter_name": "Oscillations",
+          "source_heading": "Oscillations",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Waves",
+          "source_chapter_name": "Waves",
+          "source_heading": "Waves",
+          "source_type": "explicit_chapter"
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+--- Page 1 ---
+PHYSICS Subject Code – 042 Class XI-XII (2025-26) Senior Secondary stage of school education is a stage of transition from general education to discipline-based focus on curriculum. The present updated syllabus keeps in view the rigor and depth of disciplinary approach as well as the comprehension level of learners. Due care has also been taken that the syllabus is comparable to the international standards. Salient features of the syllabus include:  Emphasis on basic conceptual understanding of the content.  Emphasis on use of SI units, symbols, nomenclature of physical quantities and formulations as per international standards.  Providing logical sequencing of units of the subject matter and proper placement of concepts with their linkage for better learning.  Reducing the curriculum load by eliminating overlapping of concepts/content within the discipline and other disciplines.  Promotion of process-skills, problem-solving abilities and applications of Physics concepts. Besides, the syllabus also attempts to Strengthen the concepts developed at the secondary stage to provide firm foundation for further learning in the subject. Expose the learners to different processes used in Physics-related industrial and technological applications. Develop process-skills and experimental, observational, manipulative, decision making and investigatory skills in the learners. Promote problem solving abilities and creative thinking in learners. Develop conceptual competence in the learners and make them realize and appreciate the interface of Physics with other disciplines. Class XI-XII (2026-27)
+
+--- Page 2 ---
+PHYSICS (Code No. 042) COURSE STRUCTURE Time: 3 hrs. Max Marks: 70 UNIT CHAPTERS MARKS Unit–I Physical World and Measurement 23 Chapter–1: Units and Measurements Unit-II Kinematics Chapter–2: Motion in a Straight Line Chapter–3: Motion in a Plane Unit–III Laws of Motion Chapter–4: Laws of Motion Unit–IV Work, Energy and Power 17 Chapter–5: Work, Energy and Power Unit–V Motion of System of Particles and Rigid Body Chapter–6: System of Particles and Rotational Motion Unit-VI Gravitation Chapter–7: Gravitation Unit–VII Properties of Bulk Matter 20 Chapter–8: Mechanical Properties of Solids Chapter–9: Mechanical Properties of Fluids Chapter–10: Thermal Properties of Matter Unit–VIII Thermodynamics Chapter–11: Thermodynamics Unit–IX Behaviour of Perfect Gases and Kinetic Theory of Gases Chapter–12: Kinetic Theory Unit–X Oscillations and Waves 10 Chapter–13: Oscillations Chapter–14: Waves Total 70 Class XI - 2026-27 (Theory)
+
+--- Page 3 ---
+Unit I: Physical World and Measurements Chapter–1: Units and Measurements Need for measurement: Units of measurement; systems of units; SI units, fundamental and derived units. significant figures, Determining the uncertainty in result . Dimensions of physical quantities, dimensional analysis and its applications. Unit II: Kinematics Chapter–2: Motion in a Straight Line Frame of reference, Motion in a straight line, Elementary concepts of differentiation and integration for describing motion, uniform and non- uniform motion, average speed and average velocity and instantaneous velocity, uniformly accelerated motion, velocity - time and position-time graphs. Relations for uniformly accelerated motion (graphical and calculus treatment). Chapter–3: Motion in a Plane Scalar and vector quantities; position and displacement vectors, general vectors and their notations; equality of vectors, multiplication of vectors by a real number; addition and subtraction of vectors, Unit vector; resolution of a vector in a plane, rectangular components, Scalar and Vector product of vectors. Motion in a plane, cases of uniform velocity and uniform acceleration- projectile motion, uniform circular motion. Unit III: Laws of Motion Chapter–4: Laws of Motion Intuitive concept of force, Inertia, Newton's first law of motion; momentum and Newton's second law of motion; impulse; Newton's third law of motion. Law of conservation of linear momentum and its applications. Equilibrium of concurrent forces, Static and kinetic friction, laws of friction, rolling friction, lubrication. Dynamics of uniform circular motion: Centripetal force, examples of circular motion (vehicle on a level circular road, vehicle on a banked road).
+
+--- Page 4 ---
+Unit IV: Work, Energy and Power Chapter– 5: Work, Energy and Power Work done by a constant force and a variable force; kinetic energy, work- energy theorem, power. Notion of potential energy, potential energy of a spring, conservative forces: non-conservative forces, motion in a vertical circle; elastic and inelastic collisions in one and two dimensions. Unit V: Motion of System of Particles and Rigid Body Chapter–6: System of Particles and Rotational Motion Centre of mass of a two-particle system, momentum conservation and Centre of mass motion. Centre of mass of a rigid body; centre of mass of a uniform rod. Moment of a force, torque, angular momentum, law of conservation of angular momentum and its applications. Equilibrium of rigid bodies, rigid body rotation and equations of rotational motion, comparison of linear and rotational motions. Moment of inertia, radius of gyration, values of moments of inertia for simple geometrical objects (no derivation). Unit VI: Gravitation Chapter – 7: Gravitation Kepler's laws of planetary motion, universal law of gravitation. Acceleration due to gravity and its variation with altitude and depth. Gravitational potential energy and gravitational potential, escape speed, orbital velocity of a satellite, energy of an orbiting satellite. Unit VII: Properties of Bulk Matter Chapter–8: Mechanical Properties of Solids Elasticity, Stress-strain relationship, Hooke's law, Young’s modulus, bulk modulus, shear modulus of rigidity (qualitative idea only), Poisson's ratio; elastic energy. Application of elastic behavior of materials (qualitative idea only).
+
+--- Page 5 ---
+Chapter–9: Mechanical Properties of Fluids Pressure due to a fluid column; Pascal's law and its applications (hydraulic lift and hydraulic brakes), effect of gravity on fluid pressure. Viscosity, Stokes' law, terminal velocity, streamline and turbulent flow, critical velocity, Bernoulli's theorem and its simple applications (Torricelli's law and Dynamic lift). Surface energy and surface tension, angle of contact, excess of pressure across a curved surface, application of surface tension ideas to drops, bubbles and capillary rise. Chapter–10: Thermal Properties of Matter Heat, temperature, thermal expansion; thermal expansion of solids, liquids and gases, anomalous expansion of water; specific heat capacity; Cp, Cv - calorimetry; change of state - latent heat capacity. Heat transfer-conduction, convection and radiation, thermal conductivity, qualitative ideas of Blackbody radiation, Wein's displacement Law, Stefan's law. Unit VIII: Thermodynamics Chapter–11: Thermodynamics Thermal equilibrium and definition of temperature, zeroth law of thermodynamics, heat, work and internal energy. First law of thermodynamics, Second law of thermodynamics: Thermodynamic state variable and equation of state. Change of condition of gaseous state - isothermal, adiabatic, reversible, irreversible, and cyclic processes. Unit IX: Behavior of Perfect Gases and Kinetic Theory of Gases Chapter–12: Kinetic Theory Equation of state of a perfect gas, work done in compressing a gas. Kinetic theory of gases - assumptions, concept of pressure. Kinetic interpretation of temperature; rms speed of gas molecules; degrees of freedom, law of equi-partition of energy (statement only) and application to specific heat capacities of gases; concept of mean free path, Avogadro's number.
+
+--- Page 6 ---
+Unit X: Oscillations and Waves Chapter–13: Oscillations Periodic motion - time period, frequency, displacement as a function of time, periodic functions and their applications. Simple harmonic motion (S.H.M), uniform circular motion and its equations

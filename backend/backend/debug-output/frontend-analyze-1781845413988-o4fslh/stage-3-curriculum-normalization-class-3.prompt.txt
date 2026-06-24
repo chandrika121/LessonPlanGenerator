@@ -1,0 +1,103 @@
+Stage 3: Curriculum Normalization - Class 3
+Return compact JSON only.
+Normalize ONLY theory curriculum structure for this class.
+
+Output rules:
+- Normalize only class_name, units, chapters, topics, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Classification rules:
+- long paragraph-like chapter names must be reclassified into topics
+- chapter names must remain source-grounded
+- use only chapter names already extracted in rawClass.possible_chapters or classified as chapter in classified_blocks
+- never create new chapter names from topics or subtopics
+- if no source-grounded chapter exists under a unit, create exactly one fallback chapter using the unit name and mark is_normalized = true
+- topics and subtopics may be merged, reordered, or reassigned, but chapter names must not be invented
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "Political Science - Democratic Politics - I",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Democracy and Institutions",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "What is Democracy? Why Democracy?",
+        "Constitutional Design",
+        "Electoral Politics",
+        "Working of Institutions",
+        "Democratic Rights"
+      ],
+      "topics": [
+        "Structural components and forms of democracy",
+        "Historical processes promoting democracy",
+        "Creation of Indian Constitution",
+        "Fundamental rights and duties",
+        "Electoral system features",
+        "Roles of 3 organs of Government"
+      ],
+      "subtopics": []
+    }
+  ]
+}
+
+Heading classification for this class:
+{
+  "class_name": "IX",
+  "units": [
+    {
+      "unit_name": "Democracy and Institutions",
+      "classified_blocks": [
+        {
+          "source_heading": "What is Democracy? Why Democracy?",
+          "source_text_excerpt": "This chapter explores the definition of democracy, its advantages over other forms of government, and why it is considered a superior system.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Democracy and Institutions",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Constitutional Design",
+          "source_text_excerpt": "This section details the historical processes that led to the creation of the Indian Constitution and its fundamental design principles.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Democracy and Institutions",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Electoral Politics",
+          "source_text_excerpt": "An analysis of the electoral system features, including voting mechanisms and their role in democratic functioning.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Democracy and Institutions",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Working of Institutions",
+          "source_text_excerpt": "This chapter examines the roles of the three organs of government: legislature, executive, and judiciary.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Democracy and Institutions",
+          "parent_chapter": ""
+        },
+        {
+          "source_heading": "Democratic Rights",
+          "source_text_excerpt": "Discussion on fundamental rights and duties guaranteed to citizens under the democratic framework.",
+          "classification": "chapter",
+          "confidence": 0.95,
+          "parent_unit": "Democracy and Institutions",
+          "parent_chapter": ""
+        }
+      ]
+    }
+  ]
+}

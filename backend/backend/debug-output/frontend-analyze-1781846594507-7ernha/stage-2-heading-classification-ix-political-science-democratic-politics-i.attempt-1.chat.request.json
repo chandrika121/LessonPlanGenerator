@@ -1,0 +1,37 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "class_name": "",
+    "units": [
+      {
+        "unit_name": "",
+        "classified_blocks": [
+          {
+            "source_heading": "",
+            "source_text_excerpt": "",
+            "classification": "unit",
+            "confidence": 0,
+            "parent_unit": "",
+            "parent_chapter": ""
+          }
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 2: Heading Classification - IX - Political Science - Democratic Politics - I\nReturn compact JSON only.\nClassify headings and content blocks for this class only.\n\nRules:\n- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown\n- a valid chapter should be short and source-grounded\n- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter\n- classify from structural and textual signals, not just heading style\n- source_text_excerpt must be at most 180 characters\n- no explanations\n- no repeated raw text\n\nRaw class extraction:\n{\n  \"class_name\": \"IX\",\n  \"subject\": \"Political Science - Democratic Politics - I\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Democracy and Constitutional Design\",\n      \"marks\": 20,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"What is Democracy? Why Democracy?\",\n        \"Constitutional Design\"\n      ],\n      \"topics\": [\n        \"Structural components of democracy\",\n        \"Comparison with other countries\",\n        \"Historical processes promoting democracy\",\n        \"Creation of Indian Constitution\",\n        \"Essential features for drafting constitution\",\n        \"Guiding values and citizen responsibilities\"\n      ],\n      \"subtopics\": []\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Politics, Institutions and Rights\",\n      \"marks\": 0,\n      \"headings\": [],\n      \"possible_chapters\": [\n        \"Electoral Politics\",\n        \"Working of Institutions\",\n        \"Democratic Rights\"\n      ],\n      \"topics\": [\n        \"Power of vote and recall\",\n        \"Indian Electoral system features\",\n        \"Roles, responsibilities, interdependency of 3 organs\",\n        \"Parliamentary accountability to legislature\",\n        \"Rule of law in India\",\n        \"Fundamental rights and duties\"\n      ],\n      \"subtopics\": []\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"class_name\": \"\",\n  \"units\": [\n    {\n      \"unit_name\": \"\",\n      \"classified_blocks\": [\n        {\n          \"source_heading\": \"\",\n          \"source_text_excerpt\": \"\",\n          \"classification\": \"unit\",\n          \"confidence\": 0,\n          \"parent_unit\": \"\",\n          \"parent_chapter\": \"\"\n        }\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

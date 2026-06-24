@@ -1,0 +1,86 @@
+Stage 2: Heading Classification - X - Economics - Understanding Economic Development
+Return compact JSON only.
+Classify headings and content blocks for this class only.
+
+Rules:
+- use one of: unit, chapter, topic, subtopic, formative_content, practical, project, activity, assessment, teacher_note, excluded_content, unknown
+- a valid chapter should be short and source-grounded
+- if a heading is long, sentence-like, explanatory, comma-heavy, or semicolon-heavy, classify it as topic instead of chapter
+- classify from structural and textual signals, not just heading style
+- source_text_excerpt must be at most 180 characters
+- no explanations
+- no repeated raw text
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Economics - Understanding Economic Development",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Development and Sectors",
+      "marks": 20,
+      "headings": [],
+      "possible_chapters": [
+        "Development"
+      ],
+      "topics": [
+        "Processes involved in setting developmental goals",
+        "Per capita income as economic condition indicator",
+        "Evaluation of development goals efficacy/relevance",
+        "Comparison of per capita income variance reasons",
+        "Multiple perspectives on need for development"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Economic Activities and Finance",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Sectors of the Indian Economy"
+      ],
+      "topics": [
+        "Contribution to overall growth/development by sectors",
+        "Organised vs unorganised sector employment role",
+        "Unorganised sector impact on Per Capita Income and GDP contribution steps"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Money, Credit and Globalisation",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Money and Credit"
+      ],
+      "topics": [
+        "Money as medium of exchange from ancient times to present",
+        "Various sources of credit",
+        "Significance/role of self-help groups for rural people/women"
+      ],
+      "subtopics": []
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Globalisation and Consumer Rights",
+      "marks": 0,
+      "headings": [],
+      "possible_chapters": [
+        "Globalisation and the Indian Economy"
+      ],
+      "topics": [
+        "Concept/definition/evolution of globalisation impact on economy",
+        "Key drivers shaping global economic landscape",
+        "Role of G20 in light of India's role",
+        "Production across countries",
+        "World Trade Organisation",
+        "Struggle for a Fair Globalisation"
+      ],
+      "subtopics": []
+    }
+  ]
+}

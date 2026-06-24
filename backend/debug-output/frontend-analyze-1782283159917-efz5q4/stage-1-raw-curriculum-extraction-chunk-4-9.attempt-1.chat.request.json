@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units and chapters in this input\n- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 4 of 9; extract only what is present in this chunk\n\nCurriculum source text:\n--- Page 13 ---\n13 Interdisciplinary project as part of multiple assessments (Internally assessed for 5 marks) Political Science (Democratic Politics-II) 20 Unit No. Chapter No. Chapter name Marks I 1 Power-sharing Federalism 20 2 II 3 Gender, Religion and Caste III 4 Political Parties IV 5 Outcomes of Democracy Economics (Understanding Economic Development) 20 Chapter No. Chapter name Marks 1 Development 20 2 Sectors of the Indian Economy 3 Money and Credit 4  Globalisation and the Indian Economy to be evaluated in the Board Examination  What is Globalisation?  Factors that have enabled Globalisation  Interdisciplinary project as part of multiple assessment (Internally assessed for 5 marks)  Production across the countries  Chinese toys in India  World Trade Organisation  The Struggle for a Fair Globalisation 5 Consumer Rights (Project Work) CLASS X (2025-26) COURSE CONTENT HISTORY: India and the Contemporary World - II Chapter I -The Rise of Nationalism in Europe Learning outcome- The students will be able to ⮚ Infer how French Revolution had an impact on the European countries in the making of a nation state. ⮚ Comprehend the nature of the diverse social movements of the time. ⮚ Analyse and infer the evolution of the idea of nationalism which led to the formation of nation states in Europe and elsewhere. ⮚ Evaluate the reasons which led to the First World War.\n\n--- Page 14 ---\n14 Chapter 2 Nationalism in India Learning outcome- The students will be able to ⮚ Illustrate various facets of Nationalistic movements that ushered in the sense of Collective Belonging. ⮚ Evaluate the effectiveness of the strategies applied by Gandhiji and other leaders in the movements organised by him. ⮚ Summarise the effects of the First World War that triggered the two defining movements (Khilafat &Non- Cooperation Movement) in India Chapter 3-. The Making of a Global World Subtopic 1. The pre-modern world Subtopic 2. 19 th century 1815 -1914 Subtopic 3. The inter- war economy Subtopic 4. Rebuilding of world economy: the post war era. Inter disciplinary Project with chapter 7 of Geography: Lifelines of National Economy and chapter 4 of Economics: Globalisation and the Indian Economy Refer Annexure III B Learning outcome- The students will be able to ⮚ Summarise the changes that transformed the world in different areas. ⮚ Depict the global interconnectedness from the Pre-modern to the present day. ⮚ Enumerate the destructive impact of colonialism on the livelihoods of colonised people. Chapter 4-The Age of Industrialisation Learning outcome- The students will be able to  Enumerate economic, political, social features of Pre and Post Industrialization.  Analyse and infer how the industrialization impacted colonies with specific focus on India Chapter 5. Print culture and the Modern World Learning Outcome- The students will be able to ⮚ Enumerate the development of Print from its beginnings in East Asia to its expansion in Europe and India. ⮚ Compare and contrast the old tradition of handwritten manuscripts versus print technology. ⮚ Summarise the role of Print revolution and its impact\n\n--- Page 15 ---\n15 Geography: Contemporary India – II Chapter 1- Resources and Development Learning Outcome- The students will be able to  Enumerates how the resources are interdependent, justify how planning is essential in judicious utilisation of resources and the need to develop them in India. ⮚ Infer the rationale for development of resources. ⮚ Analyse and evaluate data and information related to non-optimal land, utilization in India ⮚ Suggest remedial measures for optimal utilization of underutilized resources Chapter 2- Forest and Wildlife Resources Learning Outcome- The students will be able to ⮚ Examine the importance of conserving forests and wildlife and their interdependency in maintaining the ecology for the sustainable development of India. ⮚ Analyse the role of grazing and wood cutting in the development and degradation ⮚ Summarise the reasons for conservation of biodiversity under sustainable development. ⮚ Discuss how developmental works, grazing wood cutting have impacted the forests ⮚ Use art integration to summarise and present the reasons for conservation of biodiversity in India under sustainable development. Chapter 3-Water Resources Learning Outcome- The students will be able to ⮚ Examine the reasons for conservation of water resource in India. ⮚ Analyse and infer how the multipurpose projects are supporting the requirement of water. Chapter 4- Agriculture Learning Outcome ⮚ Examine the crucial role played by agriculture in our economy and society. ⮚ Analyse the challenges faced by the farming community in India. ⮚ Identifies various aspects of agriculture, including crop production, types of farming etc. Chapter 5- Minerals and Energy Resources Learning Outcome- The students will be able to ⮚ Enumerate the impact of manufacturing industries on the environment and develop strategies for sustainable development of the manufacturing sector. ⮚ Differentiate between various types of manufacturing industries based on their input materials, processes, and end products, and analyse their significance in the Indian economy. ⮚ Analyse the relation between the availability of raw material and location of the industry Chapter 7- Life Lines of National Economy Interdisciplinary project with chapter 3 of History: The making of a Global world and chapter 4 of Economics: Globalisation and the Indian Economy\n\n--- Page 16 ---\n16 Learning Outcome- Refer Annexure III-B Political Science: Democratic Politics - II Chapter 1- Power – sharing Learning Outcome- The students will be able to ⮚ Enumerate the need for power sharing in democracy. ⮚ Analyse the challenges faced by countries like Belgium and Sri Lanka ensuring effective power sharing. ⮚ Compare and contrast the power sharing of India with Sri Lanka and Belgium. ⮚ Summarise the purpose of power sharing in preserving the unity and stability of a country Chapter 2-Federalism Learning Outcome- The students will be able to ⮚ Infer how federalism is being practised in India. ⮚ Analyse the policies and politics that has strengthened federalism in practice. Chapter 3- Gender, Religion and Caste Learning Outcome- The students will be able to ⮚ Examine the role and differences of Gender, religion and Caste in practicing Democracy. ⮚ Analyse that different expressions based on the differences, are healthy or otherwise in a democracy Chapter 4- Political Parties Learning Outcome- The students will be able to ⮚ Understand the process of parties getting elected. ⮚ Know the significance of the right to vote and exercise the duties as citizens of a nation. ⮚ Examine the role, purpose and no. of Political Parties in Democracy. Chapter 5- Outcomes of Democracy Learning Outcome- The students will be able to ⮚ Enumerates how the success of democracy depends on quality of government, economic well- being, inequality, social differences, conflict, freedom and dignity. Economics: Understanding Economic Development Chapter- 1. Development Learning Outcome- The students will be able to ⮚ Enumerate and examine the different processes involved in setting developmental Goals. ⮚ Analyse and infer how the per capita income depicts the economic condition of the nation.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}

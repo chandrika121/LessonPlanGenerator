@@ -1,0 +1,520 @@
+Stage 3: Node Enrichment - IX - History - India and the Contemporary World - I
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "IX",
+  "subject": "History - India and the Contemporary World - I",
+  "part_or_section": "",
+  "raw_nodes": [],
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Events and Process",
+      "marks": 20,
+      "explicit_chapters": [
+        "The French Revolution",
+        "Socialism in Europe and the Russian Revolution",
+        "Nazism and the Rise of Hitler"
+      ],
+      "headings": [],
+      "possible_chapters": [],
+      "topics": [
+        "Infer how the French Revolution had an impact on European countries",
+        "Quest for imperialism triggered First World War",
+        "Examine sources to address imbalances leading to revolutions",
+        "Compare situations led to rise of Russian and French Revolutions",
+        "Analyse role played by philosophers and leaders"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "French Revolution",
+        "Socialism",
+        "Communism",
+        "Nazism"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Livelihoods, Economies and Societies",
+      "marks": 0,
+      "explicit_chapters": [
+        "Forest Society and Colonialism",
+        "Pastoralists in the Modern World"
+      ],
+      "headings": [],
+      "possible_chapters": [],
+      "topics": [
+        "Examine situations creating nomadic societies",
+        "Analyse varying patterns of developments within pastoral societies",
+        "Comprehend impact of colonialism on Pastoralists"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Forest Society",
+        "Colonialism",
+        "Pastoralists"
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "IX",
+  "subject": "History - India and the Contemporary World - I",
+  "part_or_section": "",
+  "detected_structure": "unit_chapter_topic",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Events and Process",
+      "marks": 20,
+      "explicit_chapters": [
+        "The French Revolution",
+        "Socialism in Europe and the Russian Revolution",
+        "Nazism and the Rise of Hitler"
+      ],
+      "possible_chapters": [],
+      "headings": [],
+      "topics": [
+        "Infer how the French Revolution had an impact on European countries",
+        "Quest for imperialism triggered First World War",
+        "Examine sources to address imbalances leading to revolutions",
+        "Compare situations led to rise of Russian and French Revolutions",
+        "Analyse role played by philosophers and leaders"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "French Revolution",
+        "Socialism",
+        "Communism",
+        "Nazism"
+      ],
+      "chapter_candidates": [
+        {
+          "node_id": "U1-C1",
+          "title": "The French Revolution",
+          "level": "chapter",
+          "parent": "Events and Process",
+          "source_text": "The French Revolution",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C2",
+          "title": "Socialism in Europe and the Russian Revolution",
+          "level": "chapter",
+          "parent": "Events and Process",
+          "source_text": "Socialism in Europe and the Russian Revolution",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C3",
+          "title": "Nazism and the Rise of Hitler",
+          "level": "chapter",
+          "parent": "Events and Process",
+          "source_text": "Nazism and the Rise of Hitler",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U1",
+          "title": "Events and Process",
+          "level": "unit",
+          "parent": "History - India and the Contemporary World - I",
+          "source_text": "Events and Process"
+        },
+        {
+          "node_id": "U1-C1",
+          "title": "The French Revolution",
+          "level": "chapter",
+          "parent": "Events and Process",
+          "source_text": "The French Revolution",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C2",
+          "title": "Socialism in Europe and the Russian Revolution",
+          "level": "chapter",
+          "parent": "Events and Process",
+          "source_text": "Socialism in Europe and the Russian Revolution",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C3",
+          "title": "Nazism and the Rise of Hitler",
+          "level": "chapter",
+          "parent": "Events and Process",
+          "source_text": "Nazism and the Rise of Hitler",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-T1",
+          "title": "Infer how the French Revolution had an impact on European countries",
+          "level": "topic",
+          "parent": "Events and Process",
+          "source_text": "Infer how the French Revolution had an impact on European countries"
+        },
+        {
+          "node_id": "U1-T2",
+          "title": "Quest for imperialism triggered First World War",
+          "level": "topic",
+          "parent": "Events and Process",
+          "source_text": "Quest for imperialism triggered First World War"
+        },
+        {
+          "node_id": "U1-T3",
+          "title": "Examine sources to address imbalances leading to revolutions",
+          "level": "topic",
+          "parent": "Events and Process",
+          "source_text": "Examine sources to address imbalances leading to revolutions"
+        },
+        {
+          "node_id": "U1-T4",
+          "title": "Compare situations led to rise of Russian and French Revolutions",
+          "level": "topic",
+          "parent": "Events and Process",
+          "source_text": "Compare situations led to rise of Russian and French Revolutions"
+        },
+        {
+          "node_id": "U1-T5",
+          "title": "Analyse role played by philosophers and leaders",
+          "level": "topic",
+          "parent": "Events and Process",
+          "source_text": "Analyse role played by philosophers and leaders"
+        },
+        {
+          "node_id": "U1-K1",
+          "title": "French Revolution",
+          "level": "key_concept",
+          "parent": "Events and Process",
+          "source_text": "French Revolution"
+        },
+        {
+          "node_id": "U1-K2",
+          "title": "Socialism",
+          "level": "key_concept",
+          "parent": "Events and Process",
+          "source_text": "Socialism"
+        },
+        {
+          "node_id": "U1-K3",
+          "title": "Communism",
+          "level": "key_concept",
+          "parent": "Events and Process",
+          "source_text": "Communism"
+        },
+        {
+          "node_id": "U1-K4",
+          "title": "Nazism",
+          "level": "key_concept",
+          "parent": "Events and Process",
+          "source_text": "Nazism"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Livelihoods, Economies and Societies",
+      "marks": 0,
+      "explicit_chapters": [
+        "Forest Society and Colonialism",
+        "Pastoralists in the Modern World"
+      ],
+      "possible_chapters": [],
+      "headings": [],
+      "topics": [
+        "Examine situations creating nomadic societies",
+        "Analyse varying patterns of developments within pastoral societies",
+        "Comprehend impact of colonialism on Pastoralists"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Forest Society",
+        "Colonialism",
+        "Pastoralists"
+      ],
+      "chapter_candidates": [
+        {
+          "node_id": "U2-C1",
+          "title": "Forest Society and Colonialism",
+          "level": "chapter",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Forest Society and Colonialism",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C2",
+          "title": "Pastoralists in the Modern World",
+          "level": "chapter",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Pastoralists in the Modern World",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U2",
+          "title": "Livelihoods, Economies and Societies",
+          "level": "unit",
+          "parent": "History - India and the Contemporary World - I",
+          "source_text": "Livelihoods, Economies and Societies"
+        },
+        {
+          "node_id": "U2-C1",
+          "title": "Forest Society and Colonialism",
+          "level": "chapter",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Forest Society and Colonialism",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C2",
+          "title": "Pastoralists in the Modern World",
+          "level": "chapter",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Pastoralists in the Modern World",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-T1",
+          "title": "Examine situations creating nomadic societies",
+          "level": "topic",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Examine situations creating nomadic societies"
+        },
+        {
+          "node_id": "U2-T2",
+          "title": "Analyse varying patterns of developments within pastoral societies",
+          "level": "topic",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Analyse varying patterns of developments within pastoral societies"
+        },
+        {
+          "node_id": "U2-T3",
+          "title": "Comprehend impact of colonialism on Pastoralists",
+          "level": "topic",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Comprehend impact of colonialism on Pastoralists"
+        },
+        {
+          "node_id": "U2-K1",
+          "title": "Forest Society",
+          "level": "key_concept",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Forest Society"
+        },
+        {
+          "node_id": "U2-K2",
+          "title": "Colonialism",
+          "level": "key_concept",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Colonialism"
+        },
+        {
+          "node_id": "U2-K3",
+          "title": "Pastoralists",
+          "level": "key_concept",
+          "parent": "Livelihoods, Economies and Societies",
+          "source_text": "Pastoralists"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    }
+  ],
+  "raw_nodes": [
+    {
+      "node_id": "U1",
+      "title": "Events and Process",
+      "level": "unit",
+      "parent": "History - India and the Contemporary World - I",
+      "source_text": "Events and Process"
+    },
+    {
+      "node_id": "U1-C1",
+      "title": "The French Revolution",
+      "level": "chapter",
+      "parent": "Events and Process",
+      "source_text": "The French Revolution",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-C2",
+      "title": "Socialism in Europe and the Russian Revolution",
+      "level": "chapter",
+      "parent": "Events and Process",
+      "source_text": "Socialism in Europe and the Russian Revolution",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-C3",
+      "title": "Nazism and the Rise of Hitler",
+      "level": "chapter",
+      "parent": "Events and Process",
+      "source_text": "Nazism and the Rise of Hitler",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-T1",
+      "title": "Infer how the French Revolution had an impact on European countries",
+      "level": "topic",
+      "parent": "Events and Process",
+      "source_text": "Infer how the French Revolution had an impact on European countries"
+    },
+    {
+      "node_id": "U1-T2",
+      "title": "Quest for imperialism triggered First World War",
+      "level": "topic",
+      "parent": "Events and Process",
+      "source_text": "Quest for imperialism triggered First World War"
+    },
+    {
+      "node_id": "U1-T3",
+      "title": "Examine sources to address imbalances leading to revolutions",
+      "level": "topic",
+      "parent": "Events and Process",
+      "source_text": "Examine sources to address imbalances leading to revolutions"
+    },
+    {
+      "node_id": "U1-T4",
+      "title": "Compare situations led to rise of Russian and French Revolutions",
+      "level": "topic",
+      "parent": "Events and Process",
+      "source_text": "Compare situations led to rise of Russian and French Revolutions"
+    },
+    {
+      "node_id": "U1-T5",
+      "title": "Analyse role played by philosophers and leaders",
+      "level": "topic",
+      "parent": "Events and Process",
+      "source_text": "Analyse role played by philosophers and leaders"
+    },
+    {
+      "node_id": "U1-K1",
+      "title": "French Revolution",
+      "level": "key_concept",
+      "parent": "Events and Process",
+      "source_text": "French Revolution"
+    },
+    {
+      "node_id": "U1-K2",
+      "title": "Socialism",
+      "level": "key_concept",
+      "parent": "Events and Process",
+      "source_text": "Socialism"
+    },
+    {
+      "node_id": "U1-K3",
+      "title": "Communism",
+      "level": "key_concept",
+      "parent": "Events and Process",
+      "source_text": "Communism"
+    },
+    {
+      "node_id": "U1-K4",
+      "title": "Nazism",
+      "level": "key_concept",
+      "parent": "Events and Process",
+      "source_text": "Nazism"
+    },
+    {
+      "node_id": "U2",
+      "title": "Livelihoods, Economies and Societies",
+      "level": "unit",
+      "parent": "History - India and the Contemporary World - I",
+      "source_text": "Livelihoods, Economies and Societies"
+    },
+    {
+      "node_id": "U2-C1",
+      "title": "Forest Society and Colonialism",
+      "level": "chapter",
+      "parent": "Livelihoods, Economies and Societies",
+      "source_text": "Forest Society and Colonialism",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U2-C2",
+      "title": "Pastoralists in the Modern World",
+      "level": "chapter",
+      "parent": "Livelihoods, Economies and Societies",
+      "source_text": "Pastoralists in the Modern World",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U2-T1",
+      "title": "Examine situations creating nomadic societies",
+      "level": "topic",
+      "parent": "Livelihoods, Economies and Societies",
+      "source_text": "Examine situations creating nomadic societies"
+    },
+    {
+      "node_id": "U2-T2",
+      "title": "Analyse varying patterns of developments within pastoral societies",
+      "level": "topic",
+      "parent": "Livelihoods, Economies and Societies",
+      "source_text": "Analyse varying patterns of developments within pastoral societies"
+    },
+    {
+      "node_id": "U2-T3",
+      "title": "Comprehend impact of colonialism on Pastoralists",
+      "level": "topic",
+      "parent": "Livelihoods, Economies and Societies",
+      "source_text": "Comprehend impact of colonialism on Pastoralists"
+    },
+    {
+      "node_id": "U2-K1",
+      "title": "Forest Society",
+      "level": "key_concept",
+      "parent": "Livelihoods, Economies and Societies",
+      "source_text": "Forest Society"
+    },
+    {
+      "node_id": "U2-K2",
+      "title": "Colonialism",
+      "level": "key_concept",
+      "parent": "Livelihoods, Economies and Societies",
+      "source_text": "Colonialism"
+    },
+    {
+      "node_id": "U2-K3",
+      "title": "Pastoralists",
+      "level": "key_concept",
+      "parent": "Livelihoods, Economies and Societies",
+      "source_text": "Pastoralists"
+    }
+  ]
+}

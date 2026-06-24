@@ -1,0 +1,1296 @@
+Stage 3: Node Enrichment - X - Science
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "X",
+  "subject": "Science",
+  "part_or_section": "Annual Examination Structure",
+  "raw_nodes": [],
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Chemical Substances-Nature and Behaviour",
+      "marks": 25,
+      "explicit_chapters": [
+        "Chemical Reactions and Equations",
+        "Acids, Bases and Salts",
+        "Metals and Non-metals",
+        "Carbon and its Compounds"
+      ],
+      "headings": [
+        "Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction.",
+        "Acids and Bases – definitions in terms of furnishing of H+ and OH– ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale... importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching powder, Baking soda, Washing soda and Plaster of Paris.",
+        "Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention.",
+        "Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature... Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid..."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Chemical Reactions",
+        "Acids Bases Salts",
+        "Metals Non-metals",
+        "Carbon Compounds"
+      ],
+      "subtopics": [
+        "Types of reactions (Combination, Decomposition, etc.)",
+        "pH scale and neutralization",
+        "Reactivity series",
+        "Covalent bonds, Hydrocarbons, Functional groups"
+      ],
+      "key_concepts": [
+        "Balanced Chemical Equations",
+        "Oxidation-Reduction",
+        "Ionic Compounds",
+        "Homologous Series"
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "World of Living",
+      "marks": 25,
+      "explicit_chapters": [
+        "Life processes",
+        "Control and co-ordination in animals and plants",
+        "Reproduction",
+        "Heredity and Evolution"
+      ],
+      "headings": [
+        "'Living Being'. Basic concept of nutrition, respiration, transport and excretion in plants and animals.",
+        "Tropic movements in plants; Introduction of plant hormones; Control and co-ordination in animals: Nervous system; Voluntary, involuntary and reflex action; Chemical co-ordination: animal hormones.",
+        "Reproduction in animals and plants (asexual and sexual) reproductive health - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and women's health.",
+        "Heredity; Mendel's contribution- Laws for inheritance of traits: Sex determination; brief introduction."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Life Processes",
+        "Control and Co-ordination",
+        "Reproduction",
+        "Heredity and Evolution"
+      ],
+      "subtopics": [
+        "Nutrition, Respiration, Transport, Excretion",
+        "Nervous system, Plant hormones",
+        "Family planning, Reproductive health",
+        "Mendel's Laws, Sex determination"
+      ],
+      "key_concepts": []
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Natural Phenomena",
+      "marks": 12,
+      "explicit_chapters": [
+        "Reflection of light by curved surfaces",
+        "Refraction"
+      ],
+      "headings": [
+        "Images formed by spherical mirrors, centre of curvature, principal axis, principal focus, focal length, mirror formula (Derivation not required), magnification.",
+        "Laws of refraction, refractive index. Refraction of light by spherical lens; Image formed by spherical lenses; Lens formula (Derivation not required); Magnification. Power of a lens. Functioning of a lens in human eye, defects of vision and their corrections...",
+        "Refraction of light through a prism, dispersion of light, scattering of light..."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Reflection",
+        "Refraction",
+        "Lenses"
+      ],
+      "subtopics": [
+        "Spherical mirrors (Concave/Convex)",
+        "Mirror formula, Magnification",
+        "Lens formula, Power of lens",
+        "Dispersion and Scattering"
+      ],
+      "key_concepts": []
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Effects of Current",
+      "marks": 13,
+      "explicit_chapters": [
+        "Electric current",
+        "Ohm's law",
+        "Magnetic effects of current"
+      ],
+      "headings": [
+        "Electric current, potential difference and electric current. Ohm's law; Resistance, Resistivity, Factors on which the resistance of a conductor depends.",
+        "Series combination of resistors, parallel combination of resistors... Heating effect of electric current... Electric power...",
+        "Magnetic field, field lines, field due to a current carrying conductor, field due to current carrying coil or solenoid; Force on current carrying conductor, Fleming's Left Hand Rule..."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Electric Current",
+        "Ohm's Law and Resistance",
+        "Magnetic Effects"
+      ],
+      "subtopics": [
+        "Series/Parallel combinations",
+        "Heating effect, Electric power (P=VI)",
+        "Fleming's Left Hand Rule",
+        "AC vs DC"
+      ],
+      "key_concepts": []
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Natural Resources",
+      "marks": 5,
+      "explicit_chapters": [
+        "Our environment"
+      ],
+      "headings": [
+        "Eco-system, Environmental problems, Ozone depletion, waste production and their solutions. Biodegradable and non-biodegradable substances."
+      ],
+      "possible_chapters": [],
+      "topics": [
+        "Environment"
+      ],
+      "subtopics": [
+        "Ozone depletion",
+        "Waste management",
+        "Biodegradable vs Non-biodegradable"
+      ],
+      "key_concepts": []
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "X",
+  "subject": "Science",
+  "part_or_section": "Annual Examination Structure",
+  "detected_structure": "unit_chapter_topic",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Chemical Substances-Nature and Behaviour",
+      "marks": 25,
+      "explicit_chapters": [
+        "Chemical Reactions and Equations",
+        "Acids, Bases and Salts",
+        "Metals and Non-metals",
+        "Carbon and its Compounds"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction.",
+        "Acids and Bases – definitions in terms of furnishing of H+ and OH– ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale... importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching powder, Baking soda, Washing soda and Plaster of Paris.",
+        "Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention.",
+        "Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature... Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid..."
+      ],
+      "topics": [
+        "Chemical Reactions",
+        "Acids Bases Salts",
+        "Metals Non-metals",
+        "Carbon Compounds"
+      ],
+      "subtopics": [
+        "Types of reactions (Combination, Decomposition, etc.)",
+        "pH scale and neutralization",
+        "Reactivity series",
+        "Covalent bonds, Hydrocarbons, Functional groups"
+      ],
+      "key_concepts": [
+        "Balanced Chemical Equations",
+        "Oxidation-Reduction",
+        "Ionic Compounds",
+        "Homologous Series"
+      ],
+      "chapter_candidates": [
+        {
+          "node_id": "U1-C1",
+          "title": "Chemical Reactions and Equations",
+          "level": "chapter",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Chemical Reactions and Equations",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C2",
+          "title": "Acids, Bases and Salts",
+          "level": "chapter",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Acids, Bases and Salts",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C3",
+          "title": "Metals and Non-metals",
+          "level": "chapter",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Metals and Non-metals",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C4",
+          "title": "Carbon and its Compounds",
+          "level": "chapter",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Carbon and its Compounds",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U1",
+          "title": "Chemical Substances-Nature and Behaviour",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "Chemical Substances-Nature and Behaviour"
+        },
+        {
+          "node_id": "U1-C1",
+          "title": "Chemical Reactions and Equations",
+          "level": "chapter",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Chemical Reactions and Equations",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C2",
+          "title": "Acids, Bases and Salts",
+          "level": "chapter",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Acids, Bases and Salts",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C3",
+          "title": "Metals and Non-metals",
+          "level": "chapter",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Metals and Non-metals",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-C4",
+          "title": "Carbon and its Compounds",
+          "level": "chapter",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Carbon and its Compounds",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U1-T1",
+          "title": "Chemical Reactions",
+          "level": "topic",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Chemical Reactions"
+        },
+        {
+          "node_id": "U1-T2",
+          "title": "Acids Bases Salts",
+          "level": "topic",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Acids Bases Salts"
+        },
+        {
+          "node_id": "U1-T3",
+          "title": "Metals Non-metals",
+          "level": "topic",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Metals Non-metals"
+        },
+        {
+          "node_id": "U1-T4",
+          "title": "Carbon Compounds",
+          "level": "topic",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Carbon Compounds"
+        },
+        {
+          "node_id": "U1-S1",
+          "title": "Types of reactions (Combination, Decomposition, etc.)",
+          "level": "subtopic",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Types of reactions (Combination, Decomposition, etc.)"
+        },
+        {
+          "node_id": "U1-S2",
+          "title": "pH scale and neutralization",
+          "level": "subtopic",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "pH scale and neutralization"
+        },
+        {
+          "node_id": "U1-S3",
+          "title": "Reactivity series",
+          "level": "subtopic",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Reactivity series"
+        },
+        {
+          "node_id": "U1-S4",
+          "title": "Covalent bonds, Hydrocarbons, Functional groups",
+          "level": "subtopic",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Covalent bonds, Hydrocarbons, Functional groups"
+        },
+        {
+          "node_id": "U1-K1",
+          "title": "Balanced Chemical Equations",
+          "level": "key_concept",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Balanced Chemical Equations"
+        },
+        {
+          "node_id": "U1-K2",
+          "title": "Oxidation-Reduction",
+          "level": "key_concept",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Oxidation-Reduction"
+        },
+        {
+          "node_id": "U1-K3",
+          "title": "Ionic Compounds",
+          "level": "key_concept",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Ionic Compounds"
+        },
+        {
+          "node_id": "U1-K4",
+          "title": "Homologous Series",
+          "level": "key_concept",
+          "parent": "Chemical Substances-Nature and Behaviour",
+          "source_text": "Homologous Series"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "World of Living",
+      "marks": 25,
+      "explicit_chapters": [
+        "Life processes",
+        "Control and co-ordination in animals and plants",
+        "Reproduction",
+        "Heredity and Evolution"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "'Living Being'. Basic concept of nutrition, respiration, transport and excretion in plants and animals.",
+        "Tropic movements in plants; Introduction of plant hormones; Control and co-ordination in animals: Nervous system; Voluntary, involuntary and reflex action; Chemical co-ordination: animal hormones.",
+        "Reproduction in animals and plants (asexual and sexual) reproductive health - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and women's health.",
+        "Heredity; Mendel's contribution- Laws for inheritance of traits: Sex determination; brief introduction."
+      ],
+      "topics": [
+        "Life Processes",
+        "Control and Co-ordination",
+        "Reproduction",
+        "Heredity and Evolution"
+      ],
+      "subtopics": [
+        "Nutrition, Respiration, Transport, Excretion",
+        "Nervous system, Plant hormones",
+        "Family planning, Reproductive health",
+        "Mendel's Laws, Sex determination"
+      ],
+      "key_concepts": [],
+      "chapter_candidates": [
+        {
+          "node_id": "U2-C1",
+          "title": "Life processes",
+          "level": "chapter",
+          "parent": "World of Living",
+          "source_text": "Life processes",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C2",
+          "title": "Control and co-ordination in animals and plants",
+          "level": "chapter",
+          "parent": "World of Living",
+          "source_text": "Control and co-ordination in animals and plants",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C3",
+          "title": "Reproduction",
+          "level": "chapter",
+          "parent": "World of Living",
+          "source_text": "Reproduction",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C4",
+          "title": "Heredity and Evolution",
+          "level": "chapter",
+          "parent": "World of Living",
+          "source_text": "Heredity and Evolution",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U2",
+          "title": "World of Living",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "World of Living"
+        },
+        {
+          "node_id": "U2-C1",
+          "title": "Life processes",
+          "level": "chapter",
+          "parent": "World of Living",
+          "source_text": "Life processes",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C2",
+          "title": "Control and co-ordination in animals and plants",
+          "level": "chapter",
+          "parent": "World of Living",
+          "source_text": "Control and co-ordination in animals and plants",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C3",
+          "title": "Reproduction",
+          "level": "chapter",
+          "parent": "World of Living",
+          "source_text": "Reproduction",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-C4",
+          "title": "Heredity and Evolution",
+          "level": "chapter",
+          "parent": "World of Living",
+          "source_text": "Heredity and Evolution",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U2-T1",
+          "title": "Life Processes",
+          "level": "topic",
+          "parent": "World of Living",
+          "source_text": "Life Processes"
+        },
+        {
+          "node_id": "U2-T2",
+          "title": "Control and Co-ordination",
+          "level": "topic",
+          "parent": "World of Living",
+          "source_text": "Control and Co-ordination"
+        },
+        {
+          "node_id": "U2-T3",
+          "title": "Reproduction",
+          "level": "topic",
+          "parent": "World of Living",
+          "source_text": "Reproduction"
+        },
+        {
+          "node_id": "U2-T4",
+          "title": "Heredity and Evolution",
+          "level": "topic",
+          "parent": "World of Living",
+          "source_text": "Heredity and Evolution"
+        },
+        {
+          "node_id": "U2-S1",
+          "title": "Nutrition, Respiration, Transport, Excretion",
+          "level": "subtopic",
+          "parent": "World of Living",
+          "source_text": "Nutrition, Respiration, Transport, Excretion"
+        },
+        {
+          "node_id": "U2-S2",
+          "title": "Nervous system, Plant hormones",
+          "level": "subtopic",
+          "parent": "World of Living",
+          "source_text": "Nervous system, Plant hormones"
+        },
+        {
+          "node_id": "U2-S3",
+          "title": "Family planning, Reproductive health",
+          "level": "subtopic",
+          "parent": "World of Living",
+          "source_text": "Family planning, Reproductive health"
+        },
+        {
+          "node_id": "U2-S4",
+          "title": "Mendel's Laws, Sex determination",
+          "level": "subtopic",
+          "parent": "World of Living",
+          "source_text": "Mendel's Laws, Sex determination"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Natural Phenomena",
+      "marks": 12,
+      "explicit_chapters": [
+        "Reflection of light by curved surfaces",
+        "Refraction"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "Images formed by spherical mirrors, centre of curvature, principal axis, principal focus, focal length, mirror formula (Derivation not required), magnification.",
+        "Laws of refraction, refractive index. Refraction of light by spherical lens; Image formed by spherical lenses; Lens formula (Derivation not required); Magnification. Power of a lens. Functioning of a lens in human eye, defects of vision and their corrections...",
+        "Refraction of light through a prism, dispersion of light, scattering of light..."
+      ],
+      "topics": [
+        "Reflection",
+        "Refraction",
+        "Lenses"
+      ],
+      "subtopics": [
+        "Spherical mirrors (Concave/Convex)",
+        "Mirror formula, Magnification",
+        "Lens formula, Power of lens",
+        "Dispersion and Scattering"
+      ],
+      "key_concepts": [],
+      "chapter_candidates": [
+        {
+          "node_id": "U3-C1",
+          "title": "Reflection of light by curved surfaces",
+          "level": "chapter",
+          "parent": "Natural Phenomena",
+          "source_text": "Reflection of light by curved surfaces",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C2",
+          "title": "Refraction",
+          "level": "chapter",
+          "parent": "Natural Phenomena",
+          "source_text": "Refraction",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U3",
+          "title": "Natural Phenomena",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "Natural Phenomena"
+        },
+        {
+          "node_id": "U3-C1",
+          "title": "Reflection of light by curved surfaces",
+          "level": "chapter",
+          "parent": "Natural Phenomena",
+          "source_text": "Reflection of light by curved surfaces",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-C2",
+          "title": "Refraction",
+          "level": "chapter",
+          "parent": "Natural Phenomena",
+          "source_text": "Refraction",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U3-T1",
+          "title": "Reflection",
+          "level": "topic",
+          "parent": "Natural Phenomena",
+          "source_text": "Reflection"
+        },
+        {
+          "node_id": "U3-T2",
+          "title": "Refraction",
+          "level": "topic",
+          "parent": "Natural Phenomena",
+          "source_text": "Refraction"
+        },
+        {
+          "node_id": "U3-T3",
+          "title": "Lenses",
+          "level": "topic",
+          "parent": "Natural Phenomena",
+          "source_text": "Lenses"
+        },
+        {
+          "node_id": "U3-S1",
+          "title": "Spherical mirrors (Concave/Convex)",
+          "level": "subtopic",
+          "parent": "Natural Phenomena",
+          "source_text": "Spherical mirrors (Concave/Convex)"
+        },
+        {
+          "node_id": "U3-S2",
+          "title": "Mirror formula, Magnification",
+          "level": "subtopic",
+          "parent": "Natural Phenomena",
+          "source_text": "Mirror formula, Magnification"
+        },
+        {
+          "node_id": "U3-S3",
+          "title": "Lens formula, Power of lens",
+          "level": "subtopic",
+          "parent": "Natural Phenomena",
+          "source_text": "Lens formula, Power of lens"
+        },
+        {
+          "node_id": "U3-S4",
+          "title": "Dispersion and Scattering",
+          "level": "subtopic",
+          "parent": "Natural Phenomena",
+          "source_text": "Dispersion and Scattering"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Effects of Current",
+      "marks": 13,
+      "explicit_chapters": [
+        "Electric current",
+        "Ohm's law",
+        "Magnetic effects of current"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "Electric current, potential difference and electric current. Ohm's law; Resistance, Resistivity, Factors on which the resistance of a conductor depends.",
+        "Series combination of resistors, parallel combination of resistors... Heating effect of electric current... Electric power...",
+        "Magnetic field, field lines, field due to a current carrying conductor, field due to current carrying coil or solenoid; Force on current carrying conductor, Fleming's Left Hand Rule..."
+      ],
+      "topics": [
+        "Electric Current",
+        "Ohm's Law and Resistance",
+        "Magnetic Effects"
+      ],
+      "subtopics": [
+        "Series/Parallel combinations",
+        "Heating effect, Electric power (P=VI)",
+        "Fleming's Left Hand Rule",
+        "AC vs DC"
+      ],
+      "key_concepts": [],
+      "chapter_candidates": [
+        {
+          "node_id": "U4-C1",
+          "title": "Electric current",
+          "level": "chapter",
+          "parent": "Effects of Current",
+          "source_text": "Electric current",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U4-C2",
+          "title": "Ohm's law",
+          "level": "chapter",
+          "parent": "Effects of Current",
+          "source_text": "Ohm's law",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U4-C3",
+          "title": "Magnetic effects of current",
+          "level": "chapter",
+          "parent": "Effects of Current",
+          "source_text": "Magnetic effects of current",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U4",
+          "title": "Effects of Current",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "Effects of Current"
+        },
+        {
+          "node_id": "U4-C1",
+          "title": "Electric current",
+          "level": "chapter",
+          "parent": "Effects of Current",
+          "source_text": "Electric current",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U4-C2",
+          "title": "Ohm's law",
+          "level": "chapter",
+          "parent": "Effects of Current",
+          "source_text": "Ohm's law",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U4-C3",
+          "title": "Magnetic effects of current",
+          "level": "chapter",
+          "parent": "Effects of Current",
+          "source_text": "Magnetic effects of current",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U4-T1",
+          "title": "Electric Current",
+          "level": "topic",
+          "parent": "Effects of Current",
+          "source_text": "Electric Current"
+        },
+        {
+          "node_id": "U4-T2",
+          "title": "Ohm's Law and Resistance",
+          "level": "topic",
+          "parent": "Effects of Current",
+          "source_text": "Ohm's Law and Resistance"
+        },
+        {
+          "node_id": "U4-T3",
+          "title": "Magnetic Effects",
+          "level": "topic",
+          "parent": "Effects of Current",
+          "source_text": "Magnetic Effects"
+        },
+        {
+          "node_id": "U4-S1",
+          "title": "Series/Parallel combinations",
+          "level": "subtopic",
+          "parent": "Effects of Current",
+          "source_text": "Series/Parallel combinations"
+        },
+        {
+          "node_id": "U4-S2",
+          "title": "Heating effect, Electric power (P=VI)",
+          "level": "subtopic",
+          "parent": "Effects of Current",
+          "source_text": "Heating effect, Electric power (P=VI)"
+        },
+        {
+          "node_id": "U4-S3",
+          "title": "Fleming's Left Hand Rule",
+          "level": "subtopic",
+          "parent": "Effects of Current",
+          "source_text": "Fleming's Left Hand Rule"
+        },
+        {
+          "node_id": "U4-S4",
+          "title": "AC vs DC",
+          "level": "subtopic",
+          "parent": "Effects of Current",
+          "source_text": "AC vs DC"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Natural Resources",
+      "marks": 5,
+      "explicit_chapters": [
+        "Our environment"
+      ],
+      "possible_chapters": [],
+      "headings": [
+        "Eco-system, Environmental problems, Ozone depletion, waste production and their solutions. Biodegradable and non-biodegradable substances."
+      ],
+      "topics": [
+        "Environment"
+      ],
+      "subtopics": [
+        "Ozone depletion",
+        "Waste management",
+        "Biodegradable vs Non-biodegradable"
+      ],
+      "key_concepts": [],
+      "chapter_candidates": [
+        {
+          "node_id": "U5-C1",
+          "title": "Our environment",
+          "level": "chapter",
+          "parent": "Natural Resources",
+          "source_text": "Our environment",
+          "source_type": "explicit_chapter"
+        }
+      ],
+      "source_nodes": [
+        {
+          "node_id": "U5",
+          "title": "Natural Resources",
+          "level": "unit",
+          "parent": "Science",
+          "source_text": "Natural Resources"
+        },
+        {
+          "node_id": "U5-C1",
+          "title": "Our environment",
+          "level": "chapter",
+          "parent": "Natural Resources",
+          "source_text": "Our environment",
+          "source_type": "explicit_chapter"
+        },
+        {
+          "node_id": "U5-T1",
+          "title": "Environment",
+          "level": "topic",
+          "parent": "Natural Resources",
+          "source_text": "Environment"
+        },
+        {
+          "node_id": "U5-S1",
+          "title": "Ozone depletion",
+          "level": "subtopic",
+          "parent": "Natural Resources",
+          "source_text": "Ozone depletion"
+        },
+        {
+          "node_id": "U5-S2",
+          "title": "Waste management",
+          "level": "subtopic",
+          "parent": "Natural Resources",
+          "source_text": "Waste management"
+        },
+        {
+          "node_id": "U5-S3",
+          "title": "Biodegradable vs Non-biodegradable",
+          "level": "subtopic",
+          "parent": "Natural Resources",
+          "source_text": "Biodegradable vs Non-biodegradable"
+        }
+      ],
+      "structure_type": "unit_chapter_topic"
+    }
+  ],
+  "raw_nodes": [
+    {
+      "node_id": "U1",
+      "title": "Chemical Substances-Nature and Behaviour",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "Chemical Substances-Nature and Behaviour"
+    },
+    {
+      "node_id": "U1-C1",
+      "title": "Chemical Reactions and Equations",
+      "level": "chapter",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Chemical Reactions and Equations",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-C2",
+      "title": "Acids, Bases and Salts",
+      "level": "chapter",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Acids, Bases and Salts",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-C3",
+      "title": "Metals and Non-metals",
+      "level": "chapter",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Metals and Non-metals",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-C4",
+      "title": "Carbon and its Compounds",
+      "level": "chapter",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Carbon and its Compounds",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U1-T1",
+      "title": "Chemical Reactions",
+      "level": "topic",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Chemical Reactions"
+    },
+    {
+      "node_id": "U1-T2",
+      "title": "Acids Bases Salts",
+      "level": "topic",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Acids Bases Salts"
+    },
+    {
+      "node_id": "U1-T3",
+      "title": "Metals Non-metals",
+      "level": "topic",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Metals Non-metals"
+    },
+    {
+      "node_id": "U1-T4",
+      "title": "Carbon Compounds",
+      "level": "topic",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Carbon Compounds"
+    },
+    {
+      "node_id": "U1-S1",
+      "title": "Types of reactions (Combination, Decomposition, etc.)",
+      "level": "subtopic",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Types of reactions (Combination, Decomposition, etc.)"
+    },
+    {
+      "node_id": "U1-S2",
+      "title": "pH scale and neutralization",
+      "level": "subtopic",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "pH scale and neutralization"
+    },
+    {
+      "node_id": "U1-S3",
+      "title": "Reactivity series",
+      "level": "subtopic",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Reactivity series"
+    },
+    {
+      "node_id": "U1-S4",
+      "title": "Covalent bonds, Hydrocarbons, Functional groups",
+      "level": "subtopic",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Covalent bonds, Hydrocarbons, Functional groups"
+    },
+    {
+      "node_id": "U1-K1",
+      "title": "Balanced Chemical Equations",
+      "level": "key_concept",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Balanced Chemical Equations"
+    },
+    {
+      "node_id": "U1-K2",
+      "title": "Oxidation-Reduction",
+      "level": "key_concept",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Oxidation-Reduction"
+    },
+    {
+      "node_id": "U1-K3",
+      "title": "Ionic Compounds",
+      "level": "key_concept",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Ionic Compounds"
+    },
+    {
+      "node_id": "U1-K4",
+      "title": "Homologous Series",
+      "level": "key_concept",
+      "parent": "Chemical Substances-Nature and Behaviour",
+      "source_text": "Homologous Series"
+    },
+    {
+      "node_id": "U2",
+      "title": "World of Living",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "World of Living"
+    },
+    {
+      "node_id": "U2-C1",
+      "title": "Life processes",
+      "level": "chapter",
+      "parent": "World of Living",
+      "source_text": "Life processes",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U2-C2",
+      "title": "Control and co-ordination in animals and plants",
+      "level": "chapter",
+      "parent": "World of Living",
+      "source_text": "Control and co-ordination in animals and plants",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U2-C3",
+      "title": "Reproduction",
+      "level": "chapter",
+      "parent": "World of Living",
+      "source_text": "Reproduction",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U2-C4",
+      "title": "Heredity and Evolution",
+      "level": "chapter",
+      "parent": "World of Living",
+      "source_text": "Heredity and Evolution",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U2-T1",
+      "title": "Life Processes",
+      "level": "topic",
+      "parent": "World of Living",
+      "source_text": "Life Processes"
+    },
+    {
+      "node_id": "U2-T2",
+      "title": "Control and Co-ordination",
+      "level": "topic",
+      "parent": "World of Living",
+      "source_text": "Control and Co-ordination"
+    },
+    {
+      "node_id": "U2-T3",
+      "title": "Reproduction",
+      "level": "topic",
+      "parent": "World of Living",
+      "source_text": "Reproduction"
+    },
+    {
+      "node_id": "U2-T4",
+      "title": "Heredity and Evolution",
+      "level": "topic",
+      "parent": "World of Living",
+      "source_text": "Heredity and Evolution"
+    },
+    {
+      "node_id": "U2-S1",
+      "title": "Nutrition, Respiration, Transport, Excretion",
+      "level": "subtopic",
+      "parent": "World of Living",
+      "source_text": "Nutrition, Respiration, Transport, Excretion"
+    },
+    {
+      "node_id": "U2-S2",
+      "title": "Nervous system, Plant hormones",
+      "level": "subtopic",
+      "parent": "World of Living",
+      "source_text": "Nervous system, Plant hormones"
+    },
+    {
+      "node_id": "U2-S3",
+      "title": "Family planning, Reproductive health",
+      "level": "subtopic",
+      "parent": "World of Living",
+      "source_text": "Family planning, Reproductive health"
+    },
+    {
+      "node_id": "U2-S4",
+      "title": "Mendel's Laws, Sex determination",
+      "level": "subtopic",
+      "parent": "World of Living",
+      "source_text": "Mendel's Laws, Sex determination"
+    },
+    {
+      "node_id": "U3",
+      "title": "Natural Phenomena",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "Natural Phenomena"
+    },
+    {
+      "node_id": "U3-C1",
+      "title": "Reflection of light by curved surfaces",
+      "level": "chapter",
+      "parent": "Natural Phenomena",
+      "source_text": "Reflection of light by curved surfaces",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U3-C2",
+      "title": "Refraction",
+      "level": "chapter",
+      "parent": "Natural Phenomena",
+      "source_text": "Refraction",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U3-T1",
+      "title": "Reflection",
+      "level": "topic",
+      "parent": "Natural Phenomena",
+      "source_text": "Reflection"
+    },
+    {
+      "node_id": "U3-T2",
+      "title": "Refraction",
+      "level": "topic",
+      "parent": "Natural Phenomena",
+      "source_text": "Refraction"
+    },
+    {
+      "node_id": "U3-T3",
+      "title": "Lenses",
+      "level": "topic",
+      "parent": "Natural Phenomena",
+      "source_text": "Lenses"
+    },
+    {
+      "node_id": "U3-S1",
+      "title": "Spherical mirrors (Concave/Convex)",
+      "level": "subtopic",
+      "parent": "Natural Phenomena",
+      "source_text": "Spherical mirrors (Concave/Convex)"
+    },
+    {
+      "node_id": "U3-S2",
+      "title": "Mirror formula, Magnification",
+      "level": "subtopic",
+      "parent": "Natural Phenomena",
+      "source_text": "Mirror formula, Magnification"
+    },
+    {
+      "node_id": "U3-S3",
+      "title": "Lens formula, Power of lens",
+      "level": "subtopic",
+      "parent": "Natural Phenomena",
+      "source_text": "Lens formula, Power of lens"
+    },
+    {
+      "node_id": "U3-S4",
+      "title": "Dispersion and Scattering",
+      "level": "subtopic",
+      "parent": "Natural Phenomena",
+      "source_text": "Dispersion and Scattering"
+    },
+    {
+      "node_id": "U4",
+      "title": "Effects of Current",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "Effects of Current"
+    },
+    {
+      "node_id": "U4-C1",
+      "title": "Electric current",
+      "level": "chapter",
+      "parent": "Effects of Current",
+      "source_text": "Electric current",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U4-C2",
+      "title": "Ohm's law",
+      "level": "chapter",
+      "parent": "Effects of Current",
+      "source_text": "Ohm's law",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U4-C3",
+      "title": "Magnetic effects of current",
+      "level": "chapter",
+      "parent": "Effects of Current",
+      "source_text": "Magnetic effects of current",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U4-T1",
+      "title": "Electric Current",
+      "level": "topic",
+      "parent": "Effects of Current",
+      "source_text": "Electric Current"
+    },
+    {
+      "node_id": "U4-T2",
+      "title": "Ohm's Law and Resistance",
+      "level": "topic",
+      "parent": "Effects of Current",
+      "source_text": "Ohm's Law and Resistance"
+    },
+    {
+      "node_id": "U4-T3",
+      "title": "Magnetic Effects",
+      "level": "topic",
+      "parent": "Effects of Current",
+      "source_text": "Magnetic Effects"
+    },
+    {
+      "node_id": "U4-S1",
+      "title": "Series/Parallel combinations",
+      "level": "subtopic",
+      "parent": "Effects of Current",
+      "source_text": "Series/Parallel combinations"
+    },
+    {
+      "node_id": "U4-S2",
+      "title": "Heating effect, Electric power (P=VI)",
+      "level": "subtopic",
+      "parent": "Effects of Current",
+      "source_text": "Heating effect, Electric power (P=VI)"
+    },
+    {
+      "node_id": "U4-S3",
+      "title": "Fleming's Left Hand Rule",
+      "level": "subtopic",
+      "parent": "Effects of Current",
+      "source_text": "Fleming's Left Hand Rule"
+    },
+    {
+      "node_id": "U4-S4",
+      "title": "AC vs DC",
+      "level": "subtopic",
+      "parent": "Effects of Current",
+      "source_text": "AC vs DC"
+    },
+    {
+      "node_id": "U5",
+      "title": "Natural Resources",
+      "level": "unit",
+      "parent": "Science",
+      "source_text": "Natural Resources"
+    },
+    {
+      "node_id": "U5-C1",
+      "title": "Our environment",
+      "level": "chapter",
+      "parent": "Natural Resources",
+      "source_text": "Our environment",
+      "source_type": "explicit_chapter"
+    },
+    {
+      "node_id": "U5-T1",
+      "title": "Environment",
+      "level": "topic",
+      "parent": "Natural Resources",
+      "source_text": "Environment"
+    },
+    {
+      "node_id": "U5-S1",
+      "title": "Ozone depletion",
+      "level": "subtopic",
+      "parent": "Natural Resources",
+      "source_text": "Ozone depletion"
+    },
+    {
+      "node_id": "U5-S2",
+      "title": "Waste management",
+      "level": "subtopic",
+      "parent": "Natural Resources",
+      "source_text": "Waste management"
+    },
+    {
+      "node_id": "U5-S3",
+      "title": "Biodegradable vs Non-biodegradable",
+      "level": "subtopic",
+      "parent": "Natural Resources",
+      "source_text": "Biodegradable vs Non-biodegradable"
+    }
+  ]
+}

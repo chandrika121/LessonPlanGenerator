@@ -1,0 +1,1926 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Extraction
+Stage 2: Heading Classification
+Stage 3: Curriculum Normalization
+Stage 4: Structural Validation
+Stage 5: Statistics Generation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 10: Curriculum Intelligence Generation
+- You may now perform inference.
+- Use only normalized structural entities as anchors.
+- Do not create new unit names or chapter names.
+- Generate only: dependency graph, lesson planning intelligence, difficulty estimation, concept density, teaching hours.
+
+Normalized structure:
+{
+  "document_metadata": {
+    "board": "CBSE",
+    "subject": "Social Science",
+    "class": "IX & X",
+    "grade": "9, 10",
+    "stream": "",
+    "academic_year": "2025-26",
+    "total_pages": "33"
+  },
+  "classes": [
+    {
+      "class_name": "IX",
+      "subject": "History - India and the Contemporary World - I",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Events and Processes",
+          "marks": 20,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "The French Revolution",
+              "source_heading": "The French Revolution",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Impact on European countries",
+                "Quest for imperialism and First World War"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "the french revolution"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Socialism in Europe and the Russian Revolution",
+              "source_heading": "Socialism in Europe and the Russian Revolution",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Rise of communism and collectivization",
+                "Role of philosophers and leaders"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "socialism in europe and the russian revolution"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Nazism and the Rise of Hitler",
+              "source_heading": "Nazism and the Rise of Hitler",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Treaty of Versailles",
+                "Genocidal war"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "nazism and the rise of hitler"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Livelihoods, Economies and Societies",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Forest Society and Colonialism",
+              "source_heading": "Forest Society and Colonialism",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Nomadic societies",
+                "Impact of colonialism on pastoralists"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "forest society and colonialism"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Pastoralists in the Modern World",
+              "source_heading": "Pastoralists in the Modern World",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Rebellions in forest areas"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "pastoralists in the modern world"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [],
+      "validation_report": {
+        "suspicious_chapter_names": [
+          "Socialism in Europe and the Russian Revolution",
+          "Nazism and the Rise of Hitler",
+          "Forest Society and Colonialism"
+        ],
+        "long_chapter_names_reclassified": [
+          "Socialism in Europe and the Russian Revolution",
+          "Nazism and the Rise of Hitler",
+          "Forest Society and Colonialism"
+        ],
+        "unit_count": 2,
+        "chapter_count": 5
+      }
+    },
+    {
+      "class_name": "IX",
+      "subject": "Geography - Contemporary India - I",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Physical Features and Environment",
+          "marks": 20,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "India – Size and Location",
+              "source_heading": "India – Size and Location",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Location impacts climate",
+                "Time meridian (82.5E)",
+                "Strategic partner position"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "india size and location"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Physical Features of India",
+              "source_heading": "Physical Features of India",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Geological processes"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "physical features of india"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Drainage",
+              "source_heading": "Drainage",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "River systems and lakes"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "drainage"
+            },
+            {
+              "chapter_id": "C4",
+              "chapter_name": "Climate",
+              "source_heading": "Climate",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Monsoon winds and temperatures"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "climate"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Natural Vegetation, Wildlife and Population",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Natural Vegetation and Wildlife",
+              "source_heading": "Natural Vegetation and Wildlife",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Inter-relationship between environment and culture"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "natural vegetation and wildlife"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Population",
+              "source_heading": "Population",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Uneven distribution of population",
+                "Factors affecting density"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "population"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [
+          "India – Size and Location",
+          "Physical Features of India"
+        ],
+        "unit_count": 2,
+        "chapter_count": 6
+      }
+    },
+    {
+      "class_name": "IX",
+      "subject": "Political Science - Democratic Politics - I",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Democracy and Constitutional Design",
+          "marks": 20,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "What is Democracy? Why Democracy?",
+              "source_heading": "What is Democracy? Why Democracy?",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Structural components of democracy"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "what is democracy why democracy"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Constitutional Design",
+              "source_heading": "Constitutional Design",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Creation of Indian Constitution",
+                "Guiding values and citizen responsibilities"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "constitutional design"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Institutions and Rights",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Electoral Politics",
+              "source_heading": "Electoral Politics",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Power of vote and recall"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "electoral politics"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Working of Institutions",
+              "source_heading": "Working of Institutions",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Three organs of Government",
+                "Parliamentary system"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "working of institutions"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Democratic Rights",
+              "source_heading": "Democratic Rights",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Fundamental rights and duties"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "democratic rights"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [
+          "What is Democracy? Why Democracy?",
+          "Constitutional Design",
+          "Electoral Politics",
+          "Working of Institutions",
+          "Democratic Rights"
+        ],
+        "unit_count": 2,
+        "chapter_count": 5
+      }
+    },
+    {
+      "class_name": "IX",
+      "subject": "Economics",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Production and Resources",
+          "marks": 20,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "The Story of Village Palampur",
+              "source_heading": "The Story of Village Palampur",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Requirements of production",
+                "Farming and non-farming activities"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "the story of village palampur"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "People as Resource",
+              "source_heading": "People as Resource",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Quality of population",
+                "Government schemes"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "people as resource"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Challenges in Economy",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Poverty as a Challenge",
+              "source_heading": "Poverty as a Challenge",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Reasons for poverty (rural/urban)",
+                "Link between education and poverty"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "poverty as a challenge"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Food Security in India",
+              "source_heading": "Food Security in India",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Green Revolution impact",
+                "PDS features"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "food security in india"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [],
+        "unit_count": 2,
+        "chapter_count": 4
+      }
+    },
+    {
+      "class_name": "X",
+      "subject": "History - India and the Contemporary World - II",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Events and Processes",
+          "marks": 20,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "The Rise of Nationalism in Europe",
+              "source_heading": "The Rise of Nationalism in Europe",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Impact of French Revolution on nation states",
+                "Evolution of nationalism idea"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "the rise of nationalism in europe"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Nationalism in India",
+              "source_heading": "Nationalism in India",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "First World War reasons",
+                "Collective belonging and Gandhian strategies",
+                "Khilafat & Non-Cooperation Movements"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "nationalism in india"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Livelihoods, Economies and Societies",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "The Making of a Global World",
+              "source_heading": "The Making of a Global World",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Pre-modern to present day interconnectedness"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "the making of a global world"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "The Age of Industrialisation",
+              "source_heading": "The Age of Industrialisation",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Impact of colonialism on livelihoods",
+                "Economic, political, social features pre/post industrialization"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "the age of industrialisation"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Everyday Life, Culture and Politics",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Print Culture and the Modern World",
+              "source_heading": "Print Culture and the Modern World",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Development of print from East Asia to Europe/India",
+                "Manuscripts vs Print technology"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "print culture and the modern world"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [
+        {
+          "title": "The Rise of Nationalism in Europe",
+          "related_unit": "U1",
+          "related_chapter": "The Rise of Nationalism in Europe",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Nationalism in India",
+          "related_unit": "U1",
+          "related_chapter": "Nationalism in India",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "The Making of a Global World",
+          "related_unit": "U2",
+          "related_chapter": "The Making of a Global World",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "The Age of Industrialisation",
+          "related_unit": "U2",
+          "related_chapter": "The Age of Industrialisation",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Print Culture and the Modern World",
+          "related_unit": "U3",
+          "related_chapter": "Print Culture and the Modern World",
+          "assessment_status": "formative"
+        }
+      ],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [
+          "The Rise of Nationalism in Europe",
+          "Nationalism in India",
+          "The Making of a Global World",
+          "The Age of Industrialisation",
+          "Print Culture and the Modern World"
+        ],
+        "unit_count": 3,
+        "chapter_count": 5
+      }
+    },
+    {
+      "class_name": "X",
+      "subject": "Geography - Contemporary India - II",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Resources and Development",
+          "marks": 20,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Resources and Development",
+              "source_heading": "Resources and Development",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Interdependence of resources",
+                "Planning for judicious utilization",
+                "Non-optimal land use in India"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "resources and development"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Conservation and Agriculture",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Forest and Wildlife Resources",
+              "source_heading": "Forest and Wildlife Resources",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Importance of conserving forests/wildlife",
+                "Grazing and wood cutting impact"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "forest and wildlife resources"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Water Resources",
+              "source_heading": "Water Resources",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Multipurpose projects for water requirement"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "water resources"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Economic Activities",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Agriculture",
+              "source_heading": "Agriculture",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Role of agriculture in economy/society",
+                "Challenges faced by farming community"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "agriculture"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Minerals and Energy Resources",
+              "source_heading": "Minerals and Energy Resources",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Resource classification in India"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "minerals and energy resources"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Manufacturing Industries",
+              "source_heading": "Manufacturing Industries",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Impact of manufacturing on environment",
+                "Raw material availability vs industry location"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "manufacturing industries"
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Lifelines of National Economy",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Lifelines of National Economy",
+              "source_heading": "Lifelines of National Economy",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Transportation as lifeline",
+                "Impact of roadways and railways on national economy"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "lifelines of national economy"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [],
+      "validation_report": {
+        "suspicious_chapter_names": [
+          "Minerals and Energy Resources"
+        ],
+        "long_chapter_names_reclassified": [],
+        "unit_count": 4,
+        "chapter_count": 6
+      }
+    },
+    {
+      "class_name": "X",
+      "subject": "Political Science - Democratic Politics-II",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Power Sharing and Federalism",
+          "marks": 20,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Power-sharing (Federalism)",
+              "source_heading": "Power-sharing (Federalism)",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Need for power sharing in democracy",
+                "Challenges in Belgium and Sri Lanka",
+                "Comparison of India with other countries"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "power sharing federalism"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Gender, Religion and Caste",
+              "source_heading": "Gender, Religion and Caste",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Role of Gender, religion and caste in democracy"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "gender religion and caste"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Political Parties and Outcomes",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Political Parties",
+              "source_heading": "Political Parties",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Process of parties getting elected",
+                "Right to vote and duties as citizens"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "political parties"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Outcomes of Democracy",
+              "source_heading": "Outcomes of Democracy",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Success factors: quality of government, economic well-being, inequality"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "outcomes of democracy"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [
+          "Power-sharing (Federalism)",
+          "Gender, Religion and Caste",
+          "Political Parties",
+          "Outcomes of Democracy"
+        ],
+        "unit_count": 2,
+        "chapter_count": 4
+      }
+    },
+    {
+      "class_name": "X",
+      "subject": "Economics - Understanding Economic Development",
+      "part_or_section": "",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Development and Sectors",
+          "marks": 20,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Development",
+              "source_heading": "Development",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Setting developmental Goals",
+                "Per capita income as indicator",
+                "Multiple perspectives on development need"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "development"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Economic Structure and Finance",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Sectors of the Indian Economy",
+              "source_heading": "Sectors of the Indian Economy",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Contribution to overall growth",
+                "Organised vs Unorganised sectors employment",
+                "Public and Private sector roles"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "sectors of the indian economy"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Money, Credit and Globalisation",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Money and Credit",
+              "source_heading": "Money and Credit",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Medium of exchange from ancient times",
+                "Sources of credit",
+                "Self-help groups for rural women"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "money and credit"
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Globalisation and Consumer Rights",
+          "marks": 0,
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Globalisation and the Indian Economy",
+              "source_heading": "Globalisation and the Indian Economy",
+              "is_normalized": false,
+              "confidence": 0.95,
+              "topics": [
+                "Concept of globalisation definition/evolution",
+                "Drivers of globalisation (G20 role)",
+                "Production across countries, WTO, Fair Globalisation"
+              ],
+              "subtopics": [],
+              "assessment_status": "summative",
+              "validation_status": "validated",
+              "source_text_excerpt": "globalisation and the indian economy"
+            }
+          ]
+        }
+      ],
+      "formative_content_refs": [
+        {
+          "title": "Setting developmental Goals",
+          "related_unit": "U1",
+          "related_chapter": "Development",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Per capita income as indicator",
+          "related_unit": "U1",
+          "related_chapter": "Development",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Multiple perspectives on development need",
+          "related_unit": "U1",
+          "related_chapter": "Development",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Contribution to overall growth",
+          "related_unit": "U2",
+          "related_chapter": "Sectors of the Indian Economy",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Organised vs Unorganised sectors employment",
+          "related_unit": "U2",
+          "related_chapter": "Sectors of the Indian Economy",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Public and Private sector roles",
+          "related_unit": "U2",
+          "related_chapter": "Sectors of the Indian Economy",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Medium of exchange from ancient times",
+          "related_unit": "U3",
+          "related_chapter": "Money and Credit",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Sources of credit",
+          "related_unit": "U3",
+          "related_chapter": "Money and Credit",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Self-help groups for rural women",
+          "related_unit": "U3",
+          "related_chapter": "Money and Credit",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Concept of globalisation definition/evolution",
+          "related_unit": "U4",
+          "related_chapter": "Globalisation and the Indian Economy",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Drivers of globalisation (G20 role)",
+          "related_unit": "U4",
+          "related_chapter": "Globalisation and the Indian Economy",
+          "assessment_status": "formative"
+        },
+        {
+          "title": "Production across countries, WTO, Fair Globalisation",
+          "related_unit": "U4",
+          "related_chapter": "Globalisation and the Indian Economy",
+          "assessment_status": "formative"
+        }
+      ],
+      "validation_report": {
+        "suspicious_chapter_names": [],
+        "long_chapter_names_reclassified": [
+          "Development and Sectors -> Development",
+          "Economic Structure and Finance -> Sectors of the Indian Economy",
+          "Money, Credit and Globalisation -> Money and Credit",
+          "Globalisation and Consumer Rights -> Globalisation and the Indian Economy"
+        ],
+        "unit_count": 4,
+        "chapter_count": 4
+      }
+    }
+  ],
+  "practicals": [],
+  "activities": [
+    {
+      "title": "Multiple Assessment Activities",
+      "source_text": "Quiz, debate, role play, viva-voce, group discussion, visual expression, interactive bulletin boards, gallery walks, exit cards, concept maps, peer assessment, self-assessment etc.",
+      "related_unit": "Internal Assessment (IX & X)",
+      "related_chapter": ""
+    },
+    {
+      "title": "Subject Enrichment Activity",
+      "source_text": "Project work (Interdisciplinary)-Disaster Management / Consumer Rights OR Social Issues OR Sustainable Development",
+      "related_unit": "Internal Assessment (IX & X)",
+      "related_chapter": ""
+    },
+    {
+      "title": "Art Integration Activities",
+      "source_text": "Various forms of art must be integrated in the project work. Use cartoon strips, PPTs, skits, albums, song and dance.",
+      "related_unit": "Interdisciplinary Projects (IX & X)",
+      "related_chapter": ""
+    }
+  ],
+  "projects": [
+    {
+      "title": "Class IX Disaster Management Project",
+      "source_text": "Every student must undertake one project on Disaster Management. Objectives: Create awareness, prepare to face situations, ensure participation in risk reduction plans.",
+      "related_unit": "Internal Assessment (IX)",
+      "related_chapter": ""
+    },
+    {
+      "title": "Class IX Interdisciplinary Project",
+      "source_text": "History Chapter IV Forest Society and Colonialism & Geography Chapter 5 Natural Vegetation and Wildlife. Compare forest situations, evaluate commercial forestry, analyse rebellions.",
+      "related_unit": "Livelihoods (IX History) / Environment (IX Geography)",
+      "related_chapter": "Chapter IV & V"
+    },
+    {
+      "title": "Class X Project Work",
+      "source_text": "Consumer Awareness OR Social Issues OR Sustainable Development. Objectives: Gain insight, apply concepts, enhance life skills.",
+      "related_unit": "Internal Assessment (X)",
+      "related_chapter": ""
+    },
+    {
+      "title": "Class X Interdisciplinary Project",
+      "source_text": "History Chapter III Making of a Global World & Geography Chapter 7 Lifelines of National Economy & Economics Chapter 4 Globalisation. Analyse implications, discuss globalisation experiences.",
+      "related_unit": "Livelihoods (X History) / Economic Activities (X Geography)",
+      "related_chapter": "Chapter III, VII, IV"
+    }
+  ],
+  "assessment_information": {
+    "marks_distribution": [
+      "Class IX: Total Marks - 80 (Theory) + 20 (Internal Assessment). Theory includes Map Pointing.",
+      "Class X: Total Marks - 80 (Board Exam) + 20 (Internal Assessment).",
+      "Question Paper Design Class X: MCQs (1 Mark, 25%), Long Answer Questions (2-3 Marks), Case Study Questions (4 Marks), Map Pointing.",
+      "Competency Weightage Class X: Remembering/Understanding (30%), Applying (13.25%), Analysing/Evaluating/Creating (50%)."
+    ],
+    "excluded_or_non_assessed_content": [
+      "Pastoralists in the Modern World (IX History) - assessed only as part of Periodic Assessment",
+      "The Story of Village Palampur (IX Economics) - assessed only as part of Periodic Assessment",
+      "Natural Vegetation and Wildlife Map Pointing (IX Geography) - Only map pointing evaluated annually, content not in annual exam marks distribution explicitly separate from other chapters but noted for specific evaluation.",
+      "The Age of Industrialisation (X History) - assessed only as part of Periodic Assessment",
+      "Lifelines of National Economy Map Pointing (X Geography) - Only map pointing evaluated in Board Examination"
+    ],
+    "teacher_notes": [
+      "Interdisciplinary projects must be carried out at school between April and September. Carryover to home is strictly avoided.",
+      "Projects should use eco-friendly products without excessive expenditure.",
+      "Project records (internal assessment) must be maintained for three months after result declaration.",
+      "Use of Govt. of India website maps is permitted.",
+      "Rubrics for project evaluation: Content accuracy/originality (2), Competencies/Presentation (2), Viva-Voce (1).",
+      "Map work includes locating, labeling, and identifying specific areas as listed in the syllabus sections."
+    ]
+  },
+  "teacher_notes": [
+    "Interdisciplinary projects must be carried out at school between April and September. Carryover to home is strictly avoided.",
+    "Projects should use eco-friendly products without excessive expenditure.",
+    "Project records (internal assessment) must be maintained for three months after result declaration.",
+    "Use of Govt. of India website maps is permitted.",
+    "Rubrics for project evaluation: Content accuracy/originality (2), Competencies/Presentation (2), Viva-Voce (1).",
+    "Map work includes locating, labeling, and identifying specific areas as listed in the syllabus sections."
+  ],
+  "excluded_content": [
+    "Pastoralists in the Modern World (IX History) - assessed only as part of Periodic Assessment",
+    "The Story of Village Palampur (IX Economics) - assessed only as part of Periodic Assessment",
+    "Natural Vegetation and Wildlife Map Pointing (IX Geography) - Only map pointing evaluated annually, content not in annual exam marks distribution explicitly separate from other chapters but noted for specific evaluation.",
+    "The Age of Industrialisation (X History) - assessed only as part of Periodic Assessment",
+    "Lifelines of National Economy Map Pointing (X Geography) - Only map pointing evaluated in Board Examination"
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "suspicious_chapter_names": [
+      "Socialism in Europe and the Russian Revolution",
+      "Nazism and the Rise of Hitler",
+      "Forest Society and Colonialism",
+      "Minerals and Energy Resources"
+    ],
+    "long_chapter_names_reclassified": [
+      "Socialism in Europe and the Russian Revolution",
+      "Nazism and the Rise of Hitler",
+      "Forest Society and Colonialism",
+      "India – Size and Location",
+      "Physical Features of India",
+      "What is Democracy? Why Democracy?",
+      "Constitutional Design",
+      "Electoral Politics",
+      "Working of Institutions",
+      "Democratic Rights",
+      "The Rise of Nationalism in Europe",
+      "Nationalism in India",
+      "The Making of a Global World",
+      "The Age of Industrialisation",
+      "Print Culture and the Modern World",
+      "Power-sharing (Federalism)",
+      "Gender, Religion and Caste",
+      "Political Parties",
+      "Outcomes of Democracy",
+      "Development and Sectors -> Development",
+      "Economic Structure and Finance -> Sectors of the Indian Economy",
+      "Money, Credit and Globalisation -> Money and Credit",
+      "Globalisation and Consumer Rights -> Globalisation and the Indian Economy"
+    ],
+    "units_validated": 21,
+    "chapters_validated": 40,
+    "invalid_units": [],
+    "invalid_chapters": []
+  }
+}
+
+Stage 6 competencies:
+{
+  "competency_groups": [
+    {
+      "code": "C-2.1",
+      "title": "Historical Events and Processes",
+      "description": "Explain historical events and processes with different types of sources.",
+      "competencies": [
+        "Explain historical events and processes with different types of sources with specific examples from India and world history."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-2.3",
+      "title": "Continuity and Change in World History",
+      "description": "Trace aspects of continuity and change in different phases of world history.",
+      "competencies": [
+        "Trace aspects of continuity and change in different phases of world history (including cultural trends, social and religious reforms, and economic and political transformations)."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-2.4",
+      "title": "Growth of New Ideas and Practices",
+      "description": "Explain the growth of new ideas and practices across the world.",
+      "competencies": [
+        "Explain the growth of new ideas and practices across the world and how they affected the course of world history."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-2.5",
+      "title": "Condemned Practices in History",
+      "description": "Recognise practices that arose and were later condemned.",
+      "competencies": [
+        "Recognise the various practices that arose, such as those in C- 2.4, and came to be condemned later on (such as racism, slavery, colonial invasions, conquests, and plunder, genocides, exclusion of women from democratic and other institutions), all of which have also impacted the course of world history and have left unhealed wounds."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C3.2",
+      "title": "Indian National Freedom Struggle",
+      "description": "Identify and analyse important phases of the Indian national freedom struggle.",
+      "competencies": [
+        "Identify and analyse important phases of the Indian national freedom struggle against British colonial rule, with special reference to the movement led by Mahatma Gandhi and other important figures as well as those that led to independence."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-4.1",
+      "title": "Locating Physiographic Regions",
+      "description": "Locate physiographic regions of India and climatic zones.",
+      "competencies": [
+        "Locate physiographic regions of India and the climatic zones of the world on a globe/map."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-4.2",
+      "title": "Geographical Concepts and Landforms",
+      "description": "Explain important geographical concepts and characteristics of landforms.",
+      "competencies": [
+        "Explain important geographical concepts, characteristics of key landforms, their origin, and other physical factors of a region."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-4.3",
+      "title": "Inter-linkages in Physical Environment",
+      "description": "Draw inter-linkages between components of the physical environment.",
+      "competencies": [
+        "Draw inter- linkages between various components of the physical environment, such as climate and relief, climate and vegetation, vegetation, and wildlife."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-4.4",
+      "title": "Environment-Human Interrelationship",
+      "description": "Analyse the inter- relationship between natural environment and human beings.",
+      "competencies": [
+        "Analyse and evaluate the inter- relationship between the natural environment and human beings and their cultures across regions and, in the case of India, the special environmental ethos that resulted in practices of nature conservation."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-4.5",
+      "title": "Impact of Human Interventions on Environment",
+      "description": "Critically evaluate the impact of human interventions on the environment.",
+      "competencies": [
+        "Critically evaluate the impact of human interventions on the environment, including climate change, pollution, shortages of natural resources (particularly water), and loss of biodiversity; identifies practices that have led to these environmental crises and the measures that must be taken to reverse them."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-4.6",
+      "title": "Judicious Use of Natural Resources",
+      "description": "Develop sensitivity towards the judicious use of natural resources.",
+      "competencies": [
+        "Develop sensitivity towards the judicious use of natural resources (by individuals, societies, and nations) and suggests measures for their conservation."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-5.1",
+      "title": "Indian Constitution and Heritage",
+      "description": "Understand that the Indian Constitution draws from cultural heritage.",
+      "competencies": [
+        "Understand that the Indian Constitution draws from the great cultural heritage and common aspirations of the Indian nation, and recalls India's early experiments with democracy (assemblies in Mahajanapadas , kingdoms and empires at several levels of the society, guilds sanghas and ganas , village councils and committees, Uthiramerur inscriptions)."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-5.2",
+      "title": "Constitutional Values",
+      "description": "Appreciate fundamental Constitutional values.",
+      "competencies": [
+        "Appreciate fundamental Constitutional values and identify their significance for the prosperity of the Indian nation."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-5.3",
+      "title": "Fundamental Rights and Duties",
+      "description": "Explain fundamental rights as basic human rights.",
+      "competencies": [
+        "Explain that fundamental rights are the most basic human rights, and they flourish when people also perform their fundamental duties."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-5.4",
+      "title": "Features of Democracy",
+      "description": "Analyse the basic features of a democracy and democratic government.",
+      "competencies": [
+        "Analyse the basic features of a democracy and democratic government – and its history in India and across the world – and compares this form of government with other forms of government."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-5.5",
+      "title": "Non-state Participants in Democracy",
+      "description": "Analyse the critical role of non-state and non-market participants.",
+      "competencies": [
+        "Analyse the critical role of non-state and non-market participants in the functioning of a democratic government and society, such as the media, civil society, socio-religious institutions, and community institutions."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-6.1",
+      "title": "Indian Ethos and Diversity",
+      "description": "Understands how the Indian ethos respected diversity.",
+      "competencies": [
+        "Understands how the Indian ethos and the cultural integration across India did not attempt uniformity, but respected and promoted a rich diversity in Indian society, and how this harmonisation and unity in diversity, with a historical respect for all cultures, women have counted among India's great strengths by promoting peaceful coexistence."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-6.2",
+      "title": "Inequality and Justice in Society",
+      "description": "Understand forms of inequality, injustice, and discrimination.",
+      "competencies": [
+        "Understand that despite C-6.1, forms of inequality, injustice, and discrimination have occurred in different sections of society at different times (due to internal as well as outside forces such as colonisation), leading to political, social, and cultural efforts, struggles, movements, and mechanisms at various levels towards equity, inclusion, justice, and harmony, with varying outcomes and degrees of success."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-7.1",
+      "title": "Key Features of Economy",
+      "description": "Defines key features of the economy.",
+      "competencies": [
+        "Defines key features of the economy, such as, production, distribution, demand, supply, trade, and commerce, and factors that influence these aspects (including technology)."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-7.2",
+      "title": "Three Sectors of Production",
+      "description": "Evaluates the importance of the three sectors.",
+      "competencies": [
+        "Evaluates the importance of the three sectors of production (primary, secondary, and tertiary) in any country's economy, especially India."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-7.3",
+      "title": "Organised vs Unorganised Sectors",
+      "description": "Distinguishes between organised and unorganised sectors.",
+      "competencies": [
+        "Distinguishes between 'unorganised' and 'organised' sectors of the economy and their role in production for the local market in small, medium, and large-scale production centres (industries), and recognises the special importance of the so-called 'unorganised' sector in Indian economy and its connections with the self-organising features of Indian society."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-7.4",
+      "title": "Large-scale Trade and Commerce",
+      "description": "Trace the beginning and importance of large-scale trade.",
+      "competencies": [
+        "Trace the beginning and importance of large- scale trade and commerce (including e- commerce) between one country and another - the key items of trade in the beginning, and the changes from time to time."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-8.1",
+      "title": "Data Analysis on Economy",
+      "description": "Gather, comprehend, and analyse data related to income.",
+      "competencies": [
+        "Gather, comprehend, and analyse data related to income, capital, poverty, and employment in one's locality, region and at the national level."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-8.3",
+      "title": "Economy of Ancient India",
+      "description": "Understand features in context of ancient India.",
+      "competencies": [
+        "Understand these features in the context of ancient India, with its thriving trade, both internal and external, and its well- established trade practices and networks, business conventions, and diverse industries, all of which made India one of the world's leading economies up to the colonial period."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-8.4",
+      "title": "India's Economic Progress",
+      "description": "Describes India's recent path towards economic progress.",
+      "competencies": [
+        "Describes India's recent path towards again becoming one of the three largest economies of the world, and how individuals can contribute to this economic progress."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    },
+    {
+      "code": "C-8.5",
+      "title": "Economic Development and Environment",
+      "description": "Appreciates connections between development and environment.",
+      "competencies": [
+        "Appreciates the connections between economic development and the environment, and the broader indicators of societal wellbeing beyond GDP growth and income."
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}
+
+Stage 7 assessment:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      "Class IX: Total Marks - 80 (Theory) + 20 (Internal Assessment). Theory includes Map Pointing.",
+      "Class X: Total Marks - 80 (Board Exam) + 20 (Internal Assessment)."
+    ],
+    "question_paper_design": [
+      "MCQs (1 Mark, 25%)",
+      "Long Answer Questions (2-3 Marks)",
+      "Case Study Questions (4 Marks)",
+      "Map Pointing"
+    ],
+    "competency_weightage": [
+      "Remembering/Understanding: 30% (24 marks)",
+      "Applying: 13.25% (11 marks)",
+      "Analysing/Evaluating/Creating: 50% (40 marks)"
+    ],
+    "bloom_levels": [
+      "Remembering and Understanding",
+      "Applying",
+      "Analyzing, Evaluating and Creating"
+    ],
+    "internal_assessment": [
+      "Periodic Assessment (Pen Paper Test): 5 Marks",
+      "Multiple Assessment (Quiz, debate, role play, viva-voce, group discussion, visual expression, interactive bulletin boards, gallery walks, exit cards, concept maps, peer assessment, self-assessment etc.): 5 Marks",
+      "Subject Enrichment Activity (Project work): 5 Marks",
+      "Portfolio (Classwork, reflections, narrations, journals, achievements): 5 Marks"
+    ],
+    "practical_assessment": [
+      "Map Pointing: 6.25% of total marks (5 marks)"
+    ],
+    "project_assessment": [
+      "Content accuracy and originality: 2 Marks",
+      "Competencies exhibited and Presentation: 2 Marks",
+      "Viva-Voce: 1 Mark"
+    ]
+  }
+}
+
+Stage 8 learning outcomes:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Events and Processes",
+      "chapter_name": "The French Revolution",
+      "topic": "",
+      "outcomes": [
+        "Infer how the French Revolution had an impact on the European countries in the making of nation states in Europe and elsewhere.",
+        "Illustrate that, the quest for imperialism triggered the First World War.",
+        "Examine various sources to address imbalances that may lead to revolutions."
+      ]
+    },
+    {
+      "unit_name": "Events and Processes",
+      "chapter_name": "Socialism in Europe and the Russian Revolution",
+      "topic": "",
+      "outcomes": [
+        "Compare the situations that led to the rise of Russian and French Revolutions.",
+        "Examine the situations that led to the establishment of Lenin's communism and Stalin's collectivization.",
+        "Analyse the role played by the varied philosophers and leaders that shaped the revolution."
+      ]
+    },
+    {
+      "unit_name": "Events and Processes",
+      "chapter_name": "Nazism and the Rise of Hitler",
+      "topic": "",
+      "outcomes": [
+        "Analyse the role of 'Treaty of Versailles' in the rise of Hitler to power.",
+        "Analyse the genocidal war waged against the 'undesirables' by Hitler.",
+        "Compare and contrast the characteristics of Hitler and Gandhi."
+      ]
+    },
+    {
+      "unit_name": "Livelihoods, Economies and Societies",
+      "chapter_name": "Forest Society and Colonialism",
+      "topic": "",
+      "outcomes": [
+        "Compare the forest situations prevailed in the pre-colonial, colonial and post- colonial era.",
+        "Evaluate the growth &role of commercial forestry in different types of Vegetation.",
+        "Analyse the reasons for rebellions in forest areas of south East-Asia with specification to JAVA.",
+        "To defend the role of government and the local communities in protecting the forest cover."
+      ]
+    },
+    {
+      "unit_name": "Livelihoods, Economies and Societies",
+      "chapter_name": "Pastoralists in the Modern World",
+      "topic": "",
+      "outcomes": [
+        "Examine the situations that have created nomadic societies highlighting the key factors played by the climatic conditions and topography.",
+        "Analyse varying patterns of developments within pastoral societies in different places in India.",
+        "Comprehend the impact of colonialism on Pastoralists in India and Africa."
+      ]
+    },
+    {
+      "unit_name": "Physical Features and Environment",
+      "chapter_name": "India – Size and Location",
+      "topic": "",
+      "outcomes": [
+        "Examine how the location of an area impacts its climate and time with reference to longitude and latitude.",
+        "Explore and analyses the trading and cultural relationships of India with its neighbouring countries.",
+        "Evaluate the situation & reasons that made 82.5E* longitude as Time meridian of India.",
+        "Examine how location of India enables its position as a strategic partner in the subcontinent.",
+        "Justify the reasons for the differences in climatic conditions, local and standard time."
+      ]
+    },
+    {
+      "unit_name": "Physical Features and Environment",
+      "chapter_name": "Physical Features of India",
+      "topic": "",
+      "outcomes": [
+        "Justify how the Physical Features of India influences the livelihoods, culture, and the biodiversity of the region.",
+        "Examine the geological process that played a crucial role in the formation of diverse physical features in India.",
+        "Analyse the conditions and relationships of the people living in different physiographic areas."
+      ]
+    },
+    {
+      "unit_name": "Physical Features and Environment",
+      "chapter_name": "Drainage",
+      "topic": "",
+      "outcomes": [
+        "Examine the information about different lakes and infer on their contribution to Indian ecology.",
+        "Present creative solutions to overcome the water pollution and also to increase the contribution of water bodies to the Indian economy.",
+        "Identify the river systems of the country and explain the role of rivers in human society."
+      ]
+    },
+    {
+      "unit_name": "Physical Features and Environment",
+      "chapter_name": "Climate",
+      "topic": "",
+      "outcomes": [
+        "Analyse and infer the effect of monsoon winds on rainfall of the Indian subcontinent.",
+        "Analyse the temperatures between plateau region, Himalayan region, desert region and coastal region.",
+        "Enumerate and summarise the reasons for the wide difference between temperatures at different geographical locations of India."
+      ]
+    },
+    {
+      "unit_name": "Physical Features and Environment",
+      "chapter_name": "Natural Vegetation and Wildlife",
+      "topic": "",
+      "outcomes": [
+        "Examine how the location of an area impacts its climate and time with reference to longitude and latitude.",
+        "Explore and analyses the trading and cultural relationships of India with its neighbouring countries."
+      ]
+    },
+    {
+      "unit_name": "Physical Features and Environment",
+      "chapter_name": "Population",
+      "topic": "",
+      "outcomes": [
+        "Analyse and infer the reasons behind the uneven distribution of population in India with specific reference to UP & Rajasthan and Mizoram and Karnataka.",
+        "Enlist the factors that affect the population density."
+      ]
+    },
+    {
+      "unit_name": "Democracy and Constitutional Design",
+      "chapter_name": "What is Democracy? Why Democracy?",
+      "topic": "",
+      "outcomes": [
+        "Examine the concept of structural components of Democracy and its forms/ features.",
+        "Compare and Contrast working of democracies of India and some other countries and discuss differences and similarities in each country.",
+        "Analyse and infer on the different historical processes and forces that have contributed for the promotion of democracy."
+      ]
+    },
+    {
+      "unit_name": "Democracy and Constitutional Design",
+      "chapter_name": "Constitutional Design",
+      "topic": "",
+      "outcomes": [
+        "Discuss and describe the situation that led to creation of Indian Constitution.",
+        "Enumerate the essential features that need to be kept in mind while drafting a constitution.",
+        "Examine the guiding values that created the Indian constitution.",
+        "Comprehend the roles and responsibilities as citizens of India."
+      ]
+    },
+    {
+      "unit_name": "Institutions and Rights",
+      "chapter_name": "Electoral Politics",
+      "topic": "",
+      "outcomes": [
+        "Analyse the implications of power of vote and power of recall.",
+        "Summarise the essential features of the Indian Electoral system.",
+        "Examine the rationale for adopting the present Indian Electoral System."
+      ]
+    },
+    {
+      "unit_name": "Institutions and Rights",
+      "chapter_name": "Working of Institutions",
+      "topic": "",
+      "outcomes": [
+        "Examine the roles, responsibilities, and interdependency of all the 3 organs of the Government.",
+        "Appreciate the parliamentary system of executive's accountability to the legislature.",
+        "Summarise and evaluate the rule of law in India."
+      ]
+    },
+    {
+      "unit_name": "Institutions and Rights",
+      "chapter_name": "Democratic Rights",
+      "topic": "",
+      "outcomes": [
+        "Summarise the importance of fundamental rights and duties in the light of the nation's glory.",
+        "Analyse and recognise the role of a responsible citizen while performing their prescribed duties versus claiming rights."
+      ]
+    },
+    {
+      "unit_name": "Production and Resources",
+      "chapter_name": "The Story of Village Palampur",
+      "topic": "",
+      "outcomes": [
+        "Enlist the requirements of production and comprehend the interdependence of these requirements.",
+        "Correlate farming and non-farming activities to economic growth.",
+        "Comprehend how the significance of conditions of farming and the factors of production impact economic development.",
+        "Find solutions to foster an equitable society."
+      ]
+    },
+    {
+      "unit_name": "Production and Resources",
+      "chapter_name": "People as Resource",
+      "topic": "",
+      "outcomes": [
+        "Evaluate the reasons that contribute to the quality of population.",
+        "Observe different government schemes and see their effect on the people there."
+      ]
+    },
+    {
+      "unit_name": "Production and Resources",
+      "chapter_name": "Poverty as a Challenge",
+      "topic": "",
+      "outcomes": [
+        "Comprehend the reasons for poverty in the rural and urban areas.",
+        "Evaluate the efficacy of the government to eradicate poverty.",
+        "Correlate the link between education and poverty."
+      ]
+    },
+    {
+      "unit_name": "Production and Resources",
+      "chapter_name": "Food Security in India",
+      "topic": "",
+      "outcomes": [
+        "Comprehend various aspects of food security that will ensure continuity of supply.",
+        "Enumerate the different features of PDS that directly address FSI.",
+        "Analyse and infer the impact of the Green Revolution.",
+        "Analyse causes and effect of famines in food security during pre and post independent India."
+      ]
+    },
+    {
+      "unit_name": "Events and Processes",
+      "chapter_name": "The Rise of Nationalism in Europe",
+      "topic": "",
+      "outcomes": [
+        "Infer how French Revolution had an impact on the European countries in the making of a nation state.",
+        "Comprehend the nature of the diverse social movements of the time.",
+        "Analyse and infer the evolution of the idea of nationalism which led to the formation of nation states in Europe and elsewhere.",
+        "Evaluate the reasons which led to the First World War."
+      ]
+    },
+    {
+      "unit_name": "Events and Processes",
+      "chapter_name": "Nationalism in India",
+      "topic": "",
+      "outcomes": [
+        "Illustrate various facets of Nationalistic movements that ushered in the sense of Collective Belonging.",
+        "Evaluate the effectiveness of the strategies applied by Gandhiji and other leaders in the movements organised by him.",
+        "Summarise the effects of the First World War that triggered the two defining movements (Khilafat &Non- Cooperation Movement) in India."
+      ]
+    },
+    {
+      "unit_name": "Livelihoods, Economies and Societies",
+      "chapter_name": "The Making of a Global World",
+      "topic": "",
+      "outcomes": [
+        "Summarise the changes that transformed the world in different areas.",
+        "Depict the global interconnectedness from the Pre-modern to the present day.",
+        "Enumerate the destructive impact of colonialism on the livelihoods of colonised people."
+      ]
+    },
+    {
+      "unit_name": "Livelihoods, Economies and Societies",
+      "chapter_name": "The Age of Industrialisation",
+      "topic": "",
+      "outcomes": [
+        "Enumerate economic, political, social features of Pre and Post Industrialization.",
+        "Analyse and infer how the industrialization impacted colonies with specific focus on India."
+      ]
+    },
+    {
+      "unit_name": "Everyday Life, Culture and Politics",
+      "chapter_name": "Print Culture and the Modern World",
+      "topic": "",
+      "outcomes": [
+        "Enumerate the development of Print from its beginnings in East Asia to its expansion in Europe and India.",
+        "Compare and contrast the old tradition of handwritten manuscripts versus print technology.",
+        "Summarise the role of Print revolution and its impact."
+      ]
+    },
+    {
+      "unit_name": "Resources and Development",
+      "chapter_name": "Resources and Development",
+      "topic": "",
+      "outcomes": [
+        "Enumerates how the resources are interdependent, justify how planning is essential in judicious utilisation of resources and the need to develop them in India.",
+        "Infer the rationale for development of resources.",
+        "Analyse and evaluate data and information related to non-optimal land, utilization in India.",
+        "Suggest remedial measures for optimal utilization of underutilized resources."
+      ]
+    },
+    {
+      "unit_name": "Conservation and Agriculture",
+      "chapter_name": "Forest and Wildlife Resources",
+      "topic": "",
+      "outcomes": [
+        "Examine the importance of conserving forests and wildlife and their interdependency in maintaining the ecology for the sustainable development of India.",
+        "Analyse the role of grazing and wood cutting in the development and degradation.",
+        "Summarise the reasons for conservation of biodiversity under sustainable development.",
+        "Discuss how developmental works, grazing wood cutting have impacted the forests."
+      ]
+    },
+    {
+      "unit_name": "Conservation and Agriculture",
+      "chapter_name": "Water Resources",
+      "topic": "",
+      "outcomes": [
+        "Examine the reasons for conservation of water resource in India.",
+        "Analyse and infer how the multipurpose projects are supporting the requirement of water."
+      ]
+    },
+    {
+      "unit_name": "Economic Activities",
+      "chapter_name": "Agriculture",
+      "topic": "",
+      "outcomes": [
+        "Examine the crucial role played by agriculture in our economy and society.",
+        "Analyse the challenges faced by the farming community in India.",
+        "Identifies various aspects of agriculture, including crop production, types of farming etc."
+      ]
+    },
+    {
+      "unit_name": "Economic Activities",
+      "chapter_name": "Minerals and Energy Resources",
+      "topic": "",
+      "outcomes": [
+        "Enumerate the impact of manufacturing industries on the environment and develop strategies for sustainable development of the manufacturing sector.",
+        "Differentiate between various types of manufacturing industries based on their input materials, processes, and end products, and analyse their significance in the Indian economy.",
+        "Analyse the relation between the availability of raw material and location of the industry."
+      ]
+    },
+    {
+      "unit_name": "Economic Activities",
+      "chapter_name": "Manufacturing Industries",
+      "topic": "",
+      "outcomes": [
+        "Enumerate the impact of manufacturing industries on the environment and develop strategies for sustainable development of the manufacturing sector.",
+        "Differentiate between various types of manufacturing industries based on their input materials, processes, and end products, and analyse their significance in the Indian economy.",
+        "Analyse the relation between the availability of raw material and location of the industry."
+      ]
+    },
+    {
+      "unit_name": "Lifelines of National Economy",
+      "chapter_name": "Lifelines of National Economy",
+      "topic": "",
+      "outcomes": [
+        "Enumerates how transportation works as a lifeline of the economy.",
+        "Analyse and infer the impact of roadways and railways on the national economy."
+      ]
+    },
+    {
+      "unit_name": "Power Sharing and Federalism",
+      "chapter_name": "Power-sharing (Federalism)",
+      "topic": "",
+      "outcomes": [
+        "Enumerate the need for power sharing in democracy.",
+        "Analyse the challenges faced by countries like Belgium and Sri Lanka ensuring effective power sharing.",
+        "Compare and contrast the power sharing of India with Sri Lanka and Belgium.",
+        "Summarise the purpose of power sharing in preserving the unity and stability of a country."
+      ]
+    },
+    {
+      "unit_name": "Power Sharing and Federalism",
+      "chapter_name": "Gender, Religion and Caste",
+      "topic": "",
+      "outcomes": [
+        "Examine the role and differences of Gender, religion and Caste in practicing Democracy.",
+        "Analyse that different expressions based on the differences, are healthy or otherwise in a democracy."
+      ]
+    },
+    {
+      "unit_name": "Political Parties and Outcomes",
+      "chapter_name": "Political Parties",
+      "topic": "",
+      "outcomes": [
+        "Understand the process of parties getting elected.",
+        "Know the significance of the right to vote and exercise the duties as citizens of a nation.",
+        "Examine the role, purpose and no. of Political Parties in Democracy."
+      ]
+    },
+    {
+      "unit_name": "Political Parties and Outcomes",
+      "chapter_name": "Outcomes of Democracy",
+      "topic": "",
+      "outcomes": [
+        "Enumerates how the success of democracy depends on quality of government, economic well-being, inequality, social differences, conflict, freedom and dignity."
+      ]
+    },
+    {
+      "unit_name": "Development and Sectors",
+      "chapter_name": "Development",
+      "topic": "",
+      "outcomes": [
+        "Enumerate and examine the different processes involved in setting developmental Goals.",
+        "Analyse and infer how the per capita income depicts the economic condition of the nation.",
+        "Evaluate the development goals with reference to their efficacy, implemental strategies, relevance to current requirements of the nation.",
+        "Compare the per capita income of some countries and infer reasons for the variance.",
+        "Analyse the multiple perspectives on the need of development."
+      ]
+    },
+    {
+      "unit_name": "Economic Structure and Finance",
+      "chapter_name": "Sectors of the Indian Economy",
+      "topic": "",
+      "outcomes": [
+        "Analyse and infer how the economic activities in different sectors contribute to the overall growth and development of the Indian economy.",
+        "Propose solutions to identified problems in different sectors based on their understanding.",
+        "Summarise how the organised and unorganised sectors are providing employment.",
+        "Enumerate the role of the unorganised sector in impacting Per Capita Income currently and propose suggestive steps to reduce the unorganised sector for more productive contributions to GDP.",
+        "Enumerate and infer the essential role of the Public and Private sectors."
+      ]
+    },
+    {
+      "unit_name": "Money, Credit and Globalisation",
+      "chapter_name": "Money and Credit",
+      "topic": "",
+      "outcomes": [
+        "Enumerate how money plays as a medium exchange in all transactions of goods and services from ancient times to the present times.",
+        "Analyse and infer various sources of Credit.",
+        "Summarise the significance and role of self-help groups in the betterment of the economic condition of rural people/ women."
+      ]
+    },
+    {
+      "unit_name": "Globalisation and Consumer Rights",
+      "chapter_name": "Globalisation and the Indian Economy",
+      "topic": "",
+      "outcomes": [
+        "Enumerate the concept of globalisation and its definition, evolution, and impact on the global economy.",
+        "Evaluate the key role of the key major drivers of globalisation and their role in shaping the global economic landscape in various countries.",
+        "Comprehend the significance of role of G20 and its significance in the light of India's role."
+      ]
+    }
+  ]
+}
+
+Stage 9 activities/projects/practicals:
+{
+  "activities": [
+    {
+      "type": "activity",
+      "title": "Multiple Assessment Activities",
+      "unit_name": "Internal Assessment (IX & X)",
+      "chapter_name": "",
+      "details": "Quiz, debate, role play, viva-voce, group discussion, visual expression, interactive bulletin boards, gallery walks, exit cards, concept maps, peer assessment, self-assessment etc."
+    },
+    {
+      "type": "activity",
+      "title": "Subject Enrichment Activity",
+      "unit_name": "Internal Assessment (IX & X)",
+      "chapter_name": "",
+      "details": "Project work (Interdisciplinary)-Disaster Management / Consumer Rights OR Social Issues OR Sustainable Development"
+    },
+    {
+      "type": "activity",
+      "title": "Art Integration Activities",
+      "unit_name": "Interdisciplinary Projects (IX & X)",
+      "chapter_name": "",
+      "details": "Various forms of art must be integrated in the project work. Use cartoon strips, PPTs, skits, albums, song and dance."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Class IX Disaster Management Project",
+      "unit_name": "Internal Assessment (IX)",
+      "chapter_name": "",
+      "details": "Every student must undertake one project on Disaster Management. Objectives: Create awareness, prepare to face situations, ensure participation in risk reduction plans."
+    },
+    {
+      "title": "Class IX Interdisciplinary Project",
+      "unit_name": "Livelihoods (IX History) / Environment (IX Geography)",
+      "chapter_name": "Chapter IV & V",
+      "details": "History Chapter IV Forest Society and Colonialism & Geography Chapter 5 Natural Vegetation and Wildlife. Compare forest situations, evaluate commercial forestry, analyse rebellions."
+    },
+    {
+      "title": "Class X Project Work",
+      "unit_name": "Internal Assessment (X)",
+      "chapter_name": "",
+      "details": "Consumer Awareness OR Social Issues OR Sustainable Development. Objectives: Gain insight, apply concepts, enhance life skills."
+    },
+    {
+      "title": "Class X Interdisciplinary Project",
+      "unit_name": "Livelihoods (X History) / Economic Activities (X Geography)",
+      "chapter_name": "Chapter III, VII, IV",
+      "details": "History Chapter III Making of a Global World & Geography Chapter 7 Lifelines of National Economy & Economics Chapter 4 Globalisation. Analyse implications, discuss globalisation experiences."
+    }
+  ],
+  "practicals": []
+}

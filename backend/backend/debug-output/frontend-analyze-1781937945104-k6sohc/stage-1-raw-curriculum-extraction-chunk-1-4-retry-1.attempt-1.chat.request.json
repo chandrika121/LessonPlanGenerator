@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 1500
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output intentionally small and concise\n- Never include topics, subtopics, key concepts, activities, projects, practical details, raw nodes, or long prose\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 1 of 4.2; extract only what is present in this chunk\n\n\nCurriculum source text:\n--- Page 4 ---\nUnit IV: Work, Energy and Power Chapter– 5: Work, Energy and Power Work done by a constant force and a variable force; kinetic energy, work- energy theorem, power. Notion of potential energy, potential energy of a spring, conservative forces: non-conservative forces, motion in a vertical circle; elastic and inelastic collisions in one and two dimensions. Unit V: Motion of System of Particles and Rigid Body Chapter–6: System of Particles and Rotational Motion Centre of mass of a two-particle system, momentum conservation and Centre of mass motion. Centre of mass of a rigid body; centre of mass of a uniform rod. Moment of a force, torque, angular momentum, law of conservation of angular momentum and its applications. Equilibrium of rigid bodies, rigid body rotation and equations of rotational motion, comparison of linear and rotational motions. Moment of inertia, radius of gyration, values of moments of inertia for simple geometrical objects (no derivation). Unit VI: Gravitation Chapter – 7: Gravitation Kepler's laws of planetary motion, universal law of gravitation. Acceleration due to gravity and its variation with altitude and depth. Gravitational potential energy and gravitational potential, escape speed, orbital velocity of a satellite, energy of an orbiting satellite. Unit VII: Properties of Bulk Matter Chapter–8: Mechanical Properties of Solids Elasticity, Stress-strain relationship, Hooke's law, Young’s modulus, bulk modulus, shear modulus of rigidity (qualitative idea only), Poisson's ratio; elastic energy. Application of elastic behavior of materials (qualitative idea only).\n\n--- Page 5 ---\nChapter–9: Mechanical Properties of Fluids Pressure due to a fluid column; Pascal's law and its applications (hydraulic lift and hydraulic brakes), effect of gravity on fluid pressure. Viscosity, Stokes' law, terminal velocity, streamline and turbulent flow, critical velocity, Bernoulli's theorem and its simple applications (Torricelli's law and Dynamic lift). Surface energy and surface tension, angle of contact, excess of pressure across a curved surface, application of surface tension ideas to drops, bubbles and capillary rise. Chapter–10: Thermal Properties of Matter Heat, temperature, thermal expansion; thermal expansion of solids, liquids and gases, anomalous expansion of water; specific heat capacity; Cp, Cv - calorimetry; change of state - latent heat capacity. Heat transfer-conduction, convection and radiation, thermal conductivity, qualitative ideas of Blackbody radiation, Wein's displacement Law, Stefan's law. Unit VIII: Thermodynamics Chapter–11: Thermodynamics Thermal equilibrium and definition of temperature, zeroth law of thermodynamics, heat, work and internal energy. First law of thermodynamics, Second law of thermodynamics: Thermodynamic state variable and equation of state. Change of condition of gaseous state - isothermal, adiabatic, reversible, irreversible, and cyclic processes. Unit IX: Behavior of Perfect Gases and Kinetic Theory of Gases Chapter–12: Kinetic Theory Equation of state of a perfect gas, work done in compressing a gas. Kinetic theory of gases - assumptions, concept of pressure. Kinetic interpretation of temperature; rms speed of gas molecules; degrees of freedom, law of equi-partition of energy (statement only) and application to specific heat capacities of gases; concept of mean free path, Avogadro's number.\n\n--- Page 6 ---\nUnit X: Oscillations and Waves Chapter–13: Oscillations Periodic motion - time period, frequency, displacement as a function of time, periodic functions and their applications. Simple harmonic motion (S.H.M), uniform circular motion and its equations of motion; phase; oscillations of a loaded spring- restoring force and force constant; energy in S.H.M. Kinetic and potential energies; simple pendulum derivation of expression for its time period. Chapter–14: Waves Wave motion: Transverse and longitudinal waves, speed of travelling wave, displacement relation for a progressive wave, principle of superposition of waves, reflection of waves, standing waves in strings and organ pipes, fundamental mode and harmonics, Beats.\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}
