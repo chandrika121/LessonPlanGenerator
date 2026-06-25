@@ -1,0 +1,58 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract only concise curriculum facts needed to build the hierarchy.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units and chapters in this input\n- Never include topics, subtopics, key concepts, activities, projects, raw nodes, or long prose paragraphs\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 1 of 4 retry 1.1/2; extract only what is present in this chunk\n\nCurriculum source text:\n--- Page 1 ---\nACCOUNTANCY (Subject Code 055) Class XI-XII (2025-26) Rationale The course in accountancy is introduced at plus two stage of senior second of school education, as the formal commerce education is provided after ten years of schooling. With the fast changing economic scenario, accounting as a source of financial information has carved out a place for itself at the senior secondary stage. Its syllabus content provide students a firm foundation in basic accounting concepts and methodology and also acquaint them with the changes taking place in the preparation and presentation of financial statements in accordance to the applicable accounting standards and the Companies Act 2013. The course in accounting put emphasis on developing basic understanding about accounting as an information system. The emphasis in Class XI is placed on basic concepts and process of accounting leading to the preparation of accounts for a sole proprietorship firm. The students are also familiarized with basic calculations of Goods and Services Tax (GST) in recording the business transactions. The accounting treatment of GST is confined to the syllabus of class XI. The increased role of ICT in all walks of life cannot be overemphasized and is becoming an integral part of business operations. The learners of accounting are introduced to Computerized Accounting System at class XI and XII. Computerized Accounting System is a compulsory component which is to be studied by all students of commerce in class XI; whereas in class XII it is offered as an optional subject to Company Accounts and Analysis of Financial Statements. This course is developed to impart skills for designing need based accounting database for maintaining book of accounts. The complete course of Accountancy at the senior secondary stage introduces the learners to the world of business and emphasize on strengthening the fundamentals of the subject. Objectives: 1. To familiarize students with new and emerging areas in the preparation and presentation of financial statements. 2. To acquaint students with basic accounting concepts and accounting standards. 3. To develop the skills of designing need based accounting database. 4. To appreciate the role of ICT in business operations. 5. To develop an understanding about recording of business transactions and preparation of financial statements. 6. To enable students with accounting for Not-for-Profit organizations, accounting for Partnership Firms and company accounts. Class XI-XII (2026-27)\n\n--- Page 2 ---\nAccountancy (Subject Code 055) Class-XI (2025-26) Theory: 80 Marks 3 Hours Project: 20 Marks Units Marks Part A: Financial Accounting-1 Unit-1: Theoretical Framework 12 Unit-2: Accounting Process 44 Part B: Financial Accounting-II Unit-3: Financial Statements of Sole Proprietorship 24 Part C: Project Work 20 PART A: FINANCIAL ACCOUNTING - I Unit-1: Theoretical Frame Work Units/Topics Learning Outcomes Introduction to Accounting • Accounting- concept, meaning, as a source of information, objectives, advantages and limitations, types of accounting information; users of accounting information and their needs. Qualitative Characteristics of Accounting Information. Role of Accounting in Business. • Basic Accounting Terms- Entity, Business Transaction, Capital, Drawings. Liabilities (Non Current and Current). Assets (Non Current, Current); Expenditure (Capital and Revenue), Expense, Revenue, Income, Profit, Gain, Loss, Purchase, Sales, Goods, Stock, Debtor, Creditor, Voucher, Discount (Trade discount and Cash Discount) Theory Base of Accounting • Fundamental accounting assumptions: GAAP: Concept • Basic Accounting Concept : Business Entity, Money Measurement, Going Concern, After going through this Unit, the students will be able to: • describe the meaning, significance, objectives, advantages and limitations of accounting in the modem economic environment with varied types of business and non-business economic entities. • identify / recognise the individual(s) and entities that use accounting information for serving their needs of decision making. • explain the various terms used in accounting and differentiate between different related terms like current and non-current, capital and revenue. • give examples of terms like business transaction, liabilities, assets, expenditure and purchases. • explain that sales/purchases include both cash and credit sales/purchases relating to the accounting year. • differentiate among income, profits and gains. Class-XI (2026-27)\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null\n    }\n  ]\n}"
+    }
+  ]
+}

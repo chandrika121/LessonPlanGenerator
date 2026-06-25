@@ -1,0 +1,146 @@
+Stage 6: Competency Extraction - Class XII - Batch 1 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XII",
+  "subject": "Physics",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit–I Electrostatics"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit-II Current Electricity"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U1",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_id": "C1",
+      "chapter_name": "Electric Charges and Fields",
+      "key_concepts": [
+        "Electric dipole and torque in uniform field",
+        "Gauss's law for symmetric distributions (wire, plane, shell)"
+      ],
+      "subtopics": [
+        "Conservation of charge, Force between point charges, Continuous charge distribution",
+        "Field due to point charge/dipole/infinite wire/plane/shell, Gauss's theorem applications"
+      ],
+      "topics": [
+        "Coulomb's Law and Superposition Principle",
+        "Electric Field and Flux"
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U1",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_id": "C2",
+      "chapter_name": "Electrostatic Potential and Capacitance",
+      "key_concepts": [
+        "Energy stored in a capacitor (formulae only)",
+        "Dielectrics and electric polarization"
+      ],
+      "subtopics": [
+        "Potential due to point charge/dipole, Equipotential surfaces, Potential energy of systems",
+        "Conductors/Insulators, Capacitance combinations (series/parallel), Parallel plate capacitor with dielectric"
+      ],
+      "topics": [
+        "Electric Potential and Energy",
+        "Capacitors and Dielectrics"
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U2",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_id": "C1",
+      "chapter_name": "Current Electricity",
+      "key_concepts": [
+        "V-I characteristics (linear and non-linear)",
+        "Kirchhoff's rules applications"
+      ],
+      "subtopics": [
+        "Current, Drift velocity, Mobility, Resistivity/Conductivity, Temperature dependence",
+        "Internal resistance, EMF vs PD, Cell combinations, Wheatstone bridge"
+      ],
+      "topics": [
+        "Drift of Charges and Ohm's Law",
+        "Circuits and Kirchhoff's Rules"
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_id": "C1",
+      "chapter_name": "Moving Charges and Magnetism",
+      "key_concepts": [
+        "Moving coil galvanometer: sensitivity and conversion to ammeter/voltmeter",
+        "Definition of ampere via force between conductors"
+      ],
+      "subtopics": [
+        "Oersted's experiment, Biot-Savart law (circular loop), Ampere's law (wire/solenoid)",
+        "Force on moving charge and current-carrying conductor",
+        "Torque on current loop, Magnetic dipole moment"
+      ],
+      "topics": [
+        "Magnetic Field Sources"
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_id": "C2",
+      "chapter_name": "Magnetism and Matter",
+      "key_concepts": [],
+      "subtopics": [
+        "Bar magnet as equivalent solenoid (qualitative)"
+      ],
+      "topics": [
+        "Properties of Magnets"
+      ]
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

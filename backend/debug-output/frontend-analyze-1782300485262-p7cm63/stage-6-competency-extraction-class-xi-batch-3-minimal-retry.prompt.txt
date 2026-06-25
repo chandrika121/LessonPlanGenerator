@@ -1,0 +1,118 @@
+Stage 6: Competency Extraction - Class XI - Batch 3 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XI",
+  "subject": "PHYSICS",
+  "units": [
+    {
+      "unit_id": "U8",
+      "unit_name": "Thermodynamics"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases"
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Oscillations and Waves"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U8",
+      "unit_name": "Thermodynamics",
+      "chapter_id": "C1",
+      "chapter_name": "Thermodynamics",
+      "key_concepts": [
+        "Heat, work and internal energy",
+        "First law of thermodynamics",
+        "Second law of thermodynamics: State variables and equation of state",
+        "Gaseous processes: Isothermal, Adiabatic, Reversible/Irreversible, Cyclic"
+      ],
+      "subtopics": [
+        "Thermal equilibrium; Zeroth law of thermodynamics"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U9",
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_id": "C1",
+      "chapter_name": "Kinetic Theory",
+      "key_concepts": [
+        "Kinetic theory assumptions and concept of pressure",
+        "Kinetic interpretation of temperature; RMS speed",
+        "Degrees of freedom, Law of equipartition of energy (statement)",
+        "Specific heat capacities of gases",
+        "Mean free path, Avogadro's number"
+      ],
+      "subtopics": [
+        "Equation of state of a perfect gas; Work done in compressing gas"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U10",
+      "unit_name": "Oscillations and Waves",
+      "chapter_id": "C1",
+      "chapter_name": "Oscillations",
+      "key_concepts": [
+        "Displacement as a function of time; Periodic functions",
+        "Simple Harmonic Motion (S.H.M)",
+        "Uniform circular motion and its equations"
+      ],
+      "subtopics": [
+        "Periodic motion: Time period, frequency"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U10",
+      "unit_name": "Oscillations and Waves",
+      "chapter_id": "C2",
+      "chapter_name": "Waves",
+      "key_concepts": [
+        "Content not explicitly detailed in provided text excerpt"
+      ],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

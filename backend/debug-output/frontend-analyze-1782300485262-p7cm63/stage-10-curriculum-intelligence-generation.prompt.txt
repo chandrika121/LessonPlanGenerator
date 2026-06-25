@@ -1,0 +1,2253 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Physical World and Measurement",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Units and Measurements"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Kinematics",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Motion in a Straight Line"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Motion in a Plane"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Laws of Motion",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Laws of Motion"
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Work, Energy and Power",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Work, Energy and Power"
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Motion of System of Particles and Rigid Body",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "System of Particles and Rotational Motion"
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Gravitation",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Gravitation"
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "Properties of Bulk Matter",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Mechanical Properties of Solids"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Mechanical Properties of Fluids"
+            },
+            {
+              "chapter_id": "C3",
+              "chapter_name": "Thermal Properties of Matter"
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Thermodynamics",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Thermodynamics"
+            }
+          ]
+        },
+        {
+          "unit_id": "U9",
+          "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Kinetic Theory"
+            }
+          ]
+        },
+        {
+          "unit_id": "U10",
+          "unit_name": "Oscillations and Waves",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Oscillations"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Waves"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Unit–I Electrostatics",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Electric Charges and Fields"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Electrostatic Potential and Capacitance"
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Unit-II Current Electricity",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Current Electricity"
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Moving Charges and Magnetism"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Magnetism and Matter"
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Electromagnetic Induction"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Alternating Current"
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Unit–V Electromagnetic Waves",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Electromagnetic Waves"
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Unit–VI Optics",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Ray Optics and Optical Instruments"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Wave Optics"
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Dual Nature of Radiation and Matter"
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Unit-VIII Atoms and Nuclei",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Atoms"
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Nuclei"
+            }
+          ]
+        },
+        {
+          "unit_id": "U9",
+          "unit_name": "Unit–IX Electronic Devices",
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Materials, Devices and Simple Circuits"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "C1",
+      "title": "Units and Measurements Competencies",
+      "description": "Competencies related to measurement systems, SI units, significant figures, uncertainty determination, dimensional analysis, and their applications.",
+      "competencies": [
+        "Apply fundamental and derived SI units for physical quantities.",
+        "Determine appropriate significant figures in measurements.",
+        "Calculate and express uncertainty in experimental results.",
+        "Perform dimensional analysis to verify equations and derive relationships."
+      ],
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements"
+    },
+    {
+      "code": "C2",
+      "title": "Motion in a Straight Line Competencies",
+      "description": "Competencies related to describing motion using calculus, analyzing uniform/non-uniform motion, interpreting graphs, and applying equations of uniformly accelerated motion.",
+      "competencies": [
+        "Use differentiation and integration concepts to describe linear motion.",
+        "Distinguish between average speed/velocity and instantaneous velocity.",
+        "Analyze motion using velocity-time and position-time graphs.",
+        "Apply graphical and calculus methods for uniformly accelerated motion."
+      ],
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Straight Line"
+    },
+    {
+      "code": "C3",
+      "title": "Motion in a Plane Competencies",
+      "description": "Competencies related to vector operations, resolution of vectors, and analyzing projectile and circular motion.",
+      "competencies": [
+        "Perform addition, subtraction, and scalar multiplication of vectors.",
+        "Resolve vectors into rectangular components using unit vectors.",
+        "Calculate scalar and vector products for physical quantities.",
+        "Analyze projectile motion and uniform circular motion in a plane."
+      ],
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Plane"
+    },
+    {
+      "code": "C4",
+      "title": "Laws of Motion Competencies",
+      "description": "Competencies related to Newton's laws, momentum conservation, impulse, force equilibrium, friction types, and centripetal dynamics.",
+      "competencies": [
+        "Explain inertia and apply Newton's first law in various contexts.",
+        "Relate force, mass, acceleration via Newton's second law and calculate impulse.",
+        "Apply the principle of conservation of linear momentum derived from Newton's third law.",
+        "Analyze equilibrium conditions involving static/kinetic friction and centripetal forces."
+      ],
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion"
+    },
+    {
+      "code": "U4-C1",
+      "title": "Work, Energy and Power Competencies",
+      "description": "Core competencies for Work, Energy and Power.",
+      "competencies": [
+        "Understand the core concepts of Work, Energy and Power.",
+        "Apply key ideas from Work, Energy and Power to solve curriculum-aligned problems.",
+        "Analyze relationships between major concepts in Work, Energy and Power."
+      ],
+      "unit_name": "Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power"
+    },
+    {
+      "code": "U5-C1",
+      "title": "System of Particles and Rotational Motion",
+      "description": "Competencies related to the motion of system of particles, rigid body dynamics, torque, angular momentum, equilibrium, moment of inertia, and comparison between linear and rotational motions.",
+      "competencies": [
+        "Apply conservation of momentum principles to center of mass motion in a system of particles",
+        "Analyze relationships between torque, angular momentum, and their conservation laws",
+        "Evaluate conditions for rigid body equilibrium using equations of rotational motion",
+        "Differentiate linear and rotational kinematic quantities through comparative analysis"
+      ],
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion"
+    },
+    {
+      "code": "U6-C1",
+      "title": "Gravitation",
+      "description": "Competencies covering universal gravitation, variation in acceleration due to gravity, gravitational potential energy, orbital mechanics, and Kepler's laws.",
+      "competencies": [
+        "Apply the Universal Law of Gravitation to calculate forces between celestial bodies",
+        "Determine variations in acceleration due to gravity with altitude and depth",
+        "Calculate gravitational potential energy and potential for satellite systems",
+        "Derive escape speed and orbital velocity using conservation of energy principles"
+      ],
+      "unit_name": "Gravitation",
+      "chapter_name": "Gravitation"
+    },
+    {
+      "code": "U7-C1",
+      "title": "Mechanical Properties of Solids",
+      "description": "Competencies involving elastic behavior, stress-strain relationships, material constants (Young's modulus, Bulk modulus), and energy storage in deformed solids.",
+      "competencies": [
+        "Apply Hooke's Law to determine deformation limits for solid materials",
+        "Calculate Young’s modulus and Bulk modulus from experimental data or problem scenarios",
+        "Analyze the relationship between stress, strain, and elastic potential energy",
+        "Evaluate Poisson's ratio in the context of material deformation"
+      ],
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids"
+    },
+    {
+      "code": "U7-C2",
+      "title": "Mechanical Properties of Fluids",
+      "description": "Competencies addressing fluid dynamics, viscosity, surface tension, pressure variations in fluids, and applications like Bernoulli's theorem.",
+      "competencies": [
+        "Apply Stokes' Law to determine terminal velocity of spherical bodies in viscous media",
+        "Distinguish between streamline and turbulent flow regimes using critical velocity concepts",
+        "Utilize Bernoulli’s Theorem to analyze fluid dynamics problems involving pressure, speed, and height",
+        "Calculate surface tension effects including excess pressure across curved surfaces"
+      ],
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids"
+    },
+    {
+      "code": "U7-C3",
+      "title": "Thermal Properties of Matter",
+      "description": "Competencies related to heat transfer mechanisms, specific heats, latent heat, thermal expansion anomalies, and blackbody radiation laws.",
+      "competencies": [
+        "Explain the phenomenon of anomalous expansion in water and its physical significance",
+        "Apply calorimetry principles using specific heat capacities (Cp, Cv) for energy calculations",
+        "Analyze phase transitions involving latent heat during changes of state",
+        "Evaluate thermal conductivity effects across conduction, convection, and radiation modes"
+      ],
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter"
+    },
+    {
+      "code": "PHYS-XI-U8-C1",
+      "title": "Thermodynamics Fundamentals and Laws",
+      "description": "Analyze thermal equilibrium, state variables, and the application of thermodynamic laws to gaseous processes.",
+      "competencies": [
+        "Explain thermal equilibrium and apply Zeroth law concepts to define temperature.",
+        "Differentiate between heat, work, and internal energy using the First Law of Thermodynamics.",
+        "Analyze reversible/irreversible isothermal and adiabatic gaseous processes."
+      ],
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Thermodynamics"
+    },
+    {
+      "code": "PHYS-XI-U9-C1",
+      "title": "Kinetic Theory of Gases and Molecular Properties",
+      "description": "Derive macroscopic gas properties from microscopic molecular behavior using kinetic theory assumptions.",
+      "competencies": [
+        "Explain the derivation of pressure and temperature based on kinetic theory assumptions.",
+        "Apply the law of equipartition of energy to determine specific heat capacities of gases.",
+        "Calculate RMS speed, mean free path, and utilize Avogadro's number in gas problems."
+      ],
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Kinetic Theory"
+    },
+    {
+      "code": "PHYS-XI-U10-C1",
+      "title": "Simple Harmonic Motion and Periodicity",
+      "description": "Identify periodic functions, define Simple Harmonic Motion (S.H.M), and relate it to uniform circular motion.",
+      "competencies": [
+        "Distinguish between general periodic motion and Simple Harmonic Motion using time period and frequency.",
+        "Formulate displacement as a function of time for S.H.M systems.",
+        "Relate the equations of Uniform Circular Motion to the dynamics of oscillations."
+      ],
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations"
+    },
+    {
+      "code": "PHYS-XI-U10-C2",
+      "title": "Wave Mechanics and Propagation",
+      "description": "Understand the fundamental characteristics of wave motion, including propagation mechanisms and types.",
+      "competencies": [
+        "Describe the basic properties and classification of mechanical waves.",
+        "Analyze the relationship between frequency, wavelength, and wave velocity in different media.",
+        "Explain the phenomenon of superposition and interference in wave systems."
+      ],
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves"
+    },
+    {
+      "code": "PHX12-U1-C01",
+      "title": "Electric Charges and Fields Competencies",
+      "description": "Understanding electric charges, fields, dipoles, and Gauss's theorem applications.",
+      "competencies": [
+        "Apply Coulomb's law and superposition principle to calculate forces in charge systems.",
+        "Analyze the behavior of electric dipoles including torque in uniform electric fields.",
+        "Utilize Gauss's theorem to determine electric field intensity for symmetric charge distributions."
+      ],
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields"
+    },
+    {
+      "code": "PHX12-U1-C02",
+      "title": "Electrostatic Potential and Capacitance Competencies",
+      "description": "Exploring electric potential, equipotential surfaces, and capacitor properties.",
+      "competencies": [
+        "Differentiate between conductors, insulators, and dielectrics regarding polarization effects.",
+        "Calculate equivalent capacitance for series and parallel combinations of capacitors.",
+        "Derive expressions for energy stored in a capacitor using standard formulae."
+      ],
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electrostatic Potential and Capacitance"
+    },
+    {
+      "code": "PHX12-U2-C03",
+      "title": "Current Electricity Competencies",
+      "description": "Mastering concepts of current, resistance, emf, and circuit analysis.",
+      "competencies": [
+        "Explain the relationship between drift velocity, mobility, and Ohm's law in conductors.",
+        "Analyze temperature dependence of resistivity and internal characteristics of cells.",
+        "Apply Kirchhoff's rules to solve complex circuits including Wheatstone bridge configurations."
+      ],
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity"
+    },
+    {
+      "code": "PHX12-U3-C04",
+      "title": "Moving Charges and Magnetism Competencies",
+      "description": "Investigating magnetic fields generated by currents and forces on moving charges.",
+      "competencies": [
+        "Apply Biot-Savart law and Ampere's circuital law to calculate magnetic fields of current-carrying wires.",
+        "Determine the force exerted on a charge or conductor in an external magnetic field.",
+        "Understand the principle of converting a moving coil galvanometer into ammeters and voltmeters."
+      ],
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Moving Charges and Magnetism"
+    },
+    {
+      "code": "PHX12-U3-C05",
+      "title": "Magnetism and Matter Competencies",
+      "description": "Examining properties of magnetic materials and their behavior in fields.",
+      "competencies": [
+        "Classify magnetic materials based on qualitative properties such as susceptibility and permeability.",
+        "Model a bar magnet as an equivalent solenoid to explain its magnetic field lines.",
+        "Correlate the macroscopic magnetic moments of matter with atomic dipole alignments."
+      ],
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Magnetism and Matter"
+    },
+    {
+      "code": "PH-XII-U4-C1",
+      "title": "Electromagnetic Induction Competencies",
+      "description": "Mastering the principles of electromagnetic induction and its applications.",
+      "competencies": [
+        "Explain Faraday's Law of Electromagnetic Induction",
+        "Apply Lenz's Law to determine direction of induced current",
+        "Analyze self-inductance and mutual inductance phenomena"
+      ],
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Electromagnetic Induction"
+    },
+    {
+      "code": "PH-XII-U4-C2",
+      "title": "Alternating Current Competencies",
+      "description": "Understanding the fundamentals of alternating currents in circuits.",
+      "competencies": [
+        "Derive expressions for instantaneous and RMS values of AC",
+        "Analyze behavior of L, C, and R components in AC circuits",
+        "Calculate resonance frequency and Q-factor in series LC circuits"
+      ],
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Alternating Current"
+    },
+    {
+      "code": "PH-XII-U5-C1",
+      "title": "Electromagnetic Waves Competencies",
+      "description": "Exploring the nature, properties, and spectrum of electromagnetic waves.",
+      "competencies": [
+        "Describe the transverse nature of electromagnetic waves",
+        "Explain the relationship between electric and magnetic fields in EM waves",
+        "Identify regions of the electromagnetic spectrum based on frequency"
+      ],
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_name": "Electromagnetic Waves"
+    },
+    {
+      "code": "PH-XII-U6-C1",
+      "title": "Ray Optics and Optical Instruments Competencies",
+      "description": "Applying laws of reflection, refraction, and optical instrument principles.",
+      "competencies": [
+        "Apply Snell's Law to solve problems involving refraction at spherical surfaces",
+        "Derive the lens maker's formula for thin lenses",
+        "Explain the working principle of microscopes and telescopes"
+      ],
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments"
+    },
+    {
+      "code": "PH-XII-U6-C2",
+      "title": "Wave Optics Competencies",
+      "description": "Investigating wave phenomena such as interference, diffraction, and polarization.",
+      "competencies": [
+        "Explain Young's double-slit experiment and derive fringe width formula",
+        "Analyze conditions for constructive and destructive interference",
+        "Describe the phenomenon of polarization and its applications"
+      ],
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Wave Optics"
+    },
+    {
+      "code": "PH-XII-U7-C1",
+      "title": "Dual Nature of Radiation and Matter",
+      "description": "Understanding the photoelectric effect and wave-particle duality.",
+      "competencies": [
+        "Explain the experimental evidence for the particle nature of light through the photoelectric effect.",
+        "Describe de Broglie's hypothesis regarding the wave nature of matter particles.",
+        "Analyze the relationship between photon energy, frequency, and work function."
+      ],
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_name": "Dual Nature of Radiation and Matter"
+    },
+    {
+      "code": "PH-XII-U8-C1",
+      "title": "Atoms",
+      "description": "Exploring atomic structure, models, and spectral series.",
+      "competencies": [
+        "Evaluate Rutherford's alpha-particle scattering experiment and its implications for nuclear model.",
+        "Apply Bohr's postulates to explain the stability of atoms and hydrogen spectrum.",
+        "Identify different spectral series (Lyman, Balmer, Paschen) derived from electron transitions."
+      ],
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Atoms"
+    },
+    {
+      "code": "PH-XII-U8-C2",
+      "title": "Nuclei",
+      "description": "Investigating nuclear properties, binding energy, and reactions.",
+      "competencies": [
+        "Calculate mass defect and binding energy per nucleon to explain nuclear stability.",
+        "Differentiate between nuclear fission and fusion processes with real-world examples.",
+        "Analyze the characteristics of radioactive decay laws and half-life."
+      ],
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Nuclei"
+    },
+    {
+      "code": "PH-XII-U9-C1",
+      "title": "Materials, Devices and Simple Circuits",
+      "description": "Studying semiconductor physics and electronic device applications.",
+      "competencies": [
+        "Distinguish between intrinsic and extrinsic semiconductors based on doping types.",
+        "Explain the working principles of p-n junction diodes in rectification circuits.",
+        "Design simple logic gate combinations using basic transistor switches."
+      ],
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits"
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      "Class XI/XII Theory: Max Marks 70, Time 3 hours",
+      "Class XI/XII Practical: Max Marks 30, Time 2-3 hours (Visually Impaired: 2 hours)",
+      "Gross Total: 100"
+    ],
+    "question_paper_design": [
+      {
+        "typology": "Remembering",
+        "description": "Exhibit memory of previously learned material by recalling facts, terms, basic concepts, and answers.",
+        "marks": 27,
+        "percentage": "38%"
+      },
+      {
+        "typology": "Understanding",
+        "description": "Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas.",
+        "marks": null,
+        "percentage": null
+      },
+      {
+        "typology": "Applying",
+        "description": "Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way.",
+        "marks": 22,
+        "percentage": "32%"
+      },
+      {
+        "typology": "Analysing/Evaluating/Creating",
+        "description": "Examine and break information into parts; Present and defend opinions by making judgments about information, validity of ideas, or quality of work based on a set of criteria. Compile information together in a different way.",
+        "marks": 21,
+        "percentage": "30%"
+      }
+    ],
+    "competency_weightage": [
+      {
+        "class_level": "Class XI/XII",
+        "theory_marks": 70,
+        "practical_marks": 30,
+        "total_marks": 100
+      },
+      {
+        "class_level": "Visually Impaired (XI/XII)",
+        "identification_familiarity": 5,
+        "written_test": 10,
+        "practical_record": 5,
+        "viva": 10,
+        "total_marks": 30,
+        "duration_hours": 2
+      }
+    ],
+    "bloom_levels": [
+      {
+        "level_1": "Remembering (Recall facts)",
+        "weightage_percentage": 38
+      },
+      {
+        "level_2": "Understanding (Interpret/Describe)",
+        "weightage_percentage": null
+      },
+      {
+        "level_3": "Applying (Solve problems)",
+        "weightage_percentage": 32
+      },
+      {
+        "levels_combined": "Analysing, Evaluating, Creating",
+        "weightage_percentage": 30
+      }
+    ],
+    "internal_assessment": [
+      "Practical Record: Experiments and Activities (5 Marks)",
+      "One Activity from any section (3 Marks)"
+    ],
+    "practical_assessment": {
+      "class_xi_xii_standard": {
+        "duration_hours": 2,
+        "max_marks": 30,
+        "components": [
+          {
+            "component": "Two experiments one from each section",
+            "marks": 14
+          },
+          {
+            "component": "Practical record (experiment and activities)",
+            "marks": 5
+          },
+          {
+            "component": "One activity from any section",
+            "marks": 3
+          },
+          {
+            "component": "Investigatory Project",
+            "marks": 3
+          },
+          {
+            "component": "Viva on experiments, activities and project",
+            "marks": 5
+          }
+        ]
+      },
+      "visually_impaired_examination": {
+        "duration_hours": 2,
+        "max_marks": 30,
+        "components": [
+          {
+            "component": "Identification/Familiarity with the apparatus",
+            "marks": 5
+          },
+          {
+            "component": "Written test (based on given/prescribed practicals)",
+            "description": "15 questions, answer any 10. Duration: 30 mins.",
+            "marks": 10
+          },
+          {
+            "component": "Practical Record",
+            "description": "At least five experiments recorded and signed by internal examiner.",
+            "marks": 5
+          },
+          {
+            "component": "Viva",
+            "marks": 10
+          }
+        ]
+      }
+    },
+    "project_assessment": [
+      {
+        "type": "Investigatory Project (Standard Students)",
+        "description": "Report of the project carried out by students.",
+        "marks": 3,
+        "examples": [
+          "Study various factors on which internal resistance/EMF of a cell depends",
+          "Variations in current flowing in circuit containing LDR due to variation in power/distance of lamp",
+          "Find refractive indices of water/oil using plane mirror and lens",
+          "Investigate relation between output/input voltage and turns ratio in transformer",
+          "Dependence of angle of deviation on angle of incidence using hollow prism",
+          "Estimate charge induced on Styrofoam balls using Coulomb's law",
+          "Study factor on which self-inductance depends",
+          "Study earth's magnetic field using compass needle-bar magnet"
+        ]
+      },
+      {
+        "type": "Project Record (Visually Impaired)",
+        "description": "Maintain practical file with at least five experiments recorded.",
+        "marks_included_in_viva_record_component": true,
+        "format_requirements": [
+          "Aim",
+          "Apparatus required",
+          "Simple theory",
+          "Procedure",
+          "Related practical skills",
+          "Precautions"
+        ]
+      }
+    ]
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "topic": "SI Units, Significant Figures, Uncertainty, Dimensional Analysis",
+      "outcomes": [
+        "Apply fundamental and derived SI units for physical quantities.",
+        "Determine appropriate significant figures in measurements.",
+        "Calculate and express uncertainty in experimental results.",
+        "Perform dimensional analysis to verify equations and derive relationships."
+      ]
+    },
+    {
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Straight Line",
+      "topic": "Linear Motion, Calculus Applications, Graphs, Equations of Motion",
+      "outcomes": [
+        "Use differentiation and integration concepts to describe linear motion.",
+        "Distinguish between average speed/velocity and instantaneous velocity.",
+        "Analyze motion using velocity-time and position-time graphs.",
+        "Apply graphical and calculus methods for uniformly accelerated motion."
+      ]
+    },
+    {
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Plane",
+      "topic": "Vector Operations, Projectile Motion, Circular Motion",
+      "outcomes": [
+        "Perform addition, subtraction, and scalar multiplication of vectors.",
+        "Resolve vectors into rectangular components using unit vectors.",
+        "Calculate scalar and vector products for physical quantities.",
+        "Analyze projectile motion and uniform circular motion in a plane."
+      ]
+    },
+    {
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "topic": "Newton's Laws, Momentum, Impulse, Friction, Centripetal Force",
+      "outcomes": [
+        "Explain inertia and apply Newton's first law in various contexts.",
+        "Relate force, mass, acceleration via Newton's second law and calculate impulse.",
+        "Apply the principle of conservation of linear momentum derived from Newton's third law.",
+        "Analyze equilibrium conditions involving static/kinetic friction and centripetal forces."
+      ]
+    },
+    {
+      "unit_name": "Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power",
+      "topic": "Core Concepts of Work, Energy, and Power",
+      "outcomes": [
+        "Understand the core concepts of Work, Energy and Power.",
+        "Apply key ideas from Work, Energy and Power to solve curriculum-aligned problems.",
+        "Analyze relationships between major concepts in Work, Energy and Power."
+      ]
+    },
+    {
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion",
+      "topic": "Center of Mass, Torque, Angular Momentum, Equilibrium, Moment of Inertia",
+      "outcomes": [
+        "Apply conservation of momentum principles to center of mass motion in a system of particles.",
+        "Analyze relationships between torque, angular momentum, and their conservation laws.",
+        "Evaluate conditions for rigid body equilibrium using equations of rotational motion.",
+        "Differentiate linear and rotational kinematic quantities through comparative analysis."
+      ]
+    },
+    {
+      "unit_name": "Gravitation",
+      "chapter_name": "Gravitation",
+      "topic": "Universal Gravitation, Gravity Variation, Potential Energy, Orbital Mechanics",
+      "outcomes": [
+        "Apply the Universal Law of Gravitation to calculate forces between celestial bodies.",
+        "Determine variations in acceleration due to gravity with altitude and depth.",
+        "Calculate gravitational potential energy and potential for satellite systems.",
+        "Derive escape speed and orbital velocity using conservation of energy principles."
+      ]
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids",
+      "topic": "Elastic Behavior, Stress-Strain, Material Constants, Energy Storage",
+      "outcomes": [
+        "Apply Hooke's Law to determine deformation limits for solid materials.",
+        "Calculate Young’s modulus and Bulk modulus from experimental data or problem scenarios.",
+        "Analyze the relationship between stress, strain, and elastic potential energy.",
+        "Evaluate Poisson's ratio in the context of material deformation."
+      ]
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids",
+      "topic": "Fluid Dynamics, Viscosity, Surface Tension, Bernoulli's Theorem",
+      "outcomes": [
+        "Apply Stokes' Law to determine terminal velocity of spherical bodies in viscous media.",
+        "Distinguish between streamline and turbulent flow regimes using critical velocity concepts.",
+        "Utilize Bernoulli’s Theorem to analyze fluid dynamics problems involving pressure, speed, and height.",
+        "Calculate surface tension effects including excess pressure across curved surfaces."
+      ]
+    },
+    {
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "topic": "Heat Transfer, Specific Heats, Latent Heat, Thermal Expansion, Blackbody Radiation",
+      "outcomes": [
+        "Explain the phenomenon of anomalous expansion in water and its physical significance.",
+        "Apply calorimetry principles using specific heat capacities (Cp, Cv) for energy calculations.",
+        "Analyze phase transitions involving latent heat during changes of state.",
+        "Evaluate thermal conductivity effects across conduction, convection, and radiation modes."
+      ]
+    },
+    {
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Thermodynamics",
+      "topic": "Thermal Equilibrium, State Variables, Thermodynamic Laws, Gaseous Processes",
+      "outcomes": [
+        "Explain thermal equilibrium and apply Zeroth law concepts to define temperature.",
+        "Differentiate between heat, work, and internal energy using the First Law of Thermodynamics.",
+        "Analyze reversible/irreversible isothermal and adiabatic gaseous processes."
+      ]
+    },
+    {
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Kinetic Theory",
+      "topic": "Microscopic Molecular Behavior, Pressure, Temperature, Equipartition Energy",
+      "outcomes": [
+        "Explain the derivation of pressure and temperature based on kinetic theory assumptions.",
+        "Apply the law of equipartition of energy to determine specific heat capacities of gases.",
+        "Calculate RMS speed, mean free path, and utilize Avogadro's number in gas problems."
+      ]
+    },
+    {
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations",
+      "topic": "Periodic Motion, Simple Harmonic Motion (S.H.M), Uniform Circular Motion",
+      "outcomes": [
+        "Distinguish between general periodic motion and Simple Harmonic Motion using time period and frequency.",
+        "Formulate displacement as a function of time for S.H.M systems.",
+        "Relate the equations of Uniform Circular Motion to the dynamics of oscillations."
+      ]
+    },
+    {
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "topic": "Wave Characteristics, Propagation, Superposition, Interference",
+      "outcomes": [
+        "Describe the basic properties and classification of mechanical waves.",
+        "Analyze the relationship between frequency, wavelength, and wave velocity in different media.",
+        "Explain the phenomenon of superposition and interference in wave systems."
+      ]
+    },
+    {
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "topic": "Electric Charges and Fields Competencies",
+      "outcomes": [
+        "Apply Coulomb's law and superposition principle to calculate forces in charge systems.",
+        "Analyze the behavior of electric dipoles including torque in uniform electric fields.",
+        "Utilize Gauss's theorem to determine electric field intensity for symmetric charge distributions."
+      ]
+    },
+    {
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electrostatic Potential and Capacitance",
+      "topic": "Electrostatic Potential and Capacitance Competencies",
+      "outcomes": [
+        "Differentiate between conductors, insulators, and dielectrics regarding polarization effects.",
+        "Calculate equivalent capacitance for series and parallel combinations of capacitors.",
+        "Derive expressions for energy stored in a capacitor using standard formulae."
+      ]
+    },
+    {
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "topic": "Current Electricity Competencies",
+      "outcomes": [
+        "Explain the relationship between drift velocity, mobility, and Ohm's law in conductors.",
+        "Analyze temperature dependence of resistivity and internal characteristics of cells.",
+        "Apply Kirchhoff's rules to solve complex circuits including Wheatstone bridge configurations."
+      ]
+    },
+    {
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Moving Charges and Magnetism",
+      "topic": "Moving Charges and Magnetism Competencies",
+      "outcomes": [
+        "Apply Biot-Savart law and Ampere's circuital law to calculate magnetic fields of current-carrying wires.",
+        "Determine the force exerted on a charge or conductor in an external magnetic field.",
+        "Understand the principle of converting a moving coil galvanometer into ammeters and voltmeters."
+      ]
+    },
+    {
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Magnetism and Matter",
+      "topic": "Magnetism and Matter Competencies",
+      "outcomes": [
+        "Classify magnetic materials based on qualitative properties such as susceptibility and permeability.",
+        "Model a bar magnet as an equivalent solenoid to explain its magnetic field lines.",
+        "Correlate the macroscopic magnetic moments of matter with atomic dipole alignments."
+      ]
+    },
+    {
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Electromagnetic Induction",
+      "topic": "Electromagnetic Induction Competencies",
+      "outcomes": [
+        "Explain Faraday's Law of Electromagnetic Induction",
+        "Apply Lenz's Law to determine direction of induced current",
+        "Analyze self-inductance and mutual inductance phenomena"
+      ]
+    },
+    {
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Alternating Current",
+      "topic": "Alternating Current Competencies",
+      "outcomes": [
+        "Derive expressions for instantaneous and RMS values of AC",
+        "Analyze behavior of L, C, and R components in AC circuits",
+        "Calculate resonance frequency and Q-factor in series LC circuits"
+      ]
+    },
+    {
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_name": "Electromagnetic Waves",
+      "topic": "Electromagnetic Waves Competencies",
+      "outcomes": [
+        "Describe the transverse nature of electromagnetic waves",
+        "Explain the relationship between electric and magnetic fields in EM waves",
+        "Identify regions of the electromagnetic spectrum based on frequency"
+      ]
+    },
+    {
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "topic": "Ray Optics and Optical Instruments Competencies",
+      "outcomes": [
+        "Apply Snell's Law to solve problems involving refraction at spherical surfaces",
+        "Derive the lens maker's formula for thin lenses",
+        "Explain the working principle of microscopes and telescopes"
+      ]
+    },
+    {
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Wave Optics",
+      "topic": "Wave Optics Competencies",
+      "outcomes": [
+        "Explain Young's double-slit experiment and derive fringe width formula",
+        "Analyze conditions for constructive and destructive interference",
+        "Describe the phenomenon of polarization and its applications"
+      ]
+    },
+    {
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_name": "Dual Nature of Radiation and Matter",
+      "topic": "Dual Nature of Radiation and Matter Competencies",
+      "outcomes": [
+        "Explain the experimental evidence for the particle nature of light through the photoelectric effect.",
+        "Describe de Broglie's hypothesis regarding the wave nature of matter particles.",
+        "Analyze the relationship between photon energy, frequency, and work function."
+      ]
+    },
+    {
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Atoms",
+      "topic": "Atoms Competencies",
+      "outcomes": [
+        "Evaluate Rutherford's alpha-particle scattering experiment and its implications for nuclear model.",
+        "Apply Bohr's postulates to explain the stability of atoms and hydrogen spectrum.",
+        "Identify different spectral series (Lyman, Balmer, Paschen) derived from electron transitions."
+      ]
+    },
+    {
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Nuclei",
+      "topic": "Nuclei Competencies",
+      "outcomes": [
+        "Calculate mass defect and binding energy per nucleon to explain nuclear stability.",
+        "Differentiate between nuclear fission and fusion processes with real-world examples.",
+        "Analyze the characteristics of radioactive decay laws and half-life."
+      ]
+    },
+    {
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits",
+      "topic": "Materials, Devices and Simple Circuits Competencies",
+      "outcomes": [
+        "Distinguish between intrinsic and extrinsic semiconductors based on doping types.",
+        "Explain the working principles of p-n junction diodes in rectification circuits.",
+        "Design simple logic gate combinations using basic transistor switches."
+      ]
+    }
+  ]
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [
+    {
+      "type": "activity",
+      "title": "To make a paper scale of given least count, e.g., 0.2cm, 0.5 cm.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Class XI - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To determine mass of a given body using a metre scale by principle of moments.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Class XI - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To plot a graph for a given set of data, with proper choice of scales and error bars.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Class XI - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To measure the force of limiting friction for rolling of a roller on a horizontal plane.",
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "details": "Class XI - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To study the variation in range of a projectile with angle of projection.",
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Plane",
+      "details": "Class XI - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To study the conservation of energy of a ball rolling down on an inclined plane (using a double inclined plane).",
+      "unit_name": "Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power",
+      "details": "Class XI - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To study dissipation of energy of a simple pendulum by plotting a graph between square of amplitude and time.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations",
+      "details": "Class XI - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To observe change of state and plot a cooling curve for molten wax.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "details": "Class XI - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To observe and explain the effect of heating on a bi-metallic strip.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "details": "Class XI - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To note the change in level of liquid in a container on heating and interpret the observations.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "details": "Class XI - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To study the effect of detergent on surface tension of water by observing capillary rise.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids",
+      "details": "Class XI - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To study the factors affecting the rate of loss of heat of a liquid.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "details": "Class XI - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To study the effect of load on depression of a suitably clamped metre scale loaded at (i) its end (ii) in the middle.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids",
+      "details": "Class XI - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To observe the decrease in pressure with increase in velocity of a fluid.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids",
+      "details": "Class XI - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To measure the resistance and impedance of an inductor with or without iron core.",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "details": "Class XII - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To measure resistance, voltage (AC/DC), current (AC) and check continuity of a given circuit using multimeter.",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "details": "Class XII - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To assemble a household circuit comprising three bulbs, three (on/off) switches, a fuse and a power source.",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "details": "Class XII - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To assemble the components of a given electrical circuit.",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "details": "Class XII - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To study the variation in potential drop with length of a wire for a steady current.",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "details": "Class XII - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To draw the diagram of a given open circuit comprising at least a battery, resistor/rheostat, key, ammeter and voltmeter. Mark the components that are not connected in proper order and correct the circuit and also the circuit diagram.",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "details": "Class XII - Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To identify a diode, an LED, a resistor and a capacitor from a mixed collection of such items.",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits",
+      "details": "Class XII - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "Use of multimeter to see the unidirectional flow of current in case of a diode and an LED and check whether a given electronic component (e.g., diode) is in working order.",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits",
+      "details": "Class XII - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To study effect of intensity of light (by varying distance of the source) on an LDR.",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits",
+      "details": "Class XII - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To observe refraction and lateral deviation of a beam of light incident obliquely on a glass slab.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To observe diffraction of light due to a thin slit.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Wave Optics",
+      "details": "Class XII - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To study the nature and size of the image formed by a (i) convex lens, or (ii) concave mirror, on a screen by using a candle and a screen (for different distances of the candle from the lens/mirror).",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To obtain a lens combination with the specified focal length by using two lenses from the given set of lenses.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    }
+  ],
+  "projects": [
+    {
+      "title": "To study various factors on which the internal resistance/EMF of a cell depends.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Class XII - Investigatory Project"
+    },
+    {
+      "title": "To study the variations in current flowing in a circuit containing an LDR because of a variation in (a) the power of the incandescent lamp, used to 'illuminate' the LDR (keeping all the lamps at a fixed distance). (b) the distance of an incandescent lamp (of fixed power) used to 'illuminate' the LDR.",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits",
+      "details": "Class XII - Investigatory Project"
+    },
+    {
+      "title": "To find the refractive indices of (a) water (b) oil (transparent) using a plane mirror, an equiconvex lens (made from a glass of known refractive index) and an adjustable object needle.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Investigatory Project"
+    },
+    {
+      "title": "To investigate the relation between the ratio of (i) output and input voltage and (ii) number of turns in the secondary coil and primary coil of a self-designed transformer.",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Alternating Current",
+      "details": "Class XII - Investigatory Project"
+    },
+    {
+      "title": "To investigate the dependence of the angle of deviation on the angle of incidence using a hollow prism filled one by one, with different transparent fluids.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Investigatory Project"
+    },
+    {
+      "title": "To estimate the charge induced on each one of the two identical Styrofoam (or pith) balls suspended in a vertical plane by making use of Coulomb's law.",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields",
+      "details": "Class XII - Investigatory Project"
+    },
+    {
+      "title": "To study the factor on which the self-inductance of a coil depends by observing the effect of this coil, when put in series with a resistor/(bulb) in a circuit fed up by an A.C. source of adjustable frequency.",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Alternating Current",
+      "details": "Class XII - Investigatory Project"
+    },
+    {
+      "title": "To study the earth's magnetic field using a compass needle -bar magnet by plotting magnetic field lines and tangent galvanometer.",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Magnetism and Matter",
+      "details": "Class XII - Investigatory Project"
+    }
+  ],
+  "practicals": [
+    {
+      "title": "To measure diameter of a small spherical/cylindrical body and to measure internal diameter and depth of a given beaker/calorimeter using Vernier Callipers and hence find its volume.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To measure diameter of a given wire and thickness of a given sheet using screw gauge.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To determine volume of an irregular lamina using screw gauge.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To determine radius of curvature of a given spherical surface by a spherometer.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To determine the mass of two different objects using a beam balance.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To find the weight of a given body using parallelogram law of vectors.",
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "Using a simple pendulum, plot its graph and use it to find the effective length of second's pendulum.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To study variation of time period of a simple pendulum of a given length by taking bobs of same size but different masses and interpret the result.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To study the relationship between force of limiting friction and normal reaction and to find the co- efficient of friction between a block and a horizontal surface.",
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To find the downward force, along an inclined plane, acting on a roller due to gravitational pull of the earth and study its relationship with the angle of inclination θ by plotting graph between force and Sinθ.",
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "details": "Class XI - Section A"
+    },
+    {
+      "title": "To determine Young's modulus of elasticity of the material of a given wire.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To find the force constant of a helical spring by plotting a graph between load and extension.",
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To study the variation in volume with pressure for a sample of air at constant temperature by plotting graphs between P and V, and between P and 1/V.",
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Kinetic Theory",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To determine the surface tension of water by capillary rise method.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To determine the coefficient of viscosity of a given viscous liquid by measuring terminal velocity of a given spherical body.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To study the relationship between the temperature of a hot body and time by plotting a cooling curve.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To determine specific heat capacity of a given solid by method of mixtures.",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To study the relation between frequency and length of a given wire under constant tension using sonometer.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To study the relation between the length of a given wire and tension for constant frequency using sonometer.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To find the speed of sound in air at room temperature using a resonance tube by two resonance positions.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "details": "Class XI - Section B"
+    },
+    {
+      "title": "To determine resistivity of two / three wires by plotting a graph for potential difference versus current.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Class XII - Section A"
+    },
+    {
+      "title": "To find resistance of a given wire / standard resistor using metre bridge.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Class XII - Section A"
+    },
+    {
+      "title": "To verify the laws of combination (series) of resistances using a metre bridge OR To verify the laws of combination (parallel) of resistances using a metre bridge.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Class XII - Section A"
+    },
+    {
+      "title": "To determine resistance of a galvanometer by half-deflection method and to find its figure of merit.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Class XII - Section A"
+    },
+    {
+      "title": "To convert the given galvanometer (of known resistance and figure of merit) into a voltmeter of desired range and to verify the same OR To convert the given galvanometer (of known resistance and figure of merit) into an ammeter of desired range and to verify the same.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Class XII - Section A"
+    },
+    {
+      "title": "To find the frequency of AC mains with a sonometer.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "details": "Class XII - Section A"
+    },
+    {
+      "title": "To find the value of v for different values of u in case of a concave mirror and to find the focal length.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To find the focal length of a convex mirror, using a convex lens.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To find the focal length of a convex lens by plotting graphs between u and v or between 1/u and 1/v.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To find the focal length of a concave lens, using a convex lens.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To determine angle of minimum deviation for a given prism by plotting a graph between angle of incidence and angle of deviation.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To determine refractive index of a glass slab using a travelling microscope.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To find the refractive index of a liquid using convex lens and plane mirror.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To find the refractive index of a liquid using a concave mirror and a plane mirror.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To draw the I-V characteristic curve for a p-n junction diode in forward and reverse bias.",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits",
+      "details": "Class XII - Section B"
+    },
+    {
+      "title": "To measure diameter of a small spherical/cylindrical body using vernier calipers.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "To measure the internal diameter and depth of a given beaker/calorimeter using vernier calipers and hence find its volume.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "To measure diameter of given wire using screw gauge.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "To measure thickness of a given sheet using screw gauge.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "To determine the mass of a given object using a beam balance.",
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "To find the weight of given body using the parallelogram law of vectors.",
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "Using a simple pendulum plot L-T and graphs. Hence find the effective length of second's pendulum using appropriate length values.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "To find the force constant of given helical spring by plotting a graph between load and extension.",
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "(i) To study the relation between frequency and length of a given wire under constant tension using a sonometer. (ii) To study the relation between the length of a given wire and tension, for constant frequency, using a sonometer.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "To find the speed of sound in air, at room temperature, using a resonance tube, by observing the two resonance positions.",
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves",
+      "details": "Visually Impaired - Class XI"
+    },
+    {
+      "title": "To determine the resistance per cm of a given wire by plotting a graph between voltage and current.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Visually Impaired - Class XII"
+    },
+    {
+      "title": "To verify the laws of combination (series/parallel combination) of resistances by Ohm's law.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Visually Impaired - Class XII"
+    },
+    {
+      "title": "To find the resistance of a given wire / standard resistor using a meter bridge.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Visually Impaired - Class XII"
+    },
+    {
+      "title": "To determine the resistance of a galvanometer by half deflection method.",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity",
+      "details": "Visually Impaired - Class XII"
+    },
+    {
+      "title": "To identify a resistor, capacitor, inductor and diode from a mixed collection of such items.",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits",
+      "details": "Visually Impaired - Class XII"
+    },
+    {
+      "title": "To observe the difference between (i) a convex lens and a concave lens (ii) a convex mirror and a concave mirror and to estimate the likely difference between the power of two given convex /concave lenses.",
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "details": "Visually Impaired - Class XII"
+    },
+    {
+      "title": "To design an inductor coil and to know the effect of (i) change in the number of turns (ii) Introduction of ferromagnetic material as its core material on the inductance of the coil.",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Alternating Current",
+      "details": "Visually Impaired - Class XII"
+    },
+    {
+      "title": "To design a (i) step up (ii) step down transformer on a given core and know the relation between its input and output voltages.",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Alternating Current",
+      "details": "Visually Impaired - Class XII"
+    }
+  ]
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

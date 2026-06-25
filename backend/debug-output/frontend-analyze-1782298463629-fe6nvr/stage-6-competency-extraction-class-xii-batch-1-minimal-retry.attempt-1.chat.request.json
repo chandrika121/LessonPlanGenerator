@@ -1,0 +1,33 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "competency_groups": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "competencies": [
+          ""
+        ],
+        "unit_name": "",
+        "chapter_name": ""
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 6: Competency Extraction - Class XII - Batch 1 - Minimal Retry\n\nReturn valid JSON only.\n\nReturn exactly one competency_group per input chapter.\n\nUse only the given subject, class, unit name, chapter name, key_concepts, and subtopics.\n\nDo not omit any input chapter.\n\nDo not create more than one competency_group for the same chapter.\n\nLimit competencies to exactly 3 concise items per chapter.\n\nBatch payload:\n{\n  \"class_name\": \"Class XII\",\n  \"subject\": \"Physics\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit–I Electrostatics\"\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit-II Current Electricity\"\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit-III Magnetic Effects of Current and Magnetism\"\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit–I Electrostatics\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Electric Charges and Fields\",\n      \"key_concepts\": [\n        \"Electric dipole and torque in uniform field\",\n        \"Gauss's law for symmetric distributions (wire, plane, shell)\"\n      ],\n      \"subtopics\": [\n        \"Conservation of charge, Force between point charges, Continuous charge distribution\",\n        \"Field due to point charge/dipole/infinite wire/plane/shell, Gauss's theorem applications\"\n      ],\n      \"topics\": [\n        \"Coulomb's Law and Superposition Principle\",\n        \"Electric Field and Flux\"\n      ]\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit–I Electrostatics\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Electrostatic Potential and Capacitance\",\n      \"key_concepts\": [\n        \"Energy stored in a capacitor (formulae only)\",\n        \"Dielectrics and electric polarization\"\n      ],\n      \"subtopics\": [\n        \"Potential due to point charge/dipole, Equipotential surfaces, Potential energy of systems\",\n        \"Conductors/Insulators, Capacitance combinations (series/parallel), Parallel plate capacitor with dielectric\"\n      ],\n      \"topics\": [\n        \"Electric Potential and Energy\",\n        \"Capacitors and Dielectrics\"\n      ]\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit-II Current Electricity\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Current Electricity\",\n      \"key_concepts\": [\n        \"V-I characteristics (linear and non-linear)\",\n        \"Kirchhoff's rules applications\"\n      ],\n      \"subtopics\": [\n        \"Current, Drift velocity, Mobility, Resistivity/Conductivity, Temperature dependence\",\n        \"Internal resistance, EMF vs PD, Cell combinations, Wheatstone bridge\"\n      ],\n      \"topics\": [\n        \"Drift of Charges and Ohm's Law\",\n        \"Circuits and Kirchhoff's Rules\"\n      ]\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit-III Magnetic Effects of Current and Magnetism\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Moving Charges and Magnetism\",\n      \"key_concepts\": [\n        \"Moving coil galvanometer: sensitivity and conversion to ammeter/voltmeter\",\n        \"Definition of ampere via force between conductors\"\n      ],\n      \"subtopics\": [\n        \"Oersted's experiment, Biot-Savart law (circular loop), Ampere's law (wire/solenoid)\",\n        \"Force on moving charge and current-carrying conductor\",\n        \"Torque on current loop, Magnetic dipole moment\"\n      ],\n      \"topics\": [\n        \"Magnetic Field Sources\"\n      ]\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit-III Magnetic Effects of Current and Magnetism\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Magnetism and Matter\",\n      \"key_concepts\": [],\n      \"subtopics\": [\n        \"Bar magnet as equivalent solenoid (qualitative)\"\n      ],\n      \"topics\": [\n        \"Properties of Magnets\"\n      ]\n    }\n  ]\n}\n\nTarget schema:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -1,0 +1,388 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8B - Class XII
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XII",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit–I Electrostatics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electric Charges and Fields"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Electrostatic Potential and Capacitance"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit-II Current Electricity",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Current Electricity"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Moving Charges and Magnetism"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Magnetism and Matter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electromagnetic Induction"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Alternating Current"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electromagnetic Waves"
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Unit–VI Optics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Ray Optics and Optical Instruments"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Wave Optics"
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Dual Nature of Radiation and Matter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Atoms"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Nuclei"
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Materials, Devices and Simple Circuits"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_id": "C1",
+      "chapter_name": "Electric Charges and Fields"
+    },
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_id": "C2",
+      "chapter_name": "Electrostatic Potential and Capacitance"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_id": "C1",
+      "chapter_name": "Current Electricity"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_id": "C1",
+      "chapter_name": "Moving Charges and Magnetism"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_id": "C2",
+      "chapter_name": "Magnetism and Matter"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_id": "C1",
+      "chapter_name": "Electromagnetic Induction"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_id": "C2",
+      "chapter_name": "Alternating Current"
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_id": "C1",
+      "chapter_name": "Electromagnetic Waves"
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Unit–VI Optics",
+      "chapter_id": "C1",
+      "chapter_name": "Ray Optics and Optical Instruments"
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Unit–VI Optics",
+      "chapter_id": "C2",
+      "chapter_name": "Wave Optics"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_id": "C1",
+      "chapter_name": "Dual Nature of Radiation and Matter"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_id": "C1",
+      "chapter_name": "Atoms"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_id": "C2",
+      "chapter_name": "Nuclei"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_id": "C1",
+      "chapter_name": "Materials, Devices and Simple Circuits"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "PHX12-U1-C01",
+      "title": "Electric Charges and Fields Competencies",
+      "description": "Mastering fundamental electrostatic principles including charge conservation, Coulomb's law, electric fields from various distributions, dipole behavior, and Gauss's theorem applications.",
+      "competencies": [
+        "Apply superposition principle to calculate net force on charges in a system."
+      ],
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields"
+    },
+    {
+      "code": "PHX12-U1-C02",
+      "title": "Electrostatic Potential and Capacitance Competencies",
+      "description": "Understanding electric potential, equipotential surfaces, energy storage in capacitors, and the behavior of dielectrics.",
+      "competencies": [
+        "Analyze series and parallel combinations of capacitors to determine equivalent capacitance."
+      ],
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electrostatic Potential and Capacitance"
+    },
+    {
+      "code": "PHX12-U2-C03",
+      "title": "Current Electricity Competencies",
+      "description": "Exploring the flow of electric current, resistance characteristics, Ohm's law applications, and circuit analysis using Kirchhoff's rules.",
+      "competencies": [
+        "Utilize Kirchhoff's laws to solve complex electrical circuits."
+      ],
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity"
+    },
+    {
+      "code": "PHX12-U3-C04",
+      "title": "Moving Charges and Magnetism Competencies",
+      "description": "Investigating the magnetic effects of electric currents, forces on moving charges, and the operation of measuring instruments like galvanometers.",
+      "competencies": [
+        "Calculate force exerted by a uniform magnetic field on current-carrying conductors."
+      ],
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Moving Charges and Magnetism"
+    },
+    {
+      "code": "PHX12-U3-C05",
+      "title": "Magnetism and Matter Competencies",
+      "description": "Examining the properties of magnetic materials, magnetization concepts, and the equivalence between bar magnets and solenoids.",
+      "competencies": [
+        "Differentiate between paramagnetic, diamagnetic, and ferromagnetic behaviors qualitatively."
+      ],
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Magnetism and Matter"
+    },
+    {
+      "code": "PH-XII-U4-C1",
+      "title": "Electromagnetic Induction Competencies",
+      "description": "Master the principles of electromagnetic induction and its applications.",
+      "competencies": [
+        "Explain Faraday's Law of Electromagnetic Induction",
+        "Apply Lenz's Law to determine direction of induced current",
+        "Analyze self-inductance and mutual inductance phenomena"
+      ],
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Electromagnetic Induction"
+    },
+    {
+      "code": "PH-XII-U4-C2",
+      "title": "Alternating Current Competencies",
+      "description": "Understand the fundamentals of alternating currents in circuits.",
+      "competencies": [
+        "Define and calculate RMS values for AC quantities",
+        "Analyze behavior of LCR series resonance circuits",
+        "Differentiate between peak, average, and RMS values"
+      ],
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Alternating Current"
+    },
+    {
+      "code": "PH-XII-U5-C1",
+      "title": "Electromagnetic Waves Competencies",
+      "description": "Explore the nature and properties of electromagnetic waves.",
+      "competencies": [
+        "Describe the transverse nature of electromagnetic waves",
+        "Explain the electromagnetic spectrum and its regions",
+        "Relate electric and magnetic field oscillations in EM waves"
+      ],
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_name": "Electromagnetic Waves"
+    },
+    {
+      "code": "PH-XII-U6-C1",
+      "title": "Ray Optics Competencies",
+      "description": "Apply laws of reflection and refraction to optical instruments.",
+      "competencies": [
+        "Derive lens maker's formula for thin lenses",
+        "Calculate magnification in microscopes and telescopes",
+        "Analyze total internal reflection phenomena"
+      ],
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments"
+    },
+    {
+      "code": "PH-XII-U6-C2",
+      "title": "Wave Optics Competencies",
+      "description": "Investigate interference, diffraction, and polarization effects.",
+      "competencies": [
+        "Apply Huygens' principle to wave propagation",
+        "Analyze Young's double-slit experiment results",
+        "Explain conditions for constructive and destructive interference"
+      ],
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Wave Optics"
+    },
+    {
+      "code": "PH-XII-U7-C1",
+      "title": "Dual Nature of Radiation and Matter",
+      "description": "Understanding the photoelectric effect and wave-particle duality in matter.",
+      "competencies": [
+        "Explain the experimental evidence for the particle nature of light through the photoelectric effect.",
+        "Describe the concept of de Broglie wavelength associated with moving particles.",
+        "Analyze the relationship between photon energy, work function, and stopping potential."
+      ],
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_name": "Dual Nature of Radiation and Matter"
+    },
+    {
+      "code": "PH-XII-U8-C1",
+      "title": "Atoms",
+      "description": "Exploring atomic models, electron orbits, and spectral emission series.",
+      "competencies": [
+        "Evaluate the limitations of Rutherford's model and explain Bohr's postulates for hydrogen atom stability.",
+        "Derive expressions for orbital radii and energy levels in the hydrogen atom.",
+        "Classify different spectral series (Lyman, Balmer, Paschen) based on electron transitions."
+      ],
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Atoms"
+    },
+    {
+      "code": "PH-XII-U8-C2",
+      "title": "Nuclei",
+      "description": "Investigating nuclear composition, binding energy, and radioactive processes.",
+      "competencies": [
+        "Calculate mass defect and binding energy per nucleon to explain nuclear stability.",
+        "Differentiate between nuclear fission and fusion mechanisms and their respective applications in energy production.",
+        "Analyze the laws of radioactivity including decay constants and half-life calculations."
+      ],
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_name": "Nuclei"
+    },
+    {
+      "code": "PH-XII-U9-C1",
+      "title": "Materials, Devices and Simple Circuits",
+      "description": "Studying semiconductor properties, device characteristics, and logic gate operations.",
+      "competencies": [
+        "Distinguish between intrinsic and extrinsic semiconductors based on doping types (n-type/p-type).",
+        "Interpret the V-I characteristics of p-n junction diodes in forward and reverse bias conditions.",
+        "Design simple circuits using transistors as amplifiers or switches and analyze logic gate combinations."
+      ],
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits"
+    }
+  ]
+}

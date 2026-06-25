@@ -39,15 +39,27 @@ import {
   Trash2,
   Database
 } from "lucide-react";
-import { CurriculumExtraction, SavedCurriculumRecord, SessionConfig, SessionPlan, TermRow } from "./types";
+import {
+  AssessmentBlueprint,
+  AssessmentCompetencyReference,
+  AssessmentResult,
+  AssessmentSessionReference,
+  ClassTermPlan,
+  CurriculumExtraction,
+  SavedCurriculumRecord,
+  SessionConfig,
+  SessionPlan,
+  TermAssignedContentRow,
+  TermRow,
+} from "./types";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 export default function App() {
   const LAST_CURRICULUM_ID_KEY = "lms:lastCurriculumId";
   // Navigation & Step Management
-  // 0: Dashboard, 1: Upload & Extract, 2: Term Planner, 3: Session Specs & Roadmap, 4: Lesson Plan Delivery Outlines, 5: Saved Curriculums
-  const [activeStep, setActiveStep] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
+  // 0: Dashboard, 1: Upload & Extract, 2: Term Planner, 3: Session Specs & Roadmap, 4: Lesson Plan Delivery Outlines, 5: Assessment Generator, 6: Saved Curriculums
+  const [activeStep, setActiveStep] = useState<0 | 1 | 2 | 3 | 4 | 5 | 6>(0);
   const [dashboardTab, setDashboardTab] = useState<string>("curriculum");
 
   // Error and Loading indicators
@@ -68,6 +80,8 @@ export default function App() {
 
   // Step 2 State: Divide Terms
   const [termsList, setTermsList] = useState<TermRow[]>([]);
+  const [termPlans, setTermPlans] = useState<ClassTermPlan[]>([]);
+  const [selectedPlannerClass, setSelectedPlannerClass] = useState<string>("");
   const [selectedTermRow, setSelectedTermRow] = useState<TermRow | null>(null);
   const [termDivisionStats, setTermDivisionStats] = useState<{ totalMarks: number }>({ totalMarks: 0 });
 
@@ -97,6 +111,24 @@ export default function App() {
   const [activeSessionNumber, setActiveSessionNumber] = useState<number>(1);
   const [activeSubTab, setActiveSubTab] = useState<"theory" | "materials" | "homework" | "assessments" | "assignments">("theory");
   const [activeMaterialTab, setActiveMaterialTab] = useState<"ppt" | "pdf" | "docx">("ppt");
+
+  // Step 5 State: Assessment Generator
+  const [assessmentConfig, setAssessmentConfig] = useState({
+    total_marks: 80,
+    duration_minutes: 180,
+    paper_type: "term_exam",
+    set_count: 1,
+  });
+  const [assessmentResult, setAssessmentResult] = useState<AssessmentResult | null>(null);
+  const [assessmentBlueprint, setAssessmentBlueprint] = useState<AssessmentBlueprint | null>(null);
+  const [assessmentTab, setAssessmentTab] = useState<"blueprint" | "question_paper" | "answer_key" | "marking_scheme">("blueprint");
+  const [selectedSet, setSelectedSet] = useState<string>("Set A");
+  const [assessmentExportFormat, setAssessmentExportFormat] = useState<string>("json");
+  const [assessmentExportType, setAssessmentExportType] = useState<string>("all");
+  const [termsDataForAssessment, setTermsDataForAssessment] = useState<Record<string, unknown> | null>(null);
+  const [coveredUnitsForAssessment, setCoveredUnitsForAssessment] = useState<string[]>([]);
+  const [coveredChaptersForAssessment, setCoveredChaptersForAssessment] = useState<string[]>([]);
+  const [coveredTopicsForAssessment, setCoveredTopicsForAssessment] = useState<string[]>([]);
 
   // File drag state
   const [dragActive, setDragActive] = useState<boolean>(false);
@@ -134,6 +166,171 @@ export default function App() {
       };
     }),
   }));
+  const hasGeneratedTerms = termPlans.length > 0 || termsList.length > 0;
+  const plannerClassOptions = termPlans.map((plan) => plan.class_name || "Curriculum");
+  const activePlannerClass =
+    selectedPlannerClass && plannerClassOptions.includes(selectedPlannerClass)
+      ? selectedPlannerClass
+      : plannerClassOptions[0] || "";
+  const activePlannerPlan = termPlans.find((plan) => (plan.class_name || "Curriculum") === activePlannerClass) || null;
+  const dashboardTermCount = termPlans.length > 0
+    ? termPlans.reduce((sum, plan) => sum + (plan.terms?.length || 0), 0)
+    : new Set(termsList.map((term) => `${term.className || "Curriculum"}::${term.term}`)).size;
+  const getTermContentRows = (term: ClassTermPlan["terms"][number]): TermAssignedContentRow[] =>
+    term.assigned_content || term.curriculum_content || [];
+
+  const getTermSummaryValue = (term: ClassTermPlan["terms"][number], key: "units" | "chapters" | "sessions" | "hours" | "marks") => {
+    const summary = term.summary || {};
+    const contentRows = getTermContentRows(term);
+    if (key === "units") {
+      return summary.total_units ?? summary.unit_count ?? contentRows.length;
+    }
+    if (key === "chapters") {
+      return summary.total_chapters ?? summary.chapter_count ?? contentRows.reduce((sum, row) => {
+        const chapterNames = row.chapter_names || row.chapters?.map((chapter) => chapter.chapter_name).filter(Boolean) || [];
+        return sum + chapterNames.length;
+      }, 0);
+    }
+    if (key === "sessions") {
+      return summary.total_sessions ?? summary.estimated_sessions ?? contentRows.reduce((sum, row) => sum + Number(row.estimated_sessions || 0), 0);
+    }
+    if (key === "hours") {
+      return summary.total_hours ?? summary.estimated_hours ?? contentRows.reduce((sum, row) => sum + Number(row.estimated_hours || 0), 0);
+    }
+    return summary.marks ?? contentRows.reduce((sum, row) => sum + Number(row.marks || 0), 0);
+  };
+
+  const dashboardTermMarks = termPlans.length > 0
+    ? Number(
+      termPlans.reduce(
+        (sum, plan) =>
+          sum +
+          (plan.terms || []).reduce(
+            (termSum, term) => termSum + Number(getTermSummaryValue(term, "marks") || 0),
+            0
+          ),
+        0
+      ).toFixed(2)
+    )
+    : Number(termsList.reduce((acc, curr) => acc + curr.marks, 0).toFixed(2));
+  const dashboardSubject = extractedData?.subject || savedCurriculums.find((curriculum) => curriculum._id === currentCurriculumId)?.subject || "";
+  const dashboardGradeLevel = extractedData?.gradeLevel || savedCurriculums.find((curriculum) => curriculum._id === currentCurriculumId)?.gradeLevel || "";
+  const dashboardUnitCount = extractedData?.units?.length || 0;
+  const dashboardSessionCount = sessionsOutline.length;
+  const dashboardSessionMinutes = sessionsOutline.reduce((acc, curr) => acc + curr.duration, 0);
+
+  const buildSelectedTermFromPlan = (plan: ClassTermPlan, term: ClassTermPlan["terms"][number]): TermRow => ({
+    id: `term-${plan.class_name || "Curriculum"}-${term.term_number}`,
+    className: plan.class_name || "Curriculum",
+    termNumber: term.term_number,
+    term: term.term_title,
+    unitName: "Whole Term",
+    chapters: getTermContentRows(term).flatMap(
+      (row) => row.chapter_names || row.chapters?.map((chapter) => chapter.chapter_name || "").filter(Boolean) || []
+    ),
+    marks: Number(getTermSummaryValue(term, "marks") || 0),
+  });
+
+  const resolveSelectedTermFromPlan = (plan: ClassTermPlan, term: ClassTermPlan["terms"][number]): TermRow => {
+    const fallbackTerm = buildSelectedTermFromPlan(plan, term);
+    const matchedRows = termsList.filter(
+      (row) =>
+        row.className === fallbackTerm.className &&
+        (
+          row.termNumber === fallbackTerm.termNumber ||
+          row.term === fallbackTerm.term
+        )
+    );
+
+    if (matchedRows.length === 0) {
+      return fallbackTerm;
+    }
+
+    return {
+      id: `term-${fallbackTerm.className}-${fallbackTerm.termNumber || fallbackTerm.term}`,
+      className: fallbackTerm.className,
+      termNumber: fallbackTerm.termNumber,
+      term: matchedRows[0]?.term || fallbackTerm.term,
+      unitName: "Whole Term",
+      chapters: Array.from(new Set(matchedRows.flatMap((row) => row.chapters || []))),
+      marks: Number(matchedRows.reduce((sum, row) => sum + (row.marks || 0), 0).toFixed(2)),
+    };
+  };
+
+  const normalizedCurriculum =
+    (extractedData as any)?.stagedExtraction?.normalizedStructure ||
+    (extractedData as any)?.normalizedStructure ||
+    null;
+
+  const selectedTermRows = selectedTermRow
+    ? termsList.filter(
+      (row) =>
+        row.className === selectedTermRow.className &&
+        row.term === selectedTermRow.term
+    )
+    : [];
+
+  const selectedTermName = selectedTermRow?.termNumber
+    ? `Term ${selectedTermRow.termNumber}`
+    : selectedTermRow?.term || "";
+
+  const assessmentSessionRefs: AssessmentSessionReference[] = sessionsOutline.map((session) => ({
+    id: session.id,
+    session_number: session.sessionNumber,
+    title: session.title,
+    duration: session.duration,
+    learning_outcomes: session.learningOutcomes || [],
+  }));
+
+  const assessmentLearningOutcomes = Array.from(
+    new Set(sessionsOutline.flatMap((session) => session.learningOutcomes || []))
+  );
+
+  const assessmentCompetencies: AssessmentCompetencyReference[] =
+    ((extractedData as any)?.competencies?.competency_groups ||
+      (extractedData as any)?.stagedExtraction?.competencies?.competency_groups ||
+      []) as AssessmentCompetencyReference[];
+
+  const getTopicsForSelectedTerm = (): string[] => {
+    if (!normalizedCurriculum || !selectedTermRow) return [] as string[];
+
+    const selectedChapters = new Set(
+      selectedTermRows
+        .flatMap((row) => row.chapters || [])
+        .map((chapter) => chapter.trim().toLowerCase())
+    );
+
+    const classes = (normalizedCurriculum as any)?.classes || [];
+    const matchingClass = classes.find((cls: any) => {
+      if (!selectedTermRow.className) return true;
+      return String(cls?.class_name || "").trim().toLowerCase() === selectedTermRow.className?.trim().toLowerCase();
+    });
+
+    if (!matchingClass) return [] as string[];
+
+    return Array.from(
+      new Set(
+        (matchingClass.units || [])
+          .flatMap((unit: any) =>
+            (unit.chapters || [])
+              .filter((chapter: any) =>
+                selectedChapters.has(
+                  String(chapter?.chapter_name || chapter?.source_chapter_name || "")
+                    .trim()
+                    .toLowerCase()
+                )
+              )
+              .flatMap((chapter: any) => [
+                ...(chapter?.topics || []),
+                ...(chapter?.subtopics || []),
+                ...(chapter?.teaching_blocks || []).map((block: any) => block?.title || block?.name || ""),
+              ])
+          )
+          .map((topic: any) => String(topic || "").trim())
+          .filter(Boolean)
+      )
+    );
+  };
 
   const clearCurriculumWorkspace = () => {
     setCurrentCurriculumId("");
@@ -144,6 +341,10 @@ export default function App() {
     setEditingJsonText("");
     setIsEditingJson(false);
     setIsJsonCollapsed(false);
+    setTermPlans([]);
+    setTermsList([]);
+    setSelectedTermRow(null);
+    setTermDivisionStats({ totalMarks: 0 });
   };
 
   const readErrorFromResponse = async (res: Response, fallback: string) => {
@@ -188,6 +389,26 @@ export default function App() {
       setInputText(curriculumRecord.sourceText || "");
       setExtractedData(curriculumRecord.extractedCurriculum);
       setEditingJsonText(JSON.stringify(curriculumRecord.extractedCurriculum, null, 2));
+      setTermPlans(curriculumRecord.savedTermPlanning?.class_term_plans || []);
+      setTermsList(curriculumRecord.savedTermPlanning?.rows || []);
+      setTermDivisionStats({
+        totalMarks: Number(curriculumRecord.savedTermPlanning?.statistics?.total_marks || 0),
+      });
+      if ((curriculumRecord.savedTermPlanning?.rows || []).length > 0) {
+        const restoredRows = curriculumRecord.savedTermPlanning?.rows || [];
+        const firstClassName = restoredRows[0]?.className || "Curriculum";
+        const firstTermName = restoredRows[0]?.term;
+        const firstTermRows = restoredRows.filter((row) => row.className === firstClassName && row.term === firstTermName);
+        setSelectedTermRow({
+          id: `term-${firstClassName}-${restoredRows[0]?.termNumber || firstTermName}`,
+          className: firstClassName,
+          termNumber: restoredRows[0]?.termNumber,
+          term: firstTermName,
+          unitName: "Whole Term",
+          chapters: Array.from(new Set<string>(firstTermRows.flatMap((row) => row.chapters as string[]))),
+          marks: Number(firstTermRows.reduce((sum: number, row) => sum + row.marks, 0).toFixed(2)),
+        });
+      }
       localStorage.setItem(LAST_CURRICULUM_ID_KEY, curriculumRecord._id);
       setErrorHeader(null);
       await fetchSavedCurriculums();
@@ -208,6 +429,17 @@ export default function App() {
     await restoreCurriculumById(curriculumId);
     setActiveStep(0);
   };
+
+  const handleOpenSavedTerms = async (curriculumId: string) => {
+    await restoreCurriculumById(curriculumId);
+    setActiveStep(2);
+  };
+
+  const getSavedTermCount = (curriculum: SavedCurriculumRecord) =>
+    (curriculum.savedTermPlanning?.class_term_plans || []).reduce(
+      (sum, classPlan) => sum + (classPlan.terms?.length || 0),
+      0
+    );
 
   const handleDeleteSavedCurriculum = async (curriculumId: string) => {
     setErrorHeader(null);
@@ -234,6 +466,45 @@ export default function App() {
       console.error("[Frontend] Load saved curriculums failed", error);
     });
   }, []);
+
+  useEffect(() => {
+    const lastCurriculumId = localStorage.getItem(LAST_CURRICULUM_ID_KEY);
+    if (!lastCurriculumId || extractedData || currentCurriculumId) return;
+    void restoreCurriculumById(lastCurriculumId, { silent: true });
+  }, [extractedData, currentCurriculumId]);
+
+  useEffect(() => {
+    if (!selectedTermRow) return;
+    const termRows = termsList.filter(
+      (row) => row.className === selectedTermRow.className && row.term === selectedTermRow.term
+    );
+    const units = Array.from(new Set(termRows.map((row) => row.unitName).filter(Boolean))) as string[];
+    const chapters = Array.from(new Set(termRows.flatMap((row) => row.chapters || []).filter(Boolean))) as string[];
+    const topics = getTopicsForSelectedTerm();
+
+    setTermsDataForAssessment({
+      class_name: selectedTermRow.className || extractedData?.gradeLevel || "",
+      subject: extractedData?.subject || "",
+      term: selectedTermRow.term,
+      term_number: selectedTermRow.termNumber || "",
+      units: termRows.map((row) => ({
+        unit_name: row.unitName,
+        chapters: row.chapters,
+        marks: row.marks,
+      })),
+    });
+    setCoveredUnitsForAssessment(units);
+    setCoveredChaptersForAssessment(chapters);
+    setCoveredTopicsForAssessment(topics);
+  }, [selectedTermRow, termsList, extractedData]);
+
+  useEffect(() => {
+    if (!plannerClassOptions.length) {
+      setSelectedPlannerClass("");
+      return;
+    }
+    setSelectedPlannerClass((prev) => (prev && plannerClassOptions.includes(prev) ? prev : plannerClassOptions[0]));
+  }, [termPlans]);
 
   const extractPdfText = async (file: File): Promise<string> => {
     const buffer = await file.arrayBuffer();
@@ -401,7 +672,10 @@ export default function App() {
       const res = await fetch("/api/divide-terms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ curriculum: normalizedCurriculum || extractedData }),
+        body: JSON.stringify({
+          curriculum: normalizedCurriculum || extractedData,
+          curriculumId: currentCurriculumId || undefined,
+        }),
       });
 
       if (!res.ok) {
@@ -409,6 +683,7 @@ export default function App() {
       }
 
       const termResponse = await res.json();
+      setTermPlans(termResponse?.class_term_plans || []);
       const terms = Array.isArray(termResponse) ? termResponse : termResponse.rows || [];
       setTermDivisionStats({
         totalMarks: Number(termResponse?.statistics?.total_marks || 0),
@@ -545,11 +820,117 @@ export default function App() {
   };
 
   /**
+   * Assessment Generator handler
+   */
+  const handleGenerateAssessment = async () => {
+    if (!extractedData) {
+      setErrorHeader("Please extract a curriculum first.");
+      return;
+    }
+    if (!selectedTermRow) {
+      setErrorHeader("Please select a term before generating an assessment.");
+      return;
+    }
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Generating CBSE-style assessment with blueprint, question paper, answer key, and marking scheme...");
+
+    try {
+      const curriculum = normalizedCurriculum || extractedData;
+      const topicList = coveredTopicsForAssessment.length > 0
+        ? coveredTopicsForAssessment
+        : getTopicsForSelectedTerm();
+      
+      const res = await fetch("/api/generate-assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: extractedData.subject,
+          grade: extractedData.gradeLevel,
+          curriculum,
+          academic_year: new Date().getFullYear().toString(),
+          term_number: String(selectedTermRow.termNumber || selectedTermRow.term || ""),
+          term_data: termsDataForAssessment,
+          sessions: assessmentSessionRefs,
+          learning_outcomes: assessmentLearningOutcomes,
+          competencies: assessmentCompetencies,
+          total_marks: assessmentConfig.total_marks,
+          duration_minutes: assessmentConfig.duration_minutes,
+          paper_type: assessmentConfig.paper_type,
+          set_count: assessmentConfig.set_count,
+          covered_units: coveredUnitsForAssessment.length > 0 ? coveredUnitsForAssessment : undefined,
+          covered_chapters: coveredChaptersForAssessment.length > 0 ? coveredChaptersForAssessment : undefined,
+          covered_topics: topicList.length > 0 ? topicList : undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to generate assessment"));
+      }
+
+      const result = await res.json() as AssessmentResult;
+      setAssessmentResult(result);
+      setAssessmentBlueprint(result.blueprint || null);
+      setAssessmentTab("blueprint");
+      setSelectedSet(result.question_papers?.[0]?.set_label || "Set A");
+    } catch (err: any) {
+      console.error(err);
+      setErrorHeader(err.message || "Assessment generation failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExportAssessment = async () => {
+    if (!assessmentResult) return;
+    setLoading(true);
+    setLoadingMessage(`Exporting assessment as ${assessmentExportFormat.toUpperCase()}...`);
+    try {
+      const res = await fetch("/api/export-assessment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          format: assessmentExportFormat,
+          assessment: assessmentResult,
+          exportType: assessmentExportType,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Export failed"));
+      }
+      const exportResult = await res.json();
+      
+      // Create a downloadable file
+      const blob = new Blob([exportResult.data], { type: exportResult.contentType || "application/json" });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = exportResult.fileName || "assessment-export.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setErrorHeader(err.message || "Export failed.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /**
    * Custom print trigger for modern layouts
    */
   const handlePrintPlans = () => {
     window.print();
   };
+
+  const selectedQuestionPaper = assessmentResult?.question_papers?.find((paper) => paper.set_label === selectedSet)
+    || assessmentResult?.question_papers?.[0];
+  const selectedAnswerKey = assessmentResult?.answer_keys?.find((answerSet) => answerSet.set_label === selectedSet)
+    || assessmentResult?.answer_keys?.[0];
+  const selectedMarkingScheme = assessmentResult?.marking_schemes?.find((schemeSet) => schemeSet.set_label === selectedSet)
+    || assessmentResult?.marking_schemes?.[0];
+  const generatedSetLabels = assessmentResult?.question_papers?.map((paper) => paper.set_label) || [];
 
   return (
     <div className="min-h-screen bg-[#FDFEFE] text-[#2B3437] font-sans antialiased selection:bg-[#9FCDD2] selection:text-teal-900 transition-all duration-300">
@@ -588,7 +969,8 @@ export default function App() {
               { num: 2, label: "Terms" },
               { num: 3, label: "Specs" },
               { num: 4, label: "Sessions" },
-              { num: 5, label: "Saved" },
+              { num: 5, label: "Assessment" },
+              { num: 6, label: "Saved" },
             ].map((step) => {
               const isFirstOrActive = step.num === activeStep;
               const isPast = step.num < activeStep;
@@ -904,13 +1286,13 @@ export default function App() {
                 <div className="font-black text-slate-800">Saved Curriculums</div>
                 <div>{savedCurriculums.length} curriculum record(s) stored in MongoDB.</div>
               </div>
-              <button
-                onClick={() => setActiveStep(5)}
-                className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"
-              >
-                <Database className="w-3.5 h-3.5" />
-                Open Saved Curriculums
-              </button>
+                <button
+                  onClick={() => setActiveStep(6)}
+                  className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  Open Saved Curriculums
+                </button>
             </div>
 
             {/* Dynamic Metric Counter Bento Units */}
@@ -924,10 +1306,10 @@ export default function App() {
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">Subject</span>
                   <h4 className="font-display font-black text-slate-800 text-sm truncate max-w-[160px]">
-                    {extractedData?.subject ? "1 Subject" : "No Subject"}
+                    {dashboardSubject ? "1 Subject" : "No Subject"}
                   </h4>
                   <p className="text-[11px] text-slate-450 font-bold font-sans">
-                    {extractedData?.subject || "Awaiting extraction"}
+                    {dashboardSubject || "Awaiting extraction"}
                   </p>
                 </div>
               </div>
@@ -940,10 +1322,10 @@ export default function App() {
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">Curriculum</span>
                   <h4 className="font-display font-black text-slate-800 text-sm">
-                    {extractedData?.units ? `${extractedData.units.length} Units` : "0 Units"}
+                    {dashboardUnitCount > 0 ? `${dashboardUnitCount} Units` : "0 Units"}
                   </h4>
                   <p className="text-[11px] text-slate-450 font-bold font-sans">
-                    {extractedData?.gradeLevel || "Awaiting extraction"}
+                    {dashboardGradeLevel || "Awaiting extraction"}
                   </p>
                 </div>
               </div>
@@ -956,10 +1338,10 @@ export default function App() {
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">Terms</span>
                   <h4 className="font-display font-black text-slate-800 text-sm">
-                    {termsList.length > 0 ? `${termsList.length} Terms` : "0 Terms"}
+                    {dashboardTermCount > 0 ? `${dashboardTermCount} Terms` : "0 Terms"}
                   </h4>
                   <p className="text-[11px] text-slate-450 font-bold font-sans">
-                    {termsList.reduce((acc, curr) => acc + curr.marks, 0)} Total Marks
+                    {dashboardTermMarks} Total Marks
                   </p>
                 </div>
               </div>
@@ -972,10 +1354,10 @@ export default function App() {
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">Sessions</span>
                   <h4 className="font-display font-black text-slate-800 text-sm">
-                    {sessionsOutline.length > 0 ? `${sessionsOutline.length} Sessions` : "0 Sessions"}
+                    {dashboardSessionCount > 0 ? `${dashboardSessionCount} Sessions` : "0 Sessions"}
                   </h4>
                   <p className="text-[11px] text-slate-450 font-bold font-sans">
-                    {sessionsOutline.reduce((acc, curr) => acc + curr.duration, 0)} Total Minutes
+                    {dashboardSessionMinutes} Total Minutes
                   </p>
                 </div>
               </div>
@@ -1550,7 +1932,17 @@ export default function App() {
               {dashboardTab === "terms" && (
                 <div className="space-y-4 animate-[fadeIn_0.3s_ease-out] font-sans">
                   {(() => {
-                    const activeTerms = termsList;
+                    const activeTerms = termPlans.length > 0
+                      ? termPlans.flatMap((plan) =>
+                        (plan.terms || []).map((term) => ({
+                          className: plan.class_name || "Curriculum",
+                          term: term.term_title,
+                          unitName: getTermContentRows(term).map((row) => row.unit_name || "Untitled Unit").join(", "),
+                          chapters: getTermContentRows(term).flatMap((row) => row.chapter_names || row.chapters?.map((chapter) => chapter.chapter_name || "").filter(Boolean) || []),
+                          marks: Number(getTermSummaryValue(term, "marks") || 0),
+                        }))
+                      )
+                      : termsList;
 
                     return (
                       <div className="overflow-x-auto border border-slate-100 rounded-2xl">
@@ -1566,7 +1958,9 @@ export default function App() {
                           <tbody className="divide-y divide-slate-50 text-slate-650 font-semibold font-sans">
                             {activeTerms.map((termItem, idx) => (
                               <tr key={idx} className="hover:bg-slate-50/50 transition">
-                                <td className="p-4 font-display font-black text-slate-800">{termItem.term}</td>
+                                <td className="p-4 font-display font-black text-slate-800">
+                                  {"className" in termItem && termItem.className ? `${termItem.className} - ${termItem.term}` : termItem.term}
+                                </td>
                                 <td className="p-4 text-[#36ADAA] font-bold">{termItem.unitName}</td>
                                 <td className="p-4 whitespace-normal max-w-xs">
                                   <div className="flex flex-wrap gap-1">
@@ -1717,6 +2111,16 @@ export default function App() {
                 onClick={() => setActiveStep(5)}
                 className="p-5 bg-white hover:border-[#36ADAA]/30 hover:shadow-md hover:-translate-y-0.5 border-2 border-slate-100 rounded-2xl transition-all duration-300 space-y-2 focus:ring-2 focus:ring-[#36ADAA] group"
               >
+                <div className="w-10 h-10 mx-auto rounded-xl bg-emerald-50 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <GraduationCap className="w-5 h-5 text-emerald-600" />
+                </div>
+                <p className="text-xs font-black text-slate-800 font-display">Assessment Generator</p>
+                <p className="text-[10px] text-slate-400 font-medium">Build blueprint, paper, keys, and scheme</p>
+              </button>
+              <button
+                onClick={() => setActiveStep(6)}
+                className="p-5 bg-white hover:border-[#36ADAA]/30 hover:shadow-md hover:-translate-y-0.5 border-2 border-slate-100 rounded-2xl transition-all duration-300 space-y-2 focus:ring-2 focus:ring-[#36ADAA] group"
+              >
                 <div className="w-10 h-10 mx-auto rounded-xl bg-slate-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                   <Database className="w-5 h-5 text-slate-700" />
                 </div>
@@ -1729,6 +2133,386 @@ export default function App() {
         )}
 
         {activeStep === 5 && (
+          <div className="space-y-8 animate-fadeIn">
+            {!selectedTermRow ? (
+              <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
+                <div className="w-16 h-16 bg-emerald-50 rounded-3xl flex items-center justify-center text-emerald-600 mx-auto">
+                  <GraduationCap className="w-8 h-8" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-display font-extrabold text-[#2B3437] text-xl">
+                    Assessment Generator Needs a Selected Term
+                  </h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    Pick the active term first so the paper uses only that term's units, chapters, topics, and session coverage.
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setActiveStep(2)}
+                    className="px-5 py-3 bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-bold rounded-xl text-xs transition cursor-pointer"
+                  >
+                    Go to Step 2: Terms
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs">
+                  <div className="space-y-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex items-center gap-2 text-xs font-bold min-w-0 text-[#586A71]">
+                        <span>Step 5 of LMS Planner</span>
+                        <ChevronRight className="w-3 h-3" />
+                        <span className="text-[#36ADAA]">{selectedTermName}</span>
+                        <ChevronRight className="w-3 h-3" />
+                        <span className="text-emerald-600">Assessment Generator</span>
+                      </div>
+                      <button
+                        onClick={() => setActiveStep(4)}
+                        className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800 cursor-pointer"
+                      >
+                        <ArrowLeft className="w-3.5 h-3.5" />
+                        Back
+                      </button>
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-display font-extrabold text-slate-800 tracking-tight">
+                        Assessment Generator
+                      </h2>
+                      <p className="text-slate-500 text-xs">
+                        Generate a CBSE-style term paper, answer key, marking scheme, and blueprint using only the selected term content.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                  <div className="xl:col-span-1 space-y-6">
+                    <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-xs space-y-5">
+                      <div className="pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                          <Settings className="w-4 h-4" />
+                        </div>
+                        <h3 className="font-display font-extrabold text-slate-800 text-sm">Exam Controls</h3>
+                      </div>
+
+                      <div className="space-y-4 text-xs">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
+                            <div className="text-slate-400 uppercase font-bold tracking-wider text-[10px]">Class</div>
+                            <div className="mt-1 font-extrabold text-slate-800">{selectedTermRow.className || extractedData?.gradeLevel}</div>
+                          </div>
+                          <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
+                            <div className="text-slate-400 uppercase font-bold tracking-wider text-[10px]">Subject</div>
+                            <div className="mt-1 font-extrabold text-slate-800">{extractedData?.subject}</div>
+                          </div>
+                        </div>
+
+                        <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
+                          <div className="text-slate-400 uppercase font-bold tracking-wider text-[10px]">Selected Term</div>
+                          <div className="mt-1 font-extrabold text-slate-800">{selectedTermName}</div>
+                        </div>
+
+                        <label className="block space-y-1">
+                          <span className="text-slate-500 uppercase tracking-wider font-bold text-[10px]">Exam Type</span>
+                          <select
+                            value={assessmentConfig.paper_type}
+                            onChange={(e) => setAssessmentConfig((prev) => ({ ...prev, paper_type: e.target.value }))}
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700"
+                          >
+                            <option value="term_exam">Term Exam</option>
+                            <option value="mid_term">Mid Term</option>
+                            <option value="periodic_test">Periodic Test</option>
+                            <option value="unit_test">Unit Test</option>
+                          </select>
+                        </label>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          <label className="block space-y-1">
+                            <span className="text-slate-500 uppercase tracking-wider font-bold text-[10px]">Total Marks</span>
+                            <input
+                              type="number"
+                              min={10}
+                              max={200}
+                              value={assessmentConfig.total_marks}
+                              onChange={(e) => setAssessmentConfig((prev) => ({ ...prev, total_marks: Math.max(10, Number(e.target.value) || 10) }))}
+                              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700"
+                            />
+                          </label>
+                          <label className="block space-y-1">
+                            <span className="text-slate-500 uppercase tracking-wider font-bold text-[10px]">Duration</span>
+                            <input
+                              type="number"
+                              min={30}
+                              max={360}
+                              value={assessmentConfig.duration_minutes}
+                              onChange={(e) => setAssessmentConfig((prev) => ({ ...prev, duration_minutes: Math.max(30, Number(e.target.value) || 30) }))}
+                              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700"
+                            />
+                          </label>
+                        </div>
+
+                        <label className="block space-y-1">
+                          <span className="text-slate-500 uppercase tracking-wider font-bold text-[10px]">Number of Sets</span>
+                          <select
+                            value={assessmentConfig.set_count}
+                            onChange={(e) => setAssessmentConfig((prev) => ({ ...prev, set_count: Number(e.target.value) }))}
+                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700"
+                          >
+                            <option value={1}>1 Set</option>
+                            <option value={2}>2 Sets</option>
+                            <option value={3}>3 Sets</option>
+                          </select>
+                        </label>
+
+                        <button
+                          onClick={handleGenerateAssessment}
+                          className="w-full bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-extrabold text-sm py-3.5 px-4 rounded-2xl shadow-sm transition flex items-center justify-center gap-2"
+                        >
+                          <Sparkles className="w-4 h-4" />
+                          Generate Assessment Package
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-xs space-y-4">
+                      <div className="pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-sky-50 flex items-center justify-center text-sky-600">
+                          <Info className="w-4 h-4" />
+                        </div>
+                        <h3 className="font-display font-extrabold text-slate-800 text-sm">Term Coverage Preview</h3>
+                      </div>
+
+                      <div className="space-y-3 text-xs">
+                        <div>
+                          <div className="text-slate-400 uppercase font-bold tracking-wider text-[10px] mb-1">Covered Units</div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {coveredUnitsForAssessment.map((unit) => (
+                              <span key={unit} className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold">{unit}</span>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-slate-400 uppercase font-bold tracking-wider text-[10px] mb-1">Covered Chapters</div>
+                          <div className="flex flex-wrap gap-1.5">
+                            {coveredChaptersForAssessment.map((chapter) => (
+                              <span key={chapter} className="px-2 py-1 rounded-full bg-slate-100 text-slate-700 font-semibold">{chapter}</span>
+                            ))}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-slate-400 uppercase font-bold tracking-wider text-[10px] mb-1">Covered Topics</div>
+                          <div className="max-h-32 overflow-y-auto flex flex-wrap gap-1.5">
+                            {coveredTopicsForAssessment.length > 0 ? coveredTopicsForAssessment.map((topic) => (
+                              <span key={topic} className="px-2 py-1 rounded-full bg-amber-50 text-amber-800 font-semibold">{topic}</span>
+                            )) : (
+                              <span className="text-slate-400">Topics will populate from the selected term hierarchy.</span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="xl:col-span-2 space-y-6">
+                    <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-xs space-y-5">
+                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                          <h3 className="font-display font-extrabold text-slate-800 text-lg">Assessment Output</h3>
+                          <p className="text-xs text-slate-500">Preview the blueprint first, then inspect the paper, keys, and marking guidance.</p>
+                        </div>
+                        {assessmentResult && (
+                          <div className="flex flex-wrap items-center gap-2">
+                            {generatedSetLabels.length > 1 && (
+                              <select
+                                value={selectedSet}
+                                onChange={(e) => setSelectedSet(e.target.value)}
+                                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700"
+                              >
+                                {generatedSetLabels.map((label) => (
+                                  <option key={label} value={label}>{label}</option>
+                                ))}
+                              </select>
+                            )}
+                            <select
+                              value={assessmentExportType}
+                              onChange={(e) => setAssessmentExportType(e.target.value)}
+                              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700"
+                            >
+                              <option value="all">Full Package</option>
+                              <option value="question_paper">Question Paper</option>
+                              <option value="answer_key">Answer Key</option>
+                              <option value="marking_scheme">Marking Scheme</option>
+                              <option value="blueprint">Blueprint</option>
+                            </select>
+                            <select
+                              value={assessmentExportFormat}
+                              onChange={(e) => setAssessmentExportFormat(e.target.value)}
+                              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700"
+                            >
+                              <option value="json">JSON</option>
+                              <option value="pdf">PDF</option>
+                              <option value="docx">DOCX</option>
+                            </select>
+                            <button
+                              onClick={handleExportAssessment}
+                              className="inline-flex items-center gap-2 rounded-xl bg-[#2B3437] px-3.5 py-2 text-xs font-bold text-white transition hover:bg-slate-800"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              Export
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {!assessmentResult ? (
+                        <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-14 text-center">
+                          <div className="w-14 h-14 mx-auto rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 mb-4">
+                            <Trophy className="w-7 h-7" />
+                          </div>
+                          <h4 className="font-display font-extrabold text-slate-800">Blueprint, question paper, key, and scheme will appear here</h4>
+                          <p className="mt-2 text-sm text-slate-500">Use the exam controls to generate the assessment package for the selected term.</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-5">
+                          <div className="flex flex-wrap gap-2">
+                            {[
+                              ["blueprint", "Blueprint"],
+                              ["question_paper", "Question Paper"],
+                              ["answer_key", "Answer Key"],
+                              ["marking_scheme", "Marking Scheme"],
+                            ].map(([id, label]) => (
+                              <button
+                                key={id}
+                                onClick={() => setAssessmentTab(id as any)}
+                                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition ${
+                                  assessmentTab === id
+                                    ? "bg-[#36ADAA] text-white shadow-xs"
+                                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                                }`}
+                              >
+                                {label}
+                              </button>
+                            ))}
+                          </div>
+
+                          {assessmentTab === "blueprint" && assessmentBlueprint && (
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 text-xs">
+                              <div className="rounded-2xl border border-slate-200 p-4 bg-slate-50">
+                                <div className="font-extrabold text-slate-800 mb-3">Blueprint Summary</div>
+                                <div className="space-y-2 text-slate-600">
+                                  <div>Total marks: <span className="font-bold text-slate-800">{assessmentBlueprint.total_marks}</span></div>
+                                  <div>Duration: <span className="font-bold text-slate-800">{assessmentBlueprint.duration_minutes} mins</span></div>
+                                  <div>Difficulty: <span className="font-bold text-slate-800">{assessmentBlueprint.difficulty_distribution.easy}% / {assessmentBlueprint.difficulty_distribution.medium}% / {assessmentBlueprint.difficulty_distribution.hard}%</span></div>
+                                </div>
+                              </div>
+                              <div className="rounded-2xl border border-slate-200 p-4 bg-slate-50">
+                                <div className="font-extrabold text-slate-800 mb-3">Validation Report</div>
+                                <div className="space-y-2 text-slate-600">
+                                  <div>Selected term only: <span className="font-bold text-slate-800">{assessmentBlueprint.validation_report.uses_only_selected_term_content ? "Yes" : "No"}</span></div>
+                                  <div>Total marks valid: <span className="font-bold text-slate-800">{assessmentBlueprint.validation_report.total_marks_valid ? "Yes" : "No"}</span></div>
+                                  <div>Answers complete: <span className="font-bold text-slate-800">{assessmentBlueprint.validation_report.all_questions_have_answers ? "Yes" : "No"}</span></div>
+                                  <div>Subjective scheme complete: <span className="font-bold text-slate-800">{assessmentBlueprint.validation_report.all_subjective_questions_have_marking_scheme ? "Yes" : "No"}</span></div>
+                                </div>
+                              </div>
+                              <div className="lg:col-span-2 rounded-2xl border border-slate-200 p-4">
+                                <div className="font-extrabold text-slate-800 mb-3">Section Distribution</div>
+                                <div className="space-y-2">
+                                  {assessmentBlueprint.section_distribution.map((section) => (
+                                    <div key={section.section} className="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+                                      <span className="font-bold text-slate-800">{section.section}. {section.label}</span>
+                                      <span className="text-slate-600">{section.questions_count} x {section.marks_per_question} = {section.marks} marks</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {assessmentTab === "question_paper" && selectedQuestionPaper && (
+                            <div className="space-y-4">
+                              {Object.values(selectedQuestionPaper.sections).map((section) => (
+                                <div key={section.section} className="rounded-2xl border border-slate-200 overflow-hidden">
+                                  <div className="bg-slate-50 px-4 py-3 flex items-center justify-between">
+                                    <div className="font-extrabold text-slate-800">{section.section}. {section.label}</div>
+                                    <div className="text-xs font-semibold text-slate-500">{section.marks} marks</div>
+                                  </div>
+                                  <div className="divide-y divide-slate-100">
+                                    {section.questions.map((question) => (
+                                      <div key={question.question_id} className="px-4 py-3 text-xs space-y-2">
+                                        <div className="flex items-center justify-between gap-4">
+                                          <div className="font-bold text-slate-800">{question.question_id}. {question.question_text}</div>
+                                          <div className="text-slate-500 font-semibold">{question.marks} mark{question.marks > 1 ? "s" : ""}</div>
+                                        </div>
+                                        {question.options?.length > 0 && (
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-slate-600">
+                                            {question.options.map((option, index) => (
+                                              <div key={index} className="rounded-lg bg-slate-50 px-3 py-2">{option}</div>
+                                            ))}
+                                          </div>
+                                        )}
+                                        <div className="flex flex-wrap gap-2 text-[11px]">
+                                          <span className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold">{question.unit || "Unit not set"}</span>
+                                          <span className="px-2 py-1 rounded-full bg-sky-50 text-sky-700 font-semibold">{question.chapter || "Chapter not set"}</span>
+                                          <span className="px-2 py-1 rounded-full bg-amber-50 text-amber-800 font-semibold">{question.topic || "Topic not set"}</span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {assessmentTab === "answer_key" && selectedAnswerKey && (
+                            <div className="space-y-3">
+                              {selectedAnswerKey.answers.map((answer) => (
+                                <div key={answer.question_id} className="rounded-2xl border border-slate-200 p-4 text-xs space-y-2">
+                                  <div className="font-extrabold text-slate-800">{answer.question_id}</div>
+                                  <div className="text-slate-700"><span className="font-bold">Correct answer:</span> {answer.correct_answer}</div>
+                                  <div className="text-slate-600">{answer.explanation}</div>
+                                  {answer.steps?.length > 0 && (
+                                    <ol className="list-decimal pl-5 text-slate-600 space-y-1">
+                                      {answer.steps.map((step, index) => (
+                                        <li key={index}>{step}</li>
+                                      ))}
+                                    </ol>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {assessmentTab === "marking_scheme" && selectedMarkingScheme && (
+                            <div className="space-y-3">
+                              {selectedMarkingScheme.schemes.map((scheme) => (
+                                <div key={scheme.question_id} className="rounded-2xl border border-slate-200 p-4 text-xs space-y-2">
+                                  <div className="flex items-center justify-between gap-4">
+                                    <div className="font-extrabold text-slate-800">{scheme.question_id}</div>
+                                    <div className="text-slate-500 font-semibold">{scheme.total_marks} marks</div>
+                                  </div>
+                                  <div className="text-slate-600"><span className="font-bold text-slate-800">Value points:</span> {scheme.value_points.join(" | ")}</div>
+                                  <div className="space-y-1">
+                                    {scheme.partial_marking.map((item, index) => (
+                                      <div key={index} className="rounded-lg bg-slate-50 px-3 py-2 text-slate-600">{item.point} - {item.marks}</div>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {activeStep === 6 && (
           <div className="space-y-8 animate-fadeIn">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs">
               <div className="space-y-3">
@@ -1764,9 +2548,11 @@ export default function App() {
                 <div className="text-xs text-slate-500 font-semibold">Curriculums stored in MongoDB</div>
               </div>
               <div className="bg-white border-2 border-slate-100 rounded-3xl p-5">
-                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Current</div>
-                <div className="mt-2 text-sm font-display font-black text-slate-800 truncate">{extractedData?.subject || "No curriculum open"}</div>
-                <div className="text-xs text-slate-500 font-semibold truncate">{currentCurriculumId || "No saved curriculum selected"}</div>
+                <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Saved Terms</div>
+                <div className="mt-2 text-2xl font-display font-black text-slate-800">
+                  {savedCurriculums.reduce((sum, curriculum) => sum + getSavedTermCount(curriculum), 0)}
+                </div>
+                <div className="text-xs text-slate-500 font-semibold">Term plans stored with saved curriculums</div>
               </div>
               <div className="bg-white border-2 border-slate-100 rounded-3xl p-5">
                 <div className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Action</div>
@@ -1792,19 +2578,36 @@ export default function App() {
                 </div>
               ) : (
                 <div className="divide-y divide-slate-100">
-                  {savedCurriculums.map((curriculum) => (
-                    <div key={curriculum._id} className="px-6 py-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  {savedCurriculums.map((curriculum) => {
+                    const savedTermCount = getSavedTermCount(curriculum);
+
+                    return (
+                      <div key={curriculum._id} className="px-6 py-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <span className="text-sm font-display font-black text-slate-800">{curriculum.subject}</span>
                           {currentCurriculumId === curriculum._id && (
                             <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700">Active</span>
                           )}
+                          {savedTermCount > 0 && (
+                            <span className="rounded-full bg-sky-50 px-2 py-0.5 text-[10px] font-bold text-sky-700">
+                              {savedTermCount} saved {savedTermCount === 1 ? "term" : "terms"}
+                            </span>
+                          )}
                         </div>
                         <div className="text-xs font-semibold text-slate-500">{curriculum.gradeLevel}</div>
                         <div className="mt-1 text-[11px] text-slate-400 font-medium break-all">{curriculum.fileName || "Untitled upload"} • {new Date(curriculum.updatedAt).toLocaleString()}</div>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
+                        {savedTermCount > 0 && (
+                          <button
+                            onClick={() => void handleOpenSavedTerms(curriculum._id)}
+                            className="inline-flex items-center gap-2 rounded-xl border border-sky-200 px-3 py-2 text-xs font-bold text-sky-700 transition hover:bg-sky-50"
+                          >
+                            <Calendar className="w-3.5 h-3.5" />
+                            Open Saved Terms
+                          </button>
+                        )}
                         <button
                           onClick={() => void handleOpenSavedCurriculum(curriculum._id)}
                           className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"
@@ -1821,7 +2624,8 @@ export default function App() {
                         </button>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -1879,7 +2683,7 @@ export default function App() {
                     Refresh
                   </button>
                   <button
-                    onClick={() => setActiveStep(5)}
+                    onClick={() => setActiveStep(6)}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"
                   >
                     <Database className="w-3.5 h-3.5" />
@@ -2193,7 +2997,7 @@ export default function App() {
         {/* -------------------- STEP 2: TERMS PLANNER TABLE -------------------- */}
         {activeStep === 2 && (
           <div className="space-y-6 animate-fadeIn">
-            {termsList.length === 0 ? (
+            {!hasGeneratedTerms ? (
               <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
                 <div className="w-16 h-16 bg-[#E9CAB7]/25 rounded-3xl flex items-center justify-center text-[#DE8431] mx-auto">
                   <FileSpreadsheet className="w-8 h-8" />
@@ -2227,7 +3031,9 @@ export default function App() {
                     <span className="bg-[#9FCDD2]/35 text-[#36ADAA] text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full">
                       Syllabus Divided
                     </span>
-                    <span className="text-slate-400">Total Terms: {new Set(termsList.map((term) => term.term)).size}</span>
+                    <span className="text-slate-400">
+                      Total Terms: {termPlans.length > 0 ? termPlans.reduce((sum, plan) => sum + (plan.terms?.length || 0), 0) : new Set(termsList.map((term) => term.term)).size}
+                    </span>
                   </div>
                   <button
                     onClick={() => setActiveStep(1)}
@@ -2268,99 +3074,223 @@ export default function App() {
                   Total marks sum: {termDivisionStats.totalMarks} pts
                 </div>
               </div>
+              {termPlans.length > 0 && activePlannerPlan ? (
+                <div className="bg-white p-4 md:p-6 print-sheet">
+                  <div className="no-print flex flex-col gap-3 border-b border-slate-200 pb-4 md:flex-row md:items-center md:justify-between">
+                    <div className="space-y-1">
+                      <h3 className="font-display text-lg font-extrabold text-slate-800">Academic Term Planning Sheet</h3>
+                      <p className="text-xs text-slate-500">Select a term row to continue into session planning. The layout is optimized for print and export.</p>
+                    </div>
+                    {plannerClassOptions.length > 1 && (
+                      <select
+                        value={activePlannerClass}
+                        onChange={(e) => setSelectedPlannerClass(e.target.value)}
+                        className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700"
+                      >
+                        {plannerClassOptions.map((className) => (
+                          <option key={className} value={className}>{className}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
 
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs text-[#586A71] font-bold uppercase tracking-wider">
-                    <th className="px-6 py-4">Selected</th>
-                    <th className="px-6 py-4">Academic Term</th>
-                    <th className="px-6 py-4">Theme Unit Name</th>
-                    <th className="px-6 py-4">Chapters & Covered Topics</th>
-                    <th className="px-6 py-4 text-center">Marks Weightage</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-sm">
-                  {classTermGroups.map(({ className, termGroups }) => (
-                    <React.Fragment key={className}>
-                      <tr className="bg-[#2B3437] text-white">
-                        <td colSpan={5} className="px-6 py-4">
-                          <div className="flex items-center justify-between">
-                            <span className="font-display font-bold text-sm">{className}</span>
-                            <span className="text-xs text-[#E9CAB7]">{termGroups.length} terms</span>
-                          </div>
-                        </td>
-                      </tr>
-                      {termGroups.map(({ termName, rows, totalMarks, summaryRow }) => {
-                        const isTermSelected = selectedTermRow?.id === summaryRow.id;
-                        return (
-                          <React.Fragment key={`${className}-${termName}`}>
-                            <tr
-                              onClick={() => setSelectedTermRow(summaryRow)}
-                              className={`border-y border-slate-200 cursor-pointer transition-colors ${
-                                isTermSelected ? "bg-[#36ADAA]/10" : "bg-slate-100/80 hover:bg-slate-100"
-                              }`}
-                            >
-                              <td colSpan={5} className="px-6 py-4">
-                                <div className="flex items-center justify-between gap-4">
-                                  <div className="flex items-center gap-3">
-                                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                                      isTermSelected ? "bg-[#36ADAA] border-[#36ADAA] text-white" : "border-slate-300 bg-white"
-                                    }`}>
-                                      {isTermSelected && <Check className="w-3.5 h-3.5" />}
+                  <div className="space-y-1 py-4">
+                    <h4 className="font-display text-xl font-black text-slate-900">{activePlannerPlan.class_name || "Curriculum"}</h4>
+                    <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-slate-600">
+                      <span><span className="font-bold text-slate-800">Academic Year:</span> {String(activePlannerPlan.curriculum_metadata?.academic_year || (extractedData as any)?.document_metadata?.academic_year || "2026-27")}</span>
+                      <span><span className="font-bold text-slate-800">Subject:</span> {String(activePlannerPlan.curriculum_metadata?.subject || extractedData?.subject || "")}</span>
+                    </div>
+                  </div>
+
+                  {/* Term selector chips */}
+                  <div className="no-print flex flex-wrap gap-2 pb-4">
+                    {activePlannerPlan.terms.map((term) => {
+                      const selectedTerm = resolveSelectedTermFromPlan(activePlannerPlan, term);
+                      const isSelected = selectedTermRow?.id === selectedTerm.id;
+                      return (
+                        <button
+                          key={term.term_number}
+                          onClick={() => setSelectedTermRow(selectedTerm)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border ${
+                            isSelected
+                              ? "bg-[#36ADAA] text-white border-[#36ADAA] shadow-sm"
+                              : "bg-white text-slate-700 border-slate-200 hover:border-[#36ADAA]/40 hover:text-[#36ADAA]"
+                          }`}
+                        >
+                          <span className={`w-2.5 h-2.5 rounded-full ${isSelected ? "bg-white" : "bg-[#36ADAA]"}`} />
+                          {term.term_title}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[860px] border-collapse text-left text-sm term-planning-table">
+                      <thead className="sticky top-0 z-10 bg-white">
+                        <tr className="border-y border-slate-300 text-[11px] uppercase tracking-[0.18em] text-slate-500">
+                          <th className="px-3 py-3 font-bold">Term</th>
+                          <th className="px-3 py-3 font-bold">Units</th>
+                          <th className="px-3 py-3 font-bold">Chapters</th>
+                          <th className="px-3 py-3 font-bold">Total Sessions</th>
+                          <th className="px-3 py-3 font-bold">Marks</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {activePlannerPlan.terms.map((term, termIndex) => {
+                          const rows = getTermContentRows(term);
+                          const rowCount = Math.max(rows.length, 1);
+                          const selectedTerm = resolveSelectedTermFromPlan(activePlannerPlan, term);
+                          const isSelected = selectedTermRow?.id === selectedTerm.id;
+
+                          return rows.map((row, rowIndex) => {
+                            const chapterNames = row.chapter_names || row.chapters?.map((chapter) => chapter.chapter_name || "").filter(Boolean) || [];
+                            return (
+                              <tr
+                                key={`${term.term_number}-${row.unit_id || rowIndex}`}
+                                onClick={() => setSelectedTermRow(selectedTerm)}
+                                className={`cursor-pointer border-b border-slate-200 align-top ${termIndex % 2 === 0 ? "bg-white" : "bg-slate-50/50"} ${isSelected ? "bg-[#36ADAA]/8" : ""}`}
+                              >
+                                {rowIndex === 0 && (
+                                  <td rowSpan={rowCount} className="px-3 py-3 align-top border-r border-slate-200">
+                                    <div className="font-bold text-slate-800">{term.term_title}</div>
+                                    <div className="mt-1 text-[11px] text-slate-500">Term {term.term_number}</div>
+                                  </td>
+                                )}
+                                <td className="px-3 py-3 align-top border-r border-slate-200">
+                                  <div className="whitespace-pre-line leading-6 text-slate-800">{row.unit_name || "Untitled Unit"}</div>
+                                </td>
+                                <td className="px-3 py-3 align-top border-r border-slate-200">
+                                  <div className="whitespace-pre-line leading-6 text-slate-700">
+                                    {chapterNames.length > 0 ? chapterNames.map((chapterName) => `• ${chapterName}`).join("\n") : "—"}
+                                  </div>
+                                </td>
+                                {rowIndex === 0 && (
+                                  <td rowSpan={rowCount} className="px-3 py-3 align-top border-r border-slate-200 font-semibold text-slate-700">
+                                    {getTermSummaryValue(term, "sessions") || "—"}
+                                  </td>
+                                )}
+                                {rowIndex === 0 && (
+                                  <td rowSpan={rowCount} className="px-3 py-3 align-top font-semibold text-slate-700">
+                                    {getTermSummaryValue(term, "marks") || "—"}
+                                  </td>
+                                )}
+                              </tr>
+                            );
+                          });
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {selectedTermRow && (
+                    <div className="no-print mt-4 flex flex-col gap-3 border-t border-slate-200 pt-4 md:flex-row md:items-center md:justify-between">
+                      <div className="text-sm text-slate-600">
+                        Active term: <span className="font-bold text-slate-800">{selectedTermName}</span>
+                      </div>
+                      <button
+                        onClick={() => handleConfigureSessionsForTerm(selectedTermRow)}
+                        className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2B3437] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#2B3437]/90"
+                      >
+                        Continue to Session Planning
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-slate-50 border-b border-slate-100 text-xs text-[#586A71] font-bold uppercase tracking-wider">
+                      <th className="px-6 py-4">Selected</th>
+                      <th className="px-6 py-4">Academic Term</th>
+                      <th className="px-6 py-4">Theme Unit Name</th>
+                      <th className="px-6 py-4">Chapters & Covered Topics</th>
+                      <th className="px-6 py-4 text-center">Marks Weightage</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-sm">
+                    {classTermGroups.map(({ className, termGroups }) => (
+                      <React.Fragment key={className}>
+                        <tr className="bg-[#2B3437] text-white">
+                          <td colSpan={5} className="px-6 py-4">
+                            <div className="flex items-center justify-between">
+                              <span className="font-display font-bold text-sm">{className}</span>
+                              <span className="text-xs text-[#E9CAB7]">{termGroups.length} terms</span>
+                            </div>
+                          </td>
+                        </tr>
+                        {termGroups.map(({ termName, rows, totalMarks, summaryRow }) => {
+                          const isTermSelected = selectedTermRow?.id === summaryRow.id;
+                          return (
+                            <React.Fragment key={`${className}-${termName}`}>
+                              <tr
+                                onClick={() => setSelectedTermRow(summaryRow)}
+                                className={`border-y border-slate-200 cursor-pointer transition-colors ${
+                                  isTermSelected ? "bg-[#36ADAA]/10" : "bg-slate-100/80 hover:bg-slate-100"
+                                }`}
+                              >
+                                <td colSpan={5} className="px-6 py-4">
+                                  <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-3">
+                                      <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                                        isTermSelected ? "bg-[#36ADAA] border-[#36ADAA] text-white" : "border-slate-300 bg-white"
+                                      }`}>
+                                        {isTermSelected && <Check className="w-3.5 h-3.5" />}
+                                      </div>
+                                      <span className="px-3 py-1 bg-slate-800 text-white rounded-md text-xs font-bold">
+                                        {termName}
+                                      </span>
+                                      <span className="text-xs font-semibold text-slate-500">
+                                        {rows.length} unit rows
+                                      </span>
                                     </div>
-                                    <span className="px-3 py-1 bg-slate-800 text-white rounded-md text-xs font-bold">
-                                      {termName}
-                                    </span>
-                                    <span className="text-xs font-semibold text-slate-500">
-                                      {rows.length} unit rows
+                                    <span className="text-xs font-bold text-[#DE8431]">
+                                      Term marks: {totalMarks} pts
                                     </span>
                                   </div>
-                                  <span className="text-xs font-bold text-[#DE8431]">
-                                    Term marks: {totalMarks} pts
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-                            {rows.map((row) => {
-                              return (
-                                <tr
-                                  key={row.id}
-                                  className="text-slate-700"
-                                >
-                                  <td className="px-6 py-4" />
-                                  <td className="px-6 py-4 font-bold text-slate-500">
-                                    {row.termNumber || ""}
-                                  </td>
-                                  <td className="px-6 py-4 font-extrabold text-slate-800">
-                                    {row.unitName}
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <div className="flex flex-wrap gap-1 max-w-sm">
-                                      {row.chapters.map((chap, i) => (
-                                        <span
-                                          key={i}
-                                          className="text-[10px] bg-[#9FCDD2]/20 text-[#2B3437] px-2 py-0.5 rounded"
-                                        >
-                                          {chap}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  </td>
-                                  <td className="px-6 py-4 text-center">
-                                    <span className="px-2.5 py-1 bg-[#DE8431]/10 text-[#DE8431] rounded-full font-bold text-xs">
-                                      {row.marks} marks
-                                    </span>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </React.Fragment>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
+                                </td>
+                              </tr>
+                              {rows.map((row) => {
+                                return (
+                                  <tr
+                                    key={row.id}
+                                    className="text-slate-700"
+                                  >
+                                    <td className="px-6 py-4" />
+                                    <td className="px-6 py-4 font-bold text-slate-500">
+                                      {row.termNumber || ""}
+                                    </td>
+                                    <td className="px-6 py-4 font-extrabold text-slate-800">
+                                      {row.unitName}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                      <div className="flex flex-wrap gap-1 max-w-sm">
+                                        {row.chapters.map((chap, i) => (
+                                          <span
+                                            key={i}
+                                            className="text-[10px] bg-[#9FCDD2]/20 text-[#2B3437] px-2 py-0.5 rounded"
+                                          >
+                                            {chap}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                      <span className="px-2.5 py-1 bg-[#DE8431]/10 text-[#DE8431] rounded-full font-bold text-xs">
+                                        {row.marks} marks
+                                      </span>
+                                    </td>
+                                  </tr>
+                                );
+                              })}
+                            </React.Fragment>
+                          );
+                        })}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
 
             {/* Helpful Banner */}
@@ -2800,6 +3730,13 @@ export default function App() {
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 lg:justify-end">
+                    <button
+                      onClick={() => setActiveStep(5)}
+                      className="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
+                    >
+                      <GraduationCap className="w-3.5 h-3.5" />
+                      Assessment Generator
+                    </button>
                     <button
                       onClick={triggerGenerateAllSessions}
                       className="py-2.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition"

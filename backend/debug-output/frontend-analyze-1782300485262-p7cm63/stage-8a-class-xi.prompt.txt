@@ -1,0 +1,413 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8A - Class XI
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical World and Measurement",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Units and Measurements"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Kinematics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Motion in a Straight Line"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Motion in a Plane"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Laws of Motion",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Laws of Motion"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Work, Energy and Power",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Work, Energy and Power"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "System of Particles and Rotational Motion"
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Gravitation",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Gravitation"
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Properties of Bulk Matter",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Mechanical Properties of Solids"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Mechanical Properties of Fluids"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Thermal Properties of Matter"
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Thermodynamics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Thermodynamics"
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Kinetic Theory"
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Oscillations and Waves",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Oscillations"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Waves"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical World and Measurement",
+      "chapter_id": "C1",
+      "chapter_name": "Units and Measurements"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Kinematics",
+      "chapter_id": "C1",
+      "chapter_name": "Motion in a Straight Line"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Kinematics",
+      "chapter_id": "C2",
+      "chapter_name": "Motion in a Plane"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Laws of Motion",
+      "chapter_id": "C1",
+      "chapter_name": "Laws of Motion"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Work, Energy and Power",
+      "chapter_id": "C1",
+      "chapter_name": "Work, Energy and Power"
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapter_id": "C1",
+      "chapter_name": "System of Particles and Rotational Motion"
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Gravitation",
+      "chapter_id": "C1",
+      "chapter_name": "Gravitation"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_id": "C1",
+      "chapter_name": "Mechanical Properties of Solids"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_id": "C2",
+      "chapter_name": "Mechanical Properties of Fluids"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_id": "C3",
+      "chapter_name": "Thermal Properties of Matter"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Thermodynamics",
+      "chapter_id": "C1",
+      "chapter_name": "Thermodynamics"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_id": "C1",
+      "chapter_name": "Kinetic Theory"
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Oscillations and Waves",
+      "chapter_id": "C1",
+      "chapter_name": "Oscillations"
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Oscillations and Waves",
+      "chapter_id": "C2",
+      "chapter_name": "Waves"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C1",
+      "title": "Units and Measurements Competencies",
+      "description": "Competencies related to measurement systems, SI units, significant figures, uncertainty determination, dimensional analysis, and their applications.",
+      "competencies": [
+        "Apply fundamental and derived SI units for physical quantities.",
+        "Determine appropriate significant figures in measurements.",
+        "Calculate and express uncertainty in experimental results.",
+        "Perform dimensional analysis to verify equations and derive relationships."
+      ],
+      "unit_name": "Physical World and Measurement",
+      "chapter_name": "Units and Measurements"
+    },
+    {
+      "code": "C2",
+      "title": "Motion in a Straight Line Competencies",
+      "description": "Competencies related to describing motion using calculus, analyzing uniform/non-uniform motion, interpreting graphs, and applying equations of uniformly accelerated motion.",
+      "competencies": [
+        "Use differentiation and integration concepts to describe linear motion.",
+        "Distinguish between average speed/velocity and instantaneous velocity.",
+        "Analyze motion using velocity-time and position-time graphs.",
+        "Apply graphical and calculus methods for uniformly accelerated motion."
+      ],
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Straight Line"
+    },
+    {
+      "code": "C3",
+      "title": "Motion in a Plane Competencies",
+      "description": "Competencies related to vector operations, resolution of vectors, and analyzing projectile and circular motion.",
+      "competencies": [
+        "Perform addition, subtraction, and scalar multiplication of vectors.",
+        "Resolve vectors into rectangular components using unit vectors.",
+        "Calculate scalar and vector products for physical quantities.",
+        "Analyze projectile motion and uniform circular motion in a plane."
+      ],
+      "unit_name": "Kinematics",
+      "chapter_name": "Motion in a Plane"
+    },
+    {
+      "code": "C4",
+      "title": "Laws of Motion Competencies",
+      "description": "Competencies related to Newton's laws, momentum conservation, impulse, force equilibrium, friction types, and centripetal dynamics.",
+      "competencies": [
+        "Explain inertia and apply Newton's first law in various contexts.",
+        "Relate force, mass, acceleration via Newton's second law and calculate impulse.",
+        "Apply the principle of conservation of linear momentum derived from Newton's third law.",
+        "Analyze equilibrium conditions involving static/kinetic friction and centripetal forces."
+      ],
+      "unit_name": "Laws of Motion",
+      "chapter_name": "Laws of Motion"
+    },
+    {
+      "code": "U4-C1",
+      "title": "Work, Energy and Power Competencies",
+      "description": "Core competencies for Work, Energy and Power.",
+      "competencies": [
+        "Understand the core concepts of Work, Energy and Power.",
+        "Apply key ideas from Work, Energy and Power to solve curriculum-aligned problems.",
+        "Analyze relationships between major concepts in Work, Energy and Power."
+      ],
+      "unit_name": "Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power"
+    },
+    {
+      "code": "U5-C1",
+      "title": "System of Particles and Rotational Motion",
+      "description": "Competencies related to the motion of system of particles, rigid body dynamics, torque, angular momentum, equilibrium, moment of inertia, and comparison between linear and rotational motions.",
+      "competencies": [
+        "Apply conservation of momentum principles to center of mass motion in a system of particles",
+        "Analyze relationships between torque, angular momentum, and their conservation laws",
+        "Evaluate conditions for rigid body equilibrium using equations of rotational motion",
+        "Differentiate linear and rotational kinematic quantities through comparative analysis"
+      ],
+      "unit_name": "Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion"
+    },
+    {
+      "code": "U6-C1",
+      "title": "Gravitation",
+      "description": "Competencies covering universal gravitation, variation in acceleration due to gravity, gravitational potential energy, orbital mechanics, and Kepler's laws.",
+      "competencies": [
+        "Apply the Universal Law of Gravitation to calculate forces between celestial bodies",
+        "Determine variations in acceleration due to gravity with altitude and depth",
+        "Calculate gravitational potential energy and potential for satellite systems",
+        "Derive escape speed and orbital velocity using conservation of energy principles"
+      ],
+      "unit_name": "Gravitation",
+      "chapter_name": "Gravitation"
+    },
+    {
+      "code": "U7-C1",
+      "title": "Mechanical Properties of Solids",
+      "description": "Competencies involving elastic behavior, stress-strain relationships, material constants (Young's modulus, Bulk modulus), and energy storage in deformed solids.",
+      "competencies": [
+        "Apply Hooke's Law to determine deformation limits for solid materials",
+        "Calculate Young’s modulus and Bulk modulus from experimental data or problem scenarios",
+        "Analyze the relationship between stress, strain, and elastic potential energy",
+        "Evaluate Poisson's ratio in the context of material deformation"
+      ],
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids"
+    },
+    {
+      "code": "U7-C2",
+      "title": "Mechanical Properties of Fluids",
+      "description": "Competencies addressing fluid dynamics, viscosity, surface tension, pressure variations in fluids, and applications like Bernoulli's theorem.",
+      "competencies": [
+        "Apply Stokes' Law to determine terminal velocity of spherical bodies in viscous media",
+        "Distinguish between streamline and turbulent flow regimes using critical velocity concepts",
+        "Utilize Bernoulli’s Theorem to analyze fluid dynamics problems involving pressure, speed, and height",
+        "Calculate surface tension effects including excess pressure across curved surfaces"
+      ],
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids"
+    },
+    {
+      "code": "U7-C3",
+      "title": "Thermal Properties of Matter",
+      "description": "Competencies related to heat transfer mechanisms, specific heats, latent heat, thermal expansion anomalies, and blackbody radiation laws.",
+      "competencies": [
+        "Explain the phenomenon of anomalous expansion in water and its physical significance",
+        "Apply calorimetry principles using specific heat capacities (Cp, Cv) for energy calculations",
+        "Analyze phase transitions involving latent heat during changes of state",
+        "Evaluate thermal conductivity effects across conduction, convection, and radiation modes"
+      ],
+      "unit_name": "Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter"
+    },
+    {
+      "code": "PHYS-XI-U8-C1",
+      "title": "Thermodynamics Fundamentals and Laws",
+      "description": "Analyze thermal equilibrium, state variables, and the application of thermodynamic laws to gaseous processes.",
+      "competencies": [
+        "Explain thermal equilibrium and apply Zeroth law concepts to define temperature.",
+        "Differentiate between heat, work, and internal energy using the First Law of Thermodynamics.",
+        "Analyze reversible/irreversible isothermal and adiabatic gaseous processes."
+      ],
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Thermodynamics"
+    },
+    {
+      "code": "PHYS-XI-U9-C1",
+      "title": "Kinetic Theory of Gases and Molecular Properties",
+      "description": "Derive macroscopic gas properties from microscopic molecular behavior using kinetic theory assumptions.",
+      "competencies": [
+        "Explain the derivation of pressure and temperature based on kinetic theory assumptions.",
+        "Apply the law of equipartition of energy to determine specific heat capacities of gases.",
+        "Calculate RMS speed, mean free path, and utilize Avogadro's number in gas problems."
+      ],
+      "unit_name": "Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Kinetic Theory"
+    },
+    {
+      "code": "PHYS-XI-U10-C1",
+      "title": "Simple Harmonic Motion and Periodicity",
+      "description": "Identify periodic functions, define Simple Harmonic Motion (S.H.M), and relate it to uniform circular motion.",
+      "competencies": [
+        "Distinguish between general periodic motion and Simple Harmonic Motion using time period and frequency.",
+        "Formulate displacement as a function of time for S.H.M systems.",
+        "Relate the equations of Uniform Circular Motion to the dynamics of oscillations."
+      ],
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Oscillations"
+    },
+    {
+      "code": "PHYS-XI-U10-C2",
+      "title": "Wave Mechanics and Propagation",
+      "description": "Understand the fundamental characteristics of wave motion, including propagation mechanisms and types.",
+      "competencies": [
+        "Describe the basic properties and classification of mechanical waves.",
+        "Analyze the relationship between frequency, wavelength, and wave velocity in different media.",
+        "Explain the phenomenon of superposition and interference in wave systems."
+      ],
+      "unit_name": "Oscillations and Waves",
+      "chapter_name": "Waves"
+    }
+  ]
+}

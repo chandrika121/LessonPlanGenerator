@@ -1,0 +1,33 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "competency_groups": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "competencies": [
+          ""
+        ],
+        "unit_name": "",
+        "chapter_name": ""
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 6: Competency Extraction - Class XII - Batch 1 - Minimal Retry\n\nReturn valid JSON only.\n\nReturn exactly one competency_group per input chapter.\n\nUse only the given subject, class, unit name, chapter name, key_concepts, and subtopics.\n\nDo not omit any input chapter.\n\nDo not create more than one competency_group for the same chapter.\n\nLimit competencies to exactly 3 concise items per chapter.\n\nBatch payload:\n{\n  \"class_name\": \"Class XII\",\n  \"subject\": \"Physics\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit–I Electrostatics\"\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit-II Current Electricity\"\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit-III Magnetic Effects of Current and Magnetism\"\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit–I Electrostatics\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Electric Charges and Fields\",\n      \"key_concepts\": [\n        \"Electric field due to point charge\",\n        \"Electric dipole and torque in uniform electric field\",\n        \"Gauss's theorem applications (wire, plane sheet, spherical shell)\"\n      ],\n      \"subtopics\": [\n        \"Conservation of charge\",\n        \"Coulomb's law and superposition principle\",\n        \"Continuous charge distribution\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit–I Electrostatics\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Electrostatic Potential and Capacitance\",\n      \"key_concepts\": [\n        \"Conductors, insulators, dielectrics, and polarization\",\n        \"Capacitors: series/parallel combinations and parallel plate capacitor with dielectric\",\n        \"Energy stored in a capacitor (formulae only)\"\n      ],\n      \"subtopics\": [\n        \"Electric potential and equipotential surfaces\",\n        \"Potential energy of charge systems\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit-II Current Electricity\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Current Electricity\",\n      \"key_concepts\": [\n        \"Electrical resistivity, conductivity, and temperature dependence of resistance\",\n        \"Internal resistance, emf, and combination of cells\",\n        \"Kirchhoff's rules and Wheatstone bridge\"\n      ],\n      \"subtopics\": [\n        \"Drift velocity, mobility, and Ohm's law\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit-III Magnetic Effects of Current and Magnetism\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Moving Charges and Magnetism\",\n      \"key_concepts\": [\n        \"Ampere's law applications (straight wire)\",\n        \"Force on moving charges and current-carrying conductors\",\n        \"Current loop as magnetic dipole; Moving coil galvanometer conversion\"\n      ],\n      \"subtopics\": [\n        \"Magnetic field concepts: Oersted's experiment, Biot-Savart law\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Physics\",\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit-III Magnetic Effects of Current and Magnetism\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Magnetism and Matter\",\n      \"key_concepts\": [\n        \"Properties of magnetic materials (qualitative)\"\n      ],\n      \"subtopics\": [\n        \"Bar magnet as equivalent solenoid\"\n      ],\n      \"topics\": []\n    }\n  ]\n}\n\nTarget schema:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}"
+    }
+  ]
+}

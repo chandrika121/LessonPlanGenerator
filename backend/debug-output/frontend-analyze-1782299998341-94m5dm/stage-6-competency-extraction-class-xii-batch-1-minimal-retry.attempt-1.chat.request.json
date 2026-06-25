@@ -1,0 +1,33 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "competency_groups": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "competencies": [
+          ""
+        ],
+        "unit_name": "",
+        "chapter_name": ""
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 6: Competency Extraction - Class XII - Batch 1 - Minimal Retry\n\nReturn valid JSON only.\n\nReturn exactly one competency_group per input chapter.\n\nUse only the given subject, class, unit name, chapter name, key_concepts, and subtopics.\n\nDo not omit any input chapter.\n\nDo not create more than one competency_group for the same chapter.\n\nLimit competencies to exactly 3 concise items per chapter.\n\nBatch payload:\n{\n  \"class_name\": \"Class XII\",\n  \"subject\": \"Chemistry\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit 1: Solutions\"\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit 2: Electrochemistry\"\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit 3: Chemical Kinetics\"\n    },\n    {\n      \"unit_id\": \"U4\",\n      \"unit_name\": \"Unit 4: d and f Block Elements\"\n    },\n    {\n      \"unit_id\": \"U5\",\n      \"unit_name\": \"Unit 5: Coordination Compounds\"\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Chemistry\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit 1: Solutions\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Solutions\",\n      \"key_concepts\": [\n        \"Colligative Properties\",\n        \"Determination of Molar Mass\",\n        \"Abnormal Molecular Masses\"\n      ],\n      \"subtopics\": [\n        \"Types of Solutions\",\n        \"Expression of Concentration of Solutions\",\n        \"Solubility\",\n        \"Vapour Pressure of Liquid Solutions\",\n        \"Ideal and Non-Ideal Solutions\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Chemistry\",\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit 2: Electrochemistry\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Electrochemistry\",\n      \"key_concepts\": [\n        \"Electrolytic Cells and Electrolysis\",\n        \"Batteries\",\n        \"Fuel Cells\",\n        \"Corrosion\"\n      ],\n      \"subtopics\": [\n        \"Electrochemical Cells\",\n        \"Galvanic Cells\",\n        \"Nernst Equation\",\n        \"Conductance of Electrolytic solutions\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Chemistry\",\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit 3: Chemical Kinetics\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Chemical Kinetics\",\n      \"key_concepts\": [\n        \"Integrated rate equations\",\n        \"Temperature Dependence of the rate of a reaction\",\n        \"Collision theory of Chemical Reactions\"\n      ],\n      \"subtopics\": [\n        \"Rate of a Chemical reaction\",\n        \"Factors influencing rate of reaction\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Chemistry\",\n      \"unit_id\": \"U4\",\n      \"unit_name\": \"Unit 4: d and f Block Elements\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"d and f Block Elements\",\n      \"key_concepts\": [\n        \"General properties of Transition Elements (d-Block)\",\n        \"Important Compounds of Transition Elements\",\n        \"The Lanthanoids\",\n        \"The Actinoids\",\n        \"Applications of d- and f- Block Elements\"\n      ],\n      \"subtopics\": [\n        \"Position in the Periodic Table\",\n        \"Electronic configuration of the d-Block Elements\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Chemistry\",\n      \"unit_id\": \"U5\",\n      \"unit_name\": \"Unit 5: Coordination Compounds\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Coordination Compounds\",\n      \"key_concepts\": [\n        \"Definition of important terms pertaining to Coordination Compounds\",\n        \"Nomenclature of Coordination Compounds\",\n        \"Isomerism in Coordination Compounds\",\n        \"Bonding in coordination compounds\",\n        \"Bonding in Metal Carbonyls\"\n      ],\n      \"subtopics\": [\n        \"Werner's Theory of Coordination Compound\"\n      ],\n      \"topics\": []\n    }\n  ]\n}\n\nTarget schema:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}"
+    }
+  ]
+}

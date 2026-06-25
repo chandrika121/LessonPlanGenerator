@@ -1,0 +1,141 @@
+Stage 6: Competency Extraction - Class XII - Batch 1 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XII",
+  "subject": "Accountancy",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit 1. Accounting for Partnership Firms"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit 2. Accounting for Companies"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit 3. Analysis of Financial Statements"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Computerised Accounting"
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Cash Flow Statement"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XII",
+      "subject": "Accountancy",
+      "unit_id": "U1",
+      "unit_name": "Unit 1. Accounting for Partnership Firms",
+      "chapter_id": "C1",
+      "chapter_name": "Unit 1. Accounting for Partnership Firms",
+      "key_concepts": [
+        "Accounting Equation Approach",
+        "Double Entry System",
+        "Accrual Basis Principle",
+        "GST Characteristics and Applicability"
+      ],
+      "subtopics": [
+        "Concept, Objectives, Limitations of Accounting",
+        "Qualitative Characteristics and Role in Business",
+        "Basic Accounting Terms: Assets, Liabilities, Capital, Revenue vs Expenditure",
+        "Fundamental Assumptions (GAAP): Entity, Money Measurement, Going Concern, etc.",
+        "Basis of Accounting: Cash vs Accrual"
+      ],
+      "topics": [
+        "Introduction to Accounting and Theoretical Framework"
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Accountancy",
+      "unit_id": "U2",
+      "unit_name": "Unit 2. Accounting for Companies",
+      "chapter_id": "C1",
+      "chapter_name": "Unit 2. Accounting for Companies",
+      "key_concepts": [
+        "Rules of Debit and Credit",
+        "Bank Reconciliation Statement Preparation",
+        "Provisions, Reserves, and Capital/Revenue Distinction",
+        "Rectification of Errors",
+        "Trial Balance Verification"
+      ],
+      "subtopics": [
+        "Source Documents, Vouchers, and Journal Entries",
+        "Special Purpose Books: Cash Book (Simple & Bank), Petty Cash Book",
+        "Purchases/Sales Books and Returns",
+        "Ledger Posting and Balancing of Accounts",
+        "Depreciation Methods (SLM vs WDV) and Treatment"
+      ],
+      "topics": [
+        "Accounting Process and Recording Transactions"
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Accountancy",
+      "unit_id": "U3",
+      "unit_name": "Unit 3. Analysis of Financial Statements",
+      "chapter_id": "C1",
+      "chapter_name": "Unit 3. Analysis of Financial Statements",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Accountancy",
+      "unit_id": "U4",
+      "unit_name": "Computerised Accounting",
+      "chapter_id": "C1",
+      "chapter_name": "Computerised Accounting",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Accountancy",
+      "unit_id": "U5",
+      "unit_name": "Cash Flow Statement",
+      "chapter_id": "C1",
+      "chapter_name": "Cash Flow Statement",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

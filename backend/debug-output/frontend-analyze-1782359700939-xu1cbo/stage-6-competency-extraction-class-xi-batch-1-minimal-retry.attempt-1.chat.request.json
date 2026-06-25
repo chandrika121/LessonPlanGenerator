@@ -1,0 +1,33 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "competency_groups": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "competencies": [
+          ""
+        ],
+        "unit_name": "",
+        "chapter_name": ""
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 6: Competency Extraction - Class XI - Batch 1 - Minimal Retry\n\nReturn valid JSON only.\n\nReturn exactly one competency_group per input chapter.\n\nUse only the given subject, class, unit name, chapter name, key_concepts, and subtopics.\n\nDo not omit any input chapter.\n\nDo not create more than one competency_group for the same chapter.\n\nLimit competencies to exactly 3 concise items per chapter.\n\nBatch payload:\n{\n  \"class_name\": \"Class XI\",\n  \"subject\": \"Biology\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Diversity of Living Organisms\"\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Structural Organization in Plants and Animals\"\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Diversity of Living Organisms\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"The Living World\",\n      \"key_concepts\": [\n        \"Biodiversity and Need for classification\",\n        \"Three domains of life; taxonomy and systematics\",\n        \"Concept of species and taxonomical hierarchy\",\n        \"Binomial nomenclature\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Diversity of Living Organisms\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Biological Classification\",\n      \"key_concepts\": [\n        \"Five kingdom classification\",\n        \"Salient features and classification of Monera, Protista and Fungi\",\n        \"Lichens, Viruses and Viroids\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Diversity of Living Organisms\",\n      \"chapter_id\": \"C3\",\n      \"chapter_name\": \"Plant Kingdom\",\n      \"key_concepts\": [\n        \"Classification of plants into major groups\",\n        \"Salient and distinguishing features of Algae, Bryophyta, Pteridophyta, Gymnospermae and Angiosperms\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Diversity of Living Organisms\",\n      \"chapter_id\": \"C4\",\n      \"chapter_name\": \"Animal Kingdom\",\n      \"key_concepts\": [\n        \"Salient features and classification of animals, non-chordates up to phyla level\",\n        \"Chordates upto class level\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Structural Organization in Plants and Animals\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Morphology of Flowering Plants\",\n      \"key_concepts\": [\n        \"Morphology of root, stem, leaf, inflorescence, flower, fruit and seed\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    }\n  ]\n}\n\nTarget schema:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}"
+    }
+  ]
+}

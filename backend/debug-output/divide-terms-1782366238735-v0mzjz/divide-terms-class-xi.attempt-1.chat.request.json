@@ -1,0 +1,63 @@
+{
+  "model": "gemma4:31b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "curriculum_metadata": {},
+    "term_planning_metadata": {
+      "requested_term_count": 0,
+      "planning_basis": [
+        ""
+      ]
+    },
+    "terms": [
+      {
+        "term_number": 1,
+        "term_title": "Term 1",
+        "summary": {
+          "total_units": 0,
+          "total_chapters": 0,
+          "total_topics": 0,
+          "total_subtopics": 0,
+          "total_learning_outcomes": 0,
+          "total_competencies": 0,
+          "total_estimated_sessions": 0,
+          "total_estimated_hours": 0
+        },
+        "curriculum_content": [
+          {
+            "unit_id": "",
+            "unit_name": "",
+            "estimated_sessions": 0,
+            "estimated_hours": 0,
+            "marks": 0,
+            "chapters": [
+              {
+                "chapter_id": "",
+                "chapter_name": "",
+                "estimated_sessions": 0,
+                "estimated_hours": 0,
+                "marks": 0
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "validation_report": {}
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 2048
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL CURRICULUM TERM PLANNING ENGINE\n\nROLE:\nYou are an expert academic planner and curriculum scheduler.\n\nTASK:\nDivide the given compact curriculum index into balanced academic terms.\n\nIMPORTANT:\nYou are NOT extracting curriculum.\nYou are NOT rewriting curriculum.\nYou are NOT generating lessons.\nYou are NOT preserving full curriculum text.\nYou are ONLY assigning existing curriculum IDs to terms.\n\nSOURCE OF TRUTH:\nUse only the provided compact curriculum JSON.\nDo not use prior knowledge.\nDo not invent units, chapters, topics, sessions, learning outcomes, or competencies.\n\nINPUT:\nYou will receive compact JSON only:\n\n{\n  \"class_name\": \"\",\n  \"subject\": \"\",\n  \"academic_year\": \"\",\n  \"term_count\": 0,\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"unit_name\": \"\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"\",\n          \"chapter_name\": \"\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    }\n  ]\n}\n\nTERM DIVISION RULES:\n1. Preserve curriculum order.\n2. Maintain prerequisite flow.\n3. Do not duplicate units or chapters.\n4. Do not omit units or chapters.\n5. Balance terms by estimated_sessions first.\n6. If estimated_sessions is missing, balance by chapter count.\n7. Keep chapters of the same unit together where possible.\n8. Split a unit across terms only if the unit is too large.\n9. Never create new units or chapters.\n10. Never rename units or chapters.\n11. Return references by IDs.\n\nOUTPUT:\nReturn ONLY valid JSON.\n\nRequired JSON shape:\n\n{\n  \"curriculum_metadata\": {\n    \"class_name\": \"\",\n    \"subject\": \"\",\n    \"academic_year\": \"\"\n  },\n  \"term_planning_metadata\": {\n    \"requested_term_count\": 0,\n    \"planning_basis\": [\n      \"curriculum_order\",\n      \"estimated_sessions\",\n      \"chapter_count\"\n    ]\n  },\n  \"terms\": [\n    {\n      \"term_number\": 1,\n      \"term_title\": \"Term 1\",\n      \"summary\": {\n        \"unit_count\": 0,\n        \"chapter_count\": 0,\n        \"estimated_sessions\": 0,\n        \"estimated_hours\": 0,\n        \"marks\": 0\n      },\n      \"assigned_content\": [\n        {\n          \"unit_id\": \"\",\n          \"unit_name\": \"\",\n          \"chapter_ids\": [],\n          \"chapter_names\": []\n        }\n      ]\n    }\n  ],\n  \"validation_report\": {\n    \"all_units_assigned\": true,\n    \"all_chapters_assigned\": true,\n    \"duplicate_unit_ids\": [],\n    \"duplicate_chapter_ids\": [],\n    \"missing_unit_ids\": [],\n    \"missing_chapter_ids\": [],\n    \"term_count_valid\": true,\n    \"total_assigned_chapters\": 0\n  }\n}\n\nSTRICT RULES:\n- Do not include full topics.\n- Do not include full learning outcomes.\n- Do not include full competencies.\n- Do not include activities.\n- Do not include projects.\n- Do not include practical details.\n- Do not include lesson/session content.\n- Do not include source text.\n- Do not include explanations.\n- Do not include markdown.\n- Output JSON only.\n\nIMPORTANT OVERRIDE FOR IMPLEMENTATION:\n\nUse ONLY the compact input JSON below.\n\nDo NOT infer or reconstruct omitted fields.\n\nDo NOT include full curriculum content in the output.\n\nAssign only unit and chapter IDs into terms, while preserving sequence and balancing workload.\n\nDo NOT include topics, subtopics, learning outcomes, competencies, notes, sessions, practicals, projects, prescribed books, or any other omitted data.\n\nReturn terms with curriculum_content entries shaped like:\n\n{\n  \"unit_id\": \"\",\n  \"unit_name\": \"\",\n  \"estimated_sessions\": 0,\n  \"estimated_hours\": 0,\n  \"marks\": 0,\n  \"chapters\": [\n    {\n      \"chapter_id\": \"\",\n      \"chapter_name\": \"\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0\n    }\n  ]\n}\n\nCOMPACT TERM DIVISION INPUT JSON:\n\n{\n  \"class_name\": \"Class XI\",\n  \"subject\": \"PHYSICS\",\n  \"academic_year\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Physical World and Measurement\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Units and Measurements\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Kinematics\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Motion in a Straight Line\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        },\n        {\n          \"chapter_id\": \"C2\",\n          \"chapter_name\": \"Motion in a Plane\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Laws of Motion\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Laws of Motion\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U4\",\n      \"unit_name\": \"Work, Energy and Power\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Work, Energy and Power\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U5\",\n      \"unit_name\": \"Motion of System of Particles and Rigid Body\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"System of Particles and Rotational Motion\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U6\",\n      \"unit_name\": \"Gravitation\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Gravitation\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U7\",\n      \"unit_name\": \"Properties of Bulk Matter\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Mechanical Properties of Solids\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        },\n        {\n          \"chapter_id\": \"C2\",\n          \"chapter_name\": \"Mechanical Properties of Fluids\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        },\n        {\n          \"chapter_id\": \"C3\",\n          \"chapter_name\": \"Thermal Properties of Matter\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U8\",\n      \"unit_name\": \"Thermodynamics\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Thermodynamics\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U9\",\n      \"unit_name\": \"Behaviour of Perfect Gases and Kinetic Theory of Gases\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Kinetic Theory\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U10\",\n      \"unit_name\": \"Oscillations and Waves\",\n      \"estimated_sessions\": 0,\n      \"estimated_hours\": 0,\n      \"marks\": 0,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Oscillations\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        },\n        {\n          \"chapter_id\": \"C2\",\n          \"chapter_name\": \"Waves\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0\n        }\n      ]\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"curriculum_metadata\": {},\n  \"term_planning_metadata\": {\n    \"requested_term_count\": 0,\n    \"planning_basis\": [\n      \"\"\n    ]\n  },\n  \"terms\": [\n    {\n      \"term_number\": 1,\n      \"term_title\": \"Term 1\",\n      \"summary\": {\n        \"total_units\": 0,\n        \"total_chapters\": 0,\n        \"total_topics\": 0,\n        \"total_subtopics\": 0,\n        \"total_learning_outcomes\": 0,\n        \"total_competencies\": 0,\n        \"total_estimated_sessions\": 0,\n        \"total_estimated_hours\": 0\n      },\n      \"curriculum_content\": [\n        {\n          \"unit_id\": \"\",\n          \"unit_name\": \"\",\n          \"estimated_sessions\": 0,\n          \"estimated_hours\": 0,\n          \"marks\": 0,\n          \"chapters\": [\n            {\n              \"chapter_id\": \"\",\n              \"chapter_name\": \"\",\n              \"estimated_sessions\": 0,\n              \"estimated_hours\": 0,\n              \"marks\": 0\n            }\n          ]\n        }\n      ]\n    }\n  ],\n  \"validation_report\": {}\n}"
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+Stage 6: Competency Extraction - Class XI - Batch 1 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XI",
+  "subject": "Biology",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Diversity of Living Organisms"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Structural Organization in Plants and Animals"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U1",
+      "unit_name": "Diversity of Living Organisms",
+      "chapter_id": "C1",
+      "chapter_name": "The Living World",
+      "key_concepts": [
+        "Biodiversity and Need for classification",
+        "Three domains of life; taxonomy and systematics",
+        "Concept of species and taxonomical hierarchy",
+        "Binomial nomenclature"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U1",
+      "unit_name": "Diversity of Living Organisms",
+      "chapter_id": "C2",
+      "chapter_name": "Biological Classification",
+      "key_concepts": [
+        "Five kingdom classification",
+        "Salient features and classification of Monera, Protista and Fungi",
+        "Lichens, Viruses and Viroids"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U1",
+      "unit_name": "Diversity of Living Organisms",
+      "chapter_id": "C3",
+      "chapter_name": "Plant Kingdom",
+      "key_concepts": [
+        "Classification of plants into major groups",
+        "Salient and distinguishing features of Algae, Bryophyta, Pteridophyta, Gymnospermae and Angiosperms"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U1",
+      "unit_name": "Diversity of Living Organisms",
+      "chapter_id": "C4",
+      "chapter_name": "Animal Kingdom",
+      "key_concepts": [
+        "Salient features and classification of animals, non-chordates up to phyla level",
+        "Chordates upto class level"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U2",
+      "unit_name": "Structural Organization in Plants and Animals",
+      "chapter_id": "C1",
+      "chapter_name": "Morphology of Flowering Plants",
+      "key_concepts": [
+        "Morphology of root, stem, leaf, inflorescence, flower, fruit and seed"
+      ],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

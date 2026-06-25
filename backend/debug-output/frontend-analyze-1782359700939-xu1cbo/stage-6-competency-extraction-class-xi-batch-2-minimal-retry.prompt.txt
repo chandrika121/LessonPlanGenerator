@@ -1,0 +1,112 @@
+Stage 6: Competency Extraction - Class XI - Batch 2 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XI",
+  "subject": "Biology",
+  "units": [
+    {
+      "unit_id": "U2",
+      "unit_name": "Structural Organization in Plants and Animals"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Cell: Structure and Function"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U2",
+      "unit_name": "Structural Organization in Plants and Animals",
+      "chapter_id": "C2",
+      "chapter_name": "Anatomy of Flowering Plants",
+      "key_concepts": [
+        "Anatomy and functions of tissue systems in dicots"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U2",
+      "unit_name": "Structural Organization in Plants and Animals",
+      "chapter_id": "C3",
+      "chapter_name": "Structural Organisation in Animals",
+      "key_concepts": [
+        "Morphology, Anatomy and functions of digestive system"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U3",
+      "unit_name": "Cell: Structure and Function",
+      "chapter_id": "C1",
+      "chapter_name": "Cell-The Unit of Life",
+      "key_concepts": [
+        "Cell theory and cell as the basic unit of life"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U3",
+      "unit_name": "Cell: Structure and Function",
+      "chapter_id": "C2",
+      "chapter_name": "Biomolecules",
+      "key_concepts": [
+        "Chemical constituents of living cells: biomolecules"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U3",
+      "unit_name": "Cell: Structure and Function",
+      "chapter_id": "C3",
+      "chapter_name": "Cell Cycle and Cell Division",
+      "key_concepts": [
+        "Mitosis, meiosis and their significance"
+      ],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

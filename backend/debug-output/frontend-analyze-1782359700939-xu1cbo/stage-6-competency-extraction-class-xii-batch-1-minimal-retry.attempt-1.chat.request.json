@@ -1,0 +1,33 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "competency_groups": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "competencies": [
+          ""
+        ],
+        "unit_name": "",
+        "chapter_name": ""
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 6: Competency Extraction - Class XII - Batch 1 - Minimal Retry\n\nReturn valid JSON only.\n\nReturn exactly one competency_group per input chapter.\n\nUse only the given subject, class, unit name, chapter name, key_concepts, and subtopics.\n\nDo not omit any input chapter.\n\nDo not create more than one competency_group for the same chapter.\n\nLimit competencies to exactly 3 concise items per chapter.\n\nBatch payload:\n{\n  \"class_name\": \"Class XII\",\n  \"subject\": \"Biology\",\n  \"units\": [\n    {\n      \"unit_id\": \"U6\",\n      \"unit_name\": \"Reproduction\"\n    },\n    {\n      \"unit_id\": \"U7\",\n      \"unit_name\": \"Genetics and Evolution\"\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U6\",\n      \"unit_name\": \"Reproduction\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Sexual Reproduction in Flowering Plants\",\n      \"key_concepts\": [\n        \"Flower structure and development of gametophytes\",\n        \"Pollination types, agencies, out-breeding devices, pollen-pistil interaction\",\n        \"Double fertilization and post-fertilization events (endosperm/embryo)\",\n        \"Seed and fruit formation with special modes: apomixis, parthenocarpy, polyembryony\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U6\",\n      \"unit_name\": \"Reproduction\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Human Reproduction\",\n      \"key_concepts\": [\n        \"Male and female reproductive systems; microscopic anatomy of testis and ovary\",\n        \"Gametogenesis: spermatogenesis and oogenesis\",\n        \"Menstrual cycle, fertilization, embryo development to blastocyst, implantation\",\n        \"Pregnancy (placenta), parturition, lactation\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U6\",\n      \"unit_name\": \"Reproduction\",\n      \"chapter_id\": \"C3\",\n      \"chapter_name\": \"Reproductive Health\",\n      \"key_concepts\": [\n        \"Need for reproductive health and prevention of STDs\",\n        \"Birth control methods, contraception, Medical Termination of Pregnancy (MTP)\",\n        \"Amniocentesis; infertility and assisted reproductive technologies (IVF, ZIFT, GIFT)\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U7\",\n      \"unit_name\": \"Genetics and Evolution\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Principles of Inheritance and Variation\",\n      \"key_concepts\": [\n        \"Mendelian inheritance; deviations: incomplete dominance, co-dominance, multiple alleles (blood groups), pleiotropy\",\n        \"Polygenic inheritance and chromosome theory of inheritance\",\n        \"Sex determination in humans, birds, honey bees; linkage and crossing over\",\n        \"Sex-linked inheritance (haemophilia, colour blindness); Mendelian disorders (thalassemia)\",\n        \"Chromosomal disorders: Down's syndrome, Turner's, Klinefelter's syndromes\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U7\",\n      \"unit_name\": \"Genetics and Evolution\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Molecular Basis of Inheritance\",\n      \"key_concepts\": [\n        \"Search for genetic material; DNA as genetic material; structure of DNA and RNA\",\n        \"DNA packaging, replication, Central Dogma (transcription, translation)\",\n        \"Genetic code, gene expression regulation: lac operon\",\n        \"Human genome project, rice genome project, DNA fingerprinting\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    }\n  ]\n}\n\nTarget schema:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}"
+    }
+  ]
+}

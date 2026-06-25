@@ -18,6 +18,7 @@ const PORT = Number(process.env.BACKEND_PORT) || 3002;
 const FRONTEND_PORT = Number(process.env.FRONTEND_PORT) || 4173;
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "qwen3.5:35b";
+const TERM_DIVISION_MODEL = process.env.TERM_DIVISION_MODEL || "gemma4:31b";
 const OLLAMA_NUM_PREDICT = Number(process.env.OLLAMA_NUM_PREDICT) || 8192;
 const OLLAMA_STAGE1_NUM_PREDICT = Number(process.env.OLLAMA_STAGE1_NUM_PREDICT) || 4096;
 const OLLAMA_TIMEOUT_MS = Number(process.env.OLLAMA_TIMEOUT_MS) || 600000;
@@ -98,61 +99,6 @@ function extractJsonText(raw: string): string {
   }
 
   throw new Error(`Unable to locate JSON in Ollama response: ${trimmed.slice(0, 300)}`);
-}
-
-function sanitizeJsonText(raw: string): { text: string; changed: boolean; fixes: string[] } {
-  let changed = false;
-  const fixes: string[] = [];
-  let output = "";
-  let inString = false;
-  let escaped = false;
-
-  for (let index = 0; index < raw.length; index += 1) {
-    const char = raw[index];
-
-    if (inString) {
-      output += char;
-      if (escaped) {
-        escaped = false;
-      } else if (char === "\\") {
-        escaped = true;
-      } else if (char === "\"") {
-        inString = false;
-      }
-      continue;
-    }
-
-    if (char === "\"") {
-      inString = true;
-      output += char;
-      continue;
-    }
-
-    if (
-      char === "0" &&
-      /[0-9]/.test(raw[index + 1] || "") &&
-      !/[A-Za-z0-9_."\]]/.test(raw[index - 1] || "")
-    ) {
-      let end = index + 1;
-      while (/[0-9]/.test(raw[end] || "")) end += 1;
-      const token = raw.slice(index, end);
-      const trailing = raw[end] || "";
-      if (/^\d+$/.test(token) && /[\s,\]}]/.test(trailing || " ")) {
-        const normalized = String(Number(token));
-        if (normalized !== token) {
-          output += normalized;
-          changed = true;
-          fixes.push(`leading_zero_number:${token}->${normalized}`);
-          index = end - 1;
-          continue;
-        }
-      }
-    }
-
-    output += char;
-  }
-
-  return { text: output, changed, fixes: uniqueStrings(fixes) };
 }
 
 function normalizeSourceText(value: string): string {
@@ -305,6 +251,314 @@ function buildStage8PayloadForClass(className: string, classes: any[] = [], comp
     ),
     competencies: filteredCompetencies,
   };
+}
+
+function buildCompetencyExtractionBatches(classes: any[] = [], maxChaptersPerBatch: number = 5) {
+  const batches: Array<{ className: string; batchIndex: number; payload: any }> = [];
+
+  for (const cls of classes || []) {
+    const className = canonicalizeClassName(cls?.class_name || "");
+    const subject = canonicalizeSubjectName(cls?.subject || "");
+    const units = (cls?.units || []).map((unit: any, unitIndex: number) => ({
+      unit_id: unit?.unit_id || `U${unitIndex + 1}`,
+      unit_name: unit?.unit_name || "",
+      chapters: (unit?.chapters || []).map((chapter: any, chapterIndex: number) => ({
+        chapter_id: chapter?.chapter_id || `C${chapterIndex + 1}`,
+        chapter_name: chapter?.chapter_name || chapter?.source_chapter_name || "",
+        key_concepts: chapter?.key_concepts || [],
+        subtopics: chapter?.subtopics || [],
+        topics: chapter?.topics || [],
+      })),
+    }));
+
+    const chapterRefs = units.flatMap((unit: any) =>
+      (unit.chapters || []).map((chapter: any) => ({
+        class_name: className,
+        subject,
+        unit_id: unit.unit_id,
+        unit_name: unit.unit_name,
+        chapter_id: chapter.chapter_id,
+        chapter_name: chapter.chapter_name,
+        key_concepts: chapter.key_concepts || [],
+        subtopics: chapter.subtopics || [],
+        topics: chapter.topics || [],
+      }))
+    );
+
+    if (chapterRefs.length === 0) {
+      batches.push({
+        className,
+        batchIndex: 0,
+        payload: {
+          class_name: className,
+          subject,
+          chapters: [],
+        },
+      });
+      continue;
+    }
+
+    for (let index = 0; index < chapterRefs.length; index += maxChaptersPerBatch) {
+      const batchChapters = chapterRefs.slice(index, index + maxChaptersPerBatch);
+      const chapterKeySet = new Set(batchChapters.map((chapter: any) => `${chapter.unit_id}::${normalizeSourceText(chapter.chapter_name || "")}`));
+      const batchUnits = units
+        .map((unit: any) => ({
+          ...unit,
+          chapters: (unit.chapters || []).filter((chapter: any) => chapterKeySet.has(`${unit.unit_id}::${normalizeSourceText(chapter.chapter_name || "")}`)),
+        }))
+        .filter((unit: any) => (unit.chapters || []).length > 0);
+
+      batches.push({
+        className,
+        batchIndex: batches.filter((batch) => batch.className === className).length,
+        payload: {
+          class_name: className,
+          subject,
+          units: batchUnits.map((unit: any) => ({
+            unit_id: unit.unit_id,
+            unit_name: unit.unit_name,
+          })),
+          chapters: batchChapters,
+        },
+      });
+    }
+  }
+
+  return batches;
+}
+
+function mergeCompetencyGroupResults(results: any[] = []) {
+  const merged = new Map<string, any>();
+  for (const result of results) {
+    for (const group of result?.competency_groups || []) {
+      const key = [
+        normalizeSourceText(group?.unit_name || ""),
+        normalizeSourceText(group?.chapter_name || ""),
+      ].join("::");
+      if (!key.trim()) continue;
+      if (!merged.has(key)) {
+        merged.set(key, {
+          code: group?.code || "",
+          title: group?.title || "",
+          description: group?.description || "",
+          competencies: uniqueStrings((group?.competencies || []).slice(0, 5)),
+          unit_name: group?.unit_name || "",
+          chapter_name: group?.chapter_name || "",
+        });
+        continue;
+      }
+      const existing = merged.get(key) as any;
+      existing.code = existing.code || group?.code || "";
+      existing.title = existing.title || group?.title || "";
+      existing.description = existing.description || group?.description || "";
+      existing.competencies = uniqueStrings([...(existing.competencies || []), ...((group?.competencies || []).slice(0, 5))]).slice(0, 5);
+    }
+  }
+  return {
+    competency_groups: [...merged.values()],
+  };
+}
+
+function buildCompetencyBatchPrompt(stageName: string, extractionRules: string, payload: any, sourceText: string) {
+  return renderPrompt("competency-extraction.md", {
+    EXTRACTION_RULES: extractionRules,
+    STAGE_NAME: stageName,
+    STAGE_PAYLOAD_JSON: serializeJson(payload),
+    SOURCE_TEXT: sourceText,
+  });
+}
+
+function buildMinimalCompetencyRetryPrompt(stageName: string, payload: any) {
+  return [
+    stageName,
+    "Return valid JSON only.",
+    "Return exactly one competency_group per input chapter.",
+    "Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.",
+    "Do not omit any input chapter.",
+    "Do not create more than one competency_group for the same chapter.",
+    "Limit competencies to exactly 3 concise items per chapter.",
+    `Batch payload:\n${serializeJson(payload)}`,
+    `Target schema:\n${serializeJson({
+      competency_groups: [{
+        code: "",
+        title: "",
+        description: "",
+        competencies: [""],
+        unit_name: "",
+        chapter_name: "",
+      }],
+    })}`,
+  ].join("\n\n");
+}
+
+function buildCompetencyFallbackGroups(payload: any, missingChapters: any[] = []) {
+  return {
+    competency_groups: missingChapters.map((chapter: any) => ({
+      code: `${chapter.unit_id || "U"}-${chapter.chapter_id || "C"}`,
+      title: `${chapter.chapter_name} Competencies`,
+      description: `Core competencies for ${chapter.chapter_name}.`,
+      competencies: [
+        `Understand the core concepts of ${chapter.chapter_name}.`,
+        `Apply key ideas from ${chapter.chapter_name} to solve curriculum-aligned problems.`,
+        `Analyze relationships between major concepts in ${chapter.chapter_name}.`,
+      ],
+      unit_name: chapter.unit_name || "",
+      chapter_name: chapter.chapter_name || "",
+    })),
+  };
+}
+
+function validateCompetencyBatchResult(payload: any, result: any) {
+  const inputChapters = payload?.chapters || [];
+  const outputGroups = result?.competency_groups || [];
+  const inputChapterNames = inputChapters.map((chapter: any) => chapter.chapter_name || "");
+  const outputChapterNames = outputGroups.map((group: any) => group.chapter_name || "");
+  const outputKeySet = new Set(outputChapterNames.map((name: string) => normalizeSourceText(name || "")));
+  const missingChapters = inputChapters.filter((chapter: any) => !outputKeySet.has(normalizeSourceText(chapter.chapter_name || "")));
+  return {
+    inputChapterNames,
+    outputChapterNames,
+    missingChapters,
+    valid: inputChapters.length === 0 || outputGroups.length > 0,
+  };
+}
+
+async function runCompetencyExtraction(
+  requestId: string,
+  debugDir: string,
+  normalizedClasses: any[],
+  extractionRules: string,
+  sourceText: string,
+  competencySchema: any
+) {
+  const baseBatches = buildCompetencyExtractionBatches(normalizedClasses, 5);
+  const results: any[] = [];
+
+  for (const batch of baseBatches) {
+    let batchChapterSize = Math.max(1, (batch.payload?.chapters || []).length || 1);
+    let attempt = 0;
+
+    while (true) {
+      const stageName = `${STAGE_ORDER[5]} - ${batch.className || "Curriculum"} - Batch ${batch.batchIndex + 1}`;
+      const classSourceText = extractRelevantClassSourceText(sourceText, {
+        class_name: batch.payload?.class_name || batch.className,
+        subject: batch.payload?.subject || "",
+      }, 4000);
+      const stage6Prompt = buildCompetencyBatchPrompt(stageName, extractionRules, batch.payload, classSourceText);
+
+      try {
+        console.log(`[Pipeline][${requestId}] ${stageName} chapter batch size: ${batchChapterSize}`);
+        console.log(`[Pipeline][${requestId}] ${stageName} batch input chapter names: ${JSON.stringify((batch.payload?.chapters || []).map((chapter: any) => chapter.chapter_name || ""))}`);
+        const result = await runStage(requestId, debugDir, stageName, stage6Prompt, competencySchema);
+        const validation = validateCompetencyBatchResult(batch.payload, result);
+        console.log(`[Pipeline][${requestId}] ${stageName} batch output competency chapter names: ${JSON.stringify(validation.outputChapterNames)}`);
+        console.log(`[Pipeline][${requestId}] ${stageName} missing competency chapters: ${JSON.stringify(validation.missingChapters.map((chapter: any) => chapter.chapter_name || ""))}`);
+        if ((batch.payload?.chapters || []).length > 0 && (result?.competency_groups || []).length === 0) {
+          console.warn(`[Pipeline][${requestId}] ${stageName} returned empty competency_groups for a non-empty chapter batch. Retrying with minimal prompt.`);
+          const retryPrompt = buildMinimalCompetencyRetryPrompt(`${stageName} - Minimal Retry`, batch.payload);
+          const retryResult = await runStage(requestId, debugDir, `${stageName} - Minimal Retry`, retryPrompt, competencySchema);
+          const retryValidation = validateCompetencyBatchResult(batch.payload, retryResult);
+          console.log(`[Pipeline][${requestId}] ${stageName} minimal retry output competency chapter names: ${JSON.stringify(retryValidation.outputChapterNames)}`);
+          console.log(`[Pipeline][${requestId}] ${stageName} minimal retry missing competency chapters: ${JSON.stringify(retryValidation.missingChapters.map((chapter: any) => chapter.chapter_name || ""))}`);
+          if ((retryResult?.competency_groups || []).length === 0) {
+            console.warn(`[Pipeline][${requestId}] ${stageName} minimal retry still returned empty competency_groups. Using deterministic fallback.`);
+            results.push(buildCompetencyFallbackGroups(batch.payload, batch.payload?.chapters || []));
+          } else if (retryValidation.missingChapters.length > 0) {
+            console.warn(`[Pipeline][${requestId}] ${stageName} minimal retry missing some chapters. Filling only missing chapters with deterministic fallback.`);
+            results.push(mergeCompetencyGroupResults([retryResult, buildCompetencyFallbackGroups(batch.payload, retryValidation.missingChapters)]));
+          } else {
+            results.push(retryResult);
+          }
+        } else if (validation.missingChapters.length > 0) {
+          console.warn(`[Pipeline][${requestId}] ${stageName} missing competency chapters after primary result. Filling missing chapters with deterministic fallback.`);
+          results.push(mergeCompetencyGroupResults([result, buildCompetencyFallbackGroups(batch.payload, validation.missingChapters)]));
+        } else {
+          results.push(result);
+        }
+        break;
+      } catch (error: any) {
+        const isTruncated = String(error?.code || "") === "OLLAMA_OUTPUT_TRUNCATED" || String(error?.message || "").includes("truncated");
+        const chapterCount = (batch.payload?.chapters || []).length;
+        if (!isTruncated || chapterCount <= 1) {
+          throw error;
+        }
+
+        attempt += 1;
+        const nextSize = Math.max(1, Math.floor(chapterCount / 2));
+        console.warn(`[Pipeline][${requestId}] ${stageName} truncated at chapter batch size ${chapterCount}. Retrying with smaller batch size ${nextSize}.`);
+        await writeDebugFile(debugDir, `${safeStageName(stageName)}.retry-${attempt}.batch.json`, {
+          failedChapterCount: chapterCount,
+          retryChapterCount: nextSize,
+        });
+
+        const splitBatches = buildCompetencyExtractionBatches(
+          [{
+            class_name: batch.className,
+            subject: batch.payload?.subject || "",
+            units: (batch.payload?.chapters || []).reduce((acc: any[], chapter: any) => {
+              const existing = acc.find((unit) => unit.unit_id === chapter.unit_id && unit.unit_name === chapter.unit_name);
+              if (existing) {
+                existing.chapters.push({
+                  chapter_id: chapter.chapter_id,
+                  chapter_name: chapter.chapter_name,
+                  key_concepts: chapter.key_concepts || [],
+                  subtopics: chapter.subtopics || [],
+                  topics: chapter.topics || [],
+                });
+              } else {
+                acc.push({
+                  unit_id: chapter.unit_id || "",
+                  unit_name: chapter.unit_name || "",
+                  chapters: [{
+                    chapter_id: chapter.chapter_id,
+                    chapter_name: chapter.chapter_name,
+                    key_concepts: chapter.key_concepts || [],
+                    subtopics: chapter.subtopics || [],
+                    topics: chapter.topics || [],
+                  }],
+                });
+              }
+              return acc;
+            }, []).map((unit: any) => ({
+              unit_id: unit?.unit_id || "",
+              unit_name: unit?.unit_name || "",
+              chapters: unit?.chapters || [],
+            })),
+          }],
+          nextSize
+        );
+
+        for (const retryBatch of splitBatches) {
+          const retryPrompt = buildMinimalCompetencyRetryPrompt(`${stageName} - Retry`, retryBatch.payload);
+          console.log(`[Pipeline][${requestId}] ${stageName} retry reason: truncation`);
+          console.log(`[Pipeline][${requestId}] ${stageName} retry chapter batch size: ${(retryBatch.payload?.chapters || []).length}`);
+          console.log(`[Pipeline][${requestId}] ${stageName} retry batch input chapter names: ${JSON.stringify((retryBatch.payload?.chapters || []).map((chapter: any) => chapter.chapter_name || ""))}`);
+          const retryResult = await runStage(requestId, debugDir, `${stageName} - Retry`, retryPrompt, competencySchema);
+          const retryValidation = validateCompetencyBatchResult(retryBatch.payload, retryResult);
+          console.log(`[Pipeline][${requestId}] ${stageName} retry batch output competency chapter names: ${JSON.stringify(retryValidation.outputChapterNames)}`);
+          console.log(`[Pipeline][${requestId}] ${stageName} retry batch missing competency chapters: ${JSON.stringify(retryValidation.missingChapters.map((chapter: any) => chapter.chapter_name || ""))}`);
+          if ((retryResult?.competency_groups || []).length === 0) {
+            results.push(buildCompetencyFallbackGroups(retryBatch.payload, retryBatch.payload?.chapters || []));
+          } else if (retryValidation.missingChapters.length > 0) {
+            results.push(mergeCompetencyGroupResults([retryResult, buildCompetencyFallbackGroups(retryBatch.payload, retryValidation.missingChapters)]));
+          } else {
+            results.push(retryResult);
+          }
+        }
+        break;
+      }
+    }
+  }
+
+  const merged = mergeCompetencyGroupResults(results);
+  const normalizedChapterCount = (normalizedClasses || []).reduce(
+    (sum: number, cls: any) => sum + (cls?.units || []).reduce((unitSum: number, unit: any) => unitSum + ((unit?.chapters || []).length || 0), 0),
+    0
+  );
+  if ((merged.competency_groups || []).length < normalizedChapterCount) {
+    console.warn(`[Pipeline][${requestId}] Stage 6 final competency count ${merged.competency_groups.length} is below normalized chapter count ${normalizedChapterCount}.`);
+  }
+  return merged;
 }
 
 function safeStageName(value: string): string {
@@ -464,77 +718,6 @@ function canonicalizeSubjectName(value: string): string {
     .replace(/[-–—/:]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-function isLanguageSubject(subject: string): boolean {
-  const normalized = normalizeSourceText(subject || "");
-  return [
-    "english",
-    "first language english",
-    "english language",
-    "communicative english",
-    "language",
-  ].some((candidate) => normalized.includes(candidate));
-}
-
-function buildLanguageFallbackStage1Facts(sourceText: string, existingFacts: any) {
-  const lines = sourceText
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean);
-  const headingPatterns = [
-    "reading",
-    "writing",
-    "grammar",
-    "literature",
-    "prose",
-    "poetry",
-    "supplementary reader",
-    "prescribed books",
-    "assessment",
-    "listening",
-    "speaking",
-    "skill",
-  ];
-
-  const matches = uniqueStrings(
-    lines.filter((line) => {
-      const normalized = normalizeSourceText(line);
-      return headingPatterns.some((pattern) => normalized === pattern || normalized.startsWith(`${pattern} `) || normalized.includes(` ${pattern}`));
-    })
-  );
-
-  const units = matches.map((heading, index) => ({
-    class_name: existingFacts?.classes?.[0]?.class_name || existingFacts?.document_metadata?.class || "",
-    subject: existingFacts?.document_metadata?.subject || existingFacts?.classes?.[0]?.subject || "",
-    part_or_section: "",
-    unit_id: `U${index + 1}`,
-    unit_name: heading,
-    marks: null,
-  }));
-
-  const chapters = matches.map((heading, index) => ({
-    class_name: existingFacts?.classes?.[0]?.class_name || existingFacts?.document_metadata?.class || "",
-    subject: existingFacts?.document_metadata?.subject || existingFacts?.classes?.[0]?.subject || "",
-    part_or_section: "",
-    unit_id: `U${index + 1}`,
-    unit_name: heading,
-    chapter_name: heading,
-    marks: null,
-  }));
-
-  return {
-    document_metadata: existingFacts?.document_metadata || {},
-    classes: existingFacts?.classes || (units.length ? [{
-      class_name: existingFacts?.document_metadata?.class || "",
-      subject: existingFacts?.document_metadata?.subject || "",
-      part_or_section: "",
-    }] : []),
-    units,
-    chapters,
-    fallbackApplied: units.length > 0,
-    fallbackUnitsCount: units.length,
-  };
 }
 
 function cleanChapterName(value: string, unitName: string = ""): string {
@@ -2030,18 +2213,27 @@ function buildNormalizedTeachingBlocks(
       throw new Error(`Missing enrichment result for class "${rawClass?.class_name || classIndex + 1}".`);
     }
     const approvedUnits = rawClass?.units || [];
+    const acceptedTheoryUnits = approvedUnits.filter((unit: any) => !isStrongExplicitNonTheoryUnit(unit));
+    const divertedApprovedUnits = approvedUnits.filter((unit: any) => isStrongExplicitNonTheoryUnit(unit));
+    if (divertedApprovedUnits.length) {
+      console.log(
+        `[Normalization] Class "${normalizedClassName}" | removed diverted non-theory units from expected hierarchy: ${JSON.stringify(
+          divertedApprovedUnits.map((unit: any) => unit?.unit_name || unit?.unit_id || "")
+        )}`
+      );
+    }
     const approvedUnitById = new Map(
-      approvedUnits
+      acceptedTheoryUnits
         .map((unit: any): [string, any] => [canonicalUnitId(unit?.unit_id || ""), unit])
         .filter(([key]: [string, any]) => Boolean(key))
     );
     const approvedUnitByKey = new Map(
-      approvedUnits
+      acceptedTheoryUnits
         .map((unit: any): [string, any] => [canonicalUnitKey(unit?.unit_name || ""), unit])
         .filter(([key]: [string, any]) => Boolean(key))
     );
     const approvedUnitByStructuralKey = new Map(
-      approvedUnits
+      acceptedTheoryUnits
         .map((unit: any): [string, any] => [buildUnitStructuralKey({
           class_name: rawClass?.class_name || "",
           subject: rawClass?.subject || "",
@@ -2059,15 +2251,15 @@ function buildNormalizedTeachingBlocks(
           : [];
     console.log("[Normalization] enrichment keys", Object.keys(enrichedResult || {}));
     console.log("[Normalization] enriched units length", allEnrichedUnits.length);
-    const expectedUnitKeysFromUnits = approvedUnits.map((unit: any) => canonicalUnitKey(unit?.unit_name || "")).filter(Boolean);
-    const expectedUnitKeysFromChapters = approvedUnits
+    const expectedUnitKeysFromUnits = acceptedTheoryUnits.map((unit: any) => canonicalUnitKey(unit?.unit_name || "")).filter(Boolean);
+    const expectedUnitKeysFromChapters = acceptedTheoryUnits
       .flatMap((unit: any) => (unit?.chapters || []).map((chapter: any) => canonicalUnitKey(chapter?.source_chapter_name || chapter?.chapter_name || "")))
       .filter(Boolean);
     const expectedUnitKeys = expectedUnitKeysFromUnits;
-    const expectedUnitIds = approvedUnits.map((unit: any) => canonicalUnitId(unit?.unit_id || "")).filter(Boolean);
-    const expectedChapterCount = approvedUnits.reduce((sum: number, unit: any) => sum + ((unit?.chapters || []).length || 0), 0);
+    const expectedUnitIds = acceptedTheoryUnits.map((unit: any) => canonicalUnitId(unit?.unit_id || "")).filter(Boolean);
+    const expectedChapterCount = acceptedTheoryUnits.reduce((sum: number, unit: any) => sum + ((unit?.chapters || []).length || 0), 0);
     const sourceUnitById = Object.fromEntries(
-      approvedUnits
+      acceptedTheoryUnits
         .map((unit: any): [string, any] => [canonicalUnitId(unit?.unit_id || ""), unit])
         .filter(([key]: [string, any]) => Boolean(key))
     ) as Record<string, any>;
@@ -2077,7 +2269,7 @@ function buildNormalizedTeachingBlocks(
     const stage3TheoryChapterCount = stage3TheoryCandidates.reduce((sum: number, unit: any) => sum + ((unit?.chapters || []).length || 0), 0);
     const expectedUnitsClearlyIncomplete =
       expectedUnitIds.length === 0 ||
-      (approvedUnits.length === 0 && stage3TheoryCandidateCount > 0) ||
+      (acceptedTheoryUnits.length === 0 && stage3TheoryCandidateCount > 0) ||
       (expectedChapterCount === 0 && stage3TheoryChapterCount > 0);
     const recoveredFromStage3Fallback = expectedUnitsClearlyIncomplete && stage3TheoryCandidateCount > 0;
     const enrichedUnits = preparedEnrichedUnits.filter((unit: any) => {
@@ -2126,11 +2318,11 @@ function buildNormalizedTeachingBlocks(
       enrichedUnitMap.set(canonicalUnitId(sourceUnit?.unit_id || ""), unit);
     }
     const divertedUnits = preparedEnrichedUnits.filter((unit: any) => !enrichedUnits.includes(unit));
-    const outputUnitKeys = approvedUnits
+    const outputUnitKeys = acceptedTheoryUnits
       .filter((unit: any) => enrichedUnitMap.has(canonicalUnitId(unit?.unit_id || "")))
       .map((unit: any) => canonicalUnitKey(unit?.unit_name || ""))
       .filter(Boolean);
-    const outputUnitIds = approvedUnits
+    const outputUnitIds = acceptedTheoryUnits
       .filter((unit: any) => enrichedUnitMap.has(canonicalUnitId(unit?.unit_id || "")))
       .map((unit: any) => canonicalUnitId(unit?.unit_id || ""))
       .filter(Boolean);
@@ -2180,7 +2372,7 @@ function buildNormalizedTeachingBlocks(
             source_type: chapter?.source_type || "explicit_chapter",
           })),
         }))
-      : approvedUnits;
+      : acceptedTheoryUnits;
 
     const normalizedUnits = normalizationSourceUnits.map((approvedUnit: any, unitIndex: number) => {
       const approvedUnitId = canonicalUnitId(approvedUnit?.unit_id || "");
@@ -2646,14 +2838,11 @@ type OllamaStageResult = {
 type StageValidationResult<T> = {
   parsed: T;
   valid: boolean;
-  sanitized?: {
-    text: string;
-    changed: boolean;
-    fixes: string[];
-  };
 };
 
 type OllamaRequestOptions = {
+  model?: string;
+  temperature?: number;
   numPredict?: number;
   timeoutMs?: number;
   retries?: number;
@@ -2688,8 +2877,7 @@ function isStage1LikeStage(stageName: string) {
 }
 
 function validateStageOutput<T>(stageName: string, responseText: string): StageValidationResult<T> {
-  const sanitized = sanitizeJsonText(responseText);
-  const parsed = JSON.parse(sanitized.text) as T;
+  const parsed = JSON.parse(responseText) as T;
 
   if (isStage1LikeStage(stageName)) {
     const stage1 = parsed as any;
@@ -2704,11 +2892,10 @@ function validateStageOutput<T>(stageName: string, responseText: string): StageV
     return {
       parsed,
       valid: hasArrays && hasUsefulFacts,
-      sanitized,
     };
   }
 
-  return { parsed, valid: true, sanitized };
+  return { parsed, valid: true };
 }
 
 function getStageRequestOptions(stageName: string): OllamaRequestOptions {
@@ -2729,16 +2916,11 @@ function getStageRequestOptions(stageName: string): OllamaRequestOptions {
 function isRetryableOllamaError(error: any) {
   const code = String(error?.code || error?.cause?.code || "");
   const message = String(error?.message || "");
-  if (
+  return (
     code === "UND_ERR_HEADERS_TIMEOUT" ||
     code === "ABORT_ERR" ||
     message.includes("Headers Timeout Error") ||
-    message.includes("Request timed out")
-  ) {
-    return false;
-  }
-
-  return (
+    message.includes("Request timed out") ||
     message.includes("502") ||
     message.includes("503") ||
     message.includes("504") ||
@@ -3271,16 +3453,6 @@ async function runStage<T>(requestId: string, debugDir: string, stageName: strin
   let valid = true;
   try {
     const validation = validateStageOutput<T>(stageName, responseText);
-    if (validation.sanitized?.changed) {
-      console.warn(
-        `[Pipeline][${requestId}] ${stageName} JSON sanitizer modified response. Fixes: ${JSON.stringify(validation.sanitized.fixes)}`
-      );
-      await writeDebugFile(
-        debugDir,
-        `${safeStageName(stageName)}.sanitized.json.txt`,
-        validation.sanitized.text
-      );
-    }
     parsed = validation.parsed;
     valid = validation.valid;
   } catch (_error: any) {
@@ -3344,19 +3516,20 @@ async function generateWithOllama(
 
       const requestUrl = `${OLLAMA_BASE_URL}/api/chat`;
       console.log(`[Ollama][${requestId}][${stageName}] Sending request to: ${requestUrl}`);
-      console.log(`[Ollama][${requestId}][${stageName}] Model: ${OLLAMA_MODEL}`);
+      const model = resolvedOptions.model || OLLAMA_MODEL;
+      console.log(`[Ollama][${requestId}][${stageName}] Model: ${model}`);
       console.log(`[Ollama][${requestId}][${stageName}] Prompt length: ${fullPrompt.length} characters`);
       console.log(`[Ollama][${requestId}][${stageName}] Timeout: ${timeoutMs}ms`);
       console.log(`[Ollama][${requestId}][${stageName}] Attempt: ${attempt + 1}/${retries}`);
       console.log(`[Ollama][${requestId}][${stageName}] num_predict: ${numPredict}`);
 
       const requestBody = {
-        model: OLLAMA_MODEL,
+        model,
         stream: false,
         think: false,
         format: schema || "json",
         options: {
-          temperature: 0.1,
+          temperature: resolvedOptions.temperature ?? 0.1,
           num_predict: numPredict,
         },
         messages: [
@@ -3482,7 +3655,7 @@ async function generateWithOllama(
       console.error(`[Ollama][${requestId}][${stageName}] Error on attempt ${attempt}/${retries}: ${error?.message || error}`);
       if (error?.cause) console.error(`[Ollama][${requestId}][${stageName}] Error cause:`, error.cause);
       if (error?.code) console.error(`[Ollama][${requestId}][${stageName}] Error code: ${error.code}`);
-      console.error(`[Ollama][${requestId}][${stageName}] Clear reason: stage="${stageName}" model="${OLLAMA_MODEL}" timeoutMs=${timeoutMs} promptLength=${error?.promptLength || prompt.length}`);
+      console.error(`[Ollama][${requestId}][${stageName}] Clear reason: stage="${stageName}" model="${resolvedOptions.model || OLLAMA_MODEL}" timeoutMs=${timeoutMs} promptLength=${error?.promptLength || prompt.length}`);
 
       const isTransient = Boolean(error?.retryable ?? isRetryableOllamaError(error));
       if (isTransient && attempt < retries) {
@@ -3705,39 +3878,6 @@ Rules:
       await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.chunked-merged.parsed.json`, stage1Facts);
     }
 
-    const mergedStage1UnitCount = (stage1Facts?.units || []).length;
-    const mergedStage1ChapterCount = (stage1Facts?.chapters || []).length;
-    const mergedStage1ClassCount = (stage1Facts?.classes || []).length;
-    const detectedSubject = canonicalizeSubjectName(stage1Facts?.document_metadata?.subject || stage1Facts?.classes?.[0]?.subject || "");
-    const initialChunkCount = initialStage1ChunkCount;
-    if (mergedStage1UnitCount === 0 && mergedStage1ChapterCount === 0) {
-      console.warn(
-        `[Pipeline][${requestId}] Stage 1 merge returned empty extraction | subject="${detectedSubject}" | class="${stage1Facts?.document_metadata?.class || ""}" | sourceLength=${text.length} | chunkCount=${initialChunkCount}`
-      );
-      if (isLanguageSubject(detectedSubject)) {
-        const languageFallback = buildLanguageFallbackStage1Facts(text, stage1Facts);
-        if (languageFallback.fallbackApplied) {
-          console.warn(
-            `[Pipeline][${requestId}] Language fallback applied | subject="${detectedSubject}" | recoveredUnits=${languageFallback.fallbackUnitsCount}`
-          );
-          stage1Facts = {
-            ...stage1Facts,
-            classes: languageFallback.classes,
-            units: languageFallback.units,
-            chapters: languageFallback.chapters,
-          };
-        } else {
-          throw new Error(
-            `Stage 1 extraction returned no units or chapters, and language fallback could not recover structure. Subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${text.length} chunkCount=${initialChunkCount}.`
-          );
-        }
-      } else {
-        throw new Error(
-          `Stage 1 extraction returned no units or chapters. Empty LLM extraction for subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${text.length} chunkCount=${initialChunkCount}.`
-        );
-      }
-    }
-
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.facts.parsed.json`, stage1Facts);
     const rawExtraction = expandStage1FactsToRawExtraction(stage1Facts);
     const rawClasses = rawExtraction.classes || [];
@@ -3824,9 +3964,7 @@ Rules:
     console.log(`[Pipeline][${requestId}] Normalized unit count: ${stage1UnitCount}`);
     console.log(`[Pipeline][${requestId}] Normalized chapter count: ${stage1ChapterCount}`);
     if (stage1UnitCount === 0 || stage1ChapterCount === 0) {
-      throw new Error(
-        `Normalized structure is insufficient. Units: ${stage1UnitCount}, Chapters: ${stage1ChapterCount}, Subject: "${detectedSubject}", Class: "${stage1Facts?.document_metadata?.class || ""}", SourceLength: ${text.length}, ChunkCount: ${initialChunkCount}.`
-      );
+      throw new Error(`Normalized structure is insufficient. Units: ${stage1UnitCount}, Chapters: ${stage1ChapterCount}.`);
     }
 
     const competencySchema = {
@@ -3842,14 +3980,26 @@ Rules:
 
     const structurePayload = buildSlimStructurePayload(normalizedStructure.classes || []);
 
-    const stage6Prompt = renderPrompt("competency-extraction.md", {
-      EXTRACTION_RULES: extractionRules,
-      STAGE_NAME: STAGE_ORDER[5],
-      STAGE_PAYLOAD_JSON: serializeJson(structurePayload),
-      SOURCE_TEXT: text,
-    });
-
-    const competencies = await runStage(requestId, debugDir, STAGE_ORDER[5], stage6Prompt, competencySchema);
+    const competencies = await runCompetencyExtraction(
+      requestId,
+      debugDir,
+      normalizedStructure.classes || [],
+      extractionRules,
+      text,
+      competencySchema
+    );
+    const competencyCountByClassChapter = new Map<string, number>();
+    for (const group of competencies.competency_groups || []) {
+      const key = [
+        normalizeSourceText(group?.unit_name || ""),
+        normalizeSourceText(group?.chapter_name || ""),
+      ].join("::");
+      competencyCountByClassChapter.set(key, (competencyCountByClassChapter.get(key) || 0) + 1);
+    }
+    const invalidCompetencyMultiplicity = [...competencyCountByClassChapter.entries()].filter(([, count]) => count > 1);
+    if (invalidCompetencyMultiplicity.length) {
+      console.warn(`[Pipeline][${requestId}] Stage 6 produced multiple competency groups for the same chapter: ${JSON.stringify(invalidCompetencyMultiplicity)}`);
+    }
 
     const assessmentSchema = {
       assessment_framework: {
@@ -4082,7 +4232,7 @@ Rules:
 });
 
 app.post("/api/divide-terms", async (req, res) => {
-  const { curriculum, termCount, preferred_term_count } = req.body;
+  const { curriculum, termCount, preferred_term_count, curriculumId } = req.body;
   if (!curriculum) {
     return res.status(400).json({ error: "No curriculum structure provided." });
   }
@@ -4093,46 +4243,183 @@ app.post("/api/divide-terms", async (req, res) => {
     assertCurriculumReadyForPlanning(curriculum);
     const normalizedStructure = getNormalizedStructureFromCurriculum(curriculum);
     const normalizedClasses = normalizedStructure?.classes || [];
-    const classTermPlans = normalizedClasses.length > 1
-      ? normalizedClasses.map((cls: any) => {
-          const classNormalizedStructure = {
-            ...normalizedStructure,
-            classes: [cls],
-          };
-          const classPlan = buildTermDivision(
-            classNormalizedStructure,
-            preferred_term_count ?? termCount
-          );
-          return {
+    const requestedTermCount = preferred_term_count ?? termCount;
+    const termDivisionSchema = {
+      curriculum_metadata: {},
+      term_planning_metadata: {
+        requested_term_count: 0,
+        planning_basis: [""],
+      },
+      terms: [{
+        term_number: 1,
+        term_title: "Term 1",
+        summary: {
+          total_units: 0,
+          total_chapters: 0,
+          total_topics: 0,
+          total_subtopics: 0,
+          total_learning_outcomes: 0,
+          total_competencies: 0,
+          total_estimated_sessions: 0,
+          total_estimated_hours: 0,
+        },
+        curriculum_content: [{
+          unit_id: "",
+          unit_name: "",
+          estimated_sessions: 0,
+          estimated_hours: 0,
+          marks: 0,
+          chapters: [{
+            chapter_id: "",
+            chapter_name: "",
+            estimated_sessions: 0,
+            estimated_hours: 0,
+            marks: 0,
+          }],
+        }],
+      }],
+      validation_report: {},
+    };
+
+    const classTermPlans = [];
+    for (const cls of normalizedClasses) {
+      const classNormalizedStructure = {
+        ...normalizedStructure,
+        classes: [cls],
+      };
+      const compactInput = buildCompactTermDivisionInput(cls, requestedTermCount);
+      const prompt = buildCompactTermDivisionPrompt(compactInput);
+      console.log("[TermDivision] FULL section size:", JSON.stringify(cls).length);
+      console.log("[TermDivision] COMPACT input size:", JSON.stringify(compactInput).length);
+      console.log("[TermDivision] Compact units:", compactInput.units.length);
+      console.log("[TermDivision] Compact chapters:", compactInput.units.reduce((s: number, u: any) => s + ((u.chapters || []).length || 0), 0));
+      console.log("[TermDivision] FINAL prompt length:", prompt.length);
+      if (prompt.length > 25000) {
+        throw new Error(`[TermDivision] Prompt too large after compaction: ${prompt.length}. Backend is still passing full curriculum.`);
+      }
+      try {
+        const response = await generateWithOllama(
+          requestId,
+          debugDir,
+          `divide-terms-${cls?.class_name || "curriculum"}`,
+          prompt,
+          termDivisionSchema,
+          {
+            model: TERM_DIVISION_MODEL,
+            numPredict: 2048,
+            temperature: 0.1,
+          }
+        );
+        if (response.doneReason === "length") {
+          throw new Error("Model output truncated during term division. Reduce scope or increase num_predict.");
+        }
+        const parsedPlan = JSON.parse(response.text || "{}");
+        const hydratedPlan = hydrateTermDivisionPlanFromCompactResult(compactInput, parsedPlan);
+        classTermPlans.push({
+          class_name: cls?.class_name || "",
+          ...hydratedPlan,
+        });
+      } catch (error: any) {
+        const isOllamaTransportFailure =
+          error instanceof OllamaRequestError ||
+          String(error?.message || "").includes("fetch failed") ||
+          String(error?.message || "").includes("ECONNREFUSED") ||
+          String(error?.message || "").includes("ENOTFOUND") ||
+          String(error?.message || "").includes("model") ||
+          String(error?.message || "").includes("404");
+
+        if (!isOllamaTransportFailure) {
+          throw error;
+        }
+
+        console.warn(
+          `[TermDivision] LLM term division unavailable for ${cls?.class_name || "curriculum"}. Falling back to deterministic planner. Reason: ${error?.code || "unknown"} ${error?.message || ""}`
+        );
+
+        const fallbackPlan = buildTermDivision(
+          classNormalizedStructure,
+          requestedTermCount
+        );
+
+        classTermPlans.push({
+          class_name: cls?.class_name || "",
+          term_planning_metadata: {
+            requested_term_count: fallbackPlan.term_count,
+            planning_basis: ["deterministic_fallback", fallbackPlan.term_determination_method || "automatic"],
+          },
+          curriculum_metadata: {
             class_name: cls?.class_name || "",
-            ...classPlan,
-          };
-        })
-      : [{
-          class_name: normalizedClasses[0]?.class_name || "",
-          ...buildTermDivision(
-            normalizedStructure,
-            preferred_term_count ?? termCount
-          ),
-        }];
-    await writeDebugFile(debugDir, "term-division.json", classTermPlans);
-    const invalidClassPlans = classTermPlans.filter((plan: any) => !plan.validation.valid);
-    if (invalidClassPlans.length) {
-      const allErrors = invalidClassPlans.flatMap((plan: any) =>
-        (plan.validation.errors || []).map((error: string) => `${plan.class_name || "Unknown Class"}: ${error}`)
-      );
-      throw new Error(`Term division validation failed: ${allErrors.join(" | ")}`);
+            subject: cls?.subject || "",
+            academic_year: normalizedStructure?.document_metadata?.academic_year || "",
+          },
+          terms: (fallbackPlan.terms || []).map((term: any) => ({
+            term_number: term.term_number,
+            term_title: term.term_name,
+            summary: {
+              total_units: term.total_units || 0,
+              total_chapters: (term.items || []).reduce(
+                (sum: number, item: any) => sum + ((item.teaching_blocks || []).length || 0),
+                0
+              ),
+              total_topics: term.total_topics || 0,
+              total_subtopics: 0,
+              total_learning_outcomes: 0,
+              total_competencies: 0,
+              total_estimated_sessions: term.estimated_sessions || 0,
+              total_estimated_hours: 0,
+            },
+            curriculum_content: (term.items || []).map((item: any) => ({
+              unit_id: item.unit_id,
+              unit_name: item.unit_name,
+              estimated_sessions: (item.teaching_blocks || []).reduce(
+                (sum: number, block: any) => sum + toNumberOrZero(block.estimated_sessions),
+                0
+              ),
+              estimated_hours: 0,
+              marks: Number(
+                (item.teaching_blocks || []).reduce(
+                  (sum: number, block: any) => sum + toNumberOrZero(block.marks),
+                  0
+                ).toFixed(2)
+              ),
+              chapters: (item.teaching_blocks || []).map((block: any) => ({
+                chapter_id: block.block_id,
+                chapter_name: block.block_name,
+                estimated_sessions: toNumberOrZero(block.estimated_sessions),
+                estimated_hours: 0,
+                marks: toNumberOrZero(block.marks),
+              })),
+            })),
+          })),
+          validation_report: fallbackPlan.validation,
+        });
+      }
     }
-    const legacyRows = classTermPlans.flatMap((plan: any) => flattenTermDivisionToRows(plan));
-    const totalMarks = classTermPlans.reduce((sum: number, plan: any) => sum + toNumberOrZero(plan?.statistics?.total_marks), 0);
+
+    await writeDebugFile(debugDir, "term-division.json", classTermPlans);
+    const legacyRows = classTermPlans.flatMap((plan: any) =>
+      flattenPromptDrivenTermDivisionToRows(plan, plan.class_name || "")
+    );
+    const totalMarks = legacyRows.reduce((sum: number, row: any) => sum + toNumberOrZero(row?.marks), 0);
     const responsePayload = {
       class_term_plans: classTermPlans,
-      term_count: classTermPlans.length === 1 ? classTermPlans[0].term_count : undefined,
+      term_count: classTermPlans.length === 1 ? classTermPlans[0]?.term_planning_metadata?.requested_term_count : undefined,
       statistics: {
         total_marks: Number(totalMarks.toFixed(2)),
       },
       rows: legacyRows,
     };
+    if (curriculumId) {
+      await connectToMongo();
+      await CurriculumModel.findOneAndUpdate(
+        { _id: curriculumId },
+        {
+          $set: {
+            savedTermPlanning: responsePayload,
+          },
+        }
+      );
+    }
     await writeDebugFile(debugDir, "final-response.json", responsePayload);
     res.json(responsePayload);
   } catch (error: any) {
@@ -4241,12 +4528,735 @@ app.post("/api/generate-sessions-outline", async (req, res) => {
 export {
   buildApprovedTheoryHierarchy,
   buildNormalizedTeachingBlocks,
-  buildLanguageFallbackStage1Facts,
   expandStage1FactsToRawExtraction,
-  isLanguageSubject,
   mergeStage1FactExtractions,
-  sanitizeJsonText,
 };
+
+// ======== ASSESSMENT GENERATOR ========
+
+const ASSESSMENT_SCHEMA = {
+  metadata: {
+    grade: "",
+    subject: "",
+    academic_year: "",
+    term_number: "",
+    total_marks: 80,
+    duration_minutes: 180,
+    paper_type: "term_exam",
+    set_count: 1,
+    generated_at: "",
+  },
+  blueprint: {
+    total_marks: 80,
+    duration_minutes: 180,
+    section_distribution: [{
+      section: "A",
+      label: "MCQ / Assertion-Reason / Objective",
+      marks: 20,
+      questions_count: 20,
+      question_type: "objective",
+      marks_per_question: 1,
+    }],
+    chapter_wise_weightage: [{
+      unit: "",
+      chapter: "",
+      marks: 0,
+      question_count: 0,
+      sections_covered: [""],
+    }],
+    difficulty_distribution: {
+      easy: 30,
+      medium: 50,
+      hard: 20,
+    },
+    competency_coverage: [""],
+    learning_outcome_coverage: [""],
+    validation_report: {
+      uses_only_selected_term_content: true,
+      total_marks_valid: true,
+      all_questions_have_answers: true,
+      all_subjective_questions_have_marking_scheme: true,
+      future_topics_detected: [""],
+    },
+  },
+  question_papers: [{
+    set_label: "Set A",
+    sections: {
+      "A": {
+        section: "A",
+        label: "MCQ / Assertion-Reason / Objective",
+        marks: 20,
+        questions: [{
+          question_id: "A1",
+          section: "A",
+          question_type: "mcq",
+          marks: 1,
+          difficulty: "easy",
+          unit: "",
+          chapter: "",
+          topic: "",
+          session_refs: [""],
+          learning_outcome_refs: [""],
+          competency_refs: [""],
+          question_text: "",
+          options: [""],
+          correct_answer: "",
+          expected_answer_points: [""],
+          diagram_required: false,
+          diagram_description: "",
+          internal_choice: false,
+        }],
+      },
+    },
+  }],
+  answer_keys: [{
+    set_label: "Set A",
+    answers: [{
+      question_id: "",
+      correct_answer: "",
+      explanation: "",
+      steps: [""],
+      final_answer: "",
+    }],
+  }],
+  marking_schemes: [{
+    set_label: "Set A",
+    schemes: [{
+      question_id: "",
+      total_marks: 0,
+      value_points: [""],
+      partial_marking: [{ point: "", marks: 0 }],
+      alternative_answers_allowed: true,
+      diagram_marks: 0,
+      common_errors: [""],
+    }],
+  }],
+};
+
+function buildAssessmentInput(grade: string, subject: string, academicYear: string, termNumber: string, termData: any, coveredUnits: string[], coveredChapters: string[], coveredTopics: string[], sessions: any[], learningOutcomes: string[], competencies: any[], totalMarks: number, durationMinutes: number, paperType: string, setCount: number) {
+  return {
+    grade,
+    subject,
+    academic_year: academicYear,
+    term_number: termNumber,
+    term_data: termData || {},
+    covered_units: coveredUnits || [],
+    covered_chapters: coveredChapters || [],
+    covered_topics: coveredTopics || [],
+    sessions: sessions || [],
+    learning_outcomes: learningOutcomes || [],
+    competencies: competencies || [],
+    total_marks: totalMarks,
+    duration_minutes: durationMinutes,
+    paper_type: paperType || "term_exam",
+    set_count: Math.max(1, Math.min(3, setCount || 1)),
+  };
+}
+
+function buildPromptDrivenTermDivisionPrompt(curriculumJson: any, requestedTermCount?: number) {
+  return [
+    loadPrompt("term-division.md"),
+    "TERM DIVISION INPUT JSON:",
+    serializeJson(curriculumJson),
+    "TERM DIVISION REQUEST:",
+    serializeJson({
+      term_count: requestedTermCount ?? null,
+    }),
+  ].join("\n\n");
+}
+
+function buildCompactTermDivisionInput(section: any, requestedTermCount?: number) {
+  return {
+    class_name: section.class_name || section.className || section.class || "",
+    subject: section.subject || "",
+    academic_year: section.academic_year || section.academicYear || "",
+    term_count: requestedTermCount,
+    units: (section.units || []).map((unit: any, unitIndex: number) => ({
+      unit_id: unit.unit_id || unit.id || `u${unitIndex + 1}`,
+      unit_name: unit.unit_name || unit.name || unit.title || "",
+      estimated_sessions: unit.estimated_sessions || unit.total_estimated_sessions || 0,
+      estimated_hours: unit.estimated_hours || 0,
+      marks: unit.marks || unit.weightage || 0,
+      chapters: (unit.chapters || []).map((chapter: any, chapterIndex: number) => ({
+        chapter_id:
+          chapter.chapter_id ||
+          chapter.id ||
+          `${unit.unit_id || `u${unitIndex + 1}`}_c${chapterIndex + 1}`,
+        chapter_name:
+          chapter.chapter_name ||
+          chapter.source_chapter_name ||
+          chapter.name ||
+          chapter.title ||
+          "",
+        estimated_sessions: chapter.estimated_sessions || 0,
+        estimated_hours: chapter.estimated_hours || 0,
+        marks: chapter.marks || chapter.weightage || 0,
+      })),
+    })),
+  };
+}
+
+function buildCompactTermDivisionPrompt(compactInput: any) {
+  return [
+    loadPrompt("term-division.md"),
+    "IMPORTANT OVERRIDE FOR IMPLEMENTATION:",
+    "Use ONLY the compact input JSON below.",
+    "Do NOT infer or reconstruct omitted fields.",
+    "Do NOT include full curriculum content in the output.",
+    "Assign only unit and chapter IDs into terms, while preserving sequence and balancing workload.",
+    "Do NOT include topics, subtopics, learning outcomes, competencies, notes, sessions, practicals, projects, prescribed books, or any other omitted data.",
+    "Return terms with curriculum_content entries shaped like:",
+    serializeJson({
+      unit_id: "",
+      unit_name: "",
+      estimated_sessions: 0,
+      estimated_hours: 0,
+      marks: 0,
+      chapters: [
+        {
+          chapter_id: "",
+          chapter_name: "",
+          estimated_sessions: 0,
+          estimated_hours: 0,
+          marks: 0,
+        },
+      ],
+    }),
+    "COMPACT TERM DIVISION INPUT JSON:",
+    serializeJson(compactInput),
+  ].join("\n\n");
+}
+
+function hydrateTermDivisionPlanFromCompactResult(compactInput: any, rawPlan: any) {
+  const unitMap = new Map<string, any>();
+  for (const unit of compactInput?.units || []) {
+    unitMap.set(String(unit?.unit_id || ""), unit);
+  }
+
+  const hydratedTerms = (rawPlan?.terms || []).map((term: any, termIndex: number) => {
+    const hydratedContent = (term?.curriculum_content || []).map((unitRef: any, unitIndex: number) => {
+      const unitId = String(unitRef?.unit_id || "");
+      const sourceUnit = unitMap.get(unitId);
+      if (!sourceUnit) {
+        throw new Error(`[TermDivision] Unknown unit_id returned by model: ${unitId || `term-${termIndex + 1}-unit-${unitIndex + 1}`}`);
+      }
+
+      const chapterMap = new Map<string, any>();
+      for (const chapter of sourceUnit?.chapters || []) {
+        chapterMap.set(String(chapter?.chapter_id || ""), chapter);
+      }
+
+      const hydratedChapters = (unitRef?.chapters || []).map((chapterRef: any, chapterIndex: number) => {
+        const chapterId = String(chapterRef?.chapter_id || "");
+        const sourceChapter = chapterMap.get(chapterId);
+        if (!sourceChapter) {
+          throw new Error(`[TermDivision] Unknown chapter_id returned by model: ${chapterId || `${unitId}-chapter-${chapterIndex + 1}`}`);
+        }
+        return {
+          ...sourceChapter,
+          chapter_id: sourceChapter.chapter_id || chapterId,
+          chapter_name: sourceChapter.chapter_name || sourceChapter.source_chapter_name || chapterRef?.chapter_name || "",
+        };
+      });
+
+      return {
+        ...sourceUnit,
+        unit_id: sourceUnit.unit_id || unitId,
+        unit_name: sourceUnit.unit_name || unitRef?.unit_name || "",
+        chapters: hydratedChapters,
+      };
+    });
+
+    const totalChapters = hydratedContent.reduce((sum: number, unit: any) => sum + ((unit?.chapters || []).length || 0), 0);
+    const totalEstimatedSessions = hydratedContent.reduce((sum: number, unit: any) => sum + toNumberOrZero(unit?.estimated_sessions), 0);
+    const totalEstimatedHours = hydratedContent.reduce((sum: number, unit: any) => sum + toNumberOrZero(unit?.estimated_hours), 0);
+
+    return {
+      term_number: Number(term?.term_number || termIndex + 1),
+      term_title: String(term?.term_title || `Term ${termIndex + 1}`),
+      summary: {
+        total_units: hydratedContent.length,
+        total_chapters: totalChapters,
+        total_topics: 0,
+        total_subtopics: 0,
+        total_learning_outcomes: 0,
+        total_competencies: 0,
+        total_estimated_sessions: totalEstimatedSessions,
+        total_estimated_hours: totalEstimatedHours,
+      },
+      curriculum_content: hydratedContent,
+    };
+  });
+
+  return {
+    curriculum_metadata: rawPlan?.curriculum_metadata || {
+      class_name: compactInput?.class_name || "",
+      subject: compactInput?.subject || "",
+      academic_year: compactInput?.academic_year || "",
+    },
+    term_planning_metadata: {
+      requested_term_count: Number(rawPlan?.term_planning_metadata?.requested_term_count || compactInput?.term_count || hydratedTerms.length || 0),
+      planning_basis: rawPlan?.term_planning_metadata?.planning_basis || [],
+    },
+    terms: hydratedTerms,
+    validation_report: rawPlan?.validation_report || {},
+  };
+}
+
+function extractChapterNamesFromTermNode(node: any): string[] {
+  if (!node || typeof node !== "object") return [];
+
+  const directChapterNames = [
+    node.chapter_name,
+    node.chapter_title,
+    node.block_name,
+    node.topic_name,
+  ]
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+
+  const nestedCollections = [
+    ...(Array.isArray(node.chapters) ? node.chapters : []),
+    ...(Array.isArray(node.topics) ? node.topics : []),
+    ...(Array.isArray(node.subtopics) ? node.subtopics : []),
+    ...(Array.isArray(node.teaching_blocks) ? node.teaching_blocks : []),
+    ...(Array.isArray(node.curriculum_content) ? node.curriculum_content : []),
+  ];
+
+  return uniqueStrings([
+    ...directChapterNames,
+    ...nestedCollections.flatMap((child: any) => extractChapterNamesFromTermNode(child)),
+  ]);
+}
+
+function flattenPromptDrivenTermDivisionToRows(termPlan: any, className: string) {
+  return (termPlan?.terms || []).flatMap((term: any) =>
+    (term?.curriculum_content || []).map((item: any, itemIndex: number) => ({
+      id: `${term?.term_number || itemIndex + 1}-${String(item?.unit_id || item?.unit_name || itemIndex + 1)}`,
+      className,
+      termNumber: Number(term?.term_number || itemIndex + 1),
+      term: String(term?.term_title || `Term ${term?.term_number || itemIndex + 1}`),
+      unitId: String(item?.unit_id || ""),
+      unitName: String(item?.unit_name || item?.unit_title || `Unit ${itemIndex + 1}`),
+      chapters: uniqueStrings((item?.chapters || []).map((chapter: any) => String(chapter?.chapter_name || chapter?.source_chapter_name || "").trim()).filter(Boolean)),
+      marks: Number(
+        (
+          Number(item?.marks || 0) ||
+          Number(item?.estimated_marks || 0) ||
+          0
+        ).toFixed(2)
+      ),
+    }))
+  );
+}
+
+function buildAssessmentRequestPayload(body: any, overrides: Record<string, unknown> = {}) {
+  return {
+    grade: body?.grade || body?.curriculum?.gradeLevel || "",
+    subject: body?.subject || body?.curriculum?.subject || "",
+    academic_year: body?.academic_year || "",
+    term_number: body?.term_number || "",
+    term_data: body?.term_data || {},
+    covered_units: body?.covered_units || [],
+    covered_chapters: body?.covered_chapters || [],
+    covered_topics: body?.covered_topics || [],
+    sessions: body?.sessions || [],
+    learning_outcomes: body?.learning_outcomes || [],
+    competencies: body?.competencies || [],
+    total_marks: body?.total_marks || 80,
+    duration_minutes: body?.duration_minutes || 180,
+    set_count: body?.set_count || 1,
+    paper_type: body?.paper_type || "term_exam",
+    curriculum: body?.curriculum,
+    ...overrides,
+  };
+}
+
+function validateAssessmentResult(result: any, expectedTotalMarks: number, coveredChapters: string[]): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (!result?.question_papers?.length) {
+    errors.push("No question papers generated.");
+    return { valid: false, errors };
+  }
+
+  // Validate total marks
+  for (const paper of result.question_papers) {
+    let paperTotal = 0;
+    for (const sectionKey of Object.keys(paper.sections || {})) {
+      const section = paper.sections[sectionKey];
+      paperTotal += section?.marks || 0;
+    }
+    if (paperTotal !== expectedTotalMarks) {
+      errors.push(`Total marks mismatch for ${paper.set_label || "paper"}: expected ${expectedTotalMarks}, got ${paperTotal}.`);
+    }
+  }
+
+  // Validate section marks add up
+  for (const paper of result.question_papers) {
+    for (const sectionKey of Object.keys(paper.sections || {})) {
+      const section = paper.sections[sectionKey];
+      if (!section?.questions) continue;
+      const sectionTotal = section.questions.reduce((sum: number, q: any) => sum + (q.marks || 0), 0);
+      if (sectionTotal !== section.marks) {
+        errors.push(`Section ${sectionKey} marks mismatch: expected ${section.marks}, got ${sectionTotal}.`);
+      }
+    }
+  }
+
+  // Validate all questions have answer keys
+  if (result.answer_keys?.length) {
+    for (const answerSet of result.answer_keys) {
+      const answerIds = new Set((answerSet.answers || []).map((a: any) => a.question_id));
+      for (const paper of result.question_papers) {
+        if (paper.set_label !== answerSet.set_label) continue;
+        for (const sectionKey of Object.keys(paper.sections || {})) {
+          for (const q of (paper.sections[sectionKey]?.questions || [])) {
+            if (!answerIds.has(q.question_id)) {
+              errors.push(`Question ${q.question_id} missing answer key.`);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Validate subjective questions have marking schemes
+  if (result.marking_schemes?.length) {
+    for (const paper of result.question_papers) {
+      const schemeSet = (result.marking_schemes || []).find((entry: any) => entry.set_label === paper.set_label);
+      const schemeQuestionIds = new Set<string>((schemeSet?.schemes || []).map((s: any) => s.question_id));
+      for (const sectionKey of Object.keys(paper.sections || {})) {
+        for (const q of (paper.sections[sectionKey]?.questions || [])) {
+          if ((q.marks || 0) >= 2 && !schemeQuestionIds.has(q.question_id)) {
+            errors.push(`Subjective question ${q.question_id} missing marking scheme in ${paper.set_label || "paper"}.`);
+          }
+        }
+      }
+    }
+  }
+
+  // Validate chapters are within covered chapters
+  const coveredChapterSet = new Set(coveredChapters.map((ch: string) => normalizeSourceText(ch)));
+  for (const paper of result.question_papers) {
+    for (const sectionKey of Object.keys(paper.sections || {})) {
+      for (const q of (paper.sections[sectionKey]?.questions || [])) {
+        if (q.chapter && coveredChapterSet.size > 0) {
+          const qChapter = normalizeSourceText(q.chapter);
+          if (!coveredChapterSet.has(qChapter)) {
+            errors.push(`Question ${q.question_id} references chapter "${q.chapter}" not in covered chapters.`);
+          }
+        }
+      }
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+function repairAssessmentJson(raw: string): string {
+  try {
+    JSON.parse(raw);
+    return raw;
+  } catch {
+    // Try to fix truncated JSON by finding the last complete object
+    const lastBrace = raw.lastIndexOf("}");
+    if (lastBrace !== -1) {
+      const candidate = raw.slice(0, lastBrace + 1);
+      try {
+        JSON.parse(candidate);
+        return candidate;
+      } catch {
+        // Try to find the last complete top-level object
+        const trimmed = candidate.trim();
+        if (trimmed.startsWith("{")) {
+          let depth = 0;
+          for (let i = 0; i < trimmed.length; i++) {
+            if (trimmed[i] === "{") depth++;
+            if (trimmed[i] === "}") depth--;
+            if (depth === 0 && i < trimmed.length - 1) {
+              const subCandidate = trimmed.slice(0, i + 1);
+              try {
+                JSON.parse(subCandidate);
+                // Continue to see if this is the full JSON
+              } catch {
+                continue;
+              }
+            }
+          }
+        }
+      }
+    }
+    return raw;
+  }
+}
+
+app.post("/api/generate-assessment", async (req, res) => {
+  const {
+    grade, subject, academic_year, term_number, term_data,
+    covered_units, covered_chapters, covered_topics, sessions,
+    learning_outcomes, competencies, total_marks, duration_minutes,
+    paper_type, set_count, curriculum
+  } = req.body;
+
+  if (!subject) {
+    return res.status(400).json({ error: "Subject is required." });
+  }
+
+  const effectiveGrade = grade || curriculum?.gradeLevel || "";
+  const effectiveSubject = subject || curriculum?.subject || "";
+  const effectiveAcademicYear = academic_year || curriculum?.academic_year || "";
+  const effectiveTermNumber = term_number || "";
+  const effectiveTermData = term_data || curriculum?.stagedExtraction?.normalizedStructure || curriculum?.normalizedStructure || {};
+  const effectiveCoveredUnits = covered_units || [];
+  const effectiveCoveredChapters = covered_chapters || [];
+  const effectiveCoveredTopics = covered_topics || [];
+  const effectiveSessions = sessions || [];
+  const effectiveLearningOutcomes = learning_outcomes || [];
+  const effectiveCompetencies = competencies || [];
+  const effectiveTotalMarks = total_marks || 80;
+  const effectiveDurationMinutes = duration_minutes || 180;
+  const effectivePaperType = paper_type || "term_exam";
+  const effectiveSetCount = Math.max(1, Math.min(3, set_count || 1));
+
+  const requestId = makeRequestId("generate-assessment");
+  const debugDir = await ensureDebugDir(requestId);
+  await writeDebugFile(debugDir, "request-body.json", req.body);
+
+  try {
+    const assessmentInput = buildAssessmentInput(
+      effectiveGrade, effectiveSubject, effectiveAcademicYear, effectiveTermNumber,
+      effectiveTermData, effectiveCoveredUnits, effectiveCoveredChapters,
+      effectiveCoveredTopics, effectiveSessions, effectiveLearningOutcomes,
+      effectiveCompetencies, effectiveTotalMarks, effectiveDurationMinutes,
+      effectivePaperType, effectiveSetCount
+    );
+
+    const prompt = renderPrompt("assessment-generation-v2.md", {
+      ASSESSMENT_INPUT_JSON: serializeJson(assessmentInput),
+      GRADE: effectiveGrade,
+      SUBJECT: effectiveSubject,
+      ACADEMIC_YEAR: effectiveAcademicYear,
+      TERM_NUMBER: effectiveTermNumber,
+      TOTAL_MARKS: String(effectiveTotalMarks),
+      DURATION_MINUTES: String(effectiveDurationMinutes),
+      PAPER_TYPE: effectivePaperType,
+      SET_COUNT: String(effectiveSetCount),
+      COVERED_UNITS_JSON: serializeJson(effectiveCoveredUnits),
+      COVERED_CHAPTERS_JSON: serializeJson(effectiveCoveredChapters),
+      COVERED_TOPICS_JSON: serializeJson(effectiveCoveredTopics),
+      LEARNING_OUTCOMES_JSON: serializeJson(effectiveLearningOutcomes),
+      COMPETENCIES_JSON: serializeJson(effectiveCompetencies),
+    });
+
+    const stageName = "Assessment Generation";
+    let result: any;
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    while (retryCount <= maxRetries) {
+      try {
+        const stageResult = await generateWithOllama(requestId, debugDir, stageName, prompt, ASSESSMENT_SCHEMA);
+        const repairedText = repairAssessmentJson(stageResult.text);
+        result = JSON.parse(repairedText);
+        
+        const validation = validateAssessmentResult(result, effectiveTotalMarks, effectiveCoveredChapters);
+        if (validation.valid) {
+          break;
+        }
+
+        console.warn(`[Assessment][${requestId}] Validation errors (attempt ${retryCount + 1}):`, validation.errors);
+
+        if (retryCount >= maxRetries) {
+          // If we've exhausted retries, return what we have with validation report
+          result.blueprint = result.blueprint || ASSESSMENT_SCHEMA.blueprint;
+          result.blueprint.validation_report = {
+            uses_only_selected_term_content: !validation.errors.some(e => e.includes("references chapter")),
+            total_marks_valid: !validation.errors.some(e => e.includes("Total marks mismatch")),
+            all_questions_have_answers: !validation.errors.some(e => e.includes("missing answer key")),
+            all_subjective_questions_have_marking_scheme: !validation.errors.some(e => e.includes("missing marking scheme")),
+            future_topics_detected: validation.errors.filter(e => e.includes("references chapter")),
+          };
+          break;
+        }
+
+        retryCount++;
+        console.log(`[Assessment][${requestId}] Retrying assessment generation (attempt ${retryCount + 1}/${maxRetries + 1})...`);
+      } catch (error: any) {
+        if (String(error?.code || "") === "OLLAMA_OUTPUT_TRUNCATED" && retryCount < maxRetries) {
+          retryCount++;
+          console.warn(`[Assessment][${requestId}] Output truncated, retrying (${retryCount}/${maxRetries})...`);
+          continue;
+        }
+        throw error;
+      }
+    }
+
+    if (!result) {
+      throw new Error("Failed to generate assessment after all retries.");
+    }
+
+    await writeDebugFile(debugDir, "final-response.json", result);
+    res.json(result);
+  } catch (error: any) {
+    console.error(`[Request][${requestId}] Assessment generation failed:`, error);
+    res.status(500).json({ error: error?.message || "Assessment generation failed." });
+  }
+});
+
+app.post("/api/generate-question-paper", async (req, res) => {
+  const { grade, subject, academic_year, term_number, covered_units, covered_chapters, covered_topics, total_marks, duration_minutes, set_count, curriculum } = req.body;
+  if (!subject) {
+    return res.status(400).json({ error: "Subject is required." });
+  }
+  const requestId = makeRequestId("generate-question-paper");
+  const debugDir = await ensureDebugDir(requestId);
+  try {
+    const resFull = await fetch(`http://localhost:${PORT}/api/generate-assessment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildAssessmentRequestPayload(req.body, { paper_type: "term_exam" })),
+    });
+    const fullResult = await resFull.json();
+    await writeDebugFile(debugDir, "final-response.json", fullResult);
+    const questionPapersOnly = (fullResult?.question_papers || []).map((paper: any) => ({
+      metadata: fullResult.metadata,
+      blueprint: fullResult.blueprint,
+      set_label: paper.set_label,
+      sections: paper.sections,
+    }));
+    res.json(questionPapersOnly);
+  } catch (error: any) {
+    console.error(`[Request][${requestId}] Question paper generation failed:`, error);
+    res.status(500).json({ error: error?.message || "Question paper generation failed." });
+  }
+});
+
+app.post("/api/generate-answer-key", async (req, res) => {
+  const { grade, subject, academic_year, term_number, covered_units, covered_chapters, covered_topics, total_marks, duration_minutes, set_count, curriculum } = req.body;
+  if (!subject) {
+    return res.status(400).json({ error: "Subject is required." });
+  }
+  const requestId = makeRequestId("generate-answer-key");
+  const debugDir = await ensureDebugDir(requestId);
+  try {
+    const resFull = await fetch(`http://localhost:${PORT}/api/generate-assessment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildAssessmentRequestPayload(req.body, { paper_type: "term_exam" })),
+    });
+    const fullResult = await resFull.json();
+    await writeDebugFile(debugDir, "final-response.json", fullResult);
+    const answerKeysOnly = (fullResult?.answer_keys || []).map((ak: any) => ({
+      metadata: fullResult.metadata,
+      set_label: ak.set_label,
+      answers: ak.answers,
+    }));
+    res.json(answerKeysOnly);
+  } catch (error: any) {
+    console.error(`[Request][${requestId}] Answer key generation failed:`, error);
+    res.status(500).json({ error: error?.message || "Answer key generation failed." });
+  }
+});
+
+app.post("/api/generate-marking-scheme", async (req, res) => {
+  const { grade, subject, academic_year, term_number, covered_units, covered_chapters, covered_topics, total_marks, duration_minutes, set_count, curriculum } = req.body;
+  if (!subject) {
+    return res.status(400).json({ error: "Subject is required." });
+  }
+  const requestId = makeRequestId("generate-marking-scheme");
+  const debugDir = await ensureDebugDir(requestId);
+  try {
+    const resFull = await fetch(`http://localhost:${PORT}/api/generate-assessment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildAssessmentRequestPayload(req.body, { paper_type: "term_exam" })),
+    });
+    const fullResult = await resFull.json();
+    await writeDebugFile(debugDir, "final-response.json", fullResult);
+    const markingSchemesOnly = (fullResult?.marking_schemes || []).map((ms: any) => ({
+      metadata: fullResult.metadata,
+      set_label: ms.set_label,
+      schemes: ms.schemes,
+    }));
+    res.json(markingSchemesOnly);
+  } catch (error: any) {
+    console.error(`[Request][${requestId}] Marking scheme generation failed:`, error);
+    res.status(500).json({ error: error?.message || "Marking scheme generation failed." });
+  }
+});
+
+app.post("/api/export-assessment", async (req, res) => {
+  const { format, assessment, exportType } = req.body;
+  if (!format || !assessment) {
+    return res.status(400).json({ error: "Format and assessment data are required." });
+  }
+
+  const requestId = makeRequestId("export-assessment");
+  const debugDir = await ensureDebugDir(requestId);
+  await writeDebugFile(debugDir, "request-body.json", req.body);
+
+  try {
+    const validFormats = ["pdf", "docx", "json"];
+    if (!validFormats.includes(format)) {
+      return res.status(400).json({ error: `Invalid format. Supported: ${validFormats.join(", ")}` });
+    }
+
+    if (format === "json") {
+      const exportData: any = { metadata: assessment.metadata, blueprint: assessment.blueprint };
+      if (exportType === "question_paper" || exportType === "all") {
+        exportData.question_papers = assessment.question_papers;
+      }
+      if (exportType === "answer_key" || exportType === "all") {
+        exportData.answer_keys = assessment.answer_keys;
+      }
+      if (exportType === "marking_scheme" || exportType === "all") {
+        exportData.marking_schemes = assessment.marking_schemes;
+      }
+      if (exportType === "blueprint") {
+        delete exportData.question_papers;
+        delete exportData.answer_keys;
+        delete exportData.marking_schemes;
+      }
+      const jsonStr = serializeJson(exportData);
+      const fileName = `${exportType || "assessment"}-${Date.now()}.json`;
+      await writeDebugFile(debugDir, fileName, exportData);
+      res.json({
+        success: true,
+        data: jsonStr,
+        fileName,
+        contentType: "application/json",
+      });
+      return;
+    }
+
+    // For PDF and DOCX, return the data structure for client-side rendering
+    const exportData: any = { metadata: assessment.metadata, blueprint: assessment.blueprint };
+    if (exportType === "question_paper" || exportType === "all") {
+      exportData.question_papers = assessment.question_papers;
+    }
+    if (exportType === "answer_key" || exportType === "all") {
+      exportData.answer_keys = assessment.answer_keys;
+    }
+    if (exportType === "marking_scheme" || exportType === "all") {
+      exportData.marking_schemes = assessment.marking_schemes;
+    }
+    if (exportType === "blueprint") {
+      exportData.blueprint = assessment.blueprint;
+    }
+
+    res.json({
+      success: true,
+      data: serializeJson(exportData),
+      fileName: `${exportType || "assessment"}-${Date.now()}.${format}`,
+      contentType: format === "pdf" ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      format,
+    });
+  } catch (error: any) {
+    console.error(`[Request][${requestId}] Assessment export failed:`, error);
+    res.status(500).json({ error: error?.message || "Assessment export failed." });
+  }
+});
 
 // ======== START SERVER ========
 if (process.env.NODE_ENV !== "test") {

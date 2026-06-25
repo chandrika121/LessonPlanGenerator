@@ -1,0 +1,160 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 6: Competency Extraction - Class XI - Batch 1
+- Extract competencies only.
+- No analysis or lesson-planning inference.
+- Use only the provided class/unit/chapter payload as structural context.
+- Do not invent new units or chapters.
+- Return at most 1 competency_group per chapter.
+- Never create multiple sub-groups for the same chapter.
+- Limit each competency_group to 3-5 competencies maximum.
+- If a chapter has no clear competencies in the source, omit it instead of expanding it.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "subject": "PHYSICS",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Physical World and Measurement"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Kinematics"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Laws of Motion"
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Work, Energy and Power"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U1",
+      "unit_name": "Physical World and Measurement",
+      "chapter_id": "C1",
+      "chapter_name": "Units and Measurements",
+      "key_concepts": [
+        "SI units, fundamental and derived units",
+        "Significant figures",
+        "Determining the uncertainty in result",
+        "Dimensions of physical quantities",
+        "Dimensional analysis and its applications"
+      ],
+      "subtopics": [
+        "Need for measurement; Units of measurement; Systems of units"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U2",
+      "unit_name": "Kinematics",
+      "chapter_id": "C1",
+      "chapter_name": "Motion in a Straight Line",
+      "key_concepts": [
+        "Elementary concepts of differentiation and integration for describing motion",
+        "Uniform and non-uniform motion",
+        "Average speed, average velocity, instantaneous velocity",
+        "Uniformly accelerated motion",
+        "Velocity-time and position-time graphs; Relations for uniformly accelerated motion (graphical and calculus treatment)"
+      ],
+      "subtopics": [
+        "Frame of reference; Motion in a straight line"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U2",
+      "unit_name": "Kinematics",
+      "chapter_id": "C2",
+      "chapter_name": "Motion in a Plane",
+      "key_concepts": [
+        "General vectors, equality of vectors, multiplication by real number",
+        "Addition and subtraction of vectors; Unit vector; Resolution in a plane",
+        "Rectangular components; Scalar and Vector product",
+        "Motion in a plane: uniform velocity and acceleration",
+        "Projectile motion; Uniform circular motion"
+      ],
+      "subtopics": [
+        "Scalar and vector quantities; Position and displacement vectors"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U3",
+      "unit_name": "Laws of Motion",
+      "chapter_id": "C1",
+      "chapter_name": "Laws of Motion",
+      "key_concepts": [
+        "Newton's first law (Law of inertia)",
+        "Momentum and Newton's second law; Impulse",
+        "Newton's third law; Law of conservation of linear momentum",
+        "Equilibrium of concurrent forces",
+        "Static, kinetic, rolling friction; Lubrication"
+      ],
+      "subtopics": [
+        "Intuitive concept of force; Inertia"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "unit_id": "U4",
+      "unit_name": "Work, Energy and Power",
+      "chapter_id": "C1",
+      "chapter_name": "Work, Energy and Power",
+      "key_concepts": [
+        "Kinetic energy; Work-energy theorem",
+        "Power",
+        "Potential energy (including spring); Conservative vs non-conservative forces",
+        "Motion in a vertical circle",
+        "Elastic and inelastic collisions (1D and 2D)"
+      ],
+      "subtopics": [
+        "Work done by constant and variable force"
+      ],
+      "topics": []
+    }
+  ]
+}
+
+Curriculum source text:
+--- Page 1 ---
+PHYSICS Subject Code – 042 Class XI-XII (2025-26) Senior Secondary stage of school education is a stage of transition from general education to discipline-based focus on curriculum. The present updated syllabus keeps in view the rigor and depth of disciplinary approach as well as the comprehension level of learners. Due care has also been taken that the syllabus is comparable to the international standards. Salient features of the syllabus include:  Emphasis on basic conceptual understanding of the content.  Emphasis on use of SI units, symbols, nomenclature of physical quantities and formulations as per international standards.  Providing logical sequencing of units of the subject matter and proper placement of concepts with their linkage for better learning.  Reducing the curriculum load by eliminating overlapping of concepts/content within the discipline and other disciplines.  Promotion of process-skills, problem-solving abilities and applications of Physics concepts. Besides, the syllabus also attempts to Strengthen the concepts developed at the secondary stage to provide firm foundation for further learning in the subject. Expose the learners to different processes used in Physics-related industrial and technological applications. Develop process-skills and experimental, observational, manipulative, decision making and investigatory skills in the learners. Promote problem solving abilities and creative thinking in learners. Develop conceptual competence in the learners and make them realize and appreciate the interface of Physics with other disciplines. Class XI-XII (2026-27)
+
+--- Page 2 ---
+PHYSICS (Code No. 042) COURSE STRUCTURE Time: 3 hrs. Max Marks: 70 UNIT CHAPTERS MARKS Unit–I Physical World and Measurement 23 Chapter–1: Units and Measurements Unit-II Kinematics Chapter–2: Motion in a Straight Line Chapter–3: Motion in a Plane Unit–III Laws of Motion Chapter–4: Laws of Motion Unit–IV Work, Energy and Power 17 Chapter–5: Work, Energy and Power Unit–V Motion of System of Particles and Rigid Body Chapter–6: System of Particles and Rotational Motion Unit-VI Gravitation Chapter–7: Gravitation Unit–VII Properties of Bulk Matter 20 Chapter–8: Mechanical Properties of Solids Chapter–9: Mechanical Properties of Fluids Chapter–10: Thermal Properties of Matter Unit–VIII Thermodynamics Chapter–11: Thermodynamics Unit–IX Behaviour of Perfect Gases and Kinetic Theory of Gases Chapter–12: Kinetic Theory Unit–X Oscillations and Waves 10 Chapter–13: Oscillations Chapter–14: Waves Total 70 Class XI - 2026-27 (Theory)
+
+--- Page 3 ---
+Unit I: Physical World and Measurements Chapter–1: Units and Measurements Need for measurement: Units of measurement; systems of units; SI units, fundamental and derived units. significant figures, Determining the uncertainty in result . Dimensions of physical quantities, dimensional analysis and its applications. Unit II: Kinematics Chapter–2: Motion in a Straight Line Frame of reference, Motion in a straight line, Elementary concepts of differentiation and integration for describing motion, uniform and non- uniform motion, average speed and average velocity and instantaneous velocity, uniformly accelerated motion, velocity - time and position-time graphs. Relations for uniformly accelerated motion (graphical and calculus treatment). Chapter–3: Motion in a Plane Scalar and vector quantities; position and displacement vectors, general vectors and their notations; equality of vectors, multiplication of vectors by a real number; addition and subtraction of vectors, Unit vector; resolution of a vector in a plane, rectangular components, Scalar and Vector product of vectors. Motion in a plane, cases of uniform velocity and uniform acceleration- projectile motion, uniform circular motion. Unit III: Laws of Motion Chapter–4: Laws of Motion Intuitive concept of force, Inertia, Newton's first law of motion; momentum and Newton's second law of motion; impulse; Newton's third law of motion. La

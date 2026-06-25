@@ -1,0 +1,216 @@
+Stage 3: Node Enrichment - Class XII - Chemistry - Retry
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XII",
+  "subject": "Chemistry",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit 1: Solutions",
+      "part_or_section": "",
+      "marks": 7,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Solutions",
+          "source_chapter_name": "Solutions",
+          "source_heading": "Solutions",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "part_or_section": "",
+      "marks": 9,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electrochemistry",
+          "source_chapter_name": "Electrochemistry",
+          "source_heading": "Electrochemistry",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "part_or_section": "",
+      "marks": 7,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Kinetics",
+          "source_chapter_name": "Chemical Kinetics",
+          "source_heading": "Chemical Kinetics",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "part_or_section": "",
+      "marks": 7,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "d and f Block Elements",
+          "source_chapter_name": "d and f Block Elements",
+          "source_heading": "d and f Block Elements",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "part_or_section": "",
+      "marks": 7,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordination Compounds",
+          "source_chapter_name": "Coordination Compounds",
+          "source_heading": "Coordination Compounds",
+          "source_type": "unit_fallback"
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XII",
+  "subject": "Chemistry",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit 1: Solutions",
+      "part_or_section": "",
+      "marks": 7,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Solutions",
+          "source_chapter_name": "Solutions",
+          "source_heading": "Solutions",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "part_or_section": "",
+      "marks": 9,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electrochemistry",
+          "source_chapter_name": "Electrochemistry",
+          "source_heading": "Electrochemistry",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "part_or_section": "",
+      "marks": 7,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Kinetics",
+          "source_chapter_name": "Chemical Kinetics",
+          "source_heading": "Chemical Kinetics",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "part_or_section": "",
+      "marks": 7,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "d and f Block Elements",
+          "source_chapter_name": "d and f Block Elements",
+          "source_heading": "d and f Block Elements",
+          "source_type": "unit_fallback"
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "part_or_section": "",
+      "marks": 7,
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordination Compounds",
+          "source_chapter_name": "Coordination Compounds",
+          "source_heading": "Coordination Compounds",
+          "source_type": "unit_fallback"
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+--- Page 5 ---
+5 D.Chemical Equilibrium Any one of the following experiments:  Study the shift in equilibrium between ferric ions and thiocyanate ions by increasing/decreasing the concentration of either of the ions.  Study the shift in equilibrium between [Co(H 2 O) 6 ] 2+ and chloride ions by changing the concentration of either of the ions. E. Quantitative Estimation 1. Using a mechanical balance/electronic balance. 2. Preparation of standard solution of Oxalic acid. 3. Determination of strength of a given solution of Sodium hydroxide by titrating it against standard solution of Oxalic acid. 4. Preparation of standard solution of Sodium carbonate. 5. Determination of strength of a given solution of hydrochloric acid by titrating it against standard Sodium Carbonate solution. F. Qualitative Analysis 1. Determination of one anion and one cation in a given salt Cations: 𝑷𝒃 𝟐+ , 𝑪𝒖 𝟐+ , 𝑨𝒍 𝟑+ , 𝑭𝒆 𝟑+ , 𝑴𝒏 𝟐+ , 𝑵𝒊 𝟐+ , 𝒁𝒏 𝟐+ , 𝑪𝒐 𝟐+ , 𝑪𝒂 𝟐+ , 𝑺𝒓 𝟐+ , 𝑩𝒂 𝟐+ , 𝑴𝒈 𝟐+ , 𝑵𝑯 𝟒 + Anions: 𝑪𝑶 𝟑 𝟐− , 𝐒 𝟐− , 𝐒𝐎 𝟑 𝟐− , 𝑵𝑶 𝟑 − , 𝑵𝑶 𝟐 − , 𝐂𝐥 − , 𝐁𝐫 − , 𝐈 − , 𝑺𝑶 𝟒 𝟐− , 𝑷𝑶 𝟒 𝟑− , 𝐂𝐇 𝟑 𝐂𝐎𝐎 − (Note: Insoluble salts excluded) 2. Detection of -Nitrogen, Sulphur, Chlorine in organic compounds. PROJECTS Scientific investigations involving laboratory testing and collecting information from other sources. A few suggested Projects a) Checking the bacterial contamination in drinking water by testing sulphide ion b) Study of the methods of purification of water c) Testing the hardness, presence of Iron, Fluoride, Chloride, etc., depending upon the regional variation in drinking water and study of causes of presence of these ions above permissible limit (if any). d) Investigation of the foaming capacity of different washing soaps and the effect of addition of Sodium carbonate on it e) Study the acidity of different samples of tea leaves. f) Determination of the rate of evaporation of different liquids g) Study the effect of acids and bases on the tensile strength of fibers. h) Study of acidity of fruit and vegetable juices.
+
+--- Page 6 ---
+6 Note: Any other investigatory project, which involves about 10 periods of work, can be chosen with the approval of the teacher. Practical Examination for Visually Challenged Students Class XI Note: Same Evaluation scheme and general guidelines for visually challenged students as given for Class XII may be followed. List of apparatus for identification for assessment in practicals (All experiments) Beaker, tripod stand, wire gauze, glass rod, funnel, filter paper, Bunsen burner, test tube, test tube stands, dropper, test tube holder, ignition tube, china dish, tongs, standard flask, pipette, burette, conical flask, clamp stand, dropper, wash bottle • Odor detection in qualitative analysis. • Procedure/Setup of the apparatus. List of Experiments A. Characterization and Purification of Chemical Substances Crystallization of an impure sample of any one of the following: copper sulphate, benzoic acid. B. Experiments based on pH 1. Determination of pH of some solutions obtained from fruit juices, solutions of known and varied concentrations of acids, bases and salts using pH paper. 2. Comparing the pH of solutions of strong and weak acids of same concentration. C. Chemical Equilibrium 1. Study the shift in equilibrium between ferric ions and thiocyanate ions by increasing/decreasing the concentration of either ions. 2. Study the shift in equilibrium between [Co(H 2 O) 6 ] 2+ and chloride ions by changing the concentration of either of the ions. D. Quantitative estimation 1. Preparation of standard solution of oxalic acid. 2. Determination of molarity of a given solution of sodium hydroxide by titrating it against standard solution of oxalic acid. E. Qualitative Analysis 1. Determination of one anion and one cation in a given salt Cations - 𝑵𝑯 𝟒 + Anions: 𝑪𝑶 𝟑 𝟐− , 𝐒 𝟐− , 𝐒𝐎 𝟑 𝟐− , , 𝐂𝐥 − , 𝐂𝐇 𝟑 𝐂𝐎𝐎 − (Note: insoluble salts excluded) 2. Detection of Nitrogen in the given organic compound. 3. Detection of Halogen in the given organic compound.
+
+--- Page 7 ---
+7 Note: The above practical may be carried out in an experiential manner rather than recording observations. Prescribed Books: 1. Chemistry Part – I, Class-XI, Published by NCERT. 2. Chemistry Part – II, Class-XI, Published by NCERT. 3. Manual of Microscale Chemistry laboratory kit, Published by NCERT Links for NCERT textbooks: 1. https://ncert.nic.in/textbook.php?kech1=0-6 2. https://ncert.nic.in/textbook.php?kech2=0-3 3. https://ncert.nic.in/division/dek/pdf/Manual_01.pdf
+
+--- Page 8 ---
+8 COURSE STRUCTURE CLASS XII THEORY Time: 3 Hours Total Marks: 70 S. No. Title Marks 1 Solutions 7 2 Electrochemistry 9 3 Chemical Kinetics 7 4 d -and f -Block Elements 7 5 Coordination Compounds 7 6 Haloalkanes and Haloarenes 6 7 Alcohols, Phenols and Ethers 6 8 Aldehydes, Ketones and Carboxylic Acids 8 9 Amines 6 10 Biomolecules 7 Total 70 Unit 1: Solutions Types of Sol

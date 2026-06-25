@@ -1,0 +1,54 @@
+Stage 6: Competency Extraction - Class XII - Batch 2 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XII",
+  "subject": "Accountancy",
+  "units": [
+    {
+      "unit_id": "U6",
+      "unit_name": "Unit 4. Computerized Accounting"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XII",
+      "subject": "Accountancy",
+      "unit_id": "U6",
+      "unit_name": "Unit 4. Computerized Accounting",
+      "chapter_id": "C1",
+      "chapter_name": "Unit 4. Computerized Accounting",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

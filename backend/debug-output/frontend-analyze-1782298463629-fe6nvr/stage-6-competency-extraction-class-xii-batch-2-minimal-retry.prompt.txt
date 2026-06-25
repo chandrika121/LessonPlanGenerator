@@ -1,0 +1,106 @@
+Stage 6: Competency Extraction - Class XII - Batch 2 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XII",
+  "subject": "Physics",
+  "units": [
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents"
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit–V Electromagnetic Waves"
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Unit–VI Optics"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_id": "C1",
+      "chapter_name": "Electromagnetic Induction",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_id": "C2",
+      "chapter_name": "Alternating Current",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U5",
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_id": "C1",
+      "chapter_name": "Electromagnetic Waves",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U6",
+      "unit_name": "Unit–VI Optics",
+      "chapter_id": "C1",
+      "chapter_name": "Ray Optics and Optical Instruments",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U6",
+      "unit_name": "Unit–VI Optics",
+      "chapter_id": "C2",
+      "chapter_name": "Wave Optics",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

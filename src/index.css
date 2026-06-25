@@ -112,6 +112,10 @@
 
 /* Print optimizations for lesson planning reports */
 @media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
   .no-print {
     display: none !important;
   }
@@ -119,5 +123,21 @@
     border: none !important;
     box-shadow: none !important;
     padding: 0 !important;
+  }
+  .print-sheet {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .term-planning-table {
+    font-size: 10px !important;
+  }
+  .term-planning-table th,
+  .term-planning-table td {
+    padding: 6px 8px !important;
+  }
+  .term-planning-table thead {
+    position: static !important;
   }
 }

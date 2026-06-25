@@ -1,0 +1,82 @@
+Stage 6: Competency Extraction - Class XI - Batch 3 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XI",
+  "subject": "Biology",
+  "units": [
+    {
+      "unit_id": "U4",
+      "unit_name": "Plant Physiology"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U4",
+      "unit_name": "Plant Physiology",
+      "chapter_id": "C1",
+      "chapter_name": "Photosynthesis in Higher Plants",
+      "key_concepts": [
+        "Site of photosynthesis, pigments involved"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U4",
+      "unit_name": "Plant Physiology",
+      "chapter_id": "C2",
+      "chapter_name": "Respiration in Plants",
+      "key_concepts": [
+        "Cellular respiration - glycolysis, fermentation (anaerobic), TCA cycle and electron transport system"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Biology",
+      "unit_id": "U4",
+      "unit_name": "Plant Physiology",
+      "chapter_id": "C3",
+      "chapter_name": "Plant - Growth and Development",
+      "key_concepts": [
+        "Seed germination; phases of plant growth"
+      ],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

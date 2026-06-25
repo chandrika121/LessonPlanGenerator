@@ -1,0 +1,195 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8B - Class XII
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XII",
+  "units": [
+    {
+      "unit_id": "U6",
+      "unit_name": "Reproduction",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Sexual Reproduction in Flowering Plants"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Human Reproduction"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Reproductive Health"
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Genetics and Evolution",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Principles of Inheritance and Variation"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Molecular Basis of Inheritance"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Evolution"
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Biology and Human Welfare",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Human Health and Diseases"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Microbes in Human Welfare"
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Biotechnology and its Applications",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Biotechnology - Principles and Processes"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Biotechnology and its Applications"
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Ecology and Environment",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Organisms and Populations"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Ecosystem"
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "Biodiversity and its Conservation"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "U6",
+      "unit_name": "Reproduction",
+      "chapter_id": "C1",
+      "chapter_name": "Sexual Reproduction in Flowering Plants"
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Reproduction",
+      "chapter_id": "C2",
+      "chapter_name": "Human Reproduction"
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Reproduction",
+      "chapter_id": "C3",
+      "chapter_name": "Reproductive Health"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Genetics and Evolution",
+      "chapter_id": "C1",
+      "chapter_name": "Principles of Inheritance and Variation"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Genetics and Evolution",
+      "chapter_id": "C2",
+      "chapter_name": "Molecular Basis of Inheritance"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Genetics and Evolution",
+      "chapter_id": "C3",
+      "chapter_name": "Evolution"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Biology and Human Welfare",
+      "chapter_id": "C1",
+      "chapter_name": "Human Health and Diseases"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Biology and Human Welfare",
+      "chapter_id": "C2",
+      "chapter_name": "Microbes in Human Welfare"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Biotechnology and its Applications",
+      "chapter_id": "C1",
+      "chapter_name": "Biotechnology - Principles and Processes"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Biotechnology and its Applications",
+      "chapter_id": "C2",
+      "chapter_name": "Biotechnology and its Applications"
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Ecology and Environment",
+      "chapter_id": "C1",
+      "chapter_name": "Organisms and Populations"
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Ecology and Environment",
+      "chapter_id": "C2",
+      "chapter_name": "Ecosystem"
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Ecology and Environment",
+      "chapter_id": "C3",
+      "chapter_name": "Biodiversity and its Conservation"
+    }
+  ],
+  "competencies": []
+}

@@ -1,0 +1,33 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "competency_groups": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "competencies": [
+          ""
+        ],
+        "unit_name": "",
+        "chapter_name": ""
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 6: Competency Extraction - Class XI - Batch 3 - Minimal Retry\n\nReturn valid JSON only.\n\nReturn exactly one competency_group per input chapter.\n\nUse only the given subject, class, unit name, chapter name, key_concepts, and subtopics.\n\nDo not omit any input chapter.\n\nDo not create more than one competency_group for the same chapter.\n\nLimit competencies to exactly 3 concise items per chapter.\n\nBatch payload:\n{\n  \"class_name\": \"Class XI\",\n  \"subject\": \"PHYSICS\",\n  \"units\": [\n    {\n      \"unit_id\": \"U8\",\n      \"unit_name\": \"Thermodynamics\"\n    },\n    {\n      \"unit_id\": \"U9\",\n      \"unit_name\": \"Behaviour of Perfect Gases and Kinetic Theory of Gases\"\n    },\n    {\n      \"unit_id\": \"U10\",\n      \"unit_name\": \"Oscillations and Waves\"\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"PHYSICS\",\n      \"unit_id\": \"U8\",\n      \"unit_name\": \"Thermodynamics\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Thermodynamics\",\n      \"key_concepts\": [\n        \"Heat, work and internal energy\",\n        \"First law of thermodynamics\",\n        \"Second law of thermodynamics: State variables and equation of state\",\n        \"Change of gaseous state conditions (isothermal, adiabatic)\",\n        \"Reversible, irreversible, and cyclic processes\"\n      ],\n      \"subtopics\": [\n        \"Thermal equilibrium; Zeroth law of thermodynamics\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"PHYSICS\",\n      \"unit_id\": \"U9\",\n      \"unit_name\": \"Behaviour of Perfect Gases and Kinetic Theory of Gases\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Kinetic Theory\",\n      \"key_concepts\": [\n        \"Kinetic theory assumptions, concept of pressure\",\n        \"Kinetic interpretation of temperature; RMS speed\",\n        \"Degrees of freedom; Law of equi-partition of energy (statement)\",\n        \"Application to specific heat capacities of gases\",\n        \"Mean free path; Avogadro's number\"\n      ],\n      \"subtopics\": [\n        \"Equation of state of a perfect gas; Work done in compressing a gas\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"PHYSICS\",\n      \"unit_id\": \"U10\",\n      \"unit_name\": \"Oscillations and Waves\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Oscillations\",\n      \"key_concepts\": [\n        \"Displacement as a function of time; Periodic functions\",\n        \"Simple harmonic motion (S.H.M)\",\n        \"Uniform circular motion and its equations\"\n      ],\n      \"subtopics\": [\n        \"Periodic motion; Time period, frequency\"\n      ],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XI\",\n      \"subject\": \"PHYSICS\",\n      \"unit_id\": \"U10\",\n      \"unit_name\": \"Oscillations and Waves\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Waves\",\n      \"key_concepts\": [\n        \"Wave properties and behavior (implied from Oscillations context)\"\n      ],\n      \"subtopics\": [\n        \"Periodic motion concepts applied to waves\"\n      ],\n      \"topics\": []\n    }\n  ]\n}\n\nTarget schema:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ const CurriculumSchema = new Schema(
     sourceText: { type: String, required: true },
     extractedCurriculum: { type: Schema.Types.Mixed, required: true },
     extractionMetadata: { type: Schema.Types.Mixed, default: {} },
+    savedTermPlanning: { type: Schema.Types.Mixed, default: null },
   },
   {
     timestamps: true,

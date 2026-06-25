@@ -1,0 +1,149 @@
+Stage 6: Competency Extraction - Class XII - Batch 2 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XII",
+  "subject": "Chemistry",
+  "units": [
+    {
+      "unit_id": "Unit_6",
+      "unit_name": "Unit 6"
+    },
+    {
+      "unit_id": "Unit_7",
+      "unit_name": "Unit 7"
+    },
+    {
+      "unit_id": "Unit_8",
+      "unit_name": "Unit 8"
+    },
+    {
+      "unit_id": "Unit_9",
+      "unit_name": "Unit 9"
+    },
+    {
+      "unit_id": "Unit_10",
+      "unit_name": "Unit 10"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XII",
+      "subject": "Chemistry",
+      "unit_id": "Unit_6",
+      "unit_name": "Unit 6",
+      "chapter_id": "C1",
+      "chapter_name": "Haloalkanes and Haloarenes",
+      "key_concepts": [
+        "Nature of C–X bond",
+        "Methods of Preparation of Haloalkanes and Haloarenes",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Polyhalogen Compounds"
+      ],
+      "subtopics": [
+        "Classification, Nomenclature"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Chemistry",
+      "unit_id": "Unit_7",
+      "unit_name": "Unit 7",
+      "chapter_id": "C1",
+      "chapter_name": "Alcohols, Phenols and Ethers",
+      "key_concepts": [
+        "Structures of Functional Groups",
+        "Alcohols and Phenols",
+        "Some commercially Important Alcohols",
+        "Ethers"
+      ],
+      "subtopics": [
+        "Classification, Nomenclature"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Chemistry",
+      "unit_id": "Unit_8",
+      "unit_name": "Unit 8",
+      "chapter_id": "C1",
+      "chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+      "key_concepts": [
+        "Preparation, Physical Properties and Chemical Reactions, Uses of Aldehydes and Ketones",
+        "Structure of Carboxyl Group",
+        "Methods of Preparation of Carboxylic Acids",
+        "Physical Properties and Chemical Reactions, Uses of Carboxylic Acids"
+      ],
+      "subtopics": [
+        "Nomenclature and Structure of Carbonyl Group"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Chemistry",
+      "unit_id": "Unit_9",
+      "unit_name": "Unit 9",
+      "chapter_id": "C1",
+      "chapter_name": "Amines",
+      "key_concepts": [
+        "Nomenclature, Preparation of Amines",
+        "Physical Properties, Chemical Reactions",
+        "Methods of Preparation of Diazonium Salts",
+        "Chemical Reactions Importance of Diazonium Salts in Synthesis of Aromatic Compounds"
+      ],
+      "subtopics": [
+        "Structure of Amines, Classification"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Chemistry",
+      "unit_id": "Unit_10",
+      "unit_name": "Unit 10",
+      "chapter_id": "C1",
+      "chapter_name": "Biomolecules",
+      "key_concepts": [
+        "Proteins, Enzymes",
+        "Vitamins",
+        "Nucleic Acids, Hormones"
+      ],
+      "subtopics": [
+        "Carbohydrates"
+      ],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

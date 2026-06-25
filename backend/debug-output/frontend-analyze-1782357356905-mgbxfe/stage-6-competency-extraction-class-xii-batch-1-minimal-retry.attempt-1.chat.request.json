@@ -1,0 +1,33 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "competency_groups": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "competencies": [
+          ""
+        ],
+        "unit_name": "",
+        "chapter_name": ""
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 6: Competency Extraction - Class XII - Batch 1 - Minimal Retry\n\nReturn valid JSON only.\n\nReturn exactly one competency_group per input chapter.\n\nUse only the given subject, class, unit name, chapter name, key_concepts, and subtopics.\n\nDo not omit any input chapter.\n\nDo not create more than one competency_group for the same chapter.\n\nLimit competencies to exactly 3 concise items per chapter.\n\nBatch payload:\n{\n  \"class_name\": \"Class XII\",\n  \"subject\": \"Accountancy\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit 1. Accounting for Partnership Firms\"\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit 2. Accounting for Companies\"\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit 3. Analysis of Financial Statements\"\n    },\n    {\n      \"unit_id\": \"U4\",\n      \"unit_name\": \"Computerised Accounting\"\n    },\n    {\n      \"unit_id\": \"U5\",\n      \"unit_name\": \"Cash Flow Statement\"\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Accountancy\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit 1. Accounting for Partnership Firms\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Unit 1. Accounting for Partnership Firms\",\n      \"key_concepts\": [\n        \"Accounting Equation Approach\",\n        \"Double Entry System\",\n        \"Accrual Basis Principle\",\n        \"GST Characteristics and Applicability\"\n      ],\n      \"subtopics\": [\n        \"Concept, Objectives, Limitations of Accounting\",\n        \"Qualitative Characteristics and Role in Business\",\n        \"Basic Accounting Terms: Assets, Liabilities, Capital, Revenue vs Expenditure\",\n        \"Fundamental Assumptions (GAAP): Entity, Money Measurement, Going Concern, etc.\",\n        \"Basis of Accounting: Cash vs Accrual\"\n      ],\n      \"topics\": [\n        \"Introduction to Accounting and Theoretical Framework\"\n      ]\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Accountancy\",\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit 2. Accounting for Companies\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Unit 2. Accounting for Companies\",\n      \"key_concepts\": [\n        \"Rules of Debit and Credit\",\n        \"Bank Reconciliation Statement Preparation\",\n        \"Provisions, Reserves, and Capital/Revenue Distinction\",\n        \"Rectification of Errors\",\n        \"Trial Balance Verification\"\n      ],\n      \"subtopics\": [\n        \"Source Documents, Vouchers, and Journal Entries\",\n        \"Special Purpose Books: Cash Book (Simple & Bank), Petty Cash Book\",\n        \"Purchases/Sales Books and Returns\",\n        \"Ledger Posting and Balancing of Accounts\",\n        \"Depreciation Methods (SLM vs WDV) and Treatment\"\n      ],\n      \"topics\": [\n        \"Accounting Process and Recording Transactions\"\n      ]\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Accountancy\",\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit 3. Analysis of Financial Statements\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Unit 3. Analysis of Financial Statements\",\n      \"key_concepts\": [],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Accountancy\",\n      \"unit_id\": \"U4\",\n      \"unit_name\": \"Computerised Accounting\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Computerised Accounting\",\n      \"key_concepts\": [],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Accountancy\",\n      \"unit_id\": \"U5\",\n      \"unit_name\": \"Cash Flow Statement\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Cash Flow Statement\",\n      \"key_concepts\": [],\n      \"subtopics\": [],\n      \"topics\": []\n    }\n  ]\n}\n\nTarget schema:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}"
+    }
+  ]
+}

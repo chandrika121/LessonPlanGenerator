@@ -1,0 +1,115 @@
+Stage 6: Competency Extraction - Class XII - Batch 2 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XII",
+  "subject": "Biology",
+  "units": [
+    {
+      "unit_id": "U7",
+      "unit_name": "Genetics and Evolution"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Biology and Human Welfare"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Biotechnology and its Applications"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XII",
+      "subject": "Biology",
+      "unit_id": "U7",
+      "unit_name": "Genetics and Evolution",
+      "chapter_id": "C3",
+      "chapter_name": "Evolution",
+      "key_concepts": [
+        "Origin of life; evidences for evolution (paleontology, comparative anatomy, embryology, molecular)",
+        "Darwin's contribution and modern synthetic theory of evolution",
+        "Mechanism of evolution: variation through mutation and recombination"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Biology",
+      "unit_id": "U8",
+      "unit_name": "Biology and Human Welfare",
+      "chapter_id": "C1",
+      "chapter_name": "Human Health and Diseases",
+      "key_concepts": [
+        "Digestion and absorption: alimentary canal, enzymes, hormones, peristalsis",
+        "Nutritional disorders: PEM, indigestion, constipation, vomiting, jaundice, diarrhea"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Biology",
+      "unit_id": "U8",
+      "unit_name": "Biology and Human Welfare",
+      "chapter_id": "C2",
+      "chapter_name": "Microbes in Human Welfare",
+      "key_concepts": [
+        "Calorific values of proteins, carbohydrates, and fats"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Biology",
+      "unit_id": "U9",
+      "unit_name": "Biotechnology and its Applications",
+      "chapter_id": "C1",
+      "chapter_name": "Biotechnology - Principles and Processes",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Biology",
+      "unit_id": "U9",
+      "unit_name": "Biotechnology and its Applications",
+      "chapter_id": "C2",
+      "chapter_name": "Biotechnology and its Applications",
+      "key_concepts": [],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+Stage 6: Competency Extraction - Class XII - Batch 3 - Minimal Retry
+
+Return valid JSON only.
+
+Return exactly one competency_group per input chapter.
+
+Use only the given subject, class, unit name, chapter name, key_concepts, and subtopics.
+
+Do not omit any input chapter.
+
+Do not create more than one competency_group for the same chapter.
+
+Limit competencies to exactly 3 concise items per chapter.
+
+Batch payload:
+{
+  "class_name": "Class XII",
+  "subject": "Physics",
+  "units": [
+    {
+      "unit_id": "U7",
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Unit-VIII Atoms and Nuclei"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Unit–IX Electronic Devices"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U7",
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_id": "C1",
+      "chapter_name": "Dual Nature of Radiation and Matter",
+      "key_concepts": [
+        "Photoelectric effect and wave nature of matter"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U8",
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_id": "C1",
+      "chapter_name": "Atoms",
+      "key_concepts": [
+        "Atomic structure and spectral series"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U8",
+      "unit_name": "Unit-VIII Atoms and Nuclei",
+      "chapter_id": "C2",
+      "chapter_name": "Nuclei",
+      "key_concepts": [
+        "Nuclear properties, fission, and fusion"
+      ],
+      "subtopics": [],
+      "topics": []
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "unit_id": "U9",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_id": "C1",
+      "chapter_name": "Materials, Devices and Simple Circuits",
+      "key_concepts": [
+        "Semiconductors: diodes, transistors, logic gates"
+      ],
+      "subtopics": [],
+      "topics": []
+    }
+  ]
+}
+
+Target schema:
+{
+  "competency_groups": [
+    {
+      "code": "",
+      "title": "",
+      "description": "",
+      "competencies": [
+        ""
+      ],
+      "unit_name": "",
+      "chapter_name": ""
+    }
+  ]
+}

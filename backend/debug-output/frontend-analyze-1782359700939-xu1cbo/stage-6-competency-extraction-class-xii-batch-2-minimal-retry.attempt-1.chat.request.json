@@ -1,0 +1,33 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "competency_groups": [
+      {
+        "code": "",
+        "title": "",
+        "description": "",
+        "competencies": [
+          ""
+        ],
+        "unit_name": "",
+        "chapter_name": ""
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 6: Competency Extraction - Class XII - Batch 2 - Minimal Retry\n\nReturn valid JSON only.\n\nReturn exactly one competency_group per input chapter.\n\nUse only the given subject, class, unit name, chapter name, key_concepts, and subtopics.\n\nDo not omit any input chapter.\n\nDo not create more than one competency_group for the same chapter.\n\nLimit competencies to exactly 3 concise items per chapter.\n\nBatch payload:\n{\n  \"class_name\": \"Class XII\",\n  \"subject\": \"Biology\",\n  \"units\": [\n    {\n      \"unit_id\": \"U7\",\n      \"unit_name\": \"Genetics and Evolution\"\n    },\n    {\n      \"unit_id\": \"U8\",\n      \"unit_name\": \"Biology and Human Welfare\"\n    },\n    {\n      \"unit_id\": \"U9\",\n      \"unit_name\": \"Biotechnology and its Applications\"\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U7\",\n      \"unit_name\": \"Genetics and Evolution\",\n      \"chapter_id\": \"C3\",\n      \"chapter_name\": \"Evolution\",\n      \"key_concepts\": [\n        \"Origin of life; evidences for evolution (paleontology, comparative anatomy, embryology, molecular)\",\n        \"Darwin's contribution and modern synthetic theory of evolution\",\n        \"Mechanism of evolution: variation through mutation and recombination\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U8\",\n      \"unit_name\": \"Biology and Human Welfare\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Human Health and Diseases\",\n      \"key_concepts\": [\n        \"Digestion and absorption: alimentary canal, enzymes, hormones, peristalsis\",\n        \"Nutritional disorders: PEM, indigestion, constipation, vomiting, jaundice, diarrhea\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U8\",\n      \"unit_name\": \"Biology and Human Welfare\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Microbes in Human Welfare\",\n      \"key_concepts\": [\n        \"Calorific values of proteins, carbohydrates, and fats\"\n      ],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U9\",\n      \"unit_name\": \"Biotechnology and its Applications\",\n      \"chapter_id\": \"C1\",\n      \"chapter_name\": \"Biotechnology - Principles and Processes\",\n      \"key_concepts\": [],\n      \"subtopics\": [],\n      \"topics\": []\n    },\n    {\n      \"class_name\": \"Class XII\",\n      \"subject\": \"Biology\",\n      \"unit_id\": \"U9\",\n      \"unit_name\": \"Biotechnology and its Applications\",\n      \"chapter_id\": \"C2\",\n      \"chapter_name\": \"Biotechnology and its Applications\",\n      \"key_concepts\": [],\n      \"subtopics\": [],\n      \"topics\": []\n    }\n  ]\n}\n\nTarget schema:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"competency_groups\": [\n    {\n      \"code\": \"\",\n      \"title\": \"\",\n      \"description\": \"\",\n      \"competencies\": [\n        \"\"\n      ],\n      \"unit_name\": \"\",\n      \"chapter_name\": \"\"\n    }\n  ]\n}"
+    }
+  ]
+}

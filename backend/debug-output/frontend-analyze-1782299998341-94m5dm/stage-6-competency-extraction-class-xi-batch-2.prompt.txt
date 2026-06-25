@@ -1,0 +1,132 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 6: Competency Extraction - Class XI - Batch 2
+- Extract competencies only.
+- No analysis or lesson-planning inference.
+- Use only the provided class/unit/chapter payload as structural context.
+- Do not invent new units or chapters.
+- Return at most 1 competency_group per chapter.
+- Never create multiple sub-groups for the same chapter.
+- Limit each competency_group to 3-5 competencies maximum.
+- If a chapter has no clear competencies in the source, omit it instead of expanding it.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "subject": "CHEMISTRY",
+  "units": [
+    {
+      "unit_id": "U6",
+      "unit_name": "Equilibrium"
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Redox Reactions"
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques"
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Hydrocarbons"
+    }
+  ],
+  "chapters": [
+    {
+      "class_name": "Class XI",
+      "subject": "CHEMISTRY",
+      "unit_id": "U6",
+      "unit_name": "Equilibrium",
+      "chapter_id": "C1",
+      "chapter_name": "Equilibrium",
+      "key_concepts": [
+        "Law of Chemical Equilibrium, Homogeneous/Heterogeneous Equilibria",
+        "Relationship between K, Q and Gibbs Energy G",
+        "Factors Affecting Equilibria",
+        "Ionic Equilibrium: Acids, Bases, Salts, Buffer Solutions"
+      ],
+      "subtopics": [
+        "Dynamic Equilibrium in Physical and Chemical Processes"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "CHEMISTRY",
+      "unit_id": "U7",
+      "unit_name": "Redox Reactions",
+      "chapter_id": "C1",
+      "chapter_name": "Redox Reactions",
+      "key_concepts": [
+        "Redox Reactions in Terms of Electron Transfer",
+        "Oxidation Number",
+        "Electrode Processes"
+      ],
+      "subtopics": [
+        "Classical Idea: Oxidation and Reduction"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "CHEMISTRY",
+      "unit_id": "U8",
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapter_id": "C1",
+      "chapter_name": "Some basic Principles and Techniques",
+      "key_concepts": [
+        "Structural Representations and Classification",
+        "Nomenclature and Isomerism",
+        "Fundamental Concepts in Organic Reaction Mechanism",
+        "Methods of Purification (Qualitative/Quantitative Analysis)"
+      ],
+      "subtopics": [
+        "Introduction, Tetravalence of Carbon and Shapes"
+      ],
+      "topics": []
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "CHEMISTRY",
+      "unit_id": "U9",
+      "unit_name": "Hydrocarbons",
+      "chapter_id": "C1",
+      "chapter_name": "Hydrocarbons",
+      "key_concepts": [
+        "Alkanes, Alkenes, and Alkynes",
+        "Aromatic Hydrocarbon",
+        "Carcinogenicity and Toxicity"
+      ],
+      "subtopics": [
+        "Classification of Hydrocarbons"
+      ],
+      "topics": []
+    }
+  ]
+}
+
+Curriculum source text:
+--- Page 1 ---
+1 CHEMISTRY SUBJECT CODE: 043 CLASSES XI-XII (2026-27) Rationale The second phase of Secondary stage is the most crucial stage of school education because at this juncture specialised discipline based, content oriented courses are introduced. Students reach this stage after 10 years of general education and opt for Chemistry with a purpose of pursuing their career in basic sciences or professional courses like medicine, engineering, technology and to study courses in applied areas of science and technology at tertiary level. Therefore, there is a need to provide the learners with sufficient conceptual background of Chemistry, which will make them competent to meet the challenges of academic and professional courses after this stage. The new and updated curriculum is based on a disciplinary approach with rigour and depth ensuring that the syllabus is not heavy and at the same time it is comparable to that at the international level. The pedagogy of Chemistry has undergone tremendous changes in recent times. To keep pace with the developments in Chemistry, many new areas like green chemistry, material science, biomolecules, and industrial chemistry deserve to be an integral part of the chemistry syllabus at this stage. In addition, the nomenclature of elements and compounds; symbols, and units of physical quantities, recommended by scientific bodies like IUPAC and CGPM also need to be incorporated in the updated syllabus. The proposed syllabus takes due care to address these issues. Objectives The curriculum of Chemistry at the second phase of Secondary stage has been designed to: ● equip the learners with tools to understand the working of Chemistry rather than mere facts of it; ● develop the necessary conceptual foundations of chemistry and ability to apply them to real life situations; ● enable the learners to represent chemical phenomena at macroscopic, molecular, and symbolic levels; ● make the learners identify patterns and form connections that underlie various chemical phenomena; ● prepare the learners to contribute to frontier research areas related to climate change, environmental issues, materials science, biology and medicine etc.: ● inculcate problem solving skills in the learners and integrate life skills and values in the context of chemistry; and ● apprise learners of the interface of chemistry with other disciplines of science such as physics, biology, geology, engineering etc.
+
+--- Page 2 ---
+2 COURSE STRUCTURE CLASS XI THEORY Time: 3 Hours Total Marks: 70 S. No UNIT Marks 1 Some Basic Concepts of Chemistry 7 2 Structure of Atom 9 3 Classification of Elements and Periodicity in Properties 6 4 Chemical Bonding and Molecular Structure 7 5 Chemical Thermodynamics 9 6 Equilibrium 7 7 Redox Reactions 4 8 Organic Chemistry: Some basic Principles and Techniques 11 9 Hydrocarbons 10 TOTAL 70 Unit 1: Some Basic Concepts of Chemistry Importance of Chemistry, Nature of Matter, Properties of Matter and their Measurement, Uncertainty in Measurement, Laws of Chemical Combination, Dalton's Atomic Theory, Atomic and Molecular Masses, Mole Concept and Molar Masses, Percentage Composition, Stoichiometry and Stoichiometric Calculations. Unit 2: Structure of Atom Discovery of Sub-atomic Particles, Atomic Models, Developments Leading to the Bohr’s Model of Atom, Bohr’s Model for Hydrogen Atom, Towards Quantum Mechanical Model of the Atom, Quantum Mechanical Model of Atom. Unit 3: Classification of Elements and Periodicity in Properties Why we Need to Classify Elements? Genesis of Periodic Classification, Modern Periodic Law and the Present Form of Periodic Table, Nomenclature of Elements with Atomic Number > 100, Electronic Configuration of Elements and the Periodic Table, Electronic Configuration of Elements and Types of Elements: s-, p-, d-, f- Blocks, Periodic Trends in Properties of Elements. Unit 4: Chemical Bonding and Molecular Structure Kossel-Lewis Approach to Chemical Bonding, Ionic or Electrovalent Bond, B
