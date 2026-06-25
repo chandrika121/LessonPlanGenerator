@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 1 of 5; extract only what is present in this chunk\n\nCurriculum source text:\n# Page 1\n\nSocial Science\nSubject Code-087\n## Class - IX (2026-27)\n## RATIONALE\nThe purpose of the education system is to develop good human beings capable of rational\nthought and action, possessing compassion and empathy, courage and resilience, scientific\ntemper and creative imagination, with sound ethical moorings and values. It aims at producing\nengaged, productive and contributing citizens for building an equitable, inclusive and plural\nsociety as envisaged by our Constitution. [NEP 2020, pages 4-5]\nSocial Science is a compulsory subject at Secondary Stage Phase-I of school education.\nSocial Science can play a unique role within the school curriculum to enable Knowledge,\nCapacities, and Values and Dispositions that underpin the purpose of education as\ncommitted to in NEP 2020.\nThe teaching and learning of Social Science at the secondary stage is aligned with the\ntransformational vision of the National Curriculum Framework for School Education (NCF-SE)\n2023 and the National Education Policy (NEP) 2020. The NCF-SE 2023 emphasises\nlearning, i.e., competency-based, inquiry-oriented, and rooted in Indian Knowledge Systems\n(IKS) and lived realities. The deliberate reduction of content load with a focus on core\nconcepts rather than memorisation, creates space for discussion, exploration, and deep\nunderstanding. The framework’s call for interdisciplinarity encourages students to draw\nmeaningful connections across disciplines and relate classroom learning to real-life contexts\nand experiences.\nFurthermore, the NCF-SE 2023 envisions rootedness in India, in which learning is grounded\nin India’s diverse heritage and intellectual traditions, while also being combined with a global\noutlook. Within this perspective, Social Science education engages students with India’s\nhistorical experiences, democratic values, and patterns of economic and social development,\ngeographical understanding alongside global processes and contemporary challenges. By\nintegrating the aims of the NEP 2020, Social Science education seeks to transform learning\ninto a process that builds knowledge, capacities, and values essential for personal growth,\nsocial harmony and national progress.\nSocial Science at the secondary stage is an integrated study of human society like its\nevolution, structures, and dynamics through the disciplines of History, Geography, Political\nScience, and Economics. It explores how societies function and transform over time through\nthe interplay of historical, geographical, cultural, political, economic, and environmental\nforces. The subject goes beyond the factual understanding to include inquiry, interpretation,\nand analysis.\nStudents learn to source and validate information, interpret data and evidence, and construct\nlogical explanations, thus fostering critical and reflective thinking. It also cultivates empathy,\nrespect for diversity, and a sense of justice and responsibility — values that reflect India’s\nintellectual traditions of reasoning, dialogue, and debate as pathways to truth and\nunderstanding.\n1\n\n---\n\n# Page 2\n\n## AIMS & OBJECTIVE\nAs per NCF- 2023, the aims of teaching Social Science in school education can be summarised as\nfollows:\na. Develop disciplinary knowledge and understanding of how society functions through an\ninterplay of historical, geographical, social, economic, and political factors.\nThis can be enabled through:\ni. an understanding of continuity and change in human civilisation, its causation and\neffect and its impact on modern life.\nii. an understanding of the interaction between nature and human beings, the spatial\npatterns arising out of this interaction and its effect on human life.\niii. an awareness and understanding of the diversity of people and their practices in\ndifferent societies, regions and cultures within societies.\niv. an awareness of various social, political and economic institutions, their origin,\nfunctioning and transformations over time.\nb. Develop an understanding and appreciation for the methods of enquiry relevant to Social\nScience and deepen students’ skills to engage with the key questions and issues\nconfronting society.\nThese could be specifically seen as:\ni. Skills in sourcing evidence, interpreting them, checking through multiple sources\nand evidences and constructing a coherent narrative.\nii. Skills in recognizing spatial patterns, map-reading, interpretation and analysis of\nvarious interconnected concepts and processes.\niii. Skills of creative and analytical thinking to form informed opinions, demonstrate\nlogical decision-making and incline towards a problem- solving attitude.\niv. Skills to collect, organize, analyse, represent, and present data and information on\nvarious historical, geographical, and socio-political issues.\nv. Skills to question unsubstantiated ideas, biases, stereotypes, and assumptions to\nfoster scientific temper and propose meaningful responses to contemporary concerns\nof society.\nc. Foster ethical, human, and Constitutional values:\nAs the NEP 2020 emphasises to foster a “democratic outlook and commitment to liberty\nand freedom; equality, justice, and fairness; embracing diversity, plurality, and inclusion;\nhumaneness and fraternal spirit; social responsibility and the spirit of service; ethics of\nintegrity and honesty; scientific temper and commitment to rational and public dialogue;\npeace; social action through Constitutional means; unity and integrity of the nation, and\na true rootedness and pride in India with a forward-looking spirit to continuously improve\nas a nation.\nNOTE- Refer to NCF-2023-Page no-320-323\n2\n\n---\n\n# Page 3\n\nIn alignment with the NEP 2020, Social Science education seeks to develop responsible human\nbeings capable of rational thought and action, possessing compassion, empathy, courage,\nresilience, scientific temper, and creative imagination — qualities that prepare them to\ncontribute meaningfully to the nation and humanity.\nStudying Social Science is essential for developing informed, empathetic, and active citizens. It\nenables learners to situate themselves within broader social, cultural and environmental\ncontexts, and to recognise their role in shaping them. Through this subject, students\nunderstand the origins of democratic values, Constitutional principles, and India’s civilisational\nethos of unity in diversity. They also develop awareness of pressing issues such as inequality,\nconflict, environmental degradation and economic challenges, and learn to respond to them\nwith evidence-based reasoning and ethical reflection. Social Science thus, bridges knowledge\nand action, encouraging learners to think critically about society and participate responsibly and\neffectively in it.\n## CURRICULAR GOALS-CG\nAs per NCF 2023 - At the Secondary Stage, students will go into details to understand\nIndia’s past and appreciate its complexity, diversity, and unity brought about by cultural\nintegration and the sharing of knowledge traditions across geographical and linguistic\nboundaries. NCF 2023 Page no -154\n CG-1 Understands and analyses the important phases in Indian history and draws insights\nto understand present-day India\n CG -2 Analyses the important phases in world history and draw insight to understand the\npresent-day world\n CG-3 Understands the idea of a nation and the emergence of the modern Indian Nation\n CG -4 Develops an understanding of the inter-relationship between human beings and\ntheir physical environment and how that influences the livelihoods, cultural diversity, and\nbiodiversity of the region\n CG -5 Understand the Indian Constitution and explores the essence of Indian democracy\nand the characteristics of a democratic government.\n CG -6 Understand and analyse social, cultural, and political life in India over time – as\nwell as the underlying historical Indian ethos and philosophy of unity in diversity – and\nrecognises challenges faced in these areas in the past and present and the efforts (being)\nmade to address them\n CG -7 Develop an understanding of\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

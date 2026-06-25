@@ -1,0 +1,193 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+- Detected curriculum profile: cbse_unit_topic
+- Expected structure type: unit_topic
+- Prefer unit -> topic when the source lists topics directly under a unit
+- Do not invent chapters from unit names in CBSE-style syllabi
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 5 of 5; extract only what is present in this chunk
+
+Curriculum source text:
+ate them
+- Accurately use scientific instruments and
+equipment to collect data
+- Represent data in multiple modes, including tables,
+graphs and visual representations, and interpret
+and draw inferences from the data
+- Communicate their findings using scientific
+terminology and effectively communicate their
+conclusions to others
+
+---
+
+# Page 16
+
+Work, Energy and Simple Machines No. of Periods: 13
+Key Concepts Learning Outcomes
+- Concept of work; work C-2.5 • Define work done by a constant force and its SI
+done by a constant force unit
+- Work-Energy theorem • Calculate work done by a force using mathematical
+- Mechanical energy, expression
+kinetic and potential • State work-energy theorem
+energy, and conversion • Explain the concept of energy and state its SI unit
+between potential energy • Name forms of energy and identify their
+and kinetic energy interconversion in surroundings (elementary idea)
+- Conservation of energy • Define kinetic energy of a moving object and derive
+- Power its mathematical expression
+- Simple machines and • Define potential energy for an object raised to a
+their mechanical height and derive its mathematical expression
+advantage (pulley, • Calculate kinetic and potential energy using
+inclined plane, lever) mathematical expressions
+- Explain conversion between potential energy and
+kinetic energy (for the case of an object under free
+fall)
+- State the law of conservation of energy
+- Define power and its unit
+- Calculate power using its mathematical expression
+C-2.6 • Identify different simple machines (pulley, inclined
+plane and lever)
+- Define mechanical advantage and calculate its
+value for simple machine
+- Demonstrate and explain mechanical advantage of
+simple machines their conclusions to others
+C-8.1 • Analyse real-life events and phenomena, and
+identify the key factors that influence their
+behaviour
+- Develop model to represent real-life event
+- Use models to manipulate variables and predict
+results
+C-8.2 • Formulate hypotheses about scientific phenomena
+based on prior knowledge and understanding of
+scientific concepts, theories, laws, and principles
+- Predict about the outcome of an experiment or
+investigation based on their hypotheses
+- Identify the variables that are relevant to a scientific
+
+---
+
+# Page 17
+
+investigation and determine how to control or
+manipulate them
+- Accurately use scientific instruments and
+equipment to collect data
+- Represent data in multiple modes, including tables,
+graphs and visual representations, and interpret
+and draw inferences from the data
+- Communicate their findings using scientific
+terminology and effectively communicate their
+conclusions to others
+Sound No. of Periods: 11
+Key Concepts Learning Outcomes
+- Production of sound C-2.7 • Demonstrate the production of sound in multiple
+- Propagation of sound (as ways (through vibration of strings, membranes, air
+a longitudinal wave columns) using materials in surroundings
+through a medium) • Explain that sound is produced by vibrations
+- Graphical representation • Demonstrate that sound can travel through
+of sound wave different mediums (air, solid and liquid)
+- Characteristics of sound • Describe that sound needs a medium for
+wave (wavelength, propagation
+frequency, time period, • Explain that sound travels as a longitudinal wave
+amplitude, intensity, • Describe the characteristics of sound waves the
+speed) (wavelength, frequency, time period, amplitude,
+- Human perception of intensity and speed)
+sound (pitch, loudness) • Analyse graphs representing sound
+- Propagation of sound in • Write relationship between time period and
+different media (solid, frequency of sound wave
+liquid) • Derive mathematical expression for speed of sound
+- Reflection of sound • Calculate speed of sound using its mathematical
+(echo, reverberation), expression
+echolocation • Explain human perception of sound in terms of
+audible range, loudness and pitch of sound
+- Describe reflection of sound, and apply it to echo
+and reverberations in surroundings
+- Explain the use of sound waves for echolocation
+C-5.3 • Describe music in terms of characteristics of sound
+waves, such as loudness and pitch
+C-6.1 • Name historical buildings designed for echoes,
+such as whispering gallery of Gol Gumbaz
+
+---
+
+# Page 18
+
+- Display awareness about Sir C.V. Raman
+C-8.1 • Analyse real-life events and phenomena, and
+identify the key factors that influence their
+behaviour
+- Develop model to represent real-life event
+- Use models to manipulate variables and predict
+results
+C-8.2 • Formulate hypotheses about scientific phenomena
+based on prior knowledge and understanding of
+scientific concepts, theories, laws, and principles
+- Predict about the outcome of an experiment or
+investigation based on their hypotheses
+- Identify the variables that are relevant to a scientific
+investigation and determine how to control or
+manipulate them
+- Accurately use scientific instruments and
+equipment to collect data
+- Represent data in multiple modes, including tables,
+graphs and visual representations, and interpret
+and draw inferences from the data
+- Communicate their findings using scientific
+terminology and effectively communicate their
+conclusions to others
+Practical will be announced shortly.
+Assessment Structure Marks
+Annual Examination (03 hrs.) 80 Marks
+Internal Assessment 20 Marks
+ Periodic Assessment - 05 marks + 05 marks
+ Subject Enrichment (Practical Work) - 05 marks
+ Portfolio - 05 marks
+Total 100 Marks
+## PRESCRIBED BOOKS:
+ Science - Textbook for class IX - NCERT Publication
+ Assessment of Practical Skills in Science - Class IX - CBSE Publication
+ Laboratory Manual - Science - Class IX, NCERT Publication
+ Exemplar Problems Class IX – NCERT Publication

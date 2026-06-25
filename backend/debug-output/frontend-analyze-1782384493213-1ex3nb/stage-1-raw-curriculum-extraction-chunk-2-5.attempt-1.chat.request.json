@@ -1,0 +1,84 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "terms": [
+      {
+        "name": "",
+        "units": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: term_semester_curriculum\n- Expected structure type: term_unit_topic\n- Preserve term/semester structure when present\n- Do not flatten semesters into plain unit lists\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 2 of 5; extract only what is present in this chunk\n\nCurriculum source text:\nthe inter-relationship between human beings and\ntheir physical environment and how that influences the livelihoods, cultural diversity, and\nbiodiversity of the region\n CG -8 Evaluate the economic development of a country in terms of its impact on the lives of\nits people and nature\n CG-9 Understand and appreciate the contribution of India through history and present\ntimes, to the overall field of Social Science, and the disciplines that constitute it\n## COMPETENCIES\nCompetencies are specific learning achievements that are observable and can be assessed\nsystematically. In NCF, Competencies are directly derived from a Curricular Goal and are\n3\n\n---\n\n# Page 4\n\nexpected to be attained by the end of a Stage. The following competencies need to be developed\nin students to achieve the curricular goals at secondary stage.\n CG-1.1 Explains the historical events and processes using different types of sources with\nspecific examples from Indian history\n CG-1.2 Explains and analyses the chronology of human life on the Indian subcontinent,\nfrom prehistory to its civilisational beginnings and beyond, and its relations with other\ncivilisations over time, such as those in Mesopotamia, Greece, Central Asia, China,\nSoutheast Asia, Arabia, and Eastern Africa\n CG-1.3 Traces aspects of continuity and change in different phases of history across the\nIndian subcontinent (including cultural trends, social and religious trends and reforms, and\neconomic and political transformations)\n CG-1.4 Explains the growth of new indigenous ideas across India in Mathematics,\nPhilosophy, Science and Technology, Medicine, Architecture, Agriculture, Literature and Art,\nand Social Science (such as zero and the Indian number system, ahimsa , the six systems\nof Indian philosophy, Ayurveda, yoga, the 22 shrutis of Indian music, horticulture, use of\nherbs and spices, etymology, meters, and grammar) and how they affected the course of\nthe Indian history\n C-2.1 Explains historical events and processes with different types of sources with specific\nexamples from India and world history.\n C-2.3 Traces aspects of continuity and change in different phases of world history (including\ncultural trends, social and religious reforms, and economic and political transformations)\n C-2.4 Explains the growth of new ideas and practices across the world (including\nhumanism, mercantilism, industrialisation, scientific developments and explorations,\nimperialism, colonialism, the rise of the new nation states across the world, and various\ntechnologies including the most current) and how they affected the course of world history.\n C-2.5 Recognises the various practices that arose, such as those in C- 2.4, and came to be\ncondemned later on (such as racism, slavery, colonial invasions, conquests, and plunder,\ngenocides, exclusion of women from democratic and other institutions), all of which have\nalso impacted the course of world history and have left unhealed wounds.\n C 3.1 Analyses the meaning of nation and how the concept evolved over time across the\nworld and in the specific context of India, including its roots in the rich civilisational history of\nthe Indian subcontinent\n C3.2 Identifies and analyses important phases of the Indian national freedom struggle\nagainst British colonial rule, with special reference to the movement led by Mahatma\nGandhi and other important figures as well as those that led to independence, and\nunderstands the specific Indian concepts, values, and methods (such as Swaraj, Swadeshi,\npassive resistance, fight for dharma self- sacrifice, ahimsa) that played a part in achieving\nIndependence.\n C-4.1 Locates physiographic regions of India and the climatic zones of the world on a\nglobe/map.\n C-4.2 Explains important geographical concepts, characteristics of key landforms, their\norigin, and other physical factors of a region\n C-4.3 Draws inter- linkages between various components of the physical environment, such\nas climate and relief, climate and vegetation, vegetation, and wildlife.\n C-4.4 Analyses and evaluates the inter- relationship between the natural environment and\nhuman beings and their cultures across regions and, in the case of India, the special\nenvironmental ethos that resulted in practices of nature conservation\n4\n\n---\n\n# Page 5\n\n C-4.5 Critically evaluates the impact of human interventions on the environment, including\nclimate change, pollution, shortages of natural resources (particularly water), and loss of\nbiodiversity; identifies practices that have led to these environmental crises and the\nmeasures that must be taken to reverse them.\n C-4.6 Develops sensitivity towards the judicious use of natural resources (by individuals,\nsocieties, and nations) and suggests measures for their conservation\n C-5.1 Understands that the Indian Constitution draws from the great cultural heritage and\ncommon aspirations of the Indian nation, and recalls India’s early experiments with\ndemocracy (assemblies in Mahajanapadas , kingdoms and empires at several levels of the\nsociety, guilds sanghas and ganas , village councils and committees, Uthiramerur\ninscriptions)\n C-5.2 Appreciates fundamental Constitutional values and identify their significance for the\nprosperity of the Indian nation.\n C-5.3 Explains that fundamental rights are the most basic human rights, and they flourish\nwhen people also perform their fundamental duties\n C-5.4 Analyses the basic features of a democracy and democratic government – and its\nhistory in India and across the world – and compares this form of government with other\nforms of government.\n C-5.5- Analyses the critical role of non-state and non-market participants in the functioning\nof a democratic government and society, such as the media, civil society, socio-religious\ninstitutions, and community institutions\n C-6.1 Understands how the Indian ethos and the cultural integration across India did not\nattempt uniformity, but respected and promoted a rich diversity in Indian society, and how\nthis harmonisation and unity in diversity, with a historical respect for all cultures, women\nhave counted among India’s great strengths by promoting peaceful coexistence\n C-6.2 Understands that despite C-6.1, forms of inequality, injustice, and discrimination have\noccurred in different sections of society at different times (due to internal as well as outside\nforces such as colonisation), leading to political, social, and cultural efforts, struggles,\nmovements, and mechanisms at various levels towards equity, inclusion, justice, and\nharmony, with varying outcomes and degrees of success.\n C 6.3 Analyses aspects of differential treatment or discrimination that may exist in the\nIndian society, based on, socio-cultural background, region, language spoken, and what\nindividuals and societies can do to eradicate such differential treatment\n C 6.4 Understands that a progressive society and nation, such as India is one that\nrecognises not only its civilisational strengths but also its socio-economic, cultural and\npolitical challenges, and continuously makes efforts to address those challenges to become\never more prosperous, inclusive, just, and harmonious\n C-7.1 Defines key features of the economy, such as, production, distribution, demand,\nsupply, trade, and commerce, and factors that influence these aspects (including\ntechnology)\n C-7.2 Evaluates the importance of the three sectors of production (primary, secondary, and\ntertiary) in any country’s economy, especially India\n C-7.3 Distinguishes between ‘unorganised’ and ‘organised’ sectors of the economy and their\nrole in production for the local market in small, medium, and large-scale production centres\n(industries), and recognises the special importance of the so-called ‘unorganised’ sector in\n5\n\n---\n\n# Page 6\n\nIndian economy and its connections with the self-organising features of Indian society\n C-7.4 Traces the beginning and importance of large- scale trade and commerce (including\ne- commerce) between one count\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"terms\": [\n    {\n      \"name\": \"\",\n      \"units\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

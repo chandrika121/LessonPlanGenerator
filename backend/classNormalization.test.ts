@@ -7,6 +7,7 @@ async function main() {
     expandStage1FactsToRawExtraction,
     buildApprovedTheoryHierarchy,
     buildNormalizedTeachingBlocks,
+    sanitizeStage3EnrichmentToSource,
   } = await import("./server.ts");
 
   const buildHierarchyFromRaw = (raw: any) => ({
@@ -172,6 +173,32 @@ async function main() {
   assert.equal(duplicateClassesApproved.classes.length, 2);
   assert.equal(duplicateClassesApproved.classes[0].units.length, 1);
   assert.equal(duplicateClassesApproved.classes[1].units.length, 1);
+  const duplicateStage3Map = new Map<string, any>([
+    ["class_9", {
+      class_name: "Class IX",
+      subject: "Biology",
+      units: [{ unit_id: "U1", unit_name: "Cell", chapters: [{ chapter_name: "Cell Structure", source_chapter_name: "Cell Structure", topics: [], key_concepts: [], assessment_status: "summative" }] }],
+      formative_content_refs: [],
+      validation_report: {},
+    }],
+    ["class_10", {
+      class_name: "Class X",
+      subject: "Biology",
+      units: [{ unit_id: "U1", unit_name: "Heredity", chapters: [{ chapter_name: "Mendelian Inheritance", source_chapter_name: "Mendelian Inheritance", topics: [], key_concepts: [], assessment_status: "summative" }] }],
+      formative_content_refs: [],
+      validation_report: {},
+    }],
+  ]);
+  const duplicateNormalized = buildNormalizedTeachingBlocks(
+    duplicateClassesApproved.classes,
+    duplicateClassesApproved.classes,
+    duplicateStage3Map
+  );
+  assert.notEqual(
+    duplicateNormalized[0].units[0].unit_id,
+    duplicateNormalized[1].units[0].unit_id,
+    "Normalized unit ids must be globally unique even when source unit ids are reused across classes"
+  );
 
   const theoryAndPracticalCollision = {
     classes: [{
@@ -248,6 +275,55 @@ async function main() {
   assert.equal(normalizedPartialStage3[0].units[0].chapters.length, 2, "Partial Stage 3 chapters must not drop unmatched Stage 1 chapters");
   assert.deepEqual(normalizedPartialStage3[0].units[0].chapters[0].topics, ["Cell membrane"]);
   assert.deepEqual(normalizedPartialStage3[0].units[0].chapters[1].topics, []);
+
+  const socialScienceRawClass = {
+    class_name: "Class IX",
+    subject: "Social Science",
+    units: [{
+      unit_id: "U1",
+      unit_name: "Atmosphere and Climate",
+      chapters: [{
+        chapter_name: "Atmosphere and Climate",
+        source_chapter_name: "Atmosphere and Climate",
+        topics: ["Atmosphere", "Climate", "Floods"],
+        subtopics: [],
+        key_concepts: [],
+      }],
+    }],
+  };
+  const socialScienceStage3 = {
+    units: [{
+      unit_id: "U1",
+      unit_name: "Atmosphere and Climate",
+      chapters: [{
+        chapter_name: "Atmosphere and Climate",
+        source_chapter_name: "Atmosphere and Climate",
+        topics: ["Atmosphere", "Climate", "Floods", "ITCZ shift", "Jet streams", "El Nino"],
+        subtopics: ["Temperature distribution patterns", "Disaster management frameworks"],
+        key_concepts: ["Floods", "Jet streams"],
+      }],
+    }],
+  };
+  const sanitizedSocialScience = sanitizeStage3EnrichmentToSource(
+    socialScienceStage3,
+    socialScienceRawClass,
+    "Class IX Social Science Geography unit Atmosphere Climate Floods."
+  );
+  assert.deepEqual(
+    sanitizedSocialScience.units[0].chapters[0].topics,
+    ["Atmosphere", "Climate", "Floods"],
+    "Stage 3 topics must be pruned back to source-faithful syllabus items"
+  );
+  assert.deepEqual(
+    sanitizedSocialScience.units[0].chapters[0].subtopics,
+    [],
+    "Hallucinated Stage 3 subtopics must be removed when they are not present in the source"
+  );
+  assert.deepEqual(
+    sanitizedSocialScience.units[0].chapters[0].key_concepts,
+    ["Floods"],
+    "Only source-supported key concepts should survive sanitation"
+  );
 
   console.log("class normalization regression passed");
 }

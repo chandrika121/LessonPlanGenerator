@@ -1,0 +1,176 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 1 of 5; extract only what is present in this chunk
+
+Curriculum source text:
+# Page 1
+
+Social Science
+Subject Code-087
+## Class - IX (2026-27)
+## RATIONALE
+The purpose of the education system is to develop good human beings capable of rational
+thought and action, possessing compassion and empathy, courage and resilience, scientific
+temper and creative imagination, with sound ethical moorings and values. It aims at producing
+engaged, productive and contributing citizens for building an equitable, inclusive and plural
+society as envisaged by our Constitution. [NEP 2020, pages 4-5]
+Social Science is a compulsory subject at Secondary Stage Phase-I of school education.
+Social Science can play a unique role within the school curriculum to enable Knowledge,
+Capacities, and Values and Dispositions that underpin the purpose of education as
+committed to in NEP 2020.
+The teaching and learning of Social Science at the secondary stage is aligned with the
+transformational vision of the National Curriculum Framework for School Education (NCF-SE)
+2023 and the National Education Policy (NEP) 2020. The NCF-SE 2023 emphasises
+learning, i.e., competency-based, inquiry-oriented, and rooted in Indian Knowledge Systems
+(IKS) and lived realities. The deliberate reduction of content load with a focus on core
+concepts rather than memorisation, creates space for discussion, exploration, and deep
+understanding. The framework’s call for interdisciplinarity encourages students to draw
+meaningful connections across disciplines and relate classroom learning to real-life contexts
+and experiences.
+Furthermore, the NCF-SE 2023 envisions rootedness in India, in which learning is grounded
+in India’s diverse heritage and intellectual traditions, while also being combined with a global
+outlook. Within this perspective, Social Science education engages students with India’s
+historical experiences, democratic values, and patterns of economic and social development,
+geographical understanding alongside global processes and contemporary challenges. By
+integrating the aims of the NEP 2020, Social Science education seeks to transform learning
+into a process that builds knowledge, capacities, and values essential for personal growth,
+social harmony and national progress.
+Social Science at the secondary stage is an integrated study of human society like its
+evolution, structures, and dynamics through the disciplines of History, Geography, Political
+Science, and Economics. It explores how societies function and transform over time through
+the interplay of historical, geographical, cultural, political, economic, and environmental
+forces. The subject goes beyond the factual understanding to include inquiry, interpretation,
+and analysis.
+Students learn to source and validate information, interpret data and evidence, and construct
+logical explanations, thus fostering critical and reflective thinking. It also cultivates empathy,
+respect for diversity, and a sense of justice and responsibility — values that reflect India’s
+intellectual traditions of reasoning, dialogue, and debate as pathways to truth and
+understanding.
+1
+
+---
+
+# Page 2
+
+## AIMS & OBJECTIVE
+As per NCF- 2023, the aims of teaching Social Science in school education can be summarised as
+follows:
+a. Develop disciplinary knowledge and understanding of how society functions through an
+interplay of historical, geographical, social, economic, and political factors.
+This can be enabled through:
+i. an understanding of continuity and change in human civilisation, its causation and
+effect and its impact on modern life.
+ii. an understanding of the interaction between nature and human beings, the spatial
+patterns arising out of this interaction and its effect on human life.
+iii. an awareness and understanding of the diversity of people and their practices in
+different societies, regions and cultures within societies.
+iv. an awareness of various social, political and economic institutions, their origin,
+functioning and transformations over time.
+b. Develop an understanding and appreciation for the methods of enquiry relevant to Social
+Science and deepen students’ skills to engage with the key questions and issues
+confronting society.
+These could be specifically seen as:
+i. Skills in sourcing evidence, interpreting them, checking through multiple sources
+and evidences and constructing a coherent narrative.
+ii. Skills in recognizing spatial patterns, map-reading, interpretation and analysis of
+various interconnected concepts and processes.
+iii. Skills of creative and analytical thinking to form informed opinions, demonstrate
+logical decision-making and incline towards a problem- solving attitude.
+iv. Skills to collect, organize, analyse, represent, and present data and information on
+various historical, geographical, and socio-political issues.
+v. Skills to question unsubstantiated ideas, biases, stereotypes, and assumptions to
+foster scientific temper and propose meaningful responses to contemporary concerns
+of society.
+c. Foster ethical, human, and Constitutional values:
+As the NEP 2020 emphasises to foster a “democratic outlook and commitment to liberty
+and freedom; equality, justice, and fairness; embracing diversity, plurality, and inclusion;
+humaneness and fraternal spirit; social responsibility and the spirit of service; ethics of
+integrity and honesty; scientific temper and commitment to rational and public dialogue;
+peace; social action through Constitutional means; unity and integrity of the nation, and
+a true rootedness and pride in India with a forward-looking spirit to continuously improve
+as a nation.
+NOTE- Refer to NCF-2023-Page no-320-323
+2
+
+---
+
+# Page 3
+
+In alignment with the NEP 2020, Social Science education seeks to develop responsible human
+beings capable of rational thought and action, possessing compassion, empathy, courage,
+resilience, scientific temper, and creative imagination — qualities that prepare them to
+contribute meaningfully to the nation and humanity.
+Studying Social Science is essential for developing informed, empathetic, and active citizens. It
+enables learners to situate themselves within broader social, cultural and environmental
+contexts, and to recognise their role in shaping them. Through this subject, students
+understand the origins of democratic values, Constitutional principles, and India’s civilisational
+ethos of unity in diversity. They also develop awareness of pressing issues such as inequality,
+conflict, environmental degradation and economic challenges, and learn to respond to them
+with evidence-based reasoning and ethical reflection. Social Science thus, bridges knowledge
+and action, encouraging learners to think critically about society and participate responsibly and
+effectively in it.
+## CURRICULAR GOALS-CG
+As per NCF 2023 - At the Secondary Stage, students will go into details to understand
+India’s past and appreciate its complexity, diversity, and unity brought about by cultural
+integration and the sharing of knowledge traditions across geographical and linguistic
+boundaries. NCF 2023 Page no -154
+ CG-1 Understands and analyses the important phases in Indian history and draws insights
+to understand present-day India
+ CG -2 Analyses the important phases in world history and draw insight to understand the
+present-day world
+ CG-3 Understands the idea of a nation and the emergence of the modern Indian Nation
+ CG -4 Develops an understanding of the inter-relationship between human beings and
+their physical environment and how that influences the livelihoods, cultural diversity, and
+biodiversity of the region
+ CG -5 Understand the Indian Constitution and explores the essence of Indian democracy
+and the characteristics of a democratic government.
+ CG -6 Understand and analyse social, cultural, and political life in India over time – as
+well as the underlying historical Indian ethos and philosophy of unity in diversity – and
+recognises challenges faced in these areas in the past and present and the efforts (being)
+made to address them
+ CG -7 Develop an understanding of

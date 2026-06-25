@@ -1,0 +1,1648 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class XI",
+      "subject": "Computer Science",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Unit 1: Computer Systems and Organisation",
+          "topics": [
+            "Basic computer organisation",
+            "Types of software",
+            "Operating System(OS)",
+            "Boolean logic",
+            "Number System"
+          ],
+          "subtopics": [
+            "Introduction to Computer System, hardware, software, input device, output device, CPU, memory (primary, cache and secondary), units of memory (bit, byte, KB, MB, GB, TB, PB)",
+            "System software (Operating systems, system utilities, device drivers), programming tools and language translators (assembler, compiler, and interpreter), application software",
+            "functions of the operating system, OS user interface",
+            "NOT, AND, OR, NAND, NOR, XOR, NOT, truth tables and De Morgan's laws, Logic circuits",
+            "Binary, Octal, Decimal and Hexadecimal number system; conversion between number systems"
+          ],
+          "key_concepts": [
+            "Encoding Schemes: ASCII, ISCII, and Unicode (UTF8, UTF32)"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Computer Systems and Organisation",
+              "topics": [
+                "Basic computer organisation",
+                "Types of software",
+                "Operating System(OS)",
+                "Boolean logic",
+                "Number System"
+              ],
+              "subtopics": [
+                "Introduction to Computer System, hardware, software, input device, output device, CPU, memory (primary, cache and secondary), units of memory (bit, byte, KB, MB, GB, TB, PB)",
+                "System software (Operating systems, system utilities, device drivers), programming tools and language translators (assembler, compiler, and interpreter), application software",
+                "functions of the operating system, OS user interface",
+                "NOT, AND, OR, NAND, NOR, XOR, NOT, truth tables and De Morgan's laws, Logic circuits",
+                "Binary, Octal, Decimal and Hexadecimal number system; conversion between number systems"
+              ],
+              "key_concepts": [
+                "Encoding Schemes: ASCII, ISCII, and Unicode (UTF8, UTF32)"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Unit 2: Computational Thinking and Programming - I",
+          "topics": [
+            "Introduction to Problem-solving",
+            "Familiarization with the basics of Python programming",
+            "Knowledge of data types",
+            "Operators",
+            "Expressions, statement, type conversion, and input/output",
+            "Errors",
+            "Flow of Control",
+            "Conditional statements",
+            "Iterative Statement",
+            "Strings",
+            "Lists",
+            "Tuples",
+            "Dictionary",
+            "Introduction to Python modules"
+          ],
+          "subtopics": [
+            "Steps for Problem-solving (Analyzing the problem, developing an algorithm, coding, testing, and debugging), representation of algorithms using flowchart and pseudocode, decomposition",
+            "Introduction to Python, Features of Python, executing a simple 'hello world' program, execution modes: interactive mode and script mode, Python character set, Python tokens( keyword, identifier, literal, operator, punctuator), variables, concept of l-value and r-value, use of comments",
+            "Number(integer, floating point,complex), boolean, sequence(string, list, tuple), None, Mapping(dictionary), mutable and immutable data types.",
+            "arithmetic operators, relational operators, logical operators, assignment operators, augmented assignment operators, identity operators (is, is not), membership operators (in not in)",
+            "precedence of operators, expression, evaluation of an expression, type-conversion (explicit and implicit conversion), accepting data as input from the console and displaying output.",
+            "syntax errors, logical errors, and run-time errors",
+            "introduction, use of indentation, sequential flow, conditional and iterative flow",
+            "if, if-else, if-elif-else, flowcharts, simple programs: e.g.: absolute value, sort 3 numbers and divisibility of a number.",
+            "for loop, range(), while loop, flowcharts, break and continue statements, nested loops, suggested programs: generating pattern, summation of series, finding the factorial of a positive number, etc.",
+            "introduction, string operations (concatenation, repetition, membership and slicing), traversing a string using loops, built-in functions/methods–len(), capitalize(), title(), lower(), upper(), count(), find(), index(), endswith(), startswith(), isalnum(), isalpha(), isdigit(), islower(), isupper(), isspace(),lstrip(), rstrip(), strip(), replace(), join(), partition(), split()",
+            "introduction, indexing, list operations (concatenation, repetition, membership and slicing), traversing a list using loops, built-in functions/methods–len(), list(), append(), extend(), insert(), count(), index(), remove(), pop(), reverse(), sort(), sorted(), min(), max(), sum(); nested lists, suggested programs: finding the maximum, minimum, mean of numeric values stored in a list; linear search on list of numbers and counting the frequency of elements in a list.",
+            "introduction, indexing, tuple operations (concatenation, repetition, membership and slicing); built-in functions/methods – len(), tuple(), count(), index(), sorted(), min(), max(), sum(); tuple assignment, nested tuple; suggested programs: finding the minimum, maximum, mean of values stored in a tuple; linear search on a tuple of numbers, counting the frequency of elements in a tuple.",
+            "introduction, accessing items in a dictionary using keys, mutability of a dictionary (adding a new term, modifying an existing item), traversing a dictionary, built-in functions/methods – len(), dict(), keys(), values(), items(), get(), update(), del, clear(), fromkeys(), copy(), pop(), popitem(), setdefault(), max(), min(), sorted(); Suggested programs: count the number of times a character appears in a given string using a dictionary, create a dictionary with names of employees, their salary and access them.",
+            "Importing module using 'import <module>' and using from statement, importing math module (pi, e, sqrt(), ceil(), floor(), pow(), fabs(), sin(), cos(), tan()); random module (random(), randint(), randrange()), statistics module (mean(), median(), mode())."
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Computational Thinking and Programming - I",
+              "topics": [
+                "Introduction to Problem-solving",
+                "Familiarization with the basics of Python programming",
+                "Knowledge of data types",
+                "Operators",
+                "Expressions, statement, type conversion, and input/output"
+              ],
+              "subtopics": [
+                "Steps for Problem-solving (Analyzing the problem, developing an algorithm, coding, testing, and debugging), representation of algorithms using flowchart and pseudocode, decomposition",
+                "Introduction to Python, Features of Python, executing a simple 'hello world' program, execution modes: interactive mode and script mode, Python character set, Python tokens( keyword, identifier, literal, operator, punctuator), variables, concept of l-value and r-value, use of comments",
+                "Number(integer, floating point,complex), boolean, sequence(string, list, tuple), None, Mapping(dictionary), mutable and immutable data types.",
+                "arithmetic operators, relational operators, logical operators, assignment operators, augmented assignment operators, identity operators (is, is not), membership operators (in not in)",
+                "precedence of operators, expression, evaluation of an expression, type-conversion (explicit and implicit conversion), accepting data as input from the console and displaying output."
+              ],
+              "key_concepts": [
+                "Errors: syntax errors, logical errors, run-time errors",
+                "Flow of Control: sequential flow, conditional and iterative flow"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Unit 3: Society, Law and Ethics",
+          "topics": [
+            "Digital Footprints",
+            "Digital Society and Netizen",
+            "Data Protection",
+            "Cyber Crime",
+            "Cyber safety",
+            "Malware",
+            "E-waste management",
+            "Information Technology Act (IT Act)",
+            "Technology and society"
+          ],
+          "subtopics": [
+            "net etiquettes, communication etiquettes, social media etiquettes",
+            "Intellectual property rights (copyright, patent, trademark), violation of IPR (plagiarism, copyright infringement, trademark infringement), open source software and licensing (Creative Commons, GPL and Apache)",
+            "definition, hacking, eavesdropping, phishing and fraud emails, ransomware, cyber trolls, cyber bullying",
+            "safely browsing the web, identity protection, confidentiality",
+            "viruses, trojans, adware",
+            "proper disposal of used electronic gadgets.",
+            "Gender and disability issues while teaching and using computers"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Society, Law and Ethics",
+              "topics": [
+                "Digital Footprints",
+                "Digital Society and Netizen",
+                "Data Protection",
+                "Cyber Crime",
+                "Malware"
+              ],
+              "subtopics": [
+                "net etiquettes, communication etiquettes, social media etiquettes",
+                "Intellectual property rights (copyright, patent, trademark), violation of IPR (plagiarism, copyright infringement, trademark infringement), open source software and licensing (Creative Commons, GPL and Apache)",
+                "definition, hacking, eavesdropping, phishing and fraud emails, ransomware, cyber trolls, cyber bullying",
+                "safely browsing the web, identity protection, confidentiality",
+                "viruses, trojans, adware"
+              ],
+              "key_concepts": [
+                "Cyber safety: safely browsing, identity protection, confidentiality",
+                "E-waste management and Gender/disability issues in technology use"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Computer Science",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Computational Thinking and Programming – 2",
+          "topics": [
+            "Revision of Python topics covered in Class XI.",
+            "Functions: types of function (built-in functions, functions defined in module, user defined functions), creating user defined function, arguments and parameters, default parameters, positional parameters, function returning value(s), flow of execution, scope of a variable (global scope, local scope)",
+            "Exception Handling: Introduction, handling exceptions using try-except-finally blocks",
+            "Introduction to files, types of files (Text file, Binary file, CSV file), relative and absolute paths"
+          ],
+          "subtopics": [
+            "Text file: opening a text file, text file open modes (r, r+, w, w+, a, a+), closing a text file, opening a file using with clause, writing/appending data to a text file using write() and writelines(), reading from a text file using read(), readline() and readlines(), seek and tell methods, manipulation of data in a text file",
+            "Binary file: basic operations on a binary file: open using file open modes (rb, rb+, wb, wb+, ab, ab+), close a binary file, import pickle module, dump() and load() method, read, write/create, search, append and update operations in a binary file",
+            "CSV file: import csv module, open / close csv file, write into a csv file using writer(),writerow(),writerows() and read from a csv file using reader()",
+            "Data Structure: Stack, operations on stack (push & pop), implementation of stack using list."
+          ],
+          "key_concepts": [
+            "Revision",
+            "Functions",
+            "Exception Handling",
+            "File handling"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Computational Thinking and Programming – 2",
+              "topics": [
+                "Revision of Python topics covered in Class XI.",
+                "Functions: types, arguments, parameters, scope, flow of execution",
+                "Exception Handling using try-except-finally blocks"
+              ],
+              "subtopics": [
+                "Text file operations and open modes (r, w, a)",
+                "Binary file operations with pickle module",
+                "CSV file handling using csv module",
+                "Stack data structure implementation"
+              ],
+              "key_concepts": [
+                "Revision",
+                "Functions",
+                "Exception Handling",
+                "File handling"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Computer Networks",
+          "topics": [
+            "Evolution of networking: introduction to computer networks, evolution of networking (ARPANET, NSFNET, INTERNET)",
+            "Data communication terminologies: concept of communication, components of data communication (sender,receiver, message, communication media, protocols), measuring capacity of communication media (bandwidth, data transfer rate), IP address, switching techniques (Circuit switching, Packet switching)",
+            "Transmission media: Wired communication media (Twisted pair cable, Co-axial cable, Fiber-optic cable), Wireless media (Radio waves, Micro waves, Infrared waves)",
+            "Network devices (Modem, Ethernet card, RJ45, Repeater, Hub, Switch, Router, Gateway, WIFI card)",
+            "Network topologies and Network types: types of networks (PAN, LAN, MAN, WAN), networking topologies (Bus, Star, Tree)",
+            "Network protocol: HTTP, FTP, PPP, SMTP, TCP/IP, POP3, HTTPS, TELNET, VoIP",
+            "Introduction to web services: WWW, Hyper Text Markup Language (HTML), Extensible Markup Language (XML), domain names, URL, website, web browser, web servers, web hosting"
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Evolution of networking",
+            "Data communication terminologies",
+            "Transmission media",
+            "Network devices",
+            "Network topologies and Network types",
+            "Network protocol",
+            "Web services"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Computer Networks",
+              "topics": [
+                "Evolution of networking: ARPANET, NSFNET, INTERNET",
+                "Data communication terminologies and switching techniques"
+              ],
+              "subtopics": [
+                "Transmission media (Wired and Wireless)",
+                "Network devices and topologies",
+                "Types of networks (PAN, LAN, MAN, WAN)"
+              ],
+              "key_concepts": [
+                "Evolution of networking",
+                "Data communication terminologies",
+                "Transmission media"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Database Management",
+          "topics": [
+            "Database concepts: introduction to database concepts and its need",
+            "Relational data model: relation, attribute, tuple, domain, degree, cardinality, keys (candidate key, primary key, alternate key, foreign key)",
+            "Structured Query Language: introduction, Data Definition Language and Data Manipulation Language, data type (char(n), varchar(n), int, float, date), constraints (not null, unique, primary key), create database, use database, show databases, drop database, show tables, create table, describe table, alter table (add and remove an attribute, add and remove primary key), drop table, insert, delete, select, operators (mathematical, relational and logical), aliasing, distinct clause, where clause, in, between, order by, meaning of null, is null, is not null, like, update command, delete command, aggregate functions (max, min, avg, sum, count), group by, having clause, joins: cartesian product on two tables, equi-join and natural join",
+            "Interface of python with an SQL database: connecting SQL with Python, performing insert, update, delete queries using cursor, display data by using connect(), cursor(), execute(), commit(), fetchone(), fetchall(), rowcount, creating database connectivity applications, use of %s format specifier or format() to perform queries"
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Database concepts",
+            "Relational data model",
+            "Structured Query Language (SQL)",
+            "Python-SQL Interface"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Database Management",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "CS-XI-U1",
+      "title": "Computer Systems and Organisation Competencies",
+      "description": "Competencies related to understanding computer architecture, software types, operating systems, logic circuits, number systems, and encoding schemes.",
+      "competencies": [
+        "Develop a basic understanding of computer system architecture including hardware components (CPU, memory units), input/output devices, and storage hierarchy.",
+        "Explain the distinction between system software, application software, and programming tools including language translators.",
+        "Describe the functions of an operating system and its user interface capabilities.",
+        "Apply Boolean logic principles including truth tables, De Morgan's laws, and basic logic circuit design (NOT, AND, OR, NAND, NOR, XOR).",
+        "Perform conversions between Binary, Octal, Decimal, and Hexadecimal number systems.",
+        "Identify and explain encoding schemes such as ASCII, ISCII, Unicode (UTF8, UTF32) for character representation."
+      ],
+      "unit_name": "Unit 1: Computer Systems and Organisation",
+      "chapter_name": "Computer Systems and Organisation"
+    },
+    {
+      "code": "CS-XI-U2",
+      "title": "Computational Thinking and Programming Competencies (Class XI)",
+      "description": "Competencies related to problem-solving methodologies, Python programming fundamentals, data types, operators, control structures, and standard library usage.",
+      "competencies": [
+        "Apply computational thinking by analyzing problems, developing algorithms using flowcharts/pseudocode, decomposing tasks, coding, testing, and debugging.",
+        "Demonstrate proficiency in the Python language including execution modes (interactive/script), character sets, tokens, variables, l-value/r-value concepts, and comments.",
+        "Differentiate between mutable and immutable data types including Numbers, Booleans, Strings, Lists, Tuples, Dictionaries, and None.",
+        "Utilize various operators (arithmetic, relational, logical, assignment, identity, membership) with correct precedence rules for expression evaluation.",
+        "Implement control flow structures using conditional statements (if-else, if-elif-else) and iterative loops (for, while), including nested loops and break/continue statements.",
+        "Manipulate strings and sequences performing operations like concatenation, slicing, traversal, and utilizing built-in methods for case conversion, counting, searching, etc.",
+        "Manage data structures by implementing list, tuple, and dictionary operations such as indexing, appending, extending, sorting, filtering, and nested structure handling.",
+        "Identify and handle different types of errors: syntax, logical, and run-time errors."
+      ],
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I"
+    },
+    {
+      "code": "CS-XI-U3",
+      "title": "Society, Law, and Ethics Competencies (Class XI)",
+      "description": "Competencies related to digital citizenship, legal frameworks, cyber safety, ethical considerations in technology use.",
+      "competencies": [
+        "Adhere to net etiquettes and communication protocols on social media platforms.",
+        "Understand Intellectual Property Rights including copyright, patents, trademarks, open source licensing (GPL, Apache), and identify violations like plagiarism.",
+        "Recognize various cyber crimes such as hacking, phishing, ransomware, eavesdropping, cyber bullying, and fraud.",
+        "Implement cyber safety practices including identity protection, confidentiality measures, and safe web browsing habits.",
+        "Identify types of malware (viruses, trojans, adware) and their impacts on systems.",
+        "Understand the importance of E-waste management regarding proper disposal of electronic gadgets.",
+        "Analyze gender and disability issues in the context of teaching and using computers."
+      ],
+      "unit_name": "Unit 3: Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics"
+    },
+    {
+      "code": "CS-XII-U1",
+      "title": "Advanced Programming Competencies (Class XII)",
+      "description": "Competencies related to advanced Python concepts including functions, exception handling, file operations, and data structures.",
+      "competencies": [
+        "Apply the concept of functions by defining user-defined functions with arguments, parameters (positional/default), return values, scope management (global/local), and flow execution."
+      ],
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2"
+    },
+    {
+      "code": "CS-XII-U1-FileHandling",
+      "title": "File Handling Competencies (Class XII)",
+      "description": "Competencies related to reading, writing, and manipulating text, binary, and CSV files.",
+      "competencies": [
+        "Perform file operations on Text Files including opening modes (r, w, a), using context managers ('with' clause), read/write methods, seek/tell positioning, and data manipulation."
+      ],
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2"
+    },
+    {
+      "code": "CS-XII-U1-BinaryCSV",
+      "title": "Binary and CSV File Handling Competencies (Class XII)",
+      "description": "Competencies related to handling binary files using pickle module and managing CSV data.",
+      "competencies": [
+        "Execute basic operations on Binary Files including open modes, close methods, importing the pickle module for dump/load operations, search, append, update, and read/write functionalities."
+      ],
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2"
+    },
+    {
+      "code": "CS-XII-U1-Stacks",
+      "title": "Data Structures Competencies (Class XII)",
+      "description": "Competencies related to implementing stack data structures.",
+      "competencies": [
+        "Implement the Stack data structure using lists, performing push and pop operations."
+      ],
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2"
+    },
+    {
+      "code": "CS-XII-U1-ExceptionHandling",
+      "title": "Exception Handling Competencies (Class XII)",
+      "description": "Competencies related to error management in Python programs.",
+      "competencies": [
+        "Handle exceptions using try-except-finally blocks to manage runtime errors gracefully."
+      ],
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2"
+    },
+    {
+      "code": "CS-XII-U2",
+      "title": "Computer Networks Competencies (Class XII)",
+      "description": "Competencies related to networking evolution, communication models, media, devices, topologies, protocols, and web services.",
+      "competencies": [
+        "Trace the evolution of computer networks from ARPANET/NSFNET to the INTERNET."
+      ],
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks"
+    },
+    {
+      "code": "CS-XII-U2-CommModels",
+      "title": "Data Communication Competencies (Class XII)",
+      "description": "Competencies related to data communication components and metrics.",
+      "competencies": [
+        "Explain the concept of data communication including sender, receiver, message, media, protocols, bandwidth, transfer rates, IP addressing, and switching techniques."
+      ],
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks"
+    },
+    {
+      "code": "CS-XII-U2-MediaDevices",
+      "title": "Transmission Media and Devices Competencies (Class XII)",
+      "description": "Competencies related to physical media types and network hardware.",
+      "competencies": [
+        "Differentiate between wired transmission media (Twisted pair, Co-axial, Fiber-optic) and wireless media (Radio waves, Microwaves, Infrared)."
+      ],
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks"
+    },
+    {
+      "code": "CS-XII-U2-NetworkTypes",
+      "title": "Network Topologies and Types Competencies (Class XII)",
+      "description": "Competencies related to network classifications and physical/logical layouts.",
+      "competencies": [
+        "Identify types of networks (PAN, LAN, MAN, WAN) and topologies (Bus, Star, Tree)."
+      ],
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks"
+    },
+    {
+      "code": "CS-XII-U2-ProtocolsWeb",
+      "title": "Network Protocols and Web Services Competencies (Class XII)",
+      "description": "Competencies related to communication protocols and web infrastructure.",
+      "competencies": [
+        "Explain network protocols including HTTP, FTP, SMTP, TCP/IP, POP3, HTTPS, TELNET, VoIP."
+      ],
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks"
+    },
+    {
+      "code": "CS-XII-U2-WebServices",
+      "title": "Introduction to Web Services Competencies (Class XII)",
+      "description": "Competencies related to web technologies and infrastructure.",
+      "competencies": [
+        "Understand the components of web services including WWW, HTML, XML, domain names, URLs, websites, browsers, servers, and hosting."
+      ],
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks"
+    },
+    {
+      "code": "CS-XII-U3-DBConcepts",
+      "title": "Database Concepts Competencies (Class XII)",
+      "description": "Competencies related to fundamental database theory and relational models.",
+      "competencies": [
+        "Explain the need for databases and core concepts including relations, attributes, tuples, domains."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-RelationalModel",
+      "title": "Relational Data Model Competencies (Class XII)",
+      "description": "Competencies related to keys and relational properties.",
+      "competencies": [
+        "Define degree, cardinality, and various types of keys: candidate key, primary key, alternate key, foreign key."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-SQLDDL_DML",
+      "title": "SQL Data Definition and Manipulation Competencies (Class XII)",
+      "description": "Competencies related to creating, altering, dropping database objects and managing data.",
+      "competencies": [
+        "Execute SQL commands for Database Management: create/use/drop databases, show tables."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-SQL_TableOps",
+      "title": "SQL Table Operations Competencies (Class XII)",
+      "description": "Competencies related to table structure modification and data manipulation.",
+      "competencies": [
+        "Perform Data Definition Language operations: create/describe/alter tables, add/remove attributes or primary keys."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-SQL_Querying",
+      "title": "SQL Querying and Filtering Competencies (Class XII)",
+      "description": "Competencies related to retrieving data using SELECT statements.",
+      "competencies": [
+        "Execute Data Manipulation Language queries: insert, delete, select with operators, aliasing, distinct clause."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-SQL_AdvancedQuery",
+      "title": "Advanced SQL Query Competencies (Class XII)",
+      "description": "Competencies related to complex querying including filtering, sorting, grouping, and joining.",
+      "competencies": [
+        "Construct advanced queries using where clause, in/between operators, order by, is null/is not null, like operator."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-SQL_AggregateJoin",
+      "title": "SQL Aggregation and Joins Competencies (Class XII)",
+      "description": "Competencies related to aggregate functions and table joins.",
+      "competencies": [
+        "Utilize aggregate functions (max, min, avg, sum, count) with group by and having clauses."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-PythonSQL",
+      "title": "Python-SQL Interface Competencies (Class XII)",
+      "description": "Competencies related to integrating Python with SQL databases.",
+      "competencies": [
+        "Establish database connectivity using connect(), cursor() methods."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-PythonSQL_Ops",
+      "title": "Python-SQL Operations Competencies (Class XII)",
+      "description": "Competencies related to executing queries and handling results in Python.",
+      "competencies": [
+        "Perform insert, update, delete operations using cursor.execute() with format specifiers (%s or format())."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    },
+    {
+      "code": "CS-XII-U3-PythonSQL_Display",
+      "title": "Python-SQL Data Retrieval Competencies (Class XII)",
+      "description": "Competencies related to fetching and displaying data from SQL databases via Python.",
+      "competencies": [
+        "Display retrieved data using fetchone(), fetchall() methods."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      "Class XI: Theory (70), Practical (30). Unit-wise breakdown: U1 (Theory 10, Practical 10), U2 (Theory 45, Practical 60), U3 (Theory 15, Practical -)",
+      "Class XII: Theory (70), Practical (30). Unit-wise breakdown: U1 (Theory 40, Practical 50), U2 (Theory 10, Practical -), U3 (Theory 20, Practical 20)"
+    ],
+    "question_paper_design": [
+      "Class XI and XII Theory papers based on unit weightage distribution provided in the syllabus.",
+      "Practical exams include Lab Tests, Report Files with Viva Voce."
+    ],
+    "competency_weightage": [
+      "Competencies assessed through problem-solving steps (analyzing, algorithm development), coding, testing, debugging, and application of concepts like file handling, SQL connectivity, and network protocols.",
+      "Weightage reflects unit marks distribution: Computational Thinking/Programming carries the highest weight in both classes."
+    ],
+    "bloom_levels": [
+      "Assessment covers understanding (explain cyber ethics), applying (write Python programs for specific tasks), analyzing (debugging errors), creating (project work, generating patterns).",
+      "Specific Bloom levels inferred from practical requirements: Logic application (60%), Documentation (20%), Code Quality (20%)."
+    ],
+    "internal_assessment": [
+      "Class XI Lab Test (12 marks): Python program evaluation.",
+      "Class XII Lab Test (8 marks for Class XII, 4 marks SQL queries).",
+      "Viva Voce included in practical assessment."
+    ],
+    "practical_assessment": [
+      "Class XI: Report File with minimum 20 Python programs and Viva Voce.",
+      "Class XII: Report File with minimum 15 Python programs, 5 sets of SQL queries (one/two tables), and 4 programs on Python-SQL connectivity."
+    ],
+    "project_assessment": [
+      "Class XI Project: Uses concepts learnt; marks allocated in practical section.",
+      "Class XII Project: Tangible/useful application using Python file handling or Python-SQL connectivity. Group size (2-3 students). Marks allocation included in practical total."
+    ]
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Unit 1: Computer Systems and Organisation",
+      "chapter_name": "Computer Systems and Organisation",
+      "topic": "Computer System Architecture",
+      "outcomes": [
+        "Develop a basic understanding of computer system architecture including hardware components (CPU, memory units), input/output devices, and storage hierarchy."
+      ]
+    },
+    {
+      "unit_name": "Unit 1: Computer Systems and Organisation",
+      "chapter_name": "Computer Systems and Organisation",
+      "topic": "Software Types and Tools",
+      "outcomes": [
+        "Explain the distinction between system software, application software, and programming tools including language translators."
+      ]
+    },
+    {
+      "unit_name": "Unit 1: Computer Systems and Organisation",
+      "chapter_name": "Computer Systems and Organisation",
+      "topic": "Operating System Functions",
+      "outcomes": [
+        "Describe the functions of an operating system and its user interface capabilities."
+      ]
+    },
+    {
+      "unit_name": "Unit 1: Computer Systems and Organisation",
+      "chapter_name": "Computer Systems and Organisation",
+      "topic": "Boolean Logic and Circuits",
+      "outcomes": [
+        "Apply Boolean logic principles including truth tables, De Morgan's laws, and basic logic circuit design (NOT, AND, OR, NAND, NOR, XOR)."
+      ]
+    },
+    {
+      "unit_name": "Unit 1: Computer Systems and Organisation",
+      "chapter_name": "Computer Systems and Organisation",
+      "topic": "Number System Conversions",
+      "outcomes": [
+        "Perform conversions between Binary, Octal, Decimal, and Hexadecimal number systems."
+      ]
+    },
+    {
+      "unit_name": "Unit 1: Computer Systems and Organisation",
+      "chapter_name": "Computer Systems and Organisation",
+      "topic": "Character Encoding Schemes",
+      "outcomes": [
+        "Identify and explain encoding schemes such as ASCII, ISCII, Unicode (UTF8, UTF32) for character representation."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "topic": "Problem Solving Methodologies",
+      "outcomes": [
+        "Apply computational thinking by analyzing problems, developing algorithms using flowcharts/pseudocode, decomposing tasks, coding, testing, and debugging."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "topic": "Python Fundamentals",
+      "outcomes": [
+        "Demonstrate proficiency in the Python language including execution modes (interactive/script), character sets, tokens, variables, l-value/r-value concepts, and comments."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "topic": "Data Types",
+      "outcomes": [
+        "Differentiate between mutable and immutable data types including Numbers, Booleans, Strings, Lists, Tuples, Dictionaries, and None."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "topic": "Operators and Expression Evaluation",
+      "outcomes": [
+        "Utilize various operators (arithmetic, relational, logical, assignment, identity, membership) with correct precedence rules for expression evaluation."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "topic": "Control Structures",
+      "outcomes": [
+        "Implement control flow structures using conditional statements (if-else, if-elif-else) and iterative loops (for, while), including nested loops and break/continue statements."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "topic": "String Manipulation",
+      "outcomes": [
+        "Manipulate strings and sequences performing operations like concatenation, slicing, traversal, and utilizing built-in methods for case conversion, counting, searching, etc."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "topic": "Data Structure Management",
+      "outcomes": [
+        "Manage data structures by implementing list, tuple, and dictionary operations such as indexing, appending, extending, sorting, filtering, and nested structure handling."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "topic": "Error Handling",
+      "outcomes": [
+        "Identify and handle different types of errors: syntax, logical, and run-time errors."
+      ]
+    },
+    {
+      "unit_name": "Unit 3: Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics",
+      "topic": "Net Etiquettes",
+      "outcomes": [
+        "Adhere to net etiquettes and communication protocols on social media platforms."
+      ]
+    },
+    {
+      "unit_name": "Unit 3: Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics",
+      "topic": "Intellectual Property Rights",
+      "outcomes": [
+        "Understand Intellectual Property Rights including copyright, patents, trademarks, open source licensing (GPL, Apache), and identify violations like plagiarism."
+      ]
+    },
+    {
+      "unit_name": "Unit 3: Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics",
+      "topic": "Cyber Crimes",
+      "outcomes": [
+        "Recognize various cyber crimes such as hacking, phishing, ransomware, eavesdropping, cyber bullying, and fraud."
+      ]
+    },
+    {
+      "unit_name": "Unit 3: Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics",
+      "topic": "Cyber Safety Practices",
+      "outcomes": [
+        "Implement cyber safety practices including identity protection, confidentiality measures, and safe web browsing habits."
+      ]
+    },
+    {
+      "unit_name": "Unit 3: Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics",
+      "topic": "Malware Identification",
+      "outcomes": [
+        "Identify types of malware (viruses, trojans, adware) and their impacts on systems."
+      ]
+    },
+    {
+      "unit_name": "Unit 3: Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics",
+      "topic": "E-waste Management",
+      "outcomes": [
+        "Understand the importance of E-waste management regarding proper disposal of electronic gadgets."
+      ]
+    },
+    {
+      "unit_name": "Unit 3: Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics",
+      "topic": "Gender and Disability Issues in Technology",
+      "outcomes": [
+        "Analyze gender and disability issues in the context of teaching and using computers."
+      ]
+    },
+    {
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "topic": "Advanced Programming Competencies",
+      "outcomes": [
+        "Apply the concept of functions by defining user-defined functions with arguments, parameters (positional/default), return values, scope management (global/local), and flow execution."
+      ]
+    },
+    {
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "topic": "File Handling Competencies",
+      "outcomes": [
+        "Perform file operations on Text Files including opening modes (r, w, a), using context managers ('with' clause), read/write methods, seek/tell positioning, and data manipulation."
+      ]
+    },
+    {
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "topic": "Binary and CSV File Handling Competencies",
+      "outcomes": [
+        "Execute basic operations on Binary Files including open modes, close methods, importing the pickle module for dump/load operations, search, append, update, and read/write functionalities."
+      ]
+    },
+    {
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "topic": "Data Structures Competencies",
+      "outcomes": [
+        "Implement the Stack data structure using lists, performing push and pop operations."
+      ]
+    },
+    {
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "topic": "Exception Handling Competencies",
+      "outcomes": [
+        "Handle exceptions using try-except-finally blocks to manage runtime errors gracefully."
+      ]
+    },
+    {
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks",
+      "topic": "Computer Networks Competencies",
+      "outcomes": [
+        "Trace the evolution of computer networks from ARPANET/NSFNET to the INTERNET."
+      ]
+    },
+    {
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks",
+      "topic": "Data Communication Competencies",
+      "outcomes": [
+        "Explain the concept of data communication including sender, receiver, message, media, protocols, bandwidth, transfer rates, IP addressing, and switching techniques."
+      ]
+    },
+    {
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks",
+      "topic": "Transmission Media and Devices Competencies",
+      "outcomes": [
+        "Differentiate between wired transmission media (Twisted pair, Co-axial, Fiber-optic) and wireless media (Radio waves, Microwaves, Infrared)."
+      ]
+    },
+    {
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks",
+      "topic": "Network Topologies and Types Competencies",
+      "outcomes": [
+        "Identify types of networks (PAN, LAN, MAN, WAN) and topologies (Bus, Star, Tree)."
+      ]
+    },
+    {
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks",
+      "topic": "Network Protocols and Web Services Competencies",
+      "outcomes": [
+        "Explain network protocols including HTTP, FTP, SMTP, TCP/IP, POP3, HTTPS, TELNET, VoIP."
+      ]
+    },
+    {
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks",
+      "topic": "Introduction to Web Services Competencies",
+      "outcomes": [
+        "Understand the components of web services including WWW, HTML, XML, domain names, URLs, websites, browsers, servers, and hosting."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "Database Concepts Competencies",
+      "outcomes": [
+        "Explain the need for databases and core concepts including relations, attributes, tuples, domains."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "Relational Data Model Competencies",
+      "outcomes": [
+        "Define degree, cardinality, and various types of keys: candidate key, primary key, alternate key, foreign key."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "SQL Data Definition and Manipulation Competencies",
+      "outcomes": [
+        "Execute SQL commands for Database Management: create/use/drop databases, show tables."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "SQL Table Operations Competencies",
+      "outcomes": [
+        "Perform Data Definition Language operations: create/describe/alter tables, add/remove attributes or primary keys."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "SQL Querying and Filtering Competencies",
+      "outcomes": [
+        "Execute Data Manipulation Language queries: insert, delete, select with operators, aliasing, distinct clause."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "Advanced SQL Query Competencies",
+      "outcomes": [
+        "Construct advanced queries using where clause, in/between operators, order by, is null/is not null, like operator."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "SQL Aggregation and Joins Competencies",
+      "outcomes": [
+        "Utilize aggregate functions (max, min, avg, sum, count) with group by and having clauses."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "Python-SQL Interface Competencies",
+      "outcomes": [
+        "Establish database connectivity using connect(), cursor() methods."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "Python-SQL Operations Competencies",
+      "outcomes": [
+        "Perform insert, update, delete operations using cursor.execute() with format specifiers (%s or format())."
+      ]
+    },
+    {
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management",
+      "topic": "Python-SQL Data Retrieval Competencies",
+      "outcomes": [
+        "Display retrieved data using fetchone(), fetchall() methods."
+      ]
+    }
+  ]
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [],
+  "projects": [
+    {
+      "title": "Class XI Project",
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "details": "Project that uses most of the concepts learnt in Class XI."
+    },
+    {
+      "title": "Class XII Project",
+      "unit_name": "Unit 1: Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "details": "Create something tangible and useful using Python file handling or Python-SQL connectivity. Examples include GST invoice generators, school software, disabled student aids, mobile applications, or games."
+    }
+  ],
+  "practicals": [
+    {
+      "title": "Lab Test (Class XI)",
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "details": "Python program evaluation based on logic, documentation, and code quality."
+    },
+    {
+      "title": "Report File + Viva (Class XI)",
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "details": "Minimum of 20 Python programs in report file plus viva voce."
+    },
+    {
+      "title": "Suggested Practical List (Class XI)",
+      "unit_name": "Unit 2: Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I",
+      "details": "Input welcome message, compare numbers, generate patterns using nested loops, series summation programs, check perfect/Armstrong/palindrome numbers, prime/composite check, Fibonacci series, GCD/LCM calculation, string character counting, list/tuple operations (swap elements, search), dictionary creation and filtering."
+    },
+    {
+      "title": "Lab Test (Class XII)",
+      "unit_name": "Unit 1: Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "details": "Python program evaluation based on logic, documentation, and code quality."
+    },
+    {
+      "title": "SQL Queries Lab (Class XII)",
+      "unit_name": "Unit 3: Database Management",
+      "chapter_name": "Database Management",
+      "details": "4 queries based on one or two tables."
+    },
+    {
+      "title": "Report File + Viva (Class XII)",
+      "unit_name": "Unit 1: Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "details": "Minimum of 15 Python programs, minimum 5 sets of SQL queries using one or two tables, and minimum 4 programs based on Python-SQL connectivity."
+    },
+    {
+      "title": "Suggested Practical List (Class XII) - File Handling",
+      "unit_name": "Unit 1: Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "details": "Read text file line by line, count vowels/consonants in files, remove lines containing 'a', create binary file for search/update operations, random number generator (dice simulation), implement stack using list."
+    },
+    {
+      "title": "Suggested Practical List (Class XII) - CSV",
+      "unit_name": "Unit 1: Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2",
+      "details": "Create a CSV file with user-id and password, read and search for passwords."
+    },
+    {
+      "title": "Suggested Practical List (Class XII) - Database Management",
+      "unit_name": "Unit 3: Database Management",
+      "chapter_name": "Database Management",
+      "details": "Create student table, implement ALTER, UPDATE, ORDER BY, DELETE commands. Perform GROUP BY operations to find min, max, sum, count, and average."
+    },
+    {
+      "title": "Suggested Practical List (Class XII) - Python-SQL Integration",
+      "unit_name": "Unit 3: Database Management",
+      "chapter_name": "Database Management",
+      "details": "Integrate SQL with Python by importing suitable module to perform database operations."
+    }
+  ]
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

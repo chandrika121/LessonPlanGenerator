@@ -6,6 +6,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import mongoose from "mongoose";
 import { CurriculumModel } from "./models/Curriculum";
+import { PlanningWorkspaceModel } from "./models/PlanningWorkspace";
 
 // Load environment variables
 dotenv.config({ path: "../.env" });
@@ -38,6 +39,17 @@ const STAGE_ORDER = [
   "Stage 9: Activities / Projects / Practicals Extraction",
   "Stage 10: Curriculum Intelligence Generation",
 ] as const;
+
+type CurriculumProfile =
+  | "cbse_unit_topic"
+  | "cbse_unit_chapter_topic"
+  | "multi_class_board_syllabus"
+  | "term_semester_curriculum"
+  | "competency_outcomes_curriculum"
+  | "language_curriculum"
+  | "mixed_or_unknown";
+
+type SchemaVersion = "v1" | "v2";
 
 // CORS - allow frontend dev server
 app.use(cors({
@@ -243,8 +255,193 @@ function uniqueStrings(values: string[]): string[] {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
+function filterFaithfulTopicList(
+  sourceText: string,
+  values: string[] = [],
+  referenceValues: string[] = []
+) {
+  const normalizedReferenceValues = new Set(
+    referenceValues.map((value) => normalizeSourceText(value || "")).filter(Boolean)
+  );
+
+  return uniqueStrings(values).filter((value) => {
+    const normalizedValue = normalizeSourceText(value || "");
+    if (!normalizedValue) return false;
+    if (normalizedReferenceValues.has(normalizedValue)) return true;
+    return validateEntityAgainstSource(sourceText, value).matched;
+  });
+}
+
 function serializeJson(value: unknown): string {
   return JSON.stringify(value, null, 2);
+}
+
+function normalizeSchemaVersion(value: unknown): SchemaVersion {
+  return String(value || "").trim().toLowerCase() === "v2" ? "v2" : "v1";
+}
+
+function detectCurriculumProfile(sourceText: string, fileName: string = "") {
+  const text = normalizeSourceText(sourceText || "");
+  const file = normalizeSourceText(fileName || "");
+  const hasCbse = /\bcbse\b/.test(text) || /\bncert\b/.test(text) || /\bcbse\b/.test(file);
+  const hasMultipleClasses = /\bclass xi\b/.test(text) && /\bclass xii\b/.test(text);
+  const hasSemester = /\bsemester\b|\bterm\b|\btrimester\b|\bquarter\b/.test(text);
+  const hasCompetencies = /\bcompetenc(?:y|ies)\b|\blearning outcomes?\b|\boutcomes?\b/.test(text);
+  const hasLanguageSignals = /\breading\b|\bwriting\b|\bgrammar\b|\bpoetry\b|\bliterature\b|\bspeaking\b|\blistening\b/.test(text);
+  const hasUnits = /\bunit\b/.test(text);
+  const hasChapters = /\bchapter\b/.test(text);
+  const hasMarksTable = /\bmarks\b|\btotal marks\b/.test(text);
+  const hasPracticals = /\bpractical\b|\bproject\b|\blaboratory\b|\blab\b/.test(text);
+
+  let profile: CurriculumProfile = "mixed_or_unknown";
+  let confidence = 0.55;
+  const reasons: string[] = [];
+
+  if (hasSemester) {
+    profile = "term_semester_curriculum";
+    confidence = 0.87;
+    reasons.push("semester_or_term_markers");
+  } else if (hasCompetencies && !hasUnits) {
+    profile = "competency_outcomes_curriculum";
+    confidence = 0.84;
+    reasons.push("competency_outcome_markers");
+  } else if (hasLanguageSignals && !hasCbse) {
+    profile = "language_curriculum";
+    confidence = 0.8;
+    reasons.push("language_section_markers");
+  } else if (hasMultipleClasses && hasCbse) {
+    profile = "multi_class_board_syllabus";
+    confidence = 0.91;
+    reasons.push("multi_class_board_markers");
+  } else if (hasCbse && hasUnits && hasChapters) {
+    profile = "cbse_unit_chapter_topic";
+    confidence = 0.88;
+    reasons.push("cbse_units_and_chapters");
+  } else if (hasCbse && hasUnits) {
+    profile = "cbse_unit_topic";
+    confidence = 0.86;
+    reasons.push("cbse_units");
+  } else if (hasLanguageSignals) {
+    profile = "language_curriculum";
+    confidence = 0.72;
+    reasons.push("language_markers");
+  } else if (hasCompetencies) {
+    profile = "competency_outcomes_curriculum";
+    confidence = 0.72;
+    reasons.push("competency_markers");
+  } else if (hasUnits && hasMarksTable && hasPracticals) {
+    profile = "cbse_unit_topic";
+    confidence = 0.68;
+    reasons.push("unit_marks_practical_markers");
+  } else {
+    reasons.push("generic_fallback");
+  }
+
+  return { profile, confidence, reasons };
+}
+
+function getCurriculumProfileConfig(profile: CurriculumProfile) {
+  const base = {
+    stage1SchemaExtension: {},
+    extraRules: [] as string[],
+    allowUnitFallbackChapters: true,
+    expectedStructureType: "mixed",
+  };
+
+  switch (profile) {
+    case "cbse_unit_topic":
+      return {
+        ...base,
+        extraRules: [
+          "- Prefer unit -> topic when the source lists topics directly under a unit",
+          "- Do not invent chapters from unit names in CBSE-style syllabi",
+        ],
+        allowUnitFallbackChapters: false,
+        expectedStructureType: "unit_topic",
+      };
+    case "cbse_unit_chapter_topic":
+      return {
+        ...base,
+        extraRules: [
+          "- Preserve explicit chapter headings only when they are clearly present",
+          "- Keep unit -> chapter -> topic hierarchy for chapter-organized board syllabi",
+        ],
+        allowUnitFallbackChapters: true,
+        expectedStructureType: "unit_chapter_topic",
+      };
+    case "multi_class_board_syllabus":
+      return {
+        ...base,
+        extraRules: [
+          "- Preserve separate classes/grades when multiple classes appear in one document",
+          "- Never merge Class XI and Class XII structures together",
+        ],
+        allowUnitFallbackChapters: false,
+        expectedStructureType: "multi_class_unit_topic",
+      };
+    case "term_semester_curriculum":
+      return {
+        ...base,
+        stage1SchemaExtension: { terms: [{ name: "", units: [""] }] },
+        extraRules: [
+          "- Preserve term/semester structure when present",
+          "- Do not flatten semesters into plain unit lists",
+        ],
+        allowUnitFallbackChapters: true,
+        expectedStructureType: "term_unit_topic",
+      };
+    case "competency_outcomes_curriculum":
+      return {
+        ...base,
+        stage1SchemaExtension: { competencies: [{ title: "", outcomes: [""] }] },
+        extraRules: [
+          "- Preserve competencies and learning outcomes as first-class entities",
+          "- Do not flatten outcomes into generic topics if they are the main structure",
+        ],
+        allowUnitFallbackChapters: true,
+        expectedStructureType: "competency_outcome",
+      };
+    case "language_curriculum":
+      return {
+        ...base,
+        extraRules: [
+          "- Preserve language sections like reading, writing, grammar, literature",
+          "- Do not force fake unit/chapter hierarchy over section-based language syllabi",
+        ],
+        allowUnitFallbackChapters: true,
+        expectedStructureType: "section_topic",
+      };
+    default:
+      return {
+        ...base,
+        extraRules: [
+          "- Use the most source-faithful hierarchy available",
+          "- Preserve ambiguous structure conservatively and avoid invented chapters",
+        ],
+        allowUnitFallbackChapters: true,
+        expectedStructureType: "mixed",
+      };
+  }
+}
+
+function buildVersionedCurriculumPayload(
+  schemaVersion: SchemaVersion,
+  basePayload: Record<string, any>,
+  extras?: {
+    structureType?: string;
+    terms?: any[];
+    competenciesCatalog?: any[];
+  }
+) {
+  if (schemaVersion === "v2") {
+    return {
+      ...basePayload,
+      structure_type: extras?.structureType || "mixed",
+      terms: extras?.terms || [],
+      competencies_catalog: extras?.competenciesCatalog || [],
+    };
+  }
+  return basePayload;
 }
 
 function buildSlimStructurePayload(classes: any[] = []) {
@@ -255,13 +452,122 @@ function buildSlimStructurePayload(classes: any[] = []) {
       units: (cls?.units || []).map((unit: any, unitIndex: number) => ({
         unit_id: unit?.unit_id || `U${unitIndex + 1}`,
         unit_name: unit?.unit_name || "",
+        topics: uniqueStrings(unit?.topics || []),
+        subtopics: uniqueStrings(unit?.subtopics || []),
+        key_concepts: uniqueStrings(unit?.key_concepts || []),
         chapters: (unit?.chapters || []).map((chapter: any, chapterIndex: number) => ({
           chapter_id: chapter?.chapter_id || `C${chapterIndex + 1}`,
           chapter_name: chapter?.chapter_name || chapter?.source_chapter_name || "",
+          topics: uniqueStrings(chapter?.topics || []),
+          subtopics: uniqueStrings(chapter?.subtopics || []),
+          key_concepts: uniqueStrings(chapter?.key_concepts || []),
         })),
       })),
     })),
   };
+}
+
+function buildFaithfulStructureFromRawExtraction(rawExtraction: any) {
+  return {
+    document_metadata: rawExtraction?.document_metadata || {},
+    classes: (rawExtraction?.classes || []).map((cls: any) => ({
+      class_name: canonicalizeClassName(cls?.class_name || ""),
+      subject: canonicalizeSubjectName(cls?.subject || ""),
+      part_or_section: cls?.part_or_section || "",
+      units: (cls?.units || []).map((unit: any, unitIndex: number) => ({
+        unit_id: unit?.unit_id || `U${unitIndex + 1}`,
+        unit_name: unit?.unit_name || "",
+        marks: unit?.marks ?? null,
+        explicit_chapters: uniqueStrings(unit?.explicit_chapters || []),
+        topics: uniqueStrings(unit?.topics || []),
+        subtopics: uniqueStrings(unit?.subtopics || []),
+        key_concepts: uniqueStrings(unit?.key_concepts || []),
+        chapters: uniqueStrings(unit?.explicit_chapters || []).map((chapterName, chapterIndex) => {
+          const matchingChapter = (unit?.chapter_details || []).find(
+            (chapter: any) => canonicalChapterKey(chapter?.chapter_name || "") === canonicalChapterKey(chapterName)
+          ) || {};
+          return {
+            chapter_id: matchingChapter?.chapter_id || `C${chapterIndex + 1}`,
+            chapter_name: chapterName,
+            source_chapter_name: matchingChapter?.source_chapter_name || chapterName,
+            topics: uniqueStrings(matchingChapter?.topics || []),
+            subtopics: uniqueStrings(matchingChapter?.subtopics || []),
+            key_concepts: uniqueStrings(matchingChapter?.key_concepts || []),
+          };
+        }),
+      })),
+    })),
+    practicals: rawExtraction?.practicals || [],
+    activities: rawExtraction?.activities || [],
+    projects: rawExtraction?.projects || [],
+    formative_only_content: rawExtraction?.formative_only_content || [],
+    assessment_information: rawExtraction?.assessment_information || {},
+  };
+}
+
+function buildHierarchyComparisonReport(faithfulStructure: any, planningStructure: any) {
+  const faithfulClasses = faithfulStructure?.classes || [];
+  const planningClasses = planningStructure?.classes || [];
+  const planningByClassKey = new Map(
+    planningClasses.map((cls: any) => [buildCanonicalClassKey(cls?.class_name || ""), cls])
+  );
+
+  const perClass = faithfulClasses.map((faithfulClass: any) => {
+    const planningClass: any = planningByClassKey.get(buildCanonicalClassKey(faithfulClass?.class_name || "")) || {};
+    const faithfulUnits = faithfulClass?.units || [];
+    const planningUnits = planningClass?.units || [];
+    const faithfulUnitTopics = faithfulUnits.reduce((sum: number, unit: any) => sum + (unit?.topics || []).length, 0);
+    const faithfulChapterTopics = faithfulUnits.reduce(
+      (sum: number, unit: any) => sum + (unit?.chapters || []).reduce((inner: number, chapter: any) => inner + (chapter?.topics || []).length, 0),
+      0
+    );
+    const planningChapterTopics = planningUnits.reduce(
+      (sum: number, unit: any) => sum + (unit?.chapters || []).reduce((inner: number, chapter: any) => inner + (chapter?.topics || []).length, 0),
+      0
+    );
+    return {
+      class_name: faithfulClass?.class_name || "",
+      faithful_units: faithfulUnits.length,
+      faithful_chapters: faithfulUnits.reduce((sum: number, unit: any) => sum + (unit?.chapters || []).length, 0),
+      faithful_unit_topics: faithfulUnitTopics,
+      faithful_chapter_topics: faithfulChapterTopics,
+      planning_units: planningUnits.length,
+      planning_chapters: planningUnits.reduce((sum: number, unit: any) => sum + (unit?.chapters || []).length, 0),
+      planning_chapter_topics: planningChapterTopics,
+    };
+  });
+
+  return {
+    per_class: perClass,
+    totals: {
+      faithful_units: perClass.reduce((sum: number, item: any) => sum + item.faithful_units, 0),
+      faithful_chapters: perClass.reduce((sum: number, item: any) => sum + item.faithful_chapters, 0),
+      faithful_unit_topics: perClass.reduce((sum: number, item: any) => sum + item.faithful_unit_topics, 0),
+      faithful_chapter_topics: perClass.reduce((sum: number, item: any) => sum + item.faithful_chapter_topics, 0),
+      planning_units: perClass.reduce((sum: number, item: any) => sum + item.planning_units, 0),
+      planning_chapters: perClass.reduce((sum: number, item: any) => sum + item.planning_chapters, 0),
+      planning_chapter_topics: perClass.reduce((sum: number, item: any) => sum + item.planning_chapter_topics, 0),
+    },
+  };
+}
+
+function collectFaithfulStructureWarnings(faithfulStructure: any) {
+  const warnings: string[] = [];
+  for (const cls of faithfulStructure?.classes || []) {
+    for (const unit of cls?.units || []) {
+      const unitTopics = unit?.topics || [];
+      const chapters = unit?.chapters || [];
+      if (unitTopics.length === 0 && chapters.length === 0) {
+        warnings.push(`Unit "${unit?.unit_name || ""}" in ${cls?.class_name || ""} has no topics and no chapters.`);
+      }
+      for (const chapter of chapters) {
+        if (canonicalChapterKey(chapter?.chapter_name || "") === canonicalChapterKey(unit?.unit_name || "")) {
+          warnings.push(`Unit "${unit?.unit_name || ""}" in ${cls?.class_name || ""} is duplicated as a chapter name.`);
+        }
+      }
+    }
+  }
+  return uniqueStrings(warnings);
 }
 
 function buildStage8PayloadForClass(className: string, classes: any[] = [], competencyGroups: any[] = []) {
@@ -359,10 +665,14 @@ function canonicalizeClassName(value: string): string {
   const normalized = normalizeSourceText(cleaned);
   if (!normalized) return "";
 
-  const digitMatch = normalized.match(/\b(?:class|grade|std|standard)?\s*(11|12)\b/);
+  const digitMatch = normalized.match(/\b(?:class|grade|std|standard)?\s*(9|10|11|12)\b/);
+  if (digitMatch?.[1] === "9") return "Class IX";
+  if (digitMatch?.[1] === "10") return "Class X";
   if (digitMatch?.[1] === "11") return "Class XI";
   if (digitMatch?.[1] === "12") return "Class XII";
 
+  if (/\bix\b/.test(normalized) && !/\bxi\b|\bxii\b/.test(normalized)) return "Class IX";
+  if (/\bx\b/.test(normalized) && !/\bix\b|\bxi\b|\bxii\b/.test(normalized)) return "Class X";
   if (/\bxi\b/.test(normalized) && !/\bxii\b/.test(normalized)) return "Class XI";
   if (/\bxii\b/.test(normalized)) return "Class XII";
 
@@ -549,11 +859,11 @@ function cleanChapterName(value: string, unitName: string = ""): string {
     }
   }
   const genericSplit = raw.match(/^[^:]{2,}:\s*(.+)$/);
-  return (genericSplit?.[1] || raw).trim();
+  return stripInternalParserLabel((genericSplit?.[1] || raw).trim());
 }
 
 function cleanUnitTitle(value: string): string {
-  const raw = String(value || "").trim();
+  const raw = stripInternalParserLabel(String(value || "").trim());
   if (!raw) return "";
   const unitPrefixMatch = raw.match(/^(\s*unit\s*[\-–—:.]?\s*(\d+|[ivxlcdm]+|[a-z])\s*[\-–—:.]?\s*)(.*)$/i);
   if (!unitPrefixMatch) {
@@ -599,7 +909,7 @@ function cleanInferredUnitTitle(value: string): string {
 }
 
 function cleanRecoveredUnitName(value: string): string {
-  const cleaned = cleanUnitTitle(value || "");
+  const cleaned = stripInternalParserLabel(cleanUnitTitle(value || ""));
   if (!cleaned) return "";
 
   const unitPrefixMatch = cleaned.match(/^(\s*unit\s*[\-â€“â€”:.]?\s*(\d+|[ivxlcdm]+|[a-z])\s*[\-â€“â€”:.]?\s*)(.*)$/i);
@@ -627,6 +937,50 @@ function cleanRecoveredUnitName(value: string): string {
     .trim();
 
   return `${prefix}${remainder ? ` ${remainder}` : ""}`.trim();
+}
+
+function stripInternalParserLabel(value: string) {
+  return String(value || "")
+    .replace(/\s*\(implicit from context[^)]*\)\s*$/i, "")
+    .replace(/\s*\(reconstructed[^)]*\)\s*$/i, "")
+    .replace(/\s*\(fallback[^)]*\)\s*$/i, "")
+    .trim();
+}
+
+function buildPublicWarningMessage(warning: string) {
+  const normalized = normalizeSourceText(warning || "");
+  if (!normalized) return "";
+  if (normalized.includes("fallback chapters present")) {
+    return "Some units were reconstructed because explicit chapter headings were unavailable in the uploaded document.";
+  }
+  if (normalized.includes("multi class board syllabus detected but fewer than two classes were preserved")) {
+    return "The document appears to contain multiple classes, but only one class could be preserved reliably.";
+  }
+  if (normalized.includes("term semester curriculum detected but term semester entities were not preserved")) {
+    return "Term or semester labels were detected in the document, but some of them could not be preserved reliably.";
+  }
+  return warning;
+}
+
+function buildPublicFallbackLabel(value: string) {
+  if (value === "pdf_to_markdown") return value;
+  if (value.startsWith("unit_fallback:")) return "reconstructed_chapter_headings";
+  return value;
+}
+
+function buildStableUnitId(className: string, subject: string, baseUnitId: string, fallbackIndex: number) {
+  const classSlug = (buildCanonicalClassKey(className || "") || `class_${fallbackIndex + 1}`).replace(/_/g, "-");
+  const subjectSlug = normalizeSourceText(subject || "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "") || "general";
+  const unitSlug = normalizeSourceText(baseUnitId || `u${fallbackIndex + 1}`)
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "") || `u${fallbackIndex + 1}`;
+  return `${classSlug}-${subjectSlug}-${unitSlug}`;
 }
 
 function canonicalUnitKey(value: string): string {
@@ -963,6 +1317,9 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
         unit_name: String(rawUnit?.unit_name || structureUnit?.unit_name || "").trim(),
         part_or_section: rawUnit?.part_or_section || structureUnit?.part_or_section || "",
         marks: rawUnit?.marks ?? null,
+        topics: uniqueStrings(rawUnit?.topics || []),
+        subtopics: uniqueStrings(rawUnit?.subtopics || []),
+        key_concepts: uniqueStrings(rawUnit?.key_concepts || []),
         chapters: [],
       });
     }
@@ -997,6 +1354,9 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
           unit_name: recoveredUnitName,
           part_or_section: rawChapter?.part_or_section || structureUnit?.part_or_section || "",
           marks: rawChapter?.marks ?? null,
+          topics: [],
+          subtopics: [],
+          key_concepts: [],
           chapters: [],
         });
       }
@@ -1028,6 +1388,9 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
           source_chapter_name: cleanChapterName(fallbackChapterName, recoveredUnitName),
           source_heading: cleanChapterName(fallbackChapterName, recoveredUnitName),
           source_type: "explicit_chapter",
+          topics: uniqueStrings(chapter?.topics || []),
+          subtopics: uniqueStrings(chapter?.subtopics || []),
+          key_concepts: uniqueStrings(chapter?.key_concepts || []),
           });
         });
       const chapterCandidatesFromStructure = (structureUnit?.chapter_candidates || [])
@@ -1038,6 +1401,9 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
           source_chapter_name: cleanChapterName(candidate?.title || "", unit?.unit_name || structureUnit?.unit_name || ""),
           source_heading: cleanChapterName(candidate?.title || "", unit?.unit_name || structureUnit?.unit_name || ""),
           source_type: candidate?.source_type || "explicit_chapter",
+          topics: [],
+          subtopics: [],
+          key_concepts: [],
         }));
       const chapterCandidates = (chapterCandidatesFromStage1.length ? chapterCandidatesFromStage1 : chapterCandidatesFromStructure)
         .filter((candidate: any) => Boolean(candidate?.chapter_name))
@@ -1696,6 +2062,143 @@ function getNormalizedStructureFromCurriculum(curriculum: any) {
   return null;
 }
 
+function buildCurriculumSnapshot(curriculum: any) {
+  return {
+    subject: curriculum?.subject || "",
+    gradeLevel: curriculum?.gradeLevel || "",
+    overallDescription: curriculum?.overallDescription || "",
+    units: Array.isArray(curriculum?.units) ? curriculum.units : [],
+    documentMetadata:
+      curriculum?.document_metadata ||
+      curriculum?.normalizedStructure?.document_metadata ||
+      curriculum?.stagedExtraction?.normalizedStructure?.document_metadata ||
+      {},
+    normalizedStructure: getNormalizedStructureFromCurriculum(curriculum),
+  };
+}
+
+function createDefaultPlanningWorkspacePayload(curriculumId: string, curriculum: any) {
+  return {
+    curriculumId,
+    phase: "curriculum_setup",
+    status: "draft",
+    curriculumSnapshot: buildCurriculumSnapshot(curriculum),
+    curriculumApproval: {
+      approved: false,
+      approvedAt: null,
+      notes: "",
+      confidence: curriculum?.structure_confidence ?? curriculum?.profile_confidence ?? null,
+    },
+    academicConfig: {},
+    termPlan: {
+      approved: false,
+      recommendedTermCount: null,
+      recommendations: [],
+      allocations: [],
+    },
+    teachingStrategy: {},
+    sessionAllocation: {
+      approved: false,
+      recommendations: [],
+      allocations: [],
+    },
+    generationScope: {},
+    generatedArtifacts: [],
+    revisionState: {
+      history: [],
+    },
+  };
+}
+
+async function ensurePlanningWorkspaceForCurriculum(curriculumId: string, curriculum: any) {
+  await connectToMongo();
+  const existingWorkspace = await PlanningWorkspaceModel.findOne({ curriculumId })
+    .sort({ updatedAt: -1 });
+
+  if (existingWorkspace) {
+    existingWorkspace.curriculumSnapshot = buildCurriculumSnapshot(curriculum);
+    if (existingWorkspace.curriculumApproval?.confidence == null) {
+      existingWorkspace.curriculumApproval = {
+        ...(existingWorkspace.curriculumApproval || {}),
+        confidence: curriculum?.structure_confidence ?? curriculum?.profile_confidence ?? null,
+      };
+    }
+    await existingWorkspace.save();
+    return existingWorkspace;
+  }
+
+  return PlanningWorkspaceModel.create(
+    createDefaultPlanningWorkspacePayload(curriculumId, curriculum)
+  );
+}
+
+function buildWorkspaceStateAfterCurriculumChange(curriculum: any) {
+  return {
+    phase: "curriculum_setup",
+    status: "draft",
+    curriculumSnapshot: buildCurriculumSnapshot(curriculum),
+    curriculumApproval: {
+      approved: false,
+      approvedAt: null,
+      notes: "",
+      confidence: curriculum?.structure_confidence ?? curriculum?.profile_confidence ?? null,
+    },
+    termPlan: {
+      approved: false,
+      recommendedTermCount: null,
+      recommendations: [],
+      allocations: [],
+    },
+    teachingStrategy: {},
+    sessionAllocation: {
+      approved: false,
+      recommendations: [],
+      allocations: [],
+    },
+    generationScope: {},
+    generatedArtifacts: [],
+    revisionState: {
+      history: [],
+    },
+  };
+}
+
+async function syncPlanningWorkspaceAfterCurriculumChange(curriculumId: string, curriculum: any) {
+  await connectToMongo();
+  const workspace = await PlanningWorkspaceModel.findOne({ curriculumId })
+    .sort({ updatedAt: -1 });
+
+  if (!workspace) {
+    return PlanningWorkspaceModel.create(
+      createDefaultPlanningWorkspacePayload(curriculumId, curriculum)
+    );
+  }
+
+  const nextState = buildWorkspaceStateAfterCurriculumChange(curriculum);
+  workspace.phase = nextState.phase;
+  workspace.status = nextState.status;
+  workspace.curriculumSnapshot = nextState.curriculumSnapshot;
+  workspace.curriculumApproval = nextState.curriculumApproval;
+  workspace.termPlan = nextState.termPlan;
+  workspace.teachingStrategy = nextState.teachingStrategy;
+  workspace.sessionAllocation = nextState.sessionAllocation;
+  workspace.generationScope = nextState.generationScope;
+  workspace.generatedArtifacts = nextState.generatedArtifacts;
+  workspace.revisionState = nextState.revisionState;
+  await workspace.save();
+  return workspace;
+}
+
+async function loadCurriculumRecordById(curriculumId: string) {
+  await connectToMongo();
+  return CurriculumModel.findOne({ _id: curriculumId }).lean();
+}
+
+async function loadPlanningWorkspaceById(workspaceId: string) {
+  await connectToMongo();
+  return PlanningWorkspaceModel.findOne({ _id: workspaceId });
+}
+
 function detectTeachingBlocks(normalizedStructure: any) {
   const classes = normalizedStructure?.classes || [];
   const detected = classes.map((cls: any) => {
@@ -2192,10 +2695,19 @@ function buildNormalizedTeachingBlocks(
       }
       const structureUnit = (structureClass?.units || [])[unitIndex] || {};
       const sourceUnitName = approvedUnit?.unit_name || "";
-      const chapterSources: Array<{ name: string; sourceType: "explicit_chapter" | "chapter_heading" | "unit_fallback" }> =
+      const chapterSources: Array<{
+        name: string;
+        sourceType: "explicit_chapter" | "chapter_heading" | "unit_fallback";
+        topics: string[];
+        subtopics: string[];
+        key_concepts: string[];
+      }> =
         (approvedUnit?.chapters || []).map((chapter: any) => ({
           name: chapter?.chapter_name || chapter?.source_chapter_name || "",
           sourceType: chapter?.source_type || "explicit_chapter",
+          topics: uniqueStrings(chapter?.topics || []),
+          subtopics: uniqueStrings(chapter?.subtopics || []),
+          key_concepts: uniqueStrings(chapter?.key_concepts || []),
         }));
       const normalizedChapterMap = new Map<string, any>();
       for (const chapter of enrichedUnit?.chapters || []) {
@@ -2235,7 +2747,7 @@ function buildNormalizedTeachingBlocks(
           `[Normalization] Unit "${sourceUnitName}" is missing Stage 3 chapter matches for ${JSON.stringify(missingChapterKeys)}. Falling back to Stage 1 chapter structure.`
         );
       }
-      const enforcedChapters = chapterSources.map((chapterSource: { name: string; sourceType: "explicit_chapter" | "chapter_heading" | "unit_fallback" }, chapterIndex: number) => {
+      const enforcedChapters = chapterSources.map((chapterSource, chapterIndex: number) => {
         const chapterName = chapterSource.name;
         const normalizedChapter = (
           normalizedChapterMap.get(canonicalChapterKey(chapterName)) ||
@@ -2243,30 +2755,44 @@ function buildNormalizedTeachingBlocks(
           {}
         ) as any;
         const isUnitFallback = chapterSource.sourceType === "unit_fallback";
+        const topicValues = uniqueStrings((normalizedChapter?.topics || chapterSource?.topics || []).slice(0, 5));
+        const subtopicValues = uniqueStrings(normalizedChapter?.subtopics || chapterSource?.subtopics || []);
+        const keyConceptValues = uniqueStrings(normalizedChapter?.key_concepts || chapterSource?.key_concepts || []).filter((value: string) => {
+          const normalizedValue = normalizeSourceText(value || "");
+          return normalizedValue && !topicValues.some((topic: string) => normalizeSourceText(topic || "") === normalizedValue);
+        });
         return {
           chapter_id: `C${chapterIndex + 1}`,
-          chapter_name: chapterName,
-          source_chapter_name: chapterName,
-          source_heading: chapterName,
+          chapter_name: stripInternalParserLabel(chapterName),
+          source_chapter_name: stripInternalParserLabel(chapterName),
+          source_heading: stripInternalParserLabel(chapterName),
           source_type: chapterSource.sourceType,
           is_normalized: isUnitFallback,
           confidence: normalizedChapter?.confidence ?? (isUnitFallback ? 0.75 : 0.95),
-          topics: uniqueStrings((normalizedChapter?.topics || []).slice(0, 5)),
-          subtopics: uniqueStrings(normalizedChapter?.subtopics || []),
-          key_concepts: uniqueStrings(normalizedChapter?.key_concepts || []),
+          topics: topicValues,
+          subtopics: subtopicValues,
+          key_concepts: keyConceptValues,
           assessment_status: normalizedChapter?.assessment_status || "summative",
         };
       });
 
       return {
-        unit_id: approvedUnit?.unit_id || enrichedUnit?.unit_id || `U${unitIndex + 1}`,
-        unit_name: approvedUnit?.unit_name || "",
+        unit_id: buildStableUnitId(
+          rawClass?.class_name || enrichedResult?.class_name || "",
+          rawClass?.subject || enrichedResult?.subject || "",
+          approvedUnit?.unit_id || enrichedUnit?.unit_id || `U${unitIndex + 1}`,
+          unitIndex
+        ),
+        unit_name: stripInternalParserLabel(approvedUnit?.unit_name || ""),
         marks: approvedUnit?.marks ?? enrichedUnit?.marks ?? null,
-        explicit_chapters: (approvedUnit?.chapters || []).map((chapter: any) => chapter?.chapter_name || chapter?.source_chapter_name || ""),
+        explicit_chapters: (approvedUnit?.chapters || []).map((chapter: any) => stripInternalParserLabel(chapter?.chapter_name || chapter?.source_chapter_name || "")),
         headings: structureUnit?.headings || [],
-        topics: [],
-        subtopics: [],
-        key_concepts: [],
+        topics: uniqueStrings(approvedUnit?.topics || []),
+        subtopics: uniqueStrings(approvedUnit?.subtopics || []),
+        key_concepts: uniqueStrings(approvedUnit?.key_concepts || []).filter((value: string) => {
+          const normalizedValue = normalizeSourceText(value || "");
+          return normalizedValue && !uniqueStrings(approvedUnit?.topics || []).some((topic: string) => normalizeSourceText(topic || "") === normalizedValue);
+        }),
         chapters: enforcedChapters,
       };
     });
@@ -2288,6 +2814,56 @@ function buildNormalizedTeachingBlocks(
       validation_report: enrichedResult?.validation_report || {},
     };
   });
+}
+
+function sanitizeStage3EnrichmentToSource(
+  stage3Result: any,
+  rawClass: any,
+  sourceText: string
+) {
+  const approvedUnits = rawClass?.units || [];
+  const approvedUnitById = new Map(
+    approvedUnits
+      .map((unit: any): [string, any] => [canonicalUnitId(unit?.unit_id || ""), unit])
+      .filter(([key]: [string, any]) => Boolean(key))
+  );
+
+  const sanitizedUnits = (stage3Result?.units || []).map((unit: any) => {
+    const sourceUnit = (approvedUnitById.get(canonicalUnitId(unit?.unit_id || "")) || {}) as any;
+    const sourceChapterByName = new Map(
+      (sourceUnit?.chapters || [])
+        .map((chapter: any): [string, any] => [canonicalChapterKey(chapter?.chapter_name || chapter?.source_chapter_name || ""), chapter])
+        .filter(([key]: [string, any]) => Boolean(key))
+    );
+
+    const sanitizedChapters = (unit?.chapters || []).map((chapter: any) => {
+      const sourceChapter = (
+        sourceChapterByName.get(canonicalChapterKey(chapter?.source_chapter_name || chapter?.chapter_name || "")) || {}
+      ) as any;
+      const referenceValues = uniqueStrings([
+        ...(sourceChapter?.topics || []),
+        ...(sourceChapter?.subtopics || []),
+        ...(sourceChapter?.key_concepts || []),
+      ]);
+
+      return {
+        ...chapter,
+        topics: filterFaithfulTopicList(sourceText, chapter?.topics || [], referenceValues),
+        subtopics: filterFaithfulTopicList(sourceText, chapter?.subtopics || [], referenceValues),
+        key_concepts: filterFaithfulTopicList(sourceText, chapter?.key_concepts || [], referenceValues),
+      };
+    });
+
+    return {
+      ...unit,
+      chapters: sanitizedChapters,
+    };
+  });
+
+  return {
+    ...stage3Result,
+    units: sanitizedUnits,
+  };
 }
 
 async function normalizeClassTheory(
@@ -2351,10 +2927,10 @@ async function normalizeClassTheory(
   let firstResult: any = null;
   try {
     const result = await runStage(requestId, debugDir, stageName, prompt, schema);
-    const normalizedResult = {
+    const normalizedResult = sanitizeStage3EnrichmentToSource({
       ...result,
       units: (result?.units || []).filter((unit: any) => String(unit?.unit_id || "").trim()),
-    };
+    }, theoryRawClass, relevantSourceText);
     const firstAcceptedUnitIds = (normalizedResult.units || []).map((unit: any) => unit?.unit_id || "").filter(Boolean);
     const firstDiscardedUnitIds = (result?.units || [])
       .filter((unit: any) => !String(unit?.unit_id || "").trim())
@@ -2410,10 +2986,10 @@ async function normalizeClassTheory(
       SOURCE_TEXT: fallbackSourceText,
     });
     const retryResult = await runStage(requestId, debugDir, `${stageName} - Retry`, fallbackPrompt, schema);
-    const normalizedRetryResult = {
+    const normalizedRetryResult = sanitizeStage3EnrichmentToSource({
       ...retryResult,
       units: (retryResult?.units || []).filter((unit: any) => String(unit?.unit_id || "").trim()),
-    };
+    }, theoryRawClass, fallbackSourceText);
     const retryAcceptedUnitIds = (normalizedRetryResult.units || []).map((unit: any) => unit?.unit_id || "").filter(Boolean);
     const retryDiscardedUnitIds = (retryResult?.units || [])
       .filter((unit: any) => !String(unit?.unit_id || "").trim())
@@ -2931,6 +3507,9 @@ function mergeStage1FactExtractions(extractions: any[]) {
           unit_id: rawUnit?.unit_id || "",
           unit_name: String(rawUnit?.unit_name || "").trim(),
           marks: rawUnit?.marks ?? null,
+          topics: uniqueStrings(rawUnit?.topics || []),
+          subtopics: uniqueStrings(rawUnit?.subtopics || []),
+          key_concepts: uniqueStrings(rawUnit?.key_concepts || []),
         });
         continue;
       }
@@ -2939,6 +3518,9 @@ function mergeStage1FactExtractions(extractions: any[]) {
       existingUnit.unit_id = existingUnit.unit_id || rawUnit?.unit_id || "";
       existingUnit.unit_name = existingUnit.unit_name || String(rawUnit?.unit_name || "").trim();
       existingUnit.marks = existingUnit.marks ?? rawUnit?.marks ?? null;
+      existingUnit.topics = uniqueStrings([...(existingUnit.topics || []), ...(rawUnit?.topics || [])]);
+      existingUnit.subtopics = uniqueStrings([...(existingUnit.subtopics || []), ...(rawUnit?.subtopics || [])]);
+      existingUnit.key_concepts = uniqueStrings([...(existingUnit.key_concepts || []), ...(rawUnit?.key_concepts || [])]);
     }
 
     for (const rawChapter of extraction?.chapters || []) {
@@ -2952,6 +3534,9 @@ function mergeStage1FactExtractions(extractions: any[]) {
           unit_name: String(rawChapter?.unit_name || "").trim(),
           chapter_name: cleanChapterName(rawChapter?.chapter_name || "", rawChapter?.unit_name || ""),
           marks: rawChapter?.marks ?? null,
+          topics: uniqueStrings(rawChapter?.topics || []),
+          subtopics: uniqueStrings(rawChapter?.subtopics || []),
+          key_concepts: uniqueStrings(rawChapter?.key_concepts || []),
         });
         continue;
       }
@@ -2961,6 +3546,9 @@ function mergeStage1FactExtractions(extractions: any[]) {
       existingChapter.unit_name = existingChapter.unit_name || String(rawChapter?.unit_name || "").trim();
       existingChapter.chapter_name = existingChapter.chapter_name || cleanChapterName(rawChapter?.chapter_name || "", rawChapter?.unit_name || "");
       existingChapter.marks = existingChapter.marks ?? rawChapter?.marks ?? null;
+      existingChapter.topics = uniqueStrings([...(existingChapter.topics || []), ...(rawChapter?.topics || [])]);
+      existingChapter.subtopics = uniqueStrings([...(existingChapter.subtopics || []), ...(rawChapter?.subtopics || [])]);
+      existingChapter.key_concepts = uniqueStrings([...(existingChapter.key_concepts || []), ...(rawChapter?.key_concepts || [])]);
     }
   }
 
@@ -3027,7 +3615,7 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
         );
       })
       .map((unit: any) => {
-        const explicitChapters = (stage1Facts?.chapters || [])
+        const matchingChapters = (stage1Facts?.chapters || [])
           .filter((chapter: any) => {
             const resolvedClassName = resolveClassName(chapter, documentContext);
             return (
@@ -3047,8 +3635,16 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
               }, documentContext)
             );
           })
-          .map((chapter: any) => cleanChapterName(chapter?.chapter_name || "", chapter?.unit_name || unit?.unit_name || ""))
-          .filter(Boolean);
+          .map((chapter: any, chapterIndex: number) => ({
+            chapter_id: chapter?.chapter_id || `C${chapterIndex + 1}`,
+            chapter_name: cleanChapterName(chapter?.chapter_name || "", chapter?.unit_name || unit?.unit_name || ""),
+            source_chapter_name: cleanChapterName(chapter?.chapter_name || "", chapter?.unit_name || unit?.unit_name || ""),
+            topics: uniqueStrings(chapter?.topics || []),
+            subtopics: uniqueStrings(chapter?.subtopics || []),
+            key_concepts: uniqueStrings(chapter?.key_concepts || []),
+          }))
+          .filter((chapter: any) => Boolean(chapter?.chapter_name));
+        const explicitChapters = matchingChapters.map((chapter: any) => chapter.chapter_name);
 
         return {
           unit_id: unit?.unit_id || "",
@@ -3057,9 +3653,10 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
           explicit_chapters: uniqueStrings(explicitChapters),
           headings: [],
           possible_chapters: [],
-          topics: [],
-          subtopics: [],
-          key_concepts: [],
+          topics: uniqueStrings(unit?.topics || []),
+          subtopics: uniqueStrings(unit?.subtopics || []),
+          key_concepts: uniqueStrings(unit?.key_concepts || []),
+          chapter_details: matchingChapters,
         };
       });
 
@@ -3253,6 +3850,71 @@ async function runStage1ChunkWithAdaptiveRetry(
       ));
     }
     return mergeStage1FactExtractions(results);
+  }
+}
+
+async function runStage6CompetencyExtractionWithFallback(
+  requestId: string,
+  debugDir: string,
+  extractionRules: string,
+  structurePayload: any,
+  sourceText: string,
+  competencySchema: any
+) {
+  const buildStage6Prompt = (stageName: string, payload: any, stageSourceText: string) =>
+    renderPrompt("competency-extraction.md", {
+      EXTRACTION_RULES: extractionRules,
+      STAGE_NAME: stageName,
+      STAGE_PAYLOAD_JSON: serializeJson(payload),
+      SOURCE_TEXT: stageSourceText,
+    });
+
+  const fullPrompt = buildStage6Prompt(STAGE_ORDER[5], structurePayload, sourceText);
+
+  try {
+    return await runStage(requestId, debugDir, STAGE_ORDER[5], fullPrompt, competencySchema);
+  } catch (error: any) {
+    const isTruncated =
+      String(error?.code || "") === "OLLAMA_OUTPUT_TRUNCATED" ||
+      String(error?.message || "").includes("Model output truncated");
+    if (!isTruncated) {
+      throw error;
+    }
+
+    const classes = structurePayload?.classes || [];
+    if (classes.length <= 1) {
+      throw error;
+    }
+
+    console.warn(
+      `[Pipeline][${requestId}] ${STAGE_ORDER[5]} truncated. Retrying with ${classes.length} class-scoped competency prompts.`
+    );
+
+    const competencyGroups: any[] = [];
+    for (let classIndex = 0; classIndex < classes.length; classIndex += 1) {
+      const cls = classes[classIndex];
+      const classStageName = `${STAGE_ORDER[5]} - ${cls?.class_name || `Class ${classIndex + 1}`}`;
+      const classPayload = buildSlimStructurePayload([cls]);
+      const classSourceText = extractRelevantClassSourceText(sourceText, cls, 8000);
+      const classPrompt = buildStage6Prompt(classStageName, classPayload, classSourceText);
+      const classResult = await runStage(
+        requestId,
+        debugDir,
+        classStageName,
+        classPrompt,
+        competencySchema,
+        {
+          numPredict: Math.min(4096, OLLAMA_NUM_PREDICT),
+          timeoutMs: OLLAMA_TIMEOUT_MS,
+          retries: 1,
+        }
+      );
+      competencyGroups.push(...(classResult?.competency_groups || []));
+    }
+
+    return {
+      competency_groups: competencyGroups,
+    };
   }
 }
 
@@ -3538,6 +4200,282 @@ app.get("/api/curriculums/:id", async (req, res) => {
   }
 });
 
+app.patch("/api/curriculums/:id", async (req, res) => {
+  const { extractedCurriculum, fileName, sourceText } = req.body || {};
+  if (!extractedCurriculum) {
+    return res.status(400).json({ error: "extractedCurriculum is required." });
+  }
+
+  try {
+    await connectToMongo();
+    const curriculum = await CurriculumModel.findOne({ _id: req.params.id });
+    if (!curriculum) {
+      return res.status(404).json({ error: "Curriculum not found." });
+    }
+
+    curriculum.extractedCurriculum = extractedCurriculum;
+    curriculum.subject = extractedCurriculum?.subject || curriculum.subject;
+    curriculum.gradeLevel = extractedCurriculum?.gradeLevel || curriculum.gradeLevel;
+    if (typeof fileName === "string") {
+      curriculum.fileName = fileName;
+    }
+    if (typeof sourceText === "string") {
+      curriculum.sourceText = sourceText;
+    }
+    curriculum.extractionMetadata = {
+      ...(curriculum.extractionMetadata || {}),
+      manuallyEdited: true,
+      lastManualEditAt: new Date().toISOString(),
+    };
+    await curriculum.save();
+
+    const workspace = await syncPlanningWorkspaceAfterCurriculumChange(
+      String(curriculum._id),
+      extractedCurriculum
+    );
+
+    res.json({
+      success: true,
+      curriculumId: String(curriculum._id),
+      curriculum,
+      workspaceId: String(workspace._id),
+      workspace,
+    });
+  } catch (error: any) {
+    console.error("[Curriculums] Update failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to update curriculum." });
+  }
+});
+
+app.get("/api/planning-workspaces/:id", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+    res.json({ success: true, workspace });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to fetch planning workspace." });
+  }
+});
+
+app.get("/api/planning-workspaces/by-curriculum/:curriculumId", async (req, res) => {
+  try {
+    await connectToMongo();
+    const workspace = await PlanningWorkspaceModel.findOne({ curriculumId: req.params.curriculumId })
+      .sort({ updatedAt: -1 })
+      .lean();
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found for this curriculum." });
+    }
+    res.json({ success: true, workspace });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Fetch by curriculum failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to fetch planning workspace." });
+  }
+});
+
+app.post("/api/planning-workspaces", async (req, res) => {
+  const { curriculumId } = req.body;
+  if (!curriculumId) {
+    return res.status(400).json({ error: "curriculumId is required." });
+  }
+
+  try {
+    const curriculumRecord = await loadCurriculumRecordById(curriculumId);
+    if (!curriculumRecord) {
+      return res.status(404).json({ error: "Curriculum not found." });
+    }
+
+    const workspace = await ensurePlanningWorkspaceForCurriculum(
+      String(curriculumRecord._id),
+      curriculumRecord.extractedCurriculum
+    );
+    res.status(201).json({ success: true, workspaceId: String(workspace._id), workspace });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Create failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to create planning workspace." });
+  }
+});
+
+app.patch("/api/planning-workspaces/:id", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    const allowedFields = [
+      "phase",
+      "status",
+      "curriculumApproval",
+      "academicConfig",
+      "termPlan",
+      "teachingStrategy",
+      "sessionAllocation",
+      "generationScope",
+      "generatedArtifacts",
+      "revisionState",
+    ];
+
+    for (const field of allowedFields) {
+      if (field in req.body) {
+        (workspace as any)[field] = req.body[field];
+      }
+    }
+
+    await workspace.save();
+    res.json({ success: true, workspace });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Update failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to update planning workspace." });
+  }
+});
+
+app.post("/api/planning-workspaces/:id/approve-curriculum", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    const notes = String(req.body?.notes || "");
+    workspace.curriculumApproval = {
+      ...(workspace.curriculumApproval || {}),
+      approved: true,
+      approvedAt: new Date().toISOString(),
+      notes,
+    };
+    workspace.phase = "course_planning";
+    workspace.status = "in_progress";
+    await workspace.save();
+
+    res.json({ success: true, workspace });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Curriculum approval failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to approve curriculum." });
+  }
+});
+
+app.post("/api/planning-workspaces/:id/recommend-course-plan", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+    if (!workspace.curriculumApproval?.approved) {
+      return res.status(400).json({ error: "Approve the curriculum before requesting a course plan." });
+    }
+
+    const normalizedStructure = workspace.curriculumSnapshot?.normalizedStructure;
+    if (!normalizedStructure) {
+      return res.status(400).json({ error: "No normalized curriculum structure available for planning." });
+    }
+
+    const preferredTermCount = Number(req.body?.preferredTermCount || 0) || undefined;
+    const classTermPlans = (normalizedStructure?.classes || []).length > 1
+      ? normalizedStructure.classes.map((cls: any) => ({
+          class_name: cls?.class_name || "",
+          ...buildTermDivision(
+            {
+              ...normalizedStructure,
+              classes: [cls],
+            },
+            preferredTermCount
+          ),
+        }))
+      : [{
+          class_name: normalizedStructure?.classes?.[0]?.class_name || "",
+          ...buildTermDivision(normalizedStructure, preferredTermCount),
+        }];
+
+    const recommendations = classTermPlans.flatMap((plan: any) =>
+      flattenTermDivisionToRows(plan).map((row: any) => ({
+        className: row.className || "",
+        termName: row.term,
+        termNumber: row.termNumber ?? null,
+        chapters: row.chapters || [],
+        marks: row.marks || 0,
+        reasoning: row.marks > 0
+          ? "Balanced using curriculum structure, unit coverage, and marks distribution."
+          : "Balanced using curriculum structure and chapter coverage.",
+        estimatedSessions: Math.max(1, Math.ceil((row.chapters || []).length * 1.5)),
+      }))
+    );
+
+    workspace.termPlan = {
+      approved: false,
+      recommendedTermCount: classTermPlans[0]?.term_count || preferredTermCount || null,
+      recommendations,
+      allocations: workspace.termPlan?.allocations || [],
+    };
+    await workspace.save();
+
+    res.json({
+      success: true,
+      workspace,
+      class_term_plans: classTermPlans,
+      recommendations,
+    });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Course plan recommendation failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to build course plan recommendations." });
+  }
+});
+
+app.post("/api/planning-workspaces/:id/approve-course-plan", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    if (!workspace.curriculumApproval?.approved) {
+      return res.status(400).json({ error: "Approve the curriculum before approving the course plan." });
+    }
+
+    const academicConfig = workspace.academicConfig || {};
+    const hasAcademicSetup = Boolean(
+      academicConfig.academicYear ||
+      academicConfig.school ||
+      academicConfig.board ||
+      academicConfig.subject ||
+      academicConfig.className
+    );
+
+    if (!hasAcademicSetup) {
+      return res.status(400).json({
+        error: "Add and save the academic configuration before approving the course plan.",
+      });
+    }
+
+    const allocations = Array.isArray(workspace.termPlan?.allocations)
+      ? workspace.termPlan.allocations
+      : [];
+
+    if (allocations.length === 0) {
+      return res.status(400).json({
+        error: "Select or save at least one term allocation before approving the course plan.",
+      });
+    }
+
+    workspace.termPlan = {
+      ...(workspace.termPlan || {}),
+      approved: true,
+      allocations,
+    };
+    workspace.phase = "session_planning";
+    workspace.status = "in_progress";
+    await workspace.save();
+
+    res.json({ success: true, workspace });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Course plan approval failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to approve the course plan." });
+  }
+});
+
 app.post("/api/curriculums", async (req, res) => {
   try {
     await connectToMongo();
@@ -3556,6 +4494,7 @@ app.delete("/api/curriculums/:id", async (req, res) => {
     if (!deleted) {
       return res.status(404).json({ error: "Curriculum not found." });
     }
+    await PlanningWorkspaceModel.deleteMany({ curriculumId: req.params.id });
     res.json({ success: true, curriculumId: req.params.id });
   } catch (error: any) {
     console.error("[Curriculums] Delete failed:", error);
@@ -3564,7 +4503,7 @@ app.delete("/api/curriculums/:id", async (req, res) => {
 });
 
 app.post("/api/analyze-curriculum", async (req, res) => {
-  const { text, fileName = "" } = req.body;
+  const { text, fileName = "", schemaVersion: requestedSchemaVersion } = req.body;
   if (!text || text.trim().length === 0) {
     return res.status(400).json({ error: "No curriculum text provided." });
   }
@@ -3573,11 +4512,38 @@ app.post("/api/analyze-curriculum", async (req, res) => {
     ? requestIdHeader
     : makeRequestId("analyze-curriculum");
   const debugDir = await ensureDebugDir(requestId);
+  const sourceText = String(text);
+  const schemaVersion = normalizeSchemaVersion(requestedSchemaVersion);
+  const detectedProfile = detectCurriculumProfile(sourceText, fileName);
+  const profileConfig = getCurriculumProfileConfig(detectedProfile.profile);
+  const isPdfUpload = String(fileName).toLowerCase().endsWith(".pdf");
+  const looksLikeMarkdown =
+    /^\s*#\s+Page\s+\d+/m.test(sourceText) ||
+    /^\s*##\s+/m.test(sourceText) ||
+    /^\s*-\s+/m.test(sourceText);
   console.log(`[Request][${requestId}] /api/analyze-curriculum started`);
-  console.log(`[Request][${requestId}] Source text length: ${text.length}`);
-  console.log(`[Request][${requestId}] Source text preview (first 2000 chars):\n${String(text).slice(0, 2000)}`);
+  console.log(`[Request][${requestId}] File name: ${fileName || "(none)"}`);
+  console.log(`[Request][${requestId}] Source text length: ${sourceText.length}`);
+  console.log(`[Request][${requestId}] Schema version: ${schemaVersion}`);
+  console.log(`[Request][${requestId}] Curriculum profile: ${detectedProfile.profile} (${detectedProfile.confidence})`);
+  console.log(`[Request][${requestId}] PDF upload detected: ${isPdfUpload ? "yes" : "no"}`);
+  console.log(`[Request][${requestId}] Source text looks like markdown: ${looksLikeMarkdown ? "yes" : "no"}`);
+  if (isPdfUpload && looksLikeMarkdown) {
+    console.log(`[Request][${requestId}] Using PDF->Markdown converted source text for curriculum extraction.`);
+  }
+  console.log(`[Request][${requestId}] Source text preview (first 2000 chars):\n${sourceText.slice(0, 2000)}`);
   await writeDebugFile(debugDir, "request-body.json", req.body);
-  await writeDebugFile(debugDir, "source-text.txt", text);
+  await writeDebugFile(debugDir, "source-text.txt", sourceText);
+  await writeDebugFile(debugDir, "detected-profile.json", {
+    schema_version: schemaVersion,
+    curriculum_profile: detectedProfile.profile,
+    profile_confidence: detectedProfile.confidence,
+    profile_reasons: detectedProfile.reasons,
+    expected_structure_type: profileConfig.expectedStructureType,
+  });
+  if (isPdfUpload && looksLikeMarkdown) {
+    await writeDebugFile(debugDir, "source-text.md", sourceText);
+  }
   try {
     const stage1FactsSchema = {
       document_metadata: {
@@ -3601,6 +4567,9 @@ app.post("/api/analyze-curriculum", async (req, res) => {
         unit_id: "U1",
         unit_name: "Unit heading from source",
         marks: null,
+        topics: [""],
+        subtopics: [""],
+        key_concepts: [""],
       }],
       chapters: [{
         class_name: "",
@@ -3610,7 +4579,11 @@ app.post("/api/analyze-curriculum", async (req, res) => {
         unit_name: "Unit heading from source",
         chapter_name: "",
         marks: null,
+        topics: [""],
+        subtopics: [""],
+        key_concepts: [""],
       }],
+      ...profileConfig.stage1SchemaExtension,
     };
 
     const extractionRules = `Extraction-first architecture is mandatory.
@@ -3623,9 +4596,14 @@ Rules:
 - do not perform analysis during extraction stages
 - no recommendations outside Stage 6
 - return JSON only`;
+    const profileSpecificRules = [
+      `- Detected curriculum profile: ${detectedProfile.profile}`,
+      `- Expected structure type: ${profileConfig.expectedStructureType}`,
+      ...profileConfig.extraRules,
+    ].join("\n");
     const buildStage1Prompt = (sourceText: string, chunkLabel?: string) => renderPrompt("curriculum-extraction.md", {
       STAGE_NAME: STAGE_ORDER[0],
-      EXTRACTION_RULES: extractionRules,
+      EXTRACTION_RULES: `${extractionRules}\n${profileSpecificRules}`,
       CHUNK_RULE: chunkLabel ? `- This is partial curriculum input for ${chunkLabel}; extract only what is present in this chunk` : "",
       SOURCE_TEXT: sourceText,
     });
@@ -3740,6 +4718,13 @@ Rules:
 
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.facts.parsed.json`, stage1Facts);
     const rawExtraction = expandStage1FactsToRawExtraction(stage1Facts);
+    const faithfulStructure = buildFaithfulStructureFromRawExtraction(rawExtraction);
+    await writeDebugFile(debugDir, "faithful-structure.parsed.json", faithfulStructure);
+    const faithfulWarnings = collectFaithfulStructureWarnings(faithfulStructure);
+    await writeDebugFile(debugDir, "faithful-structure-warnings.json", faithfulWarnings);
+    if (faithfulWarnings.length) {
+      console.warn(`[Pipeline][${requestId}] Faithful structure warnings: ${JSON.stringify(faithfulWarnings)}`);
+    }
     const rawClasses = rawExtraction.classes || [];
     const documentHierarchy = buildDocumentStructureHierarchy(rawExtraction);
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[1])}.parsed.json`, documentHierarchy);
@@ -3811,7 +4796,49 @@ Rules:
       },
     };
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[3])}.parsed.json`, normalizedStructure);
+    const hierarchyComparison = buildHierarchyComparisonReport(faithfulStructure, normalizedStructure);
+    await writeDebugFile(debugDir, "hierarchy-comparison.parsed.json", hierarchyComparison);
+    console.log(`[Pipeline][${requestId}] Faithful/planning hierarchy comparison: ${JSON.stringify(hierarchyComparison.totals)}`);
     const validationReport = await validateNormalizedStructure(requestId, debugDir, text, normalizedStructure, rawExtraction);
+    const profileWarnings = [...faithfulWarnings];
+    if (detectedProfile.profile === "cbse_unit_topic") {
+      const suspiciousFallbacks = (normalizedStructure.classes || []).flatMap((cls: any) =>
+        (cls.units || []).flatMap((unit: any) =>
+          (unit.chapters || []).filter((chapter: any) => chapter?.source_type === "unit_fallback").map((chapter: any) => `${cls.class_name}::${unit.unit_name}::${chapter.chapter_name}`)
+        )
+      );
+      if (suspiciousFallbacks.length) {
+        profileWarnings.push("Some units were reconstructed because explicit chapter headings were unavailable in the uploaded document.");
+      }
+    }
+    if (detectedProfile.profile === "multi_class_board_syllabus" && (faithfulStructure.classes || []).length < 2) {
+      profileWarnings.push("multi_class_board_syllabus detected but fewer than two classes were preserved");
+    }
+    if (detectedProfile.profile === "term_semester_curriculum" && !/\bsemester\b|\bterm\b/.test(normalizeSourceText(JSON.stringify(stage1Facts || {})))) {
+      profileWarnings.push("term_semester_curriculum detected but term/semester entities were not preserved in Stage 1 facts");
+    }
+    const structureConfidence = Math.max(
+      0.35,
+      Math.min(
+        0.99,
+        detectedProfile.confidence - (profileWarnings.length * 0.06) - ((validationReport.invalid_chapters || []).length * 0.04)
+      )
+    );
+    const fallbacksUsed = uniqueStrings([
+      ...(isPdfUpload && looksLikeMarkdown ? ["pdf_to_markdown"] : []),
+      ...((normalizedStructure.classes || []).flatMap((cls: any) =>
+        (cls.units || []).flatMap((unit: any) =>
+          (unit.chapters || []).some((chapter: any) => chapter?.source_type === "unit_fallback") ? ["reconstructed_chapter_headings"] : []
+        )
+      )),
+    ]);
+    await writeDebugFile(debugDir, "profile-validation.json", {
+      curriculum_profile: detectedProfile.profile,
+      profile_confidence: detectedProfile.confidence,
+      structure_confidence: structureConfidence,
+      warnings: uniqueStrings(profileWarnings.map(buildPublicWarningMessage).filter(Boolean)),
+      fallbacks_used: uniqueStrings(fallbacksUsed.map(buildPublicFallbackLabel).filter(Boolean)),
+    });
     const statistics = computeCurriculumStatistics(normalizedStructure);
     await writeDebugFile(debugDir, "statistics.parsed.json", statistics);
 
@@ -3842,14 +4869,14 @@ Rules:
 
     const structurePayload = buildSlimStructurePayload(normalizedStructure.classes || []);
 
-    const stage6Prompt = renderPrompt("competency-extraction.md", {
-      EXTRACTION_RULES: extractionRules,
-      STAGE_NAME: STAGE_ORDER[5],
-      STAGE_PAYLOAD_JSON: serializeJson(structurePayload),
-      SOURCE_TEXT: text,
-    });
-
-    const competencies = await runStage(requestId, debugDir, STAGE_ORDER[5], stage6Prompt, competencySchema);
+    const competencies = await runStage6CompetencyExtractionWithFallback(
+      requestId,
+      debugDir,
+      extractionRules,
+      structurePayload,
+      text,
+      competencySchema
+    );
 
     const assessmentSchema = {
       assessment_framework: {
@@ -3990,7 +5017,7 @@ Rules:
     );
     const units = mergedNormalizedClasses.flatMap((cls: any, classIndex: number) =>
       (cls.units || []).map((unit: any, unitIndex: number) => ({
-        unitId: unit.unit_id || `U${classIndex + 1}-${unitIndex + 1}`,
+        unitId: unit.unit_id || buildStableUnitId(cls?.class_name || "", cls?.subject || "", `U${classIndex + 1}-${unitIndex + 1}`, unitIndex),
         unitName: unit.unit_name,
         className: cls.class_name || "",
         description: uniqueStrings((unit.chapters || []).map((chapter: any) => chapter.chapter_name)).join(", "),
@@ -4011,6 +5038,7 @@ Rules:
       class: classNames.length > 1
         ? classNames.join(", ")
         : classNames[0] || normalizedMetadata.class || rawMetadata.class || "",
+      grade: classNames.length > 1 ? "" : (normalizedMetadata.grade || rawMetadata.grade || ""),
     };
     normalizedStructure.document_metadata = resolvedDocumentMetadata;
     const gradeLevel = [
@@ -4020,21 +5048,30 @@ Rules:
     ].filter(Boolean).join(" / ") || "";
 
     const overallDescription = `${statistics.total_units} units, ${statistics.total_chapters} chapters, and ${statistics.total_topics} topics extracted through raw extraction, document-structure hierarchy building, node enrichment, normalized teaching blocks, validation, and statistics generation.`;
-
-    const finalPayload = {
+    const basePayload = {
+      schema_version: schemaVersion,
+      curriculum_profile: detectedProfile.profile,
+      profile_confidence: detectedProfile.confidence,
+      structure_confidence: structureConfidence,
+      warnings: uniqueStrings(profileWarnings.map(buildPublicWarningMessage).filter(Boolean)),
+      fallbacks_used: uniqueStrings(fallbacksUsed.map(buildPublicFallbackLabel).filter(Boolean)),
       subject,
       gradeLevel,
       overallDescription,
       coreObjectives: flattenedOutcomes.slice(0, 12),
       units,
+      faithful_structure: faithfulStructure,
+      planning_structure: normalizedStructure,
       normalizedStructure,
       classes: normalizedStructure.classes || [],
       document_metadata: resolvedDocumentMetadata,
       stagedExtraction: {
         rawExtraction,
+        faithfulStructure,
         documentHierarchy,
         nodeEnrichment,
         normalizedStructure,
+        hierarchyComparison,
         structuralValidation: validationReport,
         statistics,
         competencies,
@@ -4044,6 +5081,11 @@ Rules:
         intelligence,
       },
     };
+    const finalPayload = buildVersionedCurriculumPayload(schemaVersion, basePayload, {
+      structureType: profileConfig.expectedStructureType,
+      terms: (stage1Facts as any)?.terms || [],
+      competenciesCatalog: (stage1Facts as any)?.competencies || [],
+    });
     await connectToMongo();
     const savedCurriculum = await CurriculumModel.create({
       fileName,
@@ -4058,10 +5100,16 @@ Rules:
         stage1ChapterCount,
       },
     });
+    const planningWorkspace = await ensurePlanningWorkspaceForCurriculum(
+      String(savedCurriculum._id),
+      finalPayload
+    );
     const responsePayload = {
       success: true,
       curriculumId: String(savedCurriculum._id),
       curriculum: finalPayload,
+      workspaceId: String(planningWorkspace._id),
+      workspace: planningWorkspace,
     };
     await writeDebugFile(debugDir, "final-response.json", responsePayload);
     console.log(`[Request][${requestId}] Final response JSON length: ${JSON.stringify(responsePayload).length}`);
@@ -4240,11 +5288,16 @@ app.post("/api/generate-sessions-outline", async (req, res) => {
 
 export {
   buildApprovedTheoryHierarchy,
+  buildFaithfulStructureFromRawExtraction,
+  buildVersionedCurriculumPayload,
+  detectCurriculumProfile,
+  getCurriculumProfileConfig,
   buildNormalizedTeachingBlocks,
   buildLanguageFallbackStage1Facts,
   expandStage1FactsToRawExtraction,
   isLanguageSubject,
   mergeStage1FactExtractions,
+  sanitizeStage3EnrichmentToSource,
   sanitizeJsonText,
 };
 

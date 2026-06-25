@@ -39,15 +39,25 @@ import {
   Trash2,
   Database
 } from "lucide-react";
-import { CurriculumExtraction, SavedCurriculumRecord, SessionConfig, SessionPlan, TermRow } from "./types";
+import {
+  AcademicConfig,
+  CurriculumExtraction,
+  TermAllocation,
+  PlanningWorkspace,
+  SavedCurriculumRecord,
+  SessionConfig,
+  SessionPlan,
+  TermRow,
+} from "./types";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 export default function App() {
   const LAST_CURRICULUM_ID_KEY = "lms:lastCurriculumId";
+  const LAST_WORKSPACE_ID_KEY = "lms:lastWorkspaceId";
   // Navigation & Step Management
   // 0: Dashboard, 1: Upload & Extract, 2: Term Planner, 3: Session Specs & Roadmap, 4: Lesson Plan Delivery Outlines, 5: Saved Curriculums
-  const [activeStep, setActiveStep] = useState<0 | 1 | 2 | 3 | 4 | 5>(0);
+  const [activeStep, setActiveStep] = useState<0 | 1 | 2 | 3 | 4 | 5>(1);
   const [dashboardTab, setDashboardTab] = useState<string>("curriculum");
 
   // Error and Loading indicators
@@ -61,10 +71,14 @@ export default function App() {
   const [fileSizeStr, setFileSizeStr] = useState<string>("");
   const [extractedData, setExtractedData] = useState<CurriculumExtraction | null>(null);
   const [currentCurriculumId, setCurrentCurriculumId] = useState<string>("");
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string>("");
+  const [activeWorkspace, setActiveWorkspace] = useState<PlanningWorkspace | null>(null);
   const [editingJsonText, setEditingJsonText] = useState<string>("");
   const [isEditingJson, setIsEditingJson] = useState<boolean>(false);
   const [isJsonCollapsed, setIsJsonCollapsed] = useState<boolean>(false);
   const [savedCurriculums, setSavedCurriculums] = useState<SavedCurriculumRecord[]>([]);
+  const [academicConfigDraft, setAcademicConfigDraft] = useState<AcademicConfig>({});
+  const [preferredTermCount, setPreferredTermCount] = useState<number>(3);
 
   // Step 2 State: Divide Terms
   const [termsList, setTermsList] = useState<TermRow[]>([]);
@@ -137,6 +151,8 @@ export default function App() {
 
   const clearCurriculumWorkspace = () => {
     setCurrentCurriculumId("");
+    setCurrentWorkspaceId("");
+    setActiveWorkspace(null);
     setFileName("");
     setFileSizeStr("");
     setInputText("");
@@ -144,6 +160,8 @@ export default function App() {
     setEditingJsonText("");
     setIsEditingJson(false);
     setIsJsonCollapsed(false);
+    localStorage.removeItem(LAST_CURRICULUM_ID_KEY);
+    localStorage.removeItem(LAST_WORKSPACE_ID_KEY);
   };
 
   const readErrorFromResponse = async (res: Response, fallback: string) => {
@@ -164,6 +182,98 @@ export default function App() {
     const data = await res.json();
     setSavedCurriculums(data.curriculums || []);
     return data.curriculums || [];
+  };
+
+  const mapAllocationsToTermRows = (allocations: TermAllocation[] = []) =>
+    allocations.map((row, index) => ({
+      id: `term-allocation-${index + 1}-${row.termNumber ?? row.termName}`,
+      className: row.className || "Curriculum",
+      termNumber: row.termNumber ?? undefined,
+      term: row.termName,
+      unitName: "Whole Term",
+      chapters: row.chapters || [],
+      marks: Number(row.marks || 0),
+    })) as TermRow[];
+
+  const syncWorkspaceIntoCoursePlanState = (workspace: PlanningWorkspace | null) => {
+    if (!workspace) return;
+
+    setAcademicConfigDraft(workspace.academicConfig || {});
+    if (workspace.termPlan?.recommendedTermCount) {
+      setPreferredTermCount(Number(workspace.termPlan.recommendedTermCount) || 3);
+    }
+
+    const sourceAllocations =
+      workspace.termPlan?.allocations?.length
+        ? workspace.termPlan.allocations
+        : workspace.termPlan?.recommendations || [];
+    const rows = mapAllocationsToTermRows(sourceAllocations);
+    setTermsList(rows);
+    setTermDivisionStats({
+      totalMarks: Number(rows.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
+    });
+
+    if (rows.length === 0) {
+      setSelectedTermRow(null);
+      return;
+    }
+
+    const firstClassName = rows[0]?.className || "Curriculum";
+    const firstTermName = rows[0]?.term;
+    const firstTermRows = rows.filter((row) => row.className === firstClassName && row.term === firstTermName);
+    setSelectedTermRow({
+      id: `term-${firstClassName}-${rows[0]?.termNumber || firstTermName}`,
+      className: firstClassName,
+      termNumber: rows[0]?.termNumber,
+      term: firstTermName,
+      unitName: "Whole Term",
+      chapters: Array.from(new Set<string>(firstTermRows.flatMap((row) => row.chapters as string[]))),
+      marks: Number(firstTermRows.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
+    });
+  };
+
+  const loadPlanningWorkspaceById = async (workspaceId: string) => {
+    if (!workspaceId) return null;
+    const res = await fetch(`/api/planning-workspaces/${workspaceId}`);
+    if (!res.ok) {
+      throw new Error(await readErrorFromResponse(res, "Failed to load planning workspace."));
+    }
+    const data = await res.json();
+    const workspace = data.workspace as PlanningWorkspace;
+    setCurrentWorkspaceId(workspace._id);
+    setActiveWorkspace(workspace);
+    localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    return workspace;
+  };
+
+  const ensurePlanningWorkspaceForCurriculum = async (curriculumId: string) => {
+    if (!curriculumId) return null;
+
+    const existingRes = await fetch(`/api/planning-workspaces/by-curriculum/${curriculumId}`);
+    if (existingRes.ok) {
+      const existingData = await existingRes.json();
+      const workspace = existingData.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+      return workspace;
+    }
+
+    const createRes = await fetch("/api/planning-workspaces", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ curriculumId }),
+    });
+    if (!createRes.ok) {
+      throw new Error(await readErrorFromResponse(createRes, "Failed to create planning workspace."));
+    }
+
+    const createData = await createRes.json();
+    const workspace = createData.workspace as PlanningWorkspace;
+    setCurrentWorkspaceId(workspace._id);
+    setActiveWorkspace(workspace);
+    localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    return workspace;
   };
 
   const restoreCurriculumById = async (curriculumId: string, options?: { silent?: boolean }) => {
@@ -189,11 +299,13 @@ export default function App() {
       setExtractedData(curriculumRecord.extractedCurriculum);
       setEditingJsonText(JSON.stringify(curriculumRecord.extractedCurriculum, null, 2));
       localStorage.setItem(LAST_CURRICULUM_ID_KEY, curriculumRecord._id);
+      await ensurePlanningWorkspaceForCurriculum(curriculumRecord._id);
       setErrorHeader(null);
       await fetchSavedCurriculums();
     } catch (error: any) {
       console.error("[Frontend] Restore curriculum failed", error);
       localStorage.removeItem(LAST_CURRICULUM_ID_KEY);
+      localStorage.removeItem(LAST_WORKSPACE_ID_KEY);
       if (!silent) {
         setErrorHeader(error.message || "Unable to restore the saved curriculum.");
       }
@@ -206,7 +318,7 @@ export default function App() {
 
   const handleOpenSavedCurriculum = async (curriculumId: string) => {
     await restoreCurriculumById(curriculumId);
-    setActiveStep(0);
+    setActiveStep(1);
   };
 
   const handleDeleteSavedCurriculum = async (curriculumId: string) => {
@@ -219,7 +331,6 @@ export default function App() {
 
       if (currentCurriculumId === curriculumId) {
         clearCurriculumWorkspace();
-        localStorage.removeItem(LAST_CURRICULUM_ID_KEY);
       }
 
       await fetchSavedCurriculums();
@@ -230,29 +341,115 @@ export default function App() {
   };
 
   useEffect(() => {
-    void fetchSavedCurriculums().catch((error: any) => {
-      console.error("[Frontend] Load saved curriculums failed", error);
-    });
+    void (async () => {
+      try {
+        await fetchSavedCurriculums();
+        const lastCurriculumId = localStorage.getItem(LAST_CURRICULUM_ID_KEY);
+        if (lastCurriculumId) {
+          await restoreCurriculumById(lastCurriculumId, { silent: true });
+          return;
+        }
+
+        const lastWorkspaceId = localStorage.getItem(LAST_WORKSPACE_ID_KEY);
+        if (lastWorkspaceId) {
+          await loadPlanningWorkspaceById(lastWorkspaceId);
+        }
+      } catch (error: any) {
+        console.error("[Frontend] Initial restore failed", error);
+      }
+    })();
   }, []);
+
+  useEffect(() => {
+    syncWorkspaceIntoCoursePlanState(activeWorkspace);
+  }, [activeWorkspace]);
+
+  const normalizePdfLineToMarkdown = (line: string): string => {
+    const trimmed = line.replace(/\s+/g, " ").trim();
+    if (!trimmed) return "";
+
+    if (/^(?:[-*•]|[A-Z]\.|[0-9]+[.)])\s+/.test(trimmed)) {
+      return trimmed
+        .replace(/^•\s+/, "- ")
+        .replace(/^([A-Z]\.)\s+/, "- $1 ")
+        .replace(/^([0-9]+[.)])\s+/, "- $1 ");
+    }
+
+    if (/^(?:chapter|unit|section|part|class|grade|course structure|practical syllabus|question paper design)\b/i.test(trimmed)) {
+      return `## ${trimmed}`;
+    }
+
+    if (
+      trimmed.length <= 90 &&
+      /[A-Za-z]/.test(trimmed) &&
+      trimmed === trimmed.toUpperCase()
+    ) {
+      return `## ${trimmed}`;
+    }
+
+    return trimmed;
+  };
 
   const extractPdfText = async (file: File): Promise<string> => {
     const buffer = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
     const pageTexts: string[] = [];
 
+    console.log(`[Frontend][PDF->MD] Starting conversion for "${file.name}" with ${pdf.numPages} page(s).`);
+
     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
       const page = await pdf.getPage(pageNumber);
       const content = await page.getTextContent();
-      const pageText = content.items
-        .map((item) => ("str" in item ? item.str : ""))
-        .join(" ")
-        .replace(/\s+/g, " ")
-        .trim();
+      const textItems = content.items
+        .filter((item): item is typeof content.items[number] & { str: string; transform: number[] } => "str" in item)
+        .map((item) => ({
+          text: item.str.replace(/\s+/g, " ").trim(),
+          x: item.transform[4] || 0,
+          y: item.transform[5] || 0,
+        }))
+        .filter((item) => item.text);
 
-      pageTexts.push(`--- Page ${pageNumber} ---\n${pageText}`);
+      const lines: { y: number; parts: { x: number; text: string }[] }[] = [];
+      for (const item of textItems) {
+        const existingLine = lines.find((line) => Math.abs(line.y - item.y) < 3);
+        if (existingLine) {
+          existingLine.parts.push({ x: item.x, text: item.text });
+        } else {
+          lines.push({ y: item.y, parts: [{ x: item.x, text: item.text }] });
+        }
+      }
+
+      const markdownLines = lines
+        .sort((a, b) => b.y - a.y)
+        .map((line) =>
+          normalizePdfLineToMarkdown(
+            line.parts
+              .sort((a, b) => a.x - b.x)
+              .map((part) => part.text)
+              .join(" ")
+          )
+        )
+        .filter(Boolean);
+
+      pageTexts.push([
+        `# Page ${pageNumber}`,
+        "",
+        ...markdownLines,
+      ].join("\n"));
+
+      console.log(
+        `[Frontend][PDF->MD] Page ${pageNumber}/${pdf.numPages} converted with ${markdownLines.length} markdown line(s).`
+      );
     }
 
-    return pageTexts.join("\n\n").trim();
+    const markdownText = pageTexts.join("\n\n---\n\n").trim();
+    console.log(
+      `[Frontend][PDF->MD] Completed conversion for "${file.name}". Markdown length: ${markdownText.length} chars.`
+    );
+    console.log(
+      `[Frontend][PDF->MD] Markdown preview (first 1000 chars):\n${markdownText.slice(0, 1000)}`
+    );
+    return markdownText;
   };
 
   const readTextFile = (file: File): Promise<string> =>
@@ -271,11 +468,13 @@ export default function App() {
 
     try {
       if (lowerName.endsWith(".pdf")) {
-        const extractedText = await extractPdfText(file);
-        if (!extractedText.trim()) {
+        console.log(`[Frontend] PDF upload detected for "${file.name}". Converting to markdown before extraction.`);
+        const markdownText = await extractPdfText(file);
+        if (!markdownText.trim()) {
           throw new Error("No readable text was extracted from the PDF.");
         }
-        setInputText(extractedText);
+        console.log(`[Frontend] PDF "${file.name}" converted to markdown and loaded into curriculum input.`);
+        setInputText(markdownText);
         return;
       }
 
@@ -362,6 +561,11 @@ export default function App() {
       if (data.curriculumId) {
         localStorage.setItem(LAST_CURRICULUM_ID_KEY, data.curriculumId);
       }
+      if (data.workspaceId && data.workspace) {
+        setCurrentWorkspaceId(data.workspaceId);
+        setActiveWorkspace(data.workspace as PlanningWorkspace);
+        localStorage.setItem(LAST_WORKSPACE_ID_KEY, data.workspaceId);
+      }
       await fetchSavedCurriculums();
     } catch (err: any) {
       console.error(`[Frontend][${requestId}] Analyze curriculum failed`, err);
@@ -374,14 +578,141 @@ export default function App() {
   /**
    * Save customized/edited JSON curriculum back to application state
    */
-  const handleSaveJsonEdit = () => {
+  const handleSaveJsonEdit = async () => {
     try {
       const parsed = JSON.parse(editingJsonText);
-      setExtractedData(parsed);
+      if (!currentCurriculumId) {
+        setExtractedData(parsed);
+        setIsEditingJson(false);
+        setErrorHeader(null);
+        return;
+      }
+
+      setLoading(true);
+      setLoadingMessage("Saving edited curriculum and refreshing the planning workspace...");
+      const res = await fetch(`/api/curriculums/${currentCurriculumId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          extractedCurriculum: parsed,
+          fileName,
+          sourceText: inputText,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to save the edited curriculum."));
+      }
+
+      const data = await res.json();
+      setExtractedData(data.curriculum.extractedCurriculum);
+      setEditingJsonText(JSON.stringify(data.curriculum.extractedCurriculum, null, 2));
       setIsEditingJson(false);
       setErrorHeader(null);
+      if (data.workspaceId && data.workspace) {
+        setCurrentWorkspaceId(data.workspaceId);
+        setActiveWorkspace(data.workspace as PlanningWorkspace);
+        localStorage.setItem(LAST_WORKSPACE_ID_KEY, data.workspaceId);
+      }
+      await fetchSavedCurriculums();
     } catch (e) {
-      setErrorHeader("Invalid JSON formulation. Please review brackets and commas.");
+      const message =
+        e instanceof SyntaxError
+          ? "Invalid JSON formulation. Please review brackets and commas."
+          : (e as Error)?.message || "Unable to save the edited curriculum.";
+      setErrorHeader(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApproveCurriculumWorkspace = async () => {
+    if (!currentWorkspaceId) {
+      setErrorHeader("No planning workspace is attached to this curriculum yet.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Approving curriculum and unlocking course planning...");
+
+    try {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/approve-curriculum`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes: "Approved from Step 1 review." }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to approve curriculum."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    } catch (error: any) {
+      console.error("[Frontend] Curriculum approval failed", error);
+      setErrorHeader(error.message || "Unable to approve the curriculum for planning.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateAcademicConfigField = (field: keyof AcademicConfig, value: string | number | null) => {
+    setAcademicConfigDraft((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const updateAcademicCalendarField = (
+    field: keyof NonNullable<AcademicConfig["calendar"]>,
+    value: string | number | null
+  ) => {
+    setAcademicConfigDraft((prev) => ({
+      ...prev,
+      calendar: {
+        ...(prev.calendar || {}),
+        [field]: value,
+      },
+    }));
+  };
+
+  const handleSaveAcademicConfig = async () => {
+    if (!currentWorkspaceId) {
+      setErrorHeader("No planning workspace is attached to this curriculum yet.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Saving academic configuration for course planning...");
+
+    try {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          academicConfig: academicConfigDraft,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to save academic configuration."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    } catch (error: any) {
+      console.error("[Frontend] Academic configuration save failed", error);
+      setErrorHeader(error.message || "Unable to save the academic configuration.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -390,30 +721,51 @@ export default function App() {
    */
   const handleDivideTerms = async () => {
     if (!extractedData) return;
+    if (!activeWorkspace?.curriculumApproval?.approved) {
+      setErrorHeader("Approve the curriculum in Step 1 before generating course or term plans.");
+      return;
+    }
     setErrorHeader(null);
     setLoading(true);
-    setLoadingMessage("Automatically dividing the curriculum into balanced academic terms...");
+    setLoadingMessage("Building the approved course plan and balancing the curriculum into academic terms...");
 
     try {
-      const normalizedCurriculum =
-        (extractedData as any)?.normalizedStructure ||
-        (extractedData as any)?.stagedExtraction?.normalizedStructure;
-      const res = await fetch("/api/divide-terms", {
+      const saveRes = await fetch(`/api/planning-workspaces/${currentWorkspaceId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          academicConfig: academicConfigDraft,
+        }),
+      });
+
+      if (!saveRes.ok) {
+        throw new Error(await readErrorFromResponse(saveRes, "Failed to save academic configuration before generating the course plan."));
+      }
+
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/recommend-course-plan`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ curriculum: normalizedCurriculum || extractedData }),
+        body: JSON.stringify({
+          preferredTermCount,
+        }),
       });
 
       if (!res.ok) {
-        throw new Error(await readErrorFromResponse(res, "Failed to split into terms"));
+        throw new Error(await readErrorFromResponse(res, "Failed to build the course plan"));
       }
 
       const termResponse = await res.json();
-      const terms = Array.isArray(termResponse) ? termResponse : termResponse.rows || [];
+      const terms = mapAllocationsToTermRows(termResponse?.recommendations || []);
       setTermDivisionStats({
-        totalMarks: Number(termResponse?.statistics?.total_marks || 0),
+        totalMarks: Number(terms.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
       });
       setTermsList(terms);
+      if (termResponse?.workspace) {
+        const workspace = termResponse.workspace as PlanningWorkspace;
+        setCurrentWorkspaceId(workspace._id);
+        setActiveWorkspace(workspace);
+        localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+      }
       if (terms.length > 0) {
         const firstClassName = terms[0]?.className || "Curriculum";
         const firstTermName = terms[0]?.term;
@@ -437,10 +789,168 @@ export default function App() {
     }
   };
 
+  const handleUseRecommendedCoursePlan = async () => {
+    if (!currentWorkspaceId || !activeWorkspace?.termPlan?.recommendations?.length) {
+      setErrorHeader("Generate course plan recommendations before saving allocations.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Saving recommended course plan as the active term allocation...");
+
+    try {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          academicConfig: academicConfigDraft,
+          termPlan: {
+            ...(activeWorkspace.termPlan || {}),
+            approved: false,
+            allocations: activeWorkspace.termPlan.recommendations,
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to save the recommended course plan."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    } catch (error: any) {
+      console.error("[Frontend] Save course plan allocations failed", error);
+      setErrorHeader(error.message || "Unable to save the recommended course plan.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApproveCoursePlan = async () => {
+    if (!currentWorkspaceId) {
+      setErrorHeader("No planning workspace is attached to this curriculum yet.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Approving course plan and unlocking session planning...");
+
+    try {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/approve-course-plan`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to approve the course plan."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+      setActiveStep(3);
+    } catch (error: any) {
+      console.error("[Frontend] Course plan approval failed", error);
+      setErrorHeader(error.message || "Unable to approve the course plan.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const curriculumApproved = !!activeWorkspace?.curriculumApproval?.approved;
+  const coursePlanApproved = !!activeWorkspace?.termPlan?.approved;
+  const savedTermAllocations = activeWorkspace?.termPlan?.allocations || [];
+  const recommendedTermAllocations = activeWorkspace?.termPlan?.recommendations || [];
+  const workspaceConfidence =
+    activeWorkspace?.curriculumApproval?.confidence ??
+    (extractedData as any)?.structure_confidence ??
+    (extractedData as any)?.profile_confidence ??
+    null;
+  const workspaceConfidencePercent =
+    workspaceConfidence == null
+      ? null
+      : Number(workspaceConfidence) > 1
+        ? Math.round(Number(workspaceConfidence))
+        : Math.round(Number(workspaceConfidence) * 100);
+  const normalizedCurriculum =
+    (extractedData as any)?.normalizedStructure ||
+    (extractedData as any)?.stagedExtraction?.normalizedStructure ||
+    null;
+  const normalizedClasses = Array.isArray(normalizedCurriculum?.classes) ? normalizedCurriculum.classes : [];
+  const normalizedUnits = normalizedClasses.flatMap((cls: any) => cls?.units || []);
+  const normalizedChapters = normalizedUnits.flatMap((unit: any) => unit?.chapters || []);
+  const canonicalUnitsCount = normalizedUnits.length || extractedData?.units?.length || 0;
+  const totalTopicsCount = normalizedUnits.length > 0
+    ? normalizedUnits.reduce((sum: number, unit: any) => {
+        const unitTopicCount = (unit?.topics || []).length;
+        const chapterTopicCount = (unit?.chapters || []).reduce(
+          (chapterSum: number, chapter: any) => chapterSum + ((chapter?.topics || []).length || 0),
+          0
+        );
+        return sum + unitTopicCount + chapterTopicCount;
+      }, 0)
+    : Array.isArray(extractedData?.units)
+      ? extractedData.units.reduce((sum, unit) => sum + (unit.topics?.length || 0), 0)
+      : 0;
+  const totalSubtopicsCount = normalizedUnits.length > 0
+    ? normalizedUnits.reduce((sum: number, unit: any) => {
+        const unitSubtopicCount = (unit?.subtopics || []).length;
+        const chapterSubtopicCount = (unit?.chapters || []).reduce(
+          (chapterSum: number, chapter: any) => chapterSum + ((chapter?.subtopics || []).length || 0),
+          0
+        );
+        return sum + unitSubtopicCount + chapterSubtopicCount;
+      }, 0)
+    : normalizedChapters.reduce(
+        (sum: number, chapter: any) => sum + ((chapter?.subtopics || []).length || 0),
+        0
+      );
+  const totalObjectivesCount = totalSubtopicsCount > 0
+    ? totalSubtopicsCount
+    : extractedData?.coreObjectives?.length || 0;
+  const totalPracticalsCount =
+    (Array.isArray(normalizedCurriculum?.practicals) ? normalizedCurriculum.practicals.length : 0) ||
+    (Array.isArray((extractedData as any)?.stagedExtraction?.activities?.practicals)
+      ? (extractedData as any).stagedExtraction.activities.practicals.length
+      : 0);
+  const reviewChecklist = [
+    {
+      label: "Subject and grade detected",
+      complete: Boolean(extractedData?.subject && extractedData?.gradeLevel),
+    },
+    {
+      label: "At least one unit extracted",
+      complete: canonicalUnitsCount > 0,
+    },
+    {
+      label: "Topics available for planning",
+      complete: totalTopicsCount > 0,
+    },
+    {
+      label: "Learning outcomes available",
+      complete: totalObjectivesCount > 0,
+    },
+    {
+      label: "Planning workspace attached",
+      complete: Boolean(currentWorkspaceId),
+    },
+  ];
+
   /**
    * Term level verification - Proceeding to session specifications
    */
   const handleConfigureSessionsForTerm = (term: TermRow) => {
+    if (!coursePlanApproved) {
+      setErrorHeader("Approve the course plan in Step 2 before moving to session planning.");
+      return;
+    }
     setSelectedTermRow(term);
     setActiveStep(3); // Jump to Session Specifier
   };
@@ -580,15 +1090,15 @@ export default function App() {
               }`}
             >
               <LayoutDashboard className="w-3.5 h-3.5" />
-              <span>Dashboard</span>
+              <span>Overview</span>
             </button>
             <div className="w-[1px] h-4 bg-slate-200 mx-0.5" />
             {[
-              { num: 1, label: "Extraction" },
-              { num: 2, label: "Terms" },
-              { num: 3, label: "Specs" },
-              { num: 4, label: "Sessions" },
-              { num: 5, label: "Saved" },
+              { num: 1, label: "Curriculum" },
+              { num: 2, label: "Course Plan" },
+              { num: 3, label: "Session Plan" },
+              { num: 4, label: "Content" },
+              { num: 5, label: "Review" },
             ].map((step) => {
               const isFirstOrActive = step.num === activeStep;
               const isPast = step.num < activeStep;
@@ -738,7 +1248,7 @@ export default function App() {
               {/* App Status Indicator */}
               <div className="flex items-center gap-2 pb-3.5 border-b border-slate-100">
                 <div className="w-2 h-2 rounded-full bg-[#1EABDA]" />
-                <span className="text-xs font-bold text-slate-700 font-display">Lesson Workspace</span>
+                <span className="text-xs font-bold text-slate-700 font-display">Five-Phase Planner</span>
                 <span className="ml-auto text-[10px] bg-sky-50 text-[#1EABDA] px-2 py-0.5 rounded-full font-bold">
                   Active
                 </span>
@@ -747,11 +1257,11 @@ export default function App() {
               {/* Navigation Skeleton Placeholders (Disabled / Non-Functional) */}
               <nav className="space-y-2">
                 {[
-                  { label: "Dashboard", active: true },
-                  { label: "Syllabus Analysis", active: false },
-                  { label: "Term Configuration", active: false },
-                  { label: "Deliverable Specs", active: false },
-                  { label: "Material Outlines", active: false },
+                  { label: "Curriculum Setup", active: activeStep === 1 },
+                  { label: "Course Planning", active: activeStep === 2 },
+                  { label: "Session Planning", active: activeStep === 3 },
+                  { label: "Content Generation", active: activeStep === 4 },
+                  { label: "Assessment & Revision", active: activeStep === 5 },
                 ].map((item, idx) => (
                   <div
                     key={idx}
@@ -1949,7 +2459,7 @@ export default function App() {
                     <span className="w-3 h-3 rounded-full bg-[#E0CB15]" />
                     <h3 className="font-display font-extrabold text-slate-800">Upload Curriculum Material</h3>
                   </div>
-                  <span className="text-xs text-slate-400">PDF, DOC, TXT supported</span>
+                  <span className="text-xs text-slate-400">PDF and TXT supported</span>
                 </div>
 
                 {/* Drag and Drop Zone */}
@@ -2048,54 +2558,124 @@ export default function App() {
 
                 {extractedData ? (
                   <div className="space-y-4 flex-1 flex flex-col justify-between">
-                    
-                    
-                    {false && <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-bold">
-                            Subject Domain
-                          </span>
-                          <span className="text-sm font-extrabold text-slate-800">
-                            {extractedData!.subject}
-                          </span>
-                        </div>
-                        <div>
-                          <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-bold">
-                            Standard Grade
-                          </span>
-                          <span className="text-sm font-extrabold text-slate-800">
-                            {extractedData!.gradeLevel}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-bold">
-                          Core Narrative Outlines
-                        </span>
-                        <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
-                          {extractedData!.overallDescription}
-                        </p>
-                      </div>
-
-                      {/* Display Objectives bento badges */}
-                      <div>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-bold mb-1">
-                          Calculated Objectives
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {extractedData!.coreObjectives.map((obj, i) => (
-                            <span
-                              key={i}
-                              className="text-[10px] font-medium bg-[#E9CAB7]/25 text-amber-900 px-2 py-1 rounded-md"
-                            >
-                              ✓ {obj}
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="space-y-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-display font-black text-slate-800">
+                              Planning Workspace
                             </span>
-                          ))}
+                            <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                              curriculumApproved
+                                ? "bg-emerald-100 text-emerald-700"
+                                : "bg-amber-100 text-amber-700"
+                            }`}>
+                              {curriculumApproved ? "Approved" : "Approval Needed"}
+                            </span>
+                          </div>
+                          <div className="text-xs font-semibold text-slate-500">
+                            {currentWorkspaceId ? `Workspace ID: ${currentWorkspaceId}` : "Workspace will be attached after analysis."}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-3 text-[11px] font-semibold text-slate-500">
+                            <span>{extractedData.subject || "Unknown Subject"}</span>
+                            <span>{extractedData.gradeLevel || "Unknown Grade"}</span>
+                            {workspaceConfidencePercent != null && (
+                              <span>Confidence: {workspaceConfidencePercent}%</span>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            onClick={handleApproveCurriculumWorkspace}
+                            disabled={!currentWorkspaceId || curriculumApproved}
+                            className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold transition ${
+                              !currentWorkspaceId || curriculumApproved
+                                ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400"
+                                : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                            }`}
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            {curriculumApproved ? "Curriculum Approved" : "Approve Curriculum"}
+                          </button>
                         </div>
                       </div>
-                    </div>}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                      <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3">
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Units</div>
+                        <div className="mt-1 text-lg font-display font-black text-slate-800">{canonicalUnitsCount}</div>
+                      </div>
+                      <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3">
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Topics</div>
+                        <div className="mt-1 text-lg font-display font-black text-slate-800">{totalTopicsCount}</div>
+                      </div>
+                      <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3">
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Subtopics</div>
+                        <div className="mt-1 text-lg font-display font-black text-slate-800">{totalSubtopicsCount}</div>
+                      </div>
+                      <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3">
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Objectives</div>
+                        <div className="mt-1 text-lg font-display font-black text-slate-800">{totalObjectivesCount}</div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-4">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <h4 className="text-sm font-display font-black text-slate-800">Detected Curriculum Review</h4>
+                          <p className="text-xs font-medium text-slate-500">
+                            Review the extracted structure, save any edits, then approve to unlock planning.
+                          </p>
+                        </div>
+                        <div className="rounded-xl bg-white px-3 py-2 text-[11px] font-semibold text-slate-500 border border-slate-200">
+                          Practicals: {totalPracticalsCount}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1.3fr_1fr]">
+                        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Summary</div>
+                          <div className="mt-2 space-y-2">
+                            <div className="text-sm font-bold text-slate-800">
+                              {extractedData.subject || "Unknown Subject"} • {extractedData.gradeLevel || "Unknown Grade"}
+                            </div>
+                            <p className="text-xs leading-relaxed text-slate-600">
+                              {extractedData.overallDescription || "No high-level description was generated for this curriculum yet."}
+                            </p>
+                            {extractedData.coreObjectives?.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5 pt-1">
+                                {extractedData.coreObjectives.slice(0, 6).map((objective, index) => (
+                                  <span
+                                    key={index}
+                                    className="rounded-md bg-[#E9CAB7]/25 px-2 py-1 text-[10px] font-medium text-amber-900"
+                                  >
+                                    {objective}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Review Checklist</div>
+                          <div className="mt-3 space-y-2">
+                            {reviewChecklist.map((item) => (
+                              <div key={item.label} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                                <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full ${
+                                  item.complete ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                                }`}>
+                                  {item.complete ? <Check className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+                                </span>
+                                <span>{item.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Extracted JSON Editor/Viewer Container */}
                     <div className={`bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden flex flex-col transition-all duration-300 ${
@@ -2118,11 +2698,16 @@ export default function App() {
                           JSON output is hidden. Use the toggle button above to expand it.
                         </div>
                       ) : isEditingJson ? (
-                        <textarea
-                          value={editingJsonText}
-                          onChange={(e) => setEditingJsonText(e.target.value)}
-                          className="w-full flex-1 min-h-[320px] p-3 font-mono text-xs bg-slate-900 text-[#3CC583] focus:outline-none overflow-y-auto resize-none"
-                        />
+                        <div className="flex flex-1 flex-col">
+                          <div className="border-b border-slate-200 bg-amber-50 px-4 py-2 text-[11px] font-semibold text-amber-800">
+                            Saving curriculum edits will reset approval and downstream planning recommendations so the workflow stays consistent.
+                          </div>
+                          <textarea
+                            value={editingJsonText}
+                            onChange={(e) => setEditingJsonText(e.target.value)}
+                            className="w-full flex-1 min-h-[320px] p-3 font-mono text-xs bg-slate-900 text-[#3CC583] focus:outline-none overflow-y-auto resize-none"
+                          />
+                        </div>
                       ) : (
                         <pre className="flex-1 overflow-auto p-4 text-xs font-mono text-slate-700 whitespace-pre-wrap break-words min-h-[320px]">
                           {JSON.stringify(extractedData, null, 2)}
@@ -2159,10 +2744,17 @@ export default function App() {
                       </button>
 
                       <div className="bg-[#E9CAB7]/20 px-3 py-1.5 rounded-xl flex items-center gap-2 border border-[#E9CAB7]/40">
-                        <span className="text-[10px] font-bold text-[#586A71]">Auto Term Division</span>
+                        <span className="text-[10px] font-bold text-[#586A71]">
+                          {curriculumApproved ? "Auto Term Division" : "Approve Curriculum To Continue"}
+                        </span>
                         <button
                           onClick={handleDivideTerms}
-                          className="bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-extrabold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-xs transition"
+                          disabled={!curriculumApproved}
+                          className={`text-white font-extrabold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-xs transition ${
+                            curriculumApproved
+                              ? "bg-[#36ADAA] hover:bg-[#36ADAA]/90"
+                              : "bg-slate-300 cursor-not-allowed"
+                          }`}
                         >
                           Generate Terms
                           <ArrowRight className="w-3 h-3" />
@@ -2193,6 +2785,270 @@ export default function App() {
         {/* -------------------- STEP 2: TERMS PLANNER TABLE -------------------- */}
         {activeStep === 2 && (
           <div className="space-y-6 animate-fadeIn">
+            {!curriculumApproved ? (
+              <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
+                <div className="w-16 h-16 bg-amber-100 rounded-3xl flex items-center justify-center text-amber-700 mx-auto">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-display font-extrabold text-[#2B3437] text-xl">
+                    Curriculum Approval Is Required First
+                  </h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    Complete Phase 1 review and approve the curriculum before building the course plan.
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setActiveStep(1)}
+                    className="px-5 py-3 bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    Return to Curriculum Setup
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <>
+            <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_1.4fr] gap-6">
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-bold text-[#586A71]">Phase 2</div>
+                      <h2 className="text-2xl font-display font-extrabold tracking-tight text-slate-800">
+                        Course Planning Setup
+                      </h2>
+                    </div>
+                    <button
+                      onClick={() => setActiveStep(1)}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      Back
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Save the academic setup, generate AI term recommendations, then approve the course plan to unlock session planning.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Academic Year</span>
+                    <input
+                      value={academicConfigDraft.academicYear || ""}
+                      onChange={(e) => updateAcademicConfigField("academicYear", e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="2026-27"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">School</span>
+                    <input
+                      value={academicConfigDraft.school || ""}
+                      onChange={(e) => updateAcademicConfigField("school", e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="School name"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Board</span>
+                    <input
+                      value={academicConfigDraft.board || ""}
+                      onChange={(e) => updateAcademicConfigField("board", e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="CBSE / ICSE / State"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Medium</span>
+                    <input
+                      value={academicConfigDraft.medium || ""}
+                      onChange={(e) => updateAcademicConfigField("medium", e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="English"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Language</span>
+                    <input
+                      value={academicConfigDraft.language || ""}
+                      onChange={(e) => updateAcademicConfigField("language", e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="English"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Class / Grade</span>
+                    <input
+                      value={academicConfigDraft.className || extractedData?.gradeLevel || ""}
+                      onChange={(e) => updateAcademicConfigField("className", e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="Class IX"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Section</span>
+                    <input
+                      value={academicConfigDraft.section || ""}
+                      onChange={(e) => updateAcademicConfigField("section", e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="A"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Book</span>
+                    <input
+                      value={academicConfigDraft.book || ""}
+                      onChange={(e) => updateAcademicConfigField("book", e.target.value)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="NCERT Mathematics"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Weekly Periods</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={academicConfigDraft.weeklyPeriods ?? ""}
+                      onChange={(e) => updateAcademicConfigField("weeklyPeriods", e.target.value ? Number(e.target.value) : null)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="6"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Period Minutes</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={academicConfigDraft.periodDurationMinutes ?? ""}
+                      onChange={(e) => updateAcademicConfigField("periodDurationMinutes", e.target.value ? Number(e.target.value) : null)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="45"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Working Days</span>
+                    <input
+                      type="number"
+                      min={0}
+                      value={academicConfigDraft.calendar?.workingDays ?? ""}
+                      onChange={(e) => updateAcademicCalendarField("workingDays", e.target.value ? Number(e.target.value) : null)}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                      placeholder="220"
+                    />
+                  </label>
+                  <label className="space-y-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Preferred Terms</span>
+                    <select
+                      value={preferredTermCount}
+                      onChange={(e) => setPreferredTermCount(Number(e.target.value))}
+                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                    >
+                      {[1, 2, 3, 4].map((count) => (
+                        <option key={count} value={count}>{count}</option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <button
+                    onClick={handleSaveAcademicConfig}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"
+                  >
+                    <Settings className="w-3.5 h-3.5" />
+                    Save Academic Setup
+                  </button>
+                  <button
+                    onClick={handleDivideTerms}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#36ADAA] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#36ADAA]/90"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Generate Course Plan
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="text-xs font-bold text-[#586A71]">Planner Status</div>
+                    <h3 className="text-xl font-display font-extrabold text-slate-800">Term Allocation Review</h3>
+                    <p className="text-xs text-slate-500">
+                      Recommendations are stored separately from approved allocations so we can keep an edit-friendly workflow.
+                    </p>
+                  </div>
+                  <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${
+                    coursePlanApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                  }`}>
+                    {coursePlanApproved ? "Course Plan Approved" : "Awaiting Approval"}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Recommendations</div>
+                    <div className="mt-1 text-lg font-display font-black text-slate-800">{recommendedTermAllocations.length}</div>
+                  </div>
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Saved Allocations</div>
+                    <div className="mt-1 text-lg font-display font-black text-slate-800">{savedTermAllocations.length}</div>
+                  </div>
+                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Preferred Terms</div>
+                    <div className="mt-1 text-lg font-display font-black text-slate-800">{preferredTermCount}</div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-3">
+                  <div className="text-sm font-display font-black text-slate-800">Phase 2 Checklist</div>
+                  {[
+                    { label: "Curriculum approved", complete: curriculumApproved },
+                    { label: "Academic setup saved", complete: Boolean(activeWorkspace?.academicConfig && Object.keys(activeWorkspace.academicConfig).length > 0) },
+                    { label: "Recommendations generated", complete: recommendedTermAllocations.length > 0 },
+                    { label: "Allocations selected", complete: savedTermAllocations.length > 0 },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                      <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full ${
+                        item.complete ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                      }`}>
+                        {item.complete ? <Check className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+                      </span>
+                      <span>{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={handleUseRecommendedCoursePlan}
+                    disabled={recommendedTermAllocations.length === 0}
+                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                      recommendedTermAllocations.length === 0
+                        ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400"
+                        : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"
+                    }`}
+                  >
+                    <Layers className="w-3.5 h-3.5" />
+                    Use Recommendations
+                  </button>
+                  <button
+                    onClick={handleApproveCoursePlan}
+                    disabled={savedTermAllocations.length === 0 || coursePlanApproved}
+                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                      savedTermAllocations.length === 0 || coursePlanApproved
+                        ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400"
+                        : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    }`}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    {coursePlanApproved ? "Approved" : "Approve Course Plan"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
             {termsList.length === 0 ? (
               <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
                 <div className="w-16 h-16 bg-[#E9CAB7]/25 rounded-3xl flex items-center justify-center text-[#DE8431] mx-auto">
@@ -2370,20 +3226,51 @@ export default function App() {
                   <div className="w-10 h-10 rounded-xl bg-[#3CC583]/15 flex items-center justify-center shrink-0">
                     <CheckSquare className="w-5 h-5 text-[#3CC583]" />
                   </div>
-                  <div>
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-sm font-display font-black text-slate-800">
+                        {selectedTermRow.term}
+                      </span>
+                      <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-500 border border-slate-200">
+                        {selectedTermRow.className || "Curriculum"}
+                      </span>
+                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                        coursePlanApproved
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}>
+                        {coursePlanApproved ? "Ready for Session Planning" : "Course Plan Approval Needed"}
+                      </span>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-500">
+                      {selectedTermRow.chapters.length} chapter{selectedTermRow.chapters.length === 1 ? "" : "s"} selected
+                      {" "}with {selectedTermRow.marks} marks across this term.
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      {coursePlanApproved
+                        ? "This approved term can now be used to configure session preferences and generate outlines."
+                        : "Approve the Phase 2 course plan first, then continue into Session Planning."}
+                    </p>
                   </div>
                 </div>
 
                 <button
                   onClick={() => handleConfigureSessionsForTerm(selectedTermRow)}
-                  className="bg-[#2B3437] hover:bg-[#2B3437]/90 text-white font-bold text-xs py-3 px-6 rounded-xl transition flex items-center gap-2 shadow-xs"
+                  disabled={!coursePlanApproved}
+                  className={`font-bold text-xs py-3 px-6 rounded-xl transition flex items-center gap-2 shadow-xs ${
+                    coursePlanApproved
+                      ? "bg-[#2B3437] hover:bg-[#2B3437]/90 text-white"
+                      : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                  }`}
                 >
-                  Configure Sessions Specs
+                  {coursePlanApproved ? "Configure Sessions Specs" : "Approve Course Plan First"}
                   <Sliders className="w-4 h-4 text-[#E9CAB7]" />
                 </button>
               </div>
             )}
 
+              </>
+            )}
               </>
             )}
           </div>
@@ -2392,7 +3279,29 @@ export default function App() {
         {/* -------------------- STEP 3: SESSION SPECS & RESOURCE CONFIG -------------------- */}
         {activeStep === 3 && (
           <div className="space-y-6 animate-fadeIn">
-            {!selectedTermRow ? (
+            {!coursePlanApproved ? (
+              <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
+                <div className="w-16 h-16 bg-amber-100 rounded-3xl flex items-center justify-center text-amber-700 mx-auto">
+                  <Sliders className="w-8 h-8" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-display font-extrabold text-[#2B3437] text-xl">
+                    Course Plan Approval Comes Next
+                  </h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    Finish Phase 2 and approve the course plan before defining session preferences and outlines.
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setActiveStep(2)}
+                    className="px-5 py-3 bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    Return to Course Planning
+                  </button>
+                </div>
+              </div>
+            ) : !selectedTermRow ? (
               <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
                 <div className="w-16 h-16 bg-[#9FCDD2]/35 rounded-3xl flex items-center justify-center text-[#36ADAA] mx-auto">
                   <Sliders className="w-8 h-8 animate-pulse" />

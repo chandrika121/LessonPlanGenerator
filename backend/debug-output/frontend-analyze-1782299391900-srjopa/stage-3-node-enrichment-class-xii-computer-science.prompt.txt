@@ -1,0 +1,300 @@
+Stage 3: Node Enrichment - Class XII - Computer Science
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XII",
+  "subject": "Computer Science",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Computational Thinking and Programming – 2",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Revision of Python topics covered in Class XI.",
+        "Functions: types of function (built-in functions, functions defined in module, user defined functions), creating user defined function, arguments and parameters, default parameters, positional parameters, function returning value(s), flow of execution, scope of a variable (global scope, local scope)",
+        "Exception Handling: Introduction, handling exceptions using try-except-finally blocks",
+        "Introduction to files, types of files (Text file, Binary file, CSV file), relative and absolute paths"
+      ],
+      "subtopics": [
+        "Text file: opening a text file, text file open modes (r, r+, w, w+, a, a+), closing a text file, opening a file using with clause, writing/appending data to a text file using write() and writelines(), reading from a text file using read(), readline() and readlines(), seek and tell methods, manipulation of data in a text file",
+        "Binary file: basic operations on a binary file: open using file open modes (rb, rb+, wb, wb+, ab, ab+), close a binary file, import pickle module, dump() and load() method, read, write/create, search, append and update operations in a binary file",
+        "CSV file: import csv module, open / close csv file, write into a csv file using writer(),writerow(),writerows() and read from a csv file using reader()",
+        "Data Structure: Stack, operations on stack (push & pop), implementation of stack using list."
+      ],
+      "key_concepts": [
+        "Revision",
+        "Functions",
+        "Exception Handling",
+        "File handling"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computational Thinking and Programming – 2",
+          "source_chapter_name": "Computational Thinking and Programming – 2",
+          "source_heading": "Computational Thinking and Programming – 2",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Computer Networks",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Evolution of networking: introduction to computer networks, evolution of networking (ARPANET, NSFNET, INTERNET)",
+        "Data communication terminologies: concept of communication, components of data communication (sender,receiver, message, communication media, protocols), measuring capacity of communication media (bandwidth, data transfer rate), IP address, switching techniques (Circuit switching, Packet switching)",
+        "Transmission media: Wired communication media (Twisted pair cable, Co-axial cable, Fiber-optic cable), Wireless media (Radio waves, Micro waves, Infrared waves)",
+        "Network devices (Modem, Ethernet card, RJ45, Repeater, Hub, Switch, Router, Gateway, WIFI card)",
+        "Network topologies and Network types: types of networks (PAN, LAN, MAN, WAN), networking topologies (Bus, Star, Tree)",
+        "Network protocol: HTTP, FTP, PPP, SMTP, TCP/IP, POP3, HTTPS, TELNET, VoIP",
+        "Introduction to web services: WWW, Hyper Text Markup Language (HTML), Extensible Markup Language (XML), domain names, URL, website, web browser, web servers, web hosting"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Networking Evolution",
+        "Data Communication",
+        "Transmission Media",
+        "Network Devices",
+        "Topologies and Types",
+        "Protocols",
+        "Web Services"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computer Networks",
+          "source_chapter_name": "Computer Networks",
+          "source_heading": "Computer Networks",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Database Management",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Database concepts: introduction to database concepts and its need",
+        "Relational data model: relation, attribute, tuple, domain, degree, cardinality, keys (candidate key, primary key, alternate key, foreign key)",
+        "Structured Query Language: introduction, Data Definition Language and Data Manipulation Language, data type (char(n), varchar(n), int, float, date), constraints (not null, unique, primary key), create database, use database, show databases, drop database, show tables, create table, describe table, alter table (add and remove an attribute, add and remove primary key), drop table, insert, delete, select, operators (mathematical, relational and logical), aliasing, distinct clause, where clause, in, between, order by, meaning of null, is null, is not null, like, update command, delete command, aggregate functions (max, min, avg, sum, count), group by, having clause, joins: cartesian product on two tables, equi-join and natural join",
+        "Interface of python with an SQL database: connecting SQL with Python, performing insert, update, delete queries using cursor, display data by using connect(), cursor(), execute(), commit(), fetchone(), fetchall(), rowcount, creating database connectivity applications, use of %s format specifier or format() to perform queries"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Database Concepts",
+        "Relational Data Model",
+        "SQL (DDL/DML)",
+        "Python-SQL Connectivity"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Database Management",
+          "source_chapter_name": "Database Management",
+          "source_heading": "Database Management",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XII",
+  "subject": "Computer Science",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Computational Thinking and Programming – 2",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Revision of Python topics covered in Class XI.",
+        "Functions: types of function (built-in functions, functions defined in module, user defined functions), creating user defined function, arguments and parameters, default parameters, positional parameters, function returning value(s), flow of execution, scope of a variable (global scope, local scope)",
+        "Exception Handling: Introduction, handling exceptions using try-except-finally blocks",
+        "Introduction to files, types of files (Text file, Binary file, CSV file), relative and absolute paths"
+      ],
+      "subtopics": [
+        "Text file: opening a text file, text file open modes (r, r+, w, w+, a, a+), closing a text file, opening a file using with clause, writing/appending data to a text file using write() and writelines(), reading from a text file using read(), readline() and readlines(), seek and tell methods, manipulation of data in a text file",
+        "Binary file: basic operations on a binary file: open using file open modes (rb, rb+, wb, wb+, ab, ab+), close a binary file, import pickle module, dump() and load() method, read, write/create, search, append and update operations in a binary file",
+        "CSV file: import csv module, open / close csv file, write into a csv file using writer(),writerow(),writerows() and read from a csv file using reader()",
+        "Data Structure: Stack, operations on stack (push & pop), implementation of stack using list."
+      ],
+      "key_concepts": [
+        "Revision",
+        "Functions",
+        "Exception Handling",
+        "File handling"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computational Thinking and Programming – 2",
+          "source_chapter_name": "Computational Thinking and Programming – 2",
+          "source_heading": "Computational Thinking and Programming – 2",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Computer Networks",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Evolution of networking: introduction to computer networks, evolution of networking (ARPANET, NSFNET, INTERNET)",
+        "Data communication terminologies: concept of communication, components of data communication (sender,receiver, message, communication media, protocols), measuring capacity of communication media (bandwidth, data transfer rate), IP address, switching techniques (Circuit switching, Packet switching)",
+        "Transmission media: Wired communication media (Twisted pair cable, Co-axial cable, Fiber-optic cable), Wireless media (Radio waves, Micro waves, Infrared waves)",
+        "Network devices (Modem, Ethernet card, RJ45, Repeater, Hub, Switch, Router, Gateway, WIFI card)",
+        "Network topologies and Network types: types of networks (PAN, LAN, MAN, WAN), networking topologies (Bus, Star, Tree)",
+        "Network protocol: HTTP, FTP, PPP, SMTP, TCP/IP, POP3, HTTPS, TELNET, VoIP",
+        "Introduction to web services: WWW, Hyper Text Markup Language (HTML), Extensible Markup Language (XML), domain names, URL, website, web browser, web servers, web hosting"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Networking Evolution",
+        "Data Communication",
+        "Transmission Media",
+        "Network Devices",
+        "Topologies and Types",
+        "Protocols",
+        "Web Services"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computer Networks",
+          "source_chapter_name": "Computer Networks",
+          "source_heading": "Computer Networks",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Database Management",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Database concepts: introduction to database concepts and its need",
+        "Relational data model: relation, attribute, tuple, domain, degree, cardinality, keys (candidate key, primary key, alternate key, foreign key)",
+        "Structured Query Language: introduction, Data Definition Language and Data Manipulation Language, data type (char(n), varchar(n), int, float, date), constraints (not null, unique, primary key), create database, use database, show databases, drop database, show tables, create table, describe table, alter table (add and remove an attribute, add and remove primary key), drop table, insert, delete, select, operators (mathematical, relational and logical), aliasing, distinct clause, where clause, in, between, order by, meaning of null, is null, is not null, like, update command, delete command, aggregate functions (max, min, avg, sum, count), group by, having clause, joins: cartesian product on two tables, equi-join and natural join",
+        "Interface of python with an SQL database: connecting SQL with Python, performing insert, update, delete queries using cursor, display data by using connect(), cursor(), execute(), commit(), fetchone(), fetchall(), rowcount, creating database connectivity applications, use of %s format specifier or format() to perform queries"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Database Concepts",
+        "Relational Data Model",
+        "SQL (DDL/DML)",
+        "Python-SQL Connectivity"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Database Management",
+          "source_chapter_name": "Database Management",
+          "source_heading": "Database Management",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+# Page 5
+
+Computer Science (2024-25)
+## CLASS XII Code No. 083
+- 1. Prerequisites
+Computer Science- Class XI
+- 2. Learning Outcomes
+Student should be able to
+a) apply the concept of function.
+b) explain and use the concept of file handling.
+c) use basic data structure: Stacks
+d) explain basics of computer networks.
+e) use Database concepts, SQL along with connectivity between Python and SQL.
+- 3. Distribution of Marks:
+Periods
+## Unit No. Unit Name Marks
+Theory Practical
+Computational Thinking and
+o GROUP BY and find the min, max, sum, count and average
+● Similar exercise may be framed for other cases.
+● Integrate SQL with Python by importing suitable module.
+- 7. Suggested Reading Material
+● NCERT Textbook for COMPUTER SCIENCE (Class XII)
+● Support Materials on the CBSE website.
+- 8. Project
+The aim of the class project is to create something that is tangible and useful using
+Python file handling/ Python-SQL connectivity. This should be done in groups of two to
+three students and should be started by students at least 6 months before the submission
+deadline. The aim here is to find a real world problem that is worthwhile to solve.
+Students are encouraged to visit local businesses and ask them about the problems that
+they are facing. For example, if a business is finding it hard to create invoices for filing
+GST claims, then students can do a project that takes the raw data (list of transactions),
+groups the transactions by category, accounts for the GST tax rates, and creates
+invoices in the appropriate format. Students can be extremely creative here. They can
+use a wide variety of Python libraries to create user friendly applications such as games,
+software for their school, software for their disabled fellow students, and mobile
+applications, of course to do some of these projects, some additional learning is required;

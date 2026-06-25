@@ -1,0 +1,627 @@
+Stage 3: Node Enrichment - Class X - Social Science
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class X",
+  "subject": "Social Science",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U3",
+      "unit_name": "Atmosphere and Climate (7 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Structure and composition; elements of weather and climate",
+        "Seasons of India and monsoons",
+        "Climate change",
+        "Floods"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Atmosphere and Climate (7 Hours)",
+          "source_chapter_name": "Atmosphere and Climate (7 Hours)",
+          "source_heading": "Atmosphere and Climate (7 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Early Humans and Beginning of Civilisation (9 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Cultural development from 2 million years ago organised.",
+        "Prehistoric time divisions periodisation: Archaeological ages",
+        "Who are human ancestors?",
+        "Palaeolithic hunter-gatherers and use of stone tools",
+        "Mesolithic transition to food production: Mesolithic sites and tools",
+        "Neolithic and the beginning of farming: Neolithic revolution domestication of plants and animals",
+        "Harappan and contemporary cultures",
+        "Mesopotamian, egyptian, and chinese civilisation"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Early Humans and Beginning of Civilisation (9 Hours)",
+          "source_chapter_name": "Early Humans and Beginning of Civilisation (9 Hours)",
+          "source_heading": "Early Humans and Beginning of Civilisation (9 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Vedic Age — polity.",
+        "Administrative structure of early empires",
+        "Quest for knowledge — educational heritage, institutions, knowledge traditions, and cultural practices"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+          "source_chapter_name": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+          "source_heading": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Democracy (9 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Meaning features and types of democracy",
+        "Roots of democracy in India",
+        "Challenges to democracy in India"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Democracy (9 Hours)",
+          "source_chapter_name": "Democracy (9 Hours)",
+          "source_heading": "Democracy (9 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Elections (9 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Factors of importance of elections",
+        "Electoral systems",
+        "Delimitation Commission and Election Commission of India"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Elections (9 Hours)",
+          "source_chapter_name": "Elections (9 Hours)",
+          "source_heading": "Elections (9 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Building Blocks in Economics (7 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Scarcity of resources, choice and opportunity cost"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Building Blocks in Economics (7 Hours)",
+          "source_chapter_name": "Building Blocks in Economics (7 Hours)",
+          "source_heading": "Building Blocks in Economics (7 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "The Price Puzzle: What Drives the Market (8 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Laws of demand and supply"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "What Drives the Market (8 Hours)",
+          "source_chapter_name": "What Drives the Market (8 Hours)",
+          "source_heading": "What Drives the Market (8 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Oceans and Life (7 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Introduction to ocean relief, movement of ocean water- waves tides and currents"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Oceans and Life (7 Hours)",
+          "source_chapter_name": "Oceans and Life (7 Hours)",
+          "source_heading": "Oceans and Life (7 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U11",
+      "unit_name": "Life on Earth (7 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Biomes: Distribution and characteristics; biosphere reserves in India"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Life on Earth (7 Hours)",
+          "source_chapter_name": "Life on Earth (7 Hours)",
+          "source_heading": "Life on Earth (7 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class X",
+  "subject": "Social Science",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U3",
+      "unit_name": "Atmosphere and Climate (7 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Structure and composition; elements of weather and climate",
+        "Seasons of India and monsoons",
+        "Climate change",
+        "Floods"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Atmosphere and Climate (7 Hours)",
+          "source_chapter_name": "Atmosphere and Climate (7 Hours)",
+          "source_heading": "Atmosphere and Climate (7 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Early Humans and Beginning of Civilisation (9 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Cultural development from 2 million years ago organised.",
+        "Prehistoric time divisions periodisation: Archaeological ages",
+        "Who are human ancestors?",
+        "Palaeolithic hunter-gatherers and use of stone tools",
+        "Mesolithic transition to food production: Mesolithic sites and tools",
+        "Neolithic and the beginning of farming: Neolithic revolution domestication of plants and animals",
+        "Harappan and contemporary cultures",
+        "Mesopotamian, egyptian, and chinese civilisation"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Early Humans and Beginning of Civilisation (9 Hours)",
+          "source_chapter_name": "Early Humans and Beginning of Civilisation (9 Hours)",
+          "source_heading": "Early Humans and Beginning of Civilisation (9 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Vedic Age — polity.",
+        "Administrative structure of early empires",
+        "Quest for knowledge — educational heritage, institutions, knowledge traditions, and cultural practices"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+          "source_chapter_name": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+          "source_heading": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Democracy (9 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Meaning features and types of democracy",
+        "Roots of democracy in India",
+        "Challenges to democracy in India"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Democracy (9 Hours)",
+          "source_chapter_name": "Democracy (9 Hours)",
+          "source_heading": "Democracy (9 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Elections (9 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Factors of importance of elections",
+        "Electoral systems",
+        "Delimitation Commission and Election Commission of India"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Elections (9 Hours)",
+          "source_chapter_name": "Elections (9 Hours)",
+          "source_heading": "Elections (9 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Building Blocks in Economics (7 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Scarcity of resources, choice and opportunity cost"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Building Blocks in Economics (7 Hours)",
+          "source_chapter_name": "Building Blocks in Economics (7 Hours)",
+          "source_heading": "Building Blocks in Economics (7 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "The Price Puzzle: What Drives the Market (8 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Laws of demand and supply"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "What Drives the Market (8 Hours)",
+          "source_chapter_name": "What Drives the Market (8 Hours)",
+          "source_heading": "What Drives the Market (8 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Oceans and Life (7 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Introduction to ocean relief, movement of ocean water- waves tides and currents"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Oceans and Life (7 Hours)",
+          "source_chapter_name": "Oceans and Life (7 Hours)",
+          "source_heading": "Oceans and Life (7 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U11",
+      "unit_name": "Life on Earth (7 Hours)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Biomes: Distribution and characteristics; biosphere reserves in India"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Life on Earth (7 Hours)",
+          "source_chapter_name": "Life on Earth (7 Hours)",
+          "source_heading": "Life on Earth (7 Hours)",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+# Page 1
+
+Social Science
+Subject Code-087
+## Class - IX (2026-27)
+## RATIONALE
+The purpose of the education system is to develop good human beings capable of rational
+thought and action, possessing compassion and empathy, courage and resilience, scientific
+temper and creative imagination, with sound ethical moorings and values. It aims at producing
+engaged, productive and contributing citizens for building an equitable, inclusive and plural
+society as envisaged by our Constitution. [NEP 2020, pages 4-5]
+Social Science is a compulsory subject at Secondary Stage Phase-I of school education.
+Social Science can play a unique role within the school curriculum to enable Knowledge,
+Capacities, and Values and Dispositions that underpin the purpose of education as
+committed to in NEP 2020.
+The teaching and learning of Social Science at the secondary stage is aligned with the
+transformational vision of the National Curriculum Framework for School Education (NCF-SE)
+2023 and the National Education Policy (NEP) 2020. The NCF-SE 2023 emphasises
+learning, i.e., competency-based, inquiry-oriented, and rooted in Indian Knowledge Systems
+(IKS) and lived realities. The deliberate reduction of content load with a focus on core
+concepts rather than memorisation, creates space for discussion, exploration, and deep
+understanding. The framework’s call for interdisciplinarity encourages students to draw
+meaningful connections across disciplines and relate classroom learning to real-life contexts
+and experiences.
+Furthermore, the NCF-SE 2023 envisions rootedness in India, in which learning is grounded
+in India’s diverse heritage and intellectual traditions, while also being combined with a global
+outlook. Within this perspective, Social Science education engages students with India’s
+historical experiences, democratic values, and patterns of economic and social development,
+geographical understanding alongside global processes and contemporary challenges. By
+integrating the aims of the NEP 2020, Social Science education seeks to transform learning
+into a process that builds knowledge, capacities, and values essential for personal growth,
+social harmony and national progress.
+Social Science at the secondary stage is an integrated study of human society like its
+evolution, structures, and dynamics through the disciplines of History, Geography, Political
+Science, and Economics. It explores how societies function and transform over time through
+the interplay of historical, geographical, cultural, political, economic, and environmental
+forces. The subject goes beyond the factual understanding to include inquiry, interpretation,
+and analysis.
+Students learn to source and validate information, interpret data and evidence, and construct
+logical explanations, thus fostering critical and reflective thinking. It also cultivates empathy,
+respect for diversity, and a sense of justice and responsibility — values that reflect India’s
+intellectual traditions of reasoning, dialogue, and debate as pathways to truth and
+understanding.
+1
+
+---
+
+# Page 2
+
+## AIMS & OBJECTIVE
+As per NCF- 2023, the aims of teaching Social Science in school education can be summarised as
+follows:
+a. Develop disciplinary knowledge and understanding of how society functions through an
+interplay of historical, geographical, social, economic, and political factors.
+This can be enabled through:
+i. an understanding of continuity and change in human civilisation, its causation and
+effect and its impact on modern life.
+ii. an understanding of the interaction between nature and human beings, the spatial
+patterns arising out of this interaction and its effect on human life.
+iii. an awareness and understanding of the diversity of people and their practices in
+different societies, regions and cultures within societies.
+iv. an awareness of various social, political and economic institutions, their origin,
+functioning and transformations over time.
+b. Develop an understanding and appreciation for the methods of enquiry relevant to Social
+Science and deepen students’ skills to engage with the key questions and issues
+confronting society.
+These could be specifically seen as:
+i. Skills in sourcing evidence, interpreting them, checking through multiple sources
+and evidences and constructing a coherent narrative.
+ii. Skills in recognizing spatial patterns, map-reading, interpretation and analysis of
+various interconnected concepts and processes.
+iii. Skills of creative and analytical thinking to form informed opinions, demonstrate
+logical decision-making and incline towards a problem- solving attitude.
+iv. Skills to collect, organize, analyse, represent, and present data and information on
+various historical, geographical, and socio-political issues.
+v. Skills to question unsubstantiated ideas, biases, stereotypes, and assumptions to
+foster scientific temper and propose meaningful responses to contemporary concerns
+of society.
+c. Foster ethical, human, and Constitutional values:
+As the NEP 2020 emphasises to foster a “democratic outlook and commitment to liberty
+and freedom; equality, justice, and fairness; embracing diversity, plurality, and inclusion;
+humaneness and fraternal spirit; social responsibility and the spirit of service; ethics of
+integrity and honesty; scientific temper and commitment to rational and public dialogue;
+peace; social action through Constitutional means; unity and integrity of the nation, and
+a true rootedness and pride in India with a forward-looking spirit to continuously improve
+as a nation.
+NOTE- Refer to NCF-2023-Page no-320-323
+2
+
+---
+
+# Page 3
+
+In alignment with the NEP 2020, Social Science education seeks to develop responsible human
+beings capable of rational thought and action, possessing compassion, empathy, courage,
+resilience, scientific temper, and creative imagination — qualities that prepare them to
+contribute meaningfully to the nation and humanity.
+Studying Social Science is essential for developing informed, empathetic, and active citizens. It
+enables learners to situate themselves within broader social, cultural and environmental
+contexts, and to recognise their role in shaping them. Through this subject, students
+understand the origins of democratic values, Constitutional principles, and India’s civilisational
+ethos of unity in diversity. They also develop awareness of pressing issues such as inequality,
+conflict, environmental degradation and economic challenges, and learn to respond to them
+with evidence-based reasoning and ethical reflection. Social Science thus, bridges knowledge
+and action, encouraging learners to think critically about society and participate responsibly and
+effectively in it.
+## CURRICULAR GOALS-CG
+As per NCF 2023 - At the Secondary Stage, students will go into details to understand
+India’s past and appreciate its complexity, diversity, and unity brought about by cultural
+integration and the sharing of knowledge traditions across geographical and linguistic
+boundaries. NCF 2023 Page no -154
+ CG-1 Understands and analyses the important phases in Indian history and draws insights
+to understand present-day India
+ CG -2 Analyses the important phases in world history and draw insight to understand the
+present-day world
+ CG-3 Understands the idea of a nation and the emergence of the modern Indian Nation
+ CG -4 Develops an understanding of the inter-relationship between human beings and
+their physical environment and how that influences the livelihoods, cultural diversity, and
+biodiversity of the region
+ CG -5 Understand the Indian Constitution and explores the essence of Indian democracy
+and the characteristics of a democratic government.
+ CG -6 Understand and analyse social, cultural, and political life in India over time – as
+well as the underlying historical Indian ethos and philosophy of unity in diversity – and
+recognises challenges faced in these areas in the past and present and the efforts (being)
+made to address them
+ CG -7 Develop an understanding of 

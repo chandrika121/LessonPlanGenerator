@@ -1,0 +1,61 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "chapters": [
+          {
+            "source_chapter_name": "",
+            "source_type": "explicit_chapter",
+            "node_type": "chapter",
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "key_concepts": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Node Enrichment - Class XI - Computer Science\nReturn compact JSON only.\nEnrich and label ONLY the existing document nodes for this class.\n\nOutput rules:\n- Use only the provided structure hierarchy\n- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n- output chapter count must equal input chapter count\n\nNode rules:\n- Stage 3 may label or enrich nodes but must never create hierarchy\n- Preserve the provided hierarchy exactly\n- use unit_id from Stage 2 only\n- keep every chapter source_chapter_name exactly as provided\n- do not create new chapters\n- do not split chapters\n- do not merge chapters\n- do not rename chapters\n- do not reclassify chapters as topics\n- do not reclassify topics as chapters\n- the chapter list provided in input is the source of truth\n- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts\n- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback\n- never create new class names, subject names, unit names, or chapter names\n- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters\n- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented\n- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module\n- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units\n\nRaw class extraction:\n{\n  \"class_name\": \"Class XI\",\n  \"subject\": \"Computer Science\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit No. 1: Computer Systems and Organisation\",\n      \"part_or_section\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Computer Systems and Organisation\",\n          \"source_chapter_name\": \"Computer Systems and Organisation\",\n          \"source_heading\": \"Computer Systems and Organisation\",\n          \"source_type\": \"unit_fallback\"\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit No. 2: Computational Thinking and Programming - I\",\n      \"part_or_section\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Computational Thinking and Programming - I\",\n          \"source_chapter_name\": \"Computational Thinking and Programming - I\",\n          \"source_heading\": \"Computational Thinking and Programming - I\",\n          \"source_type\": \"unit_fallback\"\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit No. 3: Society, Law and Ethics\",\n      \"part_or_section\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Society, Law and Ethics\",\n          \"source_chapter_name\": \"Society, Law and Ethics\",\n          \"source_heading\": \"Society, Law and Ethics\",\n          \"source_type\": \"unit_fallback\"\n        }\n      ]\n    }\n  ]\n}\n\nDocument structure hierarchy for this class:\n{\n  \"class_name\": \"Class XI\",\n  \"subject\": \"Computer Science\",\n  \"part_or_section\": \"\",\n  \"units\": [\n    {\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit No. 1: Computer Systems and Organisation\",\n      \"part_or_section\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Computer Systems and Organisation\",\n          \"source_chapter_name\": \"Computer Systems and Organisation\",\n          \"source_heading\": \"Computer Systems and Organisation\",\n          \"source_type\": \"unit_fallback\"\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U2\",\n      \"unit_name\": \"Unit No. 2: Computational Thinking and Programming - I\",\n      \"part_or_section\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Computational Thinking and Programming - I\",\n          \"source_chapter_name\": \"Computational Thinking and Programming - I\",\n          \"source_heading\": \"Computational Thinking and Programming - I\",\n          \"source_type\": \"unit_fallback\"\n        }\n      ]\n    },\n    {\n      \"unit_id\": \"U3\",\n      \"unit_name\": \"Unit No. 3: Society, Law and Ethics\",\n      \"part_or_section\": \"\",\n      \"marks\": null,\n      \"chapters\": [\n        {\n          \"chapter_id\": \"C1\",\n          \"chapter_name\": \"Society, Law and Ethics\",\n          \"source_chapter_name\": \"Society, Law and Ethics\",\n          \"source_heading\": \"Society, Law and Ethics\",\n          \"source_type\": \"unit_fallback\"\n        }\n      ]\n    }\n  ]\n}\n\nCurriculum source text:\n# Page 1\n\nComputer Science (2024-25)\n## CLASS XI Code No. 083\n- 1. Learning Outcomes\nStudents should be able to:\na) develop basic computational thinking\nb) explain and use data types\nc) appreciate the notion of algorithms\nd) develop a basic understanding of computer systems- architecture and\noperating system\ne) explain cyber ethics, cyber safety, and cybercrime\nf) understand the value of technology in societies along with consideration of\ngender and disability issues.\n- 2. Distribution of Marks\nPeriods\n## Unit No. Unit Name Marks\nTheory Practical\n● Input a list/tuple of elements, search for a given element in the list/tuple.\n● Create a dictionary with the roll number, name and marks of n students in a class\nand display the names of students who have marks above 75.\n- 6. Suggested Reading Material\n● NCERT Textbook for Computer Science (Class XI)\n● Support Material on CBSE website\n\n---\n\n# Page 5\n\nComputer Science (2024-25)\n## CLASS XII Code No. 083\n- 1. Prerequisites\nComputer Science- Class XI\n- 2. Learning Outcomes\nStudent should be able to\na) apply the concept of function.\nb) explain and use the concept of file handling.\nc) use basic data structure: Stacks\nd) explain basics of computer networks.\ne) use Database concepts, SQL along with connectivity between Python and SQL.\n- 3. Distribution of Marks:\nPeriods\n## Unit No. Unit Name Marks\nTheory Practical\nComputational Thinking and\n1 40 70 50\nProgramming – 2\n3 Database Management 20 25 20\nTotal 70 110 70\n- 4. Unit wise Syllabus\n## Unit 1: Computational Thinking and Programming – 2\n● Revision of Python topics covered in Class XI.\n● Functions: types of function (built-in functions, functions defined in module, user\ndefined functions), creating user defined function, arguments and parameters,\ndefault parameters, positional parameters, function returning value(s), flow of\nexecution, scope of a variable (global scope, local scope)\n● Exception Handling: Introduction, handling exceptions using try-except-finally\nblocks\n● Introduction to files, types of files (Text file, Binary file, CSV file), relative\nand absolute paths\n\n---\n\n# Page 6\n\n● Text file: opening a text file, text file open modes (r, r+, w, w+, a, a+), closing a text\no GROUP BY and find the min, max, sum, count and average\n● Similar exercise may be framed for other cases.\n● Integrate SQL with Python by importing suitable module.\n- 7. Suggested Reading Material\n● NCERT Textbook for COMPUTER SCIENCE (Class XII)\n● Support Materials on the CBSE website.\n- 8. Project\nThe aim of the class project is to create something that is tangible and useful using\nPython file handling/ Python-SQL connectivity. This should be done in groups of two to\nthree students and should be started by students at least 6 months before the submission\ndeadline. The aim here is to find a real world problem that is worthwhile to solve.\nStudents are encouraged to visit local businesses and ask them about the problems that\nthey are facing. For example, if a business is finding it hard to create invoices for filing\nGST claims, then students can do a project that takes the raw data (list of transactions),\ngroups the transactions by category, accounts for the GST tax rates, and creates\ninvoices in the appropriate format. Students can be extremely creative here. They can\nuse a wide variety of Python libraries to create user friendly applications such as games,\nsoftware for their school, software for their disabled fellow students, and mobile\napplications, of course to do some of these projects, some additional learning is required;\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"chapters\": [\n        {\n          \"source_chapter_name\": \"\",\n          \"source_type\": \"explicit_chapter\",\n          \"node_type\": \"chapter\",\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"key_concepts\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

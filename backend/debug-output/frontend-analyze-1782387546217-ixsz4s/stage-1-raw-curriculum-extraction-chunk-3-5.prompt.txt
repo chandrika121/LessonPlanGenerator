@@ -1,0 +1,235 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+- Detected curriculum profile: cbse_unit_topic
+- Expected structure type: unit_topic
+- Prefer unit -> topic when the source lists topics directly under a unit
+- Do not invent chapters from unit names in CBSE-style syllabi
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 3 of 5; extract only what is present in this chunk
+
+Curriculum source text:
+vision of animals and ecological role
+and plants • Describe the significance and rules of binomial
+- Binomial nomenclature nomenclature
+- Acellular entities: viruses • Apply binomial nomenclature on some common
+organisms in their surroundings
+C-2.8 • Analyse the interactions between members of
+different groups of organisms, such as lichens
+- Discuss ecological role of diverse organisms
+C--7.1 • Recognise three domains of classification of
+organisms on molecular basis
+Exploring Mixtures and their Separation No. of Periods: 12
+Key Concepts Learning Outcomes
+- Homogeneous and C-1.2 • Differentiate between homogeneous and
+heterogeneous mixtures; heterogeneous mixtures on the basis of their
+- Solutions, suspensions, properties
+colloids and their • Demonstrate separation techniques, such as
+properties crystallisation, distillation, paper chromatography,
+- Various ways to express sublimation, centrifugation and coagulation
+concentration of • Classify mixtures as solutions, suspensions, or
+solutions (mass by mass colloids based on their properties
+percentage of a solution, • Explain the scientific principles behind different
+
+---
+
+# Page 8
+
+mass by volume separation techniques
+percentage of a solution, • Apply the knowledge of homogeneous and
+volume by volume heterogeneous mixtures in daily life
+percentage of a solution) • Define and calculate the concentration of solutions
+- Separation techniques using mass by mass percentage, mass by volume
+based on the physical percentage, volume by volume percentage
+properties of • Analyse graphs of solubility and explain how the
+components, including solubility of substances changes with temperature
+crystallisation, • Use scientific conventions and standard units to
+distillation, paper express concentrations
+chromatography, • Handle common laboratory chemicals and
+sublimation, apparatus safely
+centrifugation and • Relate separation techniques with practices
+coagulation observed in the local environment
+C-5.1 • Draw labelled diagrams or flow charts of separation
+techniques
+C-5.2 • Display awareness about the societal impact of
+chemistry in making life healthier, cleaner and
+sustainable
+C-5.3 • Correlate the phenomenon used in centrifugation to
+the spinning dance
+C-6.1 • Describe the cultural practices, like traditional
+methods of distillation
+- Display awareness about the contributions of
+Indian scientists, such as Dilip Mahalanabis
+C-7.1 • Demonstrate the use of small-scale or micro-scale
+experiments, such as crystallisation of copper
+sulfate, as an alternative to traditional methods
+C-7.2 • Poses question, such as — Can we create artificial
+blood that works just as real blood for all patients?
+C-8.1 • Exhibit creativity and work collaboratively in groups
+to create models of apparatus used for separating
+mixtures, such as a paperfuge and a distillation
+## unit, using eco-friendly materials
+C-8.2 • Formulate hypotheses about scientific phenomena
+based on prior knowledge and understanding of
+scientific concepts, and predict the results of an
+experiment or investigation based on their
+hypotheses
+
+---
+
+# Page 9
+
+- Accurately use scientific instruments, apparatus
+and chemicals to collect data
+- Analyse results and findings using scientific terms
+- Represent findings in multiple modes, including
+appropriate figures, tables, graphs, or digital
+formats, and interpret and draw inferences from the
+findings
+- Communicate findings and conclusions effectively,
+such as those from experiments, activities or
+projects, both orally and in written form
+Structure of an Atom No. of Periods: 14
+Key Concepts Learning Outcomes
+- Atoms are the basic C-1.1 • Differentiate between subatomic particles
+units of elements (electrons, protons, and neutrons) based on their
+- Atoms consist of charge, and position in the atom
+subatomic particles • Illustrate how electrons are distributed in different
+- Atomic Models energy levels, such as K, L, M, N ... or by numbers
+(Thomson’s Model, n = 1, 2, 3, 4 ...
+Rutherford’s Model, and • Explain valence electrons, valency, atomic number,
+Bohr’s Model) atomic mass, isotopes, and isobars
+- Distributions of electrons • Calculate the number of electrons, protons, and
+in elements (up to 18 neutrons of an element using its atomic and mass
+elements) numbers
+- Symbols • Interpret data, such as atomic mass, maximum
+- Valency as the number of electrons in a shell, and valency to
+combining capacity classify elements accurately
+- Atomic number • Use scientific conventions as per international
+- Mass number standards, such as notations for electron, proton,
+- Isotopes neutron, unified atomic mass unit (u), and
+- Isobars distribution of electrons in various shells, such as
+## K, L, M, N …
+C-1.3 • Recognise and accurately apply the chemical
+symbols for the first eighteen elements according
+to IUPAC
+C-5.1 • Draw labelled diagrams of various atomic models,
+such as Thomson’s model, Rutherford’s model and
+Bohr’s model
+- Create and present a role play, stage play, or story
+of ‘Journey Inside the Atom’ to display awareness
+about the contributions of key scientists in the
+
+---
+
+# Page 10
+
+discovery and development of atomic structure
+C-5.2 • Display awareness about the role of Indian
+scientists and their contributions to atomic science
+for peaceful purposes and explore how their works
+influenced India’s scientific development
+C-5.3 • Display awareness about the societal impact of
+science in making life healthier, like the use of
+various isotopes in medicines to treat different
+diseases, and atomic energy in power generation
+- Design and develop games that utilise atomic
+number, mass number, and subatomic particle
+clues to accurately predict and identify elements
+C-6.1 • Display awareness about the contributions of the
+ancient Indian philosopher, Acharya Kanad’s idea
+of indivisible particles (Parmanu)
+C-7.1 • Describe the use of the atomic mass unit (u) to
+measure the mass of atoms as per IUPAC
+recommendations
+- Describe scientific discoveries that explain how the
+structure of the atom has evolved over time
+through various atomic models proposed by
+different scientists
+C-7.2 • Pose question, such as — is it possible to
+completely understand everything that happens
+inside an atom?
+C-8.1 • Exhibit creativity and work collaboratively in groups
+to design different models of atoms
+C-8.2 • Formulate hypotheses about scientific phenomena
+by applying prior knowledge and understanding of
+scientific concepts, and predict the results of data
+based on the hypotheses
+- Analyse results and present findings using
+scientific terms
+- Correlate the results and conclusions of different
+models of atomic structure
+- Represent data in multiple modes, including
+appropriate figures, tables, graphs or digital
+formats, and interpret and draw inferences from the
+data
+
+---
+
+# Page 11
+
+- Communicate findings and conclusions effectively,
+such as those from experiments, activities or
+projects, both orally and in written form
+Atoms and Molecules No. of Periods: 14
+Key Concepts Learning Outcomes
+- Law of conservation of C-1.1 • Differentiate between chemical species based on
+mass their properties or characteristics, such as atoms
+- Law of constant and molecules, elements and compounds, ionic
+proportion and covalent compounds, cations and anions,
+- Dalton’s Atomic theory formula unit mass and molecular mass• Plan and
+- Molecules of elements, demonstrate activities to observe and verify the law
+Molecules of covalent of conservation of mass
+compounds and their • Explain the Dalton’s atomic theory, the law of
+properties conservation of mass, the law of constant
+- Ions, Ionic compounds proportions, and formation of ionic and covalent
+and their properties compounds
+- Writing chemical • Calculate the charge on an ion, valency from the
+formulae atomic number, the molecular and formula unit
+- Molecular mass mass
+- Formula unit mass • Use scientific conventions, symbols, and valency to
+write the chemical formulae of simple compounds
+- Display awareness about the scientific di

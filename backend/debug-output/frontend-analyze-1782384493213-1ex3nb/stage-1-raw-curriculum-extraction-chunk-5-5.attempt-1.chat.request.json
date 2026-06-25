@@ -1,0 +1,84 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "terms": [
+      {
+        "name": "",
+        "units": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: term_semester_curriculum\n- Expected structure type: term_unit_topic\n- Preserve term/semester structure when present\n- Do not flatten semesters into plain unit lists\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 5 of 5; extract only what is present in this chunk\n\nCurriculum source text:\nxplain the concept and importance of\n- Government efforts biosphere reserves in conserving\nto support forest ecosystems and biodiversity.\ndwellers • Analyse the concept of ecotourism and\ndiscuss its role in promoting sustainable\nforest ecosystem and conservation.\n- Investigate the causes of forest fires in the\nlocal area, and prepare a plan for\nmitigation and prevention.\n- 3. Resistance • Safeguarding C1.3, C1.4, C3.1\nand sovereignty: • Explain the cultural, political, and military\nResilience resistance, alliances contributions of regional kingdoms in India.\n(1000 CE – 1700 and confederacies • Appreciate how diverse communities and\nCE) • Development of art regions shaped India’s history from 1000 CE\n(9 Hours) and architecture, to 1700 CE.\nlanguages and • Explore how regional kingdoms adapted to\nliterature changing political, economic, and cultural\n- The Bhakti tradition contexts over time.\n- Forts and fortifications • Analyse the continuity of the civilisational\n- Expansion of Indian history of India as a nation upto 18th\neconomy and state century CE.\n- 4. India and • Trade and commerce C1.2, C1.4, C6.1, C2.3, C9.1\nthe — trade with • Explore India’s relations with early\nWorld-I Mesopotamia, Greece, civilisations of the world.\n(1900 Roman Empire, China • Identify the major articles of trade and the\nBCE- and Southeast Asia major trading ports.\n1200 CE) • Cultural Connections • Appreciate the significant contributions of\n(8 Hours) — Interactions with India\nGreece and Rome, in diverse spheres in an integrated manner.\nCentral Asia, • Appreciate the influence of Indian religion\nChina, and Influence and culture, particularly in Southeast Asia.\non South East Asia\n12\n\n---\n\n# Page 13\n\n- Indian Knowledge\nSystems — Medicine,\nMathematics and\nAstronomy, Medicine,\nReligion\n- 5. Authorit • The Roots of Authority: C5.1, C5.2, C 5.3\ny (10 in Kautilya and • Explain the roots of authority in Indian\nHours) shukraniti- danda and political thought.\nrelationship with nyaya • Interpret the relationship between Danda\nand bala ; the types of (discipline/ force) and Nyaya (justice) as the\nnyaya and bala twin foundations of authority, development,\n- Constitutional status and security.\nof justice and security • Trace the evolution of authority structures\nsince ancient times in India.\n- Links the role of • Understand the post- independence\ncitizens with the concept of justice and security.\nelections and the • Illustrate types of authority.\ndemocratic institutions • Develop an understanding of citizen\n- Types of authority — discipline, justice, and strength.\nfunctional, sensitive, • Illustrate the role of citizens in authority.\nand welfare-oriented\n- 6. From Ideas • What is C7.3\nto Startups entrepreneurship and • Define entrepreneurship and explain its\n(8 Hours) explain the resources importance in innovation, job creation, and\nrequired to start a economic growth.\nbusiness • Understand the key resources for business.\n- Case studies of • Explain how resources are managed to\nsuccessful produce goods and services.\nentrepreneurs • Analyse real-world examples of successful\n- Creative destruction entrepreneurs.\nwith examples • Describe the features of India’s start-up\n- Start-up ecosystem in ecosystem and initiatives like Make in India,\nIndia. Startup India, and Digital India.\n- Make in India • Recognise the role of Micro, Small, and\ninitiative, role of Medium Enterprises (MSMEs) and the\nMSMEs and the unorganised sector in promoting employment,\nunorganised sector in innovation,\nIndia’s economic and inclusive growth.\ngrowth. • Identify and explain the stages of starting a\n- Stages of starting and business from developing an idea to\nexecuting a business creating and executing a business plan.\nidea through a • Understand simple profit and loss.\nbusiness plan Identify the key components of a balance.\n- Some basic accounting\nconcepts\n13\n\n---\n\n# Page 14\n\n- 7. Smart Ways • Relevance of CG8\nto Manage personal financial • Explain what personal financial\nYour management in daily management means and why\nFinances life it is essential in everyday life.\n(6 Hours) • Inflation and its impact • Recognise how managing income, spending,\non purchasing power saving, and investment helps achieve\n- Simple vs. compound financial stability and long-term goals.\ninterest rate • Explain the difference between simple\n- Budgeting interest and compound interest.\n- Various savings and • Prepare a simple personal or family budget\ninvestment options like showing income, expenditure, and savings.\nfixed deposit, stocks, • Identify various savings and investment\nbonds, mutual funds, instruments.\netc. • Understand the relationship between risk and\n- Risk and insurance return in different investment types.\n- Personal income tax • Understand the concept of income tax and\nwhy citizens are required to pay it.\nNote-Course Structure will be provided shortly\n## CLASS IX (2025-26)\n## INTERNAL ASSESSMENT: 20 MARKS\nType of Description Marks\nAssessment\nPeriodic Assessment Pen Paper Test 5\nMultiple Assessment Quiz, debate, role play, viva-voce, group discussion, visual 5\nexpression, interactive bulletin boards, gallery walks, exit\ncards, concept maps, peer assessment, self- assessment\netc. through interdisciplinary project , Report Writing on\nfield visits, Commentaries/visual interpretations, site-map\nmaking\nSubject Enrichment Project work (Interdisciplinary) 5\nActivity\nPortfolio Classroom, work done (activities/assignments) reflections, 5\nnarrations, journals etc. Achievements of the student in the\nsubject throughout the year. Participation of the student in\ndifferent activities like Heritage India quiz etc.\n## CLASS IX\n## PRESCRIBED TEXT BOOKS\n- S. No. Name of the Book Publisher\n1 Social Science-Part 1 NCERT\n2 Social Science-Part 2 NCERT\n14\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"terms\": [\n    {\n      \"name\": \"\",\n      \"units\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

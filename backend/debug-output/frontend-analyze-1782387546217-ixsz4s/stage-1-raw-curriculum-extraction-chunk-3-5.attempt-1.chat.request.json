@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: cbse_unit_topic\n- Expected structure type: unit_topic\n- Prefer unit -> topic when the source lists topics directly under a unit\n- Do not invent chapters from unit names in CBSE-style syllabi\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 3 of 5; extract only what is present in this chunk\n\nCurriculum source text:\nvision of animals and ecological role\nand plants • Describe the significance and rules of binomial\n- Binomial nomenclature nomenclature\n- Acellular entities: viruses • Apply binomial nomenclature on some common\norganisms in their surroundings\nC-2.8 • Analyse the interactions between members of\ndifferent groups of organisms, such as lichens\n- Discuss ecological role of diverse organisms\nC--7.1 • Recognise three domains of classification of\norganisms on molecular basis\nExploring Mixtures and their Separation No. of Periods: 12\nKey Concepts Learning Outcomes\n- Homogeneous and C-1.2 • Differentiate between homogeneous and\nheterogeneous mixtures; heterogeneous mixtures on the basis of their\n- Solutions, suspensions, properties\ncolloids and their • Demonstrate separation techniques, such as\nproperties crystallisation, distillation, paper chromatography,\n- Various ways to express sublimation, centrifugation and coagulation\nconcentration of • Classify mixtures as solutions, suspensions, or\nsolutions (mass by mass colloids based on their properties\npercentage of a solution, • Explain the scientific principles behind different\n\n---\n\n# Page 8\n\nmass by volume separation techniques\npercentage of a solution, • Apply the knowledge of homogeneous and\nvolume by volume heterogeneous mixtures in daily life\npercentage of a solution) • Define and calculate the concentration of solutions\n- Separation techniques using mass by mass percentage, mass by volume\nbased on the physical percentage, volume by volume percentage\nproperties of • Analyse graphs of solubility and explain how the\ncomponents, including solubility of substances changes with temperature\ncrystallisation, • Use scientific conventions and standard units to\ndistillation, paper express concentrations\nchromatography, • Handle common laboratory chemicals and\nsublimation, apparatus safely\ncentrifugation and • Relate separation techniques with practices\ncoagulation observed in the local environment\nC-5.1 • Draw labelled diagrams or flow charts of separation\ntechniques\nC-5.2 • Display awareness about the societal impact of\nchemistry in making life healthier, cleaner and\nsustainable\nC-5.3 • Correlate the phenomenon used in centrifugation to\nthe spinning dance\nC-6.1 • Describe the cultural practices, like traditional\nmethods of distillation\n- Display awareness about the contributions of\nIndian scientists, such as Dilip Mahalanabis\nC-7.1 • Demonstrate the use of small-scale or micro-scale\nexperiments, such as crystallisation of copper\nsulfate, as an alternative to traditional methods\nC-7.2 • Poses question, such as — Can we create artificial\nblood that works just as real blood for all patients?\nC-8.1 • Exhibit creativity and work collaboratively in groups\nto create models of apparatus used for separating\nmixtures, such as a paperfuge and a distillation\n## unit, using eco-friendly materials\nC-8.2 • Formulate hypotheses about scientific phenomena\nbased on prior knowledge and understanding of\nscientific concepts, and predict the results of an\nexperiment or investigation based on their\nhypotheses\n\n---\n\n# Page 9\n\n- Accurately use scientific instruments, apparatus\nand chemicals to collect data\n- Analyse results and findings using scientific terms\n- Represent findings in multiple modes, including\nappropriate figures, tables, graphs, or digital\nformats, and interpret and draw inferences from the\nfindings\n- Communicate findings and conclusions effectively,\nsuch as those from experiments, activities or\nprojects, both orally and in written form\nStructure of an Atom No. of Periods: 14\nKey Concepts Learning Outcomes\n- Atoms are the basic C-1.1 • Differentiate between subatomic particles\nunits of elements (electrons, protons, and neutrons) based on their\n- Atoms consist of charge, and position in the atom\nsubatomic particles • Illustrate how electrons are distributed in different\n- Atomic Models energy levels, such as K, L, M, N ... or by numbers\n(Thomson’s Model, n = 1, 2, 3, 4 ...\nRutherford’s Model, and • Explain valence electrons, valency, atomic number,\nBohr’s Model) atomic mass, isotopes, and isobars\n- Distributions of electrons • Calculate the number of electrons, protons, and\nin elements (up to 18 neutrons of an element using its atomic and mass\nelements) numbers\n- Symbols • Interpret data, such as atomic mass, maximum\n- Valency as the number of electrons in a shell, and valency to\ncombining capacity classify elements accurately\n- Atomic number • Use scientific conventions as per international\n- Mass number standards, such as notations for electron, proton,\n- Isotopes neutron, unified atomic mass unit (u), and\n- Isobars distribution of electrons in various shells, such as\n## K, L, M, N …\nC-1.3 • Recognise and accurately apply the chemical\nsymbols for the first eighteen elements according\nto IUPAC\nC-5.1 • Draw labelled diagrams of various atomic models,\nsuch as Thomson’s model, Rutherford’s model and\nBohr’s model\n- Create and present a role play, stage play, or story\nof ‘Journey Inside the Atom’ to display awareness\nabout the contributions of key scientists in the\n\n---\n\n# Page 10\n\ndiscovery and development of atomic structure\nC-5.2 • Display awareness about the role of Indian\nscientists and their contributions to atomic science\nfor peaceful purposes and explore how their works\ninfluenced India’s scientific development\nC-5.3 • Display awareness about the societal impact of\nscience in making life healthier, like the use of\nvarious isotopes in medicines to treat different\ndiseases, and atomic energy in power generation\n- Design and develop games that utilise atomic\nnumber, mass number, and subatomic particle\nclues to accurately predict and identify elements\nC-6.1 • Display awareness about the contributions of the\nancient Indian philosopher, Acharya Kanad’s idea\nof indivisible particles (Parmanu)\nC-7.1 • Describe the use of the atomic mass unit (u) to\nmeasure the mass of atoms as per IUPAC\nrecommendations\n- Describe scientific discoveries that explain how the\nstructure of the atom has evolved over time\nthrough various atomic models proposed by\ndifferent scientists\nC-7.2 • Pose question, such as — is it possible to\ncompletely understand everything that happens\ninside an atom?\nC-8.1 • Exhibit creativity and work collaboratively in groups\nto design different models of atoms\nC-8.2 • Formulate hypotheses about scientific phenomena\nby applying prior knowledge and understanding of\nscientific concepts, and predict the results of data\nbased on the hypotheses\n- Analyse results and present findings using\nscientific terms\n- Correlate the results and conclusions of different\nmodels of atomic structure\n- Represent data in multiple modes, including\nappropriate figures, tables, graphs or digital\nformats, and interpret and draw inferences from the\ndata\n\n---\n\n# Page 11\n\n- Communicate findings and conclusions effectively,\nsuch as those from experiments, activities or\nprojects, both orally and in written form\nAtoms and Molecules No. of Periods: 14\nKey Concepts Learning Outcomes\n- Law of conservation of C-1.1 • Differentiate between chemical species based on\nmass their properties or characteristics, such as atoms\n- Law of constant and molecules, elements and compounds, ionic\nproportion and covalent compounds, cations and anions,\n- Dalton’s Atomic theory formula unit mass and molecular mass• Plan and\n- Molecules of elements, demonstrate activities to observe and verify the law\nMolecules of covalent of conservation of mass\ncompounds and their • Explain the Dalton’s atomic theory, the law of\nproperties conservation of mass, the law of constant\n- Ions, Ionic compounds proportions, and formation of ionic and covalent\nand their properties compounds\n- Writing chemical • Calculate the charge on an ion, valency from the\nformulae atomic number, the molecular and formula unit\n- Molecular mass mass\n- Formula unit mass • Use scientific conventions, symbols, and valency to\nwrite the chemical formulae of simple compounds\n- Display awareness about the scientific di\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

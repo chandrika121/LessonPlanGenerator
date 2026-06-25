@@ -1,0 +1,3144 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class IX",
+      "subject": "Social Science",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Understanding Social Science",
+          "topics": [
+            "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+            "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Diversity",
+            "Inclusivity",
+            "Sustainability",
+            "Equity"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Understanding Social Science",
+              "topics": [
+                "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+                "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Diversity",
+                "Inclusivity",
+                "Sustainability",
+                "Equity"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Shaping of the Earth's Surface",
+          "topics": [
+            "Theory of plate tectonics"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Shaping of the Earth's Surface",
+              "topics": [
+                "Theory of plate tectonics"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+          "topics": [
+            "Government efforts biosphere reserves in conserving to support forest ecosystems and biodiversity.",
+            "Analyse the concept of ecotourism and discuss its role in promoting sustainable forest ecosystem and conservation.",
+            "Investigate the causes of forest fires in the local area, and prepare a plan for mitigation and prevention."
+          ],
+          "subtopics": [
+            "Explain the cultural, political, and military contributions of regional kingdoms in India.",
+            "Appreciate how diverse communities and regions shaped India's history from 1000 CE to 1700 CE.",
+            "Explore how regional kingdoms adapted to changing political, economic, and cultural contexts over time.",
+            "Analyse the continuity of the civilisational history of India as a nation upto 18th century CE."
+          ],
+          "key_concepts": [
+            "Safeguarding C1.3",
+            "C1.4",
+            "C3.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Resilience (1000 CE – 1700 CE)",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+          "topics": [
+            "Trade with Mesopotamia, Greece, Roman Empire, China and Southeast Asia.",
+            "Cultural Connections — Interactions with India",
+            "Influence on South East Asia"
+          ],
+          "subtopics": [
+            "Explore India's relations with early civilisations of the world.",
+            "Identify the major articles of trade and the major trading ports.",
+            "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+            "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+          ],
+          "key_concepts": [
+            "C1.2",
+            "C1.4",
+            "C6.1",
+            "C2.3",
+            "C9.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "India and the World-I (1900 BCE- 1200 CE)",
+              "topics": [],
+              "subtopics": [
+                "Explore India's relations with early civilisations of the world.",
+                "Identify the major articles of trade and the major trading ports.",
+                "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+                "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+              ],
+              "key_concepts": [
+                "C1.2",
+                "C1.4",
+                "C6.1",
+                "C2.3",
+                "C9.1"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+          "topics": [],
+          "subtopics": [
+            "Medicine"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+              "topics": [],
+              "subtopics": [
+                "Medicine"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Authority (10 Hours)",
+          "topics": [
+            "The Roots of Authority: in Kautilya and shukraniti- danda relationship with nyaya and bala"
+          ],
+          "subtopics": [
+            "Explain the roots of authority in Indian political thought.",
+            "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+            "Trace the evolution of authority structures since ancient times in India.",
+            "Understand the post- independence concept of justice and security.",
+            "Illustrate types of authority.",
+            "Develop an understanding of citizen strength.",
+            "Illustrate the role of citizens in authority."
+          ],
+          "key_concepts": [
+            "C5.1",
+            "C5.2",
+            "C 5.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Authority (10 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain the roots of authority in Indian political thought.",
+                "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+                "Trace the evolution of authority structures since ancient times in India.",
+                "Understand the post- independence concept of justice and security."
+              ],
+              "key_concepts": [
+                "C5.1",
+                "C5.2",
+                "C 5.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "From Ideas to Startups (8 Hours)",
+          "topics": [
+            "What is entrepreneurship and explain the resources required to start a business.",
+            "Case studies of successful entrepreneurs."
+          ],
+          "subtopics": [
+            "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+            "Understand the key resources for business.",
+            "Explain how resources are managed to produce goods and services.",
+            "Analyse real-world examples of successful entrepreneurs.",
+            "Describe the features of India's start-up ecosystem and initiatives like Make in India, Startup India, and Digital India.",
+            "Recognise the role of Micro, Small, and Medium Enterprises (MSMEs) and the unorganised sector in promoting employment, innovation, and inclusive growth.",
+            "Identify and explain the stages of starting a business from developing an idea to creating and executing a business plan.",
+            "Understand simple profit and loss. Identify the key components of a balance."
+          ],
+          "key_concepts": [
+            "C7.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "From Ideas to Startups (8 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+                "Understand the key resources for business.",
+                "Explain how resources are managed to produce goods and services.",
+                "Analyse real-world examples of successful entrepreneurs."
+              ],
+              "key_concepts": [
+                "C7.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+          "topics": [
+            "Relevance of personal financial management in daily life.",
+            "Inflation and its impact on purchasing power."
+          ],
+          "subtopics": [
+            "Explain what personal financial management means and why it is essential in everyday life.",
+            "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+            "Explain the difference between simple interest and compound interest.",
+            "Prepare a simple personal or family budget showing income, expenditure, and savings.",
+            "Identify various savings and investment instruments like fixed deposit, stocks, bonds, mutual funds, etc.",
+            "Understand the relationship between risk and return in different investment types.",
+            "Understand the concept of income tax and why citizens are required to pay it."
+          ],
+          "key_concepts": [
+            "CG8"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain what personal financial management means and why it is essential in everyday life.",
+                "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+                "Explain the difference between simple interest and compound interest.",
+                "Prepare a simple personal or family budget showing income, expenditure, and savings."
+              ],
+              "key_concepts": [
+                "CG8"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class X",
+      "subject": "Social Science",
+      "units": [
+        {
+          "unit_id": "U3",
+          "unit_name": "Atmosphere and Climate (7 Hours)",
+          "topics": [
+            "Structure and composition; elements of weather and climate",
+            "Seasons of India and monsoons",
+            "Climate change",
+            "Floods"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Atmosphere and Climate (7 Hours)",
+              "topics": [
+                "Structure and composition of atmosphere; elements of weather and climate",
+                "Seasons of India: mechanisms, onset, withdrawal, monsoons as a unifying bond",
+                "Climate change: causes, impacts on agriculture and water resources",
+                "Floods: types, causes, and management strategies"
+              ],
+              "subtopics": [
+                "Atmospheric layers (Troposphere to Exosphere)",
+                "Temperature distribution patterns in India",
+                "Monsoon mechanisms: ITCZ shift, jet streams, El Niño/La Niña effects",
+                "Disaster management frameworks for flood-prone regions"
+              ],
+              "key_concepts": [
+                "Climate vs Weather distinction",
+                "Regional climatic variations in India",
+                "Anthropogenic climate change drivers",
+                "Resilience and adaptation strategies"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "Early Humans and Beginning of Civilisation (9 Hours)",
+          "topics": [
+            "Cultural development from 2 million years ago organised.",
+            "Prehistoric time divisions periodisation: Archaeological ages",
+            "Who are human ancestors?",
+            "Palaeolithic hunter-gatherers and use of stone tools",
+            "Mesolithic transition to food production: Mesolithic sites and tools",
+            "Neolithic and the beginning of farming: Neolithic revolution domestication of plants and animals",
+            "Harappan and contemporary cultures",
+            "Mesopotamian, egyptian, and chinese civilisation"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Early Humans and Beginning of Civilisation (9 Hours)",
+              "topics": [
+                "Evolution of humans: from 2 million years ago to modern Homo sapiens",
+                "Prehistoric periodization: Palaeolithic, Mesolithic, Neolithic ages and tools",
+                "Transition to food production: domestication of plants and animals (Neolithic Revolution)",
+                "Harappan civilization: urban planning, trade, and social structure"
+              ],
+              "subtopics": [
+                "Hunter-gatherer societies and stone tool technologies",
+                "Mesolithic adaptations in the Indian subcontinent",
+                "Comparative analysis of Harappan sites (Mohenjo-daro, Harappa)",
+                "Contemporary civilizations: Mesopotamia, Egypt, China"
+              ],
+              "key_concepts": [
+                "Archaeological periodisation and evidence interpretation",
+                "Sedentism and agricultural surplus",
+                "Urbanization processes in early civilisations",
+                "Cultural continuity and change across millennia"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+          "topics": [
+            "Vedic Age — polity.",
+            "Administrative structure of early empires",
+            "Quest for knowledge — educational heritage, institutions, knowledge traditions, and cultural practices"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "State and Society geography; texts; rituals; political institutions, and social order (upto 1000 CE) (9 Hours)",
+              "topics": [
+                "Vedic polity: Sabha, Samiti, and the evolution of state structures",
+                "Administrative systems in early empires (Mauryas, Guptas): centralization vs decentralization",
+                "Quest for knowledge: educational institutions (Gurukuls, Taxila), texts, and rituals"
+              ],
+              "subtopics": [
+                "Social stratification: Varna system evolution",
+                "Role of Brahmins in political administration",
+                "Transmission of knowledge through oral and written traditions",
+                "Rituals as social cohesion mechanisms"
+              ],
+              "key_concepts": [
+                "Political legitimacy in ancient India",
+                "Interplay between religion, state, and society",
+                "Knowledge systems: Vedic to Buddhist/Jain traditions",
+                "Cultural integration through shared rituals"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Democracy (9 Hours)",
+          "topics": [
+            "Meaning features and types of democracy",
+            "Roots of democracy in India",
+            "Challenges to democracy in India"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Democracy (9 Hours)",
+              "topics": [
+                "Concept of democracy: meaning, features, and types (direct vs representative)",
+                "Roots of Indian democracy: colonial resistance, freedom struggle, and constitutional values",
+                "Challenges to democracy in India: inequality, communalism, regional disparities"
+              ],
+              "subtopics": [
+                "Democratic principles: liberty, equality, justice, fraternity",
+                "Historical context: 1947 Constitution drafting process",
+                "Contemporary challenges: electoral malpractices, corruption, and social divisions",
+                "Role of civil society in strengthening democracy"
+              ],
+              "key_concepts": [
+                "Democracy as a way of life vs political system",
+                "Constitutional morality and democratic resilience",
+                "Inclusivity and representation in Indian polity",
+                "Democratic backsliding indicators"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "Elections (9 Hours)",
+          "topics": [
+            "Factors of importance of elections",
+            "Electoral systems",
+            "Delimitation Commission and Election Commission of India"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Elections (9 Hours)",
+              "topics": [
+                "Importance of elections: legitimacy, accountability, and citizen participation",
+                "Electoral systems in India: First-past-the-post vs proportional representation debates",
+                "Institutional framework: Delimitation Commission and Election Commission powers"
+              ],
+              "subtopics": [
+                "Voter turnout trends and demographic shifts",
+                "Election machinery: EVMs, voter ID systems, and logistics",
+                "Delimitation criteria: population changes vs geographical boundaries",
+                "Electoral reforms: Model Code of Conduct enforcement"
+              ],
+              "key_concepts": [
+                "Free and fair elections as democratic pillars",
+                "Institutional autonomy in electoral governance",
+                "Geographical representation challenges",
+                "Technology in election management"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Building Blocks in Economics (7 Hours)",
+          "topics": [
+            "Scarcity of resources, choice and opportunity cost"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Building Blocks in Economics (7 Hours)",
+              "topics": [
+                "Scarcity of resources: fundamental economic problem and choice-making",
+                "Opportunity cost: trade-offs in production and consumption decisions"
+              ],
+              "subtopics": [
+                "Factors of production: land, labor, capital, entrepreneurship",
+                "Production Possibility Frontier (PPF) analysis",
+                "Resource allocation mechanisms: market vs command economies",
+                "Opportunity cost calculation examples"
+              ],
+              "key_concepts": [
+                "Rational choice theory basics",
+                "Efficiency and equity in resource distribution",
+                "Marginal decision-making processes",
+                "Economic problem resolution frameworks"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U9",
+          "unit_name": "The Price Puzzle: What Drives the Market (8 Hours)",
+          "topics": [
+            "Laws of demand and supply"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "What Drives the Market (8 Hours)",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U10",
+          "unit_name": "Oceans and Life (7 Hours)",
+          "topics": [
+            "Introduction to ocean relief, movement of ocean water- waves tides and currents"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Oceans and Life (7 Hours)",
+              "topics": [
+                "Ocean relief features: continental shelves, slopes, abyssal plains"
+              ],
+              "subtopics": [
+                "Waves: generation mechanisms and coastal impacts",
+                "Tides: spring vs neap tides; tidal energy potential",
+                "Currents: warm/cold currents and their climatic effects",
+                "Oceanic biodiversity hotspots"
+              ],
+              "key_concepts": [
+                "Marine geomorphology processes",
+                "Hydrological cycles in ocean systems",
+                "Climate regulation by ocean currents",
+                "Sustainable marine resource management"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U11",
+          "unit_name": "Life on Earth (7 Hours)",
+          "topics": [
+            "Biomes: Distribution and characteristics; biosphere reserves in India"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Life on Earth (7 Hours)",
+              "topics": [
+                "Biomes: global distribution patterns and ecological characteristics"
+              ],
+              "subtopics": [
+                "Major biomes: tropical rainforests, deserts, tundras, grasslands",
+                "Biosphere reserves in India: purpose, locations, conservation goals",
+                "Human impact on biome integrity (deforestation, urbanization)",
+                "Climate change effects on biome shifts"
+              ],
+              "key_concepts": [
+                "Ecological succession and stability",
+                "Biodiversity hotspots vs cold spots",
+                "Conservation strategies for endemic species",
+                "Interdependence of biotic and abiotic factors"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class IX",
+      "subject": "Social Science Part 1 and Part 2",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Understanding Social Science",
+          "topics": [
+            "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+            "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Diversity",
+            "Inclusivity",
+            "Sustainability",
+            "Equity"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Understanding Social Science",
+              "topics": [
+                "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+                "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Diversity",
+                "Inclusivity",
+                "Sustainability",
+                "Equity"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Shaping of the Earth's Surface",
+          "topics": [
+            "Theory of plate tectonics"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Shaping of the Earth's Surface",
+              "topics": [
+                "Theory of plate tectonics"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+          "topics": [
+            "Government efforts biosphere reserves in conserving to support forest ecosystems and biodiversity.",
+            "Analyse the concept of ecotourism and discuss its role in promoting sustainable forest ecosystem and conservation.",
+            "Investigate the causes of forest fires in the local area, and prepare a plan for mitigation and prevention."
+          ],
+          "subtopics": [
+            "Explain the cultural, political, and military contributions of regional kingdoms in India.",
+            "Appreciate how diverse communities and regions shaped India's history from 1000 CE to 1700 CE.",
+            "Explore how regional kingdoms adapted to changing political, economic, and cultural contexts over time.",
+            "Analyse the continuity of the civilisational history of India as a nation upto 18th century CE."
+          ],
+          "key_concepts": [
+            "Safeguarding C1.3",
+            "C1.4",
+            "C3.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Resilience (1000 CE – 1700 CE)",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+          "topics": [
+            "Trade with Mesopotamia, Greece, Roman Empire, China and Southeast Asia.",
+            "Cultural Connections — Interactions with India",
+            "Influence on South East Asia"
+          ],
+          "subtopics": [
+            "Explore India's relations with early civilisations of the world.",
+            "Identify the major articles of trade and the major trading ports.",
+            "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+            "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+          ],
+          "key_concepts": [
+            "C1.2",
+            "C1.4",
+            "C6.1",
+            "C2.3",
+            "C9.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "India and the World-I (1900 BCE- 1200 CE)",
+              "topics": [],
+              "subtopics": [
+                "Explore India's relations with early civilisations of the world.",
+                "Identify the major articles of trade and the major trading ports.",
+                "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+                "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+              ],
+              "key_concepts": [
+                "C1.2",
+                "C1.4",
+                "C6.1",
+                "C2.3",
+                "C9.1"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+          "topics": [],
+          "subtopics": [
+            "Medicine"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+              "topics": [],
+              "subtopics": [
+                "Medicine"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Authority (10 Hours)",
+          "topics": [
+            "The Roots of Authority: in Kautilya and shukraniti- danda relationship with nyaya and bala"
+          ],
+          "subtopics": [
+            "Explain the roots of authority in Indian political thought.",
+            "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+            "Trace the evolution of authority structures since ancient times in India.",
+            "Understand the post- independence concept of justice and security.",
+            "Illustrate types of authority.",
+            "Develop an understanding of citizen strength.",
+            "Illustrate the role of citizens in authority."
+          ],
+          "key_concepts": [
+            "C5.1",
+            "C5.2",
+            "C 5.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Authority (10 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain the roots of authority in Indian political thought.",
+                "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+                "Trace the evolution of authority structures since ancient times in India.",
+                "Understand the post- independence concept of justice and security."
+              ],
+              "key_concepts": [
+                "C5.1",
+                "C5.2",
+                "C 5.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "From Ideas to Startups (8 Hours)",
+          "topics": [
+            "What is entrepreneurship and explain the resources required to start a business.",
+            "Case studies of successful entrepreneurs."
+          ],
+          "subtopics": [
+            "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+            "Understand the key resources for business.",
+            "Explain how resources are managed to produce goods and services.",
+            "Analyse real-world examples of successful entrepreneurs.",
+            "Describe the features of India's start-up ecosystem and initiatives like Make in India, Startup India, and Digital India.",
+            "Recognise the role of Micro, Small, and Medium Enterprises (MSMEs) and the unorganised sector in promoting employment, innovation, and inclusive growth.",
+            "Identify and explain the stages of starting a business from developing an idea to creating and executing a business plan.",
+            "Understand simple profit and loss. Identify the key components of a balance."
+          ],
+          "key_concepts": [
+            "C7.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "From Ideas to Startups (8 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+                "Understand the key resources for business.",
+                "Explain how resources are managed to produce goods and services.",
+                "Analyse real-world examples of successful entrepreneurs."
+              ],
+              "key_concepts": [
+                "C7.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+          "topics": [
+            "Relevance of personal financial management in daily life.",
+            "Inflation and its impact on purchasing power."
+          ],
+          "subtopics": [
+            "Explain what personal financial management means and why it is essential in everyday life.",
+            "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+            "Explain the difference between simple interest and compound interest.",
+            "Prepare a simple personal or family budget showing income, expenditure, and savings.",
+            "Identify various savings and investment instruments like fixed deposit, stocks, bonds, mutual funds, etc.",
+            "Understand the relationship between risk and return in different investment types.",
+            "Understand the concept of income tax and why citizens are required to pay it."
+          ],
+          "key_concepts": [
+            "CG8"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain what personal financial management means and why it is essential in everyday life.",
+                "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+                "Explain the difference between simple interest and compound interest.",
+                "Prepare a simple personal or family budget showing income, expenditure, and savings."
+              ],
+              "key_concepts": [
+                "CG8"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class IX",
+      "subject": "History",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Understanding Social Science",
+          "topics": [
+            "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+            "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Diversity",
+            "Inclusivity",
+            "Sustainability",
+            "Equity"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Understanding Social Science",
+              "topics": [
+                "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+                "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Diversity",
+                "Inclusivity",
+                "Sustainability",
+                "Equity"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Shaping of the Earth's Surface",
+          "topics": [
+            "Theory of plate tectonics"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Shaping of the Earth's Surface",
+              "topics": [
+                "Theory of plate tectonics"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+          "topics": [
+            "Government efforts biosphere reserves in conserving to support forest ecosystems and biodiversity.",
+            "Analyse the concept of ecotourism and discuss its role in promoting sustainable forest ecosystem and conservation.",
+            "Investigate the causes of forest fires in the local area, and prepare a plan for mitigation and prevention."
+          ],
+          "subtopics": [
+            "Explain the cultural, political, and military contributions of regional kingdoms in India.",
+            "Appreciate how diverse communities and regions shaped India's history from 1000 CE to 1700 CE.",
+            "Explore how regional kingdoms adapted to changing political, economic, and cultural contexts over time.",
+            "Analyse the continuity of the civilisational history of India as a nation upto 18th century CE."
+          ],
+          "key_concepts": [
+            "Safeguarding C1.3",
+            "C1.4",
+            "C3.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Resilience (1000 CE – 1700 CE)",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+          "topics": [
+            "Trade with Mesopotamia, Greece, Roman Empire, China and Southeast Asia.",
+            "Cultural Connections — Interactions with India",
+            "Influence on South East Asia"
+          ],
+          "subtopics": [
+            "Explore India's relations with early civilisations of the world.",
+            "Identify the major articles of trade and the major trading ports.",
+            "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+            "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+          ],
+          "key_concepts": [
+            "C1.2",
+            "C1.4",
+            "C6.1",
+            "C2.3",
+            "C9.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "India and the World-I (1900 BCE- 1200 CE)",
+              "topics": [],
+              "subtopics": [
+                "Explore India's relations with early civilisations of the world.",
+                "Identify the major articles of trade and the major trading ports.",
+                "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+                "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+              ],
+              "key_concepts": [
+                "C1.2",
+                "C1.4",
+                "C6.1",
+                "C2.3",
+                "C9.1"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+          "topics": [],
+          "subtopics": [
+            "Medicine"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+              "topics": [],
+              "subtopics": [
+                "Medicine"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Authority (10 Hours)",
+          "topics": [
+            "The Roots of Authority: in Kautilya and shukraniti- danda relationship with nyaya and bala"
+          ],
+          "subtopics": [
+            "Explain the roots of authority in Indian political thought.",
+            "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+            "Trace the evolution of authority structures since ancient times in India.",
+            "Understand the post- independence concept of justice and security.",
+            "Illustrate types of authority.",
+            "Develop an understanding of citizen strength.",
+            "Illustrate the role of citizens in authority."
+          ],
+          "key_concepts": [
+            "C5.1",
+            "C5.2",
+            "C 5.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Authority (10 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain the roots of authority in Indian political thought.",
+                "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+                "Trace the evolution of authority structures since ancient times in India.",
+                "Understand the post- independence concept of justice and security."
+              ],
+              "key_concepts": [
+                "C5.1",
+                "C5.2",
+                "C 5.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "From Ideas to Startups (8 Hours)",
+          "topics": [
+            "What is entrepreneurship and explain the resources required to start a business.",
+            "Case studies of successful entrepreneurs."
+          ],
+          "subtopics": [
+            "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+            "Understand the key resources for business.",
+            "Explain how resources are managed to produce goods and services.",
+            "Analyse real-world examples of successful entrepreneurs.",
+            "Describe the features of India's start-up ecosystem and initiatives like Make in India, Startup India, and Digital India.",
+            "Recognise the role of Micro, Small, and Medium Enterprises (MSMEs) and the unorganised sector in promoting employment, innovation, and inclusive growth.",
+            "Identify and explain the stages of starting a business from developing an idea to creating and executing a business plan.",
+            "Understand simple profit and loss. Identify the key components of a balance."
+          ],
+          "key_concepts": [
+            "C7.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "From Ideas to Startups (8 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+                "Understand the key resources for business.",
+                "Explain how resources are managed to produce goods and services.",
+                "Analyse real-world examples of successful entrepreneurs."
+              ],
+              "key_concepts": [
+                "C7.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+          "topics": [
+            "Relevance of personal financial management in daily life.",
+            "Inflation and its impact on purchasing power."
+          ],
+          "subtopics": [
+            "Explain what personal financial management means and why it is essential in everyday life.",
+            "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+            "Explain the difference between simple interest and compound interest.",
+            "Prepare a simple personal or family budget showing income, expenditure, and savings.",
+            "Identify various savings and investment instruments like fixed deposit, stocks, bonds, mutual funds, etc.",
+            "Understand the relationship between risk and return in different investment types.",
+            "Understand the concept of income tax and why citizens are required to pay it."
+          ],
+          "key_concepts": [
+            "CG8"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain what personal financial management means and why it is essential in everyday life.",
+                "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+                "Explain the difference between simple interest and compound interest.",
+                "Prepare a simple personal or family budget showing income, expenditure, and savings."
+              ],
+              "key_concepts": [
+                "CG8"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class IX",
+      "subject": "History Civics",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Understanding Social Science",
+          "topics": [
+            "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+            "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Diversity",
+            "Inclusivity",
+            "Sustainability",
+            "Equity"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Understanding Social Science",
+              "topics": [
+                "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+                "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Diversity",
+                "Inclusivity",
+                "Sustainability",
+                "Equity"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Shaping of the Earth's Surface",
+          "topics": [
+            "Theory of plate tectonics"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Shaping of the Earth's Surface",
+              "topics": [
+                "Theory of plate tectonics"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+          "topics": [
+            "Government efforts biosphere reserves in conserving to support forest ecosystems and biodiversity.",
+            "Analyse the concept of ecotourism and discuss its role in promoting sustainable forest ecosystem and conservation.",
+            "Investigate the causes of forest fires in the local area, and prepare a plan for mitigation and prevention."
+          ],
+          "subtopics": [
+            "Explain the cultural, political, and military contributions of regional kingdoms in India.",
+            "Appreciate how diverse communities and regions shaped India's history from 1000 CE to 1700 CE.",
+            "Explore how regional kingdoms adapted to changing political, economic, and cultural contexts over time.",
+            "Analyse the continuity of the civilisational history of India as a nation upto 18th century CE."
+          ],
+          "key_concepts": [
+            "Safeguarding C1.3",
+            "C1.4",
+            "C3.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Resilience (1000 CE – 1700 CE)",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+          "topics": [
+            "Trade with Mesopotamia, Greece, Roman Empire, China and Southeast Asia.",
+            "Cultural Connections — Interactions with India",
+            "Influence on South East Asia"
+          ],
+          "subtopics": [
+            "Explore India's relations with early civilisations of the world.",
+            "Identify the major articles of trade and the major trading ports.",
+            "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+            "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+          ],
+          "key_concepts": [
+            "C1.2",
+            "C1.4",
+            "C6.1",
+            "C2.3",
+            "C9.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "India and the World-I (1900 BCE- 1200 CE)",
+              "topics": [],
+              "subtopics": [
+                "Explore India's relations with early civilisations of the world.",
+                "Identify the major articles of trade and the major trading ports.",
+                "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+                "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+              ],
+              "key_concepts": [
+                "C1.2",
+                "C1.4",
+                "C6.1",
+                "C2.3",
+                "C9.1"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+          "topics": [],
+          "subtopics": [
+            "Medicine"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+              "topics": [],
+              "subtopics": [
+                "Medicine"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Authority (10 Hours)",
+          "topics": [
+            "The Roots of Authority: in Kautilya and shukraniti- danda relationship with nyaya and bala"
+          ],
+          "subtopics": [
+            "Explain the roots of authority in Indian political thought.",
+            "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+            "Trace the evolution of authority structures since ancient times in India.",
+            "Understand the post- independence concept of justice and security.",
+            "Illustrate types of authority.",
+            "Develop an understanding of citizen strength.",
+            "Illustrate the role of citizens in authority."
+          ],
+          "key_concepts": [
+            "C5.1",
+            "C5.2",
+            "C 5.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Authority (10 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain the roots of authority in Indian political thought.",
+                "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+                "Trace the evolution of authority structures since ancient times in India.",
+                "Understand the post- independence concept of justice and security."
+              ],
+              "key_concepts": [
+                "C5.1",
+                "C5.2",
+                "C 5.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "From Ideas to Startups (8 Hours)",
+          "topics": [
+            "What is entrepreneurship and explain the resources required to start a business.",
+            "Case studies of successful entrepreneurs."
+          ],
+          "subtopics": [
+            "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+            "Understand the key resources for business.",
+            "Explain how resources are managed to produce goods and services.",
+            "Analyse real-world examples of successful entrepreneurs.",
+            "Describe the features of India's start-up ecosystem and initiatives like Make in India, Startup India, and Digital India.",
+            "Recognise the role of Micro, Small, and Medium Enterprises (MSMEs) and the unorganised sector in promoting employment, innovation, and inclusive growth.",
+            "Identify and explain the stages of starting a business from developing an idea to creating and executing a business plan.",
+            "Understand simple profit and loss. Identify the key components of a balance."
+          ],
+          "key_concepts": [
+            "C7.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "From Ideas to Startups (8 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+                "Understand the key resources for business.",
+                "Explain how resources are managed to produce goods and services.",
+                "Analyse real-world examples of successful entrepreneurs."
+              ],
+              "key_concepts": [
+                "C7.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+          "topics": [
+            "Relevance of personal financial management in daily life.",
+            "Inflation and its impact on purchasing power."
+          ],
+          "subtopics": [
+            "Explain what personal financial management means and why it is essential in everyday life.",
+            "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+            "Explain the difference between simple interest and compound interest.",
+            "Prepare a simple personal or family budget showing income, expenditure, and savings.",
+            "Identify various savings and investment instruments like fixed deposit, stocks, bonds, mutual funds, etc.",
+            "Understand the relationship between risk and return in different investment types.",
+            "Understand the concept of income tax and why citizens are required to pay it."
+          ],
+          "key_concepts": [
+            "CG8"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain what personal financial management means and why it is essential in everyday life.",
+                "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+                "Explain the difference between simple interest and compound interest.",
+                "Prepare a simple personal or family budget showing income, expenditure, and savings."
+              ],
+              "key_concepts": [
+                "CG8"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class IX",
+      "subject": "Civics Political Science",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Understanding Social Science",
+          "topics": [
+            "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+            "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Diversity",
+            "Inclusivity",
+            "Sustainability",
+            "Equity"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Understanding Social Science",
+              "topics": [
+                "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+                "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Diversity",
+                "Inclusivity",
+                "Sustainability",
+                "Equity"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Shaping of the Earth's Surface",
+          "topics": [
+            "Theory of plate tectonics"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Shaping of the Earth's Surface",
+              "topics": [
+                "Theory of plate tectonics"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+          "topics": [
+            "Government efforts biosphere reserves in conserving to support forest ecosystems and biodiversity.",
+            "Analyse the concept of ecotourism and discuss its role in promoting sustainable forest ecosystem and conservation.",
+            "Investigate the causes of forest fires in the local area, and prepare a plan for mitigation and prevention."
+          ],
+          "subtopics": [
+            "Explain the cultural, political, and military contributions of regional kingdoms in India.",
+            "Appreciate how diverse communities and regions shaped India's history from 1000 CE to 1700 CE.",
+            "Explore how regional kingdoms adapted to changing political, economic, and cultural contexts over time.",
+            "Analyse the continuity of the civilisational history of India as a nation upto 18th century CE."
+          ],
+          "key_concepts": [
+            "Safeguarding C1.3",
+            "C1.4",
+            "C3.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Resilience (1000 CE – 1700 CE)",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+          "topics": [
+            "Trade with Mesopotamia, Greece, Roman Empire, China and Southeast Asia.",
+            "Cultural Connections — Interactions with India",
+            "Influence on South East Asia"
+          ],
+          "subtopics": [
+            "Explore India's relations with early civilisations of the world.",
+            "Identify the major articles of trade and the major trading ports.",
+            "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+            "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+          ],
+          "key_concepts": [
+            "C1.2",
+            "C1.4",
+            "C6.1",
+            "C2.3",
+            "C9.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "India and the World-I (1900 BCE- 1200 CE)",
+              "topics": [],
+              "subtopics": [
+                "Explore India's relations with early civilisations of the world.",
+                "Identify the major articles of trade and the major trading ports.",
+                "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+                "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+              ],
+              "key_concepts": [
+                "C1.2",
+                "C1.4",
+                "C6.1",
+                "C2.3",
+                "C9.1"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+          "topics": [],
+          "subtopics": [
+            "Medicine"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+              "topics": [],
+              "subtopics": [
+                "Medicine"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Authority (10 Hours)",
+          "topics": [
+            "The Roots of Authority: in Kautilya and shukraniti- danda relationship with nyaya and bala"
+          ],
+          "subtopics": [
+            "Explain the roots of authority in Indian political thought.",
+            "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+            "Trace the evolution of authority structures since ancient times in India.",
+            "Understand the post- independence concept of justice and security.",
+            "Illustrate types of authority.",
+            "Develop an understanding of citizen strength.",
+            "Illustrate the role of citizens in authority."
+          ],
+          "key_concepts": [
+            "C5.1",
+            "C5.2",
+            "C 5.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Authority (10 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain the roots of authority in Indian political thought.",
+                "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+                "Trace the evolution of authority structures since ancient times in India.",
+                "Understand the post- independence concept of justice and security."
+              ],
+              "key_concepts": [
+                "C5.1",
+                "C5.2",
+                "C 5.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "From Ideas to Startups (8 Hours)",
+          "topics": [
+            "What is entrepreneurship and explain the resources required to start a business.",
+            "Case studies of successful entrepreneurs."
+          ],
+          "subtopics": [
+            "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+            "Understand the key resources for business.",
+            "Explain how resources are managed to produce goods and services.",
+            "Analyse real-world examples of successful entrepreneurs.",
+            "Describe the features of India's start-up ecosystem and initiatives like Make in India, Startup India, and Digital India.",
+            "Recognise the role of Micro, Small, and Medium Enterprises (MSMEs) and the unorganised sector in promoting employment, innovation, and inclusive growth.",
+            "Identify and explain the stages of starting a business from developing an idea to creating and executing a business plan.",
+            "Understand simple profit and loss. Identify the key components of a balance."
+          ],
+          "key_concepts": [
+            "C7.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "From Ideas to Startups (8 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+                "Understand the key resources for business.",
+                "Explain how resources are managed to produce goods and services.",
+                "Analyse real-world examples of successful entrepreneurs."
+              ],
+              "key_concepts": [
+                "C7.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+          "topics": [
+            "Relevance of personal financial management in daily life.",
+            "Inflation and its impact on purchasing power."
+          ],
+          "subtopics": [
+            "Explain what personal financial management means and why it is essential in everyday life.",
+            "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+            "Explain the difference between simple interest and compound interest.",
+            "Prepare a simple personal or family budget showing income, expenditure, and savings.",
+            "Identify various savings and investment instruments like fixed deposit, stocks, bonds, mutual funds, etc.",
+            "Understand the relationship between risk and return in different investment types.",
+            "Understand the concept of income tax and why citizens are required to pay it."
+          ],
+          "key_concepts": [
+            "CG8"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain what personal financial management means and why it is essential in everyday life.",
+                "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+                "Explain the difference between simple interest and compound interest.",
+                "Prepare a simple personal or family budget showing income, expenditure, and savings."
+              ],
+              "key_concepts": [
+                "CG8"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class IX",
+      "subject": "Economics Entrepreneurship",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Understanding Social Science",
+          "topics": [
+            "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+            "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Diversity",
+            "Inclusivity",
+            "Sustainability",
+            "Equity"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Understanding Social Science",
+              "topics": [
+                "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+                "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Diversity",
+                "Inclusivity",
+                "Sustainability",
+                "Equity"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Shaping of the Earth's Surface",
+          "topics": [
+            "Theory of plate tectonics"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Shaping of the Earth's Surface",
+              "topics": [
+                "Theory of plate tectonics"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+          "topics": [
+            "Government efforts biosphere reserves in conserving to support forest ecosystems and biodiversity.",
+            "Analyse the concept of ecotourism and discuss its role in promoting sustainable forest ecosystem and conservation.",
+            "Investigate the causes of forest fires in the local area, and prepare a plan for mitigation and prevention."
+          ],
+          "subtopics": [
+            "Explain the cultural, political, and military contributions of regional kingdoms in India.",
+            "Appreciate how diverse communities and regions shaped India's history from 1000 CE to 1700 CE.",
+            "Explore how regional kingdoms adapted to changing political, economic, and cultural contexts over time.",
+            "Analyse the continuity of the civilisational history of India as a nation upto 18th century CE."
+          ],
+          "key_concepts": [
+            "Safeguarding C1.3",
+            "C1.4",
+            "C3.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Resilience (1000 CE – 1700 CE)",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+          "topics": [
+            "Trade with Mesopotamia, Greece, Roman Empire, China and Southeast Asia.",
+            "Cultural Connections — Interactions with India",
+            "Influence on South East Asia"
+          ],
+          "subtopics": [
+            "Explore India's relations with early civilisations of the world.",
+            "Identify the major articles of trade and the major trading ports.",
+            "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+            "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+          ],
+          "key_concepts": [
+            "C1.2",
+            "C1.4",
+            "C6.1",
+            "C2.3",
+            "C9.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "India and the World-I (1900 BCE- 1200 CE)",
+              "topics": [],
+              "subtopics": [
+                "Explore India's relations with early civilisations of the world.",
+                "Identify the major articles of trade and the major trading ports.",
+                "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+                "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+              ],
+              "key_concepts": [
+                "C1.2",
+                "C1.4",
+                "C6.1",
+                "C2.3",
+                "C9.1"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+          "topics": [],
+          "subtopics": [
+            "Medicine"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+              "topics": [],
+              "subtopics": [
+                "Medicine"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Authority (10 Hours)",
+          "topics": [
+            "The Roots of Authority: in Kautilya and shukraniti- danda relationship with nyaya and bala"
+          ],
+          "subtopics": [
+            "Explain the roots of authority in Indian political thought.",
+            "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+            "Trace the evolution of authority structures since ancient times in India.",
+            "Understand the post- independence concept of justice and security.",
+            "Illustrate types of authority.",
+            "Develop an understanding of citizen strength.",
+            "Illustrate the role of citizens in authority."
+          ],
+          "key_concepts": [
+            "C5.1",
+            "C5.2",
+            "C 5.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Authority (10 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain the roots of authority in Indian political thought.",
+                "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+                "Trace the evolution of authority structures since ancient times in India.",
+                "Understand the post- independence concept of justice and security."
+              ],
+              "key_concepts": [
+                "C5.1",
+                "C5.2",
+                "C 5.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "From Ideas to Startups (8 Hours)",
+          "topics": [
+            "What is entrepreneurship and explain the resources required to start a business.",
+            "Case studies of successful entrepreneurs."
+          ],
+          "subtopics": [
+            "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+            "Understand the key resources for business.",
+            "Explain how resources are managed to produce goods and services.",
+            "Analyse real-world examples of successful entrepreneurs.",
+            "Describe the features of India's start-up ecosystem and initiatives like Make in India, Startup India, and Digital India.",
+            "Recognise the role of Micro, Small, and Medium Enterprises (MSMEs) and the unorganised sector in promoting employment, innovation, and inclusive growth.",
+            "Identify and explain the stages of starting a business from developing an idea to creating and executing a business plan.",
+            "Understand simple profit and loss. Identify the key components of a balance."
+          ],
+          "key_concepts": [
+            "C7.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "From Ideas to Startups (8 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+                "Understand the key resources for business.",
+                "Explain how resources are managed to produce goods and services.",
+                "Analyse real-world examples of successful entrepreneurs."
+              ],
+              "key_concepts": [
+                "C7.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+          "topics": [
+            "Relevance of personal financial management in daily life.",
+            "Inflation and its impact on purchasing power."
+          ],
+          "subtopics": [
+            "Explain what personal financial management means and why it is essential in everyday life.",
+            "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+            "Explain the difference between simple interest and compound interest.",
+            "Prepare a simple personal or family budget showing income, expenditure, and savings.",
+            "Identify various savings and investment instruments like fixed deposit, stocks, bonds, mutual funds, etc.",
+            "Understand the relationship between risk and return in different investment types.",
+            "Understand the concept of income tax and why citizens are required to pay it."
+          ],
+          "key_concepts": [
+            "CG8"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain what personal financial management means and why it is essential in everyday life.",
+                "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+                "Explain the difference between simple interest and compound interest.",
+                "Prepare a simple personal or family budget showing income, expenditure, and savings."
+              ],
+              "key_concepts": [
+                "CG8"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class IX",
+      "subject": "Economics Financial Literacy",
+      "units": [
+        {
+          "unit_id": "U1",
+          "unit_name": "Understanding Social Science",
+          "topics": [
+            "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+            "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Diversity",
+            "Inclusivity",
+            "Sustainability",
+            "Equity"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Understanding Social Science",
+              "topics": [
+                "Meaning, scope and relevance of Social Science to understand society, environment, economy, and governance in our lives.",
+                "Understanding Social Science from an Indian perspective as disciplines (Geography, History, Political Science, Economics) and recognise their interconnections."
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Diversity",
+                "Inclusivity",
+                "Sustainability",
+                "Equity"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U2",
+          "unit_name": "Shaping of the Earth's Surface",
+          "topics": [
+            "Theory of plate tectonics"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Shaping of the Earth's Surface",
+              "topics": [
+                "Theory of plate tectonics"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U3",
+          "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+          "topics": [
+            "Government efforts biosphere reserves in conserving to support forest ecosystems and biodiversity.",
+            "Analyse the concept of ecotourism and discuss its role in promoting sustainable forest ecosystem and conservation.",
+            "Investigate the causes of forest fires in the local area, and prepare a plan for mitigation and prevention."
+          ],
+          "subtopics": [
+            "Explain the cultural, political, and military contributions of regional kingdoms in India.",
+            "Appreciate how diverse communities and regions shaped India's history from 1000 CE to 1700 CE.",
+            "Explore how regional kingdoms adapted to changing political, economic, and cultural contexts over time.",
+            "Analyse the continuity of the civilisational history of India as a nation upto 18th century CE."
+          ],
+          "key_concepts": [
+            "Safeguarding C1.3",
+            "C1.4",
+            "C3.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Resilience (1000 CE – 1700 CE)",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U4",
+          "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+          "topics": [
+            "Trade with Mesopotamia, Greece, Roman Empire, China and Southeast Asia.",
+            "Cultural Connections — Interactions with India",
+            "Influence on South East Asia"
+          ],
+          "subtopics": [
+            "Explore India's relations with early civilisations of the world.",
+            "Identify the major articles of trade and the major trading ports.",
+            "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+            "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+          ],
+          "key_concepts": [
+            "C1.2",
+            "C1.4",
+            "C6.1",
+            "C2.3",
+            "C9.1"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "India and the World-I (1900 BCE- 1200 CE)",
+              "topics": [],
+              "subtopics": [
+                "Explore India's relations with early civilisations of the world.",
+                "Identify the major articles of trade and the major trading ports.",
+                "Appreciate the significant contributions of India in diverse spheres in an integrated manner.",
+                "Appreciate the influence of Indian religion and culture, particularly in Southeast Asia."
+              ],
+              "key_concepts": [
+                "C1.2",
+                "C1.4",
+                "C6.1",
+                "C2.3",
+                "C9.1"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U5",
+          "unit_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+          "topics": [],
+          "subtopics": [
+            "Medicine"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Indian Knowledge Systems — Medicine, Mathematics and Astronomy, Religion",
+              "topics": [],
+              "subtopics": [
+                "Medicine"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "U6",
+          "unit_name": "Authority (10 Hours)",
+          "topics": [
+            "The Roots of Authority: in Kautilya and shukraniti- danda relationship with nyaya and bala"
+          ],
+          "subtopics": [
+            "Explain the roots of authority in Indian political thought.",
+            "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+            "Trace the evolution of authority structures since ancient times in India.",
+            "Understand the post- independence concept of justice and security.",
+            "Illustrate types of authority.",
+            "Develop an understanding of citizen strength.",
+            "Illustrate the role of citizens in authority."
+          ],
+          "key_concepts": [
+            "C5.1",
+            "C5.2",
+            "C 5.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Authority (10 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain the roots of authority in Indian political thought.",
+                "Interpret the relationship between Danda (discipline/ force) and Nyaya (justice) as the twin foundations of authority, development, and security.",
+                "Trace the evolution of authority structures since ancient times in India.",
+                "Understand the post- independence concept of justice and security."
+              ],
+              "key_concepts": [
+                "C5.1",
+                "C5.2",
+                "C 5.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U7",
+          "unit_name": "From Ideas to Startups (8 Hours)",
+          "topics": [
+            "What is entrepreneurship and explain the resources required to start a business.",
+            "Case studies of successful entrepreneurs."
+          ],
+          "subtopics": [
+            "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+            "Understand the key resources for business.",
+            "Explain how resources are managed to produce goods and services.",
+            "Analyse real-world examples of successful entrepreneurs.",
+            "Describe the features of India's start-up ecosystem and initiatives like Make in India, Startup India, and Digital India.",
+            "Recognise the role of Micro, Small, and Medium Enterprises (MSMEs) and the unorganised sector in promoting employment, innovation, and inclusive growth.",
+            "Identify and explain the stages of starting a business from developing an idea to creating and executing a business plan.",
+            "Understand simple profit and loss. Identify the key components of a balance."
+          ],
+          "key_concepts": [
+            "C7.3"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "From Ideas to Startups (8 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Define entrepreneurship and explain its importance in innovation, job creation, and economic growth.",
+                "Understand the key resources for business.",
+                "Explain how resources are managed to produce goods and services.",
+                "Analyse real-world examples of successful entrepreneurs."
+              ],
+              "key_concepts": [
+                "C7.3"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "U8",
+          "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+          "topics": [
+            "Relevance of personal financial management in daily life.",
+            "Inflation and its impact on purchasing power."
+          ],
+          "subtopics": [
+            "Explain what personal financial management means and why it is essential in everyday life.",
+            "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+            "Explain the difference between simple interest and compound interest.",
+            "Prepare a simple personal or family budget showing income, expenditure, and savings.",
+            "Identify various savings and investment instruments like fixed deposit, stocks, bonds, mutual funds, etc.",
+            "Understand the relationship between risk and return in different investment types.",
+            "Understand the concept of income tax and why citizens are required to pay it."
+          ],
+          "key_concepts": [
+            "CG8"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)",
+              "topics": [],
+              "subtopics": [
+                "Explain what personal financial management means and why it is essential in everyday life.",
+                "Recognise how managing income, spending saving, and investment helps achieve financial stability and long-term goals.",
+                "Explain the difference between simple interest and compound interest.",
+                "Prepare a simple personal or family budget showing income, expenditure, and savings."
+              ],
+              "key_concepts": [
+                "CG8"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "C1.2",
+      "title": "Chronology of Human Life and Relations with Other Civilisations",
+      "description": "Explains and analyses the chronology of human life on the Indian subcontinent, from prehistory to its civilisational beginnings and beyond, and its relations with other civilisations over time.",
+      "competencies": [
+        "C1.2 Explains and analyses the chronology of human life on the Indian subcontinent, from prehistory to its civilisational beginnings and beyond, and its relations with other civilisations over time, such as those in Mesopotamia, Greece, Central Asia, China, Southeast Asia, Arabia, and Eastern Africa"
+      ],
+      "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+      "chapter_name": "India and the World-I (1900 BCE- 1200 CE)"
+    },
+    {
+      "code": "C1.3",
+      "title": "Continuity and Change in Indian History",
+      "description": "Traces aspects of continuity and change in different phases of history across the Indian subcontinent.",
+      "competencies": [
+        "C1.3 Traces aspects of continuity and change in different phases of history across the Indian subcontinent (including cultural trends, social and religious trends and reforms, and economic and political transformations)"
+      ],
+      "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+      "chapter_name": "Resilience (1000 CE – 1700 CE)"
+    },
+    {
+      "code": "C1.4",
+      "title": "Growth of Indigenous Ideas in India",
+      "description": "Explains the growth of new indigenous ideas across India in Mathematics, Philosophy, Science and Technology, Medicine, Architecture, Agriculture, Literature and Art.",
+      "competencies": [
+        "C1.4 Explains the growth of new indigenous ideas across India in Mathematics, Philosophy, Science and Technology, Medicine, Architecture, Agriculture, Literature and Art, and Social Science (such as zero and the Indian number system, ahimsa , the six systems of Indian philosophy, Ayurveda, yoga, the 22 shrutis of Indian music, horticulture, use of herbs and spices, etymology, meters, and grammar) and how they affected the course of the Indian history"
+      ],
+      "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+      "chapter_name": "Resilience (1000 CE – 1700 CE)"
+    },
+    {
+      "code": "C2.3",
+      "title": "Continuity and Change in World History",
+      "description": "Traces aspects of continuity and change in different phases of world history.",
+      "competencies": [
+        "C-2.3 Traces aspects of continuity and change in different phases of world history (including cultural trends, social and religious reforms, and economic and political transformations)"
+      ],
+      "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+      "chapter_name": "India and the World-I (1900 BCE- 1200 CE)"
+    },
+    {
+      "code": "C3.1",
+      "title": "Meaning of Nation in Indian Context",
+      "description": "Analyses the meaning of nation and how the concept evolved over time across the world and in the specific context of India.",
+      "competencies": [
+        "C 3.1 Analyses the meaning of nation and how the concept evolved over time across the world and in the specific context of India, including its roots in the rich civilisational history of the Indian subcontinent"
+      ],
+      "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+      "chapter_name": "Resilience (1000 CE – 1700 CE)"
+    },
+    {
+      "code": "C4.2",
+      "title": "Geographical Concepts and Landforms",
+      "description": "Explains important geographical concepts, characteristics of key landforms, their origin, and other physical factors.",
+      "competencies": [
+        "C-4.2 Explains important geographical concepts, characteristics of key landforms, their origin, and other physical factors of a region"
+      ],
+      "unit_name": "Shaping of the Earth's Surface",
+      "chapter_name": "Shaping of the Earth's Surface"
+    },
+    {
+      "code": "C4.3",
+      "title": "Inter-linkages in Physical Environment",
+      "description": "Draws inter- linkages between various components of the physical environment.",
+      "competencies": [
+        "C-4.3 Draws inter- linkages between various components of the physical environment, such as climate and relief, climate and vegetation, vegetation, and wildlife."
+      ],
+      "unit_name": "Atmosphere and Climate (7 Hours)",
+      "chapter_name": "Atmosphere and Climate (7 Hours)"
+    },
+    {
+      "code": "C4.5",
+      "title": "Impact of Human Interventions on Environment",
+      "description": "Critically evaluates the impact of human interventions on the environment, including climate change, pollution, shortages of natural resources.",
+      "competencies": [
+        "C-4.5 Critically evaluates the impact of human interventions on the environment, including climate change, pollution, shortages of natural resources (particularly water), and loss of biodiversity; identifies practices that have led to these environmental crises and the measures that must be taken to reverse them."
+      ],
+      "unit_name": "Atmosphere and Climate (7 Hours)",
+      "chapter_name": "Atmosphere and Climate (7 Hours)"
+    },
+    {
+      "code": "C5.1",
+      "title": "Indian Constitution and Early Democracy Experiments",
+      "description": "Understands that the Indian Constitution draws from cultural heritage and recalls India's early experiments with democracy.",
+      "competencies": [
+        "C-5.1 Understands that the Indian Constitution draws from the great cultural heritage and common aspirations of the Indian nation, and recalls India’s early experiments with democracy (assemblies in Mahajanapadas , kingdoms and empires at several levels of the society, guilds sanghas and ganas , village councils and committees, Uthiramerur inscriptions)"
+      ],
+      "unit_name": "Authority (10 Hours)",
+      "chapter_name": "Authority (10 Hours)"
+    },
+    {
+      "code": "C5.2",
+      "title": "Fundamental Constitutional Values",
+      "description": "Appreciates fundamental Constitutional values and identify their significance for the prosperity of the Indian nation.",
+      "competencies": [
+        "C-5.2 Appreciates fundamental Constitutional values and identify their significance for the prosperity of the Indian nation."
+      ],
+      "unit_name": "Authority (10 Hours)",
+      "chapter_name": "Authority (10 Hours)"
+    },
+    {
+      "code": "C 5.3",
+      "title": "Fundamental Rights and Duties",
+      "description": "Explains that fundamental rights are the most basic human rights, and they flourish when people also perform their fundamental duties.",
+      "competencies": [
+        "C-5.3 Explains that fundamental rights are the most basic human rights, and they flourish when people also perform their fundamental duties"
+      ],
+      "unit_name": "Authority (10 Hours)",
+      "chapter_name": "Authority (10 Hours)"
+    },
+    {
+      "code": "C6.1",
+      "title": "Unity in Diversity and Cultural Integration",
+      "description": "Understands how the Indian ethos respected diversity, promoted unity in diversity, and peaceful coexistence.",
+      "competencies": [
+        "C-6.1 Understands how the Indian ethos and the cultural integration across India did not attempt uniformity, but respected and promoted a rich diversity in Indian society, and how this harmonisation and unity in diversity, with a historical respect for all cultures, women have counted among India’s great strengths by promoting peaceful coexistence"
+      ],
+      "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+      "chapter_name": "India and the World-I (1900 BCE- 1200 CE)"
+    },
+    {
+      "code": "C7.3",
+      "title": "Organised vs Unorganised Sectors",
+      "description": "Distinguishes between 'unorganised' and 'organised' sectors of the economy and their role in production.",
+      "competencies": [
+        "C-7.3 Distinguishes between ‘unorganised’ and ‘organised’ sectors of the economy and their role in production for the local market in small, medium, and large-scale production centres (industries), and recognises the special importance of the so-called ‘unorganised’ sector in Indian economy and its connections with the self-organising features of Indian society"
+      ],
+      "unit_name": "From Ideas to Startups (8 Hours)",
+      "chapter_name": "From Ideas to Startups (8 Hours)"
+    },
+    {
+      "code": "CG8",
+      "title": "Personal Financial Management and Economic Concepts",
+      "description": "Evaluates economic development impact on lives, understands financial management concepts including interest rates, budgeting, risk-return trade-offs.",
+      "competencies": [
+        "C-8.1 Gathers, comprehends and analyses data related to income, capital, poverty, and employment in one’s locality, region and at the national level.",
+        "C- 8.2 Understands and analyses the concepts and practices of the range of economic systems — from free market to entirely state-controlled markets.",
+        "C-8.3 Understands these features in the context of ancient India...",
+        "C-8.4 Describes India’s recent path towards again becoming one of the three largest economies..."
+      ],
+      "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+      "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)"
+    },
+    {
+      "code": "C9.1",
+      "title": "India's Contributions to Social Science",
+      "description": "Knows and explains the significant contributions of India to all matters studied within the curriculum.",
+      "competencies": [
+        "C – 9.1 Knows and explains the significant contributions of India to all matters (concepts, explanations, methods) studied within the curriculum, in an integrated manner"
+      ],
+      "unit_name": "India and the World-I (1900 BCE- 1200 CE)",
+      "chapter_name": "India and the World-I (1900 BCE- 1200 CE)"
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [],
+    "question_paper_design": [],
+    "competency_weightage": [],
+    "bloom_levels": [],
+    "internal_assessment": [
+      {
+        "type": "Periodic Assessment",
+        "description": "Pen Paper Test",
+        "marks": 5
+      },
+      {
+        "type": "Multiple Assessment",
+        "description": "Quiz, debate, role play, viva-voce, group discussion, visual expression, interactive bulletin boards, gallery walks, exit cards, concept maps, peer assessment, self-assessment etc. through interdisciplinary project, Report Writing on field visits, Commentaries/visual interpretations, site-map making",
+        "marks": 5
+      },
+      {
+        "type": "Subject Enrichment Project work (Interdisciplinary)",
+        "description": "",
+        "marks": 5
+      },
+      {
+        "type": "Portfolio",
+        "description": "Classroom, work done (activities/assignments) reflections, narrations, journals etc. Achievements of the student in the subject throughout the year. Participation of the student in different activities like Heritage India quiz etc.",
+        "marks": 5
+      }
+    ],
+    "practical_assessment": [],
+    "project_assessment": []
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": []
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [
+    {
+      "type": "activity",
+      "title": "Investigate causes of forest fires and prepare mitigation plan",
+      "unit_name": "Resistance and sovereignty: Resilience (1000 CE – 1700 CE)",
+      "chapter_name": "Resilience (1000 CE – 1700 CE)",
+      "details": "Investigate the causes of forest fires in the local area, and prepare a plan for mitigation and prevention."
+    },
+    {
+      "type": "activity",
+      "title": "Prepare simple personal or family budget",
+      "unit_name": "Smart Ways to Manage Your Finances (6 Hours)",
+      "chapter_name": "Smart Ways to Manage Your Finances (6 Hours)",
+      "details": "Prepare a simple personal or family budget showing income, expenditure, and savings."
+    },
+    {
+      "type": "activity",
+      "title": "Role-play: Running a lemonade stall / Simulating circular flow of income",
+      "unit_name": "Building Blocks in Economics (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Run a lemonade stall or simulate the circular flow of income with students acting as households, firms, banks, and government to make ideas like production, income, and expenditure tangible."
+    },
+    {
+      "type": "activity",
+      "title": "Classroom budget preparation game",
+      "unit_name": "Building Blocks in Economics (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Engage in classroom activities and games like preparing a classroom budget to understand scarcity, choice, and opportunity cost."
+    },
+    {
+      "type": "activity",
+      "title": "Field visit to local shopkeepers or MSMEs",
+      "unit_name": "Building Blocks in Economics (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Conduct surveys and field visits to expose students to real market dynamics."
+    },
+    {
+      "type": "activity",
+      "title": "Analyze inscriptions or edicts",
+      "unit_name": "Understanding Social Science",
+      "chapter_name": "Understanding Social Science",
+      "details": "Analyze inscriptions (e.g., Ashoka's edicts, Gupta records) to understand how rulers communicated policies and ethical guidelines."
+    },
+    {
+      "type": "activity",
+      "title": "Research on forts, temples, mosques, and palaces",
+      "unit_name": "Understanding Social Science",
+      "chapter_name": "Understanding Social Science",
+      "details": "Conduct research to present examples of cultural, architectural, and political developments in Indian history."
+    },
+    {
+      "type": "activity",
+      "title": "Locate extent of empires on a world map",
+      "unit_name": "Understanding Social Science",
+      "chapter_name": "Understanding Social Science",
+      "details": "Use a world map to trace India's trade and cultural exchanges with other civilisations."
+    },
+    {
+      "type": "activity",
+      "title": "Document-based inquiry on Vedic texts or constitutional excerpts",
+      "unit_name": "Understanding Social Science",
+      "chapter_name": "Understanding Social Science",
+      "details": "Explore authentic sources to interpret historical contexts and moral reasoning."
+    },
+    {
+      "type": "activity",
+      "title": "Visual organiser creation (charts, tables, concept maps)",
+      "unit_name": "Understanding Social Science",
+      "chapter_name": "Understanding Social Science",
+      "details": "Convert complex political ideas into structured visuals to support comprehension."
+    },
+    {
+      "type": "activity",
+      "title": "Construct models or sketches of ocean relief",
+      "unit_name": "Oceans and Life (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Create three-dimensional models to visualise complex geographical processes like mountain formation, river systems, and soil profiles."
+    },
+    {
+      "type": "activity",
+      "title": "Field observation of local landscapes",
+      "unit_name": "Oceans and Life (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Directly engage with local landscapes to develop geographical inquiry skills."
+    },
+    {
+      "type": "activity",
+      "title": "Explore Bhuvan images for geospatial data",
+      "unit_name": "Oceans and Life (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Use India's indigenous satellite imagery to explore regions using real-time geospatial data."
+    },
+    {
+      "type": "activity",
+      "title": "Photo interpretation of land-use patterns",
+      "unit_name": "Oceans and Life (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Analyse aerial and satellite photographs to understand land-use, vegetation cover, urbanisation, and environmental changes."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Interdisciplinary Project: Field Visits and Report Writing",
+      "unit_name": "Understanding Social Science",
+      "chapter_name": "Understanding Social Science",
+      "details": "Report writing on field visits, commentaries/visual interpretations, site-map making."
+    },
+    {
+      "title": "Interdisciplinary Project: Heritage India Quiz and Achievements Portfolio",
+      "unit_name": "Understanding Social Science",
+      "chapter_name": "Understanding Social Science",
+      "details": "Participation in activities like Heritage India quiz, portfolio of classroom work including reflections, narrations, journals."
+    },
+    {
+      "title": "Interdisciplinary Project: Debate and Role Play on Democracy",
+      "unit_name": "Democracy (9 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Debate, role play, viva-voce, group discussion to explore democratic values."
+    },
+    {
+      "title": "Interdisciplinary Project: Visual Expression and Gallery Walks",
+      "unit_name": "Democracy (9 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Visual expression, interactive bulletin boards, gallery walks."
+    },
+    {
+      "title": "Interdisciplinary Project: Exit Cards and Concept Maps",
+      "unit_name": "Democracy (9 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Exit cards, concept maps to assess understanding of democratic concepts."
+    },
+    {
+      "title": "Interdisciplinary Project: Peer and Self Assessment",
+      "unit_name": "Democracy (9 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Peer assessment, self-assessment on democratic processes."
+    }
+  ],
+  "practicals": [
+    {
+      "title": "Map Reading: Locate major tectonic plates",
+      "unit_name": "Shaping of the Earth's Surface",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Locate major tectonic plates on a world map."
+    },
+    {
+      "title": "Map Reading: Locate physiographic regions and climatic zones",
+      "unit_name": "Oceans and Life (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Locate physiographic regions of India and climatic zones on a globe/map."
+    },
+    {
+      "title": "Map Reading: Locate biosphere reserves",
+      "unit_name": "Life on Earth (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Locate biosphere reserves on the map of India."
+    },
+    {
+      "title": "Graphing: Represent climatic data",
+      "unit_name": "Atmosphere and Climate (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Represent climatic data (temperature, rainfall) through appropriate graphs, charts, or diagrams."
+    },
+    {
+      "title": "Graphing: Analyse GDP and trade trends",
+      "unit_name": "Building Blocks in Economics (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Use visual tools including maps, pie charts, and graphs to analyse data on GDP, trade, and sectoral trends."
+    },
+    {
+      "title": "Data Analysis: Income, Capital, Poverty",
+      "unit_name": "Building Blocks in Economics (7 Hours)",
+      "chapter_name": "What Drives the Market (8 Hours)",
+      "details": "Gather and analyse data related to income, capital, poverty, and employment from Census or NITI Aayog reports."
+    }
+  ]
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

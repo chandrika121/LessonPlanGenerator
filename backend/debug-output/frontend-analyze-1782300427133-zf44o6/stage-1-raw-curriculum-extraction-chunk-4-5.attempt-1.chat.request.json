@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 4 of 5; extract only what is present in this chunk\n\nCurriculum source text:\nering and\nwind, glaciers, and\nerosion with suitable examples.\nunderground water\n- Identify the prominent agents of gradation\n- Landforms and\noperating in a given region.\ndisasters:\n- Describe major landforms and explain the\nearthquakes,\nprocesses involved in their formation.\nlandslides,\navalanches, Glacial • Explain the causes of natural disasters and\nLake Outburst Flood propose strategies for their mitigation.\n(GLOF) and\nduststroms\n- 3. Atmosphere • Structure and C4.3, C4.4, C4.5\nand Climate composition; elements • Explain the different atmospheric layers\nand represent them using sketches and\n(7 Hours) of weather and climate\n- Seasons of India and diagrams.\n- Observe and analyse local winds and their\nmonsoons\nimpact.\n- Climate change\n- Understand the impact of the Indian monsoon\n- Floods\non life, agriculture, and livelihoods across\nCarbon footprint\ndifferent regions.\n8\n\n---\n\n# Page 9\n\n- Explain the causes and effects of climate\nchange.\n- Represent climatic data (temperature,\nrainfall, etc.) through appropriate graphs,\ncharts, or diagrams.\n- Analyse how climate change influences\nthe frequency and intensity of natural\ndisasters.\n- 4. Early • Cultural development C1.2, C2.1, C2.2, C2.3\nHumans and from 2 million years\n- Describe how prehistoric time divisions are\nBeginning of ago organised.\nCivilisation (9 • Early human history,\n- Explain how humans lived before the\nHours) periodisation:\ninvention of writing\nArchaeological ages\n- Understand the beginning of the settled life\n- Who are human\nwith development of agriculture, and\nancestors?\ndomestication of plants and animals.\n- Palaeolithic\n- Explore the factors of urban development\nhunter-gatherers and\nand\nuse of stone tools transformation through time.\n- Mesolithic transition to • Appreciate the diversity of crafts and trade,\nfood production: and their role the\nMesolithic sites and establishment of prosperous economy.\ntools\n- Understand the diversity of food habits.\n- Neolithic and the\n- Describe the social, political, and religious\nbeginning of farming:\nstructures of the civilisations of Egypt and\nNeolithic revolution\nMesopotamia.\ndomestication of\nplants and animals\n- Harappan and\ncontemporary cultures\n- Mesopotamian,\negyptian, and chinese\ncivilisation\n- 5. State and • Vedic Age — C1.3, C2.3, C3.1, C1.4\nSociety geography; texts;\n- Explain various facets of Vedic society and\nrituals; political\n(upto 1000 CE) polity.\ninstitutions, and\n(9 Hours)\n- Appreciate the achievements of Indian\nsocial order\nempires and their cultural legacy.\n- Administrative\nstructure of early • Understand the knowledge traditions and\nempires practices of India.\n- Quest for knowledge • Understand the foundations of the Indian\n— educational social and political institutions and their\nheritage, institutions, continuity.\nknowledge traditions,\nand\ncultural practices\n9\n\n---\n\n# Page 10\n\n- Traders and trade\nroutes, guilds and\nmerchants, crafts and\nindustries\n- 6. Democracy • Meaning features C5.1, C5.2\n(9 Hours) and types of • Understand the features of democracy.\ndemocracy\n- Appreciate early democratic traditions in\n- Roots of democracy in\nIndia and how they influenced modern\nIndia\ndemocracy.\n- Challenges to\n- Differentiate between parliamentary and\ndemocracy in India\npresidential systems.\n- Democratic systems in\n- Identify examples of both systems across\nthe world\ncountries, such as India, USA, France,\nRussia, and Canada.\n- 7. Elections • Factors of importance C5.2, C5.3, C5.4, C5.5, C6.2, C6.3, C6.4, C9.1\n(9 Hours) of elections • Identify factors highlighting importance of\n- Electoral systems elections in a democracy.\n- Delimitation • Categorise three types of electoral systems\nCommission and list examples.\n- Election Commission • Identify the major laws that govern the\nof India and its role conduct of elections in India.\n- Constituency, electoral • Describe the main provisions of the\nrolls, enumerators Representation of the People Acts.\n- Party system in India • Define the concept of delimitation and its\npurpose in the Indian electoral system.\n- Identify the role and functions Election\nCommission of India (ECI) in the electoral\nprocess.\n- Explain constituency, electoral roll,\nenumerator.\n- Understand the party system in India.\n- Explain the meaning and features of a\ncoalition government in the Indian\npolitical system. Explain key provisions of\nthe Anti-Defection Law with reference to\npolitical instability and the need for anti-\ndefection measures.\n- 8. Building • Scarcity of C8.2\nBlocks in resources,\n- Explain the meaning of scarcity, choice, and\nEconomics opportunity cost and opportunity cost in everyday life, and\n(7 Hours) the need for making economic decision-making.\nchoice. What do\n- Describe what economists do and how they\neconomists do?\nstudy production, distribution, and\nconsumption of goods and services.\n10\n\n---\n\n# Page 11\n\n- What to produce, • Recognise how economic analysis helps in\nhow to produce, and policy-making and solving real-world issues.\nfor whom to\n- Describe the three central problems of an\nproduce?\neconomy — what to produce, how to\n- Difference between produce, and for whom to produce.\nmarket, centrally\n- Identify and differentiate the characteristics\nplanned, and mixed\nof planned, free market, and mixed\neconomic systems\neconomic systems.\n- Welfare economy\n- Explain the concept of a welfare economy\nand the importance\nof social safety nets.\n- 9. The Price • Laws of demand and C7.1\nPuzzle: What supply\n- Explain the Law of Demand and Law of\nDrives the\n- Real-world deviations Supply with the help of real life examples.\nMarket\nfrom textbook theory,\n- Interpret how changes in price affect the\n(8 Hours) such as in case of\nquantity demanded and quantity supplied\nnecessities, luxury\nof goods and services.\ngoods, perishable\n- Identify the equilibrium price and quantity\nitems, and\nwhere demand and supply intersect.\nexpectations\n- Analyse how changes in market conditions\n- Some related\n(e.g., increase in demand or supply) lead to\nconcepts — price\nsurplus or shortage and affect equilibrium.\nceilings and market\nfailures (externalities, • Explain the concept of price ceilings and\ninformation how they can lead\nto shortages or black markets.\nasymmetry, public\ngoods) • Understand market failures and identify\ntheir main types.\n- Understand public goods (non- excludable\nand non-rival goods like parks or street\nlighting).\n## Part 2\n- S. Theme (time Outline/Concepts Learning Outcomes (pertinent) CGs, Cs\nNo. allocation\nStudents will be able to:\ninstructional\nhours)\n- 1. Oceans and • Introduction to ocean C4.1, C4.2\nLife (7 relief, movement of • Explain the movement of ocean waters,\nHours) ocean water- waves, including waves, tides, and currents.\ntides and currents • Analyse the connections between ocean\n- Marine resources currents, and global and regional climate\nand their patterns.\nsignificance; open • Understand the importance of marine\nseas, navigation resources for human livelihoods and\nfishing, and livelihood ecosystems.\nconcerns and • Examine the relationship between oceans,\nchallenges climate, livelihoods, and natural disasters.\n- Cyclones and • Highlight key rules, conventions, and\n11\n\n---\n\n# Page 12\n\nTsunamis — early international agreements governing\nwarning systems ocean navigation. and the use of marine\n- International resources.\nmaritime rules and • Explain the need for international\nregulations cooperation and agreements in the\nsustainable use of ocean resources.\n- Construct models or sketches representing\nocean relief.\n- 2. Life on • Biomes: Distribution C4.3, C4.4, C4.5, C4.6\nEarth (7 and characteristics; • Identify the major biomes of the world and\nHours) biosphere reserves in describe\nIndia their key climatic conditions, characteristic\n- Forest and flora, and fauna.\necotourism; forest • Locate biosphere reserves on the map of\ndwellers, their India.\nlivelihoods, and • Appreciate local traditional practices\nchallenges related to biodiversity conservation and\n- Forest and wildlife analyse their effects.\nconservation • E\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8B - Class XII
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XII",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computational Thinking and Programming – 2"
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Computer Networks",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computer Networks"
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Database Management",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Database Management"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_id": "C1",
+      "chapter_name": "Computational Thinking and Programming – 2"
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Computer Networks",
+      "chapter_id": "C1",
+      "chapter_name": "Computer Networks"
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Database Management",
+      "chapter_id": "C1",
+      "chapter_name": "Database Management"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "CS-XII-U1",
+      "title": "Computational Thinking and Programming – 2",
+      "description": "Advanced Python programming concepts including functions, exception handling, file operations (text, binary, CSV), and data structures like stacks.",
+      "competencies": [
+        "Apply the concept of functions: built-in, module-defined, user-defined; manage arguments/parameters (default, positional); understand return values, execution flow, and variable scope (global/local).",
+        "Handle exceptions using try-except-finally blocks to ensure robust code.",
+        "Manage file operations for Text files including open modes (r, w, a), with clause usage, read/write methods (read(), write()), seek/tell manipulation, and appending data.",
+        "Perform basic operations on Binary files: opening in binary modes, using pickle module for dump/load, search, append, update, and close operations.",
+        "Create and manipulate CSV files using the csv module with writer/writerow/reader methods.",
+        "Implement Stack data structure including push/pop operations and realization via Python lists."
+      ],
+      "unit_name": "Computational Thinking and Programming – 2",
+      "chapter_name": "Computational Thinking and Programming – 2"
+    },
+    {
+      "code": "CS-XII-U2",
+      "title": "Computer Networks",
+      "description": "Fundamentals of computer networking, evolution, data communication components, transmission media, devices, topologies, protocols, and web services.",
+      "competencies": [
+        "Trace the evolution of networking from ARPANET to INTERNET.",
+        "Explain data communication concepts: sender/receiver/message/protocols/media; measure capacity via bandwidth and transfer rates; understand IP addresses and switching techniques (Circuit/Packet).",
+        "Differentiate transmission media types: Wired (Twisted pair, Co-axial, Fiber-optic) and Wireless (Radio waves, Micro waves, Infrared).",
+        "Identify network devices including Modem, Ethernet card, RJ45, Repeater, Hub, Switch, Router, Gateway, WIFI card.",
+        "Classify networks by type (PAN, LAN, MAN, WAN) and topology (Bus, Star, Tree).",
+        "Explain key network protocols: HTTP, FTP, PPP, SMTP, TCP/IP, POP3, HTTPS, TELNET, VoIP.",
+        "Describe web services components including WWW, HTML, XML, domain names, URLs, websites, browsers, servers, and hosting."
+      ],
+      "unit_name": "Computer Networks",
+      "chapter_name": "Computer Networks"
+    },
+    {
+      "code": "CS-XII-U3",
+      "title": "Database Management",
+      "description": "Relational database concepts, SQL operations (DDL/DML), constraints, aggregate functions, joins, and Python-SQL connectivity.",
+      "competencies": [
+        "Explain relational data model components: relation, attribute, tuple, domain, degree, cardinality; identify keys (candidate, primary, alternate, foreign).",
+        "Execute Data Definition Language commands: create/use/drop database/table/show tables/alter table/add-remove attributes.",
+        "Perform Data Manipulation Language operations: insert/delete/select/update with mathematical, relational, and logical operators; use aliasing, distinct clause, where/in/between/order by/is null conditions.",
+        "Apply aggregate functions (max, min, avg, sum, count) using group by and having clauses.",
+        "Implement joins including cartesian product, equi-join, and natural join on two tables.",
+        "Establish Python-SQL connectivity: connect(), cursor(), execute(), commit(); perform insert/update/delete queries; fetch data via fetchone()/fetchall() with %s or format() specifiers."
+      ],
+      "unit_name": "Database Management",
+      "chapter_name": "Database Management"
+    }
+  ]
+}

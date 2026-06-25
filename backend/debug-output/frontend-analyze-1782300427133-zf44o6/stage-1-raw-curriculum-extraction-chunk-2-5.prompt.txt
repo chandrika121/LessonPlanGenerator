@@ -1,0 +1,173 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 2 of 5; extract only what is present in this chunk
+
+Curriculum source text:
+the inter-relationship between human beings and
+their physical environment and how that influences the livelihoods, cultural diversity, and
+biodiversity of the region
+ CG -8 Evaluate the economic development of a country in terms of its impact on the lives of
+its people and nature
+ CG-9 Understand and appreciate the contribution of India through history and present
+times, to the overall field of Social Science, and the disciplines that constitute it
+## COMPETENCIES
+Competencies are specific learning achievements that are observable and can be assessed
+systematically. In NCF, Competencies are directly derived from a Curricular Goal and are
+3
+
+---
+
+# Page 4
+
+expected to be attained by the end of a Stage. The following competencies need to be developed
+in students to achieve the curricular goals at secondary stage.
+ CG-1.1 Explains the historical events and processes using different types of sources with
+specific examples from Indian history
+ CG-1.2 Explains and analyses the chronology of human life on the Indian subcontinent,
+from prehistory to its civilisational beginnings and beyond, and its relations with other
+civilisations over time, such as those in Mesopotamia, Greece, Central Asia, China,
+Southeast Asia, Arabia, and Eastern Africa
+ CG-1.3 Traces aspects of continuity and change in different phases of history across the
+Indian subcontinent (including cultural trends, social and religious trends and reforms, and
+economic and political transformations)
+ CG-1.4 Explains the growth of new indigenous ideas across India in Mathematics,
+Philosophy, Science and Technology, Medicine, Architecture, Agriculture, Literature and Art,
+and Social Science (such as zero and the Indian number system, ahimsa , the six systems
+of Indian philosophy, Ayurveda, yoga, the 22 shrutis of Indian music, horticulture, use of
+herbs and spices, etymology, meters, and grammar) and how they affected the course of
+the Indian history
+ C-2.1 Explains historical events and processes with different types of sources with specific
+examples from India and world history.
+ C-2.3 Traces aspects of continuity and change in different phases of world history (including
+cultural trends, social and religious reforms, and economic and political transformations)
+ C-2.4 Explains the growth of new ideas and practices across the world (including
+humanism, mercantilism, industrialisation, scientific developments and explorations,
+imperialism, colonialism, the rise of the new nation states across the world, and various
+technologies including the most current) and how they affected the course of world history.
+ C-2.5 Recognises the various practices that arose, such as those in C- 2.4, and came to be
+condemned later on (such as racism, slavery, colonial invasions, conquests, and plunder,
+genocides, exclusion of women from democratic and other institutions), all of which have
+also impacted the course of world history and have left unhealed wounds.
+ C 3.1 Analyses the meaning of nation and how the concept evolved over time across the
+world and in the specific context of India, including its roots in the rich civilisational history of
+the Indian subcontinent
+ C3.2 Identifies and analyses important phases of the Indian national freedom struggle
+against British colonial rule, with special reference to the movement led by Mahatma
+Gandhi and other important figures as well as those that led to independence, and
+understands the specific Indian concepts, values, and methods (such as Swaraj, Swadeshi,
+passive resistance, fight for dharma self- sacrifice, ahimsa) that played a part in achieving
+Independence.
+ C-4.1 Locates physiographic regions of India and the climatic zones of the world on a
+globe/map.
+ C-4.2 Explains important geographical concepts, characteristics of key landforms, their
+origin, and other physical factors of a region
+ C-4.3 Draws inter- linkages between various components of the physical environment, such
+as climate and relief, climate and vegetation, vegetation, and wildlife.
+ C-4.4 Analyses and evaluates the inter- relationship between the natural environment and
+human beings and their cultures across regions and, in the case of India, the special
+environmental ethos that resulted in practices of nature conservation
+4
+
+---
+
+# Page 5
+
+ C-4.5 Critically evaluates the impact of human interventions on the environment, including
+climate change, pollution, shortages of natural resources (particularly water), and loss of
+biodiversity; identifies practices that have led to these environmental crises and the
+measures that must be taken to reverse them.
+ C-4.6 Develops sensitivity towards the judicious use of natural resources (by individuals,
+societies, and nations) and suggests measures for their conservation
+ C-5.1 Understands that the Indian Constitution draws from the great cultural heritage and
+common aspirations of the Indian nation, and recalls India’s early experiments with
+democracy (assemblies in Mahajanapadas , kingdoms and empires at several levels of the
+society, guilds sanghas and ganas , village councils and committees, Uthiramerur
+inscriptions)
+ C-5.2 Appreciates fundamental Constitutional values and identify their significance for the
+prosperity of the Indian nation.
+ C-5.3 Explains that fundamental rights are the most basic human rights, and they flourish
+when people also perform their fundamental duties
+ C-5.4 Analyses the basic features of a democracy and democratic government – and its
+history in India and across the world – and compares this form of government with other
+forms of government.
+ C-5.5- Analyses the critical role of non-state and non-market participants in the functioning
+of a democratic government and society, such as the media, civil society, socio-religious
+institutions, and community institutions
+ C-6.1 Understands how the Indian ethos and the cultural integration across India did not
+attempt uniformity, but respected and promoted a rich diversity in Indian society, and how
+this harmonisation and unity in diversity, with a historical respect for all cultures, women
+have counted among India’s great strengths by promoting peaceful coexistence
+ C-6.2 Understands that despite C-6.1, forms of inequality, injustice, and discrimination have
+occurred in different sections of society at different times (due to internal as well as outside
+forces such as colonisation), leading to political, social, and cultural efforts, struggles,
+movements, and mechanisms at various levels towards equity, inclusion, justice, and
+harmony, with varying outcomes and degrees of success.
+ C 6.3 Analyses aspects of differential treatment or discrimination that may exist in the
+Indian society, based on, socio-cultural background, region, language spoken, and what
+individuals and societies can do to eradicate such differential treatment
+ C 6.4 Understands that a progressive society and nation, such as India is one that
+recognises not only its civilisational strengths but also its socio-economic, cultural and
+political challenges, and continuously makes efforts to address those challenges to become
+ever more prosperous, inclusive, just, and harmonious
+ C-7.1 Defines key features of the economy, such as, production, distribution, demand,
+supply, trade, and commerce, and factors that influence these aspects (including
+technology)
+ C-7.2 Evaluates the importance of the three sectors of production (primary, secondary, and
+tertiary) in any country’s economy, especially India
+ C-7.3 Distinguishes between ‘unorganised’ and ‘organised’ sectors of the economy and their
+role in production for the local market in small, medium, and large-scale production centres
+(industries), and recognises the special importance of the so-called ‘unorganised’ sector in
+5
+
+---
+
+# Page 6
+
+Indian economy and its connections with the self-organising features of Indian society
+ C-7.4 Traces the beginning and importance of large- scale trade and commerce (including
+e- commerce) between one count

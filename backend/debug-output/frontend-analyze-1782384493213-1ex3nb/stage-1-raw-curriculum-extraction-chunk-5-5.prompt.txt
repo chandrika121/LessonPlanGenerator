@@ -1,0 +1,184 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+- Detected curriculum profile: term_semester_curriculum
+- Expected structure type: term_unit_topic
+- Preserve term/semester structure when present
+- Do not flatten semesters into plain unit lists
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 5 of 5; extract only what is present in this chunk
+
+Curriculum source text:
+xplain the concept and importance of
+- Government efforts biosphere reserves in conserving
+to support forest ecosystems and biodiversity.
+dwellers • Analyse the concept of ecotourism and
+discuss its role in promoting sustainable
+forest ecosystem and conservation.
+- Investigate the causes of forest fires in the
+local area, and prepare a plan for
+mitigation and prevention.
+- 3. Resistance • Safeguarding C1.3, C1.4, C3.1
+and sovereignty: • Explain the cultural, political, and military
+Resilience resistance, alliances contributions of regional kingdoms in India.
+(1000 CE – 1700 and confederacies • Appreciate how diverse communities and
+CE) • Development of art regions shaped India’s history from 1000 CE
+(9 Hours) and architecture, to 1700 CE.
+languages and • Explore how regional kingdoms adapted to
+literature changing political, economic, and cultural
+- The Bhakti tradition contexts over time.
+- Forts and fortifications • Analyse the continuity of the civilisational
+- Expansion of Indian history of India as a nation upto 18th
+economy and state century CE.
+- 4. India and • Trade and commerce C1.2, C1.4, C6.1, C2.3, C9.1
+the — trade with • Explore India’s relations with early
+World-I Mesopotamia, Greece, civilisations of the world.
+(1900 Roman Empire, China • Identify the major articles of trade and the
+BCE- and Southeast Asia major trading ports.
+1200 CE) • Cultural Connections • Appreciate the significant contributions of
+(8 Hours) — Interactions with India
+Greece and Rome, in diverse spheres in an integrated manner.
+Central Asia, • Appreciate the influence of Indian religion
+China, and Influence and culture, particularly in Southeast Asia.
+on South East Asia
+12
+
+---
+
+# Page 13
+
+- Indian Knowledge
+Systems — Medicine,
+Mathematics and
+Astronomy, Medicine,
+Religion
+- 5. Authorit • The Roots of Authority: C5.1, C5.2, C 5.3
+y (10 in Kautilya and • Explain the roots of authority in Indian
+Hours) shukraniti- danda and political thought.
+relationship with nyaya • Interpret the relationship between Danda
+and bala ; the types of (discipline/ force) and Nyaya (justice) as the
+nyaya and bala twin foundations of authority, development,
+- Constitutional status and security.
+of justice and security • Trace the evolution of authority structures
+since ancient times in India.
+- Links the role of • Understand the post- independence
+citizens with the concept of justice and security.
+elections and the • Illustrate types of authority.
+democratic institutions • Develop an understanding of citizen
+- Types of authority — discipline, justice, and strength.
+functional, sensitive, • Illustrate the role of citizens in authority.
+and welfare-oriented
+- 6. From Ideas • What is C7.3
+to Startups entrepreneurship and • Define entrepreneurship and explain its
+(8 Hours) explain the resources importance in innovation, job creation, and
+required to start a economic growth.
+business • Understand the key resources for business.
+- Case studies of • Explain how resources are managed to
+successful produce goods and services.
+entrepreneurs • Analyse real-world examples of successful
+- Creative destruction entrepreneurs.
+with examples • Describe the features of India’s start-up
+- Start-up ecosystem in ecosystem and initiatives like Make in India,
+India. Startup India, and Digital India.
+- Make in India • Recognise the role of Micro, Small, and
+initiative, role of Medium Enterprises (MSMEs) and the
+MSMEs and the unorganised sector in promoting employment,
+unorganised sector in innovation,
+India’s economic and inclusive growth.
+growth. • Identify and explain the stages of starting a
+- Stages of starting and business from developing an idea to
+executing a business creating and executing a business plan.
+idea through a • Understand simple profit and loss.
+business plan Identify the key components of a balance.
+- Some basic accounting
+concepts
+13
+
+---
+
+# Page 14
+
+- 7. Smart Ways • Relevance of CG8
+to Manage personal financial • Explain what personal financial
+Your management in daily management means and why
+Finances life it is essential in everyday life.
+(6 Hours) • Inflation and its impact • Recognise how managing income, spending,
+on purchasing power saving, and investment helps achieve
+- Simple vs. compound financial stability and long-term goals.
+interest rate • Explain the difference between simple
+- Budgeting interest and compound interest.
+- Various savings and • Prepare a simple personal or family budget
+investment options like showing income, expenditure, and savings.
+fixed deposit, stocks, • Identify various savings and investment
+bonds, mutual funds, instruments.
+etc. • Understand the relationship between risk and
+- Risk and insurance return in different investment types.
+- Personal income tax • Understand the concept of income tax and
+why citizens are required to pay it.
+Note-Course Structure will be provided shortly
+## CLASS IX (2025-26)
+## INTERNAL ASSESSMENT: 20 MARKS
+Type of Description Marks
+Assessment
+Periodic Assessment Pen Paper Test 5
+Multiple Assessment Quiz, debate, role play, viva-voce, group discussion, visual 5
+expression, interactive bulletin boards, gallery walks, exit
+cards, concept maps, peer assessment, self- assessment
+etc. through interdisciplinary project , Report Writing on
+field visits, Commentaries/visual interpretations, site-map
+making
+Subject Enrichment Project work (Interdisciplinary) 5
+Activity
+Portfolio Classroom, work done (activities/assignments) reflections, 5
+narrations, journals etc. Achievements of the student in the
+subject throughout the year. Participation of the student in
+different activities like Heritage India quiz etc.
+## CLASS IX
+## PRESCRIBED TEXT BOOKS
+- S. No. Name of the Book Publisher
+1 Social Science-Part 1 NCERT
+2 Social Science-Part 2 NCERT
+14

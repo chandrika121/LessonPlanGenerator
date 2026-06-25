@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 3 of 5; extract only what is present in this chunk\n\nCurriculum source text:\nry and another - the key items of trade in the beginning,\nand the changes from time to time.\n C-8.1 Gathers, comprehends and analyses data related to income, capital, poverty, and\nemployment in one’s locality, region and at the national level. Markets.\n C- 8.2 Understands and analyses the concepts and practices of the range of economic\nsystems — from free market to entirely state-controlled markets.\n C-8.3 Understands these features in the context of ancient India, with its thriving trade, both\ninternal and external, and its well- established trade practices and networks, business\nconventions, and diverse industries, all of which made India one of the world’s leading\neconomies up to the colonial period\n C-8.4 Describes India’s recent path towards again becoming one of the three largest\neconomies of the world, and how individuals can contribute to this economic progress.\n C-8.5 Appreciates the connections between economic development and the environment,\nand the broader indicators of societal wellbeing beyond GDP growth and income.\n C – 9.1 Knows and explains the significant contributions of India to all matters (concepts,\nexplanations, methods) studied within the curriculum, in an integrated manner\nPedagogy for teaching geography should integrate experiential, visual, and analytical\napproaches to make learning more meaningful and connected to the real world. Effective\ngeography teaching goes beyond textbooks- it involves helping students observe, analyse, and\ninterpret the Earth’s surface and human-environment relationships. The use of three-\ndimensional models enables students to visualise complex geographical processes, such as\nmountain formation, river systems, and soil profiles, thus making abstract concepts tangible.\nField observation is an essential pedagogical tool that promotes experiential learning; by directly\nengaging with local landscapes, students develop geographical inquiry skills, observation\ntechniques, and data collection abilities. Incorporating Bhuvan images, India’s indigenous\nsatellite imagery and mapping platform allow learners to explore their own regions using real-\ntime geospatial data and satellite views, linking classroom knowledge to local realities. Map\nreading is another fundamental component, as it cultivates spatial awareness, orientation, and\nthe ability to interpret symbols, scales, and coordinates. Likewise, photo interpretation —\nanalysing aerial and satellite photographs — helps students understand the land-use patterns,\nvegetation cover, urbanisation, and environmental changes. When combined, these methods\nfoster critical thinking, spatial reasoning, and a deeper appreciation of the dynamic Earth\nsystems that geography seeks to explain.\nFor understanding the past and India’s rich heritage, teachers are expected to engage students\nin the following ways. Firstly, they are expected to analyse inscriptions or edicts (for example,\nAshoka’s edicts, and Gupta records) to understand how rulers communicated policies,\nmessages, and ethical guidelines to their subjects. Secondly, they are to encourage students to\nread excerpts or chapters from Indian literary sources that throw light on the social, cultural, and\npolitical life of people. Thirdly, they are expected to conduct research and present examples of\nforts, temples, mosques, and palaces to illustrate cultural, architectural, and political\ndevelopments in the Indian history. Finally, the teachers should explore and discuss the works of\nartists and philosophers of the Renaissance period, highlighting their contributions and influence.\n6\n\n---\n\n# Page 7\n\nStudents should be made to locate the extent of various important empires on a world map.\nThey are also expected to investigate and explain the key Indian ideas that shaped the thinking\nof Western philosophers, scientists, and artists. Finally, students should be encouraged to use a\nworld map to trace India’s trade and cultural exchanges with other civilisations, and analyse their\npatterns and impact.\nTransaction of political concepts requires connecting students with evidence, inquiry, and real-\nworld reasoning. Document-based inquiry helps learners explore authentic sources, such as\nVedic texts, constitutional excerpts, and letters from national leaders to interpret historical\ncontexts and moral reasoning. Case-based pedagogy, using landmark judgments, maps, and\ndata analysis, builds decision-making and analytical skills, encouraging students to apply theory\nto practice. Evidence-based learning engages learners with real datasets from Census, NITI\nAayog, or UNDP reports to develop data literacy and link concepts like equality and\nrepresentation with measurable realities. Further, multimedia and experiential approaches use\npodcasts, documentaries, and archival materials to connect abstract political ideas with real\nexperiences, sharpening students’ interpretive and critical listening skills. Visual and graphic\norganiser-based pedagogy-through charts, tables, and concept maps — supports\ncomprehension, memory, and summarisation by converting complex ideas into structured\nvisuals. Together, these pedagogies transform classrooms into laboratories of civic thinking,\nempathy, and inquiry. They nurture students as reflective citizens who can interpret evidence,\nquestion assumptions, and engage meaningfully with India’s democratic processes.\nThe pedagogy for teaching Economics needs to be interactive, experiential, and inquiry-driven,\nenabling students to relate economic concepts to real-life situations. Teachers can use role-play\nactivities — such as running a lemonade stall or simulating the circular flow of income with\nstudents acting as households, firms, banks, and the government to make ideas like production,\nincome, and expenditure tangible. Class discussions on familiar issues, such as rising vegetable\nprices during monsoons, help students link classroom learning with everyday experiences and\ndevelop critical thinking. Engaging classroom activities and games, like preparing a classroom\nbudget, allow students to understand scarcity, choice, and opportunity cost in a fun and\nparticipatory way. The use of visual tools — including maps, pie charts, and graphs — can help\nstudents analyse data on GDP, trade, and sectoral trends. The case studies on topics like\npollution as an externality, public goods like street lights, or successful entrepreneurs encourage\napplication and deeper reflection. Surveys and field visits to local shopkeepers or MSMEs\nfurther bridge theory and practice by exposing students to real market dynamics. Incorporating\ncurrent resources, such as newspaper articles or the Union Budget fosters analytical skills and\nawareness of contemporary economic issues. Through this diverse, hands-on approach,\nlearners will move beyond memorisation to active understanding, making Economics relevant,\nengaging, and empowering\n7\n\n---\n\n# Page 8\n\n## COURSE OUTLINE\n## Class IX-2026-27\n## Part 1\n- S. Theme (time Outline/Concepts Learning Outcomes and\nNo. allocation in Competencies\ninstructional Students will be able to:\nhours)\n- 1. Understandin • Meaning, scope and • Explain the relevance of studying Social\ng Social relevance of Social Science to understand society,\nScience (4 Science environment, economy, and governance in\nHours) • Understanding Social our lives.\nScience from an • Explain the meaning and scope of\nIndian perspective Geography, History, Political Science, and\nEconomics as disciplines and recognise their\ninterconnections.\n- Appreciate diversity, inclusivity,\nsustainability, and equity as guiding values\nwhen studying society and making\ndecisions.\n- 2. Shaping of • Theory of plate C4.2\nthe Earth’s tectonics\n- Describe the concept of plate tectonics\nSurface (8 • Interior of the Earth and analyse its relevance in understanding\nHours) Earth’s dynamics.\n- Role of weathering\nand erosion; agents • Locate major tectonic plates on a world\nof gradation — river, map.\nwaves and currents,\n- Explain processes of weath\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: cbse_unit_topic\n- Expected structure type: unit_topic\n- Prefer unit -> topic when the source lists topics directly under a unit\n- Do not invent chapters from unit names in CBSE-style syllabi\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 2 of 5; extract only what is present in this chunk\n\nCurriculum source text:\nation of biodiversity)\nC 5.3 – Applies scientific principles to explain phenomena in other subjects (sound pitch,\noctave, and amplitude in music; use of muscles in dance form and sports)\nCG 6 – Understands and appreciates the contribution of India through history, and the\npresent time to the overall field of Science, including the disciplines that constitute it\nC 6.1 – Knows and explains the significant contributions of India to all matters (concepts,\nexplanations, methods) that are studied within the curriculum in an integrated manner\nCG 7 – Develops awareness of the most current discoveries, ideas, and frontiers in all\nareas of scientific knowledge in order to appreciate that Science is ever evolving, and\nthat there are still many unanswered questions\nC 7.1 – States concepts that represent the most current understanding of the matter being\nstudied, ranging from mere familiarity to conceptual understanding of the matter as\nappropriate to the developmental stage of the students\nC 7.2 – States questions related to matters in the curriculum for which current scientific\nunderstanding is well-recognised\nCG 8 – Explores the nature of Science by doing Science\nC 8.1 – Develops accurate and appropriate models (including geometric, mathematical,\ngraphical) to represent real-life events and phenomena using scientific principles, and use\nthese models to manipulate variables and predict results\n\n---\n\n# Page 4\n\nC 8.2 – Designs and implements a plan for scientific inquiry (formulates hypotheses, makes\npredictions, identifies variables, accurately uses scientific instruments, represents data —\nprimary and secondary — in multiple modes, draws inferences based on data, and\nunderstanding of scientific concepts, theories, laws and principles, and communicates\nfindings using scientific terminology)\n## COURSE OUTLINE\n## CLASS IX (2026-27)\nCell No. of Periods: 12\nKey Concepts Learning Outcomes\n- Discovery of cell C-3.1 • Differentiate between plant and animal cell,\n- Plant and animal cells prokaryote and eukaryote\n- Prokaryotic and • Describe the structural and functional features of\neukaryotic cells cells\n- Cell as a structural and • Explain the role of cells in the structure and\nfunctional unit of life; functions of organisms\nstructure and function of • Explain activities inside the cell and its interactions\nkey organelles (nucleus, with the environment\nmitochondria, • Demonstrate osmosis in cells\nchloroplast, endoplasmic • Prepare slides to observe cell structure\nreticulum, vacuoles,\nC-3.2 • Differentiate between diffusion and osmosis\nplasma membrane, cell\nwall)\nC-3.3 • Explain the role of cell division mitosis and meiosis\n- Permeability of cell\nin creating similarities and variations\nmembranes\n- Cellular division and\nC-4.2 • Identify and describe the role of biomolecules in the\ncancer\nstructure and function of cell\n- Recent advancement in\ncell biology C-5.2 • Cite case study related to the use of science in\nhuman life, for example, Leigh Syndrome and\nmitochondrial dysfunction\nC-5.3 • Apply learning of a structure and function of\nmuscles cells or joints in dance form and/or sports\nC-6.1 • Discuss significant contributions of India, for\nexample, Professor Arun Kumar Sharma for his\nwork on chromosomes and methods for its studies\nC-7.1 • Recognise that the cell is a structural unit of life\nand functional unit of life processes\nC-7.2 • Pose questions, such as — Can we create artificial\ncell which behaves exactly like a natural living cell?\n\n---\n\n# Page 5\n\nC-8.1 • Exhibit creativity and design models using low cost\nor no-cost eco-friendly material to study structure\nand functions of cell and cell organelles\nC-8.2 • Carry out an experiment to understand the osmosis\n- Analyze result and present finding using scientific\nterms\nTissues No. of Periods: 13\nKey Concepts Learning Outcomes\nTissues: Introduction and C-4.2 • Differentiate between plant and animal tissues;\nimportance meristematic and permanent tissues; simple and\n- Level of organisation in complex tissues; parenchyma, collenchyma and\nthe living organisms sclerenchyma; xylem and phloem; striated smooth\n- Plant and animal tissues and cardiac muscles;\n- Types of plant tissues • Different types of joints\n- Meristematic tissues • Relate the structure of the different types of\n(types and function of tissues with their functions\neach) • Explain the role of various types of tissues in\n- Permanent tissues plants and animals\n(types, structure and • Describe the level of organisation in a multicellular\nfunction of each) organism\n- Animal tissues\nC-5.3 • Establish the correlation between different tissues\n- Overview (epithelial,\nfor fitness, for example, role of muscles, cartilage\nconnective, muscular\nand bones in facilitating movement\nand nervous tissues —\ntypes, structure and\nC-6.1 • Explain the importance of yoga exercises for\nfunction of each)\nphysical agility and in maintaining the correct\n- Elementary idea of\nposture\nmusculoskeletal system\n- Care of musculoskeletal C-6.1 • Discuss significant contributions of India, for\nsystem: injuries, postural example, Professor Sipra Guha Mukherjee and\ncare, nutrition and Professor S.C. Maheshwari for their significant\nexercise contribution in the plant cell and tissue culture\nresearch in India\nC-7.1 • Discuss the techniques and medical\nrecommendations in recovery from muscular\ninjuries\n\n---\n\n# Page 6\n\nC-8.2 • Carry out an experiment to understand the growth\nin plant due to apical meristem\n- Represent data in multiple modes, including\nappropriate figures, tables, graphs, or digital\nformats, interpret and draw inferences from the\ndata\n- Analyse results and present findings using\nscientific terms\n- Communicate findings and conclusions effectively,\nsuch as those from experiments, activities, or\nprojects, both orally and in written form\nReproduction No. of Periods: 13\nKey Concepts Learning Outcomes\n- Introduction to different C-2.8 • Analyse the interactions between members of\nforms of reproduction — different groups of organisms, such as plants and\nsexual and asexual • pollinators\nTypes of asexual\nC-3.2 • Compare asexual and sexual reproduction\nreproduction with\n- Describe male and female reproductive organs in\nexamples\nplants and animals\n- Sexual reproduction in\n- Differentiate between ovule and seed; ovary and\nflowering plants (flower\nfruit\nand its parts, pollination,\n- Explain pollination and fertilisation\nfertilisation, seed\ndispersal)\nC-3.3 • Explain how variations are introduced by sexual\n- Sexual reproduction in\nreproduction\nhumans: male and\nfemale reproductive C-4.3 • Identify and explain the role of biotic and abiotic\nsystems (structure and agents in seed dispersal and pollination\nfunction, formation of\nC-5.1 • Illustrate the structure of male and female\ngametes, sperm and\nreproductive units or systems in plants and animals\negg, fertilisation,\npregnancy and\nC-5.2 • Recognise the significance of contraceptive\ndevelopment of embryo,\ndevices for population control and health including\nmenstrual cycle)\nreproductive health\n- Reproductive health and\nhygiene • Introduction to C-6.1 • Describe the contribution of India to the\nbirth control methods understanding of human anatomy\nand importance\nC-6.1 • Discuss significant contributions of India, for\nexample, Professor Panchanan Maheshwari for\n\n---\n\n# Page 7\n\nlaying the foundation of plant cell and tissue culture\nresearch in India\nC-7.1 • Recognise the importance of improvements in\nmedical field for assisted reproductive technologies\nC-7.2 • Pose questions, such as — How do heavy metals\nharm reproductive organs? Can extreme heat\naffect fertility?\nDiversity No. of Periods: 12\nKey Concepts Learning Outcomes\n- Importance of C-4.1 • Distinguish organisms based on certain\nclassification characteristics, such as number of cells present,\n- Five kingdoms and their cellular organisation and mode of nutrition\nkey features with • Classify various organisms in groups, such as five\nexamples kingdoms, on the basis of their cellular organisation\n- Major di\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

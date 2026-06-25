@@ -1,0 +1,308 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 4 of 5; extract only what is present in this chunk
+
+Curriculum source text:
+ering and
+wind, glaciers, and
+erosion with suitable examples.
+underground water
+- Identify the prominent agents of gradation
+- Landforms and
+operating in a given region.
+disasters:
+- Describe major landforms and explain the
+earthquakes,
+processes involved in their formation.
+landslides,
+avalanches, Glacial • Explain the causes of natural disasters and
+Lake Outburst Flood propose strategies for their mitigation.
+(GLOF) and
+duststroms
+- 3. Atmosphere • Structure and C4.3, C4.4, C4.5
+and Climate composition; elements • Explain the different atmospheric layers
+and represent them using sketches and
+(7 Hours) of weather and climate
+- Seasons of India and diagrams.
+- Observe and analyse local winds and their
+monsoons
+impact.
+- Climate change
+- Understand the impact of the Indian monsoon
+- Floods
+on life, agriculture, and livelihoods across
+Carbon footprint
+different regions.
+8
+
+---
+
+# Page 9
+
+- Explain the causes and effects of climate
+change.
+- Represent climatic data (temperature,
+rainfall, etc.) through appropriate graphs,
+charts, or diagrams.
+- Analyse how climate change influences
+the frequency and intensity of natural
+disasters.
+- 4. Early • Cultural development C1.2, C2.1, C2.2, C2.3
+Humans and from 2 million years
+- Describe how prehistoric time divisions are
+Beginning of ago organised.
+Civilisation (9 • Early human history,
+- Explain how humans lived before the
+Hours) periodisation:
+invention of writing
+Archaeological ages
+- Understand the beginning of the settled life
+- Who are human
+with development of agriculture, and
+ancestors?
+domestication of plants and animals.
+- Palaeolithic
+- Explore the factors of urban development
+hunter-gatherers and
+and
+use of stone tools transformation through time.
+- Mesolithic transition to • Appreciate the diversity of crafts and trade,
+food production: and their role the
+Mesolithic sites and establishment of prosperous economy.
+tools
+- Understand the diversity of food habits.
+- Neolithic and the
+- Describe the social, political, and religious
+beginning of farming:
+structures of the civilisations of Egypt and
+Neolithic revolution
+Mesopotamia.
+domestication of
+plants and animals
+- Harappan and
+contemporary cultures
+- Mesopotamian,
+egyptian, and chinese
+civilisation
+- 5. State and • Vedic Age — C1.3, C2.3, C3.1, C1.4
+Society geography; texts;
+- Explain various facets of Vedic society and
+rituals; political
+(upto 1000 CE) polity.
+institutions, and
+(9 Hours)
+- Appreciate the achievements of Indian
+social order
+empires and their cultural legacy.
+- Administrative
+structure of early • Understand the knowledge traditions and
+empires practices of India.
+- Quest for knowledge • Understand the foundations of the Indian
+— educational social and political institutions and their
+heritage, institutions, continuity.
+knowledge traditions,
+and
+cultural practices
+9
+
+---
+
+# Page 10
+
+- Traders and trade
+routes, guilds and
+merchants, crafts and
+industries
+- 6. Democracy • Meaning features C5.1, C5.2
+(9 Hours) and types of • Understand the features of democracy.
+democracy
+- Appreciate early democratic traditions in
+- Roots of democracy in
+India and how they influenced modern
+India
+democracy.
+- Challenges to
+- Differentiate between parliamentary and
+democracy in India
+presidential systems.
+- Democratic systems in
+- Identify examples of both systems across
+the world
+countries, such as India, USA, France,
+Russia, and Canada.
+- 7. Elections • Factors of importance C5.2, C5.3, C5.4, C5.5, C6.2, C6.3, C6.4, C9.1
+(9 Hours) of elections • Identify factors highlighting importance of
+- Electoral systems elections in a democracy.
+- Delimitation • Categorise three types of electoral systems
+Commission and list examples.
+- Election Commission • Identify the major laws that govern the
+of India and its role conduct of elections in India.
+- Constituency, electoral • Describe the main provisions of the
+rolls, enumerators Representation of the People Acts.
+- Party system in India • Define the concept of delimitation and its
+purpose in the Indian electoral system.
+- Identify the role and functions Election
+Commission of India (ECI) in the electoral
+process.
+- Explain constituency, electoral roll,
+enumerator.
+- Understand the party system in India.
+- Explain the meaning and features of a
+coalition government in the Indian
+political system. Explain key provisions of
+the Anti-Defection Law with reference to
+political instability and the need for anti-
+defection measures.
+- 8. Building • Scarcity of C8.2
+Blocks in resources,
+- Explain the meaning of scarcity, choice, and
+Economics opportunity cost and opportunity cost in everyday life, and
+(7 Hours) the need for making economic decision-making.
+choice. What do
+- Describe what economists do and how they
+economists do?
+study production, distribution, and
+consumption of goods and services.
+10
+
+---
+
+# Page 11
+
+- What to produce, • Recognise how economic analysis helps in
+how to produce, and policy-making and solving real-world issues.
+for whom to
+- Describe the three central problems of an
+produce?
+economy — what to produce, how to
+- Difference between produce, and for whom to produce.
+market, centrally
+- Identify and differentiate the characteristics
+planned, and mixed
+of planned, free market, and mixed
+economic systems
+economic systems.
+- Welfare economy
+- Explain the concept of a welfare economy
+and the importance
+of social safety nets.
+- 9. The Price • Laws of demand and C7.1
+Puzzle: What supply
+- Explain the Law of Demand and Law of
+Drives the
+- Real-world deviations Supply with the help of real life examples.
+Market
+from textbook theory,
+- Interpret how changes in price affect the
+(8 Hours) such as in case of
+quantity demanded and quantity supplied
+necessities, luxury
+of goods and services.
+goods, perishable
+- Identify the equilibrium price and quantity
+items, and
+where demand and supply intersect.
+expectations
+- Analyse how changes in market conditions
+- Some related
+(e.g., increase in demand or supply) lead to
+concepts — price
+surplus or shortage and affect equilibrium.
+ceilings and market
+failures (externalities, • Explain the concept of price ceilings and
+information how they can lead
+to shortages or black markets.
+asymmetry, public
+goods) • Understand market failures and identify
+their main types.
+- Understand public goods (non- excludable
+and non-rival goods like parks or street
+lighting).
+## Part 2
+- S. Theme (time Outline/Concepts Learning Outcomes (pertinent) CGs, Cs
+No. allocation
+Students will be able to:
+instructional
+hours)
+- 1. Oceans and • Introduction to ocean C4.1, C4.2
+Life (7 relief, movement of • Explain the movement of ocean waters,
+Hours) ocean water- waves, including waves, tides, and currents.
+tides and currents • Analyse the connections between ocean
+- Marine resources currents, and global and regional climate
+and their patterns.
+significance; open • Understand the importance of marine
+seas, navigation resources for human livelihoods and
+fishing, and livelihood ecosystems.
+concerns and • Examine the relationship between oceans,
+challenges climate, livelihoods, and natural disasters.
+- Cyclones and • Highlight key rules, conventions, and
+11
+
+---
+
+# Page 12
+
+Tsunamis — early international agreements governing
+warning systems ocean navigation. and the use of marine
+- International resources.
+maritime rules and • Explain the need for international
+regulations cooperation and agreements in the
+sustainable use of ocean resources.
+- Construct models or sketches representing
+ocean relief.
+- 2. Life on • Biomes: Distribution C4.3, C4.4, C4.5, C4.6
+Earth (7 and characteristics; • Identify the major biomes of the world and
+Hours) biosphere reserves in describe
+India their key climatic conditions, characteristic
+- Forest and flora, and fauna.
+ecotourism; forest • Locate biosphere reserves on the map of
+dwellers, their India.
+livelihoods, and • Appreciate local traditional practices
+challenges related to biodiversity conservation and
+- Forest and wildlife analyse their effects.
+conservation • E
