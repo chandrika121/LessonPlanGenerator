@@ -40,12 +40,23 @@ const PlanningWorkspaceSchema = new Schema(
       },
     },
     teachingStrategy: { type: Schema.Types.Mixed, default: {} },
+    sessionPlanningDefaults: { type: Schema.Types.Mixed, default: {} },
     sessionAllocation: {
       type: Schema.Types.Mixed,
       default: {
         approved: false,
+        approvedAt: null,
+        selectedTermKey: "",
+        selectedTermSummary: null,
         recommendations: [],
         allocations: [],
+        validation: {
+          valid: false,
+          issues: [],
+          annualCapacity: null,
+          termCapacity: null,
+          allocatedSessions: null,
+        },
       },
     },
     generationScope: { type: Schema.Types.Mixed, default: {} },

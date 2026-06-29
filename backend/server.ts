@@ -19,6 +19,7 @@ const PORT = Number(process.env.BACKEND_PORT) || 3002;
 const FRONTEND_PORT = Number(process.env.FRONTEND_PORT) || 4173;
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11434";
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "qwen3.5:35b";
+const OLLAMA_SESSION_CONTENT_MODEL = process.env.OLLAMA_SESSION_CONTENT_MODEL || "qwen3.5:35b";
 const OLLAMA_NUM_PREDICT = Number(process.env.OLLAMA_NUM_PREDICT) || 8192;
 const OLLAMA_STAGE1_NUM_PREDICT = Number(process.env.OLLAMA_STAGE1_NUM_PREDICT) || 4096;
 const OLLAMA_TIMEOUT_MS = Number(process.env.OLLAMA_TIMEOUT_MS) || 600000;
@@ -50,6 +51,17 @@ type CurriculumProfile =
   | "mixed_or_unknown";
 
 type SchemaVersion = "v1" | "v2";
+type SessionSectionKey =
+  | "teacherLessonNotes"
+  | "studentLessonNotes"
+  | "learningOutcomes"
+  | "introduction"
+  | "theory"
+  | "activities"
+  | "materials"
+  | "homework"
+  | "assessment"
+  | "assignment";
 
 // CORS - allow frontend dev server
 app.use(cors({
@@ -77,6 +89,610 @@ function renderPrompt(promptName: string, replacements: Record<string, string>):
     content = content.replaceAll(`{{${key}}}`, value);
   }
   return content;
+}
+
+const ALL_SESSION_SECTIONS: SessionSectionKey[] = [
+  "teacherLessonNotes",
+  "studentLessonNotes",
+  "learningOutcomes",
+  "introduction",
+  "theory",
+  "activities",
+  "materials",
+  "homework",
+  "assessment",
+  "assignment",
+];
+
+const KAMALANIKETAN_TEMPLATE_ID = "kamalaniketan-session-12";
+const KAMALANIKETAN_TEMPLATE_SLIDES = [
+  { key: "title_identity", label: "Title / Session Identity", slideType: "title", optional: false },
+  { key: "learning_outcomes", label: "Learning Outcomes", slideType: "learning-outcomes", optional: false },
+  { key: "prerequisite_knowledge", label: "Prerequisite Knowledge + Recall", slideType: "prerequisite", optional: true },
+  { key: "lesson_hook", label: "Lesson Hook / Session Opening", slideType: "hook", optional: true },
+  { key: "topic_introduction", label: "Topic Introduction", slideType: "introduction", optional: false },
+  { key: "core_concept", label: "Core Concept", slideType: "concept", optional: false },
+  { key: "visual_explanation", label: "Visual Explanation", slideType: "visual-explanation", optional: false },
+  { key: "worked_example", label: "Worked Example / Demonstration", slideType: "worked-example", optional: true },
+  { key: "guided_practice", label: "Guided Practice / Activity", slideType: "guided-practice", optional: true },
+  { key: "quick_assessment", label: "Quick Assessment", slideType: "quick-assessment", optional: true },
+  { key: "summary", label: "Summary", slideType: "summary", optional: false },
+  { key: "homework_next_session", label: "Homework / Next Session", slideType: "homework", optional: true },
+] as const;
+
+const PPT_THEME_PRESETS: Record<string, {
+  themeId: string;
+  themeName: string;
+  fonts: { heading: string; body: string };
+  colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    background: string;
+    surface: string;
+    text: string;
+    mutedText: string;
+  };
+  visualStyle: {
+    topBarStyle: string;
+    cardStyle: string;
+    visualFrameStyle: string;
+  };
+}> = {
+  "kamalaniketan-classic": {
+    themeId: "kamalaniketan-classic",
+    themeName: "Kamalaniketan Classic",
+    fonts: { heading: "Calibri", body: "Calibri" },
+    colors: {
+      primary: "#4F81BD",
+      secondary: "#1F497D",
+      accent: "#F79646",
+      background: "#F8FAFC",
+      surface: "#FFFFFF",
+      text: "#1F2937",
+      mutedText: "#64748B",
+    },
+    visualStyle: {
+      topBarStyle: "solid academic band",
+      cardStyle: "clean rounded content cards",
+      visualFrameStyle: "simple textbook-style image frame",
+    },
+  },
+  "kamalaniketan-modern": {
+    themeId: "kamalaniketan-modern",
+    themeName: "Kamalaniketan Modern",
+    fonts: { heading: "Outfit", body: "Inter" },
+    colors: {
+      primary: "#36ADAA",
+      secondary: "#1EABDA",
+      accent: "#DE8431",
+      background: "#EEF4F7",
+      surface: "#FFFFFF",
+      text: "#0F172A",
+      mutedText: "#64748B",
+    },
+    visualStyle: {
+      topBarStyle: "bold color band with soft contrast surfaces",
+      cardStyle: "rounded modern educator cards",
+      visualFrameStyle: "large clean visual panel with soft border",
+    },
+  },
+};
+
+function normalizeSessionSections(value: unknown): SessionSectionKey[] {
+  if (!Array.isArray(value)) {
+    return [...ALL_SESSION_SECTIONS];
+  }
+
+  const allowed = new Set<string>(ALL_SESSION_SECTIONS);
+  const sections = value
+    .map((item) => String(item || "").trim())
+    .filter((item): item is SessionSectionKey => allowed.has(item));
+
+  return sections.length > 0 ? Array.from(new Set(sections)) : [...ALL_SESSION_SECTIONS];
+}
+
+function pickSessionSections(sessionPlan: any, selectedSections: SessionSectionKey[]) {
+  const partial: Record<string, unknown> = {};
+  for (const section of selectedSections) {
+    if (section in (sessionPlan || {})) {
+      partial[section] = sessionPlan[section];
+    }
+  }
+  return partial;
+}
+
+function mergeSessionPlanSections(basePlan: any, patchPlan: any, selectedSections: SessionSectionKey[]) {
+  const merged = {
+    ...(basePlan || {}),
+    ...(patchPlan || {}),
+  };
+
+  for (const section of ALL_SESSION_SECTIONS) {
+    if (!selectedSections.includes(section) && basePlan && section in basePlan) {
+      merged[section] = basePlan[section];
+    }
+  }
+
+  return merged;
+}
+
+function stripHtmlTags(value: string) {
+  return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+const pptAssetResolutionCache = new Map<string, any>();
+
+async function resolveOpenverseImage(query: string) {
+  const url = `https://api.openverse.engineering/v1/images?q=${encodeURIComponent(query)}&page_size=1`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Openverse lookup failed with status ${res.status}`);
+  }
+  const data = await res.json();
+  const item = Array.isArray(data?.results) ? data.results[0] : null;
+  if (!item) {
+    return null;
+  }
+  return {
+    sourceSite: "Openverse",
+    sourceUrl: String(item.foreign_landing_url || item.url || ""),
+    previewUrl: String(item.thumbnail || item.url || ""),
+    licenseType: [item.license, item.license_version].filter(Boolean).join(" ").trim() || "Reusable",
+    attributionText: [item.creator, item.title].filter(Boolean).join(" - "),
+    altText: String(item.title || query),
+  };
+}
+
+async function resolveWikimediaImage(query: string) {
+  const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1200&format=json&origin=*`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Wikimedia lookup failed with status ${res.status}`);
+  }
+  const data = await res.json();
+  const pages = Object.values((data as any)?.query?.pages || {}) as any[];
+  const first = pages[0];
+  const info = first?.imageinfo?.[0];
+  if (!info) {
+    return null;
+  }
+  const meta = info.extmetadata || {};
+  return {
+    sourceSite: "Wikimedia Commons",
+    sourceUrl: String(info.descriptionurl || info.url || ""),
+    previewUrl: String(info.thumburl || info.url || ""),
+    licenseType: stripHtmlTags(meta?.LicenseShortName?.value || meta?.UsageTerms?.value || "Reusable"),
+    attributionText: stripHtmlTags(meta?.Artist?.value || meta?.Credit?.value || first?.title || query),
+    altText: stripHtmlTags(meta?.ImageDescription?.value || first?.title || query),
+  };
+}
+
+async function resolveReusableImageAsset(query: string) {
+  const normalizedQuery = String(query || "").trim();
+  if (!normalizedQuery) {
+    return null;
+  }
+  if (pptAssetResolutionCache.has(normalizedQuery)) {
+    return pptAssetResolutionCache.get(normalizedQuery);
+  }
+
+  let resolved = null;
+  try {
+    resolved = await resolveOpenverseImage(normalizedQuery);
+  } catch (error) {
+    console.warn(`[PPT Assets] Openverse lookup failed for "${normalizedQuery}":`, error);
+  }
+
+  if (!resolved) {
+    try {
+      resolved = await resolveWikimediaImage(normalizedQuery);
+    } catch (error) {
+      console.warn(`[PPT Assets] Wikimedia lookup failed for "${normalizedQuery}":`, error);
+    }
+  }
+
+  pptAssetResolutionCache.set(normalizedQuery, resolved);
+  return resolved;
+}
+
+function inferTemplateSlideKey(slide: any, index: number) {
+  const explicitKey = String(slide?.templateSlideKey || "").trim();
+  if (explicitKey) {
+    return explicitKey;
+  }
+
+  const normalizedTitle = `${String(slide?.slideTitle || slide?.title || "").toLowerCase()} ${String(slide?.slideType || "").toLowerCase()}`;
+  const keywordMap: Array<{ key: string; patterns: string[] }> = [
+    { key: "title_identity", patterns: ["title", "building blocks", "session identity", "topic name"] },
+    { key: "learning_outcomes", patterns: ["learning outcome", "objective"] },
+    { key: "prerequisite_knowledge", patterns: ["prerequisite", "before today", "recall"] },
+    { key: "lesson_hook", patterns: ["hook", "opening", "story", "session opening"] },
+    { key: "topic_introduction", patterns: ["introduction", "definition", "topic introduction"] },
+    { key: "core_concept", patterns: ["core concept", "concept", "key difference", "major organelle"] },
+    { key: "visual_explanation", patterns: ["visual explanation", "diagram", "labelled"] },
+    { key: "worked_example", patterns: ["worked example", "demonstration", "example"] },
+    { key: "guided_practice", patterns: ["guided practice", "activity"] },
+    { key: "quick_assessment", patterns: ["assessment", "poll", "question"] },
+    { key: "summary", patterns: ["summary", "takeaway", "recap"] },
+    { key: "homework_next_session", patterns: ["homework", "next session", "thank you"] },
+  ];
+
+  const matched = keywordMap.find((entry) => entry.patterns.some((pattern) => normalizedTitle.includes(pattern)));
+  if (matched) {
+    return matched.key;
+  }
+
+  return KAMALANIKETAN_TEMPLATE_SLIDES[index]?.key || `template_slot_${index + 1}`;
+}
+
+function buildTemplateThemeTokens(ppt: any) {
+  const requestedThemeId = String(ppt?.themeId || "").trim();
+  const preset =
+    (requestedThemeId && PPT_THEME_PRESETS[requestedThemeId]) ||
+    PPT_THEME_PRESETS["kamalaniketan-modern"];
+
+  return {
+    themeId: preset.themeId,
+    themeName: String(ppt?.theme || ppt?.themeName || preset.themeName),
+    fonts: {
+      heading: String(ppt?.themeTokens?.fonts?.heading || preset.fonts.heading),
+      body: String(ppt?.themeTokens?.fonts?.body || preset.fonts.body),
+    },
+    colors: {
+      primary: String(ppt?.themeTokens?.colors?.primary || preset.colors.primary),
+      secondary: String(ppt?.themeTokens?.colors?.secondary || preset.colors.secondary),
+      accent: String(ppt?.themeTokens?.colors?.accent || preset.colors.accent),
+      background: String(ppt?.themeTokens?.colors?.background || preset.colors.background),
+      surface: String(ppt?.themeTokens?.colors?.surface || preset.colors.surface),
+      text: String(ppt?.themeTokens?.colors?.text || preset.colors.text),
+      mutedText: String(ppt?.themeTokens?.colors?.mutedText || preset.colors.mutedText),
+    },
+    visualStyle: {
+      topBarStyle: String(ppt?.themeTokens?.visualStyle?.topBarStyle || preset.visualStyle.topBarStyle),
+      cardStyle: String(ppt?.themeTokens?.visualStyle?.cardStyle || preset.visualStyle.cardStyle),
+      visualFrameStyle: String(ppt?.themeTokens?.visualStyle?.visualFrameStyle || preset.visualStyle.visualFrameStyle),
+    },
+  };
+}
+
+async function normalizePptMaterial(ppt: any, sessionContext: {
+  subject?: string;
+  gradeLevel?: string;
+  sessionTitle?: string;
+  learningOutcomes?: string[];
+  selectedChapters?: string[];
+}) {
+  if (!ppt || typeof ppt !== "object") {
+    return ppt;
+  }
+
+  const themeTokens = buildTemplateThemeTokens(ppt);
+  const rawSlides = Array.isArray(ppt.slides) ? ppt.slides : [];
+  const normalizedSlidesBySlot = new Map<string, any>();
+
+  for (let index = 0; index < rawSlides.length; index += 1) {
+    const slide = rawSlides[index];
+    const slideTitle = String(
+      slide?.slideTitle ||
+      slide?.title ||
+      `Slide ${index + 1}`
+    );
+    const bulletPoints = Array.isArray(slide?.bulletPoints)
+      ? slide.bulletPoints.map((item: any) => String(item))
+      : [];
+    const onSlideText = Array.isArray(slide?.onSlideText)
+      ? slide.onSlideText.map((item: any) => String(item))
+      : bulletPoints.slice(0, 4);
+    const learningOutcomeIds = Array.isArray(slide?.learningOutcomeIds) && slide.learningOutcomeIds.length > 0
+      ? slide.learningOutcomeIds.map((item: any) => String(item))
+      : (sessionContext.learningOutcomes || []).slice(0, 2);
+    const topicCoverage = Array.isArray(slide?.topicCoverage) && slide.topicCoverage.length > 0
+      ? slide.topicCoverage.map((item: any) => String(item))
+      : (sessionContext.selectedChapters || []);
+    const templateSlot =
+      KAMALANIKETAN_TEMPLATE_SLIDES.find((entry) => entry.key === inferTemplateSlideKey(slide, index)) ||
+      KAMALANIKETAN_TEMPLATE_SLIDES[index] ||
+      KAMALANIKETAN_TEMPLATE_SLIDES[KAMALANIKETAN_TEMPLATE_SLIDES.length - 1];
+
+    const existingAssets = Array.isArray(slide?.assets) && slide.assets.length > 0
+      ? slide.assets
+      : [{
+          purpose: `Support visual explanation for ${slideTitle}`,
+          searchQuery: `${sessionContext.subject || "classroom"} ${slideTitle} diagram`,
+          sourceSite: "Openverse",
+          sourceUrl: "",
+          licenseType: "Reusable / verify exact license before export",
+          attributionText: "Add attribution if the final selected asset requires it.",
+          altText: `Illustration or diagram for ${slideTitle}`,
+          placementHint: "Right panel or supporting visual zone",
+        }];
+
+    const normalizedAssets = await Promise.all(existingAssets.map(async (asset: any) => {
+      const searchQuery = String(
+        asset?.searchQuery ||
+        `${sessionContext.subject || "classroom"} ${slideTitle} diagram`
+      );
+      const needsResolution =
+        !asset?.sourceUrl ||
+        String(asset.sourceUrl).includes("example.com") ||
+        !asset?.previewUrl;
+      const resolved = needsResolution ? await resolveReusableImageAsset(searchQuery) : null;
+      return {
+        purpose: String(asset?.purpose || `Support visual explanation for ${slideTitle}`),
+        searchQuery,
+        sourceSite: String(asset?.sourceSite || resolved?.sourceSite || "Openverse"),
+        sourceUrl: String(asset?.sourceUrl || resolved?.sourceUrl || ""),
+        previewUrl: String(asset?.previewUrl || resolved?.previewUrl || resolved?.sourceUrl || ""),
+        licenseType: String(asset?.licenseType || resolved?.licenseType || "Reusable / verify exact license before export"),
+        attributionText: String(asset?.attributionText || resolved?.attributionText || "Add attribution if the final selected asset requires it."),
+        altText: String(asset?.altText || resolved?.altText || `Illustration or diagram for ${slideTitle}`),
+        placementHint: String(asset?.placementHint || "Right panel or supporting visual zone"),
+      };
+    }));
+
+    const normalizedSlide = {
+      templateId: String(slide?.templateId || KAMALANIKETAN_TEMPLATE_ID),
+      templateSlideKey: templateSlot.key,
+      templateSlideTitle: String(slide?.templateSlideTitle || templateSlot.label),
+      isOptionalSlotFilled: typeof slide?.isOptionalSlotFilled === "boolean"
+        ? slide.isOptionalSlotFilled
+        : Boolean(
+            bulletPoints.length ||
+            onSlideText.length ||
+            normalizedAssets.length ||
+            slide?.visualPlan ||
+            slide?.speakerNotes?.length
+          ),
+      slideNumber: Number(slide?.slideNumber) || index + 1,
+      slideType: String(slide?.slideType || templateSlot.slideType),
+      slideTitle,
+      learningOutcomeIds,
+      topicCoverage,
+      teacherIntent: String(
+        slide?.teacherIntent ||
+        `Use this slide to teach ${slideTitle} clearly and keep it aligned to the session flow.`
+      ),
+      studentTakeaway: String(
+        slide?.studentTakeaway ||
+        bulletPoints[0] ||
+        `Students should understand the core idea behind ${slideTitle}.`
+      ),
+      layout: String(slide?.layout || "Title + concise teaching bullets + supporting visual area"),
+      bulletPoints,
+      onSlideText,
+      speakerNotes: Array.isArray(slide?.speakerNotes) && slide.speakerNotes.length > 0
+        ? slide.speakerNotes.map((item: any) => String(item))
+        : bulletPoints.map((item: string) => `Explain: ${item}`),
+      visualPlan: String(
+        slide?.visualPlan ||
+        `Use a precise classroom visual for ${slideTitle}. Prefer diagram/SVG when conceptual accuracy matters.`
+      ),
+      assets: normalizedAssets,
+      svgDiagram: slide?.svgDiagram
+        ? slide.svgDiagram
+        : {
+            title: `${slideTitle} visual`,
+            type: "concept diagram",
+            instructions: [
+              `If a sourced image is not precise enough, create a compact SVG diagram for ${slideTitle}.`,
+              "Use labeled arrows, boxes, or structure outlines only when they help learning clarity.",
+            ],
+            svgCode: "",
+          },
+      animationHints: Array.isArray(slide?.animationHints) && slide.animationHints.length > 0
+        ? slide.animationHints.map((item: any) => String(item))
+        : ["Reveal bullets progressively while explaining."],
+      timeEstimateMinutes: Number(slide?.timeEstimateMinutes) || 4,
+    };
+
+    if (!normalizedSlidesBySlot.has(templateSlot.key)) {
+      normalizedSlidesBySlot.set(templateSlot.key, normalizedSlide);
+    }
+  }
+
+  const normalizedSlides = KAMALANIKETAN_TEMPLATE_SLIDES.map((templateSlot, index) => {
+    const existing = normalizedSlidesBySlot.get(templateSlot.key);
+    if (existing) {
+      return {
+        ...existing,
+        slideNumber: index + 1,
+        templateId: KAMALANIKETAN_TEMPLATE_ID,
+        templateSlideKey: templateSlot.key,
+        templateSlideTitle: templateSlot.label,
+      };
+    }
+
+    const lowDensityTitle = templateSlot.label;
+    const lowDensityBullets = templateSlot.optional
+      ? ["Keep this slide light and session-faithful. No extra content beyond the taught lesson."]
+      : [`Cover the ${templateSlot.label.toLowerCase()} for this session using only taught content.`];
+
+    return {
+      templateId: KAMALANIKETAN_TEMPLATE_ID,
+      templateSlideKey: templateSlot.key,
+      templateSlideTitle: templateSlot.label,
+      isOptionalSlotFilled: false,
+      slideNumber: index + 1,
+      slideType: templateSlot.slideType,
+      slideTitle: lowDensityTitle,
+      learningOutcomeIds: (sessionContext.learningOutcomes || []).slice(0, 2),
+      topicCoverage: sessionContext.selectedChapters || [],
+      teacherIntent: `Use the ${templateSlot.label.toLowerCase()} slot without inventing new curriculum content.`,
+      studentTakeaway: "",
+      layout: "Kamalaniketan template slide",
+      bulletPoints: lowDensityBullets,
+      onSlideText: [lowDensityTitle],
+      speakerNotes: ["Leave concise placeholders only when the session does not naturally support this slot."],
+      visualPlan: templateSlot.key === "visual_explanation"
+        ? "Prefer a clean diagram or labelled visual that matches the taught concept."
+        : "Use the template visual area only if it strengthens this session's taught content.",
+      assets: [],
+      svgDiagram: templateSlot.key === "visual_explanation"
+        ? {
+            title: `${lowDensityTitle} visual`,
+            type: "labelled diagram",
+            instructions: ["Provide a simple session-faithful visual only if the taught concept requires it."],
+            svgCode: "",
+          }
+        : null,
+      animationHints: [],
+      timeEstimateMinutes: 3,
+    };
+  });
+
+  return {
+    templateId: String(ppt?.templateId || KAMALANIKETAN_TEMPLATE_ID),
+    templateName: String(ppt?.templateName || "Kamalaniketan Session PPT Template"),
+    themeId: String(ppt?.themeId || themeTokens.themeId),
+    themeTokens,
+    title: String(ppt?.title || ppt?.presentationTitle || sessionContext.sessionTitle || "Session Presentation"),
+    presentationTitle: String(ppt?.presentationTitle || ppt?.title || sessionContext.sessionTitle || "Session Presentation"),
+    presentationGoal: String(
+      ppt?.presentationGoal ||
+      `Teach all key concepts from ${sessionContext.sessionTitle || "this session"} in clear classroom sequence.`
+    ),
+    audience: String(ppt?.audience || `${sessionContext.gradeLevel || "Grade-aligned"} classroom`),
+    theme: String(ppt?.theme || themeTokens.themeName),
+    assetSearchPlan: {
+      preferredSources: Array.isArray(ppt?.assetSearchPlan?.preferredSources) && ppt.assetSearchPlan.preferredSources.length > 0
+        ? ppt.assetSearchPlan.preferredSources
+        : ["Openverse", "Wikimedia Commons"],
+      safeSearch: typeof ppt?.assetSearchPlan?.safeSearch === "boolean" ? ppt.assetSearchPlan.safeSearch : true,
+      licensingNotes: Array.isArray(ppt?.assetSearchPlan?.licensingNotes) && ppt.assetSearchPlan.licensingNotes.length > 0
+        ? ppt.assetSearchPlan.licensingNotes
+        : ["Use only reusable or public-domain compatible assets."],
+      fallbackStrategy: String(
+        ppt?.assetSearchPlan?.fallbackStrategy ||
+        "Prefer SVG diagrams when external visuals are unnecessary or uncertain."
+      ),
+    },
+    licenseChecklist: Array.isArray(ppt?.licenseChecklist) && ppt.licenseChecklist.length > 0
+      ? ppt.licenseChecklist
+      : [
+          "Verify final selected assets are reusable.",
+          "Keep attribution text where required.",
+        ],
+    presentationWarnings: Array.isArray(ppt?.presentationWarnings) && ppt.presentationWarnings.length > 0
+      ? ppt.presentationWarnings
+      : [
+          "Do not extend beyond the taught session scope.",
+          "Replace placeholder asset URLs with final selected reusable assets before export if needed.",
+        ],
+    coverageSummary: {
+      learningOutcomesCovered: Array.isArray(ppt?.coverageSummary?.learningOutcomesCovered) && ppt.coverageSummary.learningOutcomesCovered.length > 0
+        ? ppt.coverageSummary.learningOutcomesCovered
+        : (sessionContext.learningOutcomes || []),
+      topicsCovered: Array.isArray(ppt?.coverageSummary?.topicsCovered) && ppt.coverageSummary.topicsCovered.length > 0
+        ? ppt.coverageSummary.topicsCovered
+        : (sessionContext.selectedChapters || []),
+      taughtConceptsCovered: Array.isArray(ppt?.coverageSummary?.taughtConceptsCovered) && ppt.coverageSummary.taughtConceptsCovered.length > 0
+        ? ppt.coverageSummary.taughtConceptsCovered
+        : normalizedSlides.map((slide: any) => slide.slideTitle),
+      omittedContent: Array.isArray(ppt?.coverageSummary?.omittedContent)
+        ? ppt.coverageSummary.omittedContent
+        : [],
+    },
+    slides: normalizedSlides,
+  };
+}
+
+function extractLearningOutcomeStrings(input: any): string[] {
+  if (!Array.isArray(input)) {
+    return [];
+  }
+
+  return uniqueStrings(
+    input.flatMap((item: any) => {
+      if (typeof item === "string") {
+        return [item];
+      }
+      if (!item || typeof item !== "object") {
+        return [];
+      }
+      return [
+        item.id,
+        item.code,
+        item.title,
+        item.description,
+        item.learningOutcome,
+        item.text,
+      ].filter((value) => typeof value === "string" && value.trim().length > 0);
+    })
+  );
+}
+
+async function normalizeGeneratedSessionPlanPpt(
+  sessionPlan: any,
+  defaults: {
+    subject?: string;
+    gradeLevel?: string;
+  }
+) {
+  if (!sessionPlan || typeof sessionPlan !== "object" || !sessionPlan.materials?.ppt) {
+    return sessionPlan;
+  }
+
+  return {
+    ...sessionPlan,
+    materials: {
+      ...(sessionPlan.materials || {}),
+      ppt: await normalizePptMaterial(sessionPlan.materials.ppt, {
+        subject: defaults.subject,
+        gradeLevel: defaults.gradeLevel,
+        sessionTitle: String(sessionPlan.title || sessionPlan.sessionTitle || "Session Presentation"),
+        learningOutcomes: extractLearningOutcomeStrings(sessionPlan.learningOutcomes),
+        selectedChapters: uniqueStrings([
+          sessionPlan.title,
+          sessionPlan.topic,
+          ...(Array.isArray(sessionPlan.topicCoverage) ? sessionPlan.topicCoverage : []),
+        ].filter((value) => typeof value === "string" && value.trim().length > 0)),
+      }),
+    },
+  };
+}
+
+async function hydrateWorkspacePptMaterials(workspace: any) {
+  if (!workspace || typeof workspace !== "object") {
+    return workspace;
+  }
+
+  const generatedSessions =
+    workspace.generationScope &&
+    typeof workspace.generationScope === "object" &&
+    workspace.generationScope.generatedSessions &&
+    typeof workspace.generationScope.generatedSessions === "object"
+      ? workspace.generationScope.generatedSessions
+      : null;
+
+  if (!generatedSessions) {
+    return workspace;
+  }
+
+  const baseWorkspace =
+    typeof workspace.toObject === "function"
+      ? workspace.toObject()
+      : { ...workspace };
+
+  const subject = String(baseWorkspace.curriculumSnapshot?.subject || baseWorkspace.academicConfig?.subject || "");
+  const gradeLevel = String(baseWorkspace.curriculumSnapshot?.gradeLevel || baseWorkspace.academicConfig?.className || "");
+
+  const hydratedGeneratedSessions = Object.fromEntries(
+    await Promise.all(
+      Object.entries(generatedSessions).map(async ([sessionKey, sessionPlan]) => [
+        sessionKey,
+        await normalizeGeneratedSessionPlanPpt(sessionPlan, { subject, gradeLevel }),
+      ])
+    )
+  );
+
+  return {
+    ...baseWorkspace,
+    generationScope: {
+      ...(baseWorkspace.generationScope || {}),
+      generatedSessions: hydratedGeneratedSessions,
+    },
+  };
 }
 
 function extractJsonText(raw: string): string {
@@ -112,15 +728,46 @@ function extractJsonText(raw: string): string {
   throw new Error(`Unable to locate JSON in Ollama response: ${trimmed.slice(0, 300)}`);
 }
 
+function escapeEmbeddedJsonStringValueByKey(raw: string, key: string) {
+  const pattern = new RegExp(`(^\\s*"${key}"\\s*:\\s*")(.*)(")(\\s*,?$)`, "gm");
+  return raw.replace(pattern, (_match, prefix: string, content: string, closingQuote: string, trailing: string) => {
+    let escapedContent = "";
+    let isEscaped = false;
+
+    for (const char of content) {
+      if (char === "\"" && !isEscaped) {
+        escapedContent += "\\\"";
+        continue;
+      }
+
+      escapedContent += char;
+      isEscaped = char === "\\" && !isEscaped;
+      if (char !== "\\") {
+        isEscaped = false;
+      }
+    }
+
+    return `${prefix}${escapedContent}${closingQuote}${trailing}`;
+  });
+}
+
 function sanitizeJsonText(raw: string): { text: string; changed: boolean; fixes: string[] } {
   let changed = false;
   const fixes: string[] = [];
+  let source = raw;
+  const svgEscaped = escapeEmbeddedJsonStringValueByKey(source, "svgCode");
+  if (svgEscaped !== source) {
+    source = svgEscaped;
+    changed = true;
+    fixes.push("escaped_embedded_quotes:svgCode");
+  }
+
   let output = "";
   let inString = false;
   let escaped = false;
 
-  for (let index = 0; index < raw.length; index += 1) {
-    const char = raw[index];
+  for (let index = 0; index < source.length; index += 1) {
+    const char = source[index];
 
     if (inString) {
       output += char;
@@ -142,13 +789,13 @@ function sanitizeJsonText(raw: string): { text: string; changed: boolean; fixes:
 
     if (
       char === "0" &&
-      /[0-9]/.test(raw[index + 1] || "") &&
-      !/[A-Za-z0-9_."\]]/.test(raw[index - 1] || "")
+      /[0-9]/.test(source[index + 1] || "") &&
+      !/[A-Za-z0-9_."\]]/.test(source[index - 1] || "")
     ) {
       let end = index + 1;
-      while (/[0-9]/.test(raw[end] || "")) end += 1;
-      const token = raw.slice(index, end);
-      const trailing = raw[end] || "";
+      while (/[0-9]/.test(source[end] || "")) end += 1;
+      const token = source.slice(index, end);
+      const trailing = source[end] || "";
       if (/^\d+$/.test(token) && /[\s,\]}]/.test(trailing || " ")) {
         const normalized = String(Number(token));
         if (normalized !== token) {
@@ -165,6 +812,61 @@ function sanitizeJsonText(raw: string): { text: string; changed: boolean; fixes:
   }
 
   return { text: output, changed, fixes: uniqueStrings(fixes) };
+}
+
+function tryRepairTruncatedPptJson(raw: string): string | null {
+  const matches = Array.from(raw.matchAll(/(\n\s*}),\n\s*{/g));
+  if (matches.length === 0) {
+    return null;
+  }
+
+  for (let index = matches.length - 1; index >= 0; index -= 1) {
+    const match = matches[index];
+    const cutIndex = (match.index ?? 0) + match[1].length;
+    const candidate = `${raw.slice(0, cutIndex)}\n      ]\n    }\n  }\n}`;
+    try {
+      const sanitized = sanitizeJsonText(candidate);
+      const parsed = JSON.parse(sanitized.text);
+      if (parsed?.materials?.ppt && Array.isArray(parsed.materials.ppt.slides) && parsed.materials.ppt.slides.length > 0) {
+        return sanitized.text;
+      }
+    } catch {
+      // Keep walking backward to find the last safely recoverable slide boundary.
+    }
+  }
+
+  return null;
+}
+
+function validateTermAllocations(allocations: any[] = []) {
+  const issues: string[] = [];
+
+  allocations.forEach((allocation, index) => {
+    const label = String(allocation?.termName || "").trim() || `Allocation ${index + 1}`;
+    const termNumber = allocation?.termNumber ?? null;
+    const chapters = Array.isArray(allocation?.chapters)
+      ? allocation.chapters.map((chapter: any) => String(chapter || "").trim()).filter(Boolean)
+      : [];
+    const marks = Number(allocation?.marks || 0);
+
+    if (!label || label === `Allocation ${index + 1}`) {
+      issues.push(`Allocation ${index + 1} is missing a term name.`);
+    }
+    if (termNumber == null) {
+      issues.push(`${label} is missing a term number.`);
+    }
+    if (chapters.length === 0) {
+      issues.push(`${label} must include at least one chapter.`);
+    }
+    if (!Number.isFinite(marks) || marks < 0) {
+      issues.push(`${label} has invalid marks.`);
+    }
+  });
+
+  return {
+    valid: issues.length === 0,
+    issues,
+  };
 }
 
 function normalizeSourceText(value: string): string {
@@ -2097,10 +2799,21 @@ function createDefaultPlanningWorkspacePayload(curriculumId: string, curriculum:
       allocations: [],
     },
     teachingStrategy: {},
+    sessionPlanningDefaults: {},
     sessionAllocation: {
       approved: false,
+      approvedAt: null,
+      selectedTermKey: "",
+      selectedTermSummary: null,
       recommendations: [],
       allocations: [],
+      validation: {
+        valid: false,
+        issues: [],
+        annualCapacity: null,
+        termCapacity: null,
+        allocatedSessions: null,
+      },
     },
     generationScope: {},
     generatedArtifacts: [],
@@ -2150,10 +2863,21 @@ function buildWorkspaceStateAfterCurriculumChange(curriculum: any) {
       allocations: [],
     },
     teachingStrategy: {},
+    sessionPlanningDefaults: {},
     sessionAllocation: {
       approved: false,
+      approvedAt: null,
+      selectedTermKey: "",
+      selectedTermSummary: null,
       recommendations: [],
       allocations: [],
+      validation: {
+        valid: false,
+        issues: [],
+        annualCapacity: null,
+        termCapacity: null,
+        allocatedSessions: null,
+      },
     },
     generationScope: {},
     generatedArtifacts: [],
@@ -2181,6 +2905,7 @@ async function syncPlanningWorkspaceAfterCurriculumChange(curriculumId: string, 
   workspace.curriculumApproval = nextState.curriculumApproval;
   workspace.termPlan = nextState.termPlan;
   workspace.teachingStrategy = nextState.teachingStrategy;
+  workspace.sessionPlanningDefaults = nextState.sessionPlanningDefaults;
   workspace.sessionAllocation = nextState.sessionAllocation;
   workspace.generationScope = nextState.generationScope;
   workspace.generatedArtifacts = nextState.generatedArtifacts;
@@ -2510,8 +3235,296 @@ function flattenTermDivisionToRows(termDivision: any) {
       unitName: item.unit_name,
       chapters: (item.teaching_blocks || []).map((block: any) => block.block_name),
       marks: Number((item.teaching_blocks || []).reduce((sum: number, block: any) => sum + toNumberOrZero(block.marks), 0).toFixed(2)),
+      sourceEstimatedSessions: (item.teaching_blocks || []).reduce(
+        (sum: number, block: any) => sum + toNumberOrZero(block.estimated_sessions),
+        0
+      ),
+      sourceTopicCount: (item.teaching_blocks || []).reduce(
+        (sum: number, block: any) => sum + ((block.topics || []).length || 0),
+        0
+      ),
+      termEstimatedSessions: toNumberOrZero(term.estimated_sessions),
     }))
   );
+}
+
+function estimateSessionBudgetFromAcademicConfig(academicConfig: any, termCount: number) {
+  const weeklyPeriods = Math.max(1, toNumberOrZero(academicConfig?.weeklyPeriods) || 5);
+  const labPeriods = Math.max(0, toNumberOrZero(academicConfig?.labPeriods));
+  const workingDays = Math.max(0, toNumberOrZero(academicConfig?.calendar?.workingDays));
+  const revisionWeeks = Math.max(0, toNumberOrZero(academicConfig?.calendar?.revisionWeeks));
+  const bufferWeeks = Math.max(0, toNumberOrZero(academicConfig?.calendar?.bufferWeeks));
+  const workingWeeks = workingDays > 0 ? workingDays / 5 : 40;
+  const usableWeeks = Math.max(1, workingWeeks - revisionWeeks - bufferWeeks);
+  // Phase 2 course planning should estimate regular teaching periods.
+  // Lab periods can be planned separately later and should not inflate
+  // the core chapter-session totals by default.
+  const weeklySessionBudget = weeklyPeriods;
+  const yearlySessionBudget = Math.max(termCount, Math.round(usableWeeks * weeklySessionBudget));
+  const perTermSessionBudget = Math.max(1, Math.round(yearlySessionBudget / Math.max(1, termCount)));
+
+  return {
+    weeklyPeriods,
+    labPeriods,
+    workingDays,
+    workingWeeks,
+    usableWeeks,
+    weeklySessionBudget,
+    yearlySessionBudget,
+    perTermSessionBudget,
+  };
+}
+
+function getSchoolDaysPerWeek(_: any) {
+  return 5;
+}
+
+function estimateAnnualSubjectSessionCapacity(academicConfig: any) {
+  const weeklyPeriods = Math.max(1, toNumberOrZero(academicConfig?.weeklyPeriods) || 5);
+  const workingDays = Math.max(0, toNumberOrZero(academicConfig?.calendar?.workingDays));
+  const schoolDaysPerWeek = getSchoolDaysPerWeek(academicConfig);
+  const annualSubjectSessions = Math.max(
+    1,
+    Math.round(
+      (workingDays > 0 ? workingDays : schoolDaysPerWeek * 40) / schoolDaysPerWeek * weeklyPeriods
+    )
+  );
+
+  return {
+    weeklyPeriods,
+    workingDays,
+    schoolDaysPerWeek,
+    annualSubjectSessions,
+  };
+}
+
+function buildTermAllocationKey(term: {
+  className?: string;
+  termName?: string;
+  termNumber?: number | null;
+  term?: string;
+}) {
+  return `${term.className || "Curriculum"}::${term.termName || term.term || ""}::${term.termNumber ?? ""}`;
+}
+
+function buildSavedTermGroups(allocations: any[] = []) {
+  const groups = new Map<string, any[]>();
+  allocations.forEach((allocation) => {
+    const key = buildTermAllocationKey(allocation);
+    if (!groups.has(key)) {
+      groups.set(key, []);
+    }
+    groups.get(key)?.push(allocation);
+  });
+  return groups;
+}
+
+function findNormalizedChapterInsight(normalizedStructure: any, chapterName: string) {
+  const target = normalizeSourceText(chapterName || "");
+  if (!target) {
+    return {
+      topicCount: 0,
+      estimatedSessions: 0,
+    };
+  }
+
+  const classes = Array.isArray(normalizedStructure?.classes) ? normalizedStructure.classes : [];
+  for (const cls of classes) {
+    const units = Array.isArray(cls?.units) ? cls.units : [];
+    for (const unit of units) {
+      const chapters = Array.isArray(unit?.chapters) ? unit.chapters : [];
+      for (const chapter of chapters) {
+        const candidateNames = [
+          chapter?.chapter_name,
+          chapter?.source_chapter_name,
+          chapter?.title,
+        ].map((value) => normalizeSourceText(String(value || "")));
+        if (candidateNames.includes(target)) {
+          const topicCount = uniqueStrings([
+            ...(chapter?.topics || []),
+            ...(chapter?.subtopics || []),
+            ...(chapter?.key_concepts || []),
+          ]).length;
+          return {
+            topicCount,
+            estimatedSessions: toNumberOrZero(chapter?.estimated_sessions),
+          };
+        }
+      }
+    }
+  }
+
+  return {
+    topicCount: 0,
+    estimatedSessions: 0,
+  };
+}
+
+function distributeIntegerSessions(totalSessions: number, weights: number[]) {
+  if (weights.length === 0) return [];
+  const safeTotal = Math.max(weights.length, totalSessions);
+  const totalWeight = Math.max(1, weights.reduce((sum, weight) => sum + Math.max(0, weight), 0));
+  const exactShares = weights.map((weight) => (safeTotal * Math.max(0, weight)) / totalWeight);
+  const base = exactShares.map((share) => Math.max(1, Math.floor(share)));
+  let assigned = base.reduce((sum, value) => sum + value, 0);
+
+  if (assigned < safeTotal) {
+    const remainders = exactShares
+      .map((share, index) => ({ index, remainder: share - Math.floor(share) }))
+      .sort((a, b) => b.remainder - a.remainder);
+    let cursor = 0;
+    while (assigned < safeTotal) {
+      base[remainders[cursor % remainders.length].index] += 1;
+      assigned += 1;
+      cursor += 1;
+    }
+  }
+
+  if (assigned > safeTotal) {
+    const candidates = exactShares
+      .map((share, index) => ({ index, remainder: share - Math.floor(share) }))
+      .sort((a, b) => a.remainder - b.remainder);
+    let cursor = 0;
+    while (assigned > safeTotal && candidates.length > 0) {
+      const targetIndex = candidates[cursor % candidates.length].index;
+      if (base[targetIndex] > 1) {
+        base[targetIndex] -= 1;
+        assigned -= 1;
+      }
+      cursor += 1;
+      if (cursor > candidates.length * 4) {
+        break;
+      }
+    }
+  }
+
+  return base;
+}
+
+function buildPhase3StrategySaved(strategy: any, defaults: any) {
+  return Boolean(
+    (Array.isArray(strategy?.teachingStyle) && strategy.teachingStyle.length > 0) ||
+    strategy?.studentLevel ||
+    strategy?.pace ||
+    strategy?.targetDifficulty ||
+    toNumberOrZero(defaults?.sessionDurationMinutes)
+  );
+}
+
+function validateSessionAllocationState(workspace: any, overrides?: {
+  selectedTermSummary?: any;
+  allocations?: any[];
+}) {
+  const issues: string[] = [];
+  const allocations = Array.isArray(overrides?.allocations)
+    ? overrides!.allocations
+    : Array.isArray(workspace?.sessionAllocation?.allocations)
+      ? workspace.sessionAllocation.allocations
+      : [];
+  const selectedTermSummary = overrides?.selectedTermSummary || workspace?.sessionAllocation?.selectedTermSummary;
+  const annualCapacity = estimateAnnualSubjectSessionCapacity(workspace?.academicConfig || {}).annualSubjectSessions;
+  const totalPlanMarks = (workspace?.termPlan?.allocations || []).reduce(
+    (sum: number, allocation: any) => sum + toNumberOrZero(allocation?.marks),
+    0
+  );
+  const uniqueTerms = buildSavedTermGroups(workspace?.termPlan?.allocations || []);
+  const fallbackTermCapacity = Math.max(1, Math.round(annualCapacity / Math.max(1, uniqueTerms.size || 1)));
+  const weightedCapacity = selectedTermSummary?.marks && totalPlanMarks > 0
+    ? Math.max(1, Math.round(annualCapacity * (toNumberOrZero(selectedTermSummary.marks) / totalPlanMarks)))
+    : fallbackTermCapacity;
+  const termCapacity = Math.min(annualCapacity, weightedCapacity);
+
+  if (!workspace?.termPlan?.approved) {
+    issues.push("Phase 2 course plan must be approved before Phase 3 can be approved.");
+  }
+  if (!buildPhase3StrategySaved(workspace?.teachingStrategy || {}, workspace?.sessionPlanningDefaults || {})) {
+    issues.push("Save the session planning strategy before approving the session allocation.");
+  }
+  if (!selectedTermSummary) {
+    issues.push("Choose an approved term before generating or approving session allocations.");
+  }
+  if (allocations.length === 0) {
+    issues.push("Generate or save at least one chapter session allocation.");
+  }
+
+  const allocatedSessions = allocations.reduce(
+    (sum: number, allocation: any) => sum + Math.max(0, toNumberOrZero(allocation?.estimatedSessions)),
+    0
+  );
+
+  allocations.forEach((allocation: any, index: number) => {
+    if (!String(allocation?.chapterName || "").trim()) {
+      issues.push(`Allocation row ${index + 1} is missing a chapter name.`);
+    }
+    if (toNumberOrZero(allocation?.estimatedSessions) <= 0) {
+      issues.push(`${allocation?.chapterName || `Allocation row ${index + 1}`} must have at least 1 session.`);
+    }
+  });
+
+  if (allocatedSessions > termCapacity) {
+    issues.push(`Allocated sessions (${allocatedSessions}) exceed the selected term capacity (${termCapacity}).`);
+  }
+
+  return {
+    valid: issues.length === 0,
+    issues,
+    annualCapacity,
+    termCapacity,
+    allocatedSessions,
+  };
+}
+
+function estimateRecommendedAllocationSessions(recommendations: any[], academicConfig: any, termCount: number) {
+  const budget = estimateSessionBudgetFromAcademicConfig(academicConfig, termCount);
+  const groups = new Map<string, any[]>();
+
+  for (const row of recommendations) {
+    const groupKey = `${row.className || ""}::${row.termNumber ?? ""}::${row.term || ""}`;
+    if (!groups.has(groupKey)) {
+      groups.set(groupKey, []);
+    }
+    groups.get(groupKey)?.push(row);
+  }
+
+  return recommendations.map((row) => {
+    const groupKey = `${row.className || ""}::${row.termNumber ?? ""}::${row.term || ""}`;
+    const termRows = groups.get(groupKey) || [row];
+    const rowWeight = Math.max(
+      1,
+      toNumberOrZero(row.sourceEstimatedSessions) +
+      toNumberOrZero(row.sourceTopicCount) +
+      ((row.chapters || []).length * 2) +
+      (toNumberOrZero(row.marks) / 2)
+    );
+    const termWeight = Math.max(
+      1,
+      termRows.reduce((sum: number, termRow: any) => {
+        return sum + Math.max(
+          1,
+          toNumberOrZero(termRow.sourceEstimatedSessions) +
+          toNumberOrZero(termRow.sourceTopicCount) +
+          ((termRow.chapters || []).length * 2) +
+          (toNumberOrZero(termRow.marks) / 2)
+        );
+      }, 0)
+    );
+    const estimatedSessions = Math.max(
+      1,
+      Math.round(budget.perTermSessionBudget * (rowWeight / termWeight))
+    );
+
+    return {
+      ...row,
+      estimatedSessions,
+      estimationBasis: {
+        perTermSessionBudget: budget.perTermSessionBudget,
+        yearlySessionBudget: budget.yearlySessionBudget,
+        weeklyPeriods: budget.weeklyPeriods,
+        labPeriods: budget.labPeriods,
+        usableWeeks: Number(budget.usableWeeks.toFixed(2)),
+      },
+    };
+  });
 }
 
 function buildNormalizedTeachingBlocks(
@@ -3230,6 +4243,7 @@ type StageValidationResult<T> = {
 };
 
 type OllamaRequestOptions = {
+  model?: string;
   numPredict?: number;
   timeoutMs?: number;
   retries?: number;
@@ -3995,6 +5009,7 @@ async function generateWithOllama(
   let attempt = 0;
   let delay = 1000;
   const retries = Math.max(1, resolvedOptions.retries || 1);
+  const model = resolvedOptions.model || OLLAMA_MODEL;
   const timeoutMs = resolvedOptions.timeoutMs || OLLAMA_TIMEOUT_MS;
   const numPredict = resolvedOptions.numPredict || OLLAMA_NUM_PREDICT;
   while (attempt < retries) {
@@ -4006,14 +5021,14 @@ async function generateWithOllama(
 
       const requestUrl = `${OLLAMA_BASE_URL}/api/chat`;
       console.log(`[Ollama][${requestId}][${stageName}] Sending request to: ${requestUrl}`);
-      console.log(`[Ollama][${requestId}][${stageName}] Model: ${OLLAMA_MODEL}`);
+      console.log(`[Ollama][${requestId}][${stageName}] Model: ${model}`);
       console.log(`[Ollama][${requestId}][${stageName}] Prompt length: ${fullPrompt.length} characters`);
       console.log(`[Ollama][${requestId}][${stageName}] Timeout: ${timeoutMs}ms`);
       console.log(`[Ollama][${requestId}][${stageName}] Attempt: ${attempt + 1}/${retries}`);
       console.log(`[Ollama][${requestId}][${stageName}] num_predict: ${numPredict}`);
 
       const requestBody = {
-        model: OLLAMA_MODEL,
+        model,
         stream: false,
         think: false,
         format: schema || "json",
@@ -4144,7 +5159,7 @@ async function generateWithOllama(
       console.error(`[Ollama][${requestId}][${stageName}] Error on attempt ${attempt}/${retries}: ${error?.message || error}`);
       if (error?.cause) console.error(`[Ollama][${requestId}][${stageName}] Error cause:`, error.cause);
       if (error?.code) console.error(`[Ollama][${requestId}][${stageName}] Error code: ${error.code}`);
-      console.error(`[Ollama][${requestId}][${stageName}] Clear reason: stage="${stageName}" model="${OLLAMA_MODEL}" timeoutMs=${timeoutMs} promptLength=${error?.promptLength || prompt.length}`);
+      console.error(`[Ollama][${requestId}][${stageName}] Clear reason: stage="${stageName}" model="${model}" timeoutMs=${timeoutMs} promptLength=${error?.promptLength || prompt.length}`);
 
       const isTransient = Boolean(error?.retryable ?? isRetryableOllamaError(error));
       if (isTransient && attempt < retries) {
@@ -4253,7 +5268,7 @@ app.get("/api/planning-workspaces/:id", async (req, res) => {
     if (!workspace) {
       return res.status(404).json({ error: "Planning workspace not found." });
     }
-    res.json({ success: true, workspace });
+    res.json({ success: true, workspace: await hydrateWorkspacePptMaterials(workspace) });
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Fetch failed:", error);
     res.status(500).json({ error: error?.message || "Failed to fetch planning workspace." });
@@ -4269,7 +5284,7 @@ app.get("/api/planning-workspaces/by-curriculum/:curriculumId", async (req, res)
     if (!workspace) {
       return res.status(404).json({ error: "Planning workspace not found for this curriculum." });
     }
-    res.json({ success: true, workspace });
+    res.json({ success: true, workspace: await hydrateWorkspacePptMaterials(workspace) });
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Fetch by curriculum failed:", error);
     res.status(500).json({ error: error?.message || "Failed to fetch planning workspace." });
@@ -4313,6 +5328,7 @@ app.patch("/api/planning-workspaces/:id", async (req, res) => {
       "academicConfig",
       "termPlan",
       "teachingStrategy",
+      "sessionPlanningDefaults",
       "sessionAllocation",
       "generationScope",
       "generatedArtifacts",
@@ -4373,6 +5389,7 @@ app.post("/api/planning-workspaces/:id/recommend-course-plan", async (req, res) 
       return res.status(400).json({ error: "No normalized curriculum structure available for planning." });
     }
 
+    const academicConfig = workspace.academicConfig || {};
     const preferredTermCount = Number(req.body?.preferredTermCount || 0) || undefined;
     const classTermPlans = (normalizedStructure?.classes || []).length > 1
       ? normalizedStructure.classes.map((cls: any) => ({
@@ -4390,7 +5407,7 @@ app.post("/api/planning-workspaces/:id/recommend-course-plan", async (req, res) 
           ...buildTermDivision(normalizedStructure, preferredTermCount),
         }];
 
-    const recommendations = classTermPlans.flatMap((plan: any) =>
+    const rawRecommendations = classTermPlans.flatMap((plan: any) =>
       flattenTermDivisionToRows(plan).map((row: any) => ({
         className: row.className || "",
         termName: row.term,
@@ -4400,15 +5417,21 @@ app.post("/api/planning-workspaces/:id/recommend-course-plan", async (req, res) 
         reasoning: row.marks > 0
           ? "Balanced using curriculum structure, unit coverage, and marks distribution."
           : "Balanced using curriculum structure and chapter coverage.",
-        estimatedSessions: Math.max(1, Math.ceil((row.chapters || []).length * 1.5)),
+        sourceEstimatedSessions: row.sourceEstimatedSessions || 0,
+        sourceTopicCount: row.sourceTopicCount || 0,
       }))
+    );
+    const recommendations = estimateRecommendedAllocationSessions(
+      rawRecommendations,
+      academicConfig,
+      classTermPlans[0]?.term_count || preferredTermCount || 1
     );
 
     workspace.termPlan = {
       approved: false,
       recommendedTermCount: classTermPlans[0]?.term_count || preferredTermCount || null,
       recommendations,
-      allocations: workspace.termPlan?.allocations || [],
+      allocations: [],
     };
     await workspace.save();
 
@@ -4460,6 +5483,14 @@ app.post("/api/planning-workspaces/:id/approve-course-plan", async (req, res) =>
       });
     }
 
+    const allocationValidation = validateTermAllocations(allocations);
+    if (!allocationValidation.valid) {
+      return res.status(400).json({
+        error: allocationValidation.issues[0] || "Saved term allocations are invalid.",
+        issues: allocationValidation.issues,
+      });
+    }
+
     workspace.termPlan = {
       ...(workspace.termPlan || {}),
       approved: true,
@@ -4473,6 +5504,352 @@ app.post("/api/planning-workspaces/:id/approve-course-plan", async (req, res) =>
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Course plan approval failed:", error);
     res.status(500).json({ error: error?.message || "Failed to approve the course plan." });
+  }
+});
+
+app.patch("/api/planning-workspaces/:id/session-strategy", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    workspace.teachingStrategy = req.body?.teachingStrategy || {};
+    workspace.sessionPlanningDefaults = req.body?.sessionPlanningDefaults || {};
+    workspace.phase = "session_planning";
+    workspace.status = "in_progress";
+    await workspace.save();
+
+    res.json({ success: true, workspace });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Session strategy save failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to save the session planning strategy." });
+  }
+});
+
+app.get("/api/planning-workspaces/:id/session-allocation", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    res.json({
+      success: true,
+      sessionAllocation: workspace.sessionAllocation || {},
+      teachingStrategy: workspace.teachingStrategy || {},
+      sessionPlanningDefaults: workspace.sessionPlanningDefaults || {},
+    });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Session allocation fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to fetch the session allocation." });
+  }
+});
+
+app.post("/api/planning-workspaces/:id/recommend-session-allocation", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+    if (!workspace.termPlan?.approved) {
+      return res.status(400).json({ error: "Approve the course plan before generating session allocations." });
+    }
+
+    const savedAllocations = Array.isArray(workspace.termPlan?.allocations) ? workspace.termPlan.allocations : [];
+    if (savedAllocations.length === 0) {
+      return res.status(400).json({ error: "Save at least one approved course-plan allocation first." });
+    }
+
+    const termGroups = buildSavedTermGroups(savedAllocations);
+    const requestedTermKey = String(req.body?.selectedTermKey || workspace.sessionAllocation?.selectedTermKey || "");
+    const selectedTermKey = requestedTermKey && termGroups.has(requestedTermKey)
+      ? requestedTermKey
+      : [...termGroups.keys()][0];
+    const selectedRows = termGroups.get(selectedTermKey) || [];
+
+    if (selectedRows.length === 0) {
+      return res.status(400).json({ error: "No approved term allocation was found for session planning." });
+    }
+
+    const chapterNames = Array.from(
+      new Set(
+        selectedRows.flatMap((row: any) =>
+          (Array.isArray(row?.chapters) ? row.chapters : [])
+            .map((chapter: string) => String(chapter || "").trim())
+            .filter(Boolean)
+        )
+      )
+    );
+
+    if (chapterNames.length === 0) {
+      return res.status(400).json({ error: "The selected term does not contain any chapters to allocate." });
+    }
+
+    const annualCapacity = estimateAnnualSubjectSessionCapacity(workspace.academicConfig || {});
+    const totalPlanMarks = savedAllocations.reduce((sum: number, row: any) => sum + toNumberOrZero(row?.marks), 0);
+    const selectedTermMarks = selectedRows.reduce((sum: number, row: any) => sum + toNumberOrZero(row?.marks), 0);
+    const evenTermCapacity = Math.max(1, Math.round(annualCapacity.annualSubjectSessions / Math.max(1, termGroups.size)));
+    const weightedTermCapacity = totalPlanMarks > 0 && selectedTermMarks > 0
+      ? Math.max(1, Math.round(annualCapacity.annualSubjectSessions * (selectedTermMarks / totalPlanMarks)))
+      : evenTermCapacity;
+    const termCapacity = Math.min(annualCapacity.annualSubjectSessions, weightedTermCapacity);
+
+    const recommendationsBase = chapterNames.map((chapterName, index) => {
+      const insight = findNormalizedChapterInsight(workspace.curriculumSnapshot?.normalizedStructure, chapterName);
+      const sourceRow = selectedRows.find((row: any) => (row?.chapters || []).includes(chapterName));
+      const marksShare = sourceRow?.chapters?.length
+        ? toNumberOrZero(sourceRow?.marks) / sourceRow.chapters.length
+        : 0;
+      return {
+        id: `${selectedTermKey}::${index + 1}`,
+        className: selectedRows[0]?.className || "",
+        termName: selectedRows[0]?.termName || selectedRows[0]?.term || "",
+        termNumber: selectedRows[0]?.termNumber ?? null,
+        chapterName,
+        unitName: sourceRow?.unitName || "Whole Term",
+        sequence: index + 1,
+        sourceTopicCount: insight.topicCount,
+        sourceEstimatedSessions: insight.estimatedSessions,
+        marksShare,
+      };
+    });
+
+    const weights = recommendationsBase.map((item) =>
+      Math.max(
+        1,
+        toNumberOrZero(item.sourceEstimatedSessions) +
+        Math.max(1, toNumberOrZero(item.sourceTopicCount)) +
+        Math.max(0, item.marksShare)
+      )
+    );
+    const durationMinutes = Math.max(
+      30,
+      toNumberOrZero(workspace.sessionPlanningDefaults?.sessionDurationMinutes) ||
+      toNumberOrZero(workspace.academicConfig?.periodDurationMinutes) ||
+      45
+    );
+    const recommendations = distributeIntegerSessions(termCapacity, weights).map((estimatedSessions, index) => {
+      const base = recommendationsBase[index];
+      return {
+        ...base,
+        recommendedSessions: estimatedSessions,
+        adjustedSessions: null,
+        estimatedSessions,
+        estimatedMinutes: estimatedSessions * durationMinutes,
+        rationale: `Allocated ${estimatedSessions} sessions using the selected term's capacity, chapter topic density, source pacing, and marks balance.`,
+        reasoning: `Allocated ${estimatedSessions} sessions using the selected term's capacity, chapter topic density, source pacing, and marks balance.`,
+      };
+    });
+
+    const selectedTermSummary = {
+      className: selectedRows[0]?.className || "",
+      termName: selectedRows[0]?.termName || selectedRows[0]?.term || "",
+      termNumber: selectedRows[0]?.termNumber ?? null,
+      chapterCount: chapterNames.length,
+      marks: selectedTermMarks,
+      totalRows: selectedRows.length,
+    };
+    const validation = validateSessionAllocationState(workspace, {
+      selectedTermSummary,
+      allocations: recommendations,
+    });
+
+    workspace.phase = "session_planning";
+    workspace.status = "in_progress";
+    workspace.sessionAllocation = {
+      approved: false,
+      approvedAt: null,
+      selectedTermKey,
+      selectedTermSummary,
+      recommendations,
+      allocations: [],
+      validation,
+    };
+    await workspace.save();
+
+    res.json({
+      success: true,
+      workspace,
+      annualCapacity: annualCapacity.annualSubjectSessions,
+      termCapacity,
+      selectedTermKey,
+      recommendations,
+    });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Session allocation recommendation failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to build session allocation recommendations." });
+  }
+});
+
+app.patch("/api/planning-workspaces/:id/session-allocation", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    const allocations = Array.isArray(req.body?.allocations) ? req.body.allocations : [];
+    const selectedTermKey = String(req.body?.selectedTermKey || workspace.sessionAllocation?.selectedTermKey || "");
+    const selectedTermSummary = req.body?.selectedTermSummary || workspace.sessionAllocation?.selectedTermSummary || null;
+    const validation = validateSessionAllocationState(workspace, {
+      selectedTermSummary,
+      allocations,
+    });
+
+    workspace.phase = "session_planning";
+    workspace.status = "in_progress";
+    workspace.sessionAllocation = {
+      ...(workspace.sessionAllocation || {}),
+      approved: false,
+      approvedAt: null,
+      selectedTermKey,
+      selectedTermSummary,
+      allocations,
+      validation,
+    };
+    await workspace.save();
+
+    res.json({ success: true, workspace, validation });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Session allocation save failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to save the session allocation." });
+  }
+});
+
+app.post("/api/planning-workspaces/:id/approve-session-allocation", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    const validation = validateSessionAllocationState(workspace);
+    if (!validation.valid) {
+      return res.status(400).json({
+        error: validation.issues[0] || "Fix the session allocation before approval.",
+        validation,
+      });
+    }
+
+    workspace.sessionAllocation = {
+      ...(workspace.sessionAllocation || {}),
+      approved: true,
+      approvedAt: new Date().toISOString(),
+      validation,
+    };
+    workspace.phase = "content_generation";
+    workspace.status = "in_progress";
+    await workspace.save();
+
+    res.json({ success: true, workspace, validation });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Session allocation approval failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to approve the session allocation." });
+  }
+});
+
+app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+    if (!workspace.sessionAllocation?.approved) {
+      return res.status(400).json({ error: "Approve the Phase 3 session allocation before generating content." });
+    }
+
+    const sessionNumber = Math.max(1, toNumberOrZero(req.body?.sessionNumber) || 1);
+    const roadmapSessionNumber = Math.max(1, toNumberOrZero(req.body?.roadmapSessionNumber) || sessionNumber);
+    const chapterName = String(req.body?.chapterName || "").trim();
+    const totalSessions = Math.max(1, toNumberOrZero(req.body?.totalSessions) || 1);
+    const durationMinutes = Math.max(
+      30,
+      toNumberOrZero(req.body?.durationMinutes) ||
+      toNumberOrZero(workspace.sessionPlanningDefaults?.sessionDurationMinutes) ||
+      toNumberOrZero(workspace.academicConfig?.periodDurationMinutes) ||
+      45
+    );
+    if (!chapterName) {
+      return res.status(400).json({ error: "chapterName is required for session generation." });
+    }
+
+    const selectedSections = normalizeSessionSections(req.body?.selectedSections);
+
+    const config = {
+      includeLearningOutcomes: true,
+      includeIntroduction: true,
+      includeTheory: true,
+      includeAssessments: workspace.sessionPlanningDefaults?.includeFormativeAssessment ?? true,
+      includeAssignments: false,
+      includeNotes: workspace.sessionPlanningDefaults?.includeTeacherNotes ?? true,
+    };
+
+    const sessionPlan = await generateSessionDetailsArtifact({
+      subject: String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
+      gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || ""),
+      selectedChapters: [chapterName],
+      sessionNumber,
+      totalSessions,
+      durationMinutes,
+      config,
+      selectedSections,
+      sessionTitle: String(req.body?.sessionTitle || chapterName || `Session ${sessionNumber}`),
+      learningOutcomes: Array.isArray(req.body?.learningOutcomes) ? req.body.learningOutcomes : [],
+      previousSessionContext: String(req.body?.previousSessionContext || "").trim(),
+      teachingStrategy: workspace.teachingStrategy || {},
+      sessionPlanningDefaults: workspace.sessionPlanningDefaults || {},
+    });
+
+    const generatedSessionKey = String(roadmapSessionNumber);
+    const existingGeneratedSessions = typeof workspace.generationScope?.generatedSessions === "object" && workspace.generationScope?.generatedSessions
+      ? workspace.generationScope.generatedSessions
+      : {};
+    const existingSessionPlan = existingGeneratedSessions?.[generatedSessionKey];
+    const mergedSessionPlan = {
+      id: existingSessionPlan?.id || `session-${generatedSessionKey}`,
+      sessionNumber: existingSessionPlan?.sessionNumber || roadmapSessionNumber,
+      title: existingSessionPlan?.title || String(req.body?.sessionTitle || `${chapterName} - Session ${roadmapSessionNumber}`),
+      duration: existingSessionPlan?.duration || durationMinutes,
+      ...mergeSessionPlanSections(existingSessionPlan, sessionPlan, selectedSections),
+    };
+    workspace.generationScope = {
+      ...(workspace.generationScope || {}),
+      generatedSessions: {
+        ...existingGeneratedSessions,
+        [generatedSessionKey]: mergedSessionPlan,
+      },
+    };
+
+    const nextArtifact = {
+      id: `session-${generatedSessionKey}`,
+      scope: "session",
+      artifactType: "session_bundle",
+      title: `${chapterName} - Session ${roadmapSessionNumber}`,
+      status: "generated",
+      updatedAt: new Date().toISOString(),
+    };
+    const existingArtifacts = Array.isArray(workspace.generatedArtifacts) ? workspace.generatedArtifacts : [];
+    workspace.generatedArtifacts = [
+      ...existingArtifacts.filter((artifact: any) => artifact?.id !== nextArtifact.id),
+      nextArtifact,
+    ];
+    workspace.phase = "content_generation";
+    workspace.status = "in_progress";
+    await workspace.save();
+
+    const responseWorkspace = await hydrateWorkspacePptMaterials(workspace);
+
+    res.json({
+      success: true,
+      sessionPlan: mergedSessionPlan,
+      generatedSessionKey,
+      selectedSections,
+      workspace: responseWorkspace,
+    });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Content generation failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to generate session content." });
   }
 });
 
@@ -5208,6 +6585,7 @@ app.post("/api/generate-session-details", async (req, res) => {
       INCLUDE_ASSESSMENTS: config.includeAssessments ? "YES" : "NO",
       INCLUDE_ASSIGNMENTS: config.includeAssignments ? "YES" : "NO",
       INCLUDE_NOTES: config.includeNotes ? "YES" : "NO",
+      SELECTED_SECTIONS_JSON: JSON.stringify(ALL_SESSION_SECTIONS),
     });
 
     const schema = {
@@ -5215,6 +6593,57 @@ app.post("/api/generate-session-details", async (req, res) => {
       sessionNumber: sessionNumber,
       title: "Vibrant, educational title for this session",
       duration: durationMinutes,
+      teacherLessonNotes: {
+        prerequisiteKnowledge: ["What students should already know"],
+        previousSessionRecap: ["Short recap points from the previous lesson"],
+        teachingSequence: ["Teacher-facing lesson flow with explanation steps"],
+        guidedPractice: ["Teacher-led checks and guided responses"],
+        differentiation: {
+          slowLearners: ["Support strategies"],
+          averageLearners: ["Core expectations"],
+          advancedLearners: ["Extension prompts"]
+        },
+        teacherTips: ["Pedagogical tips"],
+        misconceptions: ["Likely misconceptions to address"]
+      },
+    studentLessonNotes: {
+      title: "Student lesson note title",
+      introduction: "Student-friendly introduction",
+      learningObjectives: ["After this lesson you will be able to..."],
+      quickRecall: ["Short prerequisite revision point"],
+      sections: [{
+        heading: "Main idea",
+        explanation: "Comprehensive but student-friendly explanation",
+        keyPoints: ["Revision point"],
+        examples: ["Worked example or everyday example"],
+        whyItMatters: "Why students should care about this concept",
+        terminology: ["Important term"],
+        detailedExplanation: "A slightly deeper but student-friendly explanation",
+        observedIn: ["Where students observe it"],
+        visualSupport: ["Diagram or visual suggestion"],
+        importantNotes: ["Exam point or caution note"],
+        memoryTechniques: ["Mnemonic or memory tip"],
+        conceptSummary: ["One-line takeaway"]
+      }],
+      definitions: [{ term: "Key term", definition: "Clear definition" }],
+      workedExamples: [{
+        title: "Worked example title",
+        steps: ["Step 1", "Step 2"],
+        explanation: "How this example works"
+      }],
+      revisionSection: {
+        definitions: ["Important definition"],
+        formulas: ["Useful formula if applicable"],
+        facts: ["Important fact"],
+        keywords: ["Keyword"],
+        conceptMap: ["Concept map cue"],
+        quickRecap: ["Fast revision point"]
+      },
+      selfCheckQuestions: ["Question students can answer independently"],
+      didYouKnow: ["Interesting supporting fact"],
+      summary: ["Short summary point"],
+      quickRevision: ["Revision cue"]
+    },
       learningOutcomes: ["Specific action-oriented objectives"],
       introduction: "A exciting 3-5 minute hook, inquiry question, or classroom starter",
       theory: {
@@ -5228,16 +6657,84 @@ app.post("/api/generate-session-details", async (req, res) => {
         durationMinutes: 10
       }],
       materials: {
-        ppt: { title: "Presentation title", slides: [{ slideTitle: "Slide title", bulletPoints: ["Key point"] }] },
-        pdf: { documentTitle: "Document title", keyInformation: ["Key info"] },
-        docx: { outlineTitle: "Outline title", sections: ["Section content"] }
+        ppt: {
+          templateId: KAMALANIKETAN_TEMPLATE_ID,
+          templateName: "Kamalaniketan Session PPT Template",
+          themeId: "kamalaniketan-modern",
+          title: "Presentation title",
+          presentationTitle: "Presentation title",
+          presentationGoal: "What this PPT helps achieve in the session",
+          audience: "Grade-specific classroom audience",
+          theme: "Visual theme for the deck",
+          themeTokens: {
+            fonts: { heading: "Outfit", body: "Inter" },
+            colors: {
+              primary: "#36ADAA",
+              secondary: "#1EABDA",
+              accent: "#DE8431",
+              background: "#EEF4F7",
+              surface: "#FFFFFF",
+              text: "#0F172A",
+              mutedText: "#64748B"
+            },
+            visualStyle: {
+              topBarStyle: "bold color band",
+              cardStyle: "rounded modern educator cards",
+              visualFrameStyle: "large clean visual panel"
+            }
+          },
+          slides: [{
+            templateId: KAMALANIKETAN_TEMPLATE_ID,
+            templateSlideKey: "title_identity",
+            templateSlideTitle: "Title / Session Identity",
+            isOptionalSlotFilled: true,
+            slideTitle: "Slide title",
+            bulletPoints: ["Key point"]
+          }]
+        },
+        pdf: { documentTitle: "Student PDF / revision document title", keyInformation: ["Student-facing study note or revision point"] },
+        docx: { outlineTitle: "Teacher lesson note outline title", sections: ["Teacher-facing section content"] }
       },
       homework: { task: "Interactive or practical homework task", estimatedTimeMinutes: 30 },
-      assessment: { questions: ["Quiz / test questions based on the theory"], answerKey: ["Corresponding explicit answers"] },
+      assessment: {
+        mcq: [{
+          question: "MCQ question",
+          options: ["A. option", "B. option", "C. option", "D. option"],
+          answer: "Correct option",
+          explanation: "Why this option is correct",
+          marks: 1
+        }],
+        shortAnswer: [{
+          question: "Short-answer question",
+          answer: "Model short answer",
+          expectedLength: "1-2 clear points",
+          marks: 2,
+          rubric: ["1 mark for first correct point", "1 mark for second correct point"]
+        }],
+        longAnswer: [{
+          question: "Long-answer question",
+          answer: "Model long answer",
+          expectedLength: "4-5 well-structured points with explanation",
+          marks: 5,
+          rubric: ["Marks awarded point-wise", "Credit explanation quality", "Credit labelled example or diagram if relevant"]
+        }],
+        answerKey: {
+          mcq: [{ answer: "Correct option", explanation: "Brief explanation", marks: 1 }],
+          shortAnswer: [{ answer: "Point-wise short answer", rubric: ["Point 1", "Point 2"], marks: 2 }],
+          longAnswer: [{ answer: "Structured long answer", rubric: ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"], marks: 5 }],
+          generalMarkingGuidance: [
+            "Award marks point-wise for each valid idea.",
+            "Accept equivalent scientific wording if the meaning is correct.",
+            "For long answers, reward structure, explanation, and relevant examples."
+          ]
+        }
+      },
       assignment: { taskDescription: "Written assignment or project task", rubric: ["Evaluation points/criteria"], answerKey: "Sample answer or response key for teacher reference" }
     };
 
-    const response = await generateWithOllama(requestId, debugDir, "generate-session-details", prompt, schema);
+    const response = await generateWithOllama(requestId, debugDir, "generate-session-details", prompt, schema, {
+      model: OLLAMA_SESSION_CONTENT_MODEL,
+    });
     if (response.doneReason === "length") {
       throw new Error("Model output truncated during generate-session-details. Reduce stage scope or increase num_predict.");
     }
@@ -5249,6 +6746,532 @@ app.post("/api/generate-session-details", async (req, res) => {
     res.status(500).json({ error: error?.message || "Session detail generation failed." });
   }
 });
+
+async function generateSessionDetailsArtifact({
+  subject,
+  gradeLevel,
+  selectedChapters,
+  sessionNumber,
+  totalSessions,
+  durationMinutes,
+  config,
+  selectedSections = ALL_SESSION_SECTIONS,
+  sessionTitle = "",
+  learningOutcomes = [],
+  previousSessionContext = "",
+  teachingStrategy = {},
+  sessionPlanningDefaults = {},
+}: {
+  subject: string;
+  gradeLevel: string;
+  selectedChapters: string[];
+  sessionNumber: number;
+  totalSessions: number;
+  durationMinutes: number;
+  config: any;
+  selectedSections?: SessionSectionKey[];
+  sessionTitle?: string;
+  learningOutcomes?: string[];
+  previousSessionContext?: string;
+  teachingStrategy?: Record<string, any>;
+  sessionPlanningDefaults?: Record<string, any>;
+}) {
+  const requestId = makeRequestId("generate-content-session");
+  const debugDir = await ensureDebugDir(requestId);
+  await writeDebugFile(debugDir, "request-body.json", {
+    subject,
+    gradeLevel,
+    selectedChapters,
+    sessionNumber,
+    totalSessions,
+    durationMinutes,
+    config,
+    selectedSections,
+    sessionTitle,
+    learningOutcomes,
+    previousSessionContext,
+    teachingStrategy,
+    sessionPlanningDefaults,
+  });
+
+  const baseSchema = {
+    id: "unique-session-id",
+    sessionNumber,
+    title: "Vibrant, educational title for this session",
+    duration: durationMinutes,
+    teacherLessonNotes: {
+      prerequisiteKnowledge: ["What students should already know"],
+      previousSessionRecap: ["Short recap points from the previous lesson"],
+      lessonPurpose: ["Why this lesson matters"],
+      teachingSequence: ["Teacher-facing lesson flow with explanation steps"],
+      guidedPractice: ["Teacher-led checks and guided responses"],
+      conceptFlow: [{
+        conceptName: "Concept name",
+        definition: "Short definition",
+        coreExplanation: "Teacher-facing explanation",
+        importance: "Why it matters",
+        observedIn: ["Where students observe it"],
+        whyStudyIt: "Why students study it",
+        relationshipWithPrevious: "Connection with previous concepts",
+        relationshipWithFuture: "Connection with future learning without teaching it",
+        keywords: ["Important keyword"],
+        teacherMoves: ["Explain this first"],
+        examples: ["Useful example"],
+        visuals: ["Suggested visual support"]
+      }],
+      classroomQuestions: [{
+        question: "Teacher question",
+        level: "Understanding",
+        expectedResponse: "Likely student response",
+        answerPoints: ["Point teachers should listen for"]
+      }],
+      differentiation: {
+        slowLearners: ["Support strategies"],
+        averageLearners: ["Core expectations"],
+        advancedLearners: ["Extension prompts"]
+      },
+      teacherTips: ["Pedagogical tips"],
+      misconceptions: ["Likely misconceptions to address"],
+      formativeChecks: ["Natural formative assessment checkpoint"],
+      timePlan: [{
+        segment: "Recap",
+        minutes: 5,
+        purpose: "Refresh prerequisite ideas"
+      }],
+      sessionSummary: ["Closing recap point"],
+      nextSessionBridge: ["How today connects to the next lesson"]
+    },
+    studentLessonNotes: {
+      title: "Student lesson note title",
+      introduction: "Student-friendly introduction",
+      learningObjectives: ["After this lesson you will be able to..."],
+      quickRecall: ["Short prerequisite revision point"],
+      sections: [{
+        heading: "Main idea",
+        explanation: "Comprehensive but student-friendly explanation",
+        keyPoints: ["Revision point"],
+        examples: ["Worked example or everyday example"],
+        whyItMatters: "Why students should care about this concept",
+        terminology: ["Important term"],
+        detailedExplanation: "A slightly deeper but student-friendly explanation",
+        observedIn: ["Where students observe it"],
+        visualSupport: ["Diagram or visual suggestion"],
+        importantNotes: ["Exam point or caution note"],
+        memoryTechniques: ["Mnemonic or memory tip"],
+        conceptSummary: ["One-line takeaway"]
+      }],
+      definitions: [{ term: "Key term", definition: "Clear definition" }],
+      workedExamples: [{
+        title: "Worked example title",
+        steps: ["Step 1", "Step 2"],
+        explanation: "How this example works"
+      }],
+      revisionSection: {
+        definitions: ["Important definition"],
+        formulas: ["Useful formula if applicable"],
+        facts: ["Important fact"],
+        keywords: ["Keyword"],
+        conceptMap: ["Concept map cue"],
+        quickRecap: ["Fast revision point"]
+      },
+      selfCheckQuestions: ["Question students can answer independently"],
+      didYouKnow: ["Interesting supporting fact"],
+      summary: ["Short summary point"],
+      quickRevision: ["Revision cue"]
+    },
+    learningOutcomes: ["Specific action-oriented objectives"],
+    introduction: "A exciting 3-5 minute hook, inquiry question, or classroom starter",
+    theory: {
+      overview: "Plain language conceptual summary",
+      keyPoints: ["3-5 fundamental bullet points"],
+      detailedContent: "In-depth content discussion with examples"
+    },
+    activities: [{
+      name: "Name of classroom task",
+      instructions: ["Step-by-step instructions for teachers & students"],
+      durationMinutes: 10
+    }],
+    materials: {
+      ppt: {
+        templateId: KAMALANIKETAN_TEMPLATE_ID,
+        templateName: "Kamalaniketan Session PPT Template",
+        themeId: "kamalaniketan-modern",
+        title: "Presentation title",
+        presentationTitle: "Presentation title",
+        presentationGoal: "What this PPT helps achieve in the session",
+        audience: "Grade-specific classroom audience",
+        theme: "Visual theme for the deck",
+        themeTokens: {
+          fonts: {
+            heading: "Outfit",
+            body: "Inter"
+          },
+          colors: {
+            primary: "#36ADAA",
+            secondary: "#1EABDA",
+            accent: "#DE8431",
+            background: "#EEF4F7",
+            surface: "#FFFFFF",
+            text: "#0F172A",
+            mutedText: "#64748B"
+          },
+          visualStyle: {
+            topBarStyle: "bold color band",
+            cardStyle: "rounded modern educator cards",
+            visualFrameStyle: "large clean visual panel"
+          }
+        },
+        assetSearchPlan: {
+          preferredSources: ["Openverse", "Wikimedia Commons"],
+          safeSearch: true,
+          licensingNotes: ["Use reusable or public domain assets only."],
+          fallbackStrategy: "Prefer SVG diagrams when external imagery is not needed."
+        },
+        licenseChecklist: ["Verify reusable license before final export."],
+        presentationWarnings: ["Do not include untaught future-session content."],
+        coverageSummary: {
+          learningOutcomesCovered: ["Learning outcome id or text"],
+          topicsCovered: ["Topic covered"],
+          taughtConceptsCovered: ["Concept covered"],
+          omittedContent: []
+        },
+        slides: [{
+          templateId: KAMALANIKETAN_TEMPLATE_ID,
+          templateSlideKey: "title_identity",
+          templateSlideTitle: "Title / Session Identity",
+          isOptionalSlotFilled: true,
+          slideNumber: 1,
+          slideType: "hook | concept | comparison | process | summary",
+          slideTitle: "Slide title",
+          learningOutcomeIds: ["LO1"],
+          topicCoverage: ["Topic"],
+          teacherIntent: "Why this slide exists",
+          studentTakeaway: "What students should leave with",
+          layout: "Title + 2-column visual explainer",
+          bulletPoints: ["Key point"],
+          onSlideText: ["Exact concise on-slide text"],
+          speakerNotes: ["Teacher delivery cue"],
+          visualPlan: "What visual should appear and why",
+          assets: [{
+            purpose: "Why this asset is needed",
+            searchQuery: "openverse or wikimedia search query",
+            sourceSite: "Openverse | Wikimedia Commons",
+            sourceUrl: "https://example.com/asset",
+            licenseType: "CC BY 4.0 | CC0 | Public Domain",
+            attributionText: "Attribution text if required",
+            altText: "Accessible description",
+            placementHint: "Right panel / full bleed / inset"
+          }],
+          svgDiagram: {
+            title: "Diagram title",
+            type: "flowchart | timeline | labelled diagram | comparison chart",
+            instructions: ["How the diagram should communicate the concept"],
+            svgCode: "<svg><!-- optional compact svg --></svg>"
+          },
+          animationHints: ["Reveal arrows step-by-step"],
+          timeEstimateMinutes: 5
+        }]
+      },
+      pdf: { documentTitle: "Student PDF / revision document title", keyInformation: ["Student-facing study note or revision point"] },
+      docx: { outlineTitle: "Teacher lesson note outline title", sections: ["Teacher-facing section content"] }
+    },
+    homework: { task: "Interactive or practical homework task", estimatedTimeMinutes: 30 },
+    assessment: {
+      mcq: [{
+        question: "MCQ question",
+        options: ["A. option", "B. option", "C. option", "D. option"],
+        answer: "Correct option",
+        explanation: "Why this option is correct",
+        marks: 1
+      }],
+      shortAnswer: [{
+        question: "Short-answer question",
+        answer: "Model short answer",
+        expectedLength: "1-2 clear points",
+        marks: 2,
+        rubric: ["1 mark for first correct point", "1 mark for second correct point"]
+      }],
+      longAnswer: [{
+        question: "Long-answer question",
+        answer: "Model long answer",
+        expectedLength: "4-5 well-structured points with explanation",
+        marks: 5,
+        rubric: ["Marks awarded point-wise", "Credit explanation quality", "Credit labelled example or diagram if relevant"]
+      }],
+      answerKey: {
+        mcq: [{ answer: "Correct option", explanation: "Brief explanation", marks: 1 }],
+        shortAnswer: [{ answer: "Point-wise short answer", rubric: ["Point 1", "Point 2"], marks: 2 }],
+        longAnswer: [{ answer: "Structured long answer", rubric: ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"], marks: 5 }],
+        generalMarkingGuidance: [
+          "Award marks point-wise for each valid idea.",
+          "Accept equivalent scientific wording if the meaning is correct.",
+          "For long answers, reward structure, explanation, and relevant examples."
+        ]
+      }
+    },
+    assignment: { taskDescription: "Written assignment or project task", rubric: ["Evaluation points/criteria"], answerKey: "Sample answer or response key for teacher reference" }
+  };
+
+  const teacherNotesOnly = selectedSections.length === 1 && selectedSections[0] === "teacherLessonNotes";
+  const studentNotesOnly = selectedSections.length === 1 && selectedSections[0] === "studentLessonNotes";
+  const materialsOnly = selectedSections.length === 1 && selectedSections[0] === "materials";
+  const homeworkOnly = selectedSections.length === 1 && selectedSections[0] === "homework";
+  const sessionContextPayload = {
+    sessionNumber,
+    sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+    subject,
+    gradeLevel,
+    selectedChapters,
+    totalSessions,
+    durationMinutes,
+    learningOutcomes,
+    previousSessionContext,
+    teachingStrategy,
+    sessionPlanningDefaults,
+    config,
+  };
+  const prompt = teacherNotesOnly
+    ? renderPrompt("teacher-notes-generation.md", {
+        SUBJECT: String(subject || ""),
+        GRADE_LEVEL: String(gradeLevel || ""),
+        SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
+        SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
+        SESSION_NUMBER: String(sessionNumber),
+        TOTAL_SESSIONS: String(totalSessions),
+        DURATION_MINUTES: String(durationMinutes),
+        LEARNING_OUTCOMES_JSON: JSON.stringify(learningOutcomes),
+        PREVIOUS_SESSION_CONTEXT: previousSessionContext || "No previous session context provided.",
+        TEACHING_STYLE_JSON: JSON.stringify(teachingStrategy?.teachingStyle || []),
+        STUDENT_LEVEL: String(teachingStrategy?.studentLevel || "Mixed classroom"),
+        LEARNING_PACE: String(teachingStrategy?.pace || "Balanced"),
+        TARGET_DIFFICULTY: String(teachingStrategy?.targetDifficulty || "Moderate"),
+        ASSESSMENT_PREFERENCE_JSON: JSON.stringify(teachingStrategy?.assessmentPreference || []),
+        SPECIAL_INSTRUCTIONS: String(teachingStrategy?.specialInstructions || "None"),
+        TEACHING_RESOURCES_JSON: JSON.stringify(teachingStrategy?.teachingResources || []),
+        OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
+        READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
+        RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
+        CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
+      })
+    : studentNotesOnly
+    ? renderPrompt("student-notes-generation.md", {
+        SUBJECT: String(subject || ""),
+        GRADE_LEVEL: String(gradeLevel || ""),
+        SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
+        SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
+        SESSION_NUMBER: String(sessionNumber),
+        TOTAL_SESSIONS: String(totalSessions),
+        DURATION_MINUTES: String(durationMinutes),
+        LEARNING_OUTCOMES_JSON: JSON.stringify(learningOutcomes),
+        PREVIOUS_SESSION_CONTEXT: previousSessionContext || "No previous session context provided.",
+        LEARNING_PACE: String(teachingStrategy?.pace || "Balanced"),
+        TARGET_DIFFICULTY: String(teachingStrategy?.targetDifficulty || "Moderate"),
+        OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
+        READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
+        RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
+        CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
+      })
+    : materialsOnly
+    ? renderPrompt("session-ppt-prompt.md", {
+        SUBJECT: String(subject || ""),
+        GRADE_LEVEL: String(gradeLevel || ""),
+        SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
+        SESSION_NUMBER: String(sessionNumber),
+        TOTAL_SESSIONS: String(totalSessions),
+        DURATION_MINUTES: String(durationMinutes),
+        LEARNING_OUTCOMES_JSON: JSON.stringify(learningOutcomes),
+        PREVIOUS_SESSION_CONTEXT: previousSessionContext || "No previous session context provided.",
+        LEARNING_PACE: String(teachingStrategy?.pace || "Balanced"),
+        TARGET_DIFFICULTY: String(teachingStrategy?.targetDifficulty || "Moderate"),
+        TEACHING_STYLE_JSON: JSON.stringify(teachingStrategy?.teachingStyle || []),
+        TEACHING_RESOURCES_JSON: JSON.stringify(teachingStrategy?.teachingResources || []),
+        OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
+        READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
+        RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
+        CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
+        SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
+        SESSION_JSON: JSON.stringify(sessionContextPayload, null, 2),
+        SLIDE_CONFIG_JSON: JSON.stringify({
+          templateId: KAMALANIKETAN_TEMPLATE_ID,
+          templateDeck: "Kamalaniketan-pptx template.pptx",
+          fixedSlideCount: KAMALANIKETAN_TEMPLATE_SLIDES.length,
+          canonicalSlideSequence: KAMALANIKETAN_TEMPLATE_SLIDES,
+          themeMode: "themeable_system",
+          defaultThemeId: "kamalaniketan-modern",
+          availableThemes: Object.values(PPT_THEME_PRESETS).map((preset) => ({
+            themeId: preset.themeId,
+            themeName: preset.themeName,
+            fonts: preset.fonts,
+            colors: preset.colors,
+            visualStyle: preset.visualStyle,
+          })),
+          assetPolicy: ["Openverse", "Wikimedia Commons"],
+          deckRatio: "16:9",
+          outputDepth: "full_slide_spec",
+          diagrams: "svg_preferred_for_process_and_structure",
+          includePdfDocxFallback: true,
+          referenceVisualStyle: {
+            sourceDeck: "Kamalaniketan-pptx template.pptx",
+            theme: "school-ready classroom instructional deck",
+            layoutPatterns: [
+              "title slide with session identity",
+              "learning outcome board",
+              "prerequisite and recall prompt slide",
+              "opening hook slide",
+              "introduction slide",
+              "core concept teaching slide",
+              "visual explanation slide",
+              "worked example slide",
+              "guided practice slide",
+              "quick assessment slide",
+              "summary slide",
+              "homework and next-session slide",
+            ],
+            qualityBar: [
+              "preserve the 12-slide teaching skeleton",
+              "keep content session-faithful",
+              "theme changes must not alter content structure",
+            ],
+          },
+        }, null, 2),
+      })
+    : homeworkOnly
+    ? renderPrompt("homework-generation.md", {
+        SUBJECT: String(subject || ""),
+        GRADE_LEVEL: String(gradeLevel || ""),
+        SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
+        SESSION_NUMBER: String(sessionNumber),
+        TOTAL_SESSIONS: String(totalSessions),
+        EXPECTED_HOMEWORK_DURATION: String(sessionPlanningDefaults?.sessionDurationMinutes || durationMinutes || 30),
+        LEARNING_OUTCOMES_JSON: JSON.stringify(learningOutcomes),
+        PREVIOUS_SESSION_CONTEXT: previousSessionContext || "No previous session context provided.",
+        LEARNING_PACE: String(teachingStrategy?.pace || "Balanced"),
+        TARGET_DIFFICULTY: String(teachingStrategy?.targetDifficulty || "Moderate"),
+        HOMEWORK_PREFERENCES_JSON: JSON.stringify({
+          includeHomework: sessionPlanningDefaults?.includeHomework ?? true,
+          includeDifferentiation: sessionPlanningDefaults?.includeDifferentiation ?? true,
+          includeRealWorldConnections: sessionPlanningDefaults?.includeRealWorldConnections ?? true,
+        }),
+        OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
+        READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
+        SESSION_JSON: JSON.stringify(sessionContextPayload, null, 2),
+      })
+    : renderPrompt("session-generation.md", {
+        SESSION_NUMBER: String(sessionNumber),
+        TOTAL_SESSIONS: String(totalSessions),
+        DURATION_MINUTES: String(durationMinutes),
+        SUBJECT: String(subject || ""),
+        GRADE_LEVEL: String(gradeLevel || ""),
+        SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
+        INCLUDE_LEARNING_OUTCOMES: config.includeLearningOutcomes ? "YES" : "NO",
+        INCLUDE_INTRODUCTION: config.includeIntroduction ? "YES" : "NO",
+        INCLUDE_THEORY: config.includeTheory ? "YES" : "NO",
+        INCLUDE_ASSESSMENTS: config.includeAssessments ? "YES" : "NO",
+        INCLUDE_ASSIGNMENTS: config.includeAssignments ? "YES" : "NO",
+        INCLUDE_NOTES: config.includeNotes ? "YES" : "NO",
+        SELECTED_SECTIONS_JSON: JSON.stringify(selectedSections),
+      });
+
+  const schema = teacherNotesOnly
+    ? { teacherLessonNotes: baseSchema.teacherLessonNotes }
+    : studentNotesOnly
+    ? { studentLessonNotes: baseSchema.studentLessonNotes }
+    : materialsOnly
+    ? { materials: baseSchema.materials }
+    : homeworkOnly
+    ? {
+        homework: {
+          sessionInformation: {
+            sessionNumber: "",
+            sessionTitle: "",
+            subject: "",
+            grade: "",
+            difficultyLevel: "",
+            learningPace: "",
+            estimatedHomeworkDuration: ""
+          },
+          homework: [{
+            id: 1,
+            type: "",
+            title: "",
+            learningOutcomeIds: [""],
+            topicCoverage: [""],
+            difficulty: "",
+            marks: 0,
+            estimatedTime: "",
+            instructions: "",
+            question: "",
+            options: [""],
+            answerSpace: "",
+            visualRequirement: "",
+            expectedResponse: ""
+          }],
+          summary: {
+            totalQuestions: 0,
+            totalMarks: 0,
+            estimatedCompletionTime: "",
+            learningOutcomesCovered: [""],
+            topicsCovered: [""],
+            subtopicsCovered: [""],
+            taskDistribution: {},
+            homeExperimentIncluded: false,
+            parentEngagementIncluded: false
+          }
+        }
+      }
+    : baseSchema;
+
+  const response = await generateWithOllama(
+    requestId,
+    debugDir,
+    teacherNotesOnly
+      ? "generate-content-session-teacher-notes"
+      : studentNotesOnly
+      ? "generate-content-session-student-notes"
+      : materialsOnly
+      ? "generate-content-session-ppt-materials"
+      : homeworkOnly
+      ? "generate-content-session-homework"
+      : "generate-content-session",
+    prompt,
+    schema,
+    {
+      model: OLLAMA_SESSION_CONTENT_MODEL,
+    }
+  );
+  let responseText = response.text || "{}";
+  if (response.doneReason === "length") {
+    const recoveredPptText = materialsOnly ? tryRepairTruncatedPptJson(responseText) : null;
+    if (recoveredPptText) {
+      responseText = recoveredPptText;
+      await writeDebugFile(debugDir, "truncated-ppt-recovery.json", responseText);
+      console.warn(`[Ollama][${requestId}] Recovered truncated PPT response by trimming to the last complete slide boundary.`);
+    } else {
+      throw new Error("Model output truncated during session content generation. Reduce session scope or increase num_predict.");
+    }
+  }
+  const parsedSession = JSON.parse(sanitizeJsonText(responseText).text || "{}");
+  if (parsedSession?.materials?.ppt) {
+    parsedSession.materials.ppt = await normalizePptMaterial(parsedSession.materials.ppt, {
+      subject,
+      gradeLevel,
+      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+      learningOutcomes,
+      selectedChapters,
+    });
+  }
+  const normalizedSession = teacherNotesOnly || studentNotesOnly
+    ? pickSessionSections(parsedSession, selectedSections)
+    : {
+        ...pickSessionSections(parsedSession, selectedSections),
+        id: parsedSession?.id || `session-${sessionNumber}`,
+        sessionNumber: parsedSession?.sessionNumber || sessionNumber,
+        title: parsedSession?.title || sessionTitle || `Session ${sessionNumber}`,
+        duration: parsedSession?.duration || durationMinutes,
+      };
+  await writeDebugFile(debugDir, "final-response.json", normalizedSession);
+  return normalizedSession;
+}
 
 app.post("/api/generate-sessions-outline", async (req, res) => {
   const { subject, gradeLevel, selectedChapters, termName, config } = req.body;

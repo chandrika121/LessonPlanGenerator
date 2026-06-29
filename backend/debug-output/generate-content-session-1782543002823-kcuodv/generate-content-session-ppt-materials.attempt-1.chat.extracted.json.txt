@@ -1,0 +1,330 @@
+{
+  "materials": {
+    "ppt": {
+      "title": "Cell and Cell Organelles - Session 1: The Basic Unit of Life",
+      "presentationTitle": "Cell and Cell Organelles - Session 1",
+      "presentationGoal": "To introduce the cell as the fundamental unit of life, distinguish between plant and animal cells, and identify key organelles through visual comparison.",
+      "audience": "Class IX Science Students (Grade-level mixed)",
+      "theme": "Clean academic blue-and-white classroom deck with large left-aligned titles and right-side hero visuals",
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Openverse",
+          "Wikimedia Commons"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Use reusable or public domain assets only."
+        ],
+        "fallbackStrategy": "Prefer SVG diagrams when external imagery is not needed for structural precision."
+      },
+      "licenseChecklist": [
+        "Verify reusable license before final export.",
+        "Ensure attribution text matches the specific CC license of the chosen asset."
+      ],
+      "presentationWarnings": [
+        "Do not include untaught future-session content (e.g., detailed cell division or DNA replication)."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "LO1: Define a cell and explain its significance as the basic unit of life.",
+          "LO2: Differentiate between plant and animal cells based on structural features."
+        ],
+        "topicsCovered": [
+          "Discovery of Cells",
+          "Cell Theory Basics",
+          "Plant vs. Animal Cell Structures"
+        ],
+        "taughtConceptsCovered": [
+          "Robert Hooke's discovery",
+          "Unicellular vs. Multicellular organisms",
+          "Cell Wall and Chloroplast presence in plants only",
+          "Nucleus, Cytoplasm, Plasma Membrane commonality"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "slideNumber": 1,
+          "slideType": "hook",
+          "slideTitle": "The Basic Unit of Life: The Cell",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Introduction to Cells"
+          ],
+          "teacherIntent": "To capture student interest by connecting the microscopic world to their own bodies and surroundings.",
+          "studentTakeaway": "Cells are tiny building blocks that make up all living things, including us.",
+          "layout": "Title left-aligned; Full-bleed background image of a diverse ecosystem (forest/pond) fading into a magnified cell view on the right.",
+          "bulletPoints": [
+            "What is life made of?",
+            "From single cells to complex organisms."
+          ],
+          "onSlideText": [
+            "The Basic Unit of Life",
+            "Discovering the Cell"
+          ],
+          "speakerNotes": [
+            "Ask students: 'If you were a tiny explorer, what would be the smallest thing that is still alive?'",
+            "Introduce Robert Hooke's story briefly as the starting point.",
+            "Emphasize that even we are made of trillions of these units."
+          ],
+          "visualPlan": "A high-quality macro photograph showing a leaf or pond water sample, transitioning visually to a cell diagram overlay on the right side to bridge observation and theory.",
+          "assets": [
+            {
+              "purpose": "To provide visual context for living organisms before zooming in.",
+              "searchQuery": "microscopic plant cells onion skin",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "https://commons.wikimedia.org/wiki/File:Onion_epidermis_cell.jpg",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Image by Wikimedia User (Public Domain/CC)",
+              "altText": "Microscopic view of onion skin cells showing rectangular structures.",
+              "placementHint": "Right panel / Full bleed background"
+            }
+          ],
+          "svgDiagram": {
+            "title": null,
+            "type": null,
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in the title first.",
+            "Reveal the image on a click to simulate 'zooming in'."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "slideNumber": 2,
+          "slideType": "concept",
+          "slideTitle": "Discovery and Definition: What is a Cell?",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "History of Cells",
+            "Definition"
+          ],
+          "teacherIntent": "To establish the historical context (Hooke) and define the cell as the structural and functional unit.",
+          "studentTakeaway": "Cells are the smallest living units; they were first seen in cork by Robert Hooke.",
+          "layout": "Split layout: Left side for text/bullets, Right side for a portrait or diagram of Hooke's microscope observation.",
+          "bulletPoints": [
+            "1665: Robert Hooke observes 'cells' in cork.",
+            "Cells are the structural and functional units of life.",
+            "Unicellular (one cell) vs. Multicellular (many cells)."
+          ],
+          "onSlideText": [
+            "Robert Hooke's Discovery",
+            "Structural & Functional Unit"
+          ],
+          "speakerNotes": [
+            "Explain that 'cell' comes from the Latin word for a small room, as seen in cork.",
+            "Clarify: Unicellular organisms (like Amoeba) do everything alone. Multicellular organisms (like humans) have specialized cells working together.",
+            "Do not go into deep cell theory yet; focus on the definition."
+          ],
+          "visualPlan": "A diagram of Hooke's original drawing or a modern reconstruction of his microscope observation next to a simple icon representing 'One Cell' vs. 'Many Cells'.",
+          "assets": [
+            {
+              "purpose": "To visualize the historical discovery.",
+              "searchQuery": "Robert Hooke micrographia cork cells",
+              "sourceSite": "Openverse",
+              "sourceUrl": "https://openverse.org/search?q=robert+hooke+cork+cells&lang=en-US",
+              "licenseType": "Public Domain / CC0",
+              "attributionText": "Based on Robert Hooke's Micrographia (1665)",
+              "altText": "Historical drawing of cork cells as seen by Robert Hooke.",
+              "placementHint": "Right panel"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Unicellular vs. Multicellular",
+            "type": "comparison chart",
+            "instructions": [
+              "Left box: Single circle labeled 'Amoeba' with text 'One cell, all functions'.",
+              "Right box: Cluster of circles labeled 'Human Body' with text 'Many cells, specialized work'.",
+              "Arrow connecting them to label 'Complexity increases.'"
+            ],
+            "svgCode": "<svg width=\"400\" height=\"150\"><rect x=\"20\" y=\"20\" width=\"160\" height=\"110\" fill=\"#f0f8ff\" stroke=\"#333\"/><circle cx=\"100\" cy=\"75\" r=\"40\" fill=\"#e0e0e0\"/><text x=\"100\" y=\"95\" text-anchor=\"middle\">Amoeba</text><rect x=\"220\" y=\"20\" width=\"160\" height=\"110\" fill=\"#f0f8ff\" stroke=\"#333\"/><circle cx=\"270\" cy=\"45\" r=\"20\" fill=\"#e0e0e0\"/><circle cx=\"320\" cy=\"45\" r=\"20\" fill=\"#e0e0e0\"/><text x=\"180\" y=\"95\">Multicellular</text></svg>"
+          },
+          "animationHints": [
+            "Reveal the comparison diagram after defining unicellular."
+          ],
+          "timeEstimateMinutes": 7
+        },
+        {
+          "slideNumber": 3,
+          "slideType": "concept",
+          "slideTitle": "The Common Features: What All Cells Have",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Cell Structure Basics"
+          ],
+          "teacherIntent": "To identify the three universal components found in almost all cells.",
+          "studentTakeaway": "All cells have a Plasma Membrane, Cytoplasm, and Nucleus (in eukaryotes).",
+          "layout": "2x2 Concept Card Grid: Three cards for features, one empty or used for 'Universal' label. Large central diagram of an animal cell with labels.",
+          "bulletPoints": [
+            "Plasma Membrane: The boundary.",
+            "Cytoplasm: The jelly-like substance.",
+            "Nucleus: The control center (in most cells).",
+            "These are found in both plant and animal cells."
+          ],
+          "onSlideText": [
+            "Universal Cell Components",
+            "Membrane, Cytoplasm, Nucleus"
+          ],
+          "speakerNotes": [
+            "Use the analogy of a factory: Membrane = Security gate; Cytoplasm = Factory floor; Nucleus = Manager's office.",
+            "Point out that while size varies, these parts are essential for life functions in this context.",
+            "Note: Prokaryotes lack a true nucleus, but focus on the general eukaryotic model taught at Class IX level."
+          ],
+          "visualPlan": "A clear, labeled diagram of an animal cell highlighting only the three common features. The rest of the organelles should be faded or absent to avoid confusion.",
+          "assets": [],
+          "svgDiagram": {
+            "title": "Common Cell Structure",
+            "type": "labelled diagram",
+            "instructions": [
+              "Draw a large circle for Plasma Membrane (outer boundary).",
+              "Fill the inside with light blue shading for Cytoplasm.",
+              "Place a distinct dark oval in the center labeled 'Nucleus'.",
+              "Add leader lines pointing to each part from outside."
+            ],
+            "svgCode": "<svg width=\"400\" height=\"300\"><circle cx=\"200\" cy=\"150\" r=\"120\" fill=\"#e6f7ff\" stroke=\"#0056b3\"/><path d=\"M 80,150 L 320,150 M 200,30 L 200,270\" stroke=\"#ddd\"/><circle cx=\"200\" cy=\"150\" r=\"40\" fill=\"#d6eaf8\" stroke=\"#0056b3\"/><text x=\"200\" y=\"155\" text-anchor=\"middle\">Nucleus</text><line x1=\"50\" y1=\"100\" x2=\"100\" y2=\"140\" stroke=\"#333\"/><text x=\"60\" y=\"95\">Plasma Membrane</text></svg>"
+          },
+          "animationHints": [
+            "Reveal the Nucleus first, then Cytoplasm, then Membrane."
+          ],
+          "timeEstimateMinutes": 8
+        },
+        {
+          "slideNumber": 4,
+          "slideType": "comparison",
+          "slideTitle": "Plant vs. Animal Cells: The Key Differences",
+          "learningOutcomeIds": [
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Cell Structure Comparison"
+          ],
+          "teacherIntent": "To clearly distinguish the unique features of plant cells (Wall, Chloroplasts) versus animal cells.",
+          "studentTakeaway": "Plant cells have a Cell Wall and Chloroplasts; Animal cells do not. Both share other organelles.",
+          "layout": "Split Screen Comparison: Left side for Plant Cell diagram, Right side for Animal Cell diagram. Central text box highlighting differences.",
+          "bulletPoints": [
+            "Cell Wall: Present in Plants (rigid), Absent in Animals.",
+            "Chloroplasts: Present in Plants (photosynthesis), Absent in Animals.",
+            "Vacuoles: Large central vacuole in plants; small/absent in animals."
+          ],
+          "onSlideText": [
+            "Plant vs. Animal",
+            "Rigid Wall & Green Pigment"
+          ],
+          "speakerNotes": [
+            "Ask students to guess why plant cells are rectangular and animal cells are rounder (Cell wall provides shape).",
+            "Explain that Chloroplasts make plants green and allow them to make their own food.",
+            "Use the 'House' analogy: Plant cell = House with a brick exterior; Animal cell = Tent or flexible house."
+          ],
+          "visualPlan": "Side-by-side diagrams. The plant diagram must show a thick outer line (wall) and green ovals (chloroplasts). The animal diagram should be rounder without these features.",
+          "assets": [
+            {
+              "purpose": "To provide accurate visual reference for the comparison.",
+              "searchQuery": "plant vs animal cell structure labeled",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plant_vs_Animal_Cell.svg",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Diagram adapted from Wikimedia Commons.",
+              "altText": "Side-by-side comparison of plant and animal cell structures.",
+              "placementHint": "Full width split layout"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Structural Differences",
+            "type": "comparison chart",
+            "instructions": [
+              "Create two side-by-side boxes. Left: Rectangle with thick border (Wall) and green circles inside.",
+              "Right: Irregular circle, thin border only.",
+              "Add a central legend box listing 'Cell Wall' and 'Chloroplasts' as the differentiators."
+            ],
+            "svgCode": "<svg width=\"600\" height=\"250\"><rect x=\"10\" y=\"10\" width=\"280\" height=\"230\" fill=\"#fff\" stroke=\"#333\"/><circle cx=\"150\" cy=\"125\" r=\"90\" fill=\"#e6f7ff\" stroke=\"#0056b3\"/><rect x=\"40\" y=\"40\" width=\"220\" height=\"170\" fill=\"#d5f5e3\" stroke=\"#2ecc71\"/><text x=\"150\" y=\"280\">Plant Cell</text><circle cx=\"460\" cy=\"125\" r=\"90\" fill=\"#fff\" stroke=\"#333\"/><rect x=\"320\" y=\"10\" width="270" height="230" fill="#f9f9f9"/><text x="460" y="280">Animal Cell</text></svg>"
+          },
+          "animationHints": [
+            "Reveal the Plant cell features first, then contrast with Animal."
+          ],
+          "timeEstimateMinutes": 10
+        },
+        {
+          "slideNumber": 5,
+          "slideType": "quick-check",
+          "slideTitle": "Quick Check: Identify the Cell Type",
+          "learningOutcomeIds": [
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Application of Concepts"
+          ],
+          "teacherIntent": "To assess if students can apply their knowledge to identify cell types based on features.",
+          "studentTakeaway": "I can distinguish plant and animal cells by looking for a Cell Wall or Chloroplasts.",
+          "layout": "Title top, large image in center with question below. Two answer buttons (Plant / Animal) visually represented as cards at the bottom.",
+          "bulletPoints": [
+            "Feature: Has a thick outer layer and green spots inside.",
+            "Question: Is this a Plant or Animal cell?",
+            "Reasoning required."
+          ],
+          "onSlideText": [
+            "Plant or Animal?",
+            "Justify your answer"
+          ],
+          "speakerNotes": [
+            "Show the image (or describe it if no image is projected).",
+            "Ask students to raise hands for Plant vs. Animal.",
+            "Call on a student to explain: 'I chose plant because of the cell wall.'"
+          ],
+          "visualPlan": "A clear diagram or photo of a leaf epidermis (plant) with chloroplasts visible, labeled only as 'Unknown Cell'.",
+          "assets": [
+            {
+              "purpose": "To serve as the visual puzzle for the quick check.",
+              "searchQuery": "leaf cells microscope chloroplasts",
+              "sourceSite": "Openverse",
+              "sourceUrl": "https://openverse.org/search?q=chloroplast+microscope&lang=en-US",
+              "licenseType": "CC BY 4.0",
+              "attributionText": "Image by Openverse Contributor.",
+              "altText": "Microscopic view of leaf cells showing green chloroplasts.",
+              "placementHint": "Center panel"
+            }
+          ],
+          "svgDiagram": {
+            "title": null,
+            "type": null,
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal the question text first.",
+            "Wait for student response before revealing the answer key."
+          ],
+          "timeEstimateMinutes": 5
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Student Revision Sheet: The Cell",
+      "keyInformation": [
+        "Cells are the basic structural and functional units of life.",
+        "Robert Hooke discovered cells in cork (1665).",
+        "All cells have a Plasma Membrane, Cytoplasm, and Nucleus.",
+        "Plant Cells: Have Cell Wall and Chloroplasts. Shape is usually rectangular.",
+        "Animal Cells: No Cell Wall or Chloroplasts. Shape is irregular/round."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Teacher Lesson Plan: Session 1",
+      "sections": [
+        "Introduction (3 min): Hook students with the concept of 'building blocks' and show Hooke's discovery.",
+        "Core Concept - Definition (7 min): Define cell, unicellular vs multicellular. Use analogies (factory).",
+        "Visual Analysis (8 min): Identify common parts (Membrane, Cytoplasm, Nucleus) using the central diagram.",
+        "Comparison Activity (10 min): Contrast Plant and Animal cells. Focus on Cell Wall and Chloroplasts as key differentiators.",
+        "Formative Assessment (5 min): Quick check activity to identify cell types based on features.",
+        "Differentiation: Provide simplified diagrams for struggling learners; ask advanced students to hypothesize why plant vacuoles are larger."
+      ]
+    }
+  }
+}

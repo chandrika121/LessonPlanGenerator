@@ -52,11 +52,103 @@ export interface SessionConfig {
   durationMinutes: number;
 }
 
+export type SessionSectionKey =
+  | "teacherLessonNotes"
+  | "studentLessonNotes"
+  | "learningOutcomes"
+  | "introduction"
+  | "theory"
+  | "activities"
+  | "materials"
+  | "homework"
+  | "assessment"
+  | "assignment";
+
 export interface SessionPlan {
   id: string;
   sessionNumber: number;
   title: string;
   duration: number; // in mins
+  teacherLessonNotes?: {
+    prerequisiteKnowledge?: string[];
+    previousSessionRecap?: string[];
+    teachingSequence?: string[];
+    guidedPractice?: string[];
+    differentiation?: {
+      slowLearners?: string[];
+      averageLearners?: string[];
+      advancedLearners?: string[];
+    };
+    teacherTips?: string[];
+    misconceptions?: string[];
+    lessonPurpose?: string[];
+    classroomQuestions?: {
+      question: string;
+      level?: string;
+      expectedResponse?: string;
+      answerPoints?: string[];
+    }[];
+    conceptFlow?: {
+      conceptName: string;
+      definition?: string;
+      coreExplanation?: string;
+      importance?: string;
+      observedIn?: string[];
+      whyStudyIt?: string;
+      relationshipWithPrevious?: string;
+      relationshipWithFuture?: string;
+      keywords?: string[];
+      teacherMoves?: string[];
+      examples?: string[];
+      visuals?: string[];
+    }[];
+    timePlan?: {
+      segment: string;
+      minutes: number;
+      purpose?: string;
+    }[];
+    formativeChecks?: string[];
+    sessionSummary?: string[];
+    nextSessionBridge?: string[];
+  };
+  studentLessonNotes?: {
+    title?: string;
+    introduction?: string;
+    learningObjectives?: string[];
+    quickRecall?: string[];
+    sections?: {
+      heading: string;
+      explanation: string;
+      keyPoints?: string[];
+      examples?: string[];
+      whyItMatters?: string;
+      terminology?: string[];
+      detailedExplanation?: string;
+      observedIn?: string[];
+      visualSupport?: string[];
+      importantNotes?: string[];
+      memoryTechniques?: string[];
+      conceptSummary?: string[];
+    }[];
+    definitions?: { term: string; definition: string }[];
+    workedExamples?: {
+      title: string;
+      steps?: string[];
+      explanation?: string;
+    }[];
+    revisionSection?: {
+      definitions?: string[];
+      formulas?: string[];
+      facts?: string[];
+      keywords?: string[];
+      conceptMap?: string[];
+      quickRecap?: string[];
+    };
+    selfCheckQuestions?: string[];
+    didYouKnow?: string[];
+    summary?: string[];
+    quickRevision?: string[];
+  };
   learningOutcomes?: string[];
   introduction?: string;
   theory?: {
@@ -70,17 +162,158 @@ export interface SessionPlan {
     durationMinutes: number;
   }[];
   materials?: {
-    ppt: { title: string; slides: { slideTitle: string; bulletPoints: string[] }[] };
+    ppt: {
+      templateId?: string;
+      templateName?: string;
+      themeId?: string;
+      title?: string;
+      presentationTitle?: string;
+      presentationGoal?: string;
+      audience?: string;
+      theme?: string;
+      themeTokens?: {
+        fonts?: {
+          heading?: string;
+          body?: string;
+        };
+        colors?: {
+          primary?: string;
+          secondary?: string;
+          accent?: string;
+          background?: string;
+          surface?: string;
+          text?: string;
+          mutedText?: string;
+        };
+        visualStyle?: {
+          topBarStyle?: string;
+          cardStyle?: string;
+          visualFrameStyle?: string;
+        };
+      };
+      assetSearchPlan?: {
+        preferredSources?: string[];
+        safeSearch?: boolean;
+        licensingNotes?: string[];
+        fallbackStrategy?: string;
+      };
+      licenseChecklist?: string[];
+      presentationWarnings?: string[];
+      coverageSummary?: {
+        learningOutcomesCovered?: string[];
+        topicsCovered?: string[];
+        taughtConceptsCovered?: string[];
+        omittedContent?: string[];
+      };
+      slides: {
+        templateId?: string;
+        templateSlideKey?: string;
+        templateSlideTitle?: string;
+        isOptionalSlotFilled?: boolean;
+        slideTitle?: string;
+        bulletPoints?: string[];
+        slideNumber?: number;
+        slideType?: string;
+        learningOutcomeIds?: string[];
+        topicCoverage?: string[];
+        teacherIntent?: string;
+        studentTakeaway?: string;
+        layout?: string;
+        onSlideText?: string[];
+        speakerNotes?: string[];
+        visualPlan?: string;
+        assets?: {
+          purpose?: string;
+          searchQuery?: string;
+          sourceSite?: string;
+          sourceUrl?: string;
+          previewUrl?: string;
+          licenseType?: string;
+          attributionText?: string;
+          altText?: string;
+          placementHint?: string;
+        }[];
+        svgDiagram?: {
+          title?: string;
+          type?: string;
+          instructions?: string[];
+          svgCode?: string;
+        };
+        animationHints?: string[];
+        timeEstimateMinutes?: number;
+      }[];
+    };
     pdf: { documentTitle: string; keyInformation: string[] };
     docx: { outlineTitle: string; sections: string[] };
   };
   homework?: {
-    task: string;
-    estimatedTimeMinutes: number;
+    task?: string;
+    estimatedTimeMinutes?: number;
+    sessionInformation?: {
+      sessionNumber?: string;
+      sessionTitle?: string;
+      subject?: string;
+      grade?: string;
+      difficultyLevel?: string;
+      learningPace?: string;
+      estimatedHomeworkDuration?: string;
+    };
+    homework?: {
+      id: number;
+      type?: string;
+      title?: string;
+      learningOutcomeIds?: string[];
+      topicCoverage?: string[];
+      difficulty?: string;
+      marks?: number;
+      estimatedTime?: string;
+      instructions?: string;
+      question?: string;
+      options?: string[];
+      answerSpace?: string;
+      visualRequirement?: string;
+      expectedResponse?: string;
+    }[];
+    summary?: {
+      totalQuestions?: number;
+      totalMarks?: number;
+      estimatedCompletionTime?: string;
+      learningOutcomesCovered?: string[];
+      topicsCovered?: string[];
+      subtopicsCovered?: string[];
+      taskDistribution?: Record<string, number>;
+      homeExperimentIncluded?: boolean;
+      parentEngagementIncluded?: boolean;
+    };
   };
   assessment?: {
-    questions: string[];
-    answerKey: string[];
+    mcq?: {
+      question: string;
+      options: string[];
+      answer: string;
+      explanation?: string;
+      marks?: number;
+    }[];
+    shortAnswer?: {
+      question: string;
+      answer: string;
+      expectedLength?: string;
+      marks?: number;
+      rubric?: string[];
+    }[];
+    longAnswer?: {
+      question: string;
+      answer: string;
+      expectedLength?: string;
+      marks?: number;
+      rubric?: string[];
+    }[];
+    answerKey?: {
+      mcq?: { answer: string; explanation?: string; marks?: number }[];
+      shortAnswer?: { answer: string; rubric?: string[]; marks?: number }[];
+      longAnswer?: { answer: string; rubric?: string[]; marks?: number }[];
+      generalMarkingGuidance?: string[];
+    };
   };
   assignment?: {
     taskDescription: string;
@@ -149,34 +382,66 @@ export interface TermPlan {
 export interface TeachingStrategy {
   teachingStyle?: string[];
   studentLevel?: string;
-  learningPace?: string;
-  bloomWeights?: string[];
+  pace?: string;
+  bloomsTaxonomyEmphasis?: string[];
   assessmentPreference?: string[];
-  difficulty?: string;
+  targetDifficulty?: string;
   teachingResources?: string[];
-  aiSettings?: {
-    creativity?: string;
-    language?: string;
-    wordCount?: string;
-    readingLevel?: string;
-    regionalContext?: string;
-    examples?: string;
-  };
+  specialInstructions?: string;
+}
+
+export interface SessionPlanningDefaults {
+  sessionDurationMinutes?: number | null;
+  language?: string;
+  readingLevel?: string;
+  responseLength?: string;
+  creativity?: string;
+  includeRealWorldConnections?: boolean;
+  includeDifferentiation?: boolean;
+  includeFormativeAssessment?: boolean;
+  includeHomework?: boolean;
+  includeTeacherNotes?: boolean;
 }
 
 export interface ChapterSessionPlan {
+  id?: string;
+  className?: string;
+  termName?: string;
+  termNumber?: number | null;
   unitName?: string;
   chapterName: string;
-  recommendedSessions: number;
+  sequence?: number | null;
+  recommendedSessions?: number | null;
   adjustedSessions?: number | null;
+  estimatedSessions: number;
+  estimatedMinutes?: number | null;
+  rationale?: string;
   reasoning?: string;
-  suggestedSequence?: string[];
+  sourceTopicCount?: number | null;
+  sourceEstimatedSessions?: number | null;
 }
 
 export interface SessionAllocation {
   approved: boolean;
+  approvedAt?: string | null;
+  selectedTermKey?: string;
+  selectedTermSummary?: {
+    className?: string;
+    termName?: string;
+    termNumber?: number | null;
+    chapterCount?: number;
+    marks?: number;
+    totalRows?: number;
+  };
   recommendations: ChapterSessionPlan[];
   allocations: ChapterSessionPlan[];
+  validation?: {
+    valid: boolean;
+    issues: string[];
+    annualCapacity?: number | null;
+    termCapacity?: number | null;
+    allocatedSessions?: number | null;
+  };
 }
 
 export interface GeneratedArtifact {
@@ -213,6 +478,7 @@ export interface PlanningWorkspace {
   academicConfig: AcademicConfig;
   termPlan: TermPlan;
   teachingStrategy: TeachingStrategy;
+  sessionPlanningDefaults?: SessionPlanningDefaults;
   sessionAllocation: SessionAllocation;
   generationScope: Record<string, unknown>;
   generatedArtifacts: GeneratedArtifact[];

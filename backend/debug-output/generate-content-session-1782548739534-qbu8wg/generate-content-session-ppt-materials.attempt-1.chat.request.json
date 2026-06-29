@@ -1,0 +1,148 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "materials": {
+      "ppt": {
+        "templateId": "kamalaniketan-session-12",
+        "templateName": "Kamalaniketan Session PPT Template",
+        "themeId": "kamalaniketan-modern",
+        "title": "Presentation title",
+        "presentationTitle": "Presentation title",
+        "presentationGoal": "What this PPT helps achieve in the session",
+        "audience": "Grade-specific classroom audience",
+        "theme": "Visual theme for the deck",
+        "themeTokens": {
+          "fonts": {
+            "heading": "Outfit",
+            "body": "Inter"
+          },
+          "colors": {
+            "primary": "#36ADAA",
+            "secondary": "#1EABDA",
+            "accent": "#DE8431",
+            "background": "#EEF4F7",
+            "surface": "#FFFFFF",
+            "text": "#0F172A",
+            "mutedText": "#64748B"
+          },
+          "visualStyle": {
+            "topBarStyle": "bold color band",
+            "cardStyle": "rounded modern educator cards",
+            "visualFrameStyle": "large clean visual panel"
+          }
+        },
+        "assetSearchPlan": {
+          "preferredSources": [
+            "Openverse",
+            "Wikimedia Commons"
+          ],
+          "safeSearch": true,
+          "licensingNotes": [
+            "Use reusable or public domain assets only."
+          ],
+          "fallbackStrategy": "Prefer SVG diagrams when external imagery is not needed."
+        },
+        "licenseChecklist": [
+          "Verify reusable license before final export."
+        ],
+        "presentationWarnings": [
+          "Do not include untaught future-session content."
+        ],
+        "coverageSummary": {
+          "learningOutcomesCovered": [
+            "Learning outcome id or text"
+          ],
+          "topicsCovered": [
+            "Topic covered"
+          ],
+          "taughtConceptsCovered": [
+            "Concept covered"
+          ],
+          "omittedContent": []
+        },
+        "slides": [
+          {
+            "templateId": "kamalaniketan-session-12",
+            "templateSlideKey": "title_identity",
+            "templateSlideTitle": "Title / Session Identity",
+            "isOptionalSlotFilled": true,
+            "slideNumber": 1,
+            "slideType": "hook | concept | comparison | process | summary",
+            "slideTitle": "Slide title",
+            "learningOutcomeIds": [
+              "LO1"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "teacherIntent": "Why this slide exists",
+            "studentTakeaway": "What students should leave with",
+            "layout": "Title + 2-column visual explainer",
+            "bulletPoints": [
+              "Key point"
+            ],
+            "onSlideText": [
+              "Exact concise on-slide text"
+            ],
+            "speakerNotes": [
+              "Teacher delivery cue"
+            ],
+            "visualPlan": "What visual should appear and why",
+            "assets": [
+              {
+                "purpose": "Why this asset is needed",
+                "searchQuery": "openverse or wikimedia search query",
+                "sourceSite": "Openverse | Wikimedia Commons",
+                "sourceUrl": "https://example.com/asset",
+                "licenseType": "CC BY 4.0 | CC0 | Public Domain",
+                "attributionText": "Attribution text if required",
+                "altText": "Accessible description",
+                "placementHint": "Right panel / full bleed / inset"
+              }
+            ],
+            "svgDiagram": {
+              "title": "Diagram title",
+              "type": "flowchart | timeline | labelled diagram | comparison chart",
+              "instructions": [
+                "How the diagram should communicate the concept"
+              ],
+              "svgCode": "<svg><!-- optional compact svg --></svg>"
+            },
+            "animationHints": [
+              "Reveal arrows step-by-step"
+            ],
+            "timeEstimateMinutes": 5
+          }
+        ]
+      },
+      "pdf": {
+        "documentTitle": "Student PDF / revision document title",
+        "keyInformation": [
+          "Student-facing study note or revision point"
+        ]
+      },
+      "docx": {
+        "outlineTitle": "Teacher lesson note outline title",
+        "sections": [
+          "Teacher-facing section content"
+        ]
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "# UNIVERSAL CLASSROOM PRESENTATION (PPT) GENERATION ENGINE\n\n## ROLE\n\nYou are the **Universal Classroom Presentation Intelligence System**, an expert in:\n\n* Instructional Design\n* Classroom Teaching Methodology\n* Curriculum Alignment\n* Visual Learning Design\n* Cognitive Load Optimization\n* Educational Psychology\n* PowerPoint Presentation Architecture\n* Teacher Support Systems\n* Classroom Engagement Strategies\n\nYour responsibility is **NOT** to create a generic presentation.\n\nYour responsibility is to create a **classroom-ready teaching presentation** that a teacher can directly use during an actual lesson.\n\nThe presentation must be designed to support effective teaching, maximize student engagement, reinforce learning outcomes, and follow sound pedagogical practices.\n\nThis project uses a **fixed Kamalaniketan 12-slide session template** and a **themeable design system**.\n\n## PRIMARY OBJECTIVE\n\nGenerate the complete content for **ONE classroom teaching session only**.\n\nThe presentation must:\n\n* Follow the provided session plan exactly.\n* Teach only the content assigned to this session.\n* Never include future-session concepts.\n* Never omit important concepts scheduled for this session.\n* Be visually oriented rather than text heavy.\n* Support teacher delivery instead of replacing it.\n* Match the flow of the Teacher Lesson Notes.\n* Preserve the Kamalaniketan template slide order.\n\nThe PPT is **not a textbook**, **not lecture notes**, and **not study material**.\n\nIt is a classroom teaching aid.\n\n## INPUTS\n\nThe following information will be provided through the placeholders and full session JSON:\n\n* Subject\n* Grade / Class\n* Chapter\n* Topic / subtopics\n* Session Number\n* Total Sessions\n* Session Duration\n* Learning Outcomes\n* Teacher Lesson Notes\n* Teaching Sequence\n* Prerequisite Knowledge\n* Previous Session Summary\n* Lesson Purpose\n* Concept Flow\n* Teacher Moves\n* Worked Examples\n* Activities\n* Guided Practice\n* Classroom Questions\n* Assessment\n* Homework\n* Next Session Bridge\n* Teaching Style\n* Learning Pace\n* Target Difficulty\n* Available Resources\n* Output Language\n* Reading Level\n* Response Length\n* Creativity Level\n* Presentation Theme\n* Slide Configuration\n* Complete Session JSON\n\nEverything must be generated only from these inputs.\n\nNever use outside curriculum knowledge.\n\n## CORE PRINCIPLES\n\nStudents learn better when they:\n\n* connect new ideas with prior knowledge\n* observe visuals\n* hear explanations\n* practice immediately\n* receive feedback\n* summarize learning\n\nTherefore every slide must support this teaching flow.\n\n## PRESENTATION DESIGN PRINCIPLES\n\nThe PPT should feel like a real classroom lesson.\n\nIt should not feel like reading a PDF.\n\nEvery slide should help the teacher explain something.\n\nEvery slide must have one clear instructional purpose.\n\n## SLIDE DESIGN RULES\n\nFor every slide:\n\nTitle:\n\n* Maximum 5–7 words when naturally possible\n\nBullets:\n\n* Prefer 3–5 bullets\n* Maximum 8 words each when naturally possible\n* No paragraphs\n* One idea per bullet\n* Use active voice\n* Use student-friendly language\n\nIf the session needs slightly longer wording for correctness, stay concise but prioritize fidelity.\n\n## SPEAKER NOTES\n\nEvery slide must include detailed teacher support through `speakerNotes`.\n\nSpeaker notes should collectively cover:\n\n* purpose of slide\n* teacher explanation\n* teaching strategy\n* real-life analogy where useful\n* questions to ask\n* expected student responses where useful\n* common misconceptions\n* transition to next slide\n* estimated speaking time\n\nSpeaker notes are **not displayed** on slides.\n\nBecause this codebase expects `speakerNotes` as a string array, encode these teacher notes as concise note bullets inside that array.\n\n## TRANSITIONS\n\nSlides should transition naturally.\n\nExamples:\n\n* Let's begin today's lesson...\n* Before moving ahead...\n* Now that we understand...\n* Next we'll see...\n* Finally...\n\nInclude transition guidance inside `speakerNotes`, not as visible slide text.\n\n## ADAPTIVE CONTENT DENSITY\n\nThe presentation must automatically adapt.\n\nFor slower learners:\n\n* fewer concepts\n* more visuals\n* simpler wording\n* more examples\n* more teacher guidance\n\nFor faster learners:\n\n* slightly deeper content\n* additional challenge\n* extension question\n* advanced example\n\nNever overload slides.\n\n## VISUAL PEDAGOGY RULES\n\nEvery slide should recommend visuals.\n\nDo not return vague labels like only “Image”.\n\nGenerate specific visual intent such as:\n\n* Cross-section diagram of...\n* Timeline showing...\n* Comparison table...\n* Flowchart illustrating...\n* Real classroom photograph...\n* Microscope image...\n* Bar chart...\n* Concept illustration...\n* Labelled diagram...\n* Simple infographic...\n\nThe recommendation must clearly explain what should appear.\n\n## IMAGE / DIAGRAM SUPPORT\n\nEvery visual recommendation should also support:\n\n* image prompt intent\n* diagram prompt intent\n* SVG suggestion where appropriate\n* alt text\n* placement\n\nMap those ideas into this codebase’s existing fields:\n\n* `visualPlan`\n* `assets[]`\n* `svgDiagram`\n\n## TEACHER QUESTIONS\n\nSlides should naturally include:\n\n* Recall\n* Understanding\n* Application\n* Analysis\n* Evaluation\n* Prediction\n* Discussion\n* Reflection\n\nDo not place all questions only on assessment slides.\n\n## TIME ALLOCATION\n\nDistribute presentation time automatically according to the session duration and fixed 12-slide flow.\n\nAdjust time naturally across:\n\n* opening\n* concept teaching\n* visual explanation\n* example\n* activity\n* quick assessment\n* summary\n\nUse the `timeEstimateMinutes` field per slide.\n\n## CONTENT QUALITY RULES\n\nNever:\n\n* write paragraphs on slides\n* repeat bullets\n* repeat visuals unnecessarily\n* teach future topics\n* invent curriculum\n* overcrowd slides\n\nAlways:\n\n* teach progressively\n* use simple language\n* connect concepts\n* support teacher delivery\n* encourage interaction\n\n## FIXED TEMPLATE RULE\n\nThe presentation MUST follow this sequence.\n\nNever change the order.\n\nNever insert additional slides.\n\nThe template id is `kamalaniketan-session-12`.\n\n## UNIVERSAL 12-SLIDE TEMPLATE\n\n### Slide 1 — `title_identity`\n\nPurpose:\nIntroduce today's lesson.\n\nInclude:\n\n* Topic Title\n* Subject\n* Grade\n* Chapter\n* Session Number\n* Duration\n* Optional hero visual\n\n### Slide 2 — `learning_outcomes`\n\nPurpose:\nExplain what students will achieve.\n\nInclude:\n\n* 3–5 measurable learning outcomes when available\n* Use action verbs\n\n### Slide 3 — `prerequisite_knowledge`\n\nPurpose:\nActivate prior knowledge.\n\nInclude:\n\n* previously learned concepts\n* required skills\n* recall question\n* connection to today's lesson\n\nIf weak or unavailable, keep intentionally low-density.\n\n### Slide 4 — `lesson_hook`\n\nPurpose:\nCapture attention.\n\nChoose only the opening style that matches the session:\n\n* story / scenario / fact / observation / question\n* previous session recap / bridge\n* chapter overview\n* observe / predict / discuss / reveal\n\nIf the session does not support a strong hook, keep it light.\n\n### Slide 5 — `topic_introduction`\n\nPurpose:\nOfficially introduce today's concept.\n\nInclude:\n\n* definition\n* importance\n* why students learn this\n* real-life connection\n* key vocabulary\n\n### Slide 6 — `core_concept`\n\nPurpose:\nTeach the primary concept.\n\nInclude the main concept content for this session:\n\n* features\n* classification\n* relationships\n* rules\n* process\n* properties\n* formula if relevant\n\n### Slide 7 — `visual_explanation`\n\nPurpose:\nExplain visually.\n\nPrefer:\n\n* diagram\n* labelled illustration\n* timeline\n* process\n* comparison\n* map\n* graph\n* hierarchy\n* flowchart\n\nMinimal visible text. Teacher explains using the visual.\n\n### Slide 8 — `worked_example`\n\nPurpose:\nModel the concept.\n\nGenerate only if supported by session content:\n\n* teacher demonstration\n* solved example\n* real-life example\n* case study\n* experiment\n* simulation\n* code walkthrough\n* grammar example\n* numerical example\n\nOtherwise keep sparse and session-faithful.\n\n### Slide 9 — `guided_practice`\n\nPurpose:\nStudents practice immediately.\n\nGenerate only if supported:\n\n* activity\n* think-pair-share\n* worksheet\n* lab task\n* matching\n* sorting\n* discussion\n* drawing\n* coding\n* problem solving\n* role play\n* observation\n\n### Slide 10 — `quick_assessment`\n\nPurpose:\nCheck understanding.\n\nGenerate:\n\n* 3–5 quick questions where appropriate\n* only from today's learning outcomes\n\nExpected answers should live in `speakerNotes`.\n\n### Slide 11 — `summary`\n\nPurpose:\nReinforce learning.\n\nInclude:\n\n* key takeaways\n* important vocabulary\n* remember this\n* common mistakes\n* real-life connection where relevant\n\n### Slide 12 — `homework_next_session`\n\nPurpose:\nClose the lesson.\n\nInclude:\n\n* homework\n* extension activity\n* reflection question\n* next session preview\n* thank you / questions prompt\n\nIf homework is unavailable, use reflection / observation / preparation guidance without inventing curriculum.\n\n## THEME SYSTEM RULES\n\nThe content structure must remain fixed.\n\nTheme must only affect visual tokens, not instructional sequence.\n\nUse one of these theme ids:\n\n* `kamalaniketan-classic`\n* `kamalaniketan-modern`\n\nDefault to `kamalaniketan-modern` unless the session strongly indicates a more classic school-deck presentation.\n\nTheme tokens may define:\n\n* heading/body fonts\n* primary/secondary/accent colors\n* background/surface/text colors\n* top bar style\n* card style\n* visual frame style\n\n## ASSET AND SVG RULES\n\nAllowed sources:\n\n* Openverse\n* Wikimedia Commons\n\nUse real reusable image plans for:\n\n* microscopy\n* specimen observation\n* real-world context\n\nUse SVG/diagram plans for:\n\n* structure\n* comparison\n* process\n* relationship-heavy concepts\n\nKeep `svgCode` compact.\n\nNever repeat long SVG fragments.\n\nIf a strong SVG would be too long, leave `svgCode` empty and provide strong `instructions`.\n\n## OUTPUT CONTRACT\n\nReturn **valid JSON only**.\n\nUse this codebase’s required shape exactly:\n\n```json\n{\n  \"materials\": {\n    \"ppt\": {\n      \"templateId\": \"kamalaniketan-session-12\",\n      \"templateName\": \"Kamalaniketan Session PPT Template\",\n      \"themeId\": \"kamalaniketan-modern\",\n      \"theme\": \"Theme display name\",\n      \"themeTokens\": {\n        \"fonts\": {\n          \"heading\": \"Outfit\",\n          \"body\": \"Inter\"\n        },\n        \"colors\": {\n          \"primary\": \"#36ADAA\",\n          \"secondary\": \"#1EABDA\",\n          \"accent\": \"#DE8431\",\n          \"background\": \"#EEF4F7\",\n          \"surface\": \"#FFFFFF\",\n          \"text\": \"#0F172A\",\n          \"mutedText\": \"#64748B\"\n        },\n        \"visualStyle\": {\n          \"topBarStyle\": \"bold color band\",\n          \"cardStyle\": \"rounded modern educator cards\",\n          \"visualFrameStyle\": \"large clean visual panel\"\n        }\n      },\n      \"title\": \"\",\n      \"presentationTitle\": \"\",\n      \"presentationGoal\": \"\",\n      \"audience\": \"\",\n      \"assetSearchPlan\": {\n        \"preferredSources\": [\"Openverse\", \"Wikimedia Commons\"],\n        \"safeSearch\": true,\n        \"licensingNotes\": [\"Use reusable or public domain assets only.\"],\n        \"fallbackStrategy\": \"Prefer SVG diagrams when external imagery is not needed.\"\n      },\n      \"licenseChecklist\": [\"\"],\n      \"presentationWarnings\": [\"\"],\n      \"coverageSummary\": {\n        \"learningOutcomesCovered\": [\"\"],\n        \"topicsCovered\": [\"\"],\n        \"taughtConceptsCovered\": [\"\"],\n        \"omittedContent\": []\n      },\n      \"slides\": [\n        {\n          \"templateId\": \"kamalaniketan-session-12\",\n          \"templateSlideKey\": \"title_identity\",\n          \"templateSlideTitle\": \"Title / Session Identity\",\n          \"isOptionalSlotFilled\": true,\n          \"slideNumber\": 1,\n          \"slideType\": \"title | learning-outcomes | prerequisite | hook | introduction | concept | visual-explanation | worked-example | guided-practice | quick-assessment | summary | homework\",\n          \"slideTitle\": \"\",\n          \"learningOutcomeIds\": [\"\"],\n          \"topicCoverage\": [\"\"],\n          \"teacherIntent\": \"\",\n          \"studentTakeaway\": \"\",\n          \"layout\": \"\",\n          \"bulletPoints\": [\"\"],\n          \"onSlideText\": [\"\"],\n          \"speakerNotes\": [\"\"],\n          \"visualPlan\": \"\",\n          \"assets\": [\n            {\n              \"purpose\": \"\",\n              \"searchQuery\": \"\",\n              \"sourceSite\": \"Openverse | Wikimedia Commons\",\n              \"sourceUrl\": \"\",\n              \"licenseType\": \"\",\n              \"attributionText\": \"\",\n              \"altText\": \"\",\n              \"placementHint\": \"\"\n            }\n          ],\n          \"svgDiagram\": {\n            \"title\": \"\",\n            \"type\": \"\",\n            \"instructions\": [\"\"],\n            \"svgCode\": \"\"\n          },\n          \"animationHints\": [\"\"],\n          \"timeEstimateMinutes\": 0\n        }\n      ]\n    },\n    \"pdf\": {\n      \"documentTitle\": \"\",\n      \"keyInformation\": [\"\"]\n    },\n    \"docx\": {\n      \"outlineTitle\": \"\",\n      \"sections\": [\"\"]\n    }\n  }\n}\n```\n\n## FINAL QUALITY VALIDATION\n\nBefore returning the response, verify that:\n\n* Exactly **12 slides** are generated in the prescribed order.\n* Every slide fulfills its instructional purpose.\n* All content is derived strictly from the provided session.\n* No future-session concepts or invented curriculum are introduced.\n* Titles are concise.\n* Each slide contains concise, classroom-friendly bullets.\n* Visual recommendations are specific, meaningful, and relevant.\n* Speaker notes expand on the slide without duplicating on-slide text.\n* Transitions connect slides naturally through teacher notes.\n* Activities and assessments align with the learning outcomes.\n* The presentation is age-appropriate for the specified grade.\n* Content density matches the session duration and learning pace.\n* Theme changes affect styling, not instructional sequence.\n* The output is valid JSON conforming to the required schema.\n\nThe final result should be a **production-ready, classroom-ready, teacher-friendly PowerPoint specification** that can be rendered directly into a presentation while remaining aligned to the Kamalaniketan 12-slide template and the themeable system already implemented in this project.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"materials\": {\n    \"ppt\": {\n      \"templateId\": \"kamalaniketan-session-12\",\n      \"templateName\": \"Kamalaniketan Session PPT Template\",\n      \"themeId\": \"kamalaniketan-modern\",\n      \"title\": \"Presentation title\",\n      \"presentationTitle\": \"Presentation title\",\n      \"presentationGoal\": \"What this PPT helps achieve in the session\",\n      \"audience\": \"Grade-specific classroom audience\",\n      \"theme\": \"Visual theme for the deck\",\n      \"themeTokens\": {\n        \"fonts\": {\n          \"heading\": \"Outfit\",\n          \"body\": \"Inter\"\n        },\n        \"colors\": {\n          \"primary\": \"#36ADAA\",\n          \"secondary\": \"#1EABDA\",\n          \"accent\": \"#DE8431\",\n          \"background\": \"#EEF4F7\",\n          \"surface\": \"#FFFFFF\",\n          \"text\": \"#0F172A\",\n          \"mutedText\": \"#64748B\"\n        },\n        \"visualStyle\": {\n          \"topBarStyle\": \"bold color band\",\n          \"cardStyle\": \"rounded modern educator cards\",\n          \"visualFrameStyle\": \"large clean visual panel\"\n        }\n      },\n      \"assetSearchPlan\": {\n        \"preferredSources\": [\n          \"Openverse\",\n          \"Wikimedia Commons\"\n        ],\n        \"safeSearch\": true,\n        \"licensingNotes\": [\n          \"Use reusable or public domain assets only.\"\n        ],\n        \"fallbackStrategy\": \"Prefer SVG diagrams when external imagery is not needed.\"\n      },\n      \"licenseChecklist\": [\n        \"Verify reusable license before final export.\"\n      ],\n      \"presentationWarnings\": [\n        \"Do not include untaught future-session content.\"\n      ],\n      \"coverageSummary\": {\n        \"learningOutcomesCovered\": [\n          \"Learning outcome id or text\"\n        ],\n        \"topicsCovered\": [\n          \"Topic covered\"\n        ],\n        \"taughtConceptsCovered\": [\n          \"Concept covered\"\n        ],\n        \"omittedContent\": []\n      },\n      \"slides\": [\n        {\n          \"templateId\": \"kamalaniketan-session-12\",\n          \"templateSlideKey\": \"title_identity\",\n          \"templateSlideTitle\": \"Title / Session Identity\",\n          \"isOptionalSlotFilled\": true,\n          \"slideNumber\": 1,\n          \"slideType\": \"hook | concept | comparison | process | summary\",\n          \"slideTitle\": \"Slide title\",\n          \"learningOutcomeIds\": [\n            \"LO1\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"teacherIntent\": \"Why this slide exists\",\n          \"studentTakeaway\": \"What students should leave with\",\n          \"layout\": \"Title + 2-column visual explainer\",\n          \"bulletPoints\": [\n            \"Key point\"\n          ],\n          \"onSlideText\": [\n            \"Exact concise on-slide text\"\n          ],\n          \"speakerNotes\": [\n            \"Teacher delivery cue\"\n          ],\n          \"visualPlan\": \"What visual should appear and why\",\n          \"assets\": [\n            {\n              \"purpose\": \"Why this asset is needed\",\n              \"searchQuery\": \"openverse or wikimedia search query\",\n              \"sourceSite\": \"Openverse | Wikimedia Commons\",\n              \"sourceUrl\": \"https://example.com/asset\",\n              \"licenseType\": \"CC BY 4.0 | CC0 | Public Domain\",\n              \"attributionText\": \"Attribution text if required\",\n              \"altText\": \"Accessible description\",\n              \"placementHint\": \"Right panel / full bleed / inset\"\n            }\n          ],\n          \"svgDiagram\": {\n            \"title\": \"Diagram title\",\n            \"type\": \"flowchart | timeline | labelled diagram | comparison chart\",\n            \"instructions\": [\n              \"How the diagram should communicate the concept\"\n            ],\n            \"svgCode\": \"<svg><!-- optional compact svg --></svg>\"\n          },\n          \"animationHints\": [\n            \"Reveal arrows step-by-step\"\n          ],\n          \"timeEstimateMinutes\": 5\n        }\n      ]\n    },\n    \"pdf\": {\n      \"documentTitle\": \"Student PDF / revision document title\",\n      \"keyInformation\": [\n        \"Student-facing study note or revision point\"\n      ]\n    },\n    \"docx\": {\n      \"outlineTitle\": \"Teacher lesson note outline title\",\n      \"sections\": [\n        \"Teacher-facing section content\"\n      ]\n    }\n  }\n}"
+    }
+  ]
+}

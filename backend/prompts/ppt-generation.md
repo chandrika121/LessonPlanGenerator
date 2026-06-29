@@ -1,8 +1,8 @@
 # PPT Generation Prompt
 
-Use this file for future PowerPoint / slide generation prompts.
+This prompt area is now superseded by `session-ppt-prompt.md` for session-level PPT generation.
 
-Suggested placeholders:
+Recommended placeholders:
 
 - `{{SUBJECT}}`
 - `{{GRADE_LEVEL}}`

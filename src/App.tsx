@@ -41,12 +41,17 @@ import {
 } from "lucide-react";
 import {
   AcademicConfig,
+  ChapterSessionPlan,
   CurriculumExtraction,
   TermAllocation,
   PlanningWorkspace,
   SavedCurriculumRecord,
+  SessionAllocation,
   SessionConfig,
+  SessionPlanningDefaults,
+  SessionSectionKey,
   SessionPlan,
+  TeachingStrategy,
   TermRow,
 } from "./types";
 
@@ -79,6 +84,21 @@ export default function App() {
   const [savedCurriculums, setSavedCurriculums] = useState<SavedCurriculumRecord[]>([]);
   const [academicConfigDraft, setAcademicConfigDraft] = useState<AcademicConfig>({});
   const [preferredTermCount, setPreferredTermCount] = useState<number>(3);
+  const [coursePlanDraft, setCoursePlanDraft] = useState<TermAllocation[]>([]);
+  const [teachingStrategyDraft, setTeachingStrategyDraft] = useState<TeachingStrategy>({});
+  const [sessionPlanningDefaultsDraft, setSessionPlanningDefaultsDraft] = useState<SessionPlanningDefaults>({
+    sessionDurationMinutes: 45,
+    language: "English",
+    readingLevel: "Grade-aligned",
+    responseLength: "Balanced",
+    creativity: "Moderate",
+    includeRealWorldConnections: true,
+    includeDifferentiation: true,
+    includeFormativeAssessment: true,
+    includeHomework: true,
+    includeTeacherNotes: true,
+  });
+  const [sessionAllocationDraft, setSessionAllocationDraft] = useState<ChapterSessionPlan[]>([]);
 
   // Step 2 State: Divide Terms
   const [termsList, setTermsList] = useState<TermRow[]>([]);
@@ -111,6 +131,18 @@ export default function App() {
   const [activeSessionNumber, setActiveSessionNumber] = useState<number>(1);
   const [activeSubTab, setActiveSubTab] = useState<"theory" | "materials" | "homework" | "assessments" | "assignments">("theory");
   const [activeMaterialTab, setActiveMaterialTab] = useState<"ppt" | "pdf" | "docx">("ppt");
+  const [sessionSectionSelection, setSessionSectionSelection] = useState<Record<SessionSectionKey, boolean>>({
+    teacherLessonNotes: true,
+    studentLessonNotes: true,
+    learningOutcomes: true,
+    introduction: true,
+    theory: true,
+    activities: true,
+    materials: true,
+    homework: true,
+    assessment: true,
+    assignment: true,
+  });
 
   // File drag state
   const [dragActive, setDragActive] = useState<boolean>(false);
@@ -195,24 +227,7 @@ export default function App() {
       marks: Number(row.marks || 0),
     })) as TermRow[];
 
-  const syncWorkspaceIntoCoursePlanState = (workspace: PlanningWorkspace | null) => {
-    if (!workspace) return;
-
-    setAcademicConfigDraft(workspace.academicConfig || {});
-    if (workspace.termPlan?.recommendedTermCount) {
-      setPreferredTermCount(Number(workspace.termPlan.recommendedTermCount) || 3);
-    }
-
-    const sourceAllocations =
-      workspace.termPlan?.allocations?.length
-        ? workspace.termPlan.allocations
-        : workspace.termPlan?.recommendations || [];
-    const rows = mapAllocationsToTermRows(sourceAllocations);
-    setTermsList(rows);
-    setTermDivisionStats({
-      totalMarks: Number(rows.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
-    });
-
+  const summarizeRowsIntoSelectedTerm = (rows: TermRow[]) => {
     if (rows.length === 0) {
       setSelectedTermRow(null);
       return;
@@ -230,6 +245,569 @@ export default function App() {
       chapters: Array.from(new Set<string>(firstTermRows.flatMap((row) => row.chapters as string[]))),
       marks: Number(firstTermRows.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
     });
+  };
+
+  const syncTermRowsFromAllocations = (allocations: TermAllocation[] = []) => {
+    const rows = mapAllocationsToTermRows(allocations);
+    setTermsList(rows);
+    setTermDivisionStats({
+      totalMarks: Number(rows.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
+    });
+    summarizeRowsIntoSelectedTerm(rows);
+  };
+
+  const parseMultilineList = (value: string) =>
+    value
+      .split("\n")
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+  const stringifyMultilineList = (value?: string[]) => (value || []).join("\n");
+
+  const formatRenderableText = (value: unknown): string => {
+    if (value == null) return "";
+    if (typeof value === "string") return value;
+    if (typeof value === "number" || typeof value === "boolean") return String(value);
+    if (Array.isArray(value)) {
+      return value.map((item) => formatRenderableText(item)).filter(Boolean).join("; ");
+    }
+    if (typeof value === "object") {
+      const entries = Object.entries(value as Record<string, unknown>)
+        .map(([key, entryValue]) => {
+          const renderedValue = formatRenderableText(entryValue);
+          return renderedValue ? `${key}: ${renderedValue}` : key;
+        })
+        .filter(Boolean);
+      return entries.join(" | ");
+    }
+    return String(value);
+  };
+
+  const getStructuredHomeworkItems = (homework: SessionPlan["homework"]) => {
+    if (!homework || !Array.isArray(homework.homework)) {
+      return [];
+    }
+    return homework.homework.filter((item) => item && typeof item === "object");
+  };
+
+  const getHomeworkDisplayTime = (homework: SessionPlan["homework"]) => {
+    if (!homework) return "";
+    if (typeof homework.estimatedTimeMinutes === "number") {
+      return `${homework.estimatedTimeMinutes} minutes`;
+    }
+    if (homework.summary?.estimatedCompletionTime) {
+      return formatRenderableText(homework.summary.estimatedCompletionTime);
+    }
+    if (homework.sessionInformation?.estimatedHomeworkDuration) {
+      return formatRenderableText(homework.sessionInformation.estimatedHomeworkDuration);
+    }
+    return "";
+  };
+
+  const getPptSlides = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => {
+    if (!ppt?.slides || !Array.isArray(ppt.slides)) {
+      return [];
+    }
+    return ppt.slides;
+  };
+
+  const getPptTitle = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) =>
+    ppt?.presentationTitle || ppt?.title || "Session Presentation";
+
+  const getPptThemeSummary = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => {
+    if (!ppt?.themeTokens) return "";
+    const parts = [
+      ppt.themeTokens.fonts?.heading ? `Heading: ${formatRenderableText(ppt.themeTokens.fonts.heading)}` : "",
+      ppt.themeTokens.fonts?.body ? `Body: ${formatRenderableText(ppt.themeTokens.fonts.body)}` : "",
+      ppt.themeTokens.visualStyle?.topBarStyle ? `Top bar: ${formatRenderableText(ppt.themeTokens.visualStyle.topBarStyle)}` : "",
+      ppt.themeTokens.visualStyle?.visualFrameStyle ? `Visual frame: ${formatRenderableText(ppt.themeTokens.visualStyle.visualFrameStyle)}` : "",
+    ].filter(Boolean);
+    return parts.join(" | ");
+  };
+
+  const getPptAccentStyle = (index: number) => {
+    const accents = [
+      { bar: "bg-[#36ADAA]", soft: "bg-[#36ADAA]/10", text: "text-[#36ADAA]", exportBarClass: "bar-teal", exportTagClass: "tag-teal" },
+      { bar: "bg-[#1EABDA]", soft: "bg-[#1EABDA]/10", text: "text-[#1EABDA]", exportBarClass: "bar-blue", exportTagClass: "tag-blue" },
+      { bar: "bg-[#7F64EA]", soft: "bg-[#7F64EA]/10", text: "text-[#7F64EA]", exportBarClass: "bar-purple", exportTagClass: "tag-purple" },
+      { bar: "bg-[#DE8431]", soft: "bg-[#DE8431]/10", text: "text-[#DE8431]", exportBarClass: "bar-orange", exportTagClass: "tag-orange" },
+      { bar: "bg-[#3CC583]", soft: "bg-[#3CC583]/10", text: "text-[#3CC583]", exportBarClass: "bar-green", exportTagClass: "tag-green" },
+    ];
+    return accents[index % accents.length];
+  };
+
+  const getPrimaryPptAsset = (slide: NonNullable<ReturnType<typeof getPptSlides>>[number]) =>
+    Array.isArray(slide.assets) ? slide.assets.find((asset) => Boolean(asset.previewUrl)) : undefined;
+
+  const escapeHtml = (value: unknown) =>
+    formatRenderableText(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\"", "&quot;")
+      .replaceAll("'", "&#39;");
+
+  const handleExportPptSlidesPdf = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => {
+    const slides = getPptSlides(ppt);
+    if (!ppt || slides.length === 0) {
+      setErrorHeader("Generate PPT slides first before exporting a slide-only PDF.");
+      return;
+    }
+
+    const slidesMarkup = slides.map((slide, index) => {
+      const accent = getPptAccentStyle(index);
+      const primaryAsset = getPrimaryPptAsset(slide);
+      const onSlideTags = (slide.onSlideText || [])
+        .slice(0, 3)
+        .map((item) => `<span class="tag ${accent.exportTagClass}">${escapeHtml(item)}</span>`)
+        .join("");
+      const bullets = (slide.bulletPoints || [])
+        .slice(0, 5)
+        .map((item) => `<li>${escapeHtml(item)}</li>`)
+        .join("");
+      const visualMarkup = primaryAsset?.previewUrl
+        ? `<img src="${escapeHtml(primaryAsset.previewUrl)}" alt="${escapeHtml(primaryAsset.altText || primaryAsset.purpose || "Slide visual")}" />`
+        : slide.svgDiagram?.svgCode?.trim().startsWith("<svg")
+        ? `<div class="svg-wrap">${slide.svgDiagram.svgCode}</div>`
+        : `
+          <div class="visual-fallback">
+            <div class="visual-chip">${escapeHtml(slide.svgDiagram?.title || "Planned Visual")}</div>
+            <p>${escapeHtml(slide.visualPlan || "Visual will be finalized during export.")}</p>
+          </div>
+        `;
+
+      return `
+        <section class="slide-page">
+          <div class="slide-shell">
+            <div class="slide-bar ${accent.exportBarClass}"></div>
+            <div class="slide-grid">
+              <div class="slide-copy">
+                <div class="deck-label">${escapeHtml(getPptTitle(ppt))}</div>
+                <h1>${escapeHtml(slide.slideTitle || `Slide ${index + 1}`)}</h1>
+                ${onSlideTags ? `<div class="tag-row">${onSlideTags}</div>` : ""}
+                ${bullets ? `<ul class="bullet-list">${bullets}</ul>` : ""}
+                <div class="slide-footer">
+                  ${slide.studentTakeaway ? `<div class="info-card"><div class="info-label">Takeaway</div><div>${escapeHtml(slide.studentTakeaway)}</div></div>` : ""}
+                  ${slide.timeEstimateMinutes != null ? `<div class="info-card"><div class="info-label">Timing</div><div>${escapeHtml(slide.timeEstimateMinutes)} minutes</div></div>` : ""}
+                </div>
+              </div>
+              <div class="slide-visual">
+                <div class="visual-label">Visual Panel</div>
+                <div class="visual-frame">${visualMarkup}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }).join("");
+
+    const exportWindow = window.open("", "_blank", "width=1440,height=960");
+    if (!exportWindow) {
+      setErrorHeader("The PDF export window was blocked. Allow pop-ups and try again.");
+      return;
+    }
+
+    const docTitle = escapeHtml(getPptTitle(ppt));
+    exportWindow.document.write(`<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${docTitle} - Slides PDF</title>
+    <style>
+      @page { size: landscape; margin: 10mm; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; background: #eef4f7; color: #0f172a; font-family: Inter, Arial, sans-serif; }
+      body { padding: 18px; }
+      .slide-page { page-break-after: always; break-after: page; margin: 0 0 18px; }
+      .slide-page:last-child { page-break-after: auto; break-after: auto; }
+      .slide-shell {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      }
+      .slide-bar { height: 16px; }
+      .bar-teal { background: #36ADAA; }
+      .bar-blue { background: #1EABDA; }
+      .bar-purple { background: #7F64EA; }
+      .bar-orange { background: #DE8431; }
+      .bar-green { background: #3CC583; }
+      .slide-grid { display: grid; grid-template-columns: 3fr 2fr; height: calc(100% - 16px); }
+      .slide-copy { padding: 34px 38px; display: flex; flex-direction: column; }
+      .deck-label { font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: #94a3b8; }
+      h1 { margin: 10px 0 0; font-size: 34px; line-height: 1.15; font-weight: 900; font-family: Outfit, Inter, Arial, sans-serif; color: #0f172a; }
+      .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 10px; }
+      .tag { display: inline-flex; padding: 7px 12px; border-radius: 999px; font-size: 11px; font-weight: 700; background: #e2e8f0; color: #334155; }
+      .bullet-list { margin: 16px 0 0 0; padding-left: 20px; }
+      .bullet-list li { margin: 0 0 10px; font-size: 18px; line-height: 1.55; color: #334155; }
+      .slide-footer { margin-top: auto; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-top: 18px; }
+      .info-card { border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 18px; padding: 14px; font-size: 13px; line-height: 1.5; color: #475569; }
+      .info-label { font-size: 10px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #94a3b8; margin-bottom: 6px; }
+      .slide-visual { border-left: 1px solid #e2e8f0; background: rgba(248, 250, 252, 0.9); padding: 24px; display: flex; flex-direction: column; }
+      .visual-label { font-size: 10px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #94a3b8; }
+      .visual-frame { margin-top: 12px; flex: 1; border: 1px solid #e2e8f0; border-radius: 22px; background: #ffffff; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+      .visual-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .svg-wrap { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 16px; }
+      .svg-wrap svg { width: 100%; height: 100%; max-width: 100%; max-height: 100%; }
+      .visual-fallback { padding: 18px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; width: 100%; }
+      .visual-chip { display: inline-flex; align-self: flex-start; padding: 7px 12px; border-radius: 999px; background: #e2e8f0; color: #334155; font-size: 11px; font-weight: 700; }
+      .visual-fallback p { margin: 16px 0 0; font-size: 14px; line-height: 1.6; color: #475569; }
+      .tag-teal { background: rgba(54, 173, 170, 0.12); color: #1f8d8a; }
+      .tag-blue { background: rgba(30, 171, 218, 0.12); color: #0f7aa0; }
+      .tag-purple { background: rgba(127, 100, 234, 0.12); color: #5f49c3; }
+      .tag-orange { background: rgba(222, 132, 49, 0.12); color: #b8651d; }
+      .tag-green { background: rgba(60, 197, 131, 0.12); color: #269c63; }
+      @media print {
+        body { padding: 0; background: #ffffff; }
+        .slide-shell { box-shadow: none; }
+      }
+    </style>
+  </head>
+  <body>
+    ${slidesMarkup}
+    <script>
+      window.onload = () => {
+        setTimeout(() => window.print(), 300);
+      };
+      window.onafterprint = () => window.close();
+    </script>
+  </body>
+</html>`);
+    exportWindow.document.close();
+  };
+
+  const buildSessionConfigFromWorkspace = (workspace?: PlanningWorkspace | null): SessionConfig => ({
+    includeLearningOutcomes: true,
+    includeIntroduction: true,
+    includeTheory: true,
+    includeAssessments: workspace?.sessionPlanningDefaults?.includeFormativeAssessment ?? true,
+    includeAssignments: false,
+    includeNotes: workspace?.sessionPlanningDefaults?.includeTeacherNotes ?? true,
+    sessionCount: 1,
+    durationMinutes:
+      Number(workspace?.sessionPlanningDefaults?.sessionDurationMinutes) ||
+      Number(workspace?.academicConfig?.periodDurationMinutes) ||
+      45,
+  });
+
+  const sessionSectionOptions: { key: SessionSectionKey; label: string }[] = [
+    { key: "teacherLessonNotes", label: "Teacher notes" },
+    { key: "studentLessonNotes", label: "Student notes" },
+    { key: "learningOutcomes", label: "Learning outcomes" },
+    { key: "introduction", label: "Introduction hook" },
+    { key: "theory", label: "Theory" },
+    { key: "activities", label: "Activities" },
+    { key: "materials", label: "Materials" },
+    { key: "homework", label: "Homework" },
+    { key: "assessment", label: "Assessment" },
+    { key: "assignment", label: "Assignment" },
+  ];
+
+  const getSelectedSessionSections = (): SessionSectionKey[] =>
+    sessionSectionOptions
+      .filter((option) => sessionSectionSelection[option.key])
+      .map((option) => option.key);
+
+  const updateSessionSectionSelection = (key: SessionSectionKey, checked: boolean) => {
+    setSessionSectionSelection((prev) => {
+      if (checked) {
+        return {
+          ...prev,
+          [key]: true,
+        };
+      }
+
+      const selectedCount = Object.values(prev).filter(Boolean).length;
+      if (selectedCount <= 1 && prev[key]) {
+        setErrorHeader("Keep at least one content section selected for session generation.");
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [key]: false,
+      };
+    });
+  };
+
+  const buildSessionsOutlineFromAllocations = (allocations: ChapterSessionPlan[], durationMinutes: number) => {
+    const outline: {
+      id: string;
+      sessionNumber: number;
+      title: string;
+      duration: number;
+      learningOutcomes: string[];
+      chapterName?: string;
+      chapterSessionNumber?: number;
+      chapterTotalSessions?: number;
+    }[] = [];
+
+    let globalSessionNumber = 1;
+    allocations
+      .slice()
+      .sort((a, b) => Number(a.sequence || 0) - Number(b.sequence || 0))
+      .forEach((allocation) => {
+        const chapterTotalSessions = Math.max(1, Number(allocation.estimatedSessions || 0));
+        for (let chapterSessionNumber = 1; chapterSessionNumber <= chapterTotalSessions; chapterSessionNumber += 1) {
+          outline.push({
+            id: `${allocation.chapterName}-${chapterSessionNumber}`,
+            sessionNumber: globalSessionNumber,
+            title:
+              chapterTotalSessions === 1
+                ? allocation.chapterName
+                : `${allocation.chapterName} - Session ${chapterSessionNumber}`,
+            duration: durationMinutes,
+            learningOutcomes: [],
+            chapterName: allocation.chapterName,
+            chapterSessionNumber,
+            chapterTotalSessions,
+          });
+          globalSessionNumber += 1;
+        }
+      });
+
+    return outline;
+  };
+
+  const normalizeAllocationForComparison = (allocation: TermAllocation) => ({
+    className: (allocation.className || "").trim(),
+    termName: (allocation.termName || "").trim(),
+    termNumber: allocation.termNumber ?? null,
+    chapters: (allocation.chapters || []).map((chapter) => chapter.trim()).filter(Boolean),
+    marks: Number(allocation.marks || 0),
+    reasoning: (allocation.reasoning || "").trim(),
+    estimatedSessions: allocation.estimatedSessions ?? null,
+  });
+
+  const normalizeAllocationsForComparison = (allocations: TermAllocation[] = []) =>
+    allocations.map(normalizeAllocationForComparison);
+
+  const countUniqueTerms = (allocations: TermAllocation[] = []) =>
+    new Set(
+      allocations.map((allocation) =>
+        `${(allocation.className || "Curriculum").trim()}::${(allocation.termName || "").trim()}::${allocation.termNumber ?? ""}`
+      )
+    ).size;
+
+  const getAllocationTermKey = (allocation: TermAllocation) =>
+    `${(allocation.className || "Curriculum").trim()}::${(allocation.termName || "").trim()}::${allocation.termNumber ?? ""}`;
+
+  const getAllocationRowPosition = (allocations: TermAllocation[], index: number) => {
+    const targetKey = getAllocationTermKey(allocations[index]);
+    const matchingIndexes = allocations.reduce<number[]>((acc, allocation, allocationIndex) => {
+      if (getAllocationTermKey(allocation) === targetKey) {
+        acc.push(allocationIndex);
+      }
+      return acc;
+    }, []);
+
+    return {
+      rowNumber: matchingIndexes.indexOf(index) + 1,
+      rowCount: matchingIndexes.length,
+    };
+  };
+
+  const validateCoursePlanAllocations = (allocations: TermAllocation[] = []) => {
+    const issues: string[] = [];
+
+    allocations.forEach((allocation, index) => {
+      const label = allocation.termName?.trim() || `Allocation ${index + 1}`;
+      const chapters = (allocation.chapters || []).map((chapter) => chapter.trim()).filter(Boolean);
+      const marks = Number(allocation.marks || 0);
+
+      if (!allocation.termName?.trim()) {
+        issues.push(`Allocation ${index + 1} is missing a term name.`);
+      }
+      if (allocation.termNumber == null) {
+        issues.push(`${label} is missing a term number.`);
+      }
+      if (chapters.length === 0) {
+        issues.push(`${label} must include at least one chapter.`);
+      }
+      if (marks < 0) {
+        issues.push(`${label} has invalid marks.`);
+      }
+    });
+
+    return {
+      valid: issues.length === 0,
+      issues,
+    };
+  };
+
+  const getSessionPlanningDefaultsSeed = (workspace?: PlanningWorkspace | null): SessionPlanningDefaults => ({
+    sessionDurationMinutes:
+      workspace?.sessionPlanningDefaults?.sessionDurationMinutes ??
+      workspace?.academicConfig?.periodDurationMinutes ??
+      45,
+    language:
+      workspace?.sessionPlanningDefaults?.language ||
+      workspace?.academicConfig?.language ||
+      "English",
+    readingLevel: workspace?.sessionPlanningDefaults?.readingLevel || "Grade-aligned",
+    responseLength: workspace?.sessionPlanningDefaults?.responseLength || "Balanced",
+    creativity: workspace?.sessionPlanningDefaults?.creativity || "Moderate",
+    includeRealWorldConnections: workspace?.sessionPlanningDefaults?.includeRealWorldConnections ?? true,
+    includeDifferentiation: workspace?.sessionPlanningDefaults?.includeDifferentiation ?? true,
+    includeFormativeAssessment: workspace?.sessionPlanningDefaults?.includeFormativeAssessment ?? true,
+    includeHomework: workspace?.sessionPlanningDefaults?.includeHomework ?? true,
+    includeTeacherNotes: workspace?.sessionPlanningDefaults?.includeTeacherNotes ?? true,
+  });
+
+  const normalizeSessionStrategyForComparison = (strategy: TeachingStrategy = {}) => ({
+    teachingStyle: [...(strategy.teachingStyle || [])].sort(),
+    studentLevel: (strategy.studentLevel || "").trim(),
+    pace: (strategy.pace || "").trim(),
+    bloomsTaxonomyEmphasis: [...(strategy.bloomsTaxonomyEmphasis || [])].sort(),
+    assessmentPreference: [...(strategy.assessmentPreference || [])].sort(),
+    targetDifficulty: (strategy.targetDifficulty || "").trim(),
+    teachingResources: [...(strategy.teachingResources || [])].sort(),
+    specialInstructions: (strategy.specialInstructions || "").trim(),
+  });
+
+  const normalizeSessionDefaultsForComparison = (defaults: SessionPlanningDefaults = {}) => ({
+    sessionDurationMinutes: defaults.sessionDurationMinutes ?? null,
+    language: (defaults.language || "").trim(),
+    readingLevel: (defaults.readingLevel || "").trim(),
+    responseLength: (defaults.responseLength || "").trim(),
+    creativity: (defaults.creativity || "").trim(),
+    includeRealWorldConnections: defaults.includeRealWorldConnections ?? false,
+    includeDifferentiation: defaults.includeDifferentiation ?? false,
+    includeFormativeAssessment: defaults.includeFormativeAssessment ?? false,
+    includeHomework: defaults.includeHomework ?? false,
+    includeTeacherNotes: defaults.includeTeacherNotes ?? false,
+  });
+
+  const normalizeChapterSessionPlanForComparison = (allocation: ChapterSessionPlan) => ({
+    id: allocation.id || "",
+    chapterName: (allocation.chapterName || "").trim(),
+    sequence: allocation.sequence ?? null,
+    estimatedSessions: Number(allocation.estimatedSessions || 0),
+    estimatedMinutes: Number(allocation.estimatedMinutes || 0),
+    rationale: (allocation.rationale || allocation.reasoning || "").trim(),
+    className: (allocation.className || "").trim(),
+    termName: (allocation.termName || "").trim(),
+    termNumber: allocation.termNumber ?? null,
+  });
+
+  const normalizeChapterSessionPlansForComparison = (allocations: ChapterSessionPlan[] = []) =>
+    allocations.map(normalizeChapterSessionPlanForComparison);
+
+  const getSelectedTermKey = (term?: Partial<TermRow> | null) =>
+    `${(term?.className || "Curriculum").trim()}::${(term?.term || "").trim()}::${term?.termNumber ?? ""}`;
+
+  const getAnnualSessionCapacity = (academicConfig?: AcademicConfig) => {
+    const workingDays = Math.max(0, Number(academicConfig?.calendar?.workingDays || 0));
+    const weeklyPeriods = Math.max(1, Number(academicConfig?.weeklyPeriods || 0) || 5);
+    const schoolDaysPerWeek = 5;
+    const annualSubjectSessions = Math.max(
+      1,
+      Math.round(((workingDays || schoolDaysPerWeek * 40) / schoolDaysPerWeek) * weeklyPeriods)
+    );
+
+    return {
+      workingDays,
+      weeklyPeriods,
+      schoolDaysPerWeek,
+      annualSubjectSessions,
+    };
+  };
+
+  const getSelectedTermCapacity = (term: TermRow | null, allocations: TermAllocation[], academicConfig?: AcademicConfig) => {
+    const annualCapacity = getAnnualSessionCapacity(academicConfig);
+    const totalMarks = allocations.reduce((sum, allocation) => sum + Number(allocation.marks || 0), 0);
+    const uniqueTerms = countUniqueTerms(allocations);
+    const selectedTermMarks = term
+      ? allocations
+          .filter((allocation) => getAllocationTermKey(allocation) === getSelectedTermKey(term))
+          .reduce((sum, allocation) => sum + Number(allocation.marks || 0), 0)
+      : 0;
+    const evenCapacity = Math.max(1, Math.round(annualCapacity.annualSubjectSessions / Math.max(1, uniqueTerms || 1)));
+    const weightedCapacity =
+      selectedTermMarks > 0 && totalMarks > 0
+        ? Math.max(1, Math.round(annualCapacity.annualSubjectSessions * (selectedTermMarks / totalMarks)))
+        : evenCapacity;
+
+    return {
+      ...annualCapacity,
+      termCapacity: Math.min(annualCapacity.annualSubjectSessions, weightedCapacity),
+      selectedTermMarks,
+      totalMarks,
+    };
+  };
+
+  const validateSessionAllocationDraft = (
+    allocations: ChapterSessionPlan[] = [],
+    term: TermRow | null,
+    workspace?: PlanningWorkspace | null
+  ) => {
+    const issues: string[] = [];
+    const savedStrategy =
+      JSON.stringify(normalizeSessionStrategyForComparison(teachingStrategyDraft)) !==
+        JSON.stringify(normalizeSessionStrategyForComparison({})) ||
+      Boolean(sessionPlanningDefaultsDraft.sessionDurationMinutes);
+
+    if (!coursePlanApproved) {
+      issues.push("Approve the Phase 2 course plan before saving or approving Phase 3.");
+    }
+    if (!term) {
+      issues.push("Select an approved term for session planning.");
+    }
+    if (!savedStrategy) {
+      issues.push("Save the session planning setup before generating chapter allocations.");
+    }
+    if (allocations.length === 0) {
+      issues.push("Generate or save at least one chapter session allocation.");
+    }
+
+    allocations.forEach((allocation, index) => {
+      if (!(allocation.chapterName || "").trim()) {
+        issues.push(`Allocation row ${index + 1} is missing a chapter name.`);
+      }
+      if (Number(allocation.estimatedSessions || 0) <= 0) {
+        issues.push(`${allocation.chapterName || `Allocation row ${index + 1}`} must have at least 1 session.`);
+      }
+    });
+
+    const capacity = getSelectedTermCapacity(term, workspace?.termPlan?.allocations || savedTermAllocations, workspace?.academicConfig || academicConfigDraft);
+    const allocatedSessions = allocations.reduce((sum, allocation) => sum + Number(allocation.estimatedSessions || 0), 0);
+    if (allocatedSessions > capacity.termCapacity) {
+      issues.push(`Allocated sessions (${allocatedSessions}) exceed the selected term capacity (${capacity.termCapacity}).`);
+    }
+
+    return {
+      valid: issues.length === 0,
+      issues,
+      allocatedSessions,
+      annualCapacity: capacity.annualSubjectSessions,
+      termCapacity: capacity.termCapacity,
+    };
+  };
+
+  const syncWorkspaceIntoCoursePlanState = (workspace: PlanningWorkspace | null) => {
+    if (!workspace) return;
+
+    setAcademicConfigDraft(workspace.academicConfig || {});
+    if (workspace.termPlan?.recommendedTermCount) {
+      setPreferredTermCount(Number(workspace.termPlan.recommendedTermCount) || 3);
+    }
+
+    const sourceAllocations =
+      workspace.termPlan?.allocations?.length
+        ? workspace.termPlan.allocations
+        : workspace.termPlan?.recommendations || [];
+    setCoursePlanDraft(sourceAllocations);
+    setTeachingStrategyDraft(workspace.teachingStrategy || {});
+    setSessionPlanningDefaultsDraft(getSessionPlanningDefaultsSeed(workspace));
+    setSessionAllocationDraft(
+      workspace.sessionAllocation?.allocations?.length
+        ? workspace.sessionAllocation.allocations
+        : workspace.sessionAllocation?.recommendations || []
+    );
+    syncTermRowsFromAllocations(sourceAllocations);
   };
 
   const loadPlanningWorkspaceById = async (workspaceId: string) => {
@@ -363,6 +941,66 @@ export default function App() {
   useEffect(() => {
     syncWorkspaceIntoCoursePlanState(activeWorkspace);
   }, [activeWorkspace]);
+
+  useEffect(() => {
+    setSessionConfig(buildSessionConfigFromWorkspace(activeWorkspace));
+    const generatedFromWorkspace =
+      activeWorkspace?.generationScope &&
+      typeof activeWorkspace.generationScope === "object" &&
+      (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions &&
+      typeof (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions === "object"
+        ? Object.fromEntries(
+            Object.entries((activeWorkspace.generationScope as Record<string, unknown>).generatedSessions as Record<string, SessionPlan>).map(([key, value]) => [
+              key,
+              {
+                ...value,
+                sessionNumber: Number(key) || value.sessionNumber,
+              },
+            ])
+          )
+        : {};
+    setGeneratedSessions(generatedFromWorkspace || {});
+  }, [activeWorkspace]);
+
+  useEffect(() => {
+    const duration = Number(sessionPlanningDefaultsDraft.sessionDurationMinutes || academicConfigDraft.periodDurationMinutes || 45);
+    const persistedAllocations = activeWorkspace?.sessionAllocation?.allocations || [];
+    const sourceAllocations = persistedAllocations.length > 0 ? persistedAllocations : sessionAllocationDraft;
+    const filteredAllocations = sourceAllocations.filter(
+      (allocation) =>
+        getSelectedTermKey({
+          className: allocation.className,
+          term: allocation.termName,
+          termNumber: allocation.termNumber ?? undefined,
+        }) === getSelectedTermKey(selectedTermRow)
+    );
+    const nextOutline = buildSessionsOutlineFromAllocations(filteredAllocations, duration);
+    setSessionsOutline(nextOutline);
+    if (nextOutline.length > 0) {
+      setActiveSessionNumber((current) => {
+        const hasCurrent = nextOutline.some((item) => item.sessionNumber === current);
+        return hasCurrent ? current : nextOutline[0].sessionNumber;
+      });
+    } else {
+      setActiveSessionNumber(1);
+    }
+  }, [activeWorkspace?.sessionAllocation?.allocations, sessionAllocationDraft, selectedTermRow, sessionPlanningDefaultsDraft.sessionDurationMinutes, academicConfigDraft.periodDurationMinutes]);
+
+  useEffect(() => {
+    const preferredTermKey = activeWorkspace?.sessionAllocation?.selectedTermKey;
+    if (!preferredTermKey || termsList.length === 0) return;
+    const matchingRows = termsList.filter((row) => getSelectedTermKey(row) === preferredTermKey);
+    if (matchingRows.length === 0) return;
+    setSelectedTermRow({
+      id: `term-${matchingRows[0].className || "Curriculum"}-${matchingRows[0].termNumber || matchingRows[0].term}`,
+      className: matchingRows[0].className,
+      termNumber: matchingRows[0].termNumber,
+      term: matchingRows[0].term,
+      unitName: "Whole Term",
+      chapters: Array.from(new Set<string>(matchingRows.flatMap((row) => row.chapters as string[]))),
+      marks: Number(matchingRows.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
+    });
+  }, [activeWorkspace?.sessionAllocation?.selectedTermKey, termsList]);
 
   const normalizePdfLineToMarkdown = (line: string): string => {
     const trimmed = line.replace(/\s+/g, " ").trim();
@@ -669,7 +1307,7 @@ export default function App() {
 
   const updateAcademicCalendarField = (
     field: keyof NonNullable<AcademicConfig["calendar"]>,
-    value: string | number | null
+    value: string | number | string[] | null
   ) => {
     setAcademicConfigDraft((prev) => ({
       ...prev,
@@ -755,30 +1393,14 @@ export default function App() {
       }
 
       const termResponse = await res.json();
-      const terms = mapAllocationsToTermRows(termResponse?.recommendations || []);
-      setTermDivisionStats({
-        totalMarks: Number(terms.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
-      });
-      setTermsList(terms);
+      const latestRecommendations = (termResponse?.recommendations || []) as TermAllocation[];
+      setCoursePlanDraft(latestRecommendations);
+      syncTermRowsFromAllocations(latestRecommendations);
       if (termResponse?.workspace) {
         const workspace = termResponse.workspace as PlanningWorkspace;
         setCurrentWorkspaceId(workspace._id);
         setActiveWorkspace(workspace);
         localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
-      }
-      if (terms.length > 0) {
-        const firstClassName = terms[0]?.className || "Curriculum";
-        const firstTermName = terms[0]?.term;
-        const firstTermRows = terms.filter((row: TermRow) => row.className === firstClassName && row.term === firstTermName);
-        setSelectedTermRow({
-          id: `term-${firstClassName}-${terms[0]?.termNumber || firstTermName}`,
-          className: firstClassName,
-          termNumber: terms[0]?.termNumber,
-          term: firstTermName,
-          unitName: "Whole Term",
-          chapters: Array.from(new Set<string>(firstTermRows.flatMap((row: TermRow) => row.chapters as string[]))),
-          marks: Number(firstTermRows.reduce((sum: number, row: TermRow) => sum + row.marks, 0).toFixed(2)),
-        });
       }
       setActiveStep(2); // Jump to Term Planner table
     } catch (err: any) {
@@ -830,9 +1452,122 @@ export default function App() {
     }
   };
 
+  const updateCoursePlanDraft = (
+    index: number,
+    field: keyof TermAllocation,
+    value: string | number | string[] | null
+  ) => {
+    setCoursePlanDraft((prev) => {
+      const next = prev.map((allocation, allocationIndex) =>
+        allocationIndex === index
+          ? {
+              ...allocation,
+              [field]: value,
+            }
+          : allocation
+      );
+      syncTermRowsFromAllocations(next);
+      return next;
+    });
+  };
+
+  const handleAddManualTermAllocation = () => {
+    setCoursePlanDraft((prev) => {
+      const next = [
+        ...prev,
+        {
+          className: academicConfigDraft.className || extractedData?.gradeLevel || "Curriculum",
+          termName: `Term ${prev.length + 1}`,
+          termNumber: prev.length + 1,
+          chapters: [],
+          marks: 0,
+          reasoning: "",
+          estimatedSessions: null,
+        },
+      ];
+      syncTermRowsFromAllocations(next);
+      return next;
+    });
+  };
+
+  const handleRemoveManualTermAllocation = (index: number) => {
+    setCoursePlanDraft((prev) => {
+      const next = prev.filter((_, allocationIndex) => allocationIndex !== index);
+      syncTermRowsFromAllocations(next);
+      return next;
+    });
+  };
+
+  const handleSaveManualCoursePlan = async () => {
+    if (!currentWorkspaceId) {
+      setErrorHeader("No planning workspace is attached to this curriculum yet.");
+      return;
+    }
+
+    if (coursePlanDraft.length === 0) {
+      setErrorHeader("Add or select at least one term allocation before saving the course plan.");
+      return;
+    }
+
+    if (!draftValidation.valid) {
+      setErrorHeader(draftValidation.issues[0] || "Fix the course plan allocations before saving.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Saving edited course plan allocations...");
+
+    try {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          academicConfig: academicConfigDraft,
+          termPlan: {
+            ...(activeWorkspace?.termPlan || {}),
+            approved: false,
+            allocations: coursePlanDraft,
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to save the edited course plan."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    } catch (error: any) {
+      console.error("[Frontend] Manual course plan save failed", error);
+      setErrorHeader(error.message || "Unable to save the edited course plan.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetCoursePlanDraftToRecommendations = () => {
+    const recommendations = activeWorkspace?.termPlan?.recommendations || [];
+    setCoursePlanDraft(recommendations);
+    syncTermRowsFromAllocations(recommendations);
+  };
+
   const handleApproveCoursePlan = async () => {
     if (!currentWorkspaceId) {
       setErrorHeader("No planning workspace is attached to this curriculum yet.");
+      return;
+    }
+
+    if (coursePlanDraftDirty) {
+      setErrorHeader("Save the edited allocations before approving the course plan.");
+      return;
+    }
+
+    if (!draftValidation.valid) {
+      setErrorHeader(draftValidation.issues[0] || "Fix the course plan allocations before approval.");
       return;
     }
 
@@ -855,7 +1590,6 @@ export default function App() {
       setCurrentWorkspaceId(workspace._id);
       setActiveWorkspace(workspace);
       localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
-      setActiveStep(3);
     } catch (error: any) {
       console.error("[Frontend] Course plan approval failed", error);
       setErrorHeader(error.message || "Unable to approve the course plan.");
@@ -864,10 +1598,291 @@ export default function App() {
     }
   };
 
+  const updateTeachingStrategyField = (
+    field: keyof TeachingStrategy,
+    value: string | string[]
+  ) => {
+    setTeachingStrategyDraft((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const toggleTeachingStrategyArrayValue = (
+    field: "teachingStyle" | "bloomsTaxonomyEmphasis" | "assessmentPreference" | "teachingResources",
+    value: string
+  ) => {
+    setTeachingStrategyDraft((prev) => {
+      const currentValues = Array.isArray(prev[field]) ? prev[field] as string[] : [];
+      const nextValues = currentValues.includes(value)
+        ? currentValues.filter((item) => item !== value)
+        : [...currentValues, value];
+      return {
+        ...prev,
+        [field]: nextValues,
+      };
+    });
+  };
+
+  const updateSessionPlanningDefaultField = (
+    field: keyof SessionPlanningDefaults,
+    value: string | number | boolean | null
+  ) => {
+    setSessionPlanningDefaultsDraft((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const updateSessionAllocationDraft = (
+    index: number,
+    field: keyof ChapterSessionPlan,
+    value: string | number | null
+  ) => {
+    setSessionAllocationDraft((prev) =>
+      prev.map((allocation, allocationIndex) =>
+        allocationIndex === index
+          ? {
+              ...allocation,
+              [field]: value,
+            }
+          : allocation
+      )
+    );
+  };
+
+  const handleSaveSessionStrategy = async () => {
+    if (!currentWorkspaceId) {
+      setErrorHeader("No planning workspace is attached to this curriculum yet.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Saving Phase 3 session planning setup...");
+
+    try {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/session-strategy`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          teachingStrategy: teachingStrategyDraft,
+          sessionPlanningDefaults: sessionPlanningDefaultsDraft,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to save the session planning setup."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    } catch (error: any) {
+      console.error("[Frontend] Session strategy save failed", error);
+      setErrorHeader(error.message || "Unable to save the session planning setup.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRecommendSessionAllocation = async () => {
+    if (!currentWorkspaceId || !selectedTermRow) {
+      setErrorHeader("Select an approved term before generating chapter session allocations.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Building chapter-by-chapter session recommendations for the selected term...");
+
+    try {
+      const strategyRes = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/session-strategy`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          teachingStrategy: teachingStrategyDraft,
+          sessionPlanningDefaults: sessionPlanningDefaultsDraft,
+        }),
+      });
+
+      if (!strategyRes.ok) {
+        throw new Error(await readErrorFromResponse(strategyRes, "Failed to save the session planning setup."));
+      }
+
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/recommend-session-allocation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          selectedTermKey: getSelectedTermKey(selectedTermRow),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to generate chapter session recommendations."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      setSessionAllocationDraft(data.recommendations || []);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    } catch (error: any) {
+      console.error("[Frontend] Session allocation recommendation failed", error);
+      setErrorHeader(error.message || "Unable to generate chapter session recommendations.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveSessionAllocation = async () => {
+    if (!currentWorkspaceId || !selectedTermRow) {
+      setErrorHeader("Select an approved term before saving chapter session allocations.");
+      return;
+    }
+
+    const validation = validateSessionAllocationDraft(sessionAllocationDraft, selectedTermRow, activeWorkspace);
+    if (!validation.valid) {
+      setErrorHeader(validation.issues[0] || "Fix the session allocation before saving.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Saving chapter session allocations...");
+
+    try {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/session-allocation`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          selectedTermKey: getSelectedTermKey(selectedTermRow),
+          selectedTermSummary: {
+            className: selectedTermRow.className || "Curriculum",
+            termName: selectedTermRow.term,
+            termNumber: selectedTermRow.termNumber ?? null,
+            chapterCount: selectedTermRow.chapters.length,
+            marks: selectedTermRow.marks,
+            totalRows: (savedTermAllocations || []).filter((allocation) => getAllocationTermKey(allocation) === getSelectedTermKey(selectedTermRow)).length,
+          },
+          allocations: sessionAllocationDraft.map((allocation, index) => ({
+            ...allocation,
+            sequence: Number(allocation.sequence || index + 1),
+            estimatedSessions: Number(allocation.estimatedSessions || 0),
+            estimatedMinutes:
+              Number(allocation.estimatedSessions || 0) *
+              Number(sessionPlanningDefaultsDraft.sessionDurationMinutes || academicConfigDraft.periodDurationMinutes || 45),
+          })),
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to save the chapter session allocations."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    } catch (error: any) {
+      console.error("[Frontend] Session allocation save failed", error);
+      setErrorHeader(error.message || "Unable to save the chapter session allocations.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetSessionAllocationToRecommendations = () => {
+    setSessionAllocationDraft(activeWorkspace?.sessionAllocation?.recommendations || []);
+  };
+
+  const handleApproveSessionAllocation = async () => {
+    if (!currentWorkspaceId) {
+      setErrorHeader("No planning workspace is attached to this curriculum yet.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Approving Phase 3 session planning and unlocking content generation...");
+
+    try {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/approve-session-allocation`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        throw new Error(await readErrorFromResponse(res, "Failed to approve the session allocation."));
+      }
+
+      const data = await res.json();
+      const workspace = data.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(workspace._id);
+      setActiveWorkspace(workspace);
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    } catch (error: any) {
+      console.error("[Frontend] Session allocation approval failed", error);
+      setErrorHeader(error.message || "Unable to approve the session allocation.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const curriculumApproved = !!activeWorkspace?.curriculumApproval?.approved;
-  const coursePlanApproved = !!activeWorkspace?.termPlan?.approved;
   const savedTermAllocations = activeWorkspace?.termPlan?.allocations || [];
   const recommendedTermAllocations = activeWorkspace?.termPlan?.recommendations || [];
+  const draftValidation = validateCoursePlanAllocations(coursePlanDraft);
+  const coursePlanDraftDirty =
+    JSON.stringify(normalizeAllocationsForComparison(coursePlanDraft)) !==
+    JSON.stringify(normalizeAllocationsForComparison(savedTermAllocations));
+  const effectiveCoursePlanApproved =
+    !!activeWorkspace?.termPlan?.approved && !coursePlanDraftDirty && draftValidation.valid;
+  const coursePlanApproved = effectiveCoursePlanApproved;
+  const recommendationTermCount = countUniqueTerms(recommendedTermAllocations);
+  const savedTermCount = countUniqueTerms(savedTermAllocations);
+  const draftTermCount = countUniqueTerms(coursePlanDraft);
+  const savedSessionStrategy = activeWorkspace?.teachingStrategy || {};
+  const savedSessionDefaults = getSessionPlanningDefaultsSeed(activeWorkspace);
+  const savedSessionAllocations = activeWorkspace?.sessionAllocation?.allocations || [];
+  const recommendedSessionAllocations = activeWorkspace?.sessionAllocation?.recommendations || [];
+  const sessionStrategyDirty =
+    JSON.stringify(normalizeSessionStrategyForComparison(teachingStrategyDraft)) !==
+      JSON.stringify(normalizeSessionStrategyForComparison(savedSessionStrategy)) ||
+    JSON.stringify(normalizeSessionDefaultsForComparison(sessionPlanningDefaultsDraft)) !==
+      JSON.stringify(normalizeSessionDefaultsForComparison(savedSessionDefaults));
+  const sessionAllocationDraftDirty =
+    JSON.stringify(normalizeChapterSessionPlansForComparison(sessionAllocationDraft)) !==
+    JSON.stringify(normalizeChapterSessionPlansForComparison(savedSessionAllocations));
+  const sessionAllocationValidation = validateSessionAllocationDraft(sessionAllocationDraft, selectedTermRow, activeWorkspace);
+  const selectedTermCapacity = getSelectedTermCapacity(selectedTermRow, savedTermAllocations, activeWorkspace?.academicConfig || academicConfigDraft);
+  const sessionPlanApproved =
+    !!activeWorkspace?.sessionAllocation?.approved &&
+    !sessionStrategyDirty &&
+    !sessionAllocationDraftDirty &&
+    sessionAllocationValidation.valid;
+  const contentIncludesLearningOutcomes = true;
+  const contentIncludesIntroduction = true;
+  const contentIncludesTheory = true;
+  const contentIncludesAssessments = sessionPlanningDefaultsDraft.includeFormativeAssessment ?? true;
+  const contentIncludesAssignments = false;
+  const contentIncludesNotes = sessionPlanningDefaultsDraft.includeTeacherNotes ?? true;
+  const effectiveSessionAllocations = savedSessionAllocations.length > 0 ? savedSessionAllocations : sessionAllocationDraft;
+  const selectedTermSessionAllocations = effectiveSessionAllocations.filter(
+    (allocation) => getSelectedTermKey({
+      className: allocation.className,
+      term: allocation.termName,
+      termNumber: allocation.termNumber ?? undefined,
+    }) === getSelectedTermKey(selectedTermRow)
+  );
+  const selectedTermSessionCount = selectedTermSessionAllocations.reduce(
+    (sum, allocation) => sum + Number(allocation.estimatedSessions || 0),
+    0
+  );
   const workspaceConfidence =
     activeWorkspace?.curriculumApproval?.confidence ??
     (extractedData as any)?.structure_confidence ??
@@ -959,75 +1974,80 @@ export default function App() {
    * Generate session structure outline roadmap first based on specifications
    */
   const handleGenerateOutline = async () => {
-    if (!extractedData || !selectedTermRow) return;
-    setErrorHeader(null);
-    setLoading(true);
-    setLoadingMessage(`Creating lesson timeline array of ${sessionConfig.sessionCount} class sessions...`);
-
-    try {
-      const res = await fetch("/api/generate-sessions-outline", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subject: extractedData.subject,
-          gradeLevel: extractedData.gradeLevel,
-          selectedChapters: selectedTermRow.chapters,
-          termName: `${selectedTermRow.term} - ${selectedTermRow.unitName}`,
-          config: sessionConfig,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error(await readErrorFromResponse(res, "Failed to generate outlines"));
-      }
-
-      const outlines = (await res.json()) as any[];
-      setSessionsOutline(outlines);
-      setGeneratedSessions({}); // Clear former drafts
-      setActiveSessionNumber(1);
-      setActiveStep(4); // Advance to delivery dashboard
-    } catch (err: any) {
-      console.error(err);
-      setErrorHeader(err.message || "Couldn't generate class syllabus maps.");
-    } finally {
-      setLoading(false);
-    }
+    if (!selectedTermRow || !sessionPlanApproved) return;
+    setActiveStep(4);
   };
 
   /**
    * On-demand generation of full details for specific Session Number
    */
   const handleBuildSessionDeepDetails = async (sessionNum: number, outlineItem: any) => {
-    if (!extractedData || !selectedTermRow) return;
+    if (!selectedTermRow || !currentWorkspaceId) return;
+    const selectedSections = getSelectedSessionSections();
+    if (selectedSections.length === 0) {
+      setErrorHeader("Select at least one content section before generating this session.");
+      return;
+    }
+
+    const previousOutlineItem = sessionsOutline.find((item) => item.sessionNumber === sessionNum - 1);
+    const previousGeneratedSession = previousOutlineItem ? generatedSessions[previousOutlineItem.sessionNumber] : null;
+    const previousSessionContext = previousGeneratedSession
+      ? `${previousGeneratedSession.title || `Session ${previousOutlineItem?.sessionNumber}`}: ${
+          previousGeneratedSession.teacherLessonNotes?.sessionSummary?.join(" ") ||
+          previousGeneratedSession.learningOutcomes?.join(" ") ||
+          previousOutlineItem?.title ||
+          ""
+        }`
+      : previousOutlineItem?.title || "";
+
     setErrorHeader(null);
     setLoading(true);
-    setLoadingMessage(`Synthesizing Theory details, PPT slides, worksheets, assessments and answers keys for session ${sessionNum}...`);
+    setLoadingMessage(
+      selectedSections.length === sessionSectionOptions.length
+        ? `Generating the complete lesson pack for session ${sessionNum}...`
+        : `Generating selected content sections for session ${sessionNum}...`
+    );
 
     try {
-      const res = await fetch("/api/generate-session-details", {
+      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/generate-content`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          subject: extractedData.subject,
-          gradeLevel: extractedData.gradeLevel,
-          selectedChapters: selectedTermRow.chapters,
-          sessionNumber: sessionNum,
-          totalSessions: sessionConfig.sessionCount,
-          durationMinutes: sessionConfig.durationMinutes,
-          config: sessionConfig,
+          chapterName: outlineItem.chapterName || selectedTermRow.chapters[0],
+          roadmapSessionNumber: sessionNum,
+          sessionNumber: outlineItem.chapterSessionNumber || sessionNum,
+          totalSessions: outlineItem.chapterTotalSessions || 1,
+          durationMinutes:
+            outlineItem.duration ||
+            Number(sessionPlanningDefaultsDraft.sessionDurationMinutes || academicConfigDraft.periodDurationMinutes || 45),
+          sessionTitle: outlineItem.title,
+          learningOutcomes: outlineItem.learningOutcomes || [],
+          previousSessionContext,
+          selectedSections,
         }),
       });
 
       if (!res.ok) {
-        throw new Error(await readErrorFromResponse(res, "Failed deep text generation"));
+        throw new Error(await readErrorFromResponse(res, "Failed session content generation"));
       }
 
-      const details = (await res.json()) as any;
+      const detailsResponse = await res.json();
+      const details = detailsResponse.sessionPlan as SessionPlan;
+      if (detailsResponse.workspace) {
+        const workspace = detailsResponse.workspace as PlanningWorkspace;
+        setCurrentWorkspaceId(workspace._id);
+        setActiveWorkspace(workspace);
+        localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+      }
       setGeneratedSessions((prev) => ({
         ...prev,
         [sessionNum]: {
-          ...outlineItem,
           ...details,
+          ...outlineItem,
+          id: details.id || outlineItem.id,
+          title: details.title || outlineItem.title,
+          duration: details.duration || outlineItem.duration,
+          sessionNumber: outlineItem.sessionNumber,
         },
       }));
       setActiveSessionNumber(sessionNum);
@@ -1037,6 +2057,12 @@ export default function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRegenerateActiveSession = async () => {
+    const outlineItem = sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber);
+    if (!outlineItem) return;
+    await handleBuildSessionDeepDetails(activeSessionNumber, outlineItem);
   };
 
   /**
@@ -2782,7 +3808,7 @@ export default function App() {
           </div>
         )}
 
-        {/* -------------------- STEP 2: TERMS PLANNER TABLE -------------------- */}
+        {/* -------------------- STEP 2: COURSE PLANNING -------------------- */}
         {activeStep === 2 && (
           <div className="space-y-6 animate-fadeIn">
             {!curriculumApproved ? (
@@ -2791,9 +3817,7 @@ export default function App() {
                   <CheckCircle2 className="w-8 h-8" />
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-display font-extrabold text-[#2B3437] text-xl">
-                    Curriculum Approval Is Required First
-                  </h3>
+                  <h3 className="font-display font-extrabold text-[#2B3437] text-xl">Curriculum Approval Is Required First</h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
                     Complete Phase 1 review and approve the curriculum before building the course plan.
                   </p>
@@ -2809,468 +3833,225 @@ export default function App() {
               </div>
             ) : (
               <>
-            <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_1.4fr] gap-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-xs font-bold text-[#586A71]">Phase 2</div>
-                      <h2 className="text-2xl font-display font-extrabold tracking-tight text-slate-800">
-                        Course Planning Setup
-                      </h2>
+                <div className="grid grid-cols-1 xl:grid-cols-[1.1fr_1.4fr] gap-6">
+                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-xs font-bold text-[#586A71]">Phase 2</div>
+                          <h2 className="text-2xl font-display font-extrabold tracking-tight text-slate-800">Course Planning Setup</h2>
+                        </div>
+                        <button
+                          onClick={() => setActiveStep(1)}
+                          className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800"
+                        >
+                          <ArrowLeft className="w-3.5 h-3.5" />
+                          Back
+                        </button>
+                      </div>
+                      <p className="text-xs text-slate-500">
+                        Save the academic setup, generate AI term recommendations, then approve the course plan to unlock session planning.
+                      </p>
                     </div>
-                    <button
-                      onClick={() => setActiveStep(1)}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5" />
-                      Back
-                    </button>
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    Save the academic setup, generate AI term recommendations, then approve the course plan to unlock session planning.
-                  </p>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Academic Year</span>
-                    <input
-                      value={academicConfigDraft.academicYear || ""}
-                      onChange={(e) => updateAcademicConfigField("academicYear", e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="2026-27"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">School</span>
-                    <input
-                      value={academicConfigDraft.school || ""}
-                      onChange={(e) => updateAcademicConfigField("school", e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="School name"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Board</span>
-                    <input
-                      value={academicConfigDraft.board || ""}
-                      onChange={(e) => updateAcademicConfigField("board", e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="CBSE / ICSE / State"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Medium</span>
-                    <input
-                      value={academicConfigDraft.medium || ""}
-                      onChange={(e) => updateAcademicConfigField("medium", e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="English"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Language</span>
-                    <input
-                      value={academicConfigDraft.language || ""}
-                      onChange={(e) => updateAcademicConfigField("language", e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="English"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Class / Grade</span>
-                    <input
-                      value={academicConfigDraft.className || extractedData?.gradeLevel || ""}
-                      onChange={(e) => updateAcademicConfigField("className", e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="Class IX"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Section</span>
-                    <input
-                      value={academicConfigDraft.section || ""}
-                      onChange={(e) => updateAcademicConfigField("section", e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="A"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Book</span>
-                    <input
-                      value={academicConfigDraft.book || ""}
-                      onChange={(e) => updateAcademicConfigField("book", e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="NCERT Mathematics"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Weekly Periods</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={academicConfigDraft.weeklyPeriods ?? ""}
-                      onChange={(e) => updateAcademicConfigField("weeklyPeriods", e.target.value ? Number(e.target.value) : null)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="6"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Period Minutes</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={academicConfigDraft.periodDurationMinutes ?? ""}
-                      onChange={(e) => updateAcademicConfigField("periodDurationMinutes", e.target.value ? Number(e.target.value) : null)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="45"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Working Days</span>
-                    <input
-                      type="number"
-                      min={0}
-                      value={academicConfigDraft.calendar?.workingDays ?? ""}
-                      onChange={(e) => updateAcademicCalendarField("workingDays", e.target.value ? Number(e.target.value) : null)}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                      placeholder="220"
-                    />
-                  </label>
-                  <label className="space-y-1">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Preferred Terms</span>
-                    <select
-                      value={preferredTermCount}
-                      onChange={(e) => setPreferredTermCount(Number(e.target.value))}
-                      className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
-                    >
-                      {[1, 2, 3, 4].map((count) => (
-                        <option key={count} value={count}>{count}</option>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Academic Year</span><input value={academicConfigDraft.academicYear || ""} onChange={(e) => updateAcademicConfigField("academicYear", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="2026-27" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">School</span><input value={academicConfigDraft.school || ""} onChange={(e) => updateAcademicConfigField("school", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="School name" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Board</span><input value={academicConfigDraft.board || ""} onChange={(e) => updateAcademicConfigField("board", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="CBSE / ICSE / State" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Medium</span><input value={academicConfigDraft.medium || ""} onChange={(e) => updateAcademicConfigField("medium", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="English" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Language</span><input value={academicConfigDraft.language || ""} onChange={(e) => updateAcademicConfigField("language", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="English" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Class / Grade</span><input value={academicConfigDraft.className || extractedData?.gradeLevel || ""} onChange={(e) => updateAcademicConfigField("className", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="Class IX" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Section</span><input value={academicConfigDraft.section || ""} onChange={(e) => updateAcademicConfigField("section", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="A" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Book</span><input value={academicConfigDraft.book || ""} onChange={(e) => updateAcademicConfigField("book", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="NCERT Mathematics" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Weekly Periods</span><input type="number" min={0} value={academicConfigDraft.weeklyPeriods ?? ""} onChange={(e) => updateAcademicConfigField("weeklyPeriods", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="6" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Period Minutes</span><input type="number" min={0} value={academicConfigDraft.periodDurationMinutes ?? ""} onChange={(e) => updateAcademicConfigField("periodDurationMinutes", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="45" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Lab Periods / Week</span><input type="number" min={0} value={academicConfigDraft.labPeriods ?? ""} onChange={(e) => updateAcademicConfigField("labPeriods", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="1" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Working Days</span><input type="number" min={0} value={academicConfigDraft.calendar?.workingDays ?? ""} onChange={(e) => updateAcademicCalendarField("workingDays", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="220" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Revision Weeks</span><input type="number" min={0} value={academicConfigDraft.calendar?.revisionWeeks ?? ""} onChange={(e) => updateAcademicCalendarField("revisionWeeks", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="2" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Buffer Weeks</span><input type="number" min={0} value={academicConfigDraft.calendar?.bufferWeeks ?? ""} onChange={(e) => updateAcademicCalendarField("bufferWeeks", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="1" /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Preferred Terms</span><select value={preferredTermCount} onChange={(e) => setPreferredTermCount(Number(e.target.value))} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">{[1, 2, 3, 4].map((count) => (<option key={count} value={count}>{count}</option>))}</select></label>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Holiday Calendar</span><textarea value={stringifyMultilineList(academicConfigDraft.calendar?.holidayCalendar)} onChange={(e) => updateAcademicCalendarField("holidayCalendar", parseMultilineList(e.target.value))} className="min-h-24 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder={"One item per line\nDiwali break\nWinter vacation"} /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Exam Dates</span><textarea value={stringifyMultilineList(academicConfigDraft.calendar?.examDates)} onChange={(e) => updateAcademicCalendarField("examDates", parseMultilineList(e.target.value))} className="min-h-24 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder={"One item per line\nUnit Test 1 - 2026-08-12\nMid Term - 2026-10-05"} /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">School Events</span><textarea value={stringifyMultilineList(academicConfigDraft.calendar?.schoolEvents)} onChange={(e) => updateAcademicCalendarField("schoolEvents", parseMultilineList(e.target.value))} className="min-h-24 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder={"One item per line\nScience fair week\nAnnual day rehearsals"} /></label>
+                      <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Special Days</span><textarea value={stringifyMultilineList(academicConfigDraft.calendar?.specialDays)} onChange={(e) => updateAcademicCalendarField("specialDays", parseMultilineList(e.target.value))} className="min-h-24 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder={"One item per line\nNational Mathematics Day\nLab exhibition"} /></label>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      <button onClick={handleSaveAcademicConfig} className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"><Settings className="w-3.5 h-3.5" />Save Academic Setup</button>
+                      <button onClick={handleDivideTerms} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#36ADAA] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#36ADAA]/90"><Sparkles className="w-3.5 h-3.5" />Generate Course Plan</button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-bold text-[#586A71]">Planner Status</div>
+                        <h3 className="text-xl font-display font-extrabold text-slate-800">Term Allocation Review</h3>
+                        <p className="text-xs text-slate-500">Recommendations are stored separately from approved allocations so we can keep an edit-friendly workflow.</p>
+                      </div>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${coursePlanApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                        {coursePlanDraftDirty ? "Draft Has Unsaved Changes" : coursePlanApproved ? "Course Plan Approved" : "Awaiting Approval"}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Recommended Terms</div><div className="mt-1 text-lg font-display font-black text-slate-800">{recommendationTermCount}</div></div>
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Saved Terms</div><div className="mt-1 text-lg font-display font-black text-slate-800">{savedTermCount}</div></div>
+                      <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Draft Terms</div><div className="mt-1 text-lg font-display font-black text-slate-800">{draftTermCount}</div></div>
+                    </div>
+
+                    {(coursePlanDraftDirty || !draftValidation.valid) && (
+                      <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800 space-y-1">
+                        {coursePlanDraftDirty && <div className="font-semibold">The visible term plan has unsaved edits. Save edited allocations before approval.</div>}
+                        {!draftValidation.valid && <div>{draftValidation.issues[0]}</div>}
+                      </div>
+                    )}
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-3">
+                      <div className="text-sm font-display font-black text-slate-800">Phase 2 Checklist</div>
+                      {[
+                        { label: "Curriculum approved", complete: curriculumApproved },
+                        { label: "Academic setup saved", complete: Boolean(activeWorkspace?.academicConfig && Object.keys(activeWorkspace.academicConfig).length > 0) },
+                        { label: "Recommendations generated", complete: recommendationTermCount > 0 },
+                        { label: "Allocations saved", complete: savedTermCount > 0 },
+                        { label: "Draft matches saved plan", complete: !coursePlanDraftDirty },
+                        { label: "Draft passes validation", complete: draftValidation.valid },
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                          <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full ${item.complete ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                            {item.complete ? <Check className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+                          </span>
+                          <span>{item.label}</span>
+                        </div>
                       ))}
-                    </select>
-                  </label>
-                </div>
-
-                <div className="flex flex-wrap gap-2 pt-2">
-                  <button
-                    onClick={handleSaveAcademicConfig}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"
-                  >
-                    <Settings className="w-3.5 h-3.5" />
-                    Save Academic Setup
-                  </button>
-                  <button
-                    onClick={handleDivideTerms}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#36ADAA] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#36ADAA]/90"
-                  >
-                    <Sparkles className="w-3.5 h-3.5" />
-                    Generate Course Plan
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <div className="text-xs font-bold text-[#586A71]">Planner Status</div>
-                    <h3 className="text-xl font-display font-extrabold text-slate-800">Term Allocation Review</h3>
-                    <p className="text-xs text-slate-500">
-                      Recommendations are stored separately from approved allocations so we can keep an edit-friendly workflow.
-                    </p>
-                  </div>
-                  <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${
-                    coursePlanApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
-                  }`}>
-                    {coursePlanApproved ? "Course Plan Approved" : "Awaiting Approval"}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Recommendations</div>
-                    <div className="mt-1 text-lg font-display font-black text-slate-800">{recommendedTermAllocations.length}</div>
-                  </div>
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Saved Allocations</div>
-                    <div className="mt-1 text-lg font-display font-black text-slate-800">{savedTermAllocations.length}</div>
-                  </div>
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Preferred Terms</div>
-                    <div className="mt-1 text-lg font-display font-black text-slate-800">{preferredTermCount}</div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-3">
-                  <div className="text-sm font-display font-black text-slate-800">Phase 2 Checklist</div>
-                  {[
-                    { label: "Curriculum approved", complete: curriculumApproved },
-                    { label: "Academic setup saved", complete: Boolean(activeWorkspace?.academicConfig && Object.keys(activeWorkspace.academicConfig).length > 0) },
-                    { label: "Recommendations generated", complete: recommendedTermAllocations.length > 0 },
-                    { label: "Allocations selected", complete: savedTermAllocations.length > 0 },
-                  ].map((item) => (
-                    <div key={item.label} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-                      <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full ${
-                        item.complete ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
-                      }`}>
-                        {item.complete ? <Check className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
-                      </span>
-                      <span>{item.label}</span>
                     </div>
-                  ))}
-                </div>
 
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={handleUseRecommendedCoursePlan}
-                    disabled={recommendedTermAllocations.length === 0}
-                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
-                      recommendedTermAllocations.length === 0
-                        ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400"
-                        : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"
-                    }`}
-                  >
-                    <Layers className="w-3.5 h-3.5" />
-                    Use Recommendations
-                  </button>
-                  <button
-                    onClick={handleApproveCoursePlan}
-                    disabled={savedTermAllocations.length === 0 || coursePlanApproved}
-                    className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
-                      savedTermAllocations.length === 0 || coursePlanApproved
-                        ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400"
-                        : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                    }`}
-                  >
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    {coursePlanApproved ? "Approved" : "Approve Course Plan"}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {termsList.length === 0 ? (
-              <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
-                <div className="w-16 h-16 bg-[#E9CAB7]/25 rounded-3xl flex items-center justify-center text-[#DE8431] mx-auto">
-                  <FileSpreadsheet className="w-8 h-8" />
-                </div>
-                <div className="space-y-2">
-                  <h3 className="font-display font-extrabold text-[#2B3437] text-xl">
-                    No Academic Terms Generated Yet
-                  </h3>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    You haven't parsed or uploaded a curriculum syllabus in Step 1 yet. To view the Terms Planner, please analyze a syllabus file first.
-                  </p>
-                </div>
-                <div className="flex justify-center">
-                  <button
-                    onClick={() => setActiveStep(1)}
-                    className="px-5 py-3 bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
-                  >
-                    Go to Step 1: Upload
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-            {/* Header section with summary */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs">
-              <div className="space-y-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-2 text-xs font-bold min-w-0">
-                    <span className="text-[#586A71]">Step 2 of LMS Planner</span>
-                    <ChevronRight className="w-3 h-3 text-[#586A71]" />
-                    <span className="bg-[#9FCDD2]/35 text-[#36ADAA] text-[10px] uppercase tracking-widest px-2.5 py-1 rounded-full">
-                      Syllabus Divided
-                    </span>
-                    <span className="text-slate-400">Total Terms: {new Set(termsList.map((term) => term.term)).size}</span>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={handleUseRecommendedCoursePlan} disabled={recommendedTermAllocations.length === 0} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${recommendedTermAllocations.length === 0 ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"}`}><Layers className="w-3.5 h-3.5" />Use Recommendations</button>
+                      <button onClick={handleSaveManualCoursePlan} disabled={coursePlanDraft.length === 0 || !draftValidation.valid} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${coursePlanDraft.length === 0 || !draftValidation.valid ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"}`}><CheckSquare className="w-3.5 h-3.5" />Save Edited Allocations</button>
+                      <button onClick={handleApproveCoursePlan} disabled={savedTermCount === 0 || coursePlanApproved || coursePlanDraftDirty || !draftValidation.valid} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${savedTermCount === 0 || coursePlanApproved || coursePlanDraftDirty || !draftValidation.valid ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"}`}><CheckCircle2 className="w-3.5 h-3.5" />{coursePlanApproved ? "Approved" : "Approve Course Plan"}</button>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => setActiveStep(1)}
-                    className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800 cursor-pointer"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    Back
-                  </button>
                 </div>
-                <div className="space-y-1">
-                <h2 className="text-2xl font-display font-extrabold tracking-tight text-slate-800">
-                  Dynamic Term Planner Grid
-                </h2>
-                <p className="text-slate-500 text-xs">
-                  Review partitioned unit workloads, chapter structures, and estimated scores. Select a term block to construct dedicated session roadmaps.
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setActiveStep(1)}
-                  className="py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-xs font-bold text-slate-700 flex items-center gap-1.5"
-                >
-                  <ListRestart className="w-4 h-4" />
-                  Re-upload Curriculum
-                </button>
-              </div>
-              </div>
-            </div>
 
-            {/* Structured Table */}
-            <div className="bg-white border-2 border-slate-100 rounded-3xl overflow-hidden shadow-xs">
-              <div className="bg-[#586A71] text-white p-4 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  <FileSpreadsheet className="w-5 h-5 text-[#9FCDD2]" />
-                  <span className="font-display font-medium text-sm">Academic Roadmap Balance Sheet</span>
-                </div>
-                <div className="text-xs bg-[#2B3437]/25 px-3 py-1 rounded-lg text-[#E9CAB7]">
-                  Total marks sum: {termDivisionStats.totalMarks} pts
-                </div>
-              </div>
+                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-bold text-[#586A71]">Manual Planning Layer</div>
+                      <h3 className="text-xl font-display font-extrabold text-slate-800">Editable Term Allocations</h3>
+                      <p className="text-xs text-slate-500">Adjust allocation rows inside each term before you save the course plan.</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={handleAddManualTermAllocation} className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"><Layers className="w-3.5 h-3.5" />Add Term</button>
+                      <button onClick={handleResetCoursePlanDraftToRecommendations} disabled={recommendedTermAllocations.length === 0} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${recommendedTermAllocations.length === 0 ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"}`}><RotateCcw className="w-3.5 h-3.5" />Reset To Recommendations</button>
+                    </div>
+                  </div>
 
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs text-[#586A71] font-bold uppercase tracking-wider">
-                    <th className="px-6 py-4">Selected</th>
-                    <th className="px-6 py-4">Academic Term</th>
-                    <th className="px-6 py-4">Theme Unit Name</th>
-                    <th className="px-6 py-4">Chapters & Covered Topics</th>
-                    <th className="px-6 py-4 text-center">Marks Weightage</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-sm">
-                  {classTermGroups.map(({ className, termGroups }) => (
-                    <React.Fragment key={className}>
-                      <tr className="bg-[#2B3437] text-white">
-                        <td colSpan={5} className="px-6 py-4">
-                          <div className="flex items-center justify-between">
-                            <span className="font-display font-bold text-sm">{className}</span>
-                            <span className="text-xs text-[#E9CAB7]">{termGroups.length} terms</span>
+                  {coursePlanDraft.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">Generate recommendations or add a term manually to start editing the course plan.</div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">A single term can contain multiple allocation rows. Use additional rows when one term needs separate chapter groupings, marks, or session estimates.</div>
+                      {coursePlanDraft.map((allocation, index) => (
+                        <div key={`${allocation.termName}-${index}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div className="space-y-1">
+                              <div className="text-sm font-display font-black text-slate-800">{(allocation.termName || `Term ${allocation.termNumber ?? index + 1}`).trim() || `Allocation ${index + 1}`}</div>
+                              <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">{(() => { const { rowNumber, rowCount } = getAllocationRowPosition(coursePlanDraft, index); return rowCount > 1 ? `Allocation Row ${rowNumber} of ${rowCount}` : "Single allocation row"; })()}</div>
+                            </div>
+                            <button onClick={() => handleRemoveManualTermAllocation(index)} className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-white px-2.5 py-1.5 text-[11px] font-bold text-rose-600 transition hover:bg-rose-50"><Trash2 className="w-3.5 h-3.5" />Remove</button>
                           </div>
-                        </td>
-                      </tr>
-                      {termGroups.map(({ termName, rows, totalMarks, summaryRow }) => {
-                        const isTermSelected = selectedTermRow?.id === summaryRow.id;
-                        return (
-                          <React.Fragment key={`${className}-${termName}`}>
-                            <tr
-                              onClick={() => setSelectedTermRow(summaryRow)}
-                              className={`border-y border-slate-200 cursor-pointer transition-colors ${
-                                isTermSelected ? "bg-[#36ADAA]/10" : "bg-slate-100/80 hover:bg-slate-100"
-                              }`}
-                            >
-                              <td colSpan={5} className="px-6 py-4">
-                                <div className="flex items-center justify-between gap-4">
-                                  <div className="flex items-center gap-3">
-                                    <div className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
-                                      isTermSelected ? "bg-[#36ADAA] border-[#36ADAA] text-white" : "border-slate-300 bg-white"
-                                    }`}>
-                                      {isTermSelected && <Check className="w-3.5 h-3.5" />}
-                                    </div>
-                                    <span className="px-3 py-1 bg-slate-800 text-white rounded-md text-xs font-bold">
-                                      {termName}
-                                    </span>
-                                    <span className="text-xs font-semibold text-slate-500">
-                                      {rows.length} unit rows
-                                    </span>
-                                  </div>
-                                  <span className="text-xs font-bold text-[#DE8431]">
-                                    Term marks: {totalMarks} pts
-                                  </span>
-                                </div>
-                              </td>
-                            </tr>
-                            {rows.map((row) => {
-                              return (
-                                <tr
-                                  key={row.id}
-                                  className="text-slate-700"
-                                >
-                                  <td className="px-6 py-4" />
-                                  <td className="px-6 py-4 font-bold text-slate-500">
-                                    {row.termNumber || ""}
-                                  </td>
-                                  <td className="px-6 py-4 font-extrabold text-slate-800">
-                                    {row.unitName}
-                                  </td>
-                                  <td className="px-6 py-4">
-                                    <div className="flex flex-wrap gap-1 max-w-sm">
-                                      {row.chapters.map((chap, i) => (
-                                        <span
-                                          key={i}
-                                          className="text-[10px] bg-[#9FCDD2]/20 text-[#2B3437] px-2 py-0.5 rounded"
-                                        >
-                                          {chap}
-                                        </span>
-                                      ))}
-                                    </div>
-                                  </td>
-                                  <td className="px-6 py-4 text-center">
-                                    <span className="px-2.5 py-1 bg-[#DE8431]/10 text-[#DE8431] rounded-full font-bold text-xs">
-                                      {row.marks} marks
-                                    </span>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </React.Fragment>
-                        );
-                      })}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Helpful Banner */}
-            {selectedTermRow && (
-              <div className="p-5 bg-slate-50 border border-slate-100 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#3CC583]/15 flex items-center justify-center shrink-0">
-                    <CheckSquare className="w-5 h-5 text-[#3CC583]" />
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-display font-black text-slate-800">
-                        {selectedTermRow.term}
-                      </span>
-                      <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-500 border border-slate-200">
-                        {selectedTermRow.className || "Curriculum"}
-                      </span>
-                      <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                        coursePlanApproved
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-amber-100 text-amber-700"
-                      }`}>
-                        {coursePlanApproved ? "Ready for Session Planning" : "Course Plan Approval Needed"}
-                      </span>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                            <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Class</span><input value={allocation.className || ""} onChange={(e) => updateCoursePlanDraft(index, "className", e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" /></label>
+                            <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Term Name</span><input value={allocation.termName || ""} onChange={(e) => updateCoursePlanDraft(index, "termName", e.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" /></label>
+                            <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Term Number</span><input type="number" min={1} value={allocation.termNumber ?? ""} onChange={(e) => updateCoursePlanDraft(index, "termNumber", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" /></label>
+                            <label className="space-y-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Marks</span><input type="number" min={0} value={allocation.marks ?? ""} onChange={(e) => updateCoursePlanDraft(index, "marks", e.target.value ? Number(e.target.value) : 0)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" /></label>
+                            <label className="space-y-1 xl:col-span-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Estimated Sessions</span><input type="number" min={0} value={allocation.estimatedSessions ?? ""} onChange={(e) => updateCoursePlanDraft(index, "estimatedSessions", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" /></label>
+                          </div>
+                          <label className="space-y-1 block"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Chapters</span><textarea value={stringifyMultilineList(allocation.chapters)} onChange={(e) => updateCoursePlanDraft(index, "chapters", parseMultilineList(e.target.value))} className="min-h-24 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder={"One chapter per line\nNumber Systems\nPolynomials"} /></label>
+                          <label className="space-y-1 block"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Reasoning</span><textarea value={allocation.reasoning || ""} onChange={(e) => updateCoursePlanDraft(index, "reasoning", e.target.value)} className="min-h-20 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="Why this term grouping works for teaching flow, assessments, and calendar constraints." /></label>
+                        </div>
+                      ))}
                     </div>
-                    <p className="text-xs font-semibold text-slate-500">
-                      {selectedTermRow.chapters.length} chapter{selectedTermRow.chapters.length === 1 ? "" : "s"} selected
-                      {" "}with {selectedTermRow.marks} marks across this term.
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      {coursePlanApproved
-                        ? "This approved term can now be used to configure session preferences and generate outlines."
-                        : "Approve the Phase 2 course plan first, then continue into Session Planning."}
-                    </p>
-                  </div>
+                  )}
                 </div>
 
-                <button
-                  onClick={() => handleConfigureSessionsForTerm(selectedTermRow)}
-                  disabled={!coursePlanApproved}
-                  className={`font-bold text-xs py-3 px-6 rounded-xl transition flex items-center gap-2 shadow-xs ${
-                    coursePlanApproved
-                      ? "bg-[#2B3437] hover:bg-[#2B3437]/90 text-white"
-                      : "bg-slate-200 text-slate-400 cursor-not-allowed"
-                  }`}
-                >
-                  {coursePlanApproved ? "Configure Sessions Specs" : "Approve Course Plan First"}
-                  <Sliders className="w-4 h-4 text-[#E9CAB7]" />
-                </button>
-              </div>
-            )}
+                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-bold text-[#586A71]">Term Selection</div>
+                      <h3 className="text-xl font-display font-extrabold text-slate-800">Choose The Active Term For Session Planning</h3>
+                      <p className="text-xs text-slate-500">Select one term from the current allocation plan to carry into Session Planning.</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Marks</div><div className="mt-1 text-lg font-display font-black text-slate-800">{termDivisionStats.totalMarks}</div></div>
+                  </div>
 
-              </>
-            )}
+                  {termsList.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">Save the academic setup and generate a course plan recommendation to start Phase 2 review.</div>
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        {classTermGroups.map(({ className, termGroups }) => (
+                          <div key={className} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="text-sm font-display font-black text-slate-800">{className}</div>
+                              <div className="text-[11px] font-semibold text-slate-500">{termGroups.length} terms</div>
+                            </div>
+                            <div className="space-y-3">
+                              {termGroups.map(({ termName, rows, totalMarks, summaryRow }) => {
+                                const isTermSelected = selectedTermRow?.id === summaryRow.id;
+                                return (
+                                  <button key={`${className}-${termName}`} onClick={() => setSelectedTermRow(summaryRow)} className={`w-full rounded-2xl border px-4 py-4 text-left transition ${isTermSelected ? "border-[#36ADAA] bg-[#36ADAA]/8" : "border-slate-200 bg-white hover:border-slate-300"}`}>
+                                    <div className="flex items-start justify-between gap-3">
+                                      <div className="space-y-2">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                          <span className="text-sm font-display font-black text-slate-800">{termName}</span>
+                                          <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-500">{rows.length} allocation row{rows.length === 1 ? "" : "s"}</span>
+                                          {isTermSelected && <span className="rounded-full bg-[#36ADAA] px-2 py-0.5 text-[10px] font-bold text-white">Selected</span>}
+                                        </div>
+                                        <p className="text-xs font-semibold text-slate-500">{summaryRow.chapters.length} chapter{summaryRow.chapters.length === 1 ? "" : "s"} across {totalMarks} marks</p>
+                                        <div className="flex flex-wrap gap-1">
+                                          {summaryRow.chapters.map((chapter, chapterIndex) => (
+                                            <span key={`${summaryRow.id}-${chapterIndex}`} className="rounded bg-[#9FCDD2]/20 px-2 py-0.5 text-[10px] text-[#2B3437]">{chapter}</span>
+                                          ))}
+                                        </div>
+                                      </div>
+                                      <div className="text-xs font-bold text-[#DE8431]">{totalMarks} marks</div>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {selectedTermRow && (
+                        <div className="p-5 bg-slate-50 border border-slate-100 rounded-3xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-[#3CC583]/15 flex items-center justify-center shrink-0"><CheckSquare className="w-5 h-5 text-[#3CC583]" /></div>
+                            <div className="space-y-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-sm font-display font-black text-slate-800">{selectedTermRow.term}</span>
+                                <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-500 border border-slate-200">{selectedTermRow.className || "Curriculum"}</span>
+                          <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${coursePlanApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{coursePlanApproved ? "Phase 3 Unlocked" : "Waiting For Phase 2 Approval"}</span>
+                              </div>
+                              <p className="text-xs font-semibold text-slate-500">{selectedTermRow.chapters.length} chapter{selectedTermRow.chapters.length === 1 ? "" : "s"} selected with {selectedTermRow.marks} marks across this term.</p>
+                          <p className="text-xs text-slate-400">{coursePlanApproved ? "Open Phase 3 to save teaching strategy, generate chapter session allocations, and approve the session plan." : "Approve the course plan using the single Phase 2 approval action above, then continue into Session Planning."}</p>
+                        </div>
+                      </div>
+                      <button onClick={() => handleConfigureSessionsForTerm(selectedTermRow)} disabled={!coursePlanApproved} className={`font-bold text-xs py-3 px-6 rounded-xl transition flex items-center gap-2 shadow-xs ${coursePlanApproved ? "bg-[#2B3437] hover:bg-[#2B3437]/90 text-white" : "bg-slate-200 text-slate-400 cursor-not-allowed"}`}>
+                        {coursePlanApproved ? "Open Session Planner" : "Session Planning Locked"}
+                        <Sliders className="w-4 h-4 text-[#E9CAB7]" />
+                      </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
               </>
             )}
           </div>
@@ -3331,306 +4112,339 @@ export default function App() {
               </div>
             ) : (
               <>
-            {/* Context breadcrumb & details */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs">
-              <div className="space-y-3">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-2 text-xs text-[#586A71] font-bold min-w-0">
-                    <span>Step 3 of LMS Planner</span>
-                    <ChevronRight className="w-3 h-3" />
-                    <span className="text-[#36ADAA]">{selectedTermRow.term}</span>
-                    <ChevronRight className="w-3 h-3" />
-                    <span className="truncate">{selectedTermRow.unitName}</span>
+                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-xs text-[#586A71] font-bold min-w-0">
+                        <span>Step 3 of LMS Planner</span>
+                        <ChevronRight className="w-3 h-3" />
+                        <span className="text-[#36ADAA]">{selectedTermRow.term}</span>
+                        <ChevronRight className="w-3 h-3" />
+                        <span className="truncate">{selectedTermRow.className || "Curriculum"}</span>
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-display font-extrabold text-slate-800 tracking-tight">
+                          Phase 3 Session Planning
+                        </h2>
+                        <p className="text-slate-500 text-xs">
+                          Save teaching strategy and AI defaults, generate chapter session allocations for the approved term, then approve the session plan to unlock content generation.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setActiveStep(2)}
+                      className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800 cursor-pointer"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      Back
+                    </button>
                   </div>
-                  <button
-                    onClick={() => setActiveStep(2)}
-                    className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800 cursor-pointer"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    Back
-                  </button>
-                </div>
-                <div>
-                  <h2 className="text-2xl font-display font-extrabold text-slate-800 tracking-tight">
-                    Lesson Plan Specifications (Session Config)
-                  </h2>
-                  <p className="text-slate-500 text-xs">
-                    Choose what specialized classroom resources, objectives, duration parameters and tools you want built.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Advanced Configuration Wizard Form */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              
-              {/* Box 1: Timeline & Classroom Duration (Inputs) */}
-              <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-xs space-y-5">
-                <div className="pb-3 border-b border-slate-100 flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-[#E9CAB7]/45 flex items-center justify-center text-amber-900">
-                    <Clock className="w-4 h-4" />
-                  </div>
-                  <h3 className="font-display font-extrabold text-slate-800 text-sm">Classroom Parameters</h3>
                 </div>
 
-                <div className="space-y-4">
-                  {/* Session counts */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                      Count of the Sessions
-                    </label>
-                    
-                    {/* Interactive Numerical Input and Range decider */}
-                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2.5">
-                      <div className="flex items-center justify-between gap-4">
-                        <span className="text-xs text-slate-500 font-medium font-display font-bold">Total Sessions:</span>
-                        <div className="flex items-center gap-1.5">
+                <div className="grid grid-cols-1 xl:grid-cols-[1.35fr_1fr] gap-6">
+                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-bold text-[#586A71]">Band A</div>
+                        <h3 className="text-xl font-display font-extrabold text-slate-800">Session Planning Setup</h3>
+                        <p className="text-xs text-slate-500">These values become the defaults for later single-session generation.</p>
+                      </div>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${sessionStrategyDirty ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"}`}>
+                        {sessionStrategyDirty ? "Unsaved Changes" : "Saved To Workspace"}
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Student Level</span>
+                        <select value={teachingStrategyDraft.studentLevel || ""} onChange={(e) => updateTeachingStrategyField("studentLevel", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
+                          <option value="">Select level</option>
+                          <option value="Foundational support">Foundational support</option>
+                          <option value="Grade-level mixed">Grade-level mixed</option>
+                          <option value="Strong independent learners">Strong independent learners</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Learning Pace</span>
+                        <select value={teachingStrategyDraft.pace || ""} onChange={(e) => updateTeachingStrategyField("pace", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
+                          <option value="">Select pace</option>
+                          <option value="Supportive">Supportive</option>
+                          <option value="Balanced">Balanced</option>
+                          <option value="Accelerated">Accelerated</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Assessment Preference</span>
+                        <select value={(teachingStrategyDraft.assessmentPreference || [])[0] || ""} onChange={(e) => updateTeachingStrategyField("assessmentPreference", e.target.value ? [e.target.value] : [])} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
+                          <option value="">Select assessment style</option>
+                          <option value="Observation + oral checks">Observation + oral checks</option>
+                          <option value="Worksheet-heavy">Worksheet-heavy</option>
+                          <option value="Concept application">Concept application</option>
+                          <option value="Mixed formative checks">Mixed formative checks</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Target Difficulty</span>
+                        <select value={teachingStrategyDraft.targetDifficulty || ""} onChange={(e) => updateTeachingStrategyField("targetDifficulty", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
+                          <option value="">Select difficulty</option>
+                          <option value="Accessible">Accessible</option>
+                          <option value="Balanced">Balanced</option>
+                          <option value="Stretch">Stretch</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Session Duration</span>
+                        <input type="number" min={30} max={90} value={sessionPlanningDefaultsDraft.sessionDurationMinutes ?? ""} onChange={(e) => updateSessionPlanningDefaultField("sessionDurationMinutes", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" />
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Output Language</span>
+                        <input value={sessionPlanningDefaultsDraft.language || ""} onChange={(e) => updateSessionPlanningDefaultField("language", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" />
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Reading Level</span>
+                        <select value={sessionPlanningDefaultsDraft.readingLevel || ""} onChange={(e) => updateSessionPlanningDefaultField("readingLevel", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
+                          <option value="Grade-aligned">Grade-aligned</option>
+                          <option value="Simplified support">Simplified support</option>
+                          <option value="Extended academic">Extended academic</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Response Length</span>
+                        <select value={sessionPlanningDefaultsDraft.responseLength || ""} onChange={(e) => updateSessionPlanningDefaultField("responseLength", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
+                          <option value="Compact">Compact</option>
+                          <option value="Balanced">Balanced</option>
+                          <option value="Detailed">Detailed</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Creativity</span>
+                        <select value={sessionPlanningDefaultsDraft.creativity || ""} onChange={(e) => updateSessionPlanningDefaultField("creativity", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
+                          <option value="Low">Low</option>
+                          <option value="Moderate">Moderate</option>
+                          <option value="High">High</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        ["Interactive facilitation", "teachingStyle", "Interactive facilitation"],
+                        ["Direct instruction", "teachingStyle", "Direct instruction"],
+                        ["Guided discussion", "teachingStyle", "Guided discussion"],
+                        ["Hands-on activity", "teachingStyle", "Hands-on activity"],
+                        ["Remember + Understand", "bloomsTaxonomyEmphasis", "Remember + Understand"],
+                        ["Apply + Analyze", "bloomsTaxonomyEmphasis", "Apply + Analyze"],
+                        ["Evaluate + Create", "bloomsTaxonomyEmphasis", "Evaluate + Create"],
+                        ["Blackboard", "teachingResources", "Blackboard"],
+                        ["Charts / models", "teachingResources", "Charts / models"],
+                        ["Low-cost classroom activity", "teachingResources", "Low-cost classroom activity"],
+                        ["Projector / PPT", "teachingResources", "Projector / PPT"],
+                      ].map(([label, field, value]) => {
+                        const fieldName = field as "teachingStyle" | "bloomsTaxonomyEmphasis" | "teachingResources";
+                        const active = (teachingStrategyDraft[fieldName] || []).includes(value);
+                        return (
+                          <button
+                            key={`${field}-${value}`}
+                            type="button"
+                            onClick={() => toggleTeachingStrategyArrayValue(fieldName, value)}
+                            className={`rounded-2xl border px-3 py-3 text-left text-xs font-semibold transition ${active ? "border-[#36ADAA] bg-[#36ADAA]/8 text-[#2B3437]" : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"}`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        ["Include real-world connections", "includeRealWorldConnections"],
+                        ["Include differentiation", "includeDifferentiation"],
+                        ["Include formative assessment", "includeFormativeAssessment"],
+                        ["Include homework", "includeHomework"],
+                        ["Include teacher notes", "includeTeacherNotes"],
+                      ].map(([label, field]) => (
+                        <label key={field} className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-xs font-semibold text-slate-600">
                           <input
-                            type="number"
-                            min={1}
-                            max={100}
-                            value={sessionConfig.sessionCount}
-                            onChange={(e) => {
-                              const val = Math.max(1, Math.min(100, Number(e.target.value) || 1));
-                              setSessionConfig(prev => ({ ...prev, sessionCount: val }));
-                            }}
-                            className="w-16 px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs text-center font-extrabold text-[#36ADAA] focus:outline-hidden focus:ring-1 focus:ring-[#36ADAA]"
+                            type="checkbox"
+                            checked={Boolean(sessionPlanningDefaultsDraft[field as keyof SessionPlanningDefaults])}
+                            onChange={(e) => updateSessionPlanningDefaultField(field as keyof SessionPlanningDefaults, e.target.checked)}
+                            className="accent-[#36ADAA]"
                           />
-                          <span className="text-xs text-slate-400 font-semibold">sessions</span>
+                          <span>{label}</span>
+                        </label>
+                      ))}
+                    </div>
+
+                    <label className="space-y-1 block">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Special Instructions</span>
+                      <textarea value={teachingStrategyDraft.specialInstructions || ""} onChange={(e) => updateTeachingStrategyField("specialInstructions", e.target.value)} className="min-h-24 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="Any classroom constraints, pedagogy preferences, or teacher notes to carry into session generation." />
+                    </label>
+
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={handleSaveSessionStrategy} className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]">
+                        <Settings className="w-3.5 h-3.5" />
+                        Save Session Setup
+                      </button>
+                      <button onClick={handleRecommendSessionAllocation} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#36ADAA] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#36ADAA]/90">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        Generate Chapter Allocation
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-bold text-[#586A71]">Band C</div>
+                        <h3 className="text-xl font-display font-extrabold text-slate-800">Approval & Readiness</h3>
+                        <p className="text-xs text-slate-500">One approval action controls the Phase 3 lock and unlocks Phase 4.</p>
+                      </div>
+                      <span className={`rounded-full px-3 py-1 text-[11px] font-bold ${sessionPlanApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                        {sessionPlanApproved ? "Approved" : sessionAllocationDraftDirty || sessionStrategyDirty ? "Unsaved Changes" : "Awaiting Approval"}
+                      </span>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-3">
+                      <div className="text-sm font-display font-black text-slate-800">Active Term</div>
+                      <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-600">
+                        <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-500 border border-slate-200">{selectedTermRow.className || "Curriculum"}</span>
+                        <span className="font-display font-black text-slate-800">{selectedTermRow.term}</span>
+                        <span>{selectedTermRow.chapters.length} chapters</span>
+                        <span>{selectedTermRow.marks} marks</span>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-3">
+                      <div className="text-sm font-display font-black text-slate-800">Capacity Summary</div>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="rounded-2xl border border-slate-100 bg-white px-3 py-3">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Annual Subject Sessions</div>
+                          <div className="mt-1 text-lg font-display font-black text-slate-800">{selectedTermCapacity.annualSubjectSessions}</div>
+                        </div>
+                        <div className="rounded-2xl border border-slate-100 bg-white px-3 py-3">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Selected Term Capacity</div>
+                          <div className="mt-1 text-lg font-display font-black text-slate-800">{selectedTermCapacity.termCapacity}</div>
+                        </div>
+                        <div className="rounded-2xl border border-slate-100 bg-white px-3 py-3">
+                          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Allocated Sessions</div>
+                          <div className="mt-1 text-lg font-display font-black text-slate-800">{sessionAllocationValidation.allocatedSessions}</div>
                         </div>
                       </div>
-                      <input
-                        type="range"
-                        min={1}
-                        max={30}
-                        value={sessionConfig.sessionCount}
-                        onChange={(e) => setSessionConfig(prev => ({ ...prev, sessionCount: Number(e.target.value) }))}
-                        className="w-full accent-[#36ADAA]"
-                      />
+                      <p className="text-xs text-slate-500">
+                        Baseline capacity uses `working days / 5 * weekly periods`: {selectedTermCapacity.workingDays || 0} / {selectedTermCapacity.schoolDaysPerWeek} * {selectedTermCapacity.weeklyPeriods} = {selectedTermCapacity.annualSubjectSessions}.
+                      </p>
                     </div>
-                  </div>
 
-                  {/* Durations */}
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                      Session Duration
-                    </label>
-
-                    {/* Interactive Numerical Duration Decider */}
-                    <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2.5 bg-slate-50">
-                      <div className="flex items-center justify-between gap-4">
-                        <span className="text-xs text-slate-500 font-medium font-display font-bold">Minutes per Session:</span>
-                        <div className="flex items-center gap-1.5">
-                          <input
-                            type="number"
-                            min={5}
-                            max={300}
-                            value={sessionConfig.durationMinutes}
-                            onChange={(e) => {
-                              const val = Math.max(1, Math.min(600, Number(e.target.value) || 1));
-                              setSessionConfig(prev => ({ ...prev, durationMinutes: val }));
-                            }}
-                            className="w-16 px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs text-center font-extrabold text-[#36ADAA] focus:outline-hidden focus:ring-1 focus:ring-[#36ADAA]"
-                          />
-                          <span className="text-xs text-slate-400 font-semibold">minutes</span>
-                        </div>
+                    {(sessionStrategyDirty || sessionAllocationDraftDirty || !sessionAllocationValidation.valid) && (
+                      <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800 space-y-1">
+                        {sessionStrategyDirty && <div className="font-semibold">Session setup has unsaved changes.</div>}
+                        {sessionAllocationDraftDirty && <div className="font-semibold">Chapter allocations have unsaved edits.</div>}
+                        {!sessionAllocationValidation.valid && <div>{sessionAllocationValidation.issues[0]}</div>}
                       </div>
-                      <input
-                        type="range"
-                        min={5}
-                        max={180}
-                        step={5}
-                        value={sessionConfig.durationMinutes <= 180 ? sessionConfig.durationMinutes : 180}
-                        onChange={(e) => setSessionConfig(prev => ({ ...prev, durationMinutes: Number(e.target.value) }))}
-                        className="w-full accent-[#36ADAA]"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+                    )}
 
-              {/* Box 2: Specific things in sessions (Checkboxes) */}
-              <div className="bg-white p-6 rounded-3xl border-2 border-slate-100 shadow-xs lg:col-span-2 space-y-5">
-                <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-[#3CC583]/15 flex items-center justify-center text-[#3CC583]">
-                      <Settings className="w-4 h-4" />
-                    </div>
-                    <h3 className="font-display font-extrabold text-slate-800 text-sm">Include Specific Session Deliverables</h3>
-                  </div>
-                  <span className="text-xs text-slate-400">Checkbox elements requested</span>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Item 1 */}
-                  <div
-                    onClick={() => setSessionConfig(prev => ({ ...prev, includeLearningOutcomes: !prev.includeLearningOutcomes }))}
-                    className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3 select-none ${
-                      sessionConfig.includeLearningOutcomes
-                        ? "border-[#36ADAA] bg-[#36ADAA]/5"
-                        : "border-slate-100 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="mt-0.5 shrink-0">
-                      {sessionConfig.includeLearningOutcomes ? (
-                        <div className="w-5 h-5 bg-[#36ADAA] rounded-md flex items-center justify-center text-white">
-                          <Check className="w-3.5 h-3.5" />
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-3">
+                      <div className="text-sm font-display font-black text-slate-800">Phase 3 Checklist</div>
+                      {[
+                        { label: "Phase 2 approved", complete: coursePlanApproved },
+                        { label: "Session setup saved", complete: !sessionStrategyDirty },
+                        { label: "Recommendations generated", complete: recommendedSessionAllocations.length > 0 },
+                        { label: "Allocations saved", complete: savedSessionAllocations.length > 0 },
+                        { label: "Draft matches saved plan", complete: !sessionAllocationDraftDirty },
+                        { label: "Allocation valid", complete: sessionAllocationValidation.valid },
+                      ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                          <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full ${item.complete ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                            {item.complete ? <Check className="w-3 h-3" /> : <AlertCircle className="w-3 h-3" />}
+                          </span>
+                          <span>{item.label}</span>
                         </div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white" />
-                      )}
+                      ))}
                     </div>
-                    <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Learning Outcomes</h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-normal">
-                        Specific targets mapping Bloom's taxonomy behavior indicators.
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* Item 2 */}
-                  <div
-                    onClick={() => setSessionConfig(prev => ({ ...prev, includeIntroduction: !prev.includeIntroduction }))}
-                    className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3 select-none ${
-                      sessionConfig.includeIntroduction
-                        ? "border-[#36ADAA] bg-[#36ADAA]/5"
-                        : "border-slate-100 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="mt-0.5 shrink-0">
-                      {sessionConfig.includeIntroduction ? (
-                        <div className="w-5 h-5 bg-[#36ADAA] rounded-md flex items-center justify-center text-white">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white" />
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Introduction & Hooks</h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-normal">
-                        Montessori physical starter tasks, brainstorming queries and inquiry games.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Item 3 */}
-                  <div
-                    onClick={() => setSessionConfig(prev => ({ ...prev, includeTheory: !prev.includeTheory }))}
-                    className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3 select-none ${
-                      sessionConfig.includeTheory
-                        ? "border-[#36ADAA] bg-[#36ADAA]/5"
-                        : "border-slate-100 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="mt-0.5 shrink-0">
-                      {sessionConfig.includeTheory ? (
-                        <div className="w-5 h-5 bg-[#36ADAA] rounded-md flex items-center justify-center text-white">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white" />
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Theory Core Explanations</h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-normal">
-                        Definitions, key concepts, detailed pedagogical paragraphs and analogies.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Item 4 */}
-                  <div
-                    onClick={() => setSessionConfig(prev => ({ ...prev, includeAssessments: !prev.includeAssessments }))}
-                    className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3 select-none ${
-                      sessionConfig.includeAssessments
-                        ? "border-[#36ADAA] bg-[#36ADAA]/5"
-                        : "border-slate-100 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="mt-0.5 shrink-0">
-                      {sessionConfig.includeAssessments ? (
-                        <div className="w-5 h-5 bg-[#36ADAA] rounded-md flex items-center justify-center text-white">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white" />
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Assessment + Key</h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-normal">
-                        Immediate check-for-understanding quiz prompts with explicit solution keys.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Item 5 */}
-                  <div
-                    onClick={() => setSessionConfig(prev => ({ ...prev, includeAssignments: !prev.includeAssignments }))}
-                    className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3 select-none ${
-                      sessionConfig.includeAssignments
-                        ? "border-[#36ADAA] bg-[#36ADAA]/5"
-                        : "border-slate-100 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="mt-0.5 shrink-0">
-                      {sessionConfig.includeAssignments ? (
-                        <div className="w-5 h-5 bg-[#36ADAA] rounded-md flex items-center justify-center text-white">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white" />
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Assignments + Rubrics Key</h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-normal">
-                        Longer study questions, evaluation metrics guidelines, and teacher scoring examples.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Item 6 */}
-                  <div
-                    onClick={() => setSessionConfig(prev => ({ ...prev, includeNotes: !prev.includeNotes }))}
-                    className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3 select-none ${
-                      sessionConfig.includeNotes
-                        ? "border-[#36ADAA] bg-[#36ADAA]/5"
-                        : "border-slate-100 hover:border-slate-300"
-                    }`}
-                  >
-                    <div className="mt-0.5 shrink-0">
-                      {sessionConfig.includeNotes ? (
-                        <div className="w-5 h-5 bg-[#36ADAA] rounded-md flex items-center justify-center text-white">
-                          <Check className="w-3.5 h-3.5" />
-                        </div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-md border-2 border-slate-300 bg-white" />
-                      )}
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-slate-800 text-sm">Interactive Slide-Deck Notes</h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-normal">
-                        Automated structured PowerPoint (PPT), PDF references, and DOCX document scaffolds.
-                      </p>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={handleSaveSessionAllocation} disabled={sessionAllocationDraft.length === 0 || !sessionAllocationValidation.valid} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${sessionAllocationDraft.length === 0 || !sessionAllocationValidation.valid ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"}`}>
+                        <CheckSquare className="w-3.5 h-3.5" />
+                        Save Chapter Allocation
+                      </button>
+                      <button onClick={handleApproveSessionAllocation} disabled={savedSessionAllocations.length === 0 || sessionStrategyDirty || sessionAllocationDraftDirty || !sessionAllocationValidation.valid || sessionPlanApproved} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${savedSessionAllocations.length === 0 || sessionStrategyDirty || sessionAllocationDraftDirty || !sessionAllocationValidation.valid || sessionPlanApproved ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"}`}>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        {sessionPlanApproved ? "Approved" : "Approve Session Plan"}
+                      </button>
+                      <button
+                        onClick={() => setActiveStep(4)}
+                        disabled={!sessionPlanApproved}
+                        className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${!sessionPlanApproved ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "bg-[#2B3437] text-white hover:bg-[#2B3437]/90 shadow-xs"}`}
+                      >
+                        <ArrowRight className="w-3.5 h-3.5" />
+                        Go to Content Generation
+                      </button>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-                  <button
-                    onClick={handleGenerateOutline}
-                    className="w-full sm:w-auto sm:ml-auto bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-extrabold text-sm py-4 px-8 rounded-2xl shadow-md hover:shadow-lg hover:shadow-teal-100 transition-all flex items-center justify-center gap-2"
-                  >
-                    <Sparkles className="w-4 h-4 text-[#E0CB15] animate-spin" />
-                    Generate Roadmap
-                  </button>
-                </div>
-              </div>
+                <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs space-y-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <div className="text-xs font-bold text-[#586A71]">Band B</div>
+                      <h3 className="text-xl font-display font-extrabold text-slate-800">Chapter Session Allocation</h3>
+                      <p className="text-xs text-slate-500">Generate or edit integer session counts for each chapter in the approved term.</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button onClick={handleResetSessionAllocationToRecommendations} disabled={recommendedSessionAllocations.length === 0} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${recommendedSessionAllocations.length === 0 ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"}`}>
+                        <RotateCcw className="w-3.5 h-3.5" />
+                        Reset To Recommendations
+                      </button>
+                    </div>
+                  </div>
 
-            </div>
+                  {sessionAllocationDraft.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
+                      Save the Phase 3 setup, then generate chapter-level session recommendations for the selected term.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {sessionAllocationDraft
+                        .slice()
+                        .sort((a, b) => Number(a.sequence || 0) - Number(b.sequence || 0))
+                        .map((allocation, index) => (
+                          <div key={allocation.id || `${allocation.chapterName}-${index}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                            <div className="flex flex-wrap items-center justify-between gap-3">
+                              <div>
+                                <div className="text-sm font-display font-black text-slate-800">{allocation.chapterName}</div>
+                                <div className="text-[11px] font-semibold text-slate-500">Sequence {allocation.sequence || index + 1}</div>
+                              </div>
+                              <div className="text-xs font-semibold text-slate-500">{allocation.estimatedMinutes || 0} minutes</div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                              <label className="space-y-1">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Chapter</span>
+                                <input value={allocation.chapterName || ""} onChange={(e) => updateSessionAllocationDraft(index, "chapterName", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" />
+                              </label>
+                              <label className="space-y-1">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Order</span>
+                                <input type="number" min={1} value={allocation.sequence ?? index + 1} onChange={(e) => updateSessionAllocationDraft(index, "sequence", e.target.value ? Number(e.target.value) : index + 1)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" />
+                              </label>
+                              <label className="space-y-1">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Estimated Sessions</span>
+                                <input type="number" min={1} value={allocation.estimatedSessions ?? ""} onChange={(e) => updateSessionAllocationDraft(index, "estimatedSessions", e.target.value ? Number(e.target.value) : 1)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" />
+                              </label>
+                              <label className="space-y-1">
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Estimated Minutes</span>
+                                <input value={Number(allocation.estimatedSessions || 0) * Number(sessionPlanningDefaultsDraft.sessionDurationMinutes || academicConfigDraft.periodDurationMinutes || 45)} readOnly className="w-full rounded-xl border border-slate-200 bg-slate-100 px-3 py-2 text-sm text-slate-600 focus:outline-none" />
+                              </label>
+                            </div>
+
+                            <label className="space-y-1 block">
+                              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Rationale</span>
+                              <textarea value={allocation.rationale || allocation.reasoning || ""} onChange={(e) => updateSessionAllocationDraft(index, "rationale", e.target.value)} className="min-h-24 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" />
+                            </label>
+                          </div>
+                        ))}
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </div>
@@ -3639,23 +4453,52 @@ export default function App() {
         {/* -------------------- STEP 4: DELIVERABLE PLANS DISPLAY DASHBOARD -------------------- */}
         {activeStep === 4 && (
           <div className="space-y-6 animate-fadeIn">
-            {!selectedTermRow || sessionsOutline.length === 0 ? (
+            {!sessionPlanApproved ? (
+              <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
+                <div className="w-16 h-16 bg-amber-100 rounded-3xl flex items-center justify-center text-amber-700 mx-auto">
+                  <FileText className="w-8 h-8" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="font-display font-extrabold text-[#2B3437] text-xl">
+                    Approve Phase 3 First
+                  </h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">
+                    Content Generation unlocks only after the Phase 3 session plan is saved and approved for the selected term.
+                  </p>
+                </div>
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setActiveStep(3)}
+                    className="px-5 py-3 bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-bold rounded-xl text-xs transition cursor-pointer"
+                  >
+                    Return to Session Planning
+                  </button>
+                </div>
+              </div>
+            ) : !selectedTermRow || sessionsOutline.length === 0 ? (
               <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
                 <div className="w-16 h-16 bg-[#36ADAA]/15 rounded-3xl flex items-center justify-center text-[#36ADAA] mx-auto">
                   <Sparkles className="w-8 h-8 animate-pulse" />
                 </div>
                 <div className="space-y-2">
                   <h3 className="font-display font-extrabold text-[#2B3437] text-xl">
-                    No Session Roadmap Generated Yet
+                    No Content Bundle Generated Yet
                   </h3>
                   <p className="text-sm text-slate-500 leading-relaxed">
-                    You need to generate a lesson plan timeline in Step 3 to view the delivery dashboard.
+                    Phase 3 is approved for <span className="font-semibold text-slate-700">{selectedTermRow?.term || "the selected term"}</span>. The content dashboard still needs a generated session roadmap before individual lesson packs appear here.
                   </p>
+                  {selectedTermRow && (
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-xs text-slate-600 space-y-1">
+                      <div className="font-semibold text-slate-800">{selectedTermRow.term} session plan</div>
+                      <div>{selectedTermRow.chapters.length} chapters</div>
+                      <div>{selectedTermSessionCount} planned sessions</div>
+                    </div>
+                  )}
                 </div>
                 <div className="flex justify-center">
                   <button
                     onClick={() => {
-                      if (selectedTermRow) {
+                      if (selectedTermRow && sessionPlanApproved) {
                         setActiveStep(3);
                       } else if (termsList.length > 0) {
                         setActiveStep(2);
@@ -3665,7 +4508,7 @@ export default function App() {
                     }}
                     className="px-5 py-3 bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-bold rounded-xl text-xs transition cursor-pointer"
                   >
-                    {selectedTermRow ? "Go to Step 3: Specs" : termsList.length > 0 ? "Go to Step 2: Terms" : "Go to Step 1: Upload"}
+                    {selectedTermRow ? "Review Approved Session Plan" : termsList.length > 0 ? "Go to Step 2: Terms" : "Go to Step 1: Upload"}
                   </button>
                 </div>
               </div>
@@ -3697,14 +4540,14 @@ export default function App() {
                       <span className="text-[10px] uppercase font-extrabold px-2.5 py-1 rounded bg-[#E9CAB7] text-[#586A71]">
                         {extractedData?.subject} ({extractedData?.gradeLevel})
                       </span>
-                      <span className="text-xs text-slate-400">Total sessions: {sessionConfig.sessionCount}</span>
+                      <span className="text-xs text-slate-400">Planned sessions: {selectedTermSessionCount}</span>
                     </div>
                     <div>
                       <h2 className="text-xl md:text-2xl font-display font-black text-slate-800 tracking-tight">
                         Academic Timeline: {selectedTermRow.term}
                       </h2>
                       <p className="text-slate-500 text-xs">
-                        Review lesson plan, download study outlines, and explore PPT presentation grids.
+                        Review generated lesson packs, study outlines, and presentation assets for the approved session plan.
                       </p>
                     </div>
                   </div>
@@ -3714,7 +4557,7 @@ export default function App() {
                       className="py-2.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
                     >
                       <Play className="w-3.5 h-3.5" />
-                      Generate All
+                      Generate All Session Packs
                     </button>
 
                     <button
@@ -3722,7 +4565,7 @@ export default function App() {
                       className="py-2.5 px-4 rounded-xl bg-[#586A71] hover:bg-[#586A71]/90 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
                     >
                       <Printer className="w-3.5 h-3.5" />
-                      Print Outlines
+                      Print Session View
                     </button>
                   </div>
                 </div>
@@ -3735,7 +4578,7 @@ export default function App() {
               {/* Left Column: List of sessions roadmaps */}
               <div className="space-y-3 lg:col-span-1 no-print">
                 <div className="bg-[#36ADAA] text-white p-4 rounded-2xl flex items-center justify-between shadow-xs">
-                  <span className="text-xs font-bold uppercase tracking-wider">Lesson Plans Roadmap</span>
+                  <span className="text-xs font-bold uppercase tracking-wider">Approved Session Roadmap</span>
                   <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-mono font-bold">
                     {Object.keys(generatedSessions).length} / {sessionsOutline.length} Ready
                   </span>
@@ -3786,8 +4629,8 @@ export default function App() {
                               <CheckCircle2 className="w-3 h-3" /> Fully Prepared
                             </span>
                           ) : (
-                            <span className="text-[10px] text-orange-500 font-bold flex items-center gap-1">
-                              <RotateCcw className="w-3 h-3 animate-spin" /> Draft (Click to prepare)
+                              <span className="text-[10px] text-orange-500 font-bold flex items-center gap-1">
+                              <RotateCcw className="w-3 h-3 animate-spin" /> Ready to generate
                             </span>
                           )}
 
@@ -3818,7 +4661,7 @@ export default function App() {
                           <div className="space-y-1">
                             <div className="flex items-center gap-2">
                               <span className="bg-[#E9CAB7] text-[#2B3437] text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded">
-                                Session Plan {session.sessionNumber} of {sessionConfig.sessionCount}
+                                Session Plan {session.sessionNumber} of {selectedTermSessionCount}
                               </span>
                               <span className="text-xs text-slate-300">
                                 Duration Block: {session.duration} minutes
@@ -3830,6 +4673,34 @@ export default function App() {
                             <p className="text-xs text-slate-300">
                               Active Standard Target Focus: {selectedTermRow.unitName}
                             </p>
+                          </div>
+
+                          <div className="no-print space-y-3">
+                            <div className="rounded-2xl border border-white/15 bg-white/10 p-3">
+                              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-200">
+                                Generate only selected sections
+                              </div>
+                              <div className="mt-2 grid grid-cols-2 gap-2">
+                                {sessionSectionOptions.map((option) => (
+                                  <label key={option.key} className="flex items-center gap-2 text-[11px] font-semibold text-white/90">
+                                    <input
+                                      type="checkbox"
+                                      checked={Boolean(sessionSectionSelection[option.key])}
+                                      onChange={(e) => updateSessionSectionSelection(option.key, e.target.checked)}
+                                      className="h-3.5 w-3.5 rounded border-white/30 bg-transparent accent-[#E9CAB7]"
+                                    />
+                                    <span>{option.label}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => void handleRegenerateActiveSession()}
+                              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white transition hover:bg-white/15"
+                            >
+                              <RotateCcw className="w-3.5 h-3.5" />
+                              Regenerate Selected Content
+                            </button>
                           </div>
                         </div>
 
@@ -3862,8 +4733,445 @@ export default function App() {
                           {/* SUB TAB: Pedagogy Theory */}
                           {activeSubTab === "theory" && (
                             <div className="space-y-6 animate-fadeIn">
+                              {session.teacherLessonNotes && (
+                                <div className="p-5 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center text-slate-700">
+                                      <BookOpen className="w-4 h-4" />
+                                    </div>
+                                    <h4 className="font-display font-extrabold text-slate-800 text-sm">Teacher Lesson Notes</h4>
+                                  </div>
+                                  {!!session.teacherLessonNotes.prerequisiteKnowledge?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Prerequisite Knowledge</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.prerequisiteKnowledge.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.previousSessionRecap?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Previous Session Recap</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.previousSessionRecap.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.teachingSequence?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Teaching Sequence</div>
+                                      <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
+                                        {session.teacherLessonNotes.teachingSequence.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ol>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.guidedPractice?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Guided Practice</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.guidedPractice.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.lessonPurpose?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Lesson Purpose</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.lessonPurpose.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.conceptFlow?.length && (
+                                    <div className="space-y-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Concept Flow</div>
+                                      {session.teacherLessonNotes.conceptFlow.map((concept, idx) => (
+                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 space-y-2">
+                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(concept.conceptName)}</div>
+                                          {concept.definition && <p className="text-xs text-slate-600"><span className="font-semibold text-slate-700">Definition:</span> {formatRenderableText(concept.definition)}</p>}
+                                          {concept.coreExplanation && <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(concept.coreExplanation)}</p>}
+                                          {!!concept.teacherMoves?.length && (
+                                            <div>
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Teacher Moves</div>
+                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                                {concept.teacherMoves.map((item, moveIdx) => <li key={moveIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!concept.examples?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-semibold text-slate-700">Examples:</span> {concept.examples.map((item) => formatRenderableText(item)).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!concept.visuals?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-semibold text-slate-700">Visuals:</span> {concept.visuals.map((item) => formatRenderableText(item)).join("; ")}
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.classroomQuestions?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Classroom Questions</div>
+                                      <div className="space-y-2">
+                                        {session.teacherLessonNotes.classroomQuestions.map((question, idx) => (
+                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-1">
+                                            <div className="font-semibold text-slate-800">{formatRenderableText(question.question)}</div>
+                                            {question.level && <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{formatRenderableText(question.level)}</div>}
+                                            {question.expectedResponse && <div><span className="font-semibold text-slate-700">Expected response:</span> {formatRenderableText(question.expectedResponse)}</div>}
+                                            {!!question.answerPoints?.length && (
+                                              <ul className="list-disc list-inside space-y-1 text-slate-600">
+                                                {question.answerPoints.map((item, pointIdx) => <li key={pointIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            )}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.timePlan?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Time Plan</div>
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                        {session.teacherLessonNotes.timePlan.map((block, idx) => (
+                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700">
+                                            <div className="flex items-center justify-between gap-2">
+                                              <span className="font-semibold text-slate-800">{formatRenderableText(block.segment)}</span>
+                                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">{formatRenderableText(block.minutes)} min</span>
+                                            </div>
+                                            {block.purpose && <div className="mt-1 text-slate-600">{formatRenderableText(block.purpose)}</div>}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.formativeChecks?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Formative Checks</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.formativeChecks.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.sessionSummary?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Summary</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.sessionSummary.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.nextSessionBridge?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Next Session Bridge</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.nextSessionBridge.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {session.studentLessonNotes && (
+                                <div className="p-5 bg-[#9FCDD2]/10 border border-[#9FCDD2]/35 rounded-3xl space-y-4">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-[#9FCDD2]/30 flex items-center justify-center text-[#2B3437]">
+                                      <GraduationCap className="w-4 h-4" />
+                                    </div>
+                                    <h4 className="font-display font-extrabold text-slate-800 text-sm">Student Lesson Notes</h4>
+                                  </div>
+                                  {session.studentLessonNotes.introduction && (
+                                    <p className="text-xs text-slate-700 leading-relaxed">{session.studentLessonNotes.introduction}</p>
+                                  )}
+                                  {!!session.studentLessonNotes.learningObjectives?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Learning Objectives</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.learningObjectives.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.quickRecall?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Recall</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.quickRecall.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.sections?.length && (
+                                    <div className="space-y-3">
+                                      {session.studentLessonNotes.sections.map((section, idx) => (
+                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 space-y-2">
+                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(section.heading)}</div>
+                                          <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(section.explanation)}</p>
+                                          {section.whyItMatters && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Why it matters:</span> {formatRenderableText(section.whyItMatters)}
+                                            </div>
+                                          )}
+                                          {section.detailedExplanation && (
+                                            <p className="text-xs text-slate-600 leading-relaxed">{formatRenderableText(section.detailedExplanation)}</p>
+                                          )}
+                                          {!!section.keyPoints?.length && (
+                                            <ul className="text-xs text-slate-600 list-disc list-inside space-y-1">
+                                              {section.keyPoints.map((point, pointIdx) => <li key={pointIdx}>{formatRenderableText(point)}</li>)}
+                                            </ul>
+                                          )}
+                                          {!!section.examples?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Examples:</span> {section.examples.map((example) => formatRenderableText(example)).filter(Boolean).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!section.terminology?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Terminology:</span> {section.terminology.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!section.visualSupport?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Visual support:</span> {section.visualSupport.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!section.importantNotes?.length && (
+                                            <div className="rounded-xl bg-amber-50 border border-amber-100 px-3 py-2">
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">Important Notes</div>
+                                              <ul className="text-xs text-amber-900 list-disc list-inside space-y-1">
+                                                {section.importantNotes.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!section.memoryTechniques?.length && (
+                                            <div className="rounded-xl bg-sky-50 border border-sky-100 px-3 py-2">
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-sky-700 mb-1">Memory Techniques</div>
+                                              <ul className="text-xs text-sky-900 list-disc list-inside space-y-1">
+                                                {section.memoryTechniques.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!section.conceptSummary?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Concept summary:</span> {section.conceptSummary.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.definitions?.length && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                      {session.studentLessonNotes.definitions.map((definition, idx) => (
+                                        <div key={idx} className="bg-white p-3 rounded-2xl border border-slate-100">
+                                          <div className="text-xs font-extrabold text-slate-800">{formatRenderableText(definition.term)}</div>
+                                          <div className="text-xs text-slate-600 mt-1">{formatRenderableText(definition.definition)}</div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.workedExamples?.length && (
+                                    <div className="space-y-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Worked Examples</div>
+                                      {session.studentLessonNotes.workedExamples.map((example, idx) => (
+                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 space-y-2">
+                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(example.title)}</div>
+                                          {!!example.steps?.length && (
+                                            <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
+                                              {example.steps.map((step, stepIdx) => <li key={stepIdx}>{formatRenderableText(step)}</li>)}
+                                            </ol>
+                                          )}
+                                          {example.explanation && <p className="text-xs text-slate-600 leading-relaxed">{formatRenderableText(example.explanation)}</p>}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {session.studentLessonNotes.revisionSection && (
+                                    <div className="rounded-2xl border border-slate-100 bg-white p-4 space-y-2">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Revision Section</div>
+                                      {!!session.studentLessonNotes.revisionSection.definitions?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Definitions:</span> {session.studentLessonNotes.revisionSection.definitions.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.formulas?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Formulas:</span> {session.studentLessonNotes.revisionSection.formulas.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.facts?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Facts:</span> {session.studentLessonNotes.revisionSection.facts.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.keywords?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Keywords:</span> {session.studentLessonNotes.revisionSection.keywords.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.conceptMap?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Concept map:</span> {session.studentLessonNotes.revisionSection.conceptMap.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.quickRecap?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Quick recap:</span> {session.studentLessonNotes.revisionSection.quickRecap.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.selfCheckQuestions?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Self-Check Questions</div>
+                                      <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
+                                        {session.studentLessonNotes.selfCheckQuestions.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ol>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.didYouKnow?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Did You Know?</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.didYouKnow.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {session.homework && (
+                                <div className="p-5 bg-[#7F64EA]/5 border border-[#7F64EA]/20 rounded-3xl space-y-4">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-[#7F64EA]/15 flex items-center justify-center text-[#7F64EA]">
+                                      <Layers className="w-4 h-4" />
+                                    </div>
+                                    <h4 className="font-display font-extrabold text-[#7F64EA] text-sm">
+                                      Night Homework Assignment
+                                    </h4>
+                                  </div>
+
+                                  {session.homework.task ? (
+                                    <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
+                                      <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-100 text-slate-400">
+                                        <span>Task Directive</span>
+                                        {getHomeworkDisplayTime(session.homework) && (
+                                          <span className="font-mono bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded font-bold">
+                                            🕒 Expected Completion: {getHomeworkDisplayTime(session.homework)}
+                                          </span>
+                                        )}
+                                      </div>
+
+                                      <p className="text-xs text-slate-700 font-medium leading-relaxed pt-1">
+                                        {formatRenderableText(session.homework.task)}
+                                      </p>
+                                    </div>
+                                  ) : getStructuredHomeworkItems(session.homework).length > 0 ? (
+                                    <div className="space-y-4">
+                                      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs space-y-3">
+                                        <div className="flex flex-wrap justify-between gap-2 items-center text-xs pb-2 border-b border-slate-100 text-slate-400">
+                                          <span>Structured Homework Plan</span>
+                                          {getHomeworkDisplayTime(session.homework) && (
+                                            <span className="font-mono bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded font-bold">
+                                              🕒 Expected Completion: {getHomeworkDisplayTime(session.homework)}
+                                            </span>
+                                          )}
+                                        </div>
+                                        {session.homework.summary && (
+                                          <div className="grid gap-2 md:grid-cols-3 text-xs text-slate-600">
+                                            {session.homework.summary.totalQuestions != null && (
+                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
+                                                <span className="font-bold text-slate-700">Questions:</span> {formatRenderableText(session.homework.summary.totalQuestions)}
+                                              </div>
+                                            )}
+                                            {session.homework.summary.totalMarks != null && (
+                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
+                                                <span className="font-bold text-slate-700">Marks:</span> {formatRenderableText(session.homework.summary.totalMarks)}
+                                              </div>
+                                            )}
+                                            {session.homework.summary.estimatedCompletionTime && (
+                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
+                                                <span className="font-bold text-slate-700">Time:</span> {formatRenderableText(session.homework.summary.estimatedCompletionTime)}
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      {getStructuredHomeworkItems(session.homework).map((item) => (
+                                        <div key={item.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs space-y-3">
+                                          <div className="flex flex-wrap items-start justify-between gap-2">
+                                            <div>
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                                                {formatRenderableText(item.type || `Task ${item.id}`)}
+                                              </div>
+                                              <div className="font-bold text-sm text-slate-800 mt-1">
+                                                {formatRenderableText(item.title || item.question || `Homework Task ${item.id}`)}
+                                              </div>
+                                            </div>
+                                            <div className="flex flex-wrap gap-2 text-[10px]">
+                                              {item.difficulty && (
+                                                <span className="rounded-full bg-violet-50 px-2 py-1 font-bold text-violet-700">
+                                                  {formatRenderableText(item.difficulty)}
+                                                </span>
+                                              )}
+                                              {item.marks != null && (
+                                                <span className="rounded-full bg-slate-100 px-2 py-1 font-bold text-slate-700">
+                                                  {formatRenderableText(item.marks)} marks
+                                                </span>
+                                              )}
+                                              {item.estimatedTime && (
+                                                <span className="rounded-full bg-slate-100 px-2 py-1 font-bold text-slate-700">
+                                                  {formatRenderableText(item.estimatedTime)}
+                                                </span>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {item.instructions && (
+                                            <p className="text-xs text-slate-700 leading-relaxed">
+                                              <span className="font-bold text-slate-800">Instructions:</span> {formatRenderableText(item.instructions)}
+                                            </p>
+                                          )}
+                                          {item.question && (
+                                            <p className="text-xs text-slate-700 leading-relaxed">
+                                              <span className="font-bold text-slate-800">Question:</span> {formatRenderableText(item.question)}
+                                            </p>
+                                          )}
+                                          {!!item.options?.length && (
+                                            <ul className="list-disc list-inside text-xs text-slate-700 space-y-1">
+                                              {item.options.map((option, optionIdx) => (
+                                                <li key={optionIdx}>{formatRenderableText(option)}</li>
+                                              ))}
+                                            </ul>
+                                          )}
+                                          {item.answerSpace && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Answer space:</span> {formatRenderableText(item.answerSpace)}
+                                            </p>
+                                          )}
+                                          {item.visualRequirement && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Visual requirement:</span> {formatRenderableText(item.visualRequirement)}
+                                            </p>
+                                          )}
+                                          {item.expectedResponse && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Expected response:</span> {formatRenderableText(item.expectedResponse)}
+                                            </p>
+                                          )}
+                                          {!!item.topicCoverage?.length && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Topics:</span> {item.topicCoverage.map((topic) => formatRenderableText(topic)).join("; ")}
+                                            </p>
+                                          )}
+                                          {!!item.learningOutcomeIds?.length && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Learning outcomes:</span> {item.learningOutcomeIds.map((outcome) => formatRenderableText(outcome)).join("; ")}
+                                            </p>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
+                                      <p className="text-xs text-slate-500 leading-relaxed">
+                                        Homework data was returned, but it does not match a renderable homework format yet.
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
                               {/* Learning Outcomds if active */}
-                              {sessionConfig.includeLearningOutcomes && session.learningOutcomes && (
+                              {contentIncludesLearningOutcomes && session.learningOutcomes && (
                                 <div className="p-4 bg-[#9FCDD2]/15 border border-[#9FCDD2]/50 rounded-2xl space-y-1.5">
                                   <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-widest block">
                                     Target Learning Outcomes (Montessori Taxonomy Standard)
@@ -3879,7 +5187,7 @@ export default function App() {
                               )}
 
                               {/* Instruction hooks */}
-                              {sessionConfig.includeIntroduction && session.introduction && (
+                              {contentIncludesIntroduction && session.introduction && (
                                 <div className="space-y-1 p-4 bg-[#E9CAB7]/20 border border-[#E9CAB7]/50 rounded-2xl">
                                   <div className="flex items-center gap-1 text-amber-900 font-extrabold text-xs uppercase tracking-wider">
                                     <Sparkles className="w-3.5 h-3.5 text-[#DE8431]" />
@@ -3892,7 +5200,7 @@ export default function App() {
                               )}
 
                               {/* Primary Theory Sections */}
-                              {sessionConfig.includeTheory && session.theory && (
+                              {contentIncludesTheory && session.theory && (
                                 <div className="space-y-4">
                                   <div>
                                     <h4 className="text-sm font-black text-slate-800 uppercase tracking-wider pb-1 border-b border-slate-100">
@@ -4013,43 +5321,274 @@ export default function App() {
                               {/* PPT Template Material */}
                               {activeMaterialTab === "ppt" && session.materials?.ppt && (
                                 <div className="space-y-4">
-                                  <div className="p-3 bg-orange-50 border border-[#DE8431]/20 rounded-xl flex items-center gap-2.5 text-xs text-[#DE8431]">
-                                    <Info className="w-4 h-4 shrink-0" />
-                                    <span>Presentation Outline: Real presentation slides generated to map exactly to lessons.</span>
+                                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                    <div className="p-3 bg-orange-50 border border-[#DE8431]/20 rounded-xl flex items-center gap-2.5 text-xs text-[#DE8431] flex-1">
+                                      <Info className="w-4 h-4 shrink-0" />
+                                      <span>Presentation Outline: Real presentation slides generated to map exactly to lessons.</span>
+                                    </div>
+                                    <button
+                                      onClick={() => handleExportPptSlidesPdf(session.materials?.ppt)}
+                                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                    >
+                                      <Download className="w-3.5 h-3.5" />
+                                      Export Slides PDF
+                                    </button>
                                   </div>
 
-                                  <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
-                                    {session.materials.ppt.slides.map((slide, sIdx) => {
-                                      // Cycle accent colors for slide heads
-                                      const accents = ["bg-[#36ADAA]", "bg-[#7F64EA]", "bg-[#1EABDA]", "bg-[#DE8431]", "bg-[#3CC583]"];
-                                      const colorClass = accents[sIdx % accents.length];
+                                  <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+                                    <h4 className="font-display font-black text-slate-800 text-base">
+                                      {getPptTitle(session.materials.ppt)}
+                                    </h4>
+                                    <div className="grid gap-2 md:grid-cols-2 text-xs text-slate-600">
+                                      {session.materials.ppt.templateName && (
+                                        <div><span className="font-bold text-slate-700">Template:</span> {formatRenderableText(session.materials.ppt.templateName)}</div>
+                                      )}
+                                      {session.materials.ppt.themeId && (
+                                        <div><span className="font-bold text-slate-700">Theme preset:</span> {formatRenderableText(session.materials.ppt.themeId)}</div>
+                                      )}
+                                    </div>
+                                    {session.materials.ppt.presentationGoal && (
+                                      <p className="text-xs text-slate-600 leading-relaxed">
+                                        <span className="font-bold text-slate-700">Goal:</span> {formatRenderableText(session.materials.ppt.presentationGoal)}
+                                      </p>
+                                    )}
+                                    <div className="grid gap-2 md:grid-cols-2 text-xs text-slate-600">
+                                      {session.materials.ppt.audience && (
+                                        <div><span className="font-bold text-slate-700">Audience:</span> {formatRenderableText(session.materials.ppt.audience)}</div>
+                                      )}
+                                      {session.materials.ppt.theme && (
+                                        <div><span className="font-bold text-slate-700">Theme:</span> {formatRenderableText(session.materials.ppt.theme)}</div>
+                                      )}
+                                    </div>
+                                    {getPptThemeSummary(session.materials.ppt) && (
+                                      <div className="text-xs text-slate-600">
+                                        <span className="font-bold text-slate-700">Theme details:</span> {getPptThemeSummary(session.materials.ppt)}
+                                      </div>
+                                    )}
+                                    {!!session.materials.ppt.coverageSummary?.learningOutcomesCovered?.length && (
+                                      <div className="text-xs text-slate-600">
+                                        <span className="font-bold text-slate-700">LO coverage:</span> {session.materials.ppt.coverageSummary.learningOutcomesCovered.map((item) => formatRenderableText(item)).join("; ")}
+                                      </div>
+                                    )}
+                                    {!!session.materials.ppt.coverageSummary?.topicsCovered?.length && (
+                                      <div className="text-xs text-slate-600">
+                                        <span className="font-bold text-slate-700">Topics:</span> {session.materials.ppt.coverageSummary.topicsCovered.map((item) => formatRenderableText(item)).join("; ")}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
+                                    {getPptSlides(session.materials.ppt).map((slide, sIdx) => {
+                                      const accent = getPptAccentStyle(sIdx);
+                                      const primaryAsset = getPrimaryPptAsset(slide);
+                                      const hasSvgPreview = Boolean(slide.svgDiagram?.svgCode && slide.svgDiagram.svgCode.trim().startsWith("<svg"));
                                       
                                       return (
-                                        <div key={sIdx} className="bg-slate-900 text-white rounded-2xl border border-slate-800 overflow-hidden shadow-sm">
-                                          {/* Slide title bar */}
-                                          <div className={`p-3 ${colorClass} text-white flex justify-between items-center`}>
-                                            <span className="font-display font-black text-xs">
-                                              Slide #{sIdx + 1} - {slide.slideTitle}
-                                            </span>
-                                            <span className="text-[9px] bg-white/20 px-1.5 py-0.5 rounded font-mono">
-                                              16:9 Screen
-                                            </span>
+                                        <div key={sIdx} className="space-y-3">
+                                          <div className="rounded-[28px] border border-slate-200 bg-[#eef4f7] p-4 shadow-sm">
+                                            <div className="mb-3 flex items-center justify-between px-1">
+                                              <div className="flex items-center gap-2">
+                                                <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-black text-white ${accent.bar}`}>
+                                                  {slide.slideNumber || sIdx + 1}
+                                                </span>
+                                                <div>
+                                                  <div className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+                                                    {formatRenderableText(slide.templateSlideTitle || "PowerPoint Slide Preview")}
+                                                  </div>
+                                                  <div className="text-sm font-display font-black text-slate-800">
+                                                    {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div className="flex flex-col items-end gap-1">
+                                                <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${accent.soft} ${accent.text}`}>
+                                                  {formatRenderableText(slide.slideType || "concept")}
+                                                </span>
+                                                {slide.templateSlideKey && (
+                                                  <span className="text-[10px] font-mono text-slate-400">
+                                                    {formatRenderableText(slide.templateSlideKey)}
+                                                  </span>
+                                                )}
+                                              </div>
+                                            </div>
+
+                                            <div className="aspect-video overflow-hidden rounded-[22px] border border-slate-300 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
+                                              <div className={`h-4 w-full ${accent.bar}`} />
+                                              <div className="grid h-[calc(100%-1rem)] grid-cols-5 gap-0">
+                                                <div className="col-span-3 flex flex-col px-8 py-7">
+                                                  <div className="mb-5">
+                                                    <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                                      {getPptTitle(session.materials.ppt)}
+                                                    </div>
+                                                    <h5 className="mt-2 font-display text-[clamp(1.2rem,2vw,2rem)] font-black leading-tight text-slate-900">
+                                                      {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
+                                                    </h5>
+                                                  </div>
+
+                                                  {!!slide.onSlideText?.length && (
+                                                    <div className="mb-4 flex flex-wrap gap-2">
+                                                      {slide.onSlideText.slice(0, 3).map((item, idx) => (
+                                                        <span key={idx} className={`rounded-full px-3 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
+                                                          {formatRenderableText(item)}
+                                                        </span>
+                                                      ))}
+                                                    </div>
+                                                  )}
+
+                                                  <div className="space-y-3">
+                                                    {(slide.bulletPoints || []).slice(0, 5).map((bp, bpIdx) => (
+                                                      <div key={bpIdx} className="flex items-start gap-3">
+                                                        <span className={`mt-1 inline-block h-2.5 w-2.5 rounded-full ${accent.bar}`} />
+                                                        <p className="text-[13px] leading-6 text-slate-700">
+                                                          {formatRenderableText(bp)}
+                                                        </p>
+                                                      </div>
+                                                    ))}
+                                                  </div>
+
+                                                  <div className="mt-auto pt-5">
+                                                    <div className="grid grid-cols-2 gap-3">
+                                                      {slide.studentTakeaway && (
+                                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                                                          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Takeaway</div>
+                                                          <div className="mt-1 text-[11px] leading-5 text-slate-700">
+                                                            {formatRenderableText(slide.studentTakeaway)}
+                                                          </div>
+                                                        </div>
+                                                      )}
+                                                      {slide.timeEstimateMinutes != null && (
+                                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                                                          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Timing</div>
+                                                          <div className="mt-1 text-[11px] leading-5 text-slate-700">
+                                                            {formatRenderableText(slide.timeEstimateMinutes)} minutes
+                                                          </div>
+                                                        </div>
+                                                      )}
+                                                    </div>
+                                                  </div>
+                                                </div>
+
+                                                <div className="col-span-2 border-l border-slate-200 bg-slate-50/70 px-5 py-6">
+                                                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                                                    Visual Panel
+                                                  </div>
+                                                  <div className="mt-3 flex h-[calc(100%-1.5rem)] flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white">
+                                                    {primaryAsset?.previewUrl ? (
+                                                      <img
+                                                        src={primaryAsset.previewUrl}
+                                                        alt={primaryAsset.altText || primaryAsset.purpose || "Slide visual"}
+                                                        className="h-full w-full object-cover"
+                                                        loading="lazy"
+                                                        referrerPolicy="no-referrer"
+                                                      />
+                                                    ) : hasSvgPreview ? (
+                                                      <div
+                                                        className="flex h-full w-full items-center justify-center bg-white p-4 [&_svg]:h-full [&_svg]:w-full [&_svg]:max-h-full [&_svg]:max-w-full"
+                                                        dangerouslySetInnerHTML={{ __html: slide.svgDiagram?.svgCode || "" }}
+                                                      />
+                                                    ) : (
+                                                      <div className="flex h-full flex-col justify-between p-4">
+                                                        <div>
+                                                          <div className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
+                                                            {slide.svgDiagram?.title
+                                                              ? formatRenderableText(slide.svgDiagram.title)
+                                                              : "Planned visual"}
+                                                          </div>
+                                                          <p className="mt-3 text-xs leading-5 text-slate-600">
+                                                            {formatRenderableText(slide.visualPlan || "This slide uses a teacher-planned visual area in the final PPT.")}
+                                                          </p>
+                                                        </div>
+                                                        {!!slide.svgDiagram?.instructions?.length && (
+                                                          <ul className="space-y-2 text-[11px] leading-4 text-slate-500">
+                                                            {slide.svgDiagram.instructions.slice(0, 4).map((item, idx) => (
+                                                              <li key={idx} className="flex gap-2">
+                                                                <span className={`mt-1 inline-block h-2 w-2 rounded-full ${accent.bar}`} />
+                                                                <span>{formatRenderableText(item)}</span>
+                                                              </li>
+                                                            ))}
+                                                          </ul>
+                                                        )}
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
                                           </div>
-                                          
-                                          {/* Slide bullets body */}
-                                          <div className="p-5 space-y-2 bg-gradient-to-b from-slate-900 to-slate-950 font-mono text-xs">
-                                            <ul className="list-disc list-inside space-y-1 text-slate-300">
-                                              {slide.bulletPoints.map((bp, bpIdx) => (
-                                                <li key={bpIdx} className="leading-relaxed">
-                                                  {bp}
-                                                </li>
+
+                                          <div className="grid gap-3 md:grid-cols-2">
+                                            <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Speaker Notes</div>
+                                              {slide.teacherIntent && (
+                                                <p className="text-xs leading-relaxed text-slate-600">
+                                                  <span className="font-bold text-slate-700">Teacher intent:</span> {formatRenderableText(slide.teacherIntent)}
+                                                </p>
+                                              )}
+                                              {!!slide.speakerNotes?.length ? (
+                                                <ul className="list-disc list-inside space-y-1 text-xs text-slate-600">
+                                                  {slide.speakerNotes.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                                </ul>
+                                              ) : (
+                                                <p className="text-xs text-slate-500">No speaker notes were returned for this slide.</p>
+                                              )}
+                                            </div>
+
+                                            <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Visual & Attribution</div>
+                                              {slide.visualPlan && (
+                                                <p className="text-xs leading-relaxed text-slate-600">
+                                                  <span className="font-bold text-slate-700">Visual plan:</span> {formatRenderableText(slide.visualPlan)}
+                                                </p>
+                                              )}
+                                              {!!slide.assets?.length && slide.assets.map((asset, assetIdx) => (
+                                                <div key={assetIdx} className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
+                                                  {asset.purpose && <div><span className="font-bold text-slate-700">Purpose:</span> {formatRenderableText(asset.purpose)}</div>}
+                                                  {asset.searchQuery && <div><span className="font-bold text-slate-700">Search:</span> {formatRenderableText(asset.searchQuery)}</div>}
+                                                  {(asset.sourceSite || asset.sourceUrl) && <div><span className="font-bold text-slate-700">Source:</span> {[asset.sourceSite, asset.sourceUrl].filter(Boolean).map((item) => formatRenderableText(item)).join(" - ")}</div>}
+                                                  {asset.licenseType && <div><span className="font-bold text-slate-700">License:</span> {formatRenderableText(asset.licenseType)}</div>}
+                                                </div>
                                               ))}
-                                            </ul>
+                                              {!slide.assets?.length && slide.svgDiagram && (
+                                                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
+                                                  <div><span className="font-bold text-slate-700">Diagram:</span> {formatRenderableText(slide.svgDiagram.title || slide.svgDiagram.type || "SVG-supported visual")}</div>
+                                                  {!!slide.svgDiagram.instructions?.length && (
+                                                    <div><span className="font-bold text-slate-700">Instructions:</span> {slide.svgDiagram.instructions.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                                  )}
+                                                </div>
+                                              )}
+                                              {typeof slide.isOptionalSlotFilled === "boolean" && (
+                                                <p className="text-xs leading-relaxed text-slate-600">
+                                                  <span className="font-bold text-slate-700">Template slot status:</span> {slide.isOptionalSlotFilled ? "Filled from session content" : "Kept intentionally low-density"}
+                                                </p>
+                                              )}
+                                              {!!slide.animationHints?.length && (
+                                                <p className="text-xs leading-relaxed text-slate-600">
+                                                  <span className="font-bold text-slate-700">Animation:</span> {slide.animationHints.map((item) => formatRenderableText(item)).join("; ")}
+                                                </p>
+                                              )}
+                                            </div>
                                           </div>
                                         </div>
                                       );
                                     })}
                                   </div>
+
+                                  {!!session.materials.ppt.licenseChecklist?.length && (
+                                    <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">License Checklist</div>
+                                      <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
+                                        {session.materials.ppt.licenseChecklist.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.materials.ppt.presentationWarnings?.length && (
+                                    <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 space-y-2">
+                                      <div className="text-[10px] font-extrabold text-rose-500 uppercase tracking-widest">Presentation Warnings</div>
+                                      <ul className="list-disc list-inside text-xs text-rose-700 space-y-1">
+                                        {session.materials.ppt.presentationWarnings.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
                                 </div>
                               )}
 
@@ -4073,12 +5612,12 @@ export default function App() {
 
                                   <div className="space-y-4 pt-2">
                                     <span className="font-sans font-extrabold text-[11px] uppercase tracking-wider text-[#586A71] block">
-                                      I. Core Scientific Principles / Facts
+                                      I. Student Study Notes / Revision Points
                                     </span>
                                     <ul className="text-xs space-y-2 list-decimal list-inside pl-2">
                                       {session.materials.pdf.keyInformation.map((info, idx) => (
                                         <li key={idx} className="leading-relaxed">
-                                          {info}
+                                          {formatRenderableText(info)}
                                         </li>
                                       ))}
                                     </ul>
@@ -4109,7 +5648,7 @@ export default function App() {
                                     <div className="space-y-2">
                                       {session.materials.docx.sections.map((sec, idx) => (
                                         <div key={idx} className="bg-white p-3 rounded-xl border border-slate-100 text-xs leading-relaxed">
-                                          {sec}
+                                          {formatRenderableText(sec)}
                                         </div>
                                       ))}
                                     </div>
@@ -4134,18 +5673,135 @@ export default function App() {
                                     </h4>
                                   </div>
 
-                                  <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
-                                    <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-100 text-slate-400">
-                                      <span>Task Directive</span>
-                                      <span className="font-mono bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded font-bold">
-                                        🕒 Expected Completion: {session.homework.estimatedTimeMinutes} minutes
-                                      </span>
-                                    </div>
+                                  {session.homework.task ? (
+                                    <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
+                                      <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-100 text-slate-400">
+                                        <span>Task Directive</span>
+                                        {getHomeworkDisplayTime(session.homework) && (
+                                          <span className="font-mono bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded font-bold">
+                                            🕒 Expected Completion: {getHomeworkDisplayTime(session.homework)}
+                                          </span>
+                                        )}
+                                      </div>
 
-                                    <p className="text-xs text-slate-700 font-medium leading-relaxed pt-1">
-                                      {session.homework.task}
-                                    </p>
-                                  </div>
+                                      <p className="text-xs text-slate-700 font-medium leading-relaxed pt-1">
+                                        {formatRenderableText(session.homework.task)}
+                                      </p>
+                                    </div>
+                                  ) : getStructuredHomeworkItems(session.homework).length > 0 ? (
+                                    <div className="space-y-4">
+                                      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs space-y-3">
+                                        <div className="flex flex-wrap justify-between gap-2 items-center text-xs pb-2 border-b border-slate-100 text-slate-400">
+                                          <span>Structured Homework Plan</span>
+                                          {getHomeworkDisplayTime(session.homework) && (
+                                            <span className="font-mono bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded font-bold">
+                                              🕒 Expected Completion: {getHomeworkDisplayTime(session.homework)}
+                                            </span>
+                                          )}
+                                        </div>
+                                        {session.homework.summary && (
+                                          <div className="grid gap-2 md:grid-cols-3 text-xs text-slate-600">
+                                            {session.homework.summary.totalQuestions != null && (
+                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
+                                                <span className="font-bold text-slate-700">Questions:</span> {formatRenderableText(session.homework.summary.totalQuestions)}
+                                              </div>
+                                            )}
+                                            {session.homework.summary.totalMarks != null && (
+                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
+                                                <span className="font-bold text-slate-700">Marks:</span> {formatRenderableText(session.homework.summary.totalMarks)}
+                                              </div>
+                                            )}
+                                            {session.homework.summary.estimatedCompletionTime && (
+                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
+                                                <span className="font-bold text-slate-700">Time:</span> {formatRenderableText(session.homework.summary.estimatedCompletionTime)}
+                                              </div>
+                                            )}
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      {getStructuredHomeworkItems(session.homework).map((item) => (
+                                        <div key={item.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs space-y-3">
+                                          <div className="flex flex-wrap items-start justify-between gap-2">
+                                            <div>
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                                                {formatRenderableText(item.type || `Task ${item.id}`)}
+                                              </div>
+                                              <div className="font-bold text-sm text-slate-800 mt-1">
+                                                {formatRenderableText(item.title || item.question || `Homework Task ${item.id}`)}
+                                              </div>
+                                            </div>
+                                            <div className="flex flex-wrap gap-2 text-[10px]">
+                                              {item.difficulty && (
+                                                <span className="rounded-full bg-violet-50 px-2 py-1 font-bold text-violet-700">
+                                                  {formatRenderableText(item.difficulty)}
+                                                </span>
+                                              )}
+                                              {item.marks != null && (
+                                                <span className="rounded-full bg-slate-100 px-2 py-1 font-bold text-slate-700">
+                                                  {formatRenderableText(item.marks)} marks
+                                                </span>
+                                              )}
+                                              {item.estimatedTime && (
+                                                <span className="rounded-full bg-slate-100 px-2 py-1 font-bold text-slate-700">
+                                                  {formatRenderableText(item.estimatedTime)}
+                                                </span>
+                                              )}
+                                            </div>
+                                          </div>
+
+                                          {item.instructions && (
+                                            <p className="text-xs text-slate-700 leading-relaxed">
+                                              <span className="font-bold text-slate-800">Instructions:</span> {formatRenderableText(item.instructions)}
+                                            </p>
+                                          )}
+                                          {item.question && (
+                                            <p className="text-xs text-slate-700 leading-relaxed">
+                                              <span className="font-bold text-slate-800">Question:</span> {formatRenderableText(item.question)}
+                                            </p>
+                                          )}
+                                          {!!item.options?.length && (
+                                            <ul className="list-disc list-inside text-xs text-slate-700 space-y-1">
+                                              {item.options.map((option, optionIdx) => (
+                                                <li key={optionIdx}>{formatRenderableText(option)}</li>
+                                              ))}
+                                            </ul>
+                                          )}
+                                          {item.answerSpace && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Answer space:</span> {formatRenderableText(item.answerSpace)}
+                                            </p>
+                                          )}
+                                          {item.visualRequirement && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Visual requirement:</span> {formatRenderableText(item.visualRequirement)}
+                                            </p>
+                                          )}
+                                          {item.expectedResponse && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Expected response:</span> {formatRenderableText(item.expectedResponse)}
+                                            </p>
+                                          )}
+                                          {!!item.topicCoverage?.length && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Topics:</span> {item.topicCoverage.map((topic) => formatRenderableText(topic)).join("; ")}
+                                            </p>
+                                          )}
+                                          {!!item.learningOutcomeIds?.length && (
+                                            <p className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Learning outcomes:</span> {item.learningOutcomeIds.map((outcome) => formatRenderableText(outcome)).join("; ")}
+                                            </p>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
+                                      <p className="text-xs text-slate-500 leading-relaxed">
+                                        Homework data was returned, but it does not match a renderable homework format yet.
+                                      </p>
+                                    </div>
+                                  )}
 
                                   <div className="text-[11px] text-slate-400">
                                     Tip: Encourage children to write this down in their physical academic logs!
@@ -4153,7 +5809,7 @@ export default function App() {
                                 </div>
                               ) : (
                                 <div className="text-center p-8 bg-slate-50 rounded-2xl text-slate-400">
-                                  No homework active. Customize the specs parameters to enable.
+                                  Homework output is turned off or was not returned for this generated session pack.
                                 </div>
                               )}
                             </div>
@@ -4162,7 +5818,7 @@ export default function App() {
                           {/* SUB TAB: Assessments */}
                           {activeSubTab === "assessments" && (
                             <div className="space-y-6 animate-fadeIn">
-                              {sessionConfig.includeAssessments && session.assessment ? (
+                              {contentIncludesAssessments && session.assessment ? (
                                 <div className="space-y-4">
                                   
                                   <div className="p-4 bg-sky-50 border border-[#1EABDA]/25 rounded-2xl flex items-center justify-between no-print">
@@ -4179,42 +5835,118 @@ export default function App() {
                                     </span>
                                   </div>
 
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                                    {/* Left: Questions */}
-                                    <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                                      <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">
-                                        Assessment Quiz Questions
-                                      </span>
-                                      <div className="space-y-3">
-                                        {session.assessment.questions.map((q, idx) => (
-                                          <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
-                                            <p className="font-extrabold pb-1">Q{idx + 1}.</p>
-                                            <p className="leading-relaxed">{q}</p>
+                                  <div className="space-y-6">
+                                    {!!session.assessment.mcq?.length && (
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                                        <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">MCQ</span>
+                                          <div className="space-y-3">
+                                            {session.assessment.mcq.map((q, idx) => (
+                                              <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
+                                                <p className="font-extrabold pb-1">Q{idx + 1}. ({q.marks || 1} mark)</p>
+                                                <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
+                                                <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                                                  {q.options.map((option, optionIdx) => <li key={optionIdx}>{formatRenderableText(option)}</li>)}
+                                                </ul>
+                                              </div>
+                                            ))}
                                           </div>
-                                        ))}
+                                        </div>
+                                        <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
+                                          <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">MCQ Answer Key</span>
+                                          <div className="space-y-3">
+                                            {(session.assessment.answerKey?.mcq || []).map((ans, idx) => (
+                                              <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
+                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{idx + 1}</p>
+                                                <p className="leading-relaxed font-mono">{formatRenderableText(ans.answer)}</p>
+                                                {ans.explanation && <p className="leading-relaxed mt-1">{formatRenderableText(ans.explanation)}</p>}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
                                       </div>
-                                    </div>
+                                    )}
 
-                                    {/* Right: Answer Key */}
-                                    <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
-                                      <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">
-                                        Assessment Solution Answer Key
-                                      </span>
-                                      <div className="space-y-3">
-                                        {session.assessment.answerKey.map((ans, idx) => (
-                                          <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
-                                            <p className="font-extrabold text-[#3CC583] pb-1">Solution Q{idx + 1}.</p>
-                                            <p className="leading-relaxed font-mono">{ans}</p>
+                                    {!!session.assessment.shortAnswer?.length && (
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                                        <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">Short Answer Questions</span>
+                                          <div className="space-y-3">
+                                            {session.assessment.shortAnswer.map((q, idx) => (
+                                              <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
+                                                <p className="font-extrabold pb-1">Q{idx + 1}. ({q.marks || 2} marks)</p>
+                                                <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
+                                                {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {formatRenderableText(q.expectedLength)}</p>}
+                                              </div>
+                                            ))}
                                           </div>
-                                        ))}
+                                        </div>
+                                        <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
+                                          <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">Short Answer Key & Rubric</span>
+                                          <div className="space-y-3">
+                                            {(session.assessment.answerKey?.shortAnswer || []).map((ans, idx) => (
+                                              <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
+                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{idx + 1}</p>
+                                                <p className="leading-relaxed">{formatRenderableText(ans.answer)}</p>
+                                                {!!ans.rubric?.length && (
+                                                  <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                                                    {ans.rubric.map((item, rubricIdx) => <li key={rubricIdx}>{formatRenderableText(item)}</li>)}
+                                                  </ul>
+                                                )}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
                                       </div>
-                                    </div>
+                                    )}
+
+                                    {!!session.assessment.longAnswer?.length && (
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                                        <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">Long Answer Questions</span>
+                                          <div className="space-y-3">
+                                            {session.assessment.longAnswer.map((q, idx) => (
+                                              <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
+                                                <p className="font-extrabold pb-1">Q{idx + 1}. ({q.marks || 5} marks)</p>
+                                                <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
+                                                {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {formatRenderableText(q.expectedLength)}</p>}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                        <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
+                                          <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">Long Answer Key & Rubric</span>
+                                          <div className="space-y-3">
+                                            {(session.assessment.answerKey?.longAnswer || []).map((ans, idx) => (
+                                              <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
+                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{idx + 1}</p>
+                                                <p className="leading-relaxed whitespace-pre-wrap">{formatRenderableText(ans.answer)}</p>
+                                                {!!ans.rubric?.length && (
+                                                  <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
+                                                    {ans.rubric.map((item, rubricIdx) => <li key={rubricIdx}>{formatRenderableText(item)}</li>)}
+                                                  </ul>
+                                                )}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {!!session.assessment.answerKey?.generalMarkingGuidance?.length && (
+                                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+                                        <div className="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest mb-2">CBSE-style Marking Guidance</div>
+                                        <ul className="text-xs text-amber-900 list-disc list-inside space-y-1">
+                                          {session.assessment.answerKey.generalMarkingGuidance.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                        </ul>
+                                      </div>
+                                    )}
                                   </div>
 
                                 </div>
                               ) : (
                                 <div className="text-gray-400 text-center p-8 bg-slate-50 rounded-2xl">
-                                  Assessments are disabled. Check specifications checklist to include assessments.
+                                  Formative assessment output is turned off in the saved Phase 3 defaults.
                                 </div>
                               )}
                             </div>
@@ -4223,7 +5955,7 @@ export default function App() {
                           {/* SUB TAB: Assignments */}
                           {activeSubTab === "assignments" && (
                             <div className="space-y-6 animate-fadeIn">
-                              {sessionConfig.includeAssignments && session.assignment ? (
+                              {contentIncludesAssignments && session.assignment ? (
                                 <div className="space-y-5">
                                   <div className="p-6 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
                                     <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
@@ -4248,9 +5980,9 @@ export default function App() {
                                           Core Rubrics Guidelines (10 Points distribution)
                                         </span>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                          {session.assignment.rubric.map((rub, rIdx) => (
+                                        {session.assignment.rubric.map((rub, rIdx) => (
                                             <div key={rIdx} className="bg-white p-3 rounded-xl border border-slate-100 text-[11px] text-slate-600">
-                                              {rub}
+                                              {formatRenderableText(rub)}
                                             </div>
                                           ))}
                                         </div>
@@ -4264,7 +5996,7 @@ export default function App() {
                                           Teacher Grading Answer Key reference
                                         </span>
                                         <p className="text-xs text-slate-700 font-mono leading-relaxed whitespace-pre-wrap">
-                                          {session.assignment.answerKey}
+                                          {formatRenderableText(session.assignment.answerKey)}
                                         </p>
                                       </div>
                                     )}
@@ -4272,7 +6004,7 @@ export default function App() {
                                 </div>
                               ) : (
                                 <div className="text-gray-400 text-center p-8 bg-slate-50 rounded-2xl">
-                                  Assignments are disabled. Check specifications checklist to include assessments.
+                                  Standalone assignment bundles are not part of the current Phase 4 session-pack flow.
                                 </div>
                               )}
                             </div>
@@ -4292,7 +6024,7 @@ export default function App() {
                       Prep Active Session #{activeSessionNumber}
                     </h3>
                     <p className="text-sm text-slate-400 max-w-sm mb-6">
-                      Click below to generate study definitions, slide lists, worksheets and explicit assessment key for this session.
+                      Generate the full teacher-facing session pack for this approved roadmap item, including lesson content, notes, slides, homework, and checks for understanding.
                     </p>
 
                     <button
@@ -4304,7 +6036,7 @@ export default function App() {
                       }}
                       className="bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-extrabold text-xs py-3 px-6 rounded-xl transition shadow-sm"
                     >
-                      Construct Session #{activeSessionNumber} Deliverables
+                      Generate Session #{activeSessionNumber} Pack
                     </button>
                   </div>
                 )}

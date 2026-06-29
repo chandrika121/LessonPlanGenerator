@@ -1,0 +1,148 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "materials": {
+      "ppt": {
+        "templateId": "kamalaniketan-session-12",
+        "templateName": "Kamalaniketan Session PPT Template",
+        "themeId": "kamalaniketan-modern",
+        "title": "Presentation title",
+        "presentationTitle": "Presentation title",
+        "presentationGoal": "What this PPT helps achieve in the session",
+        "audience": "Grade-specific classroom audience",
+        "theme": "Visual theme for the deck",
+        "themeTokens": {
+          "fonts": {
+            "heading": "Outfit",
+            "body": "Inter"
+          },
+          "colors": {
+            "primary": "#36ADAA",
+            "secondary": "#1EABDA",
+            "accent": "#DE8431",
+            "background": "#EEF4F7",
+            "surface": "#FFFFFF",
+            "text": "#0F172A",
+            "mutedText": "#64748B"
+          },
+          "visualStyle": {
+            "topBarStyle": "bold color band",
+            "cardStyle": "rounded modern educator cards",
+            "visualFrameStyle": "large clean visual panel"
+          }
+        },
+        "assetSearchPlan": {
+          "preferredSources": [
+            "Openverse",
+            "Wikimedia Commons"
+          ],
+          "safeSearch": true,
+          "licensingNotes": [
+            "Use reusable or public domain assets only."
+          ],
+          "fallbackStrategy": "Prefer SVG diagrams when external imagery is not needed."
+        },
+        "licenseChecklist": [
+          "Verify reusable license before final export."
+        ],
+        "presentationWarnings": [
+          "Do not include untaught future-session content."
+        ],
+        "coverageSummary": {
+          "learningOutcomesCovered": [
+            "Learning outcome id or text"
+          ],
+          "topicsCovered": [
+            "Topic covered"
+          ],
+          "taughtConceptsCovered": [
+            "Concept covered"
+          ],
+          "omittedContent": []
+        },
+        "slides": [
+          {
+            "templateId": "kamalaniketan-session-12",
+            "templateSlideKey": "title_identity",
+            "templateSlideTitle": "Title / Session Identity",
+            "isOptionalSlotFilled": true,
+            "slideNumber": 1,
+            "slideType": "hook | concept | comparison | process | summary",
+            "slideTitle": "Slide title",
+            "learningOutcomeIds": [
+              "LO1"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "teacherIntent": "Why this slide exists",
+            "studentTakeaway": "What students should leave with",
+            "layout": "Title + 2-column visual explainer",
+            "bulletPoints": [
+              "Key point"
+            ],
+            "onSlideText": [
+              "Exact concise on-slide text"
+            ],
+            "speakerNotes": [
+              "Teacher delivery cue"
+            ],
+            "visualPlan": "What visual should appear and why",
+            "assets": [
+              {
+                "purpose": "Why this asset is needed",
+                "searchQuery": "openverse or wikimedia search query",
+                "sourceSite": "Openverse | Wikimedia Commons",
+                "sourceUrl": "https://example.com/asset",
+                "licenseType": "CC BY 4.0 | CC0 | Public Domain",
+                "attributionText": "Attribution text if required",
+                "altText": "Accessible description",
+                "placementHint": "Right panel / full bleed / inset"
+              }
+            ],
+            "svgDiagram": {
+              "title": "Diagram title",
+              "type": "flowchart | timeline | labelled diagram | comparison chart",
+              "instructions": [
+                "How the diagram should communicate the concept"
+              ],
+              "svgCode": "<svg><!-- optional compact svg --></svg>"
+            },
+            "animationHints": [
+              "Reveal arrows step-by-step"
+            ],
+            "timeEstimateMinutes": 5
+          }
+        ]
+      },
+      "pdf": {
+        "documentTitle": "Student PDF / revision document title",
+        "keyInformation": [
+          "Student-facing study note or revision point"
+        ]
+      },
+      "docx": {
+        "outlineTitle": "Teacher lesson note outline title",
+        "sections": [
+          "Teacher-facing section content"
+        ]
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "You are an expert instructional designer, classroom presentation architect, visual pedagogy specialist, and template-driven PPT planning system.\n\nGenerate one production-grade classroom PPT specification for a single teaching session only.\n\nSession context:\n- Subject: Science\n- Grade/Level: Class IX\n- Chapter scope: [\"Cell and Cell Organelles\"]\n- Session title: Cell and Cell Organelles - Session 2\n- Session number: 2 of 16\n- Session duration: 45 minutes\n- Learning outcomes: []\n- Previous session context: Cell and Cell Organelles - Session 1: Cells are the basic unit of life. Prokaryotes lack a nucleus; Eukaryotes have one. Cell membrane controls movement; Cell wall provides support in plants.\n- Learning pace: Balanced\n- Target difficulty: Balanced\n- Teaching style: [\"Interactive facilitation\",\"Direct instruction\",\"Hands-on activity\"]\n- Available teaching resources: [\"Blackboard\",\"Charts / models\",\"Projector / PPT\"]\n- Output language: English\n- Reading level: Grade-aligned\n- Response length: Detailed\n- Creativity level: Moderate\n- Slide configuration: {\n  \"templateId\": \"kamalaniketan-session-12\",\n  \"templateDeck\": \"Kamalaniketan-pptx template.pptx\",\n  \"fixedSlideCount\": 12,\n  \"canonicalSlideSequence\": [\n    {\n      \"key\": \"title_identity\",\n      \"label\": \"Title / Session Identity\",\n      \"slideType\": \"title\",\n      \"optional\": false\n    },\n    {\n      \"key\": \"learning_outcomes\",\n      \"label\": \"Learning Outcomes\",\n      \"slideType\": \"learning-outcomes\",\n      \"optional\": false\n    },\n    {\n      \"key\": \"prerequisite_knowledge\",\n      \"label\": \"Prerequisite Knowledge + Recall\",\n      \"slideType\": \"prerequisite\",\n      \"optional\": true\n    },\n    {\n      \"key\": \"lesson_hook\",\n      \"label\": \"Lesson Hook / Session Opening\",\n      \"slideType\": \"hook\",\n      \"optional\": true\n    },\n    {\n      \"key\": \"topic_introduction\",\n      \"label\": \"Topic Introduction\",\n      \"slideType\": \"introduction\",\n      \"optional\": false\n    },\n    {\n      \"key\": \"core_concept\",\n      \"label\": \"Core Concept\",\n      \"slideType\": \"concept\",\n      \"optional\": false\n    },\n    {\n      \"key\": \"visual_explanation\",\n      \"label\": \"Visual Explanation\",\n      \"slideType\": \"visual-explanation\",\n      \"optional\": false\n    },\n    {\n      \"key\": \"worked_example\",\n      \"label\": \"Worked Example / Demonstration\",\n      \"slideType\": \"worked-example\",\n      \"optional\": true\n    },\n    {\n      \"key\": \"guided_practice\",\n      \"label\": \"Guided Practice / Activity\",\n      \"slideType\": \"guided-practice\",\n      \"optional\": true\n    },\n    {\n      \"key\": \"quick_assessment\",\n      \"label\": \"Quick Assessment\",\n      \"slideType\": \"quick-assessment\",\n      \"optional\": true\n    },\n    {\n      \"key\": \"summary\",\n      \"label\": \"Summary\",\n      \"slideType\": \"summary\",\n      \"optional\": false\n    },\n    {\n      \"key\": \"homework_next_session\",\n      \"label\": \"Homework / Next Session\",\n      \"slideType\": \"homework\",\n      \"optional\": true\n    }\n  ],\n  \"themeMode\": \"themeable_system\",\n  \"defaultThemeId\": \"kamalaniketan-modern\",\n  \"availableThemes\": [\n    {\n      \"themeId\": \"kamalaniketan-classic\",\n      \"themeName\": \"Kamalaniketan Classic\",\n      \"fonts\": {\n        \"heading\": \"Calibri\",\n        \"body\": \"Calibri\"\n      },\n      \"colors\": {\n        \"primary\": \"#4F81BD\",\n        \"secondary\": \"#1F497D\",\n        \"accent\": \"#F79646\",\n        \"background\": \"#F8FAFC\",\n        \"surface\": \"#FFFFFF\",\n        \"text\": \"#1F2937\",\n        \"mutedText\": \"#64748B\"\n      },\n      \"visualStyle\": {\n        \"topBarStyle\": \"solid academic band\",\n        \"cardStyle\": \"clean rounded content cards\",\n        \"visualFrameStyle\": \"simple textbook-style image frame\"\n      }\n    },\n    {\n      \"themeId\": \"kamalaniketan-modern\",\n      \"themeName\": \"Kamalaniketan Modern\",\n      \"fonts\": {\n        \"heading\": \"Outfit\",\n        \"body\": \"Inter\"\n      },\n      \"colors\": {\n        \"primary\": \"#36ADAA\",\n        \"secondary\": \"#1EABDA\",\n        \"accent\": \"#DE8431\",\n        \"background\": \"#EEF4F7\",\n        \"surface\": \"#FFFFFF\",\n        \"text\": \"#0F172A\",\n        \"mutedText\": \"#64748B\"\n      },\n      \"visualStyle\": {\n        \"topBarStyle\": \"bold color band with soft contrast surfaces\",\n        \"cardStyle\": \"rounded modern educator cards\",\n        \"visualFrameStyle\": \"large clean visual panel with soft border\"\n      }\n    }\n  ],\n  \"assetPolicy\": [\n    \"Openverse\",\n    \"Wikimedia Commons\"\n  ],\n  \"deckRatio\": \"16:9\",\n  \"outputDepth\": \"full_slide_spec\",\n  \"diagrams\": \"svg_preferred_for_process_and_structure\",\n  \"includePdfDocxFallback\": true,\n  \"referenceVisualStyle\": {\n    \"sourceDeck\": \"Kamalaniketan-pptx template.pptx\",\n    \"theme\": \"school-ready classroom instructional deck\",\n    \"layoutPatterns\": [\n      \"title slide with session identity\",\n      \"learning outcome board\",\n      \"prerequisite and recall prompt slide\",\n      \"opening hook slide\",\n      \"introduction slide\",\n      \"core concept teaching slide\",\n      \"visual explanation slide\",\n      \"worked example slide\",\n      \"guided practice slide\",\n      \"quick assessment slide\",\n      \"summary slide\",\n      \"homework and next-session slide\"\n    ],\n    \"qualityBar\": [\n      \"preserve the 12-slide teaching skeleton\",\n      \"keep content session-faithful\",\n      \"theme changes must not alter content structure\"\n    ]\n  }\n}\n- Full session JSON: {\n  \"sessionNumber\": 2,\n  \"sessionTitle\": \"Cell and Cell Organelles - Session 2\",\n  \"subject\": \"Science\",\n  \"gradeLevel\": \"Class IX\",\n  \"selectedChapters\": [\n    \"Cell and Cell Organelles\"\n  ],\n  \"totalSessions\": 16,\n  \"durationMinutes\": 45,\n  \"learningOutcomes\": [],\n  \"previousSessionContext\": \"Cell and Cell Organelles - Session 1: Cells are the basic unit of life. Prokaryotes lack a nucleus; Eukaryotes have one. Cell membrane controls movement; Cell wall provides support in plants.\",\n  \"teachingStrategy\": {\n    \"studentLevel\": \"Grade-level mixed\",\n    \"pace\": \"Balanced\",\n    \"assessmentPreference\": [\n      \"Worksheet-heavy\"\n    ],\n    \"targetDifficulty\": \"Balanced\",\n    \"teachingStyle\": [\n      \"Interactive facilitation\",\n      \"Direct instruction\",\n      \"Hands-on activity\"\n    ],\n    \"bloomsTaxonomyEmphasis\": [\n      \"Remember + Understand\"\n    ],\n    \"teachingResources\": [\n      \"Blackboard\",\n      \"Charts / models\",\n      \"Projector / PPT\"\n    ]\n  },\n  \"sessionPlanningDefaults\": {\n    \"sessionDurationMinutes\": 45,\n    \"language\": \"English\",\n    \"readingLevel\": \"Grade-aligned\",\n    \"responseLength\": \"Detailed\",\n    \"creativity\": \"Moderate\",\n    \"includeRealWorldConnections\": true,\n    \"includeDifferentiation\": true,\n    \"includeFormativeAssessment\": true,\n    \"includeHomework\": true,\n    \"includeTeacherNotes\": true\n  },\n  \"config\": {\n    \"includeLearningOutcomes\": true,\n    \"includeIntroduction\": true,\n    \"includeTheory\": true,\n    \"includeAssessments\": true,\n    \"includeAssignments\": false,\n    \"includeNotes\": true\n  }\n}\n\nPrimary objective:\nFill the Kamalaniketan 12-slide classroom session template using only the content actually taught in this session.\n\nNon-negotiable rules:\n1. Use the Kamalaniketan template as a fixed instructional sequence.\n2. Preserve the same 12-slide content skeleton.\n3. Do not invent additional slides.\n4. Do not introduce future-session content or outside-scope curriculum.\n5. If the session does not strongly support a slot, keep it intentionally low-density instead of inventing material.\n6. Keep content fidelity and teaching order more important than trying to fill every placeholder densely.\n7. Return valid JSON only.\n\nKamalaniketan template slide sequence to preserve:\n1. `title_identity` - Title / session identity\n2. `learning_outcomes` - Learning outcomes\n3. `prerequisite_knowledge` - Prerequisite knowledge + recall\n4. `lesson_hook` - Lesson hook / opening\n5. `topic_introduction` - Topic introduction\n6. `core_concept` - Core concept\n7. `visual_explanation` - Visual explanation\n8. `worked_example` - Worked example / demonstration\n9. `guided_practice` - Guided practice / activity\n10. `quick_assessment` - Quick assessment\n11. `summary` - Summary\n12. `homework_next_session` - Homework / next session\n\nTheme system rules:\n1. Keep the slide content structure fixed.\n2. Theme must only affect visual tokens, not instructional sequence.\n3. Use one of these theme ids:\n   - `kamalaniketan-classic`\n   - `kamalaniketan-modern`\n4. Default to `kamalaniketan-modern` unless the session strongly indicates a more classic school-deck presentation.\n5. Theme tokens may define:\n   - heading/body fonts\n   - primary/secondary/accent colors\n   - background/surface/text colors\n   - top bar style\n   - card style\n   - visual frame style\n\nContent mapping rules:\n1. `title_identity` should contain session identity only.\n2. `learning_outcomes` should contain only this session's learning outcomes.\n3. `prerequisite_knowledge` should contain prior knowledge, recall, or a quick entry check if supported.\n4. `lesson_hook` should contain the opening hook or transition from the previous session if supported.\n5. `topic_introduction` should frame the topic, definition, importance, and session objective.\n6. `core_concept` should teach the main concept of the session.\n7. `visual_explanation` should carry the strongest diagram/image-led explanation.\n8. `worked_example` should contain a teacher demonstration or modelled example only if relevant.\n9. `guided_practice` should contain the in-class activity or guided practice only if relevant.\n10. `quick_assessment` should contain short in-class checks only.\n11. `summary` should recap key takeaways and key vocabulary.\n12. `homework_next_session` should contain homework and next-session preview only if available in session scope.\n\nAsset and SVG rules:\n1. Allowed sources: Openverse and Wikimedia Commons only.\n2. Use real reusable image plans for microscopy, specimen observation, or real-world context where useful.\n3. Use SVG/diagram plans for structure, comparison, process, and relationship-heavy concepts.\n4. Keep `svgCode` compact.\n5. Never repeat long SVG fragments.\n6. If a strong SVG would be too long, leave `svgCode` empty and provide good `instructions`.\n\nReturn JSON in this exact high-level shape:\n{\n  \"materials\": {\n    \"ppt\": {\n      \"templateId\": \"kamalaniketan-session-12\",\n      \"templateName\": \"Kamalaniketan Session PPT Template\",\n      \"themeId\": \"kamalaniketan-modern\",\n      \"theme\": \"Theme display name\",\n      \"themeTokens\": {\n        \"fonts\": {\n          \"heading\": \"Outfit\",\n          \"body\": \"Inter\"\n        },\n        \"colors\": {\n          \"primary\": \"#36ADAA\",\n          \"secondary\": \"#1EABDA\",\n          \"accent\": \"#DE8431\",\n          \"background\": \"#EEF4F7\",\n          \"surface\": \"#FFFFFF\",\n          \"text\": \"#0F172A\",\n          \"mutedText\": \"#64748B\"\n        },\n        \"visualStyle\": {\n          \"topBarStyle\": \"bold color band\",\n          \"cardStyle\": \"rounded modern educator cards\",\n          \"visualFrameStyle\": \"large clean visual panel\"\n        }\n      },\n      \"title\": \"Presentation title\",\n      \"presentationTitle\": \"Presentation title\",\n      \"presentationGoal\": \"What this PPT helps achieve in the session\",\n      \"audience\": \"Grade-specific classroom audience\",\n      \"assetSearchPlan\": {\n        \"preferredSources\": [\"Openverse\", \"Wikimedia Commons\"],\n        \"safeSearch\": true,\n        \"licensingNotes\": [\"Use reusable or public domain assets only.\"],\n        \"fallbackStrategy\": \"Prefer SVG diagrams when external imagery is not needed.\"\n      },\n      \"licenseChecklist\": [\"Verify reusable license before final export.\"],\n      \"presentationWarnings\": [\"Do not include untaught future-session content.\"],\n      \"coverageSummary\": {\n        \"learningOutcomesCovered\": [\"Learning outcome id or text\"],\n        \"topicsCovered\": [\"Topic covered\"],\n        \"taughtConceptsCovered\": [\"Concept covered\"],\n        \"omittedContent\": []\n      },\n      \"slides\": [\n        {\n          \"templateId\": \"kamalaniketan-session-12\",\n          \"templateSlideKey\": \"title_identity\",\n          \"templateSlideTitle\": \"Title / Session Identity\",\n          \"isOptionalSlotFilled\": true,\n          \"slideNumber\": 1,\n          \"slideType\": \"title | learning-outcomes | prerequisite | hook | introduction | concept | visual-explanation | worked-example | guided-practice | quick-assessment | summary | homework\",\n          \"slideTitle\": \"Slide title\",\n          \"learningOutcomeIds\": [\"LO1\"],\n          \"topicCoverage\": [\"Topic\"],\n          \"teacherIntent\": \"Why this slide exists\",\n          \"studentTakeaway\": \"What students should leave with\",\n          \"layout\": \"Kamalaniketan template layout description\",\n          \"bulletPoints\": [\"Key point\"],\n          \"onSlideText\": [\"Exact concise on-slide text\"],\n          \"speakerNotes\": [\"Teacher delivery cue\"],\n          \"visualPlan\": \"What visual should appear and why\",\n          \"assets\": [\n            {\n              \"purpose\": \"Why this asset is needed\",\n              \"searchQuery\": \"openverse or wikimedia search query\",\n              \"sourceSite\": \"Openverse | Wikimedia Commons\",\n              \"sourceUrl\": \"https://example.com/asset\",\n              \"licenseType\": \"CC BY 4.0 | CC0 | Public Domain\",\n              \"attributionText\": \"Attribution text if required\",\n              \"altText\": \"Accessible description\",\n              \"placementHint\": \"Right panel / full bleed / inset\"\n            }\n          ],\n          \"svgDiagram\": {\n            \"title\": \"Diagram title\",\n            \"type\": \"flowchart | timeline | labelled diagram | comparison chart\",\n            \"instructions\": [\"How the diagram should communicate the concept\"],\n            \"svgCode\": \"<svg><!-- optional compact svg --></svg>\"\n          },\n          \"animationHints\": [\"Reveal arrows step-by-step\"],\n          \"timeEstimateMinutes\": 5\n        }\n      ]\n    },\n    \"pdf\": {\n      \"documentTitle\": \"Student PDF / revision document title\",\n      \"keyInformation\": [\"Student-facing study note or revision point\"]\n    },\n    \"docx\": {\n      \"outlineTitle\": \"Teacher lesson note outline title\",\n      \"sections\": [\"Teacher-facing section content\"]\n    }\n  }\n}\n\nQuality checks before final output:\n- Keep the 12-slide sequence intact.\n- Ensure every slide maps to the correct template slot.\n- Keep theme separate from content.\n- Keep sparse slots controlled rather than invented.\n- Keep SVG concise.\n- Keep the deck session-faithful and classroom-ready.\n\nReturn valid JSON only.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"materials\": {\n    \"ppt\": {\n      \"templateId\": \"kamalaniketan-session-12\",\n      \"templateName\": \"Kamalaniketan Session PPT Template\",\n      \"themeId\": \"kamalaniketan-modern\",\n      \"title\": \"Presentation title\",\n      \"presentationTitle\": \"Presentation title\",\n      \"presentationGoal\": \"What this PPT helps achieve in the session\",\n      \"audience\": \"Grade-specific classroom audience\",\n      \"theme\": \"Visual theme for the deck\",\n      \"themeTokens\": {\n        \"fonts\": {\n          \"heading\": \"Outfit\",\n          \"body\": \"Inter\"\n        },\n        \"colors\": {\n          \"primary\": \"#36ADAA\",\n          \"secondary\": \"#1EABDA\",\n          \"accent\": \"#DE8431\",\n          \"background\": \"#EEF4F7\",\n          \"surface\": \"#FFFFFF\",\n          \"text\": \"#0F172A\",\n          \"mutedText\": \"#64748B\"\n        },\n        \"visualStyle\": {\n          \"topBarStyle\": \"bold color band\",\n          \"cardStyle\": \"rounded modern educator cards\",\n          \"visualFrameStyle\": \"large clean visual panel\"\n        }\n      },\n      \"assetSearchPlan\": {\n        \"preferredSources\": [\n          \"Openverse\",\n          \"Wikimedia Commons\"\n        ],\n        \"safeSearch\": true,\n        \"licensingNotes\": [\n          \"Use reusable or public domain assets only.\"\n        ],\n        \"fallbackStrategy\": \"Prefer SVG diagrams when external imagery is not needed.\"\n      },\n      \"licenseChecklist\": [\n        \"Verify reusable license before final export.\"\n      ],\n      \"presentationWarnings\": [\n        \"Do not include untaught future-session content.\"\n      ],\n      \"coverageSummary\": {\n        \"learningOutcomesCovered\": [\n          \"Learning outcome id or text\"\n        ],\n        \"topicsCovered\": [\n          \"Topic covered\"\n        ],\n        \"taughtConceptsCovered\": [\n          \"Concept covered\"\n        ],\n        \"omittedContent\": []\n      },\n      \"slides\": [\n        {\n          \"templateId\": \"kamalaniketan-session-12\",\n          \"templateSlideKey\": \"title_identity\",\n          \"templateSlideTitle\": \"Title / Session Identity\",\n          \"isOptionalSlotFilled\": true,\n          \"slideNumber\": 1,\n          \"slideType\": \"hook | concept | comparison | process | summary\",\n          \"slideTitle\": \"Slide title\",\n          \"learningOutcomeIds\": [\n            \"LO1\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"teacherIntent\": \"Why this slide exists\",\n          \"studentTakeaway\": \"What students should leave with\",\n          \"layout\": \"Title + 2-column visual explainer\",\n          \"bulletPoints\": [\n            \"Key point\"\n          ],\n          \"onSlideText\": [\n            \"Exact concise on-slide text\"\n          ],\n          \"speakerNotes\": [\n            \"Teacher delivery cue\"\n          ],\n          \"visualPlan\": \"What visual should appear and why\",\n          \"assets\": [\n            {\n              \"purpose\": \"Why this asset is needed\",\n              \"searchQuery\": \"openverse or wikimedia search query\",\n              \"sourceSite\": \"Openverse | Wikimedia Commons\",\n              \"sourceUrl\": \"https://example.com/asset\",\n              \"licenseType\": \"CC BY 4.0 | CC0 | Public Domain\",\n              \"attributionText\": \"Attribution text if required\",\n              \"altText\": \"Accessible description\",\n              \"placementHint\": \"Right panel / full bleed / inset\"\n            }\n          ],\n          \"svgDiagram\": {\n            \"title\": \"Diagram title\",\n            \"type\": \"flowchart | timeline | labelled diagram | comparison chart\",\n            \"instructions\": [\n              \"How the diagram should communicate the concept\"\n            ],\n            \"svgCode\": \"<svg><!-- optional compact svg --></svg>\"\n          },\n          \"animationHints\": [\n            \"Reveal arrows step-by-step\"\n          ],\n          \"timeEstimateMinutes\": 5\n        }\n      ]\n    },\n    \"pdf\": {\n      \"documentTitle\": \"Student PDF / revision document title\",\n      \"keyInformation\": [\n        \"Student-facing study note or revision point\"\n      ]\n    },\n    \"docx\": {\n      \"outlineTitle\": \"Teacher lesson note outline title\",\n      \"sections\": [\n        \"Teacher-facing section content\"\n      ]\n    }\n  }\n}"
+    }
+  ]
+}

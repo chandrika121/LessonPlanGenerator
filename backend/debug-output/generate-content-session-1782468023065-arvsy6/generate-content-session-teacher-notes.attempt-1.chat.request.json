@@ -1,0 +1,107 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "teacherLessonNotes": {
+      "prerequisiteKnowledge": [
+        "What students should already know"
+      ],
+      "previousSessionRecap": [
+        "Short recap points from the previous lesson"
+      ],
+      "lessonPurpose": [
+        "Why this lesson matters"
+      ],
+      "teachingSequence": [
+        "Teacher-facing lesson flow with explanation steps"
+      ],
+      "guidedPractice": [
+        "Teacher-led checks and guided responses"
+      ],
+      "conceptFlow": [
+        {
+          "conceptName": "Concept name",
+          "definition": "Short definition",
+          "coreExplanation": "Teacher-facing explanation",
+          "importance": "Why it matters",
+          "observedIn": [
+            "Where students observe it"
+          ],
+          "whyStudyIt": "Why students study it",
+          "relationshipWithPrevious": "Connection with previous concepts",
+          "relationshipWithFuture": "Connection with future learning without teaching it",
+          "keywords": [
+            "Important keyword"
+          ],
+          "teacherMoves": [
+            "Explain this first"
+          ],
+          "examples": [
+            "Useful example"
+          ],
+          "visuals": [
+            "Suggested visual support"
+          ]
+        }
+      ],
+      "classroomQuestions": [
+        {
+          "question": "Teacher question",
+          "level": "Understanding",
+          "expectedResponse": "Likely student response",
+          "answerPoints": [
+            "Point teachers should listen for"
+          ]
+        }
+      ],
+      "differentiation": {
+        "slowLearners": [
+          "Support strategies"
+        ],
+        "averageLearners": [
+          "Core expectations"
+        ],
+        "advancedLearners": [
+          "Extension prompts"
+        ]
+      },
+      "teacherTips": [
+        "Pedagogical tips"
+      ],
+      "misconceptions": [
+        "Likely misconceptions to address"
+      ],
+      "formativeChecks": [
+        "Natural formative assessment checkpoint"
+      ],
+      "timePlan": [
+        {
+          "segment": "Recap",
+          "minutes": 5,
+          "purpose": "Refresh prerequisite ideas"
+        }
+      ],
+      "sessionSummary": [
+        "Closing recap point"
+      ],
+      "nextSessionBridge": [
+        "How today connects to the next lesson"
+      ]
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "You are an expert CBSE curriculum designer, instructional strategist, lesson planner, teacher trainer, and classroom pedagogy specialist.\n\nGenerate comprehensive Teacher Notes for one instructional session only.\n\nSession context:\n- Subject: Science\n- Grade/Level: Class IX\n- Chapter scope: [\"Cell and Cell Organelles\"]\n- Session title: Cell and Cell Organelles - Session 1\n- Session number: 1 of 16\n- Session duration: 45 minutes\n- Learning outcomes: []\n- Previous session context: No previous session context provided.\n- Teaching style: [\"Interactive facilitation\",\"Direct instruction\",\"Hands-on activity\"]\n- Student level: Grade-level mixed\n- Learning pace: Balanced\n- Target difficulty: Balanced\n- Assessment preference: [\"Worksheet-heavy\"]\n- Teacher preferences / special instructions: None\n- Available teaching resources: [\"Blackboard\",\"Charts / models\",\"Projector / PPT\"]\n- Output language: English\n- Reading level: Grade-aligned\n- Response length: Detailed\n- Creativity level: Moderate\n\nTeacher notes generation rules:\n1. Generate notes for this session only.\n2. Never introduce future-session content.\n3. The notes must read like practical classroom preparation notes from an experienced teacher.\n4. Adapt the lesson to the duration, pace, level, and preferences.\n5. The time plan must exactly match the provided session duration.\n6. Keep the output teacher-facing and classroom-usable, not textbook-like.\n7. Return valid JSON only.\n\nUse this lesson flow:\n1. Previous lesson connection\n2. Lesson purpose\n3. Learning outcomes\n4. Topic introduction\n5. Concept-by-concept teaching\n6. Teacher teaching notes\n7. Examples\n8. Visual teaching suggestions\n9. Classroom questioning\n10. Common misconceptions\n11. Classroom activities\n12. Differentiated teaching\n13. Formative assessment during teaching\n14. Teacher tips\n15. Session summary\n16. Transition to next session\n\nReturn a JSON object matching this exact shape:\n{\n  \"teacherLessonNotes\": {\n    \"prerequisiteKnowledge\": [\"What students should already know\"],\n    \"previousSessionRecap\": [\"Short recap points from the previous lesson\"],\n    \"lessonPurpose\": [\"Why this lesson matters\"],\n    \"teachingSequence\": [\"Step-by-step teacher-facing lesson flow\"],\n    \"guidedPractice\": [\"Teacher-led checks and guided responses\"],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Concept name\",\n        \"definition\": \"Short definition\",\n        \"coreExplanation\": \"Teacher-facing explanation\",\n        \"importance\": \"Why it matters\",\n        \"observedIn\": [\"Where students observe it\"],\n        \"whyStudyIt\": \"Why students study it\",\n        \"relationshipWithPrevious\": \"Connection with previous concepts\",\n        \"relationshipWithFuture\": \"Connection with future learning without teaching it\",\n        \"keywords\": [\"Important keyword\"],\n        \"teacherMoves\": [\"Explain this first\"],\n        \"examples\": [\"Useful example\"],\n        \"visuals\": [\"Suggested visual support\"]\n      }\n    ],\n    \"classroomQuestions\": [\n      {\n        \"question\": \"Teacher question\",\n        \"level\": \"Recall | Understanding | Application | Analysis | Critical Thinking\",\n        \"expectedResponse\": \"Likely student response\",\n        \"answerPoints\": [\"Point teachers should listen for\"]\n      }\n    ],\n    \"differentiation\": {\n      \"slowLearners\": [\"Support strategies\"],\n      \"averageLearners\": [\"Core expectations\"],\n      \"advancedLearners\": [\"Extension prompts\"]\n    },\n    \"misconceptions\": [\"Likely misconception to address\"],\n    \"formativeChecks\": [\"Natural formative assessment checkpoint\"],\n    \"teacherTips\": [\"Practical classroom tip\"],\n    \"timePlan\": [\n      {\n        \"segment\": \"Recap\",\n        \"minutes\": 5,\n        \"purpose\": \"Refresh prerequisite ideas\"\n      }\n    ],\n    \"sessionSummary\": [\"Closing recap point\"],\n    \"nextSessionBridge\": [\"How today connects to the next lesson\"]\n  }\n}\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"teacherLessonNotes\": {\n    \"prerequisiteKnowledge\": [\n      \"What students should already know\"\n    ],\n    \"previousSessionRecap\": [\n      \"Short recap points from the previous lesson\"\n    ],\n    \"lessonPurpose\": [\n      \"Why this lesson matters\"\n    ],\n    \"teachingSequence\": [\n      \"Teacher-facing lesson flow with explanation steps\"\n    ],\n    \"guidedPractice\": [\n      \"Teacher-led checks and guided responses\"\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Concept name\",\n        \"definition\": \"Short definition\",\n        \"coreExplanation\": \"Teacher-facing explanation\",\n        \"importance\": \"Why it matters\",\n        \"observedIn\": [\n          \"Where students observe it\"\n        ],\n        \"whyStudyIt\": \"Why students study it\",\n        \"relationshipWithPrevious\": \"Connection with previous concepts\",\n        \"relationshipWithFuture\": \"Connection with future learning without teaching it\",\n        \"keywords\": [\n          \"Important keyword\"\n        ],\n        \"teacherMoves\": [\n          \"Explain this first\"\n        ],\n        \"examples\": [\n          \"Useful example\"\n        ],\n        \"visuals\": [\n          \"Suggested visual support\"\n        ]\n      }\n    ],\n    \"classroomQuestions\": [\n      {\n        \"question\": \"Teacher question\",\n        \"level\": \"Understanding\",\n        \"expectedResponse\": \"Likely student response\",\n        \"answerPoints\": [\n          \"Point teachers should listen for\"\n        ]\n      }\n    ],\n    \"differentiation\": {\n      \"slowLearners\": [\n        \"Support strategies\"\n      ],\n      \"averageLearners\": [\n        \"Core expectations\"\n      ],\n      \"advancedLearners\": [\n        \"Extension prompts\"\n      ]\n    },\n    \"teacherTips\": [\n      \"Pedagogical tips\"\n    ],\n    \"misconceptions\": [\n      \"Likely misconceptions to address\"\n    ],\n    \"formativeChecks\": [\n      \"Natural formative assessment checkpoint\"\n    ],\n    \"timePlan\": [\n      {\n        \"segment\": \"Recap\",\n        \"minutes\": 5,\n        \"purpose\": \"Refresh prerequisite ideas\"\n      }\n    ],\n    \"sessionSummary\": [\n      \"Closing recap point\"\n    ],\n    \"nextSessionBridge\": [\n      \"How today connects to the next lesson\"\n    ]\n  }\n}"
+    }
+  ]
+}

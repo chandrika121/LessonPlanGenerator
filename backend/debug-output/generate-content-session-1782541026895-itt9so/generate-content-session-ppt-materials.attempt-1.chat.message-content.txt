@@ -1,0 +1,366 @@
+{
+  "materials": {
+    "ppt": {
+      "title": "Cell and Cell Organelles - Session 1: The Basics",
+      "presentationTitle": "Cell and Cell Organelles - Session 1",
+      "presentationGoal": "To introduce the cell as the basic unit of life, distinguish between plant and animal cells, and identify key organelles through observation.",
+      "audience": "Class IX Science Students (Grade-level mixed)",
+      "theme": "Clean academic blue-and-white classroom deck with large left-aligned titles and right-side hero visuals.",
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Openverse",
+          "Wikimedia Commons"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Use reusable or public domain assets only."
+        ],
+        "fallbackStrategy": "Prefer SVG diagrams when external imagery is not needed for structural clarity."
+      },
+      "licenseChecklist": [
+        "Verify reusable license before final export.",
+        "Ensure attribution text matches the specific CC license of the chosen asset."
+      ],
+      "presentationWarnings": [
+        "Do not include untaught future-session content (e.g., detailed membrane transport mechanisms or DNA replication)."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "LO1: Define cell and state its importance as the basic unit of life.",
+          "LO2: Differentiate between plant and animal cells based on visible structures."
+        ],
+        "topicsCovered": [
+          "Introduction to Cell Theory",
+          "Cell Structure Overview",
+          "Plant vs. Animal Cells"
+        ],
+        "taughtConceptsCovered": [
+          "Basic Unit of Life",
+          "Prokaryotic vs Eukaryotic (General distinction)",
+          "Key Organelles: Nucleus, Cytoplasm, Cell Membrane, Cell Wall, Chloroplasts"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "slideNumber": 1,
+          "slideType": "hook",
+          "slideTitle": "The Building Blocks of Life: Cells",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Introduction to Cell Theory"
+          ],
+          "teacherIntent": "To capture student interest by connecting the microscopic world to their own bodies and surroundings.",
+          "studentTakeaway": "Cells are the fundamental units that make up all living things, from bacteria to humans.",
+          "layout": "Title + Right-side Hero Image",
+          "bulletPoints": [
+            "What is life made of?",
+            "The smallest unit capable of independent function."
+          ],
+          "onSlideText": [
+            "All Living Things are Made of Cells"
+          ],
+          "speakerNotes": [
+            "Start with a question: 'If you were to cut your finger, what is the tiny thing that makes up your skin?'",
+            "Explain that just as bricks build houses, cells build living organisms.",
+            "Mention Robert Hooke briefly if time permits, but focus on the concept of the 'basic unit'."
+          ],
+          "visualPlan": "A high-quality macro photograph showing a variety of biological textures (e.g., onion skin under microscope or human cheek cell) to ground the abstract concept in reality.",
+          "assets": [
+            {
+              "purpose": "To provide visual evidence of cellular structure immediately upon entry.",
+              "searchQuery": "onion epidermis cells microscopy",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "https://commons.wikimedia.org/wiki/File:Onion_epidermal_cells.jpg",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Image by Wikimedia User (Public Domain/CC)",
+              "altText": "Microscopic view of onion skin cells showing rectangular cell walls.",
+              "placementHint": "Right panel"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in the title first",
+            "Reveal the image after asking the opening question."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "slideNumber": 2,
+          "slideType": "concept",
+          "slideTitle": "What is a Cell?",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Definition of Cell"
+          ],
+          "teacherIntent": "To formally define the cell and establish its role as the structural and functional unit.",
+          "studentTakeaway": "A cell is a membrane-bound structure containing cytoplasm, nucleus (in eukaryotes), and organelles that performs life functions.",
+          "layout": "Numbered Outcome Cards + Supporting Diagram",
+          "bulletPoints": [
+            "Basic structural unit of all living organisms.",
+            "Functional unit: Performs metabolism, growth, reproduction.",
+            "Can be unicellular (one cell) or multicellular."
+          ],
+          "onSlideText": [
+            "1. Structural Unit",
+            "2. Functional Unit"
+          ],
+          "speakerNotes": [
+            "Define 'Structural': It builds the body.",
+            "Define 'Functional': It does the work (eating, breathing, moving).",
+            "Clarify that while some organisms are single-celled (bacteria), complex life is made of many cells working together.",
+            "Briefly mention Prokaryotes vs Eukaryotes as a broad classification without diving deep yet."
+          ],
+          "visualPlan": "A simple labeled diagram contrasting a unicellular organism (like Amoeba) with a multicellular tissue sample to illustrate scale and diversity.",
+          "assets": [
+            {
+              "purpose": "To visually distinguish between single-celled and multi-cellular life forms.",
+              "searchQuery": "amoeba vs human skin cells",
+              "sourceSite": "Openverse",
+              "sourceUrl": "https://openverse.org/search?q=cell+types&lang=en-US",
+              "licenseType": "CC0 / Public Domain",
+              "attributionText": "Image from Openverse (Public Domain)",
+              "altText": "Side-by-side comparison of an Amoeba and human skin cells.",
+              "placementHint": "Inset"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Cell as a Unit",
+            "type": "concept map",
+            "instructions": [
+              "Show 'Living Organism' branching into 'Unicellular' and 'Multicellular'.",
+              "Under each, show examples (e.g., Bacteria/Amoeba vs. Human Plant)."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'><rect x='10' y='10' width='580' height='380' fill='#f9fbfd' stroke='#2c3e50'/><text x='300' y='50' font-family='Arial' font-size='24' text-anchor='middle' font-weight='bold'>Living Organisms</text><line x1='300' y1='80' x2='150' y2='150' stroke='#2c3e50' stroke-width='2'/><line x1='300' y1='80' x2='450' y2='150' stroke='#2c3e50' stroke-width='2'/><text x='150' y='170' font-family='Arial' font-size='16' text-anchor='middle'>Unicellular</text><rect x='80' y='190' width='140' height='30' fill='#eaf2f8' stroke='#2c3e50'/><text x='150' y='210' font-family='Arial' font-size='14' text-anchor='middle'>Bacteria, Amoeba</text><text x='450' y='170' font-family='Arial' font-size='16' text-anchor='middle'>Multicellular</text><rect x='380' y='190' width='140' height='30' fill='#eaf2f8' stroke='#2c3e50'/><text x='450' y='210' font-family='Arial' font-size='14' text-anchor='middle'>Plants, Animals</text></svg>"
+          },
+          "animationHints": [
+            "Reveal the branching lines one by one."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "slideNumber": 3,
+          "slideType": "concept",
+          "slideTitle": "The Cell: A Factory Analogy",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Cell Structure Overview"
+          ],
+          "teacherIntent": "To use an analogy to help students understand the function of organelles before naming them all.",
+          "studentTakeaway": "Different parts (organelles) have specific jobs, just like workers in a factory or rooms in a house.",
+          "layout": "Title + Right-side Hero Image",
+          "bulletPoints": [
+            "Cell Membrane = Security Gate / Walls",
+            "Nucleus = Control Room / Manager",
+            "Mitochondria = Power Plant",
+            "Cytoplasm = Factory Floor"
+          ],
+          "onSlideText": [
+            "Organelles: Specialized Workers"
+          ],
+          "speakerNotes": [
+            "Introduce the concept of 'organelle' as a small organ within the cell.",
+            "Use the factory analogy to explain that while they are all in one place, each has a specific job.",
+            "Do not list every organelle yet; focus on the big three: Nucleus (control), Mitochondria (energy), Membrane (boundary).",
+            "Ask students what would happen if the 'power plant' stopped working."
+          ],
+          "visualPlan": "A split visual showing a generic factory floor next to a simplified cell diagram, highlighting the parallel roles.",
+          "assets": [
+            {
+              "purpose": "To bridge the gap between abstract biology and concrete understanding via analogy.",
+              "searchQuery": "factory interior production line",
+              "sourceSite": "Openverse",
+              "sourceUrl": "https://openverse.org/search?q=factory+interior&lang=en-US",
+              "licenseType": "CC BY 4.0",
+              "attributionText": "Image from Openverse (CC BY)",
+              "altText": "Interior of a factory with workers and machinery.",
+              "placementHint": "Right panel"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal each analogy point as you speak."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "slideNumber": 4,
+          "slideType": "comparison",
+          "slideTitle": "Plant vs. Animal Cells: The Key Differences",
+          "learningOutcomeIds": [
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Plant and Animal Cell Structures"
+          ],
+          "teacherIntent": "To explicitly compare the two major cell types taught in this session, focusing on unique structures.",
+          "studentTakeaway": "Both have a nucleus, membrane, cytoplasm; Plants uniquely have a cell wall and chloroplasts for photosynthesis.",
+          "layout": "2x2 Concept Card Grid",
+          "bulletPoints": [
+            "Common: Nucleus, Cytoplasm, Cell Membrane, Mitochondria.",
+            "Plant Only: Cell Wall (rigid), Chloroplasts (green).",
+            "Animal Only: Lysosomes (often present), Centrioles."
+          ],
+          "onSlideText": [
+            "Shared Features vs. Unique Structures"
+          ],
+          "speakerNotes": [
+            "Draw a Venn diagram on the blackboard while discussing this slide.",
+            "Emphasize that Plant cells have a 'hard outer shell' (Cell Wall) for support, unlike Animal cells which are flexible.",
+            "Explain Chloroplasts as the 'kitchen' where food is made using sunlight.",
+            "Clarify that Animal cells do not make their own food."
+          ],
+          "visualPlan": "A side-by-side labeled diagram comparing a generic plant cell and animal cell, highlighting the differences with color coding (e.g., green for chloroplasts).",
+          "assets": [
+            {
+              "purpose": "To provide a clear visual comparison of structural differences.",
+              "searchQuery": "plant vs animal cell diagram labeled",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "https://commons.wikimedia.org/wiki/File:Plant_and_Animal_Cell_Diagram.svg",
+              "licenseType": "Public Domain / CC0",
+              "attributionText": "Diagram from Wikimedia Commons (Public Domain)",
+              "altText": "Side-by-side labeled diagrams of a plant cell and an animal cell.",
+              "placementHint": "Full width"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Plant vs Animal Cell Comparison",
+            "type": "comparison chart",
+            "instructions": [
+              "Create two columns: 'Plant Cell' and 'Animal Cell'.",
+              "List shared organelles in a central overlapping section or list both.",
+              "Highlight unique features (Cell Wall, Chloroplasts) only under Plant; Lysosomes/Centrioles under Animal."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' width='700' height='450'><rect x='10' y='10' width='680' height='430' fill='#fff'/><text x='350' y='40' font-family='Arial' font-size='20' text-anchor='middle' font-weight='bold'>Cell Structure Comparison</text><!-- Plant Column --><rect x='100' y='60' width='280' height='370' fill='#eafbf5' stroke='#2c3e50'/><text x='240' y='90' font-family='Arial' font-size='18' text-anchor='middle'>Plant Cell</text><rect x='120' y='120' width='240' height='60' fill='#fff' stroke='#27ae60'/><text x='240' y='155' font-family='Arial' font-size='14'>Cell Wall (Rigid)</text><rect x='120' y='190' width='240' height='60' fill='#fff' stroke='#27ae60'/><text x='240' y='225' font-family='Arial' font-size='14'>Chloroplasts (Green)</rect><!-- Animal Column --><rect x='380' y='60' width='280' height='370' fill='#fff5e6' stroke='#2c3e50'/><text x='520' y='90' font-family='Arial' font-size='18' text-anchor='middle'>Animal Cell</text><rect x='400' y='120' width='240' height='60' fill='#fff' stroke='#e74c3c'/><text x='520' y='155' font-family='Arial' font-size='14'>No Cell Wall</rect><rect x='400' y='190' width='240' height='60' fill='#fff' stroke='#e74c3c'/><text x='520' y='225' font-family='Arial' font-size='14'>No Chloroplasts</rect><!-- Shared --><line x1='380' y1='60' x2='380' y2='430' stroke='#bdc3c7'/></svg>"
+          },
+          "animationHints": [
+            "Reveal the Plant column first, then the Animal column."
+          ],
+          "timeEstimateMinutes": 10
+        },
+        {
+          "slideNumber": 5,
+          "slideType": "process",
+          "slideTitle": "Inside the Cell: Key Organelles",
+          "learningOutcomeIds": [
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Organelle Functions"
+          ],
+          "teacherIntent": "To detail specific organelles and their functions, reinforcing the 'factory' analogy.",
+          "studentTakeaway": "Nucleus controls activity; Mitochondria provide energy; Cell Membrane regulates entry/exit.",
+          "layout": "Title + Connected Box Diagram",
+          "bulletPoints": [
+            "Cell Wall: Protection & Shape (Plants only).",
+            "Cell Membrane: Selective barrier.",
+            "Nucleus: The 'Brain' / Control center.",
+            "Mitochondria: Powerhouse of the cell."
+          ],
+          "onSlideText": [
+            "Organelle Functions"
+          ],
+          "speakerNotes": [
+            "Go through each organelle one by one.",
+            "For Cell Membrane, explain 'selective permeability' simply: it lets good things in and bad things out.",
+            "For Nucleus, emphasize DNA storage (without going into genetics details).",
+            "For Mitochondria, link energy to movement and growth.",
+            "Use the blackboard to sketch a quick cell as you describe these parts."
+          ],
+          "visualPlan": "A labeled diagram of an animal cell with callouts pointing to specific organelles being discussed.",
+          "assets": [
+            {
+              "purpose": "To visually map functions to locations within the cell structure.",
+              "searchQuery": "animal cell parts labeled nucleus mitochondria",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "https://commons.wikimedia.org/wiki/File:Animal_Cell_Diagram.svg",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Diagram from Wikimedia Commons (Public Domain)",
+              "altText": "Labeled diagram of an animal cell highlighting key organelles.",
+              "placementHint": "Right panel"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Organelle Functions Map",
+            "type": "labelled diagram",
+            "instructions": [
+              "Draw a generic animal cell outline.",
+              "Place 'Nucleus' in center with label 'Control'.",
+              "Place 'Mitochondria' scattered with label 'Energy'.",
+              "Outline the perimeter as 'Cell Membrane (Gatekeeper)'."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='450'><circle cx='300' cy='225' r='180' fill='#eafbf5' stroke='#2c3e50'/><text x='300' y='230' font-family='Arial' font-size='16' text-anchor='middle'>Cell Membrane</text><!-- Nucleus --><circle cx='300' cy='225' r='40' fill='#f1c40f'/><rect x='280' y='205' width='40' height='40' stroke='#e67e22' fill='none'/><text x='300' y='230' font-family='Arial' font-size='14' text-anchor='middle'>Nucleus</text><!-- Mitochondria --><ellipse cx='250' cy='180' rx='20' ry='10' fill='#e74c3c'/><rect x='230' y='160' width='40' height='40' stroke='#c0392b' fill='none'/><text x='250' y='185' font-family='Arial' font-size='12'>Mitochondria</ellipse><!-- Cytoplasm --><rect x='260' y='260' width='40' height='30' stroke='#bdc3c7' fill='none'/><text x='280' y='285' font-family='Arial' font-size='12'>Cytoplasm</text></svg>"
+          },
+          "animationHints": [
+            "Reveal the Nucleus, then Mitochondria, then Membrane sequentially."
+          ],
+          "timeEstimateMinutes": 7
+        },
+        {
+          "slideNumber": 6,
+          "slideType": "quick-check",
+          "slideTitle": "Exit Ticket: Identify and Explain",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Review of Key Concepts"
+          ],
+          "teacherIntent": "To assess student understanding of the session's core concepts before moving to independent practice.",
+          "studentTakeaway": "Students can identify key organelles and explain why plant cells differ from animal cells.",
+          "layout": "Title + Question Cards",
+          "bulletPoints": [
+            "1. Which cell part is known as the 'powerhouse'?",
+            "2. Name one structure found in plants but not animals.",
+            "3. Why do we need a Cell Membrane?"
+          ],
+          "onSlideText": [
+            "Quick Check: What did you learn today?"
+          ],
+          "speakerNotes": [
+            "Ask students to write answers on their worksheets or mini-whiteboards.",
+            "Review the answers as a class immediately after 2 minutes of thinking time.",
+            "Address any misconceptions about 'powerhouse' (energy) vs. 'nucleus' (control).",
+            "Transition to the hands-on activity if scheduled, or assign homework."
+          ],
+          "visualPlan": "Simple text-based slide with clear question prompts and a timer icon.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal questions one by one to encourage individual thinking first."
+          ],
+          "timeEstimateMinutes": 5
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Cell and Cell Organelles: Session 1 Revision Sheet",
+      "keyInformation": [
+        "The cell is the basic structural and functional unit of life.",
+        "Plant cells have a rigid Cell Wall and Chloroplasts; Animal cells do not.",
+        "Nucleus = Control Center (contains DNA).",
+        "Mitochondria = Powerhouse (produces energy/ATP).",
+        "Cell Membrane = Gatekeeper (controls what enters/exits)."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Teacher Lesson Plan: Cell and Cell Organelles - Session 1",
+      "sections": [
+        "Introduction (3 mins): Hook with 'Building Blocks' analogy. Show onion skin image.",
+        "Concept Definition (5 mins): Define cell, structural vs functional unit. Use Venn diagram for uni/multi-cellular.",
+        "Analogy Activity (5 mins): Factory analogy to introduce organelles conceptually before naming them all.",
+        "Core Content - Comparison (10 mins): Plant vs Animal cells. Draw on board. Highlight Cell Wall and Chloroplasts as key differentiators.",
+        **Deep Dive** (7 mins: Focus on Nucleus, Mitochondria, Membrane functions using the diagram slide. Use blackboard sketching to reinforce spatial understanding.)",
+        "Formative Assessment (5 mins): Exit ticket questions. Check for understanding of 'powerhouse' and structural differences.",
+        "Differentiation Note: For advanced students, ask about vacuoles size difference between plant/animal cells as an extension question."
+      ]
+    }
+  }
+}

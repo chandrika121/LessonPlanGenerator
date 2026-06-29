@@ -1,0 +1,121 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "materials": {
+      "ppt": {
+        "title": "Presentation title",
+        "presentationTitle": "Presentation title",
+        "presentationGoal": "What this PPT helps achieve in the session",
+        "audience": "Grade-specific classroom audience",
+        "theme": "Visual theme for the deck",
+        "assetSearchPlan": {
+          "preferredSources": [
+            "Openverse",
+            "Wikimedia Commons"
+          ],
+          "safeSearch": true,
+          "licensingNotes": [
+            "Use reusable or public domain assets only."
+          ],
+          "fallbackStrategy": "Prefer SVG diagrams when external imagery is not needed."
+        },
+        "licenseChecklist": [
+          "Verify reusable license before final export."
+        ],
+        "presentationWarnings": [
+          "Do not include untaught future-session content."
+        ],
+        "coverageSummary": {
+          "learningOutcomesCovered": [
+            "Learning outcome id or text"
+          ],
+          "topicsCovered": [
+            "Topic covered"
+          ],
+          "taughtConceptsCovered": [
+            "Concept covered"
+          ],
+          "omittedContent": []
+        },
+        "slides": [
+          {
+            "slideNumber": 1,
+            "slideType": "hook | concept | comparison | process | summary",
+            "slideTitle": "Slide title",
+            "learningOutcomeIds": [
+              "LO1"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "teacherIntent": "Why this slide exists",
+            "studentTakeaway": "What students should leave with",
+            "layout": "Title + 2-column visual explainer",
+            "bulletPoints": [
+              "Key point"
+            ],
+            "onSlideText": [
+              "Exact concise on-slide text"
+            ],
+            "speakerNotes": [
+              "Teacher delivery cue"
+            ],
+            "visualPlan": "What visual should appear and why",
+            "assets": [
+              {
+                "purpose": "Why this asset is needed",
+                "searchQuery": "openverse or wikimedia search query",
+                "sourceSite": "Openverse | Wikimedia Commons",
+                "sourceUrl": "https://example.com/asset",
+                "licenseType": "CC BY 4.0 | CC0 | Public Domain",
+                "attributionText": "Attribution text if required",
+                "altText": "Accessible description",
+                "placementHint": "Right panel / full bleed / inset"
+              }
+            ],
+            "svgDiagram": {
+              "title": "Diagram title",
+              "type": "flowchart | timeline | labelled diagram | comparison chart",
+              "instructions": [
+                "How the diagram should communicate the concept"
+              ],
+              "svgCode": "<svg><!-- optional compact svg --></svg>"
+            },
+            "animationHints": [
+              "Reveal arrows step-by-step"
+            ],
+            "timeEstimateMinutes": 5
+          }
+        ]
+      },
+      "pdf": {
+        "documentTitle": "Student PDF / revision document title",
+        "keyInformation": [
+          "Student-facing study note or revision point"
+        ]
+      },
+      "docx": {
+        "outlineTitle": "Teacher lesson note outline title",
+        "sections": [
+          "Teacher-facing section content"
+        ]
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "You are an expert instructional designer, presentation architect, visual pedagogy specialist, classroom communication designer, curriculum-aligned slide strategist, and teacher-support content system.\n\nGenerate one production-grade classroom PPT specification for a single teaching session only.\n\nSession context:\n- Subject: Science\n- Grade/Level: Class IX\n- Chapter scope: [\"Cell and Cell Organelles\"]\n- Session title: Cell and Cell Organelles - Session 1\n- Session number: 1 of 16\n- Session duration: 45 minutes\n- Learning outcomes: []\n- Previous session context: No previous session context provided.\n- Learning pace: Balanced\n- Target difficulty: Balanced\n- Teaching style: [\"Interactive facilitation\",\"Direct instruction\",\"Hands-on activity\"]\n- Available teaching resources: [\"Blackboard\",\"Charts / models\",\"Projector / PPT\"]\n- Output language: English\n- Reading level: Grade-aligned\n- Response length: Detailed\n- Creativity level: Moderate\n- Slide configuration: {\n  \"assetPolicy\": [\n    \"Openverse\",\n    \"Wikimedia Commons\"\n  ],\n  \"deckRatio\": \"16:9\",\n  \"outputDepth\": \"full_slide_spec\",\n  \"diagrams\": \"svg_preferred_for_process_and_structure\",\n  \"includePdfDocxFallback\": true\n}\n- Full session JSON: {\n  \"sessionNumber\": 1,\n  \"sessionTitle\": \"Cell and Cell Organelles - Session 1\",\n  \"subject\": \"Science\",\n  \"gradeLevel\": \"Class IX\",\n  \"selectedChapters\": [\n    \"Cell and Cell Organelles\"\n  ],\n  \"totalSessions\": 16,\n  \"durationMinutes\": 45,\n  \"learningOutcomes\": [],\n  \"previousSessionContext\": \"\",\n  \"teachingStrategy\": {\n    \"studentLevel\": \"Grade-level mixed\",\n    \"pace\": \"Balanced\",\n    \"assessmentPreference\": [\n      \"Worksheet-heavy\"\n    ],\n    \"targetDifficulty\": \"Balanced\",\n    \"teachingStyle\": [\n      \"Interactive facilitation\",\n      \"Direct instruction\",\n      \"Hands-on activity\"\n    ],\n    \"bloomsTaxonomyEmphasis\": [\n      \"Remember + Understand\"\n    ],\n    \"teachingResources\": [\n      \"Blackboard\",\n      \"Charts / models\",\n      \"Projector / PPT\"\n    ]\n  },\n  \"sessionPlanningDefaults\": {\n    \"sessionDurationMinutes\": 45,\n    \"language\": \"English\",\n    \"readingLevel\": \"Grade-aligned\",\n    \"responseLength\": \"Detailed\",\n    \"creativity\": \"Moderate\",\n    \"includeRealWorldConnections\": true,\n    \"includeDifferentiation\": true,\n    \"includeFormativeAssessment\": true,\n    \"includeHomework\": true,\n    \"includeTeacherNotes\": true\n  },\n  \"config\": {\n    \"includeLearningOutcomes\": true,\n    \"includeIntroduction\": true,\n    \"includeTheory\": true,\n    \"includeAssessments\": true,\n    \"includeAssignments\": false,\n    \"includeNotes\": true\n  }\n}\n\nPrimary objective:\nCreate a complete slide-by-slide classroom presentation plan that covers exactly what is taught in this session, nothing more and nothing less.\n\nNon-negotiable rules:\n1. Use only concepts, activities, examples, misconceptions, learning outcomes, and teaching flow contained in this session context.\n2. Do not introduce future-session content or outside-scope curriculum.\n3. Ensure everything the teacher is going to teach in this session is represented in the PPT.\n4. Sequence slides in teaching order, not arbitrary textbook order.\n5. Keep on-slide text concise and presentation-friendly.\n6. Put detailed teacher delivery support into speaker notes, not into overloaded bullets.\n7. Prefer diagrams over decorative imagery when conceptual precision matters.\n8. Use only reusable asset plans from Openverse and Wikimedia Commons.\n9. If a real image is not necessary or would be less precise than a diagram, return SVG diagram instructions/code instead of forcing an image.\n10. Never rely on copyrighted textbook artwork unless it is explicitly included in the input session content.\n11. Return valid JSON only.\n\nSlide design expectations:\n1. Include a title / hook slide only if the session context supports it.\n2. Include agenda / objective framing only if it helps the teacher teach this session.\n3. Cover the taught concepts in teacher delivery order.\n4. Include comparison, process, classification, example, misconception, recap, and exit-check slides where relevant.\n5. End with a summary / quick check / transition slide when appropriate.\n6. Every slide must map to one or more learning outcomes or taught concepts.\n7. Every slide must include a teacher intent and student takeaway.\n8. Every slide must include a visual plan, even if the plan is \"text + board sketch + no external asset\".\n\nAsset policy:\n1. Allowed source sites: Openverse and Wikimedia Commons only.\n2. For each external asset, provide attribution-ready metadata.\n3. If the exact asset URL is unknown, keep the search query and source site explicit instead of inventing a URL.\n4. Prefer public-domain or clearly reusable Creative Commons assets.\n5. For observational or real-world context slides, real images may be proposed.\n6. For process, structure, relationship, classification, and comparison slides, prefer SVG diagrams or structured visual instructions.\n\nSVG policy:\nUse SVG or SVG-ready structured instructions for:\n- flowcharts\n- process diagrams\n- labelled biological structures\n- comparison layouts\n- timelines\n- concept maps\n- cause and effect chains\n- sequence visuals\n\nThe SVG should be compact and self-contained when provided.\n\nReturn a JSON object matching this exact shape:\n{\n  \"materials\": {\n    \"ppt\": {\n      \"presentationTitle\": \"Presentation title\",\n      \"presentationGoal\": \"What this session PPT helps achieve\",\n      \"audience\": \"Who this deck is for\",\n      \"theme\": \"Visual and teaching theme\",\n      \"assetSearchPlan\": {\n        \"preferredSources\": [\"Openverse\", \"Wikimedia Commons\"],\n        \"safeSearch\": true,\n        \"licensingNotes\": [\"Use only reusable/public-domain assets\"],\n        \"fallbackStrategy\": \"Prefer SVG diagrams when real images are unnecessary\"\n      },\n      \"licenseChecklist\": [\n        \"Confirm the selected asset has a reusable license\",\n        \"Retain attribution where required\"\n      ],\n      \"presentationWarnings\": [\n        \"Do not include concepts not taught in this session\"\n      ],\n      \"coverageSummary\": {\n        \"learningOutcomesCovered\": [\"LO1\"],\n        \"topicsCovered\": [\"Topic name\"],\n        \"taughtConceptsCovered\": [\"Concept name\"],\n        \"omittedContent\": []\n      },\n      \"slides\": [\n        {\n          \"slideNumber\": 1,\n          \"slideType\": \"hook | concept | process | comparison | example | recap | quick-check\",\n          \"slideTitle\": \"Slide title\",\n          \"learningOutcomeIds\": [\"LO1\"],\n          \"topicCoverage\": [\"Topic name\"],\n          \"teacherIntent\": \"Why the teacher uses this slide\",\n          \"studentTakeaway\": \"What students should remember\",\n          \"layout\": \"16:9 layout description\",\n          \"bulletPoints\": [\"Concise visible bullet\"],\n          \"onSlideText\": [\"Exact short on-slide line\"],\n          \"speakerNotes\": [\"Teacher delivery cue\"],\n          \"visualPlan\": \"What visual should appear and why\",\n          \"assets\": [\n            {\n              \"purpose\": \"Why this asset is needed\",\n              \"searchQuery\": \"Openverse/Wikimedia search query\",\n              \"sourceSite\": \"Openverse | Wikimedia Commons\",\n              \"sourceUrl\": \"https://example.com/asset-or-search\",\n              \"licenseType\": \"CC BY 4.0 | CC0 | Public Domain\",\n              \"attributionText\": \"Required attribution text if applicable\",\n              \"altText\": \"Accessible description of the visual\",\n              \"placementHint\": \"full-bleed | right panel | inset | background\"\n            }\n          ],\n          \"svgDiagram\": {\n            \"title\": \"Diagram title\",\n            \"type\": \"flowchart | labelled diagram | timeline | comparison chart | concept map\",\n            \"instructions\": [\"How the diagram should communicate the concept\"],\n            \"svgCode\": \"<svg><!-- optional compact SVG --></svg>\"\n          },\n          \"animationHints\": [\"Reveal one stage at a time\"],\n          \"timeEstimateMinutes\": 5\n        }\n      ]\n    },\n    \"pdf\": {\n      \"documentTitle\": \"Companion revision sheet title\",\n      \"keyInformation\": [\"Short student-facing revision point\"]\n    },\n    \"docx\": {\n      \"outlineTitle\": \"Teacher delivery outline title\",\n      \"sections\": [\"Short teacher-facing section\"]\n    }\n  }\n}\n\nQuality checks before final output:\n- Every major taught concept is covered.\n- Learning outcomes are mapped across the slide deck.\n- Teaching order is preserved.\n- Visual choices match the concept type.\n- No future or extra content is introduced.\n- Asset metadata is reusable and attribution-aware.\n- SVG is used where it improves accuracy or clarity.\n\nReturn valid JSON only.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"materials\": {\n    \"ppt\": {\n      \"title\": \"Presentation title\",\n      \"presentationTitle\": \"Presentation title\",\n      \"presentationGoal\": \"What this PPT helps achieve in the session\",\n      \"audience\": \"Grade-specific classroom audience\",\n      \"theme\": \"Visual theme for the deck\",\n      \"assetSearchPlan\": {\n        \"preferredSources\": [\n          \"Openverse\",\n          \"Wikimedia Commons\"\n        ],\n        \"safeSearch\": true,\n        \"licensingNotes\": [\n          \"Use reusable or public domain assets only.\"\n        ],\n        \"fallbackStrategy\": \"Prefer SVG diagrams when external imagery is not needed.\"\n      },\n      \"licenseChecklist\": [\n        \"Verify reusable license before final export.\"\n      ],\n      \"presentationWarnings\": [\n        \"Do not include untaught future-session content.\"\n      ],\n      \"coverageSummary\": {\n        \"learningOutcomesCovered\": [\n          \"Learning outcome id or text\"\n        ],\n        \"topicsCovered\": [\n          \"Topic covered\"\n        ],\n        \"taughtConceptsCovered\": [\n          \"Concept covered\"\n        ],\n        \"omittedContent\": []\n      },\n      \"slides\": [\n        {\n          \"slideNumber\": 1,\n          \"slideType\": \"hook | concept | comparison | process | summary\",\n          \"slideTitle\": \"Slide title\",\n          \"learningOutcomeIds\": [\n            \"LO1\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"teacherIntent\": \"Why this slide exists\",\n          \"studentTakeaway\": \"What students should leave with\",\n          \"layout\": \"Title + 2-column visual explainer\",\n          \"bulletPoints\": [\n            \"Key point\"\n          ],\n          \"onSlideText\": [\n            \"Exact concise on-slide text\"\n          ],\n          \"speakerNotes\": [\n            \"Teacher delivery cue\"\n          ],\n          \"visualPlan\": \"What visual should appear and why\",\n          \"assets\": [\n            {\n              \"purpose\": \"Why this asset is needed\",\n              \"searchQuery\": \"openverse or wikimedia search query\",\n              \"sourceSite\": \"Openverse | Wikimedia Commons\",\n              \"sourceUrl\": \"https://example.com/asset\",\n              \"licenseType\": \"CC BY 4.0 | CC0 | Public Domain\",\n              \"attributionText\": \"Attribution text if required\",\n              \"altText\": \"Accessible description\",\n              \"placementHint\": \"Right panel / full bleed / inset\"\n            }\n          ],\n          \"svgDiagram\": {\n            \"title\": \"Diagram title\",\n            \"type\": \"flowchart | timeline | labelled diagram | comparison chart\",\n            \"instructions\": [\n              \"How the diagram should communicate the concept\"\n            ],\n            \"svgCode\": \"<svg><!-- optional compact svg --></svg>\"\n          },\n          \"animationHints\": [\n            \"Reveal arrows step-by-step\"\n          ],\n          \"timeEstimateMinutes\": 5\n        }\n      ]\n    },\n    \"pdf\": {\n      \"documentTitle\": \"Student PDF / revision document title\",\n      \"keyInformation\": [\n        \"Student-facing study note or revision point\"\n      ]\n    },\n    \"docx\": {\n      \"outlineTitle\": \"Teacher lesson note outline title\",\n      \"sections\": [\n        \"Teacher-facing section content\"\n      ]\n    }\n  }\n}"
+    }
+  ]
+}
