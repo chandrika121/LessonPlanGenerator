@@ -64,16 +64,64 @@ export type SessionSectionKey =
   | "assessment"
   | "assignment";
 
+export type AssessmentQuestionType =
+  | "mcq"
+  | "veryShortAnswer"
+  | "shortAnswer"
+  | "longAnswer"
+  | "caseStudy";
+
+export interface AssessmentQuestionTypeRequest {
+  type: AssessmentQuestionType;
+  label?: string;
+  questionCount?: number | null;
+  marksEach?: number | null;
+}
+
+export interface SessionAssessmentCustomization {
+  assessmentType?: string;
+  difficulty?: string;
+  paperObjective?: string;
+  totalMarks?: number | null;
+  totalQuestions?: number | null;
+  questionTypes?: AssessmentQuestionTypeRequest[];
+}
+
+export type AssessmentRenderedSubtype =
+  | "mcq"
+  | "veryShortAnswer"
+  | "shortAnswer"
+  | "longAnswer"
+  | "caseStudy";
+
 export interface SessionPlan {
   id: string;
   sessionNumber: number;
   title: string;
   duration: number; // in mins
   teacherLessonNotes?: {
+    sessionOverview?: string;
     prerequisiteKnowledge?: string[];
     previousSessionRecap?: string[];
+    learningOutcomes?: string[];
+    teachingPlan?: {
+      minutes: number;
+      topic: string;
+      teachingStrategy?: string;
+    }[];
     teachingSequence?: string[];
     guidedPractice?: string[];
+    lessonBlocks?: {
+      title: string;
+      durationMinutes?: number;
+      teacherPrompt?: string[];
+      explanation?: string[];
+      examples?: string[];
+      boardWork?: string[];
+      checkUnderstanding?: string[];
+      expectedAnswers?: string[];
+      activity?: string[];
+    }[];
     differentiation?: {
       slowLearners?: string[];
       averageLearners?: string[];
@@ -87,6 +135,16 @@ export interface SessionPlan {
       level?: string;
       expectedResponse?: string;
       answerPoints?: string[];
+    }[];
+    commonMisconceptionsDetailed?: {
+      misconception: string;
+      correction: string;
+    }[];
+    assessmentQuestions?: string[];
+    blackboardSummary?: string[];
+    endOfClassRecap?: {
+      prompt: string;
+      expectedAnswer?: string;
     }[];
     conceptFlow?: {
       conceptName: string;
@@ -113,9 +171,16 @@ export interface SessionPlan {
   };
   studentLessonNotes?: {
     title?: string;
+    sessionOverview?: string;
     introduction?: string;
     learningObjectives?: string[];
     quickRecall?: string[];
+    easyToRemember?: string[];
+    comparisonTables?: {
+      title: string;
+      headers?: string[];
+      rows?: string[][];
+    }[];
     sections?: {
       heading: string;
       explanation: string;
@@ -145,9 +210,25 @@ export interface SessionPlan {
       quickRecap?: string[];
     };
     selfCheckQuestions?: string[];
+    quickSummary?: string[];
+    keyTerms?: string[];
+    fillInTheBlanks?: {
+      prompt: string;
+      answer?: string;
+    }[];
+    mcqQuestions?: {
+      question: string;
+      options: string[];
+      answer?: string;
+    }[];
+    veryShortAnswerQuestions?: {
+      question: string;
+      answer?: string;
+    }[];
     didYouKnow?: string[];
     summary?: string[];
     quickRevision?: string[];
+    rememberPoints?: string[];
   };
   learningOutcomes?: string[];
   introduction?: string;
@@ -287,31 +368,89 @@ export interface SessionPlan {
     };
   };
   assessment?: {
+    assessmentMeta?: {
+      assessmentType?: string;
+      totalMarks?: number;
+      totalQuestions?: number;
+      durationMinutes?: number;
+      preferredDifficulty?: string;
+      language?: string;
+      paperObjective?: string;
+      requestSignature?: string;
+      requestedQuestionTypes?: AssessmentQuestionTypeRequest[];
+      instructions?: string[];
+    };
+    blueprint?: {
+      learningOutcomeCoverage?: {
+        outcome: string;
+        questionRefs: string[];
+      }[];
+      difficultyDistribution?: {
+        easy?: number;
+        medium?: number;
+        hard?: number;
+      };
+      bloomsDistribution?: {
+        recall?: number;
+        understanding?: number;
+        application?: number;
+        analysis?: number;
+        evaluation?: number;
+        creation?: number;
+      };
+      questionDistribution?: {
+        mcq?: number;
+        shortAnswer?: number;
+        longAnswer?: number;
+      };
+      timeAllocation?: {
+        section: string;
+        minutes: number;
+      }[];
+    };
     mcq?: {
+      id?: string;
+      questionSubtype?: "mcq";
       question: string;
       options: string[];
       answer: string;
       explanation?: string;
       marks?: number;
+      learningOutcomeIds?: string[];
+      topicCoverage?: string[];
+      difficulty?: string;
+      bloomsLevel?: string;
     }[];
     shortAnswer?: {
+      id?: string;
+      questionSubtype?: "veryShortAnswer" | "shortAnswer";
       question: string;
       answer: string;
       expectedLength?: string;
       marks?: number;
       rubric?: string[];
+      learningOutcomeIds?: string[];
+      topicCoverage?: string[];
+      difficulty?: string;
+      bloomsLevel?: string;
     }[];
     longAnswer?: {
+      id?: string;
+      questionSubtype?: "longAnswer" | "caseStudy";
       question: string;
       answer: string;
       expectedLength?: string;
       marks?: number;
       rubric?: string[];
+      learningOutcomeIds?: string[];
+      topicCoverage?: string[];
+      difficulty?: string;
+      bloomsLevel?: string;
     }[];
     answerKey?: {
-      mcq?: { answer: string; explanation?: string; marks?: number }[];
-      shortAnswer?: { answer: string; rubric?: string[]; marks?: number }[];
-      longAnswer?: { answer: string; rubric?: string[]; marks?: number }[];
+      mcq?: { answer: string; explanation?: string; marks?: number; questionSubtype?: "mcq" }[];
+      shortAnswer?: { answer: string; rubric?: string[]; marks?: number; questionSubtype?: "veryShortAnswer" | "shortAnswer" }[];
+      longAnswer?: { answer: string; rubric?: string[]; marks?: number; questionSubtype?: "longAnswer" | "caseStudy" }[];
       generalMarkingGuidance?: string[];
     };
   };

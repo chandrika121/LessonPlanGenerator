@@ -63,6 +63,36 @@ type SessionSectionKey =
   | "assessment"
   | "assignment";
 
+type AssessmentQuestionType =
+  | "mcq"
+  | "veryShortAnswer"
+  | "shortAnswer"
+  | "longAnswer"
+  | "caseStudy";
+
+type AssessmentQuestionTypeRequest = {
+  type: AssessmentQuestionType;
+  label?: string;
+  questionCount?: number | null;
+  marksEach?: number | null;
+};
+
+type SessionAssessmentCustomization = {
+  assessmentType?: string;
+  difficulty?: string;
+  paperObjective?: string;
+  totalMarks?: number | null;
+  totalQuestions?: number | null;
+  questionTypes?: AssessmentQuestionTypeRequest[];
+};
+
+type AssessmentRenderedSubtype =
+  | "mcq"
+  | "veryShortAnswer"
+  | "shortAnswer"
+  | "longAnswer"
+  | "caseStudy";
+
 // CORS - allow frontend dev server
 app.use(cors({
   origin: [
@@ -215,6 +245,302 @@ function mergeSessionPlanSections(basePlan: any, patchPlan: any, selectedSection
   }
 
   return merged;
+}
+
+function normalizeAssessmentCustomization(input: any): SessionAssessmentCustomization | null {
+  if (!input || typeof input !== "object") {
+    return null;
+  }
+
+  const questionTypes = Array.isArray(input.questionTypes)
+    ? input.questionTypes
+        .map((item: any): AssessmentQuestionTypeRequest => ({
+          type: String(item?.type || "").trim() as AssessmentQuestionType,
+          label: String(item?.label || "").trim() || undefined,
+          questionCount: Math.max(0, toNumberOrZero(item?.questionCount)),
+          marksEach: Math.max(0, toNumberOrZero(item?.marksEach)),
+        }))
+        .filter((item: AssessmentQuestionTypeRequest) => item.type && item.questionCount != null && item.marksEach != null)
+    : [];
+
+  const derivedTotalQuestions = questionTypes.reduce((sum: number, item: AssessmentQuestionTypeRequest) => sum + Number(item.questionCount || 0), 0);
+  const derivedTotalMarks = questionTypes.reduce(
+    (sum: number, item: AssessmentQuestionTypeRequest) => sum + Number(item.questionCount || 0) * Number(item.marksEach || 0),
+    0
+  );
+
+  return {
+    assessmentType: String(input.assessmentType || "").trim() || "Session assessment",
+    difficulty: String(input.difficulty || "").trim() || "Balanced",
+    paperObjective: String(input.paperObjective || "").trim(),
+    totalMarks: Math.max(0, toNumberOrZero(input.totalMarks)) || derivedTotalMarks || null,
+    totalQuestions: Math.max(0, toNumberOrZero(input.totalQuestions)) || derivedTotalQuestions || null,
+    questionTypes,
+  };
+}
+
+function buildAssessmentCustomizationSignature(customization: SessionAssessmentCustomization | null | undefined) {
+  return JSON.stringify({
+    assessmentType: String(customization?.assessmentType || "Session assessment"),
+    difficulty: String(customization?.difficulty || "Balanced"),
+    paperObjective: String(customization?.paperObjective || ""),
+    totalMarks: Number(customization?.totalMarks || 0),
+    totalQuestions: Number(customization?.totalQuestions || 0),
+    questionTypes: Array.isArray(customization?.questionTypes)
+      ? customization!.questionTypes!.map((item) => ({
+          type: item.type,
+          label: item.label || "",
+          questionCount: Number(item.questionCount || 0),
+          marksEach: Number(item.marksEach || 0),
+        }))
+      : [],
+  });
+}
+
+function hasAssessmentCustomizationContent(customization: SessionAssessmentCustomization | null | undefined) {
+  const questionTypes = Array.isArray(customization?.questionTypes) ? customization!.questionTypes! : [];
+  const totalQuestions = questionTypes.reduce((sum, item) => sum + Number(item.questionCount || 0), 0);
+  const totalMarks = questionTypes.reduce((sum, item) => sum + Number(item.questionCount || 0) * Number(item.marksEach || 0), 0);
+  return totalQuestions > 0 && totalMarks > 0;
+}
+
+function hasAssessmentSourceContent(sessionPlan: any) {
+  return Boolean(
+    sessionPlan &&
+    typeof sessionPlan === "object" &&
+    (
+      (Array.isArray(sessionPlan.learningOutcomes) && sessionPlan.learningOutcomes.length > 0) ||
+      (typeof sessionPlan.introduction === "string" && sessionPlan.introduction.trim().length > 0) ||
+      (sessionPlan.theory && (sessionPlan.theory.overview || sessionPlan.theory.detailedContent || sessionPlan.theory.keyPoints?.length)) ||
+      (Array.isArray(sessionPlan.activities) && sessionPlan.activities.length > 0) ||
+      sessionPlan.teacherLessonNotes ||
+      sessionPlan.studentLessonNotes
+    )
+  );
+}
+
+function buildAssessmentSourceSessionPayload(sessionPlan: any, fallback: Record<string, unknown>) {
+  if (!sessionPlan || typeof sessionPlan !== "object") {
+    return fallback;
+  }
+
+  return {
+    id: sessionPlan.id || fallback.id,
+    sessionNumber: sessionPlan.sessionNumber || fallback.sessionNumber,
+    title: sessionPlan.title || fallback.title,
+    duration: sessionPlan.duration || fallback.duration,
+    learningOutcomes: Array.isArray(sessionPlan.learningOutcomes) ? sessionPlan.learningOutcomes : fallback.learningOutcomes,
+    introduction: sessionPlan.introduction || "",
+    theory: sessionPlan.theory || null,
+    activities: Array.isArray(sessionPlan.activities) ? sessionPlan.activities : [],
+    teacherLessonNotes: sessionPlan.teacherLessonNotes || null,
+    studentLessonNotes: sessionPlan.studentLessonNotes || null,
+    topicCoverage: Array.isArray(sessionPlan.topicCoverage) ? sessionPlan.topicCoverage : [],
+  };
+}
+
+function buildRequestedSubtypeSequence(
+  customization: SessionAssessmentCustomization | null | undefined,
+  target: "shortAnswer" | "longAnswer"
+) {
+  const sourceTypes = Array.isArray(customization?.questionTypes) ? customization!.questionTypes! : [];
+  const includedTypes =
+    target === "shortAnswer"
+      ? (["veryShortAnswer", "shortAnswer"] as AssessmentRenderedSubtype[])
+      : (["longAnswer", "caseStudy"] as AssessmentRenderedSubtype[]);
+
+  return sourceTypes.flatMap((item) =>
+    includedTypes.includes(item.type as AssessmentRenderedSubtype)
+      ? Array.from({ length: Math.max(0, Number(item.questionCount || 0)) }, () => ({
+          questionSubtype: item.type as AssessmentRenderedSubtype,
+          marksEach: Number(item.marksEach || 0),
+        }))
+      : []
+  );
+}
+
+function normalizeAssessmentResponseToCustomization(
+  generatedAssessment: any,
+  customization: SessionAssessmentCustomization,
+  defaults: {
+    durationMinutes: number;
+    language: string;
+    preferredDifficulty: string;
+  }
+) {
+  const assessment = generatedAssessment && typeof generatedAssessment === "object" ? { ...generatedAssessment } : {};
+  const requestedQuestionTypes = Array.isArray(customization.questionTypes) ? customization.questionTypes : [];
+  const expectedMcqCount = requestedQuestionTypes.reduce(
+    (sum, item) => sum + (item.type === "mcq" ? Number(item.questionCount || 0) : 0),
+    0
+  );
+  const shortSubtypeSequence = buildRequestedSubtypeSequence(customization, "shortAnswer");
+  const longSubtypeSequence = buildRequestedSubtypeSequence(customization, "longAnswer");
+
+  const mcq = Array.isArray(assessment.mcq) ? assessment.mcq : [];
+  const shortAnswer = Array.isArray(assessment.shortAnswer) ? assessment.shortAnswer : [];
+  const longAnswer = Array.isArray(assessment.longAnswer) ? assessment.longAnswer : [];
+
+  if (mcq.length !== expectedMcqCount) {
+    throw new Error(`Assessment generation did not match the requested MCQ count (${expectedMcqCount}).`);
+  }
+  if (shortAnswer.length !== shortSubtypeSequence.length) {
+    throw new Error(`Assessment generation did not match the requested short-answer count (${shortSubtypeSequence.length}).`);
+  }
+  if (longAnswer.length !== longSubtypeSequence.length) {
+    throw new Error(`Assessment generation did not match the requested long-answer count (${longSubtypeSequence.length}).`);
+  }
+
+  const legacyToNormalizedId = new Map<string, string>();
+  const makeContinuousQuestionId = (questionNumber: number) => `q${questionNumber}`;
+
+  const normalizedMcq = mcq.map((item: any, index: number) => {
+    const requestedType = requestedQuestionTypes.find((entry) => entry.type === "mcq");
+    const normalizedId = makeContinuousQuestionId(index + 1);
+    if (typeof item?.id === "string" && item.id.trim()) {
+      legacyToNormalizedId.set(item.id.trim(), normalizedId);
+    }
+    return {
+      ...item,
+      id: normalizedId,
+      questionSubtype: "mcq" as const,
+      marks: Number(requestedType?.marksEach || item?.marks || 1),
+    };
+  });
+
+  const normalizedShortAnswer = shortAnswer.map((item: any, index: number) => {
+    const normalizedId = makeContinuousQuestionId(normalizedMcq.length + index + 1);
+    if (typeof item?.id === "string" && item.id.trim()) {
+      legacyToNormalizedId.set(item.id.trim(), normalizedId);
+    }
+    return {
+      ...item,
+      id: normalizedId,
+      questionSubtype: shortSubtypeSequence[index]?.questionSubtype,
+      marks: Number(shortSubtypeSequence[index]?.marksEach || item?.marks || 0),
+    };
+  });
+
+  const normalizedLongAnswer = longAnswer.map((item: any, index: number) => {
+    const normalizedId = makeContinuousQuestionId(normalizedMcq.length + normalizedShortAnswer.length + index + 1);
+    if (typeof item?.id === "string" && item.id.trim()) {
+      legacyToNormalizedId.set(item.id.trim(), normalizedId);
+    }
+    return {
+      ...item,
+      id: normalizedId,
+      questionSubtype: longSubtypeSequence[index]?.questionSubtype,
+      marks: Number(longSubtypeSequence[index]?.marksEach || item?.marks || 0),
+    };
+  });
+
+  const derivedMcqAnswerKey = normalizedMcq.map((item: any) => ({
+    id: item.id,
+    answer: item.answer || "Answer not provided",
+    explanation: item.explanation,
+    marks: Number(item.marks || 0),
+    questionSubtype: "mcq" as const,
+  }));
+  const derivedShortAnswerKey = normalizedShortAnswer.map((item: any) => ({
+    id: item.id,
+    answer: item.answer || "Answer not provided",
+    rubric: Array.isArray(item.rubric) ? item.rubric : [],
+    marks: Number(item.marks || 0),
+    questionSubtype: item.questionSubtype,
+  }));
+  const derivedLongAnswerKey = normalizedLongAnswer.map((item: any) => ({
+    id: item.id,
+    answer: item.answer || "Answer not provided",
+    rubric: Array.isArray(item.rubric) ? item.rubric : [],
+    marks: Number(item.marks || 0),
+    questionSubtype: item.questionSubtype,
+  }));
+
+  const answerKey = {
+    ...(assessment.answerKey && typeof assessment.answerKey === "object" ? assessment.answerKey : {}),
+    mcq:
+      Array.isArray(assessment.answerKey?.mcq) && assessment.answerKey.mcq.length === normalizedMcq.length
+        ? assessment.answerKey.mcq.map((item: any, index: number) => ({
+            ...item,
+            id: normalizedMcq[index]?.id,
+            marks: Number(normalizedMcq[index]?.marks || item?.marks || 0),
+            questionSubtype: "mcq" as const,
+          }))
+        : derivedMcqAnswerKey,
+    shortAnswer:
+      Array.isArray(assessment.answerKey?.shortAnswer) && assessment.answerKey.shortAnswer.length === normalizedShortAnswer.length
+        ? assessment.answerKey.shortAnswer.map((item: any, index: number) => ({
+            ...item,
+            id: normalizedShortAnswer[index]?.id,
+            marks: Number(normalizedShortAnswer[index]?.marks || item?.marks || 0),
+            questionSubtype: normalizedShortAnswer[index]?.questionSubtype,
+          }))
+        : derivedShortAnswerKey,
+    longAnswer:
+      Array.isArray(assessment.answerKey?.longAnswer) && assessment.answerKey.longAnswer.length === normalizedLongAnswer.length
+        ? assessment.answerKey.longAnswer.map((item: any, index: number) => ({
+            ...item,
+            id: normalizedLongAnswer[index]?.id,
+            marks: Number(normalizedLongAnswer[index]?.marks || item?.marks || 0),
+            questionSubtype: normalizedLongAnswer[index]?.questionSubtype,
+          }))
+        : derivedLongAnswerKey,
+    generalMarkingGuidance: Array.isArray(assessment.answerKey?.generalMarkingGuidance)
+      ? assessment.answerKey.generalMarkingGuidance
+      : [
+          "Award marks exactly according to the requested question pattern.",
+          "Accept equivalent correct wording when the concept taught in the session is preserved.",
+          "Use the rubric point-wise for short and long answers.",
+        ],
+  };
+
+  const totalMarks = requestedQuestionTypes.reduce(
+    (sum, item) => sum + Number(item.questionCount || 0) * Number(item.marksEach || 0),
+    0
+  );
+  const totalQuestions = requestedQuestionTypes.reduce((sum, item) => sum + Number(item.questionCount || 0), 0);
+
+  return {
+    ...assessment,
+    assessmentMeta: {
+      ...(assessment.assessmentMeta && typeof assessment.assessmentMeta === "object" ? assessment.assessmentMeta : {}),
+      assessmentType: customization.assessmentType || assessment.assessmentMeta?.assessmentType || "Session assessment",
+      totalMarks,
+      totalQuestions,
+      durationMinutes: defaults.durationMinutes,
+      preferredDifficulty: customization.difficulty || defaults.preferredDifficulty,
+      language: defaults.language,
+      paperObjective: customization.paperObjective || "",
+      requestSignature: buildAssessmentCustomizationSignature(customization),
+      requestedQuestionTypes,
+    },
+    blueprint: {
+      ...(assessment.blueprint && typeof assessment.blueprint === "object" ? assessment.blueprint : {}),
+      learningOutcomeCoverage: Array.isArray(assessment.blueprint?.learningOutcomeCoverage)
+        ? assessment.blueprint.learningOutcomeCoverage.map((item: any) => ({
+            ...item,
+            questionRefs: Array.isArray(item?.questionRefs)
+              ? item.questionRefs.map((ref: any) => {
+                  const normalizedRef = typeof ref === "string" ? legacyToNormalizedId.get(ref.trim()) : undefined;
+                  return normalizedRef || ref;
+                })
+              : [],
+          }))
+        : [],
+      questionDistribution: {
+        ...(assessment.blueprint?.questionDistribution && typeof assessment.blueprint.questionDistribution === "object"
+          ? assessment.blueprint.questionDistribution
+          : {}),
+        mcq: normalizedMcq.length,
+        shortAnswer: normalizedShortAnswer.length,
+        longAnswer: normalizedLongAnswer.length,
+      },
+    },
+    mcq: normalizedMcq,
+    shortAnswer: normalizedShortAnswer,
+    longAnswer: normalizedLongAnswer,
+    answerKey,
+  };
 }
 
 function stripHtmlTags(value: string) {
@@ -5775,6 +6101,22 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     }
 
     const selectedSections = normalizeSessionSections(req.body?.selectedSections);
+    const assessmentCustomization = normalizeAssessmentCustomization(req.body?.assessmentCustomization);
+    const generatedSessionKey = String(roadmapSessionNumber);
+    const existingGeneratedSessions = typeof workspace.generationScope?.generatedSessions === "object" && workspace.generationScope?.generatedSessions
+      ? workspace.generationScope.generatedSessions
+      : {};
+    const existingSessionPlan = existingGeneratedSessions?.[generatedSessionKey];
+    const assessmentOnly = selectedSections.length === 1 && selectedSections[0] === "assessment";
+
+    if (assessmentOnly) {
+      if (!hasAssessmentSourceContent(existingSessionPlan)) {
+        return res.status(400).json({ error: "Generate session teaching content first before creating the assessment." });
+      }
+      if (!hasAssessmentCustomizationContent(assessmentCustomization)) {
+        return res.status(400).json({ error: "Add at least one assessment question type with marks before generating the assessment." });
+      }
+    }
 
     const config = {
       includeLearningOutcomes: true,
@@ -5799,13 +6141,9 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
       previousSessionContext: String(req.body?.previousSessionContext || "").trim(),
       teachingStrategy: workspace.teachingStrategy || {},
       sessionPlanningDefaults: workspace.sessionPlanningDefaults || {},
+      assessmentCustomization,
+      sourceSessionPlan: assessmentOnly ? existingSessionPlan : null,
     });
-
-    const generatedSessionKey = String(roadmapSessionNumber);
-    const existingGeneratedSessions = typeof workspace.generationScope?.generatedSessions === "object" && workspace.generationScope?.generatedSessions
-      ? workspace.generationScope.generatedSessions
-      : {};
-    const existingSessionPlan = existingGeneratedSessions?.[generatedSessionKey];
     const mergedSessionPlan = {
       id: existingSessionPlan?.id || `session-${generatedSessionKey}`,
       sessionNumber: existingSessionPlan?.sessionNumber || roadmapSessionNumber,
@@ -6594,23 +6932,58 @@ app.post("/api/generate-session-details", async (req, res) => {
       title: "Vibrant, educational title for this session",
       duration: durationMinutes,
       teacherLessonNotes: {
+        sessionOverview: "Teacher-facing overview of this session",
         prerequisiteKnowledge: ["What students should already know"],
         previousSessionRecap: ["Short recap points from the previous lesson"],
+        learningOutcomes: ["Specific session outcome phrased for teacher delivery"],
+        teachingPlan: [{
+          minutes: 5,
+          topic: "Introduction",
+          teachingStrategy: "Questioning with simple real-life example"
+        }],
         teachingSequence: ["Teacher-facing lesson flow with explanation steps"],
         guidedPractice: ["Teacher-led checks and guided responses"],
+        lessonBlocks: [{
+          title: "Introduction",
+          durationMinutes: 5,
+          teacherPrompt: ["Prompt teachers can ask"],
+          explanation: ["What the teacher should explain"],
+          examples: ["Simple classroom example"],
+          boardWork: ["What to write on the board"],
+          checkUnderstanding: ["Quick question to ask students"],
+          expectedAnswers: ["Expected student answer"],
+          activity: ["Optional mini activity"]
+        }],
         differentiation: {
           slowLearners: ["Support strategies"],
           averageLearners: ["Core expectations"],
           advancedLearners: ["Extension prompts"]
         },
         teacherTips: ["Pedagogical tips"],
-        misconceptions: ["Likely misconceptions to address"]
+        misconceptions: ["Likely misconceptions to address"],
+        commonMisconceptionsDetailed: [{
+          misconception: "Common wrong idea",
+          correction: "Teacher correction for that misconception"
+        }],
+        assessmentQuestions: ["Oral or written assessment question"],
+        blackboardSummary: ["Key point for board summary"],
+        endOfClassRecap: [{
+          prompt: "A cell is the ________ unit of life.",
+          expectedAnswer: "basic"
+        }]
       },
     studentLessonNotes: {
       title: "Student lesson note title",
+      sessionOverview: "Simple overview of what this session covers",
       introduction: "Student-friendly introduction",
       learningObjectives: ["After this lesson you will be able to..."],
       quickRecall: ["Short prerequisite revision point"],
+      easyToRemember: ["Simple memory line for the concept"],
+      comparisonTables: [{
+        title: "Comparison table title",
+        headers: ["Feature", "Type A", "Type B"],
+        rows: [["Example feature", "Example A", "Example B"]]
+      }],
       sections: [{
         heading: "Main idea",
         explanation: "Comprehensive but student-friendly explanation",
@@ -6640,9 +7013,25 @@ app.post("/api/generate-session-details", async (req, res) => {
         quickRecap: ["Fast revision point"]
       },
       selfCheckQuestions: ["Question students can answer independently"],
+      quickSummary: ["Short summary point"],
+      keyTerms: ["Important keyword"],
+      fillInTheBlanks: [{
+        prompt: "A ________ is the basic unit of life.",
+        answer: "cell"
+      }],
+      mcqQuestions: [{
+        question: "Which organelle controls the cell?",
+        options: ["A. Ribosome", "B. Nucleus", "C. Vacuole", "D. Cytoplasm"],
+        answer: "B. Nucleus"
+      }],
+      veryShortAnswerQuestions: [{
+        question: "What is a cell?",
+        answer: "The basic structural and functional unit of life."
+      }],
       didYouKnow: ["Interesting supporting fact"],
       summary: ["Short summary point"],
-      quickRevision: ["Revision cue"]
+      quickRevision: ["Revision cue"],
+      rememberPoints: ["Cell -> Basic Unit of Life"]
     },
       learningOutcomes: ["Specific action-oriented objectives"],
       introduction: "A exciting 3-5 minute hook, inquiry question, or classroom starter",
@@ -6698,6 +7087,7 @@ app.post("/api/generate-session-details", async (req, res) => {
       homework: { task: "Interactive or practical homework task", estimatedTimeMinutes: 30 },
       assessment: {
         mcq: [{
+          questionSubtype: "mcq",
           question: "MCQ question",
           options: ["A. option", "B. option", "C. option", "D. option"],
           answer: "Correct option",
@@ -6705,6 +7095,7 @@ app.post("/api/generate-session-details", async (req, res) => {
           marks: 1
         }],
         shortAnswer: [{
+          questionSubtype: "shortAnswer",
           question: "Short-answer question",
           answer: "Model short answer",
           expectedLength: "1-2 clear points",
@@ -6712,6 +7103,7 @@ app.post("/api/generate-session-details", async (req, res) => {
           rubric: ["1 mark for first correct point", "1 mark for second correct point"]
         }],
         longAnswer: [{
+          questionSubtype: "longAnswer",
           question: "Long-answer question",
           answer: "Model long answer",
           expectedLength: "4-5 well-structured points with explanation",
@@ -6719,9 +7111,9 @@ app.post("/api/generate-session-details", async (req, res) => {
           rubric: ["Marks awarded point-wise", "Credit explanation quality", "Credit labelled example or diagram if relevant"]
         }],
         answerKey: {
-          mcq: [{ answer: "Correct option", explanation: "Brief explanation", marks: 1 }],
-          shortAnswer: [{ answer: "Point-wise short answer", rubric: ["Point 1", "Point 2"], marks: 2 }],
-          longAnswer: [{ answer: "Structured long answer", rubric: ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"], marks: 5 }],
+          mcq: [{ answer: "Correct option", explanation: "Brief explanation", marks: 1, questionSubtype: "mcq" }],
+          shortAnswer: [{ answer: "Point-wise short answer", rubric: ["Point 1", "Point 2"], marks: 2, questionSubtype: "shortAnswer" }],
+          longAnswer: [{ answer: "Structured long answer", rubric: ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"], marks: 5, questionSubtype: "longAnswer" }],
           generalMarkingGuidance: [
             "Award marks point-wise for each valid idea.",
             "Accept equivalent scientific wording if the meaning is correct.",
@@ -6761,6 +7153,8 @@ async function generateSessionDetailsArtifact({
   previousSessionContext = "",
   teachingStrategy = {},
   sessionPlanningDefaults = {},
+  assessmentCustomization = null,
+  sourceSessionPlan = null,
 }: {
   subject: string;
   gradeLevel: string;
@@ -6775,6 +7169,8 @@ async function generateSessionDetailsArtifact({
   previousSessionContext?: string;
   teachingStrategy?: Record<string, any>;
   sessionPlanningDefaults?: Record<string, any>;
+  assessmentCustomization?: SessionAssessmentCustomization | null;
+  sourceSessionPlan?: Record<string, any> | null;
 }) {
   const requestId = makeRequestId("generate-content-session");
   const debugDir = await ensureDebugDir(requestId);
@@ -6792,6 +7188,8 @@ async function generateSessionDetailsArtifact({
     previousSessionContext,
     teachingStrategy,
     sessionPlanningDefaults,
+    assessmentCustomization,
+    sourceSessionPlan,
   });
 
   const baseSchema = {
@@ -6800,11 +7198,29 @@ async function generateSessionDetailsArtifact({
     title: "Vibrant, educational title for this session",
     duration: durationMinutes,
     teacherLessonNotes: {
+      sessionOverview: "Teacher-facing overview of this session",
       prerequisiteKnowledge: ["What students should already know"],
       previousSessionRecap: ["Short recap points from the previous lesson"],
+      learningOutcomes: ["Specific session outcome phrased for teacher delivery"],
+      teachingPlan: [{
+        minutes: 5,
+        topic: "Introduction",
+        teachingStrategy: "Questioning with simple real-life example"
+      }],
       lessonPurpose: ["Why this lesson matters"],
       teachingSequence: ["Teacher-facing lesson flow with explanation steps"],
       guidedPractice: ["Teacher-led checks and guided responses"],
+      lessonBlocks: [{
+        title: "Introduction",
+        durationMinutes: 5,
+        teacherPrompt: ["Prompt teachers can ask"],
+        explanation: ["What the teacher should explain"],
+        examples: ["Simple classroom example"],
+        boardWork: ["What to write on the board"],
+        checkUnderstanding: ["Quick question to ask students"],
+        expectedAnswers: ["Expected student answer"],
+        activity: ["Optional mini activity"]
+      }],
       conceptFlow: [{
         conceptName: "Concept name",
         definition: "Short definition",
@@ -6825,6 +7241,10 @@ async function generateSessionDetailsArtifact({
         expectedResponse: "Likely student response",
         answerPoints: ["Point teachers should listen for"]
       }],
+      commonMisconceptionsDetailed: [{
+        misconception: "Common wrong idea",
+        correction: "Teacher correction for that misconception"
+      }],
       differentiation: {
         slowLearners: ["Support strategies"],
         averageLearners: ["Core expectations"],
@@ -6833,19 +7253,32 @@ async function generateSessionDetailsArtifact({
       teacherTips: ["Pedagogical tips"],
       misconceptions: ["Likely misconceptions to address"],
       formativeChecks: ["Natural formative assessment checkpoint"],
+      assessmentQuestions: ["Oral or written assessment question"],
+      blackboardSummary: ["Key point for board summary"],
       timePlan: [{
         segment: "Recap",
         minutes: 5,
         purpose: "Refresh prerequisite ideas"
       }],
       sessionSummary: ["Closing recap point"],
+      endOfClassRecap: [{
+        prompt: "A cell is the ________ unit of life.",
+        expectedAnswer: "basic"
+      }],
       nextSessionBridge: ["How today connects to the next lesson"]
     },
     studentLessonNotes: {
       title: "Student lesson note title",
+      sessionOverview: "Simple overview of what this session covers",
       introduction: "Student-friendly introduction",
       learningObjectives: ["After this lesson you will be able to..."],
       quickRecall: ["Short prerequisite revision point"],
+      easyToRemember: ["Simple memory line for the concept"],
+      comparisonTables: [{
+        title: "Comparison table title",
+        headers: ["Feature", "Type A", "Type B"],
+        rows: [["Example feature", "Example A", "Example B"]]
+      }],
       sections: [{
         heading: "Main idea",
         explanation: "Comprehensive but student-friendly explanation",
@@ -6875,9 +7308,25 @@ async function generateSessionDetailsArtifact({
         quickRecap: ["Fast revision point"]
       },
       selfCheckQuestions: ["Question students can answer independently"],
+      quickSummary: ["Short summary point"],
+      keyTerms: ["Important keyword"],
+      fillInTheBlanks: [{
+        prompt: "A ________ is the basic unit of life.",
+        answer: "cell"
+      }],
+      mcqQuestions: [{
+        question: "Which organelle controls the cell?",
+        options: ["A. Ribosome", "B. Nucleus", "C. Vacuole", "D. Cytoplasm"],
+        answer: "B. Nucleus"
+      }],
+      veryShortAnswerQuestions: [{
+        question: "What is a cell?",
+        answer: "The basic structural and functional unit of life."
+      }],
       didYouKnow: ["Interesting supporting fact"],
       summary: ["Short summary point"],
-      quickRevision: ["Revision cue"]
+      quickRevision: ["Revision cue"],
+      rememberPoints: ["Cell -> Basic Unit of Life"]
     },
     learningOutcomes: ["Specific action-oriented objectives"],
     introduction: "A exciting 3-5 minute hook, inquiry question, or classroom starter",
@@ -6977,31 +7426,93 @@ async function generateSessionDetailsArtifact({
     },
     homework: { task: "Interactive or practical homework task", estimatedTimeMinutes: 30 },
     assessment: {
+      assessmentMeta: {
+        assessmentType: "Mixed formative checks",
+        totalMarks: 15,
+        totalQuestions: 7,
+        durationMinutes: 15,
+        preferredDifficulty: "Balanced",
+        language: "English",
+        paperObjective: "Assess only the taught session content with the requested paper pattern.",
+        requestSignature: "stable-customization-signature",
+        requestedQuestionTypes: [{
+          type: "mcq",
+          label: "MCQs",
+          questionCount: 4,
+          marksEach: 1
+        }],
+        instructions: ["Answer all questions based only on the concepts taught in this session."]
+      },
+      blueprint: {
+        learningOutcomeCoverage: [{
+          outcome: "Learning outcome text",
+          questionRefs: ["q1", "q5"]
+        }],
+        difficultyDistribution: {
+          easy: 40,
+          medium: 40,
+          hard: 20
+        },
+        bloomsDistribution: {
+          recall: 20,
+          understanding: 30,
+          application: 25,
+          analysis: 15,
+          evaluation: 10
+        },
+        questionDistribution: {
+          mcq: 4,
+          shortAnswer: 2,
+          longAnswer: 1
+        },
+        timeAllocation: [{
+          section: "MCQ",
+          minutes: 5
+        }]
+      },
       mcq: [{
+        id: "q1",
+        questionSubtype: "mcq",
         question: "MCQ question",
         options: ["A. option", "B. option", "C. option", "D. option"],
         answer: "Correct option",
         explanation: "Why this option is correct",
-        marks: 1
+        marks: 1,
+        learningOutcomeIds: ["LO1"],
+        topicCoverage: ["Topic"],
+        difficulty: "easy",
+        bloomsLevel: "understanding"
       }],
       shortAnswer: [{
+        id: "q5",
+        questionSubtype: "shortAnswer",
         question: "Short-answer question",
         answer: "Model short answer",
         expectedLength: "1-2 clear points",
         marks: 2,
-        rubric: ["1 mark for first correct point", "1 mark for second correct point"]
+        rubric: ["1 mark for first correct point", "1 mark for second correct point"],
+        learningOutcomeIds: ["LO1"],
+        topicCoverage: ["Topic"],
+        difficulty: "medium",
+        bloomsLevel: "application"
       }],
       longAnswer: [{
+        id: "q7",
+        questionSubtype: "longAnswer",
         question: "Long-answer question",
         answer: "Model long answer",
         expectedLength: "4-5 well-structured points with explanation",
         marks: 5,
-        rubric: ["Marks awarded point-wise", "Credit explanation quality", "Credit labelled example or diagram if relevant"]
+        rubric: ["Marks awarded point-wise", "Credit explanation quality", "Credit labelled example or diagram if relevant"],
+        learningOutcomeIds: ["LO1"],
+        topicCoverage: ["Topic"],
+        difficulty: "hard",
+        bloomsLevel: "analysis"
       }],
       answerKey: {
-        mcq: [{ answer: "Correct option", explanation: "Brief explanation", marks: 1 }],
-        shortAnswer: [{ answer: "Point-wise short answer", rubric: ["Point 1", "Point 2"], marks: 2 }],
-        longAnswer: [{ answer: "Structured long answer", rubric: ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"], marks: 5 }],
+        mcq: [{ answer: "Correct option", explanation: "Brief explanation", marks: 1, questionSubtype: "mcq" }],
+        shortAnswer: [{ answer: "Point-wise short answer", rubric: ["Point 1", "Point 2"], marks: 2, questionSubtype: "shortAnswer" }],
+        longAnswer: [{ answer: "Structured long answer", rubric: ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"], marks: 5, questionSubtype: "longAnswer" }],
         generalMarkingGuidance: [
           "Award marks point-wise for each valid idea.",
           "Accept equivalent scientific wording if the meaning is correct.",
@@ -7016,6 +7527,10 @@ async function generateSessionDetailsArtifact({
   const studentNotesOnly = selectedSections.length === 1 && selectedSections[0] === "studentLessonNotes";
   const materialsOnly = selectedSections.length === 1 && selectedSections[0] === "materials";
   const homeworkOnly = selectedSections.length === 1 && selectedSections[0] === "homework";
+  const assessmentOnly = selectedSections.length === 1 && selectedSections[0] === "assessment";
+  if (assessmentOnly && !hasAssessmentSourceContent(sourceSessionPlan)) {
+    throw new Error("Generate session teaching content first before creating the assessment.");
+  }
   const sessionContextPayload = {
     sessionNumber,
     sessionTitle: sessionTitle || `Session ${sessionNumber}`,
@@ -7028,8 +7543,82 @@ async function generateSessionDetailsArtifact({
     previousSessionContext,
     teachingStrategy,
     sessionPlanningDefaults,
+    assessmentCustomization,
     config,
   };
+  const assessmentSourcePayload = assessmentOnly
+    ? buildAssessmentSourceSessionPayload(sourceSessionPlan, {
+        id: `session-${sessionNumber}`,
+        sessionNumber,
+        title: sessionTitle || `Session ${sessionNumber}`,
+        duration: durationMinutes,
+        learningOutcomes,
+      })
+    : sessionContextPayload;
+  const derivedAssessmentDuration = Math.max(10, Math.min(30, Math.round(durationMinutes / 3 / 5) * 5 || 15));
+  const derivedAssessmentMarks = Math.max(10, Math.min(30, Math.round(durationMinutes / 3)));
+  const requestedQuestionTypes = Array.isArray(assessmentCustomization?.questionTypes) ? assessmentCustomization.questionTypes : [];
+  const requestedMarksFromQuestionTypes = requestedQuestionTypes.reduce(
+    (sum, item) => sum + Number(item.questionCount || 0) * Number(item.marksEach || 0),
+    0
+  );
+  const requestedQuestionsFromQuestionTypes = requestedQuestionTypes.reduce(
+    (sum, item) => sum + Number(item.questionCount || 0),
+    0
+  );
+  const assessmentType = String(assessmentCustomization?.assessmentType || "Session assessment");
+  const preferredDifficulty = String(assessmentCustomization?.difficulty || teachingStrategy?.targetDifficulty || "Balanced");
+  const assessmentLanguage = String(sessionPlanningDefaults?.language || "English");
+  const targetBlooms = Array.isArray(teachingStrategy?.bloomsTaxonomyEmphasis)
+    ? teachingStrategy.bloomsTaxonomyEmphasis
+    : [];
+  const requestedTotalMarks = Math.max(1, Number(assessmentCustomization?.totalMarks || requestedMarksFromQuestionTypes || derivedAssessmentMarks));
+  const requestedTotalQuestions = Math.max(0, Number(assessmentCustomization?.totalQuestions || requestedQuestionsFromQuestionTypes || 0));
+  const assessmentInstructionsPrompt = renderPrompt("assessment-generation.md", {
+    SUBJECT: String(subject || ""),
+    GRADE_LEVEL: String(gradeLevel || ""),
+    SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
+    SESSION_NUMBER: String(sessionNumber),
+    TOTAL_SESSIONS: String(totalSessions),
+    DURATION_MINUTES: String(durationMinutes),
+    SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
+    LEARNING_OUTCOMES_JSON: JSON.stringify(learningOutcomes),
+    PREVIOUS_SESSION_CONTEXT: previousSessionContext || "No previous session context provided.",
+    LEARNING_PACE: String(teachingStrategy?.pace || "Balanced"),
+    TARGET_DIFFICULTY: preferredDifficulty,
+    OUTPUT_LANGUAGE: assessmentLanguage,
+    ASSESSMENT_TYPE: assessmentType,
+    REQUESTED_TOTAL_MARKS: String(requestedTotalMarks),
+    REQUESTED_DURATION_MINUTES: String(derivedAssessmentDuration),
+    ASSESSMENT_PREFERENCE_JSON: JSON.stringify([]),
+    BLOOMS_DISTRIBUTION_JSON: JSON.stringify(targetBlooms),
+    REQUESTED_TOTAL_QUESTIONS: String(requestedTotalQuestions),
+    REQUESTED_QUESTION_TYPES_JSON: JSON.stringify(requestedQuestionTypes),
+    QUESTION_PAPER_OBJECTIVE: String(assessmentCustomization?.paperObjective || "Not specified."),
+    TEACHER_ASSESSMENT_REQUEST_JSON: JSON.stringify(assessmentCustomization || {}, null, 2),
+    SESSION_JSON: JSON.stringify(assessmentSourcePayload, null, 2),
+    ASSESSMENT_SCHEMA_JSON: JSON.stringify({ assessment: baseSchema.assessment }, null, 2),
+  });
+  const embeddedAssessmentInstructions = [
+    "Assessment block rules:",
+    "- Use only taught session content.",
+    "- Assess each learning outcome intentionally.",
+    `- Assessment type: ${assessmentType}.`,
+    `- Total marks: ${requestedTotalMarks}.`,
+    `- Duration: ${derivedAssessmentDuration} minutes.`,
+    `- Preferred difficulty: ${preferredDifficulty}.`,
+    `- Language: ${assessmentLanguage}.`,
+    `- Requested total questions: ${requestedTotalQuestions}.`,
+    `- Requested question type mix: ${JSON.stringify(requestedQuestionTypes)}.`,
+    `- Paper objective: ${String(assessmentCustomization?.paperObjective || "Not specified.")}.`,
+    "- Match the requested question counts and marks exactly.",
+    "- Keep answer-key sections aligned one-to-one with the generated questions.",
+    "- Return the assessment block with assessmentMeta, blueprint, mcq, shortAnswer, longAnswer, and answerKey.",
+    "- Keep marks and duration exact.",
+    "- Progress from easier to harder questions.",
+    "- Add learningOutcomeCoverage, difficultyDistribution, bloomsDistribution, questionDistribution, and timeAllocation in blueprint.",
+    "- Keep answer keys and rubrics aligned with the generated questions.",
+  ].join("\n");
   const prompt = teacherNotesOnly
     ? renderPrompt("teacher-notes-generation.md", {
         SUBJECT: String(subject || ""),
@@ -7156,6 +7745,8 @@ async function generateSessionDetailsArtifact({
         READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
         SESSION_JSON: JSON.stringify(sessionContextPayload, null, 2),
       })
+    : assessmentOnly
+    ? assessmentInstructionsPrompt
     : renderPrompt("session-generation.md", {
         SESSION_NUMBER: String(sessionNumber),
         TOTAL_SESSIONS: String(totalSessions),
@@ -7170,6 +7761,7 @@ async function generateSessionDetailsArtifact({
         INCLUDE_ASSIGNMENTS: config.includeAssignments ? "YES" : "NO",
         INCLUDE_NOTES: config.includeNotes ? "YES" : "NO",
         SELECTED_SECTIONS_JSON: JSON.stringify(selectedSections),
+        ASSESSMENT_ENGINE_INSTRUCTIONS: embeddedAssessmentInstructions,
       });
 
   const schema = teacherNotesOnly
@@ -7219,6 +7811,10 @@ async function generateSessionDetailsArtifact({
           }
         }
       }
+    : assessmentOnly
+    ? {
+        assessment: baseSchema.assessment
+      }
     : baseSchema;
 
   const response = await generateWithOllama(
@@ -7232,11 +7828,19 @@ async function generateSessionDetailsArtifact({
       ? "generate-content-session-ppt-materials"
       : homeworkOnly
       ? "generate-content-session-homework"
+      : assessmentOnly
+      ? "generate-content-session-assessment"
       : "generate-content-session",
     prompt,
     schema,
     {
       model: OLLAMA_SESSION_CONTENT_MODEL,
+      numPredict:
+        assessmentOnly
+          ? Math.max(12288, OLLAMA_NUM_PREDICT)
+          : selectedSections.includes("assessment")
+          ? Math.max(10240, OLLAMA_NUM_PREDICT)
+          : OLLAMA_NUM_PREDICT,
     }
   );
   let responseText = response.text || "{}";
@@ -7260,7 +7864,14 @@ async function generateSessionDetailsArtifact({
       selectedChapters,
     });
   }
-  const normalizedSession = teacherNotesOnly || studentNotesOnly
+  if (parsedSession?.assessment && assessmentCustomization && hasAssessmentCustomizationContent(assessmentCustomization)) {
+    parsedSession.assessment = normalizeAssessmentResponseToCustomization(parsedSession.assessment, assessmentCustomization, {
+      durationMinutes: derivedAssessmentDuration,
+      language: assessmentLanguage,
+      preferredDifficulty,
+    });
+  }
+  const normalizedSession = teacherNotesOnly || studentNotesOnly || assessmentOnly
     ? pickSessionSections(parsedSession, selectedSections)
     : {
         ...pickSessionSections(parsedSession, selectedSections),

@@ -24,7 +24,21 @@ Student notes generation rules:
 3. The notes must feel like professionally designed student study notes, not teacher notes or textbook paragraphs.
 4. Keep the structure revision-friendly, engaging, and easy to study independently.
 5. Adapt to grade level, learning pace, reading level, and realistic session duration.
-6. Return valid JSON only.
+6. Follow a slow-learner-friendly classroom study-note style when the pace or difficulty is low:
+   - simple language
+   - short explanations
+   - repetition of key terms
+   - real-life examples
+   - easy memory aids
+   - quick practice inside the notes
+7. Include built-in study practice directly inside student notes:
+   - fill in the blanks
+   - MCQs
+   - very short answer questions
+   - remember points
+8. Use comparison tables where useful for differences such as plant vs animal, or prokaryotic vs eukaryotic.
+9. Return arrays with usable student-facing content, not placeholders.
+10. Return valid JSON only.
 
 Use this learning flow:
 1. Session overview
@@ -47,9 +61,18 @@ Return a JSON object matching this exact shape:
 {
   "studentLessonNotes": {
     "title": "Student lesson note title",
+    "sessionOverview": "Friendly one-session overview",
     "introduction": "Friendly session overview",
     "learningObjectives": ["After this lesson you will be able to..."],
     "quickRecall": ["Short prerequisite revision point"],
+    "easyToRemember": ["Simple memory line for the concept"],
+    "comparisonTables": [
+      {
+        "title": "Comparison title",
+        "headers": ["Feature", "Type A", "Type B"],
+        "rows": [["Example feature", "Example A", "Example B"]]
+      }
+    ],
     "sections": [
       {
         "heading": "Concept name",
@@ -88,8 +111,30 @@ Return a JSON object matching this exact shape:
       "quickRecap": ["Fast revision point"]
     },
     "selfCheckQuestions": ["Question students can answer independently"],
+    "quickSummary": ["Short summary point"],
+    "keyTerms": ["Important keyword"],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A ________ is the basic unit of life.",
+        "answer": "cell"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which organelle controls the cell?",
+        "options": ["A. Ribosome", "B. Nucleus", "C. Vacuole", "D. Cytoplasm"],
+        "answer": "B. Nucleus"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "What is a cell?",
+        "answer": "The basic structural and functional unit of life."
+      }
+    ],
     "didYouKnow": ["Interesting supporting fact"],
     "summary": ["Key learning point"],
-    "quickRevision": ["Very short revision cue"]
+    "quickRevision": ["Very short revision cue"],
+    "rememberPoints": ["Cell -> Basic Unit of Life"]
   }
 }

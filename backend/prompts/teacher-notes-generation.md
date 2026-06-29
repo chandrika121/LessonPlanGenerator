@@ -30,7 +30,22 @@ Teacher notes generation rules:
 4. Adapt the lesson to the duration, pace, level, and preferences.
 5. The time plan must exactly match the provided session duration.
 6. Keep the output teacher-facing and classroom-usable, not textbook-like.
-7. Return valid JSON only.
+7. Follow a longer classroom-ready format similar to high-quality ChatGPT teacher notes:
+   - session overview
+   - learning outcomes
+   - teaching plan table
+   - block-by-block teaching notes
+   - teacher prompts
+   - board work
+   - check-understanding questions
+   - expected answers
+   - misconceptions with corrections
+   - assessment questions
+   - blackboard summary
+   - end-of-class recap
+8. If learning pace is slow or the class level is beginner, use very simple language, one concept at a time, repeated key terms, and real-life analogies.
+9. Return arrays with usable classroom content, not placeholders.
+10. Return valid JSON only.
 
 Use this lesson flow:
 1. Previous lesson connection
@@ -53,11 +68,33 @@ Use this lesson flow:
 Return a JSON object matching this exact shape:
 {
   "teacherLessonNotes": {
+    "sessionOverview": "Teacher-facing overview of the session",
     "prerequisiteKnowledge": ["What students should already know"],
     "previousSessionRecap": ["Short recap points from the previous lesson"],
+    "learningOutcomes": ["Session outcome phrased for teacher delivery"],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Questioning with simple example"
+      }
+    ],
     "lessonPurpose": ["Why this lesson matters"],
     "teachingSequence": ["Step-by-step teacher-facing lesson flow"],
     "guidedPractice": ["Teacher-led checks and guided responses"],
+    "lessonBlocks": [
+      {
+        "title": "Introduction",
+        "durationMinutes": 5,
+        "teacherPrompt": ["Prompt teachers can ask"],
+        "explanation": ["What the teacher should explain"],
+        "examples": ["Simple classroom example"],
+        "boardWork": ["What to write on the board"],
+        "checkUnderstanding": ["Quick question to ask students"],
+        "expectedAnswers": ["Expected student answer"],
+        "activity": ["Optional mini activity"]
+      }
+    ],
     "conceptFlow": [
       {
         "conceptName": "Concept name",
@@ -82,6 +119,12 @@ Return a JSON object matching this exact shape:
         "answerPoints": ["Point teachers should listen for"]
       }
     ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Common wrong idea",
+        "correction": "Teacher correction"
+      }
+    ],
     "differentiation": {
       "slowLearners": ["Support strategies"],
       "averageLearners": ["Core expectations"],
@@ -89,6 +132,8 @@ Return a JSON object matching this exact shape:
     },
     "misconceptions": ["Likely misconception to address"],
     "formativeChecks": ["Natural formative assessment checkpoint"],
+    "assessmentQuestions": ["Oral or written assessment question"],
+    "blackboardSummary": ["Key point for board summary"],
     "teacherTips": ["Practical classroom tip"],
     "timePlan": [
       {
@@ -98,6 +143,12 @@ Return a JSON object matching this exact shape:
       }
     ],
     "sessionSummary": ["Closing recap point"],
+    "endOfClassRecap": [
+      {
+        "prompt": "A cell is the ________ unit of life.",
+        "expectedAnswer": "basic"
+      }
+    ],
     "nextSessionBridge": ["How today connects to the next lesson"]
   }
 }

@@ -1,0 +1,375 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 14,
+      "totalQuestions": 8,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 1,
+          "marksEach": 5
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Time allowed: 15 minutes. Total Marks: 14."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will be able to define a cell and explain its role as the basic unit of life.",
+          "questionRefs": [
+            "MCQ-1",
+            "VSA-1"
+          ]
+        },
+        {
+          "outcome": "Students will differentiate between prokaryotic and eukaryotic cells based on nuclear structure.",
+          "questionRefs": [
+            "MCQ-2",
+            "VSA-2",
+            "LA-1"
+          ]
+        },
+        {
+          "outcome": "Students will describe the functions of the plasma membrane and cell wall.",
+          "questionRefs": [
+            "MCQ-3",
+            "SA-1",
+            "SA-2"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 50,
+        "medium": 40,
+        "hard": 10
+      },
+      "bloomsDistribution": {
+        "recall": 37.5,
+        "understanding": 62.5,
+        "application": 0,
+        "analysis": 0,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2,
+        "longAnswer": 1
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answers",
+          "minutes": 3
+        },
+        {
+          "section": "Short Answers",
+          "minutes": 5
+        },
+        {
+          "section": "Long Answer",
+          "minutes": 3
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "MCQ-1",
+        "questionSubtype": "mcq",
+        "question": "What is the smallest structural and functional unit of life?",
+        "options": [
+          "A. Tissue",
+          "B. Cell",
+          "C. Organ",
+          "D. System"
+        ],
+        "answer": "B. Cell",
+        "explanation": "The cell is defined as the smallest unit that can be called alive and serves as the basic building block of all living organisms.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Theory",
+          "Basic Unit of Life"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "MCQ-2",
+        "questionSubtype": "mcq",
+        "question": "Which feature distinguishes a eukaryotic cell from a prokaryotic cell?",
+        "options": [
+          "A. Presence of cytoplasm",
+          "B. Absence of plasma membrane",
+          "C. Presence of a well-defined nucleus",
+          "D. Ability to move"
+        ],
+        "answer": "C. Presence of a well-defined nucleus",
+        "explanation": "The primary classification difference is that eukaryotes have a membrane-bound nucleus, whereas prokaryotes lack this distinct boundary.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Prokaryotic vs Eukaryotic Cells",
+          "Nucleus Structure"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "MCQ-3",
+        "questionSubtype": "mcq",
+        "question": "Why is the plasma membrane described as 'selectively permeable'?",
+        "options": [
+          "A. It allows all substances to pass freely.",
+          "B. It prevents any substance from entering or leaving.",
+          "C. It acts like a gatekeeper, allowing only specific substances to pass.",
+          "D. It is made of rigid cellulose."
+        ],
+        "answer": "C. It acts like a gatekeeper, allowing only specific substances to pass.",
+        "explanation": "Selective permeability means the membrane controls transport by letting some substances through while blocking others.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Plasma Membrane Function",
+          "Selectively Permeable"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "VSA-1",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Who first observed cells in cork?",
+        "answer": "Robert Hooke",
+        "expectedLength": "One name or fact",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for correctly naming 'Robert Hooke'."
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "History of Cell Discovery",
+          "Cell Theory Basics"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "VSA-2",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Name the outer rigid layer found in plant cells.",
+        "answer": "Cell Wall",
+        "expectedLength": "One term or fact",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for correctly identifying 'Cell Wall'."
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Plant Cell Structure",
+          "Cell Wall Function"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "SA-1",
+        "questionSubtype": "shortAnswer",
+        "question": "Explain the function of the cell wall in plant cells.",
+        "answer": "The cell wall provides structural support and rigidity to the plant cell. It prevents the cell from bursting when placed in hypotonic solutions (like water) due to its rigid nature made of cellulose.",
+        "expectedLength": "2 clear points",
+        "marks": 2,
+        "rubric": [
+          "1 mark for mentioning 'structural support' or 'rigidity'.",
+          "1 mark for explaining protection against bursting in water/hypotonic solutions."
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Cell Wall Function",
+          "Plant vs Animal Cells"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "SA-2",
+        "questionSubtype": "shortAnswer",
+        "question": "Differentiate between prokaryotic and eukaryotic cells based on their nucleus.",
+        "answer": "Prokaryotic cells lack a well-defined, membrane-bound nucleus; their genetic material floats in the cytoplasm. Eukaryotic cells possess a distinct, true nucleus enclosed by a membrane that contains DNA.",
+        "expectedLength": "2 clear points",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly stating prokaryotes lack a defined nucleus/membrane-bound nucleus.",
+          "1 mark for correctly stating eukaryotes have a true membrane-bound nucleus."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Prokaryotic vs Eukaryotic Cells",
+          "Nucleus Structure"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "LA-1",
+        "questionSubtype": "longAnswer",
+        "question": "Compare and contrast the plasma membrane and cell wall. In your answer, discuss their location relative to each other in plant cells, their permeability characteristics, and which type of organism possesses a cell wall.",
+        "answer": "1. **Location**: The plasma membrane is present in all cells (both plants and animals) as the inner boundary. The cell wall is an additional outer layer found only in plant cells (and fungi/bacteria), located outside the plasma membrane.\n2. **Permeability/Structure**: The plasma membrane is selectively permeable, acting like a gatekeeper that controls what enters or leaves the cell. It is flexible and thin. In contrast, the cell wall is rigid and made of cellulose in plants; it provides structural support and shape but does not control transport as specifically as the membrane.\n3. **Organism Type**: The plasma membrane is universal to all living cells. The cell wall is specific to plants (and some other organisms like fungi/bacteria), whereas animal cells lack a cell wall entirely.",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "1 mark for correctly identifying the location of both structures in plant cells (Membrane inner, Wall outer).",
+          "1 mark for describing the plasma membrane as selectively permeable and flexible.",
+          "1 mark for describing the cell wall as rigid/structural support made of cellulose.",
+          "1 mark for distinguishing that animal cells lack a cell wall while plants have it.",
+          "1 mark for clear structure, logical flow, or use of correct terminology (e.g., 'selectively permeable', 'cellulose')."
+        ],
+        "learningOutcomeIds": [
+          "LO2",
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Cell Boundaries",
+          "Plant vs Animal Cells",
+          "Membrane and Wall Functions"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "MCQ-1",
+          "answer": "B. Cell",
+          "explanation": "The cell is the smallest unit of life.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "MCQ-2",
+          "answer": "C. Presence of a well-defined nucleus",
+          "explanation": "Eukaryotes have a true nucleus; prokaryotes do not.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "MCQ-3",
+          "answer": "C. It acts like a gatekeeper, allowing only specific substances to pass.",
+          "explanation": "Selective permeability refers to the control of transport across the membrane.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "VSA-1",
+          "answer": "Robert Hooke",
+          "rubric": [
+            "Award 1 mark for correctly naming 'Robert Hooke'."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "VSA-2",
+          "answer": "Cell Wall",
+          "rubric": [
+            "Award 1 mark for correctly identifying 'Cell Wall'."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "SA-1",
+          "answer": "The cell wall provides structural support and rigidity to the plant cell. It prevents the cell from bursting when placed in hypotonic solutions (like water) due to its rigid nature made of cellulose.",
+          "rubric": [
+            "1 mark for mentioning 'structural support' or 'rigidity'.",
+            "1 mark for explaining protection against bursting in water/hypotonic solutions."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "SA-2",
+          "answer": "Prokaryotic cells lack a well-defined, membrane-bound nucleus; their genetic material floats in the cytoplasm. Eukaryotic cells possess a distinct, true nucleus enclosed by a membrane that contains DNA.",
+          "rubric": [
+            "1 mark for correctly stating prokaryotes lack a defined nucleus/membrane-bound nucleus.",
+            "1 mark for correctly stating eukaryotes have a true membrane-bound nucleus."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "LA-1",
+          "answer": "1. **Location**: The plasma membrane is present in all cells (both plants and animals) as the inner boundary. The cell wall is an additional outer layer found only in plant cells (and fungi/bacteria), located outside the plasma membrane.\n2. **Permeability/Structure**: The plasma membrane is selectively permeable, acting like a gatekeeper that controls what enters or leaves the cell. It is flexible and thin. In contrast, the cell wall is rigid and made of cellulose in plants; it provides structural support and shape but does not control transport as specifically as the membrane.\n3. **Organism Type**: The plasma membrane is universal to all living cells. The cell wall is specific to plants (and some other organisms like fungi/bacteria), whereas animal cells lack a cell wall entirely.",
+          "rubric": [
+            "1 mark for correctly identifying the location of both structures in plant cells (Membrane inner, Wall outer).",
+            "1 mark for describing the plasma membrane as selectively permeable and flexible.",
+            "1 mark for describing the cell wall as rigid/structural support made of cellulose.",
+            "1 mark for distinguishing that animal cells lack a cell wall while plants have it.",
+            "1 mark for clear structure, logical flow, or use of correct terminology (e.g., 'selectively permeable', 'cellulose')."
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'rigid' vs 'hard', 'gatekeeper' vs 'control').",
+        "For long answers, reward structure and clear distinction between concepts."
+      ]
+    }
+  }
+}

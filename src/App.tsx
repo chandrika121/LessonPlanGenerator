@@ -41,12 +41,15 @@ import {
 } from "lucide-react";
 import {
   AcademicConfig,
+  AssessmentQuestionType,
+  AssessmentQuestionTypeRequest,
   ChapterSessionPlan,
   CurriculumExtraction,
   TermAllocation,
   PlanningWorkspace,
   SavedCurriculumRecord,
   SessionAllocation,
+  SessionAssessmentCustomization,
   SessionConfig,
   SessionPlanningDefaults,
   SessionSectionKey,
@@ -124,25 +127,17 @@ export default function App() {
     title: string;
     duration: number;
     learningOutcomes: string[];
+    chapterName?: string;
+    chapterSessionNumber?: number;
+    chapterTotalSessions?: number;
   }[]>([]);
 
   // Step 4 State: Deep Sessions Plans
   const [generatedSessions, setGeneratedSessions] = useState<Record<string, SessionPlan>>({});
   const [activeSessionNumber, setActiveSessionNumber] = useState<number>(1);
-  const [activeSubTab, setActiveSubTab] = useState<"theory" | "materials" | "homework" | "assessments" | "assignments">("theory");
+  const [activeSubTab, setActiveSubTab] = useState<"teacherNotes" | "studentNotes" | "materials" | "homework" | "assessments" | "assignments">("teacherNotes");
   const [activeMaterialTab, setActiveMaterialTab] = useState<"ppt" | "pdf" | "docx">("ppt");
-  const [sessionSectionSelection, setSessionSectionSelection] = useState<Record<SessionSectionKey, boolean>>({
-    teacherLessonNotes: true,
-    studentLessonNotes: true,
-    learningOutcomes: true,
-    introduction: true,
-    theory: true,
-    activities: true,
-    materials: true,
-    homework: true,
-    assessment: true,
-    assignment: true,
-  });
+  const [assessmentCustomizationBySession, setAssessmentCustomizationBySession] = useState<Record<number, SessionAssessmentCustomization>>({});
 
   // File drag state
   const [dragActive, setDragActive] = useState<boolean>(false);
@@ -347,6 +342,348 @@ export default function App() {
       .replaceAll("\"", "&quot;")
       .replaceAll("'", "&#39;");
 
+  const slugifyFileNamePart = (value: string) =>
+    value
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "lesson-plan";
+
+  const triggerDownload = (content: string, fileName: string, mimeType: string) => {
+    const blob = new Blob([content], { type: mimeType });
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  const buildAssessmentExportBaseName = (session: SessionPlan) => {
+    const subjectLabel = extractedData?.subject || activeWorkspace?.curriculumSnapshot?.subject || "subject";
+    const gradeLabel = extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "grade";
+    return [
+      slugifyFileNamePart(subjectLabel),
+      slugifyFileNamePart(gradeLabel),
+      `session-${session.sessionNumber}`,
+      slugifyFileNamePart(session.title || "assessment"),
+    ].join("-");
+  };
+
+  const buildAssessmentQuestionPaperText = (session: SessionPlan) => {
+    const assessment = session.assessment;
+    if (!assessment) return "";
+    const mcqCount = Array.isArray(assessment.mcq) ? assessment.mcq.length : 0;
+    const shortAnswerCount = Array.isArray(assessment.shortAnswer) ? assessment.shortAnswer.length : 0;
+
+    const lines: string[] = [
+      `${formatRenderableText(session.title)}`,
+      `Session ${session.sessionNumber} Assessment`,
+      `Duration: ${formatRenderableText(assessment.assessmentMeta?.durationMinutes ?? session.duration)} minutes`,
+      `Total Marks: ${formatRenderableText(assessment.assessmentMeta?.totalMarks ?? "")}`,
+      "",
+    ];
+
+    if (Array.isArray(assessment.assessmentMeta?.instructions) && assessment.assessmentMeta!.instructions!.length > 0) {
+      lines.push("Instructions:");
+      assessment.assessmentMeta!.instructions!.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
+      lines.push("");
+    }
+
+    if (Array.isArray(assessment.mcq) && assessment.mcq.length > 0) {
+      lines.push("MCQ");
+      assessment.mcq.forEach((q, idx) => {
+        lines.push(`Question ${idx + 1} (Q${idx + 1}). ${formatRenderableText(q.question)} (${q.marks || 1} mark)`);
+        q.options.forEach((option) => lines.push(`- ${formatRenderableText(option)}`));
+        lines.push("");
+      });
+    }
+
+    if (Array.isArray(assessment.shortAnswer) && assessment.shortAnswer.length > 0) {
+      lines.push("Short Answer Questions");
+      assessment.shortAnswer.forEach((q, idx) => {
+        const questionNumber = mcqCount + idx + 1;
+        const subtype = formatAssessmentSubtypeLabel(q.questionSubtype);
+        lines.push(`Question ${questionNumber} (Q${questionNumber}). ${formatRenderableText(q.question)} (${q.marks || 0} marks)${subtype ? ` [${subtype}]` : ""}`);
+        lines.push("");
+      });
+    }
+
+    if (Array.isArray(assessment.longAnswer) && assessment.longAnswer.length > 0) {
+      lines.push("Long Answer Questions");
+      assessment.longAnswer.forEach((q, idx) => {
+        const questionNumber = mcqCount + shortAnswerCount + idx + 1;
+        const subtype = formatAssessmentSubtypeLabel(q.questionSubtype);
+        lines.push(`Question ${questionNumber} (Q${questionNumber}). ${formatRenderableText(q.question)} (${q.marks || 0} marks)${subtype ? ` [${subtype}]` : ""}`);
+        lines.push("");
+      });
+    }
+
+    return lines.join("\n");
+  };
+
+  const buildAssessmentAnswerKeyText = (session: SessionPlan) => {
+    const assessment = session.assessment;
+    if (!assessment?.answerKey) return "";
+    const mcqCount = Array.isArray(assessment.answerKey.mcq) ? assessment.answerKey.mcq.length : 0;
+    const shortAnswerCount = Array.isArray(assessment.answerKey.shortAnswer) ? assessment.answerKey.shortAnswer.length : 0;
+
+    const lines: string[] = [
+      `${formatRenderableText(session.title)}`,
+      `Session ${session.sessionNumber} Answer Key`,
+      "",
+    ];
+
+    const mcq = Array.isArray(assessment.answerKey.mcq) ? assessment.answerKey.mcq : [];
+    if (mcq.length > 0) {
+      lines.push("MCQ Answer Key");
+      mcq.forEach((item, idx) => {
+        lines.push(`Question ${idx + 1} (Q${idx + 1}): ${formatRenderableText(item.answer)}`);
+        if (item.explanation) lines.push(`Explanation: ${formatRenderableText(item.explanation)}`);
+        if (item.marks != null) lines.push(`Marks: ${formatRenderableText(item.marks)}`);
+        lines.push("");
+      });
+    }
+
+    const shortAnswer = Array.isArray(assessment.answerKey.shortAnswer) ? assessment.answerKey.shortAnswer : [];
+    if (shortAnswer.length > 0) {
+      lines.push("Short Answer Key");
+      shortAnswer.forEach((item, idx) => {
+        const questionNumber = mcqCount + idx + 1;
+        const subtype = formatAssessmentSubtypeLabel(item.questionSubtype);
+        lines.push(`Question ${questionNumber} (Q${questionNumber})${subtype ? ` [${subtype}]` : ""}: ${formatRenderableText(item.answer)}`);
+        if (item.marks != null) lines.push(`Marks: ${formatRenderableText(item.marks)}`);
+        lines.push("");
+      });
+    }
+
+    const longAnswer = Array.isArray(assessment.answerKey.longAnswer) ? assessment.answerKey.longAnswer : [];
+    if (longAnswer.length > 0) {
+      lines.push("Long Answer Key");
+      longAnswer.forEach((item, idx) => {
+        const questionNumber = mcqCount + shortAnswerCount + idx + 1;
+        const subtype = formatAssessmentSubtypeLabel(item.questionSubtype);
+        lines.push(`Question ${questionNumber} (Q${questionNumber})${subtype ? ` [${subtype}]` : ""}: ${formatRenderableText(item.answer)}`);
+        if (item.marks != null) lines.push(`Marks: ${formatRenderableText(item.marks)}`);
+        lines.push("");
+      });
+    }
+
+    return lines.join("\n");
+  };
+
+  const buildAssessmentRubricsText = (session: SessionPlan) => {
+    const assessment = session.assessment;
+    if (!assessment?.answerKey) return "";
+    const mcqCount = Array.isArray(assessment.answerKey.mcq) ? assessment.answerKey.mcq.length : 0;
+    const shortAnswerCount = Array.isArray(assessment.answerKey.shortAnswer) ? assessment.answerKey.shortAnswer.length : 0;
+
+    const lines: string[] = [
+      `${formatRenderableText(session.title)}`,
+      `Session ${session.sessionNumber} Rubrics`,
+      "",
+    ];
+
+    const shortAnswer = Array.isArray(assessment.answerKey.shortAnswer) ? assessment.answerKey.shortAnswer : [];
+    shortAnswer.forEach((item, idx) => {
+      const questionNumber = mcqCount + idx + 1;
+      const subtype = formatAssessmentSubtypeLabel(item.questionSubtype);
+      lines.push(`Question ${questionNumber} (Q${questionNumber})${subtype ? ` [${subtype}]` : ""}`);
+      if (Array.isArray(item.rubric) && item.rubric.length > 0) {
+        item.rubric.forEach((rubricItem, rubricIdx) => lines.push(`${rubricIdx + 1}. ${formatRenderableText(rubricItem)}`));
+      } else {
+        lines.push("No rubric provided.");
+      }
+      lines.push("");
+    });
+
+    const longAnswer = Array.isArray(assessment.answerKey.longAnswer) ? assessment.answerKey.longAnswer : [];
+    longAnswer.forEach((item, idx) => {
+      const questionNumber = mcqCount + shortAnswerCount + idx + 1;
+      const subtype = formatAssessmentSubtypeLabel(item.questionSubtype);
+      lines.push(`Question ${questionNumber} (Q${questionNumber})${subtype ? ` [${subtype}]` : ""}`);
+      if (Array.isArray(item.rubric) && item.rubric.length > 0) {
+        item.rubric.forEach((rubricItem, rubricIdx) => lines.push(`${rubricIdx + 1}. ${formatRenderableText(rubricItem)}`));
+      } else {
+        lines.push("No rubric provided.");
+      }
+      lines.push("");
+    });
+
+    if (Array.isArray(assessment.answerKey.generalMarkingGuidance) && assessment.answerKey.generalMarkingGuidance.length > 0) {
+      lines.push("General Marking Guidance");
+      assessment.answerKey.generalMarkingGuidance.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
+      lines.push("");
+    }
+
+    return lines.join("\n");
+  };
+
+  const handleDownloadAssessmentQuestionPaper = (session: SessionPlan) => {
+    if (!session.assessment) {
+      setErrorHeader("Generate the assessment first before downloading the question paper.");
+      return;
+    }
+    triggerDownload(buildAssessmentQuestionPaperText(session), `${buildAssessmentExportBaseName(session)}-question-paper.txt`, "text/plain;charset=utf-8");
+  };
+
+  const handleDownloadAssessmentAnswerKey = (session: SessionPlan) => {
+    if (!session.assessment?.answerKey) {
+      setErrorHeader("Generate the assessment first before downloading the answer key.");
+      return;
+    }
+    triggerDownload(buildAssessmentAnswerKeyText(session), `${buildAssessmentExportBaseName(session)}-answer-key.txt`, "text/plain;charset=utf-8");
+  };
+
+  const handleDownloadAssessmentRubrics = (session: SessionPlan) => {
+    if (!session.assessment?.answerKey) {
+      setErrorHeader("Generate the assessment first before downloading the rubrics.");
+      return;
+    }
+    triggerDownload(buildAssessmentRubricsText(session), `${buildAssessmentExportBaseName(session)}-rubrics.txt`, "text/plain;charset=utf-8");
+  };
+
+  const handleDownloadAssessmentJson = (session: SessionPlan) => {
+    if (!session.assessment) {
+      setErrorHeader("Generate the assessment first before downloading the assessment JSON.");
+      return;
+    }
+    const payload = {
+      sessionNumber: session.sessionNumber,
+      title: session.title,
+      duration: session.duration,
+      assessment: session.assessment,
+    };
+    triggerDownload(JSON.stringify(payload, null, 2), `${buildAssessmentExportBaseName(session)}-assessment-bundle.json`, "application/json;charset=utf-8");
+  };
+
+  const handleExportAllGeneratedDocuments = () => {
+    if (!selectedTermRow) {
+      setErrorHeader("Select a term before exporting the generated document bundle.");
+      return;
+    }
+
+    const generatedSessionPlans = sessionsOutline.map((outlineItem) => {
+      const generated = generatedSessions[outlineItem.sessionNumber];
+      return {
+        sessionNumber: outlineItem.sessionNumber,
+        title: outlineItem.title,
+        chapterName: outlineItem.chapterName || null,
+        duration: outlineItem.duration,
+        status: generated ? "generated" : "outline-only",
+        content: generated || null,
+      };
+    });
+
+    const exportPayload = {
+      exportedAt: new Date().toISOString(),
+      curriculum: extractedData,
+      workspace: activeWorkspace
+        ? {
+            id: activeWorkspace._id,
+            phase: activeWorkspace.phase,
+            status: activeWorkspace.status,
+            curriculumApproval: activeWorkspace.curriculumApproval,
+            academicConfig: activeWorkspace.academicConfig,
+            generatedArtifacts: activeWorkspace.generatedArtifacts,
+          }
+        : null,
+      selectedTerm: {
+        className: selectedTermRow.className || null,
+        term: selectedTermRow.term,
+        termNumber: selectedTermRow.termNumber ?? null,
+        chapters: selectedTermRow.chapters,
+        marks: selectedTermRow.marks,
+      },
+      termPlan: activeWorkspace?.termPlan || {
+        approved: coursePlanApproved,
+        recommendedTermCount: preferredTermCount,
+        recommendations: recommendedTermAllocations,
+        allocations: savedTermAllocations,
+      },
+      sessionPlan: {
+        approved: sessionPlanApproved,
+        defaults: sessionPlanningDefaultsDraft,
+        availableTabs: sessionTabDefinitions.map((tab) => tab.id),
+        roadmap: sessionsOutline,
+        allocations: savedSessionAllocations,
+      },
+      generatedSessionPlans,
+    };
+
+    const prettyJson = JSON.stringify(exportPayload, null, 2);
+    const subjectLabel = extractedData?.subject || "curriculum";
+    const gradeLabel = extractedData?.gradeLevel || "grade";
+    const termLabel = selectedTermRow.term || "term";
+    const fileStem = `${slugifyFileNamePart(subjectLabel)}-${slugifyFileNamePart(gradeLabel)}-${slugifyFileNamePart(termLabel)}-session-bundle`;
+    const htmlDocument = `<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(subjectLabel)} ${escapeHtml(termLabel)} Export Bundle</title>
+    <style>
+      body { margin: 0; padding: 32px; background: #f8fafc; color: #0f172a; font-family: Inter, Arial, sans-serif; }
+      .wrap { max-width: 1100px; margin: 0 auto; }
+      .hero { background: linear-gradient(135deg, #36ADAA, #586A71); color: white; padding: 28px; border-radius: 24px; }
+      .hero h1 { margin: 0 0 8px; font-size: 30px; font-family: Outfit, Inter, Arial, sans-serif; }
+      .hero p { margin: 0; font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.88); }
+      .card { margin-top: 20px; background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 20px; box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05); }
+      .card h2 { margin: 0 0 12px; font-size: 18px; font-family: Outfit, Inter, Arial, sans-serif; }
+      .meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 16px; }
+      .meta div { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.14); border-radius: 16px; padding: 12px; }
+      .meta-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.75; }
+      .meta-value { margin-top: 6px; font-size: 14px; font-weight: 700; }
+      .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+      .badge { border-radius: 999px; padding: 6px 10px; background: #dbeafe; color: #1e3a8a; font-size: 12px; font-weight: 700; }
+      .session { margin-top: 14px; border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; background: #fcfdff; }
+      .session h3 { margin: 0 0 6px; font-size: 15px; }
+      pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.6; background: #0f172a; color: #e2e8f0; border-radius: 16px; padding: 16px; overflow: auto; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <section class="hero">
+        <h1>Lesson Plan Export Bundle</h1>
+        <p>Combined export for curriculum extraction, term plan, session plan, and generated session content.</p>
+        <div class="meta">
+          <div><div class="meta-label">Subject</div><div class="meta-value">${escapeHtml(subjectLabel)}</div></div>
+          <div><div class="meta-label">Grade</div><div class="meta-value">${escapeHtml(gradeLabel)}</div></div>
+          <div><div class="meta-label">Term</div><div class="meta-value">${escapeHtml(termLabel)}</div></div>
+          <div><div class="meta-label">Exported At</div><div class="meta-value">${escapeHtml(new Date().toLocaleString())}</div></div>
+        </div>
+      </section>
+      <section class="card">
+        <h2>Export Summary</h2>
+        <div class="badge-row">
+          <span class="badge">Curriculum extraction</span>
+          <span class="badge">Term plan</span>
+          <span class="badge">Session plan</span>
+          <span class="badge">${escapeHtml(String(generatedSessionPlans.filter((item) => item.content).length))} generated session packs</span>
+        </div>
+      </section>
+      <section class="card">
+        <h2>Session Coverage</h2>
+        ${generatedSessionPlans.map((item) => `
+          <div class="session">
+            <h3>Session ${escapeHtml(item.sessionNumber)}: ${escapeHtml(item.title)}</h3>
+            <div>Status: ${escapeHtml(item.status)}</div>
+            <div>Duration: ${escapeHtml(item.duration)} minutes</div>
+            <div>Chapter: ${escapeHtml(item.chapterName || "Not specified")}</div>
+          </div>
+        `).join("")}
+      </section>
+      <section class="card">
+        <h2>Full Data Export</h2>
+        <pre>${escapeHtml(prettyJson)}</pre>
+      </section>
+    </div>
+  </body>
+</html>`;
+
+    triggerDownload(htmlDocument, `${fileStem}.html`, "text/html;charset=utf-8");
+  };
+
   const handleExportPptSlidesPdf = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => {
     const slides = getPptSlides(ppt);
     if (!ppt || slides.length === 0) {
@@ -493,44 +830,199 @@ export default function App() {
       45,
   });
 
-  const sessionSectionOptions: { key: SessionSectionKey; label: string }[] = [
-    { key: "teacherLessonNotes", label: "Teacher notes" },
-    { key: "studentLessonNotes", label: "Student notes" },
-    { key: "learningOutcomes", label: "Learning outcomes" },
-    { key: "introduction", label: "Introduction hook" },
-    { key: "theory", label: "Theory" },
-    { key: "activities", label: "Activities" },
-    { key: "materials", label: "Materials" },
-    { key: "homework", label: "Homework" },
-    { key: "assessment", label: "Assessment" },
-    { key: "assignment", label: "Assignment" },
+  const allSessionSections: SessionSectionKey[] = [
+    "teacherLessonNotes",
+    "studentLessonNotes",
+    "learningOutcomes",
+    "introduction",
+    "theory",
+    "activities",
+    "materials",
+    "homework",
+    "assessment",
+    "assignment",
   ];
 
-  const getSelectedSessionSections = (): SessionSectionKey[] =>
-    sessionSectionOptions
-      .filter((option) => sessionSectionSelection[option.key])
-      .map((option) => option.key);
+  const sessionTabDefinitions = [
+    { id: "teacherNotes", label: "Teacher Notes", sections: ["teacherLessonNotes"] as SessionSectionKey[] },
+    { id: "studentNotes", label: "Student Notes", sections: ["studentLessonNotes"] as SessionSectionKey[] },
+    { id: "materials", label: "Materials (PPT/PDF/DOC)", sections: ["materials"] as SessionSectionKey[] },
+    { id: "homework", label: "Homework Draft", sections: ["homework"] as SessionSectionKey[] },
+    { id: "assessments", label: "Assessments (Test + key)", sections: ["assessment"] as SessionSectionKey[] },
+    { id: "assignments", label: "Assignments + Key", sections: ["assignment"] as SessionSectionKey[] },
+  ] as const;
 
-  const updateSessionSectionSelection = (key: SessionSectionKey, checked: boolean) => {
-    setSessionSectionSelection((prev) => {
-      if (checked) {
-        return {
-          ...prev,
-          [key]: true,
-        };
-      }
+  const assessmentQuestionTypeCatalog: { type: AssessmentQuestionType; label: string; defaultMarksEach: number }[] = [
+    { type: "mcq", label: "MCQs", defaultMarksEach: 1 },
+    { type: "veryShortAnswer", label: "Very Short Answer", defaultMarksEach: 1 },
+    { type: "shortAnswer", label: "Short Answer", defaultMarksEach: 2 },
+    { type: "longAnswer", label: "Long Answer", defaultMarksEach: 5 },
+    { type: "caseStudy", label: "Case Study", defaultMarksEach: 4 },
+  ];
 
-      const selectedCount = Object.values(prev).filter(Boolean).length;
-      if (selectedCount <= 1 && prev[key]) {
-        setErrorHeader("Keep at least one content section selected for session generation.");
-        return prev;
-      }
+  const getDefaultAssessmentQuestionTypes = (): AssessmentQuestionTypeRequest[] => [
+    { type: "mcq", label: "MCQs", questionCount: 3, marksEach: 1 },
+    { type: "veryShortAnswer", label: "Very Short Answer", questionCount: 2, marksEach: 1 },
+    { type: "shortAnswer", label: "Short Answer", questionCount: 2, marksEach: 2 },
+  ];
 
+  const getSectionsForTab = (tab: typeof activeSubTab): SessionSectionKey[] =>
+    sessionTabDefinitions.find((item) => item.id === tab)?.sections || allSessionSections;
+
+  const getAssessmentCustomization = (sessionNum: number): SessionAssessmentCustomization => {
+    const stored = assessmentCustomizationBySession[sessionNum];
+    const questionTypes = stored?.questionTypes?.length
+      ? stored.questionTypes
+      : getDefaultAssessmentQuestionTypes();
+    const totalQuestions = questionTypes.reduce((sum, item) => sum + Number(item.questionCount || 0), 0);
+    const totalMarks = questionTypes.reduce((sum, item) => sum + Number(item.questionCount || 0) * Number(item.marksEach || 0), 0);
+
+    return {
+      assessmentType: stored?.assessmentType || "Session assessment",
+      difficulty: stored?.difficulty || "Balanced",
+      paperObjective: stored?.paperObjective || "",
+      questionTypes,
+      totalQuestions,
+      totalMarks,
+    };
+  };
+
+  const updateAssessmentCustomization = (sessionNum: number, updater: (draft: SessionAssessmentCustomization) => SessionAssessmentCustomization) => {
+    setAssessmentCustomizationBySession((prev) => {
+      const nextDraft = updater(getAssessmentCustomization(sessionNum));
+      const questionTypes = nextDraft.questionTypes?.length ? nextDraft.questionTypes : getDefaultAssessmentQuestionTypes();
+      const totalQuestions = questionTypes.reduce((sum, item) => sum + Number(item.questionCount || 0), 0);
+      const totalMarks = questionTypes.reduce((sum, item) => sum + Number(item.questionCount || 0) * Number(item.marksEach || 0), 0);
       return {
         ...prev,
-        [key]: false,
+        [sessionNum]: {
+          ...nextDraft,
+          questionTypes,
+          totalQuestions,
+          totalMarks,
+        },
       };
     });
+  };
+
+  const buildAssessmentCustomizationPayload = (sessionNum: number) => {
+    const draft = getAssessmentCustomization(sessionNum);
+    return {
+      assessmentType: draft.assessmentType,
+      difficulty: draft.difficulty,
+      paperObjective: draft.paperObjective,
+      totalMarks: draft.totalMarks,
+      totalQuestions: draft.totalQuestions,
+      questionTypes: (draft.questionTypes || []).map((item) => ({
+        type: item.type,
+        label: item.label || assessmentQuestionTypeCatalog.find((entry) => entry.type === item.type)?.label || item.type,
+        questionCount: Number(item.questionCount || 0),
+        marksEach: Number(item.marksEach || 0),
+      })),
+    };
+  };
+
+  const buildAssessmentCustomizationSignature = (customization: SessionAssessmentCustomization) =>
+    JSON.stringify({
+      assessmentType: customization.assessmentType || "Session assessment",
+      difficulty: customization.difficulty || "Balanced",
+      paperObjective: customization.paperObjective || "",
+      totalMarks: Number(customization.totalMarks || 0),
+      totalQuestions: Number(customization.totalQuestions || 0),
+      questionTypes: (customization.questionTypes || []).map((item) => ({
+        type: item.type,
+        label: item.label || "",
+        questionCount: Number(item.questionCount || 0),
+        marksEach: Number(item.marksEach || 0),
+      })),
+    });
+
+  const hasAssessmentSourceContent = (session: SessionPlan | undefined | null) =>
+    Boolean(
+      session &&
+      (
+        (Array.isArray(session.learningOutcomes) && session.learningOutcomes.length > 0) ||
+        (typeof session.introduction === "string" && session.introduction.trim().length > 0) ||
+        (session.theory && (session.theory.overview || session.theory.detailedContent || session.theory.keyPoints?.length)) ||
+        (Array.isArray(session.activities) && session.activities.length > 0) ||
+        session.teacherLessonNotes ||
+        session.studentLessonNotes
+      )
+    );
+
+  const isAssessmentCustomizationDirty = (sessionNum: number, session: SessionPlan | undefined | null) => {
+    const customization = getAssessmentCustomization(sessionNum);
+    const currentSignature = buildAssessmentCustomizationSignature(customization);
+    const savedSignature = session?.assessment?.assessmentMeta?.requestSignature;
+    if (!session?.assessment) {
+      return hasAssessmentSourceContent(session);
+    }
+    return savedSignature !== currentSignature;
+  };
+
+  const renderSessionTabEmptyState = (title: string, description: string) => (
+    <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-5 py-8 text-center">
+      <div className="text-sm font-display font-black text-slate-800">{title}</div>
+      <p className="mt-2 text-xs leading-relaxed text-slate-500">{description}</p>
+    </div>
+  );
+
+  const renderTabGeneratePanel = (
+    tabId: typeof activeSubTab,
+    sessionNum: number,
+    outlineItem: any,
+    title: string,
+    description: string,
+    options?: {
+      disabled?: boolean;
+      disabledReason?: string;
+      dirty?: boolean;
+      buttonLabel?: string;
+    }
+  ) => (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 no-print flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="space-y-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="text-sm font-display font-black text-slate-800">{title}</div>
+          {options?.dirty && (
+            <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-700">
+              Customization changed
+            </span>
+          )}
+        </div>
+        <p className="text-xs text-slate-500">{options?.disabled && options.disabledReason ? options.disabledReason : description}</p>
+      </div>
+      <button
+        type="button"
+        disabled={Boolean(options?.disabled)}
+        onClick={() => void handleGenerateSessionTab(tabId, sessionNum, outlineItem)}
+        className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+          options?.disabled
+            ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400"
+            : "border border-[#36ADAA]/20 bg-[#36ADAA] text-white hover:bg-[#36ADAA]/90"
+        }`}
+      >
+        <Sparkles className="w-3.5 h-3.5" />
+        {options?.buttonLabel || `Generate ${title}`}
+      </button>
+    </div>
+  );
+
+  const formatAssessmentSubtypeLabel = (value?: string) => {
+    switch (value) {
+      case "mcq":
+        return "MCQ";
+      case "veryShortAnswer":
+        return "Very Short Answer";
+      case "shortAnswer":
+        return "Short Answer";
+      case "longAnswer":
+        return "Long Answer";
+      case "caseStudy":
+        return "Case Study";
+      default:
+        return "";
+    }
   };
 
   const buildSessionsOutlineFromAllocations = (allocations: ChapterSessionPlan[], durationMinutes: number) => {
@@ -1981,13 +2473,9 @@ export default function App() {
   /**
    * On-demand generation of full details for specific Session Number
    */
-  const handleBuildSessionDeepDetails = async (sessionNum: number, outlineItem: any) => {
+  const handleBuildSessionDeepDetails = async (sessionNum: number, outlineItem: any, requestedSections: SessionSectionKey[] = allSessionSections) => {
     if (!selectedTermRow || !currentWorkspaceId) return;
-    const selectedSections = getSelectedSessionSections();
-    if (selectedSections.length === 0) {
-      setErrorHeader("Select at least one content section before generating this session.");
-      return;
-    }
+    const selectedSections = requestedSections.length ? requestedSections : allSessionSections;
 
     const previousOutlineItem = sessionsOutline.find((item) => item.sessionNumber === sessionNum - 1);
     const previousGeneratedSession = previousOutlineItem ? generatedSessions[previousOutlineItem.sessionNumber] : null;
@@ -2003,9 +2491,9 @@ export default function App() {
     setErrorHeader(null);
     setLoading(true);
     setLoadingMessage(
-      selectedSections.length === sessionSectionOptions.length
+      selectedSections.length === allSessionSections.length
         ? `Generating the complete lesson pack for session ${sessionNum}...`
-        : `Generating selected content sections for session ${sessionNum}...`
+        : `Generating ${selectedSections.join(", ")} for session ${sessionNum}...`
     );
 
     try {
@@ -2024,6 +2512,9 @@ export default function App() {
           learningOutcomes: outlineItem.learningOutcomes || [],
           previousSessionContext,
           selectedSections,
+          assessmentCustomization: selectedSections.includes("assessment")
+            ? buildAssessmentCustomizationPayload(sessionNum)
+            : undefined,
         }),
       });
 
@@ -2059,10 +2550,36 @@ export default function App() {
     }
   };
 
-  const handleRegenerateActiveSession = async () => {
-    const outlineItem = sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber);
-    if (!outlineItem) return;
-    await handleBuildSessionDeepDetails(activeSessionNumber, outlineItem);
+  const handleGenerateSessionTab = async (
+    tabId: typeof activeSubTab,
+    sessionNum?: number,
+    outlineItem?: any
+  ) => {
+    const targetOutline = outlineItem || sessionsOutline.find((item) => item.sessionNumber === (sessionNum || activeSessionNumber));
+    if (!targetOutline) return;
+    const targetSessionNumber = sessionNum || targetOutline.sessionNumber;
+    const currentSession = generatedSessions[targetSessionNumber];
+    if (tabId === "assessments") {
+      const customization = getAssessmentCustomization(targetSessionNumber);
+      if (!hasAssessmentSourceContent(currentSession)) {
+        setErrorHeader("Generate session teaching content first before creating the assessment.");
+        return;
+      }
+      if (!customization.questionTypes?.length || !customization.totalMarks || !customization.totalQuestions) {
+        setErrorHeader("Add at least one assessment question type with marks before generating the assessment.");
+        return;
+      }
+    }
+    setActiveSessionNumber(targetSessionNumber);
+    await handleBuildSessionDeepDetails(targetSessionNumber, targetOutline, getSectionsForTab(tabId));
+  };
+
+  const handleGenerateFullSessionPack = async (sessionNum?: number, outlineItem?: any) => {
+    const targetOutline = outlineItem || sessionsOutline.find((item) => item.sessionNumber === (sessionNum || activeSessionNumber));
+    if (!targetOutline) return;
+    const targetSessionNumber = sessionNum || targetOutline.sessionNumber;
+    setActiveSessionNumber(targetSessionNumber);
+    await handleBuildSessionDeepDetails(targetSessionNumber, targetOutline, allSessionSections);
   };
 
   /**
@@ -2075,7 +2592,7 @@ export default function App() {
     for (let i = 0; i < sessionsOutline.length; i++) {
       const item = sessionsOutline[i];
       if (!generatedSessions[item.sessionNumber]) {
-        await handleBuildSessionDeepDetails(item.sessionNumber, item);
+        await handleGenerateFullSessionPack(item.sessionNumber, item);
       }
     }
   };
@@ -2088,11 +2605,11 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFEFE] text-[#2B3437] font-sans antialiased selection:bg-[#9FCDD2] selection:text-teal-900 transition-all duration-300">
+      <div className="min-h-screen bg-[#FDFEFE] text-[#2B3437] font-sans antialiased selection:bg-[#9FCDD2] selection:text-teal-900 transition-all duration-300">
       
       {/* Dynamic Background Motifs (Montessori Inspired Playful Aesthetics) */}
-      <div className="absolute top-0 right-0 w-80 h-80 bg-radial from-[#9FCDD2]/10 to-transparent pointer-events-none rounded-full" />
-      <div className="absolute bottom-10 left-10 w-96 h-96 bg-radial from-[#E9CAB7]/20 to-transparent pointer-events-none rounded-full" />
+      <div className="absolute top-0 right-0 w-80 h-80 bg-radial from-[#9FCDD2]/10 to-transparent pointer-events-none rounded-full no-print" />
+      <div className="absolute bottom-10 left-10 w-96 h-96 bg-radial from-[#E9CAB7]/20 to-transparent pointer-events-none rounded-full no-print" />
 
       {/* Header Bar */}
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b-2 border-slate-100 px-6 py-4 no-print shadow-xs">
@@ -4174,16 +4691,6 @@ export default function App() {
                         </select>
                       </label>
                       <label className="space-y-1">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Assessment Preference</span>
-                        <select value={(teachingStrategyDraft.assessmentPreference || [])[0] || ""} onChange={(e) => updateTeachingStrategyField("assessmentPreference", e.target.value ? [e.target.value] : [])} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
-                          <option value="">Select assessment style</option>
-                          <option value="Observation + oral checks">Observation + oral checks</option>
-                          <option value="Worksheet-heavy">Worksheet-heavy</option>
-                          <option value="Concept application">Concept application</option>
-                          <option value="Mixed formative checks">Mixed formative checks</option>
-                        </select>
-                      </label>
-                      <label className="space-y-1">
                         <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Target Difficulty</span>
                         <select value={teachingStrategyDraft.targetDifficulty || ""} onChange={(e) => updateTeachingStrategyField("targetDifficulty", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none">
                           <option value="">Select difficulty</option>
@@ -4559,6 +5066,13 @@ export default function App() {
                       <Play className="w-3.5 h-3.5" />
                       Generate All Session Packs
                     </button>
+                    <button
+                      onClick={handleExportAllGeneratedDocuments}
+                      className="py-2.5 px-4 rounded-xl bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Export All Docs
+                    </button>
 
                     <button
                       onClick={handlePrintPlans}
@@ -4593,11 +5107,7 @@ export default function App() {
                       <div
                         key={item.id}
                         onClick={() => {
-                          if (!hasDeepData) {
-                            handleBuildSessionDeepDetails(item.sessionNumber, item);
-                          } else {
-                            setActiveSessionNumber(item.sessionNumber);
-                          }
+                          setActiveSessionNumber(item.sessionNumber);
                         }}
                         className={`p-3.5 rounded-2xl border-2 cursor-pointer transition text-left space-y-1.5 relative overflow-hidden ${
                           isSelected
@@ -4645,9 +5155,20 @@ export default function App() {
               {/* Right Column: Deep Deliverables Sheet Area (The Output Document) */}
               <div className="lg:col-span-3 space-y-4 print-card">
                 
-                {generatedSessions[activeSessionNumber] ? (
+                {sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber) ? (
                   (() => {
-                    const session = generatedSessions[activeSessionNumber];
+                    const outlineItem = sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber)!;
+                    const session = {
+                      ...outlineItem,
+                      ...generatedSessions[activeSessionNumber],
+                    } as SessionPlan & {
+                      chapterName?: string;
+                      chapterSessionNumber?: number;
+                      chapterTotalSessions?: number;
+                    };
+                    const activeAssessmentCustomization = getAssessmentCustomization(activeSessionNumber);
+                    const assessmentMcqCount = Array.isArray(session.assessment?.mcq) ? session.assessment!.mcq!.length : 0;
+                    const assessmentShortAnswerCount = Array.isArray(session.assessment?.shortAnswer) ? session.assessment!.shortAnswer!.length : 0;
                     return (
                       <div className="bg-white border-2 border-slate-100 rounded-3xl overflow-hidden shadow-xs space-y-6">
                         
@@ -4675,44 +5196,20 @@ export default function App() {
                             </p>
                           </div>
 
-                          <div className="no-print space-y-3">
-                            <div className="rounded-2xl border border-white/15 bg-white/10 p-3">
-                              <div className="text-[10px] font-bold uppercase tracking-widest text-slate-200">
-                                Generate only selected sections
-                              </div>
-                              <div className="mt-2 grid grid-cols-2 gap-2">
-                                {sessionSectionOptions.map((option) => (
-                                  <label key={option.key} className="flex items-center gap-2 text-[11px] font-semibold text-white/90">
-                                    <input
-                                      type="checkbox"
-                                      checked={Boolean(sessionSectionSelection[option.key])}
-                                      onChange={(e) => updateSessionSectionSelection(option.key, e.target.checked)}
-                                      className="h-3.5 w-3.5 rounded border-white/30 bg-transparent accent-[#E9CAB7]"
-                                    />
-                                    <span>{option.label}</span>
-                                  </label>
-                                ))}
-                              </div>
-                            </div>
+                          <div className="no-print flex flex-wrap gap-2">
                             <button
-                              onClick={() => void handleRegenerateActiveSession()}
-                              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-xs font-bold text-white transition hover:bg-white/15"
+                              onClick={() => void handleGenerateFullSessionPack(activeSessionNumber, outlineItem)}
+                              className="inline-flex items-center gap-2 rounded-xl border border-[#E9CAB7]/50 bg-[#E9CAB7]/15 px-4 py-2 text-xs font-bold text-white transition hover:bg-[#E9CAB7]/25"
                             >
-                              <RotateCcw className="w-3.5 h-3.5" />
-                              Regenerate Selected Content
+                              <Sparkles className="w-3.5 h-3.5" />
+                              Generate Full Session Pack
                             </button>
                           </div>
                         </div>
 
                         {/* Sub nav deliverable categories tabs */}
                         <div className="bg-slate-50 px-6 py-2 border-y border-slate-100 flex flex-wrap gap-2 no-print">
-                          {[
-                            { id: "theory", label: "Pedagogy Theory" },
-                            { id: "materials", label: "Materials (PPT/PDF/DOC)" },
-                            { id: "homework", label: "Homework Draft" },
-                            { id: "assessments", label: "Assessments (Test + key)" },
-                            { id: "assignments", label: "Assignments + Key" },
-                          ].map((t) => (
+                          {sessionTabDefinitions.map((t) => (
                             <button
                               key={t.id}
                               onClick={() => setActiveSubTab(t.id as any)}
@@ -4730,9 +5227,16 @@ export default function App() {
                         {/* DELIVERABLE TAB PANELS */}
                         <div className="p-6 md:p-8 space-y-6">
 
-                          {/* SUB TAB: Pedagogy Theory */}
-                          {activeSubTab === "theory" && (
+                          {/* SUB TAB: Teacher Notes */}
+                          {activeSubTab === "teacherNotes" && (
                             <div className="space-y-6 animate-fadeIn">
+                              {renderTabGeneratePanel(
+                                "teacherNotes",
+                                activeSessionNumber,
+                                outlineItem,
+                                "Teacher Notes",
+                                "Generate or refresh the teacher-facing session notes for this lesson."
+                              )}
                               {session.teacherLessonNotes && (
                                 <div className="p-5 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
                                   <div className="flex items-center gap-2">
@@ -4741,6 +5245,36 @@ export default function App() {
                                     </div>
                                     <h4 className="font-display font-extrabold text-slate-800 text-sm">Teacher Lesson Notes</h4>
                                   </div>
+                                  {session.teacherLessonNotes.sessionOverview && (
+                                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Overview</div>
+                                      <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(session.teacherLessonNotes.sessionOverview)}</p>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.learningOutcomes?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Teacher-Facing Learning Outcomes</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.learningOutcomes.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.teachingPlan?.length && (
+                                    <div className="space-y-2">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Teaching Plan</div>
+                                      <div className="grid gap-2 md:grid-cols-2">
+                                        {session.teacherLessonNotes.teachingPlan.map((item, idx) => (
+                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-1">
+                                            <div className="flex items-center justify-between gap-2">
+                                              <span className="font-semibold text-slate-800">{formatRenderableText(item.topic)}</span>
+                                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">{formatRenderableText(item.minutes)} min</span>
+                                            </div>
+                                            {item.teachingStrategy && <div className="text-slate-600">{formatRenderableText(item.teachingStrategy)}</div>}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
                                   {!!session.teacherLessonNotes.prerequisiteKnowledge?.length && (
                                     <div>
                                       <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Prerequisite Knowledge</div>
@@ -4771,6 +5305,76 @@ export default function App() {
                                       <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
                                         {session.teacherLessonNotes.guidedPractice.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
                                       </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.lessonBlocks?.length && (
+                                    <div className="space-y-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Detailed Lesson Blocks</div>
+                                      {session.teacherLessonNotes.lessonBlocks.map((block, idx) => (
+                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-4 space-y-3">
+                                          <div className="flex items-center justify-between gap-2">
+                                            <div className="font-bold text-sm text-slate-800">{formatRenderableText(block.title)}</div>
+                                            {block.durationMinutes != null && (
+                                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+                                                {formatRenderableText(block.durationMinutes)} min
+                                              </span>
+                                            )}
+                                          </div>
+                                          {!!block.teacherPrompt?.length && (
+                                            <div>
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Teacher Prompt</div>
+                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                                {block.teacherPrompt.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!block.explanation?.length && (
+                                            <div>
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Explanation</div>
+                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                                {block.explanation.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!block.examples?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-semibold text-slate-700">Examples:</span> {block.examples.map((item) => formatRenderableText(item)).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!block.boardWork?.length && (
+                                            <div className="rounded-xl border border-amber-100 bg-amber-50 px-3 py-2">
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">Board Work</div>
+                                              <ul className="text-xs text-amber-900 list-disc list-inside space-y-1">
+                                                {block.boardWork.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!block.checkUnderstanding?.length && (
+                                            <div>
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Check Understanding</div>
+                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                                {block.checkUnderstanding.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!block.expectedAnswers?.length && (
+                                            <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2">
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Expected Answers</div>
+                                              <ul className="text-xs text-emerald-900 list-disc list-inside space-y-1">
+                                                {block.expectedAnswers.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!block.activity?.length && (
+                                            <div>
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Activity</div>
+                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                                {block.activity.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
                                     </div>
                                   )}
                                   {!!session.teacherLessonNotes.lessonPurpose?.length && (
@@ -4854,6 +5458,74 @@ export default function App() {
                                       </ul>
                                     </div>
                                   )}
+                                  {!!session.teacherLessonNotes.commonMisconceptionsDetailed?.length && (
+                                    <div className="space-y-2">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Misconceptions and Corrections</div>
+                                      <div className="space-y-2">
+                                        {session.teacherLessonNotes.commonMisconceptionsDetailed.map((item, idx) => (
+                                          <div key={idx} className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-xs space-y-1">
+                                            <div className="font-semibold text-rose-900">{formatRenderableText(item.misconception)}</div>
+                                            <div className="text-rose-800"><span className="font-bold">Correction:</span> {formatRenderableText(item.correction)}</div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.assessmentQuestions?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Assessment Questions</div>
+                                      <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
+                                        {session.teacherLessonNotes.assessmentQuestions.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ol>
+                                    </div>
+                                  )}
+                                  {(!!session.teacherLessonNotes.differentiation?.slowLearners?.length || !!session.teacherLessonNotes.differentiation?.averageLearners?.length || !!session.teacherLessonNotes.differentiation?.advancedLearners?.length) && (
+                                    <div className="space-y-2">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Differentiation</div>
+                                      <div className="grid gap-2 md:grid-cols-3">
+                                        {!!session.teacherLessonNotes.differentiation?.slowLearners?.length && (
+                                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Slow Learners</div>
+                                            <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                              {session.teacherLessonNotes.differentiation.slowLearners.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                            </ul>
+                                          </div>
+                                        )}
+                                        {!!session.teacherLessonNotes.differentiation?.averageLearners?.length && (
+                                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Average Learners</div>
+                                            <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                              {session.teacherLessonNotes.differentiation.averageLearners.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                            </ul>
+                                          </div>
+                                        )}
+                                        {!!session.teacherLessonNotes.differentiation?.advancedLearners?.length && (
+                                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Advanced Learners</div>
+                                            <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                              {session.teacherLessonNotes.differentiation.advancedLearners.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                            </ul>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.teacherTips?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Teacher Tips</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.teacherTips.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.teacherLessonNotes.blackboardSummary?.length && (
+                                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Blackboard Summary</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.teacherLessonNotes.blackboardSummary.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
                                   {!!session.teacherLessonNotes.sessionSummary?.length && (
                                     <div>
                                       <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Summary</div>
@@ -4862,309 +5534,25 @@ export default function App() {
                                       </ul>
                                     </div>
                                   )}
+                                  {!!session.teacherLessonNotes.endOfClassRecap?.length && (
+                                    <div className="space-y-2">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">End-of-Class Recap</div>
+                                      <div className="space-y-2">
+                                        {session.teacherLessonNotes.endOfClassRecap.map((item, idx) => (
+                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-1">
+                                            <div className="font-semibold text-slate-800">{formatRenderableText(item.prompt)}</div>
+                                            {item.expectedAnswer && <div><span className="font-bold text-slate-700">Expected answer:</span> {formatRenderableText(item.expectedAnswer)}</div>}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
                                   {!!session.teacherLessonNotes.nextSessionBridge?.length && (
                                     <div>
                                       <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Next Session Bridge</div>
                                       <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
                                         {session.teacherLessonNotes.nextSessionBridge.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
                                       </ul>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-
-                              {session.studentLessonNotes && (
-                                <div className="p-5 bg-[#9FCDD2]/10 border border-[#9FCDD2]/35 rounded-3xl space-y-4">
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-lg bg-[#9FCDD2]/30 flex items-center justify-center text-[#2B3437]">
-                                      <GraduationCap className="w-4 h-4" />
-                                    </div>
-                                    <h4 className="font-display font-extrabold text-slate-800 text-sm">Student Lesson Notes</h4>
-                                  </div>
-                                  {session.studentLessonNotes.introduction && (
-                                    <p className="text-xs text-slate-700 leading-relaxed">{session.studentLessonNotes.introduction}</p>
-                                  )}
-                                  {!!session.studentLessonNotes.learningObjectives?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Learning Objectives</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.learningObjectives.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.quickRecall?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Recall</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.quickRecall.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.sections?.length && (
-                                    <div className="space-y-3">
-                                      {session.studentLessonNotes.sections.map((section, idx) => (
-                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 space-y-2">
-                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(section.heading)}</div>
-                                          <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(section.explanation)}</p>
-                                          {section.whyItMatters && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Why it matters:</span> {formatRenderableText(section.whyItMatters)}
-                                            </div>
-                                          )}
-                                          {section.detailedExplanation && (
-                                            <p className="text-xs text-slate-600 leading-relaxed">{formatRenderableText(section.detailedExplanation)}</p>
-                                          )}
-                                          {!!section.keyPoints?.length && (
-                                            <ul className="text-xs text-slate-600 list-disc list-inside space-y-1">
-                                              {section.keyPoints.map((point, pointIdx) => <li key={pointIdx}>{formatRenderableText(point)}</li>)}
-                                            </ul>
-                                          )}
-                                          {!!section.examples?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Examples:</span> {section.examples.map((example) => formatRenderableText(example)).filter(Boolean).join("; ")}
-                                            </div>
-                                          )}
-                                          {!!section.terminology?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Terminology:</span> {section.terminology.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
-                                            </div>
-                                          )}
-                                          {!!section.visualSupport?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Visual support:</span> {section.visualSupport.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
-                                            </div>
-                                          )}
-                                          {!!section.importantNotes?.length && (
-                                            <div className="rounded-xl bg-amber-50 border border-amber-100 px-3 py-2">
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">Important Notes</div>
-                                              <ul className="text-xs text-amber-900 list-disc list-inside space-y-1">
-                                                {section.importantNotes.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!section.memoryTechniques?.length && (
-                                            <div className="rounded-xl bg-sky-50 border border-sky-100 px-3 py-2">
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-sky-700 mb-1">Memory Techniques</div>
-                                              <ul className="text-xs text-sky-900 list-disc list-inside space-y-1">
-                                                {section.memoryTechniques.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!section.conceptSummary?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Concept summary:</span> {section.conceptSummary.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
-                                            </div>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.definitions?.length && (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                      {session.studentLessonNotes.definitions.map((definition, idx) => (
-                                        <div key={idx} className="bg-white p-3 rounded-2xl border border-slate-100">
-                                          <div className="text-xs font-extrabold text-slate-800">{formatRenderableText(definition.term)}</div>
-                                          <div className="text-xs text-slate-600 mt-1">{formatRenderableText(definition.definition)}</div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.workedExamples?.length && (
-                                    <div className="space-y-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Worked Examples</div>
-                                      {session.studentLessonNotes.workedExamples.map((example, idx) => (
-                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 space-y-2">
-                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(example.title)}</div>
-                                          {!!example.steps?.length && (
-                                            <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
-                                              {example.steps.map((step, stepIdx) => <li key={stepIdx}>{formatRenderableText(step)}</li>)}
-                                            </ol>
-                                          )}
-                                          {example.explanation && <p className="text-xs text-slate-600 leading-relaxed">{formatRenderableText(example.explanation)}</p>}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {session.studentLessonNotes.revisionSection && (
-                                    <div className="rounded-2xl border border-slate-100 bg-white p-4 space-y-2">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Revision Section</div>
-                                      {!!session.studentLessonNotes.revisionSection.definitions?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Definitions:</span> {session.studentLessonNotes.revisionSection.definitions.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.formulas?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Formulas:</span> {session.studentLessonNotes.revisionSection.formulas.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.facts?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Facts:</span> {session.studentLessonNotes.revisionSection.facts.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.keywords?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Keywords:</span> {session.studentLessonNotes.revisionSection.keywords.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.conceptMap?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Concept map:</span> {session.studentLessonNotes.revisionSection.conceptMap.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.quickRecap?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Quick recap:</span> {session.studentLessonNotes.revisionSection.quickRecap.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.selfCheckQuestions?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Self-Check Questions</div>
-                                      <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
-                                        {session.studentLessonNotes.selfCheckQuestions.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ol>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.didYouKnow?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Did You Know?</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.didYouKnow.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-
-                              {session.homework && (
-                                <div className="p-5 bg-[#7F64EA]/5 border border-[#7F64EA]/20 rounded-3xl space-y-4">
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-lg bg-[#7F64EA]/15 flex items-center justify-center text-[#7F64EA]">
-                                      <Layers className="w-4 h-4" />
-                                    </div>
-                                    <h4 className="font-display font-extrabold text-[#7F64EA] text-sm">
-                                      Night Homework Assignment
-                                    </h4>
-                                  </div>
-
-                                  {session.homework.task ? (
-                                    <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
-                                      <div className="flex justify-between items-center text-xs pb-2 border-b border-slate-100 text-slate-400">
-                                        <span>Task Directive</span>
-                                        {getHomeworkDisplayTime(session.homework) && (
-                                          <span className="font-mono bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded font-bold">
-                                            🕒 Expected Completion: {getHomeworkDisplayTime(session.homework)}
-                                          </span>
-                                        )}
-                                      </div>
-
-                                      <p className="text-xs text-slate-700 font-medium leading-relaxed pt-1">
-                                        {formatRenderableText(session.homework.task)}
-                                      </p>
-                                    </div>
-                                  ) : getStructuredHomeworkItems(session.homework).length > 0 ? (
-                                    <div className="space-y-4">
-                                      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs space-y-3">
-                                        <div className="flex flex-wrap justify-between gap-2 items-center text-xs pb-2 border-b border-slate-100 text-slate-400">
-                                          <span>Structured Homework Plan</span>
-                                          {getHomeworkDisplayTime(session.homework) && (
-                                            <span className="font-mono bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded font-bold">
-                                              🕒 Expected Completion: {getHomeworkDisplayTime(session.homework)}
-                                            </span>
-                                          )}
-                                        </div>
-                                        {session.homework.summary && (
-                                          <div className="grid gap-2 md:grid-cols-3 text-xs text-slate-600">
-                                            {session.homework.summary.totalQuestions != null && (
-                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
-                                                <span className="font-bold text-slate-700">Questions:</span> {formatRenderableText(session.homework.summary.totalQuestions)}
-                                              </div>
-                                            )}
-                                            {session.homework.summary.totalMarks != null && (
-                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
-                                                <span className="font-bold text-slate-700">Marks:</span> {formatRenderableText(session.homework.summary.totalMarks)}
-                                              </div>
-                                            )}
-                                            {session.homework.summary.estimatedCompletionTime && (
-                                              <div className="rounded-xl bg-slate-50 px-3 py-2">
-                                                <span className="font-bold text-slate-700">Time:</span> {formatRenderableText(session.homework.summary.estimatedCompletionTime)}
-                                              </div>
-                                            )}
-                                          </div>
-                                        )}
-                                      </div>
-
-                                      {getStructuredHomeworkItems(session.homework).map((item) => (
-                                        <div key={item.id} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs space-y-3">
-                                          <div className="flex flex-wrap items-start justify-between gap-2">
-                                            <div>
-                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
-                                                {formatRenderableText(item.type || `Task ${item.id}`)}
-                                              </div>
-                                              <div className="font-bold text-sm text-slate-800 mt-1">
-                                                {formatRenderableText(item.title || item.question || `Homework Task ${item.id}`)}
-                                              </div>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2 text-[10px]">
-                                              {item.difficulty && (
-                                                <span className="rounded-full bg-violet-50 px-2 py-1 font-bold text-violet-700">
-                                                  {formatRenderableText(item.difficulty)}
-                                                </span>
-                                              )}
-                                              {item.marks != null && (
-                                                <span className="rounded-full bg-slate-100 px-2 py-1 font-bold text-slate-700">
-                                                  {formatRenderableText(item.marks)} marks
-                                                </span>
-                                              )}
-                                              {item.estimatedTime && (
-                                                <span className="rounded-full bg-slate-100 px-2 py-1 font-bold text-slate-700">
-                                                  {formatRenderableText(item.estimatedTime)}
-                                                </span>
-                                              )}
-                                            </div>
-                                          </div>
-
-                                          {item.instructions && (
-                                            <p className="text-xs text-slate-700 leading-relaxed">
-                                              <span className="font-bold text-slate-800">Instructions:</span> {formatRenderableText(item.instructions)}
-                                            </p>
-                                          )}
-                                          {item.question && (
-                                            <p className="text-xs text-slate-700 leading-relaxed">
-                                              <span className="font-bold text-slate-800">Question:</span> {formatRenderableText(item.question)}
-                                            </p>
-                                          )}
-                                          {!!item.options?.length && (
-                                            <ul className="list-disc list-inside text-xs text-slate-700 space-y-1">
-                                              {item.options.map((option, optionIdx) => (
-                                                <li key={optionIdx}>{formatRenderableText(option)}</li>
-                                              ))}
-                                            </ul>
-                                          )}
-                                          {item.answerSpace && (
-                                            <p className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Answer space:</span> {formatRenderableText(item.answerSpace)}
-                                            </p>
-                                          )}
-                                          {item.visualRequirement && (
-                                            <p className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Visual requirement:</span> {formatRenderableText(item.visualRequirement)}
-                                            </p>
-                                          )}
-                                          {item.expectedResponse && (
-                                            <p className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Expected response:</span> {formatRenderableText(item.expectedResponse)}
-                                            </p>
-                                          )}
-                                          {!!item.topicCoverage?.length && (
-                                            <p className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Topics:</span> {item.topicCoverage.map((topic) => formatRenderableText(topic)).join("; ")}
-                                            </p>
-                                          )}
-                                          {!!item.learningOutcomeIds?.length && (
-                                            <p className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Learning outcomes:</span> {item.learningOutcomeIds.map((outcome) => formatRenderableText(outcome)).join("; ")}
-                                            </p>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  ) : (
-                                    <div className="space-y-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-2xs">
-                                      <p className="text-xs text-slate-500 leading-relaxed">
-                                        Homework data was returned, but it does not match a renderable homework format yet.
-                                      </p>
                                     </div>
                                   )}
                                 </div>
@@ -5282,9 +5670,319 @@ export default function App() {
                             </div>
                           )}
 
+                          {/* SUB TAB: Student Notes */}
+                          {activeSubTab === "studentNotes" && (
+                            <div className="space-y-6 animate-fadeIn">
+                              {renderTabGeneratePanel(
+                                "studentNotes",
+                                activeSessionNumber,
+                                outlineItem,
+                                "Student Notes",
+                                "Generate or refresh the student-facing notes for this session."
+                              )}
+                              {session.studentLessonNotes ? (
+                                <div className="p-5 bg-[#9FCDD2]/10 border border-[#9FCDD2]/35 rounded-3xl space-y-4">
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-8 h-8 rounded-lg bg-[#9FCDD2]/30 flex items-center justify-center text-[#2B3437]">
+                                      <GraduationCap className="w-4 h-4" />
+                                    </div>
+                                    <h4 className="font-display font-extrabold text-slate-800 text-sm">Student Lesson Notes</h4>
+                                  </div>
+                                  {session.studentLessonNotes.title && (
+                                    <div className="font-bold text-sm text-slate-800">{formatRenderableText(session.studentLessonNotes.title)}</div>
+                                  )}
+                                  {session.studentLessonNotes.sessionOverview && (
+                                    <div className="rounded-2xl border border-[#9FCDD2]/40 bg-white px-4 py-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Overview</div>
+                                      <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(session.studentLessonNotes.sessionOverview)}</p>
+                                    </div>
+                                  )}
+                                  {session.studentLessonNotes.introduction && (
+                                    <p className="text-xs text-slate-700 leading-relaxed">{session.studentLessonNotes.introduction}</p>
+                                  )}
+                                  {!!session.studentLessonNotes.learningObjectives?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Learning Objectives</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.learningObjectives.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.quickRecall?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Recall</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.quickRecall.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.easyToRemember?.length && (
+                                    <div className="rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3">
+                                      <div className="text-[10px] font-extrabold text-sky-700 uppercase tracking-widest mb-2">Easy to Remember</div>
+                                      <ul className="text-xs text-sky-900 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.easyToRemember.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.sections?.length && (
+                                    <div className="space-y-3">
+                                      {session.studentLessonNotes.sections.map((section, idx) => (
+                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 space-y-2">
+                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(section.heading)}</div>
+                                          <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(section.explanation)}</p>
+                                          {section.whyItMatters && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Why it matters:</span> {formatRenderableText(section.whyItMatters)}
+                                            </div>
+                                          )}
+                                          {section.detailedExplanation && (
+                                            <p className="text-xs text-slate-600 leading-relaxed">{formatRenderableText(section.detailedExplanation)}</p>
+                                          )}
+                                          {!!section.keyPoints?.length && (
+                                            <ul className="text-xs text-slate-600 list-disc list-inside space-y-1">
+                                              {section.keyPoints.map((point, pointIdx) => <li key={pointIdx}>{formatRenderableText(point)}</li>)}
+                                            </ul>
+                                          )}
+                                          {!!section.examples?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Examples:</span> {section.examples.map((example) => formatRenderableText(example)).filter(Boolean).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!section.terminology?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Terminology:</span> {section.terminology.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!section.visualSupport?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Visual support:</span> {section.visualSupport.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!section.importantNotes?.length && (
+                                            <div className="rounded-xl bg-amber-50 border border-amber-100 px-3 py-2">
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">Important Notes</div>
+                                              <ul className="text-xs text-amber-900 list-disc list-inside space-y-1">
+                                                {section.importantNotes.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!section.memoryTechniques?.length && (
+                                            <div className="rounded-xl bg-sky-50 border border-sky-100 px-3 py-2">
+                                              <div className="text-[10px] font-bold uppercase tracking-wider text-sky-700 mb-1">Memory Techniques</div>
+                                              <ul className="text-xs text-sky-900 list-disc list-inside space-y-1">
+                                                {section.memoryTechniques.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
+                                              </ul>
+                                            </div>
+                                          )}
+                                          {!!section.conceptSummary?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Concept summary:</span> {section.conceptSummary.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.comparisonTables?.length && (
+                                    <div className="space-y-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Comparison Tables</div>
+                                      {session.studentLessonNotes.comparisonTables.map((table, idx) => (
+                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(table.title)}</div>
+                                          <div className="overflow-x-auto">
+                                            <table className="min-w-full text-xs text-slate-700">
+                                              {table.headers?.length ? (
+                                                <thead>
+                                                  <tr className="bg-slate-50 text-left">
+                                                    {table.headers.map((header, headerIdx) => (
+                                                      <th key={headerIdx} className="px-3 py-2 font-bold text-slate-700">{formatRenderableText(header)}</th>
+                                                    ))}
+                                                  </tr>
+                                                </thead>
+                                              ) : null}
+                                              <tbody>
+                                                {(table.rows || []).map((row, rowIdx) => (
+                                                  <tr key={rowIdx} className="border-t border-slate-100">
+                                                    {row.map((cell, cellIdx) => (
+                                                      <td key={cellIdx} className="px-3 py-2 align-top">{formatRenderableText(cell)}</td>
+                                                    ))}
+                                                  </tr>
+                                                ))}
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.definitions?.length && (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                      {session.studentLessonNotes.definitions.map((definition, idx) => (
+                                        <div key={idx} className="bg-white p-3 rounded-2xl border border-slate-100">
+                                          <div className="text-xs font-extrabold text-slate-800">{formatRenderableText(definition.term)}</div>
+                                          <div className="text-xs text-slate-600 mt-1">{formatRenderableText(definition.definition)}</div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.workedExamples?.length && (
+                                    <div className="space-y-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Worked Examples</div>
+                                      {session.studentLessonNotes.workedExamples.map((example, idx) => (
+                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 space-y-2">
+                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(example.title)}</div>
+                                          {!!example.steps?.length && (
+                                            <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
+                                              {example.steps.map((step, stepIdx) => <li key={stepIdx}>{formatRenderableText(step)}</li>)}
+                                            </ol>
+                                          )}
+                                          {example.explanation && <p className="text-xs text-slate-600 leading-relaxed">{formatRenderableText(example.explanation)}</p>}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {session.studentLessonNotes.revisionSection && (
+                                    <div className="rounded-2xl border border-slate-100 bg-white p-4 space-y-2">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Revision Section</div>
+                                      {!!session.studentLessonNotes.revisionSection.definitions?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Definitions:</span> {session.studentLessonNotes.revisionSection.definitions.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.formulas?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Formulas:</span> {session.studentLessonNotes.revisionSection.formulas.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.facts?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Facts:</span> {session.studentLessonNotes.revisionSection.facts.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.keywords?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Keywords:</span> {session.studentLessonNotes.revisionSection.keywords.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.conceptMap?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Concept map:</span> {session.studentLessonNotes.revisionSection.conceptMap.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                      {!!session.studentLessonNotes.revisionSection.quickRecap?.length && (
+                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Quick recap:</span> {session.studentLessonNotes.revisionSection.quickRecap.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                      )}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.quickSummary?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Summary</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.quickSummary.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.keyTerms?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Key Terms</div>
+                                      <div className="flex flex-wrap gap-2">
+                                        {session.studentLessonNotes.keyTerms.map((item, idx) => (
+                                          <span key={idx} className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 border border-slate-200">
+                                            {formatRenderableText(item)}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.fillInTheBlanks?.length && (
+                                    <div className="space-y-2">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Fill in the Blanks</div>
+                                      <div className="space-y-2">
+                                        {session.studentLessonNotes.fillInTheBlanks.map((item, idx) => (
+                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700">
+                                            <div>{formatRenderableText(item.prompt)}</div>
+                                            {item.answer && <div className="mt-1 text-slate-500"><span className="font-bold text-slate-700">Answer:</span> {formatRenderableText(item.answer)}</div>}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.mcqQuestions?.length && (
+                                    <div className="space-y-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">MCQs</div>
+                                      {session.studentLessonNotes.mcqQuestions.map((item, idx) => (
+                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-2">
+                                          <div className="font-semibold text-slate-800">{idx + 1}. {formatRenderableText(item.question)}</div>
+                                          {!!item.options?.length && (
+                                            <ul className="list-disc list-inside space-y-1 text-slate-600">
+                                              {item.options.map((option, optionIdx) => <li key={optionIdx}>{formatRenderableText(option)}</li>)}
+                                            </ul>
+                                          )}
+                                          {item.answer && <div className="text-slate-500"><span className="font-bold text-slate-700">Answer:</span> {formatRenderableText(item.answer)}</div>}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.veryShortAnswerQuestions?.length && (
+                                    <div className="space-y-3">
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Very Short Answer Questions</div>
+                                      {session.studentLessonNotes.veryShortAnswerQuestions.map((item, idx) => (
+                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-1">
+                                          <div className="font-semibold text-slate-800">{idx + 1}. {formatRenderableText(item.question)}</div>
+                                          {item.answer && <div className="text-slate-500"><span className="font-bold text-slate-700">Answer:</span> {formatRenderableText(item.answer)}</div>}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.selfCheckQuestions?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Self-Check Questions</div>
+                                      <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
+                                        {session.studentLessonNotes.selfCheckQuestions.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ol>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.didYouKnow?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Did You Know?</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.didYouKnow.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.summary?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Summary</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.summary.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.quickRevision?.length && (
+                                    <div>
+                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Revision</div>
+                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.quickRevision.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                  {!!session.studentLessonNotes.rememberPoints?.length && (
+                                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
+                                      <div className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-widest mb-2">Remember</div>
+                                      <ul className="text-xs text-emerald-900 list-disc list-inside space-y-1">
+                                        {session.studentLessonNotes.rememberPoints.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                      </ul>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-xs text-slate-500">
+                                  Student lesson notes have not been generated for this session yet.
+                                </div>
+                              )}
+                            </div>
+                          )}
+
                           {/* SUB TAB: Materials (PPT/PDF/DOC) */}
                           {activeSubTab === "materials" && (
                             <div className="space-y-6 animate-fadeIn">
+                              {renderTabGeneratePanel(
+                                "materials",
+                                activeSessionNumber,
+                                outlineItem,
+                                "Materials",
+                                "Generate or refresh the PPT, PDF, and DOC support materials for this session."
+                              )}
                               
                               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-3 border-b border-slate-100">
                                 <div>
@@ -5418,7 +6116,7 @@ export default function App() {
                                                 <div className="col-span-3 flex flex-col px-8 py-7">
                                                   <div className="mb-5">
                                                     <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                                      {getPptTitle(session.materials.ppt)}
+                                                      {getPptTitle(session.materials?.ppt)}
                                                     </div>
                                                     <h5 className="mt-2 font-display text-[clamp(1.2rem,2vw,2rem)] font-black leading-tight text-slate-900">
                                                       {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
@@ -5662,6 +6360,13 @@ export default function App() {
                           {/* SUB TAB: Homework Draft */}
                           {activeSubTab === "homework" && (
                             <div className="space-y-6 animate-fadeIn">
+                              {renderTabGeneratePanel(
+                                "homework",
+                                activeSessionNumber,
+                                outlineItem,
+                                "Homework",
+                                "Generate or refresh the homework pack aligned to this session."
+                              )}
                               {session.homework ? (
                                 <div className="p-6 bg-[#7F64EA]/5 border border-[#7F64EA]/20 rounded-3xl space-y-4">
                                   <div className="flex items-center gap-2">
@@ -5818,6 +6523,171 @@ export default function App() {
                           {/* SUB TAB: Assessments */}
                           {activeSubTab === "assessments" && (
                             <div className="space-y-6 animate-fadeIn">
+                              <div className="rounded-3xl border border-slate-200 bg-white p-5 space-y-5 no-print">
+                                <div className="flex flex-wrap items-start justify-between gap-3">
+                                  <div>
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <div className="text-sm font-display font-black text-slate-800">Marks & questions</div>
+                                      {isAssessmentCustomizationDirty(activeSessionNumber, session) && (
+                                        <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-700">
+                                          Customization changed
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="mt-1 text-xs text-slate-500">
+                                      {!hasAssessmentSourceContent(session)
+                                        ? "Generate session teaching content first. Assessment generation uses the current session notes/content as its source of truth."
+                                        : "Set the assessment pattern for this session. The generator will follow these teacher inputs exactly."}
+                                    </p>
+                                  </div>
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const nextType = assessmentQuestionTypeCatalog.find(
+                                          (item) => !(activeAssessmentCustomization.questionTypes || []).some((entry) => entry.type === item.type)
+                                        );
+                                        if (!nextType) return;
+                                        updateAssessmentCustomization(activeSessionNumber, (draft) => ({
+                                          ...draft,
+                                          questionTypes: [
+                                            ...(draft.questionTypes || []),
+                                            {
+                                              type: nextType.type,
+                                              label: nextType.label,
+                                              questionCount: 1,
+                                              marksEach: nextType.defaultMarksEach,
+                                            },
+                                          ],
+                                        }));
+                                      }}
+                                      className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-[#7C5CE0] transition hover:border-[#7C5CE0]/30 hover:bg-[#7C5CE0]/5"
+                                    >
+                                      Add type +
+                                    </button>
+                                    <button
+                                      type="button"
+                                      disabled={
+                                        !hasAssessmentSourceContent(session) ||
+                                        !activeAssessmentCustomization.questionTypes?.length ||
+                                        !activeAssessmentCustomization.totalMarks ||
+                                        !activeAssessmentCustomization.totalQuestions
+                                      }
+                                      onClick={() => void handleGenerateSessionTab("assessments", activeSessionNumber, outlineItem)}
+                                      className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
+                                        !hasAssessmentSourceContent(session) ||
+                                        !activeAssessmentCustomization.questionTypes?.length ||
+                                        !activeAssessmentCustomization.totalMarks ||
+                                        !activeAssessmentCustomization.totalQuestions
+                                          ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400"
+                                          : "border border-[#36ADAA]/20 bg-[#36ADAA] text-white hover:bg-[#36ADAA]/90"
+                                      }`}
+                                    >
+                                      <Sparkles className="w-3.5 h-3.5" />
+                                      Generate Assessment
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total marks</div>
+                                    <div className="mt-2 text-2xl font-display font-black text-slate-800">{activeAssessmentCustomization.totalMarks || 0}</div>
+                                  </div>
+                                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total questions</div>
+                                    <div className="mt-2 text-2xl font-display font-black text-slate-800">{activeAssessmentCustomization.totalQuestions || 0}</div>
+                                  </div>
+                                  <label className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 space-y-2">
+                                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Difficulty</span>
+                                    <select
+                                      value={activeAssessmentCustomization.difficulty || "Balanced"}
+                                      onChange={(e) => updateAssessmentCustomization(activeSessionNumber, (draft) => ({ ...draft, difficulty: e.target.value }))}
+                                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                                    >
+                                      <option value="Accessible">Accessible</option>
+                                      <option value="Balanced">Balanced</option>
+                                      <option value="Stretch">Stretch</option>
+                                    </select>
+                                  </label>
+                                  <label className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 space-y-2">
+                                    <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Assessment type</span>
+                                    <input
+                                      value={activeAssessmentCustomization.assessmentType || "Session assessment"}
+                                      onChange={(e) => updateAssessmentCustomization(activeSessionNumber, (draft) => ({ ...draft, assessmentType: e.target.value }))}
+                                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                                      placeholder="Session assessment"
+                                    />
+                                  </label>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                                  {(activeAssessmentCustomization.questionTypes || []).map((item) => (
+                                    <div key={item.type} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+                                      <div className="flex items-center justify-between gap-3">
+                                        <div className="text-sm font-bold text-slate-800">{item.label || assessmentQuestionTypeCatalog.find((entry) => entry.type === item.type)?.label || item.type}</div>
+                                        <button
+                                          type="button"
+                                          onClick={() => updateAssessmentCustomization(activeSessionNumber, (draft) => ({
+                                            ...draft,
+                                            questionTypes: (draft.questionTypes || []).filter((entry) => entry.type !== item.type),
+                                          }))}
+                                          className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-400 transition hover:text-red-500"
+                                        >
+                                          <X className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
+                                      <div className="grid grid-cols-2 gap-3">
+                                        <label className="space-y-1">
+                                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Questions</span>
+                                          <input
+                                            type="number"
+                                            min={0}
+                                            value={item.questionCount ?? 0}
+                                            onChange={(e) => updateAssessmentCustomization(activeSessionNumber, (draft) => ({
+                                              ...draft,
+                                              questionTypes: (draft.questionTypes || []).map((entry) => (
+                                                entry.type === item.type
+                                                  ? { ...entry, questionCount: e.target.value ? Number(e.target.value) : 0 }
+                                                  : entry
+                                              )),
+                                            }))}
+                                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                                          />
+                                        </label>
+                                        <label className="space-y-1">
+                                          <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Marks each</span>
+                                          <input
+                                            type="number"
+                                            min={0}
+                                            value={item.marksEach ?? 0}
+                                            onChange={(e) => updateAssessmentCustomization(activeSessionNumber, (draft) => ({
+                                              ...draft,
+                                              questionTypes: (draft.questionTypes || []).map((entry) => (
+                                                entry.type === item.type
+                                                  ? { ...entry, marksEach: e.target.value ? Number(e.target.value) : 0 }
+                                                  : entry
+                                              )),
+                                            }))}
+                                            className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                                          />
+                                        </label>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+
+                                <label className="block space-y-2">
+                                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Question paper objective (optional)</span>
+                                  <textarea
+                                    value={activeAssessmentCustomization.paperObjective || ""}
+                                    onChange={(e) => updateAssessmentCustomization(activeSessionNumber, (draft) => ({ ...draft, paperObjective: e.target.value }))}
+                                    className="min-h-24 w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                                    placeholder="Tell chronobot how this paper should feel — exam-style balance, case-based, beginner-friendly, or board pattern."
+                                  />
+                                </label>
+                              </div>
+
                               {contentIncludesAssessments && session.assessment ? (
                                 <div className="space-y-4">
                                   
@@ -5835,6 +6705,191 @@ export default function App() {
                                     </span>
                                   </div>
 
+                                  <div className="rounded-2xl border border-slate-200 bg-white p-4 no-print">
+                                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-3">Download Options</div>
+                                    <div className="flex flex-wrap gap-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDownloadAssessmentQuestionPaper(session)}
+                                        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                      >
+                                        <Download className="w-3.5 h-3.5" />
+                                        Download Question Paper
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDownloadAssessmentAnswerKey(session)}
+                                        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                      >
+                                        <Download className="w-3.5 h-3.5" />
+                                        Download Answer Key
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDownloadAssessmentRubrics(session)}
+                                        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                      >
+                                        <Download className="w-3.5 h-3.5" />
+                                        Download Rubrics
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDownloadAssessmentJson(session)}
+                                        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                      >
+                                        <Download className="w-3.5 h-3.5" />
+                                        Download Question Paper, Answer Key and Rubrics JSON
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {(session.assessment.assessmentMeta || session.assessment.blueprint) && (
+                                    <div className="space-y-4">
+                                      {session.assessment.assessmentMeta && (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
+                                          {session.assessment.assessmentMeta.assessmentType && (
+                                            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Assessment Type</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.assessmentType)}</div>
+                                            </div>
+                                          )}
+                                          {session.assessment.assessmentMeta.totalMarks != null && (
+                                            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total Marks</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.totalMarks)}</div>
+                                            </div>
+                                          )}
+                                          {session.assessment.assessmentMeta.totalQuestions != null && (
+                                            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total Questions</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.totalQuestions)}</div>
+                                            </div>
+                                          )}
+                                          {session.assessment.assessmentMeta.durationMinutes != null && (
+                                            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Duration</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.durationMinutes)} min</div>
+                                            </div>
+                                          )}
+                                          {session.assessment.assessmentMeta.preferredDifficulty && (
+                                            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Difficulty</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.preferredDifficulty)}</div>
+                                            </div>
+                                          )}
+                                          {session.assessment.assessmentMeta.language && (
+                                            <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Language</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.language)}</div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      )}
+
+                                      {!!session.assessment.assessmentMeta?.instructions?.length && (
+                                        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                                          <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Assessment Instructions</div>
+                                          <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
+                                            {session.assessment.assessmentMeta.instructions.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                          </ul>
+                                        </div>
+                                      )}
+
+                                      {session.assessment.assessmentMeta?.paperObjective && (
+                                        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                                          <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Paper Objective</div>
+                                          <p className="text-xs text-slate-700 leading-relaxed">
+                                            {formatRenderableText(session.assessment.assessmentMeta.paperObjective)}
+                                          </p>
+                                        </div>
+                                      )}
+
+                                      {!!session.assessment.assessmentMeta?.requestedQuestionTypes?.length && (
+                                        <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                                          <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Requested Paper Pattern</div>
+                                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+                                            {session.assessment.assessmentMeta.requestedQuestionTypes.map((item, idx) => (
+                                              <div key={idx} className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                                                <span className="font-semibold text-slate-800">{formatRenderableText(item.label || formatAssessmentSubtypeLabel(item.type))}</span>
+                                                {" • "}
+                                                {formatRenderableText(item.questionCount)} questions
+                                                {" • "}
+                                                {formatRenderableText(item.marksEach)} marks each
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {session.assessment.blueprint && (
+                                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                                          {!!session.assessment.blueprint.learningOutcomeCoverage?.length && (
+                                            <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Learning Outcome Coverage</div>
+                                              {session.assessment.blueprint.learningOutcomeCoverage.map((item, idx) => (
+                                                <div key={idx} className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                                                  <div className="font-semibold text-slate-800">{formatRenderableText(item.outcome)}</div>
+                                                  {!!item.questionRefs?.length && (
+                                                    <div className="mt-1 text-slate-500">Questions: {item.questionRefs.map((ref) => formatRenderableText(ref)).join(", ")}</div>
+                                                  )}
+                                                </div>
+                                              ))}
+                                            </div>
+                                          )}
+
+                                          <div className="grid grid-cols-1 gap-4">
+                                            {(session.assessment.blueprint.difficultyDistribution || session.assessment.blueprint.bloomsDistribution || session.assessment.blueprint.questionDistribution) && (
+                                              <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+                                                <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Blueprint Summary</div>
+                                                {session.assessment.blueprint.difficultyDistribution && (
+                                                  <div className="text-xs text-slate-700">
+                                                    <span className="font-bold text-slate-800">Difficulty:</span>{" "}
+                                                    {Object.entries(session.assessment.blueprint.difficultyDistribution)
+                                                      .filter(([, value]) => value != null)
+                                                      .map(([key, value]) => `${key} ${formatRenderableText(value)}%`)
+                                                      .join(" • ")}
+                                                  </div>
+                                                )}
+                                                {session.assessment.blueprint.bloomsDistribution && (
+                                                  <div className="text-xs text-slate-700">
+                                                    <span className="font-bold text-slate-800">Bloom's:</span>{" "}
+                                                    {Object.entries(session.assessment.blueprint.bloomsDistribution)
+                                                      .filter(([, value]) => value != null)
+                                                      .map(([key, value]) => `${key} ${formatRenderableText(value)}%`)
+                                                      .join(" • ")}
+                                                  </div>
+                                                )}
+                                                {session.assessment.blueprint.questionDistribution && (
+                                                  <div className="text-xs text-slate-700">
+                                                    <span className="font-bold text-slate-800">Questions:</span>{" "}
+                                                    {Object.entries(session.assessment.blueprint.questionDistribution)
+                                                      .filter(([, value]) => value != null)
+                                                      .map(([key, value]) => `${key} ${formatRenderableText(value)}`)
+                                                      .join(" • ")}
+                                                  </div>
+                                                )}
+                                              </div>
+                                            )}
+
+                                            {!!session.assessment.blueprint.timeAllocation?.length && (
+                                              <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                                <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Time Allocation</div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                  {session.assessment.blueprint.timeAllocation.map((item, idx) => (
+                                                    <div key={idx} className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700 flex items-center justify-between gap-2">
+                                                      <span className="font-semibold text-slate-800">{formatRenderableText(item.section)}</span>
+                                                      <span>{formatRenderableText(item.minutes)} min</span>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+
                                   <div className="space-y-6">
                                     {!!session.assessment.mcq?.length && (
                                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
@@ -5843,8 +6898,16 @@ export default function App() {
                                           <div className="space-y-3">
                                             {session.assessment.mcq.map((q, idx) => (
                                               <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
-                                                <p className="font-extrabold pb-1">Q{idx + 1}. ({q.marks || 1} mark)</p>
+                                                <p className="font-extrabold pb-1">{`Q${idx + 1}`}. ({q.marks || 1} mark)</p>
                                                 <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
+                                                {q.questionSubtype && (
+                                                  <p className="mt-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
+                                                )}
+                                                {(q.difficulty || q.bloomsLevel) && (
+                                                  <p className="mt-1 text-slate-500">
+                                                    {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
+                                                  </p>
+                                                )}
                                                 <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
                                                   {q.options.map((option, optionIdx) => <li key={optionIdx}>{formatRenderableText(option)}</li>)}
                                                 </ul>
@@ -5855,7 +6918,7 @@ export default function App() {
                                         <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
                                           <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">MCQ Answer Key</span>
                                           <div className="space-y-3">
-                                            {(session.assessment.answerKey?.mcq || []).map((ans, idx) => (
+                                            {(Array.isArray(session.assessment.answerKey?.mcq) ? session.assessment.answerKey.mcq : []).map((ans, idx) => (
                                               <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
                                                 <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{idx + 1}</p>
                                                 <p className="leading-relaxed font-mono">{formatRenderableText(ans.answer)}</p>
@@ -5874,9 +6937,17 @@ export default function App() {
                                           <div className="space-y-3">
                                             {session.assessment.shortAnswer.map((q, idx) => (
                                               <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
-                                                <p className="font-extrabold pb-1">Q{idx + 1}. ({q.marks || 2} marks)</p>
+                                                <p className="font-extrabold pb-1">{`Q${assessmentMcqCount + idx + 1}`}. ({q.marks || 2} marks)</p>
+                                                {q.questionSubtype && (
+                                                  <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
+                                                )}
                                                 <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
                                                 {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {formatRenderableText(q.expectedLength)}</p>}
+                                                {(q.difficulty || q.bloomsLevel) && (
+                                                  <p className="mt-1 text-slate-500">
+                                                    {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
+                                                  </p>
+                                                )}
                                               </div>
                                             ))}
                                           </div>
@@ -5884,9 +6955,12 @@ export default function App() {
                                         <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
                                           <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">Short Answer Key & Rubric</span>
                                           <div className="space-y-3">
-                                            {(session.assessment.answerKey?.shortAnswer || []).map((ans, idx) => (
+                                            {(Array.isArray(session.assessment.answerKey?.shortAnswer) ? session.assessment.answerKey.shortAnswer : []).map((ans, idx) => (
                                               <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
-                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{idx + 1}</p>
+                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{assessmentMcqCount + idx + 1}</p>
+                                                {ans.questionSubtype && (
+                                                  <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(ans.questionSubtype)}</p>
+                                                )}
                                                 <p className="leading-relaxed">{formatRenderableText(ans.answer)}</p>
                                                 {!!ans.rubric?.length && (
                                                   <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
@@ -5907,9 +6981,17 @@ export default function App() {
                                           <div className="space-y-3">
                                             {session.assessment.longAnswer.map((q, idx) => (
                                               <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
-                                                <p className="font-extrabold pb-1">Q{idx + 1}. ({q.marks || 5} marks)</p>
+                                                <p className="font-extrabold pb-1">{`Q${assessmentMcqCount + assessmentShortAnswerCount + idx + 1}`}. ({q.marks || 5} marks)</p>
+                                                {q.questionSubtype && (
+                                                  <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
+                                                )}
                                                 <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
                                                 {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {formatRenderableText(q.expectedLength)}</p>}
+                                                {(q.difficulty || q.bloomsLevel) && (
+                                                  <p className="mt-1 text-slate-500">
+                                                    {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
+                                                  </p>
+                                                )}
                                               </div>
                                             ))}
                                           </div>
@@ -5917,9 +6999,12 @@ export default function App() {
                                         <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
                                           <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">Long Answer Key & Rubric</span>
                                           <div className="space-y-3">
-                                            {(session.assessment.answerKey?.longAnswer || []).map((ans, idx) => (
+                                            {(Array.isArray(session.assessment.answerKey?.longAnswer) ? session.assessment.answerKey.longAnswer : []).map((ans, idx) => (
                                               <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
-                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{idx + 1}</p>
+                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{assessmentMcqCount + assessmentShortAnswerCount + idx + 1}</p>
+                                                {ans.questionSubtype && (
+                                                  <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(ans.questionSubtype)}</p>
+                                                )}
                                                 <p className="leading-relaxed whitespace-pre-wrap">{formatRenderableText(ans.answer)}</p>
                                                 {!!ans.rubric?.length && (
                                                   <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
@@ -5945,9 +7030,10 @@ export default function App() {
 
                                 </div>
                               ) : (
-                                <div className="text-gray-400 text-center p-8 bg-slate-50 rounded-2xl">
-                                  Formative assessment output is turned off in the saved Phase 3 defaults.
-                                </div>
+                                renderSessionTabEmptyState(
+                                  "Assessment not generated yet",
+                                  "Click the generate button in the session header to create this assessment using the paper settings above."
+                                )
                               )}
                             </div>
                           )}
@@ -5955,6 +7041,13 @@ export default function App() {
                           {/* SUB TAB: Assignments */}
                           {activeSubTab === "assignments" && (
                             <div className="space-y-6 animate-fadeIn">
+                              {renderTabGeneratePanel(
+                                "assignments",
+                                activeSessionNumber,
+                                outlineItem,
+                                "Assignments",
+                                "Generate or refresh the assignment bundle for this session."
+                              )}
                               {contentIncludesAssignments && session.assignment ? (
                                 <div className="space-y-5">
                                   <div className="p-6 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
@@ -6031,7 +7124,7 @@ export default function App() {
                       onClick={() => {
                         const outlineItem = sessionsOutline.find((s) => s.sessionNumber === activeSessionNumber);
                         if (outlineItem) {
-                          handleBuildSessionDeepDetails(activeSessionNumber, outlineItem);
+                          handleGenerateFullSessionPack(activeSessionNumber, outlineItem);
                         }
                       }}
                       className="bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white font-extrabold text-xs py-3 px-6 rounded-xl transition shadow-sm"
