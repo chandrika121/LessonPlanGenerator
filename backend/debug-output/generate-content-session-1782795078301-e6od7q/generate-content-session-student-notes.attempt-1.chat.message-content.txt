@@ -1,0 +1,271 @@
+{
+  "studentLessonNotes": {
+    "title": "Computer Systems and Organisation - Session 1: The Foundation",
+    "sessionOverview": "Welcome to the first session! We will explore what a computer system really is, breaking it down into its essential parts: hardware, software, data, users, and procedures. You'll learn how these pieces work together like an orchestra.",
+    "introduction": "Have you ever wondered if your smartphone or laptop counts as a 'computer'? Or why we need both the physical machine (hardware) and the programs running on it (software)? In this session, we lay the groundwork for understanding Computer Systems. We won't just look at wires; we'll see how people, rules, and data turn raw technology into useful tools.",
+    "learningObjectives": [
+      "Define a computer system as an integrated set of components working together to process information.",
+      "Identify and explain the five key elements: Hardware, Software, Data, Users, and Procedures.",
+      "Distinguish between different types of software (System vs. Application).",
+      "Understand how users interact with systems through input and output devices."
+    ],
+    "quickRecall": [
+      "Remember that a computer processes data to produce information.",
+      "You already know the difference between physical parts you can touch and programs you run."
+    ],
+    "easyToRemember": [
+      "A Computer System = Hardware + Software + Data + Users + Procedures working in harmony."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Hardware vs. Software",
+        "headers": ["Feature", "Hardware", "Software"],
+        "rows": [
+          ["Definition", "Physical components you can touch.", "Programs and instructions that tell hardware what to do."],
+          ["Examples", "Monitor, Keyboard, CPU, Mouse.", "Windows OS, MS Word, Chrome Browser."],
+          ["Tangibility", "Can be seen and felt (tangible).", "Cannot be touched directly; exists as code (intangible)."],
+          ["Failure Type", "Hardware failure = Broken part.", "Software failure = Bug or crash."]
+        ]
+      },
+      {
+        "title": "System Software vs. Application Software",
+        "headers": ["Feature", "System Software", "Application Software"],
+        "rows": [
+          ["Purpose", "Manages computer resources and provides a platform.", "Performs specific tasks for the user."],
+          ["Examples", "Operating Systems (Windows, macOS), Device Drivers.", "Word Processors, Games, Web Browsers."],
+          ["Dependency", "Runs directly on hardware; other software needs it.", "Requires system software to run."]
+        ]
+      }
+    ],
+    "sections": [
+      {
+        "heading": "What is a Computer System?",
+        "explanation": "A computer isn't just the box under your desk. A 'Computer System' is a complete ecosystem where technology, people, and rules come together to solve problems or achieve goals. It's like a car: you need the engine (hardware), fuel and instructions (software/data), a driver (user), and traffic laws (procedures) for it to function effectively.",
+        "keyPoints": [
+          "It is an integrated system, not just isolated parts.",
+          "Input -> Processing -> Output cycle happens within this system.",
+          "Without users or procedures, the hardware is useless."
+        ],
+        "examples": [
+          "A library computer: The machine (hardware) runs a catalog program (software), uses book records (data), helps a librarian (user) follow checkout rules (procedures).",
+          "An ATM: You insert cash and card, the system processes your request using banking software to dispense money."
+        ],
+        "whyItMatters": "Understanding this holistic view prevents you from thinking computers are just magic boxes. It helps you troubleshoot problems by checking if it's a broken part (hardware) or a missing rule (procedure).",
+        "terminology": [
+          "Computer System",
+          "Integration"
+        ],
+        "detailedExplanation": "Think of the computer system as an input-process-output loop. Data enters through hardware, is manipulated by software based on user instructions and procedures, and results in useful information outputted back to the user or another device.",
+        "observedIn": [
+          "School computers",
+          "Smartphones",
+          "ATMs",
+          "Self-checkout kiosks"
+        ],
+        "visualSupport": [
+          "A circular diagram showing: User -> Input Device -> Hardware (CPU) -> Software Processing -> Output Device -> Information back to User, with 'Procedures' and 'Data' as supporting pillars."
+        ],
+        "importantNotes": [
+          "Exam Tip: Always remember that a computer system requires human interaction; it is not fully autonomous in the context of this syllabus.",
+          "Don't confuse 'Computer Hardware' (the machine) with 'Computer System' (machine + people + rules)."
+        ],
+        "memoryTechniques": [
+          "H-S-D-U-P: **H**ardware, **S**oftware, **D**ata, **U**sers, **P**rocedures."
+        ],
+        "conceptSummary": [
+          "A computer system is the complete environment where hardware and software interact with users to process data according to procedures."
+        ]
+      },
+      {
+        "heading": "The Five Key Elements of a Computer System",
+        "explanation": "To have a functioning system, you need five distinct elements. If any one is missing or fails, the whole system stops working effectively.",
+        "keyPoints": [
+          "**Hardware**: The physical machinery (CPU, RAM, Storage).",
+          "**Software**: The instructions and programs (OS, Apps).",
+          "**Data**: Raw facts processed by the computer.",
+          "**Users**: People who operate or benefit from the system.",
+          "**Procedures**: Rules and guidelines for using the system."
+        ],
+        "examples": [
+          "Hardware: A keyboard is hardware. The 'typing' action requires software drivers to work.",
+          "Data: Your name in a database is data until you search it (process) to find your record.",
+          "Procedures: The rule that says 'Save your document every 5 minutes' prevents data loss."
+        ],
+        "whyItMatters": "This breakdown helps IT professionals diagnose issues. Is the computer slow? Maybe hardware. Did a file disappear? Check procedures or user error. Was there no power? Hardware failure.",
+        "terminology": [
+          "Peripheral Devices",
+          "Operating System"
+        ],
+        "detailedExplanation": "**Hardware** includes Input devices (keyboard), Output devices (monitor), Processing units (CPU), and Storage (Hard Drive). **Software** is divided into System Software (manages the computer) and Application Software (does specific tasks for you). **Data** becomes information when processed. **Users** range from beginners to experts. **Procedures** ensure consistency, like backup protocols or login rules.",
+        "observedIn": [
+          "Every digital interaction",
+          "Online banking apps"
+        ],
+        "visualSupport": [
+          "A pie chart divided into 5 equal slices labeled Hardware, Software, Data, Users, Procedures."
+        ],
+        "importantNotes": [
+          "Caution: 'Data' is not just files; it includes numbers, text, images, and sound that the computer processes.",
+          "Procedures are often overlooked but critical for security (e.g., password policies)."
+        ],
+        "memoryTechniques": [
+          "**H**ave **S**ome **D**ata **U**nder **P**rocedure."
+        ],
+        "conceptSummary": [
+          "All five elements—Hardware, Software, Data, Users, and Procedures—are equally essential for a computer system to function."
+        ]
+      },
+      {
+        "heading": "System vs. Application Software",
+        "explanation": "Software is the brain of the operation, but it comes in two main flavors: System Software (the manager) and Application Software (the worker).",
+        "keyPoints": [
+          "**System Software**: Runs the computer itself (e.g., Windows, Linux, macOS). It manages hardware resources.",
+          "**Application Software**: Designed for end-users to perform specific tasks (e.g., Word, Photoshop, Games).",
+          "You cannot run application software without system software."
+        ],
+        "examples": [
+          "System: The Operating System that lets you turn on the computer and see icons.",
+          "Application: Microsoft Excel used by a student to calculate grades."
+        ],
+        "whyItMatters": "Knowing this distinction helps in troubleshooting. If your apps crash, it might be an application issue. If nothing starts at all, it's likely system software or hardware related.",
+        "terminology": [
+          "Operating System (OS)",
+          "Utility Software"
+        ],
+        "detailedExplanation": "**System Software** acts as a bridge between the user and the hardware. It includes Operating Systems (managing memory, processes) and Utility Programs (antivirus, disk cleanup). **Application Software** is built on top of this foundation to solve specific problems for users.",
+        "observedIn": [
+          "Boot screens show system software loading first.",
+          "Opening a game shows application software launching."
+        ],
+        "visualSupport": [
+          "A layered diagram: Bottom layer = Hardware, Middle Layer = System Software (OS), Top Layer = Application Software."
+        ],
+        "importantNotes": [
+          "Exam Point: Device drivers are part of system software; they allow the OS to talk to specific hardware.",
+          "Don't confuse 'Utility' programs with general applications; utilities maintain the computer, apps do work for you."
+        ],
+        "memoryTechniques": [
+          "**S**ystem = **S**upports the machine. **A**pplication = **A**cts on tasks."
+        ],
+        "conceptSummary": [
+          "System software manages resources; application software performs user-specific tasks, and both are required for a complete system."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Computer System",
+        "definition": "An integrated set of components including hardware, software, data, users, and procedures that work together to process information into useful output."
+      },
+      {
+        "term": "System Software",
+        "definition": "Software designed to operate the computer hardware and provide a platform for running application programs (e.g., Operating Systems)."
+      },
+      {
+        "term": "Application Software",
+        "definition": "Programs designed to help users perform specific tasks, such as word processing, browsing the web, or playing games."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Analyzing a Computer System in Action",
+        "steps": [
+          "Identify the Hardware: Look for physical items like the laptop screen and keyboard.",
+          "Identify the Software: Note what is running, e.g., Windows OS (System) and Chrome Browser (Application).",
+          "Identify Data: Recognize the webpage content or files being accessed.",
+          "Identify Users: Who is using it? A student researching for a project.",
+          "Identify Procedures: What rules are followed? 'Click to save', 'Use strong passwords'."
+        ],
+        "explanation": "By breaking down this scenario, we see that the laptop (hardware) alone does nothing. It needs Chrome (software), the search query (data), the student (user), and safety habits (procedures) to be a functional system for learning."
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Computer System: Hardware + Software + Data + Users + Procedures.",
+        "System Software: Manages hardware resources (OS).",
+        "Application Software: Performs specific user tasks."
+      ],
+      "formulas": [],
+      "facts": [
+        "A computer system is useless without users or procedures, even if the hardware works perfectly."
+      ],
+      "keywords": [
+        "Hardware",
+        "Software",
+        "Data",
+        "Users",
+        "Procedures"
+      ],
+      "conceptMap": [
+        "Computer System -> Components (H-S-D-U-P) -> Types of Software (System vs App)"
+      ],
+      "quickRecap": [
+        "Remember the acronym HSDUP for the 5 elements.",
+        "Distinguish between managing software (OS) and task software (Apps)."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Can you list all five components of a computer system?",
+      "Why is 'Procedures' considered an essential part of a computer system, not just the machine?",
+      "If your mouse stops working but Windows still loads, which element has failed?"
+    ],
+    "quickSummary": [
+      "A computer system is more than hardware; it's people and rules interacting with technology.",
+      "Software splits into System (managing) and Application (tasking).",
+      "All five elements must work together for the system to be effective."
+    ],
+    "keyTerms": [
+      "Hardware",
+      "System Software",
+      "Application Software",
+      "Procedures"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "The physical parts of a computer that you can touch are called ________.",
+        "answer": "hardware"
+      },
+      {
+        "prompt": "________ software manages the computer's resources and provides a platform for other programs to run.",
+        "answer": "System"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is NOT one of the five elements of a computer system?",
+        "options": ["A. Hardware", "B. Software", "C. Electricity Grid", "D. Procedures"],
+        "answer": "C. Electricity Grid"
+      },
+      {
+        "question": "Microsoft Word and Google Chrome are examples of:",
+        "options": ["A. System Software", "B. Application Software", "C. Hardware Components", "D. Data Files"],
+        "answer": "B. Application Software"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "Name one example of system software.",
+        "answer": "Windows, macOS, or Linux."
+      },
+      {
+        "question": "What is the role of 'Procedures' in a computer system?",
+        "answer": "To provide rules and guidelines for using the system effectively and safely."
+      }
+    ],
+    "didYouKnow": [
+      "The term 'computer' originally referred to people who performed calculations by hand before machines took over!"
+    ],
+    "summary": [
+      "Computer systems integrate hardware, software, data, users, and procedures.",
+      "System software runs the machine; application software helps you do tasks."
+    ],
+    "quickRevision": [
+      "HSDUP: Hardware, Software, Data, Users, Procedures."
+    ],
+    "rememberPoints": [
+      "Hardware = Physical",
+      "Software = Instructions (System vs App)",
+      "Users + Procedures = Human Element"
+    ]
+  }
+}

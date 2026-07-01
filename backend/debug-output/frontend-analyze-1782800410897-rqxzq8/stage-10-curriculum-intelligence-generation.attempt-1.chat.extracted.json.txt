@@ -1,0 +1,171 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Introduction to rational numbers",
+      "prerequisites": [],
+      "dependent_topics": ["Representation of rational numbers on number line"]
+    },
+    {
+      "topic": "Representation of rational numbers on number line",
+      "prerequisites": ["Introduction to rational numbers"],
+      "dependent_topics": ["Density of rational numbers and its proof"]
+    },
+    {
+      "topic": "Decimal representation of rational numbers",
+      "prerequisites": [],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Introduction to irrational numbers",
+      "prerequisites": ["Representation of rational numbers on number line"],
+      "dependent_topics": ["Proof of irrationality"]
+    },
+    {
+      "topic": "The square root spiral",
+      "prerequisites": ["Proof of irrationality of √2 and √3"],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Axioms and Postulates",
+      "prerequisites": [],
+      "dependent_topics": ["Lines and Angles"]
+    },
+    {
+      "topic": "Lines and Angles",
+      "prerequisites": ["Axioms and Postulates"],
+      "dependent_topics": ["Triangles: Congruence Theorems"]
+    },
+    {
+      "topic": "Triangles: Congruence Theorems",
+      "prerequisites": ["Lines and Angles"],
+      "dependent_topics": ["4-gons (Quadrilaterals)"]
+    },
+    {
+      "topic": "4-gons (Quadrilaterals)",
+      "prerequisites": ["Triangles: Congruence Theorems"],
+      "dependent_topics": ["Circles"]
+    },
+    {
+      "topic": "Introduction to Polynomials",
+      "prerequisites": [],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Linear polynomials and applications",
+      "prerequisites": ["Introduction to Polynomials"],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Sequences and Progressions",
+      "prerequisites": [],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Exploring Algebraic Identities",
+      "prerequisites": ["Introduction to Polynomials"],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Perimeter and Area Introduction",
+      "prerequisites": [],
+      "dependent_topics": ["Area of Shapes (Rectangles, Parallelograms, Triangles)"]
+    },
+    {
+      "topic": "Heron's Formula",
+      "prerequisites": ["Area of Shapes (Rectangles, Parallelograms, Triangles)"],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Brief history of coordinate geometry",
+      "prerequisites": [],
+      "dependent_topics": ["The 2-D Cartesian coordinate system"]
+    },
+    {
+      "topic": "Distance between two points in the 2-D plane",
+      "prerequisites": ["The 2-D Cartesian coordinate system"],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Surface areas and volumes of spheres (including hemispheres)",
+      "prerequisites": [],
+      "dependent_topics": []
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Number System",
+      "chapter_name": "Number System",
+      "difficulty_level": "Medium",
+      "concept_density": "High",
+      "estimated_teaching_hours": "12-14",
+      "estimated_sessions": "8-10",
+      "practical_requirement": "Construct the Square Root Spiral",
+      "assessment_requirement": "Unit I: Number System - 07 Marks"
+    },
+    {
+      "unit_name": "Geometry (Implicit Unit from Context)",
+      "chapter_name": "Axioms and Postulates",
+      "difficulty_level": "Medium",
+      "concept_density": "High",
+      "estimated_teaching_hours": "10-12",
+      "estimated_sessions": "7-9",
+      "practical_requirement": "Geometric Constructions with Sulbasutras, Paper Manipulation for 4-gons",
+      "assessment_requirement": "Unit IV: Geometry - 25 Marks"
+    },
+    {
+      "unit_name": "Algebra",
+      "chapter_name": "Introduction to Polynomials",
+      "difficulty_level": "Medium",
+      "concept_density": "High",
+      "estimated_teaching_hours": "14-16",
+      "estimated_sessions": "9-12",
+      "practical_requirement": "Visualise Algebraic Identities using Geometrical Models, Tower of Hanoi Puzzle",
+      "assessment_requirement": "Unit II: Algebra - 20 Marks"
+    },
+    {
+      "unit_name": "MENSURATION",
+      "chapter_name": "Area and Perimeter",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": "14-16",
+      "estimated_sessions": "9-12",
+      "practical_requirement": "Squaring a Rectangle Proof, Data Collection and Graphical Representation",
+      "assessment_requirement": "Unit V: Mensuration - 14 Marks"
+    },
+    {
+      "unit_name": "Coordinate Geometry",
+      "chapter_name": "Coordinate Geometry",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": "8-10",
+      "estimated_sessions": "6-7",
+      "practical_requirement": "Floor Plan Representation on Grid, Geometric Constructions with Sulbasutras (Coordinate aspect)",
+      "assessment_requirement": "Unit III: Coordinate Geometry - 04 Marks"
+    },
+    {
+      "unit_name": "Mensuration: Surface Area and Volume",
+      "chapter_name": "Surface Area and Volume",
+      "difficulty_level": "High",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "12-14",
+      "estimated_sessions": "8-9",
+      "practical_requirement": "Laboratory Activities (Prescribed Books)",
+      "assessment_requirement": "Unit V: Mensuration - 14 Marks"
+    },
+    {
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Introduction to Probability",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": "8-10",
+      "estimated_sessions": "6-7",
+      "practical_requirement": "Random Experiment Simulation, Data Collection and Graphical Representation",
+      "assessment_requirement": "Unit VI: Statistics and Probability - 10 Marks"
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [],
+    "invalid_chapter_names": []
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "terms": [
+      {
+        "name": "",
+        "units": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: term_semester_curriculum\n- Expected structure type: term_unit_topic\n- Preserve term/semester structure when present\n- Do not flatten semesters into plain unit lists\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 2 of 4; extract only what is present in this chunk\n\nCurriculum source text:\nmake one solution or procedure\nwork for multiple problems.\nC-9.4 Engages in algorithmic problem-solving to design such solutions.\nCG-10: Knows and appreciates important contributions of mathematicians from India and\naround the world.\nC-10.1 Recognises the important contributions made by mathematicians (Indian and others) in the\nfield of Mathematics (such as the evolution of numbers, geometry, and algebra).\nC-10.2 Recognises modern contributions to Mathematics made in both India and abroad, and\nunderstands the next frontiers and next major open questions in the field of Mathematics.\nCG-11: Explores connections of Mathematics with other subjects.\nC-11.1 Applies mathematical knowledge and tools to analyse problems or situations in multiple\nsubjects across Science, Social Science, Visual Arts, Music, Vocational Education, and Sports.\n\n---\n\n# Page 4\n\n## COURSE STRUCTURE CLASS – IX\nUnits Unit Name Chapter Name Marks\nI Number System  Number System 07\nII Algebra  Introduction to Polynomials 2 0\n Sequences and Progressions\n Exploring Algebraic Identities\n Linear Equations in Two Variables\nIII Coordinate  Coordinate Geometry 04\nGeometry\nIV Geometry  Introduction to Euclid’s Geometry: 2 5\nAxioms and Postulate s\n Lines and Angles\n Triangles – Congruence Theorems\n 4 - gons (Quadrilaterals)\n Circles\nV Mensuration  Area and Perimeter 1 4\n Surface Area and Volume\nVI Statistics and  Statistics 10\nProbability  Introduction to Probability\nTotal 80\n## Chapter Key Concepts Releva Competencies\nName nt CGs\n## Unit 1: Number System No. of periods : 12\nNumber  Introduction to rational The student will be able to:\nSystem numbers  Understand the concept of a rational\n Representation of CG-1, number.\nrational numbers on the C-1.1,  Represent rational numbers on the\nnumber line CG-9 number line.\n Density of rational  Understand the properties of rational\nnumbers and its proof numbers.\n Finding rational numbers  Explain the concept of density of\nbetween any two rational rational numbers.\nnumbers  Compute decimal representation of\n Decimal representation rational numbers.\nof rational numbers  Understand the concept of irrational\n Introduction to irrational numbers.\nnumbers  Prove the irrationality.\n Proof of irrationality of  Construct the square root spiral.\n√2 and √3  Apply computational thinking to\n The square root spiral represent rational and irrational\n\n---\n\n# Page 5\n\nnumbers through algorithms and visual\nmodels, generate decimal expansions\nsystematically, and reason about\nnumbers using step-by-step logical\nprocedures.\n## UNIT II: ALGEBRA No. of periods : 66\nIntroduction  Algebraic expressions The student will be able to:\nto  Definition of a  Understand the meaning of an\nPolynomials polynomial. CG-3, algebraic expression.\n Degree of a polynomial C-3.2,  Define a polynomial.\n## CG-9\n Introduction to linear  Identify the degree, terms and\npolynomials and coefficients of terms in a polynomial.\napplications  Model linear growth and decay using\n Exploring linear patterns linear polynomials.\n Modelling linear growth  Explain and identify patterns in linear\nand linear decay relationships.\n Linear relationships  Identify the slope and y-intercept of a\n Visualising linear linear equation in two variables.\nrelationships  Graph a linear equation in two\n Slope and y-intercept of variables.\na line y = ax + b  Use computational thinking to identify\npatterns, construct linear expressions,\nand systematically represent and\nanalyse linear relationships using\nequations and graphs.\nSequences  Introduction to The student will be able to:\nand sequences • Understand the concept of a sequence\nProgression  Explicit or general rule CG-11, of numbers.\ns of a sequence C-8.1, • Identify the pattern in a sequence and\n Recursive rule of a CG-9 predict the next few terms.\nsequence • Determine the recursive and explicit\nrules for different sequences.\n Arithmetic Progressions\n- Obtain the terms of sequence given its\n (AP): nth term,\nrecursive and explicit rule.\nvisualising an AP, and\n- Identify Arithmetic Progressions (AP).\npractical contexts\n- Determine the nth term of an AP.\nleading to Aps\n- Visualise an AP graphically.\n Sum of the first n\n- Identify Geometric Progressions (GP).\nnatural numbers\n- Determine the nth term of a GP.\n Geometric\n- Visualise a GP graphically.\nProgressions (GP): nth\n- Analyse attributes of fractals using GP.\nterm, visualising a GP,\n- Solve the Tower of Hanoi puzzle.\nand practical contexts\n- Use computational thinking to identify\nleading to GPs\npatterns, write step-by-step rules, and\n Applications of GP in\nmodel patterns in sequences and\nfractals\nprogressions.\n Tower of Hanoi puzzle\n\n---\n\n# Page 6\n\nExploring  Revisiting algebraic The student will be able to:\nAlgebraic identities CG-7, • Visualise algebraic identities using\nIdentities  Visualising identities C-7.2, geometric models.\nusing geometrical CG-9 • Determine the factors of algebraic\nmodels expressions using identities.\n Factorisation of algebraic • Interpret factors of quadratic\nexpressions using expressions through geometric\nidentities models.\n- Find simplified versions of rational\n More identities and their\nexpressions.\napplications\n- Use computational thinking strategies,\n Visualising factorisation\nsuch as decomposition and step-by-\nof quadratic expressions\nstep procedures to visualise algebraic\nthrough algebra tiles and\nidentities, factor expressions, and\nwithout using algebra\nsimplify rational expressions.\ntiles\n Finding new identities\n Simplifying rational\nexpressions\nLinear  Introduction to linear The student will be able to:\nEquations in equations in two  Understand the concept of a linear\nTwo variables through CG-3, equation in two variables.\nVariables practical examples C-3.2,  Graph a pair of linear equations.\n Solution of linear C-8.1,  Solve a pair of linear equations\nequation in two variables: CG-9 graphically.\ngraphical representation  Solve a pair of linear equations\n Slope-intercept form of through the methods of substitution\nlinear equation in two and elimination.\nvariables  Determine the nature of solutions of a\n Drawing graphs of linear pair of linear equations.\nequations when x and y  Model and solve contextualised\nassume only certain problems using a pair of linear\nvalues equations and draw conclusions.\n Pair of linear equations in  Model daily-life phenomena using\ntwo variables representations, such as graphs,\n Graphical method for tables, and equations.\nsolving a pair of linear  Use computational thinking to\nequations in two systematically represent, solve, and\nvariables interpret pairs of linear equations\n Nature of solutions: through graphs, tables, and step-by-\nconsistency and step procedures.\ninconsistency\n Algebraic methods of\nsolving a pair of linear\nequations: substitution\nand elimination method\n\n---\n\n# Page 7\n\n## UNIT III: COORDINATE GEOMETRY No. of periods : 6\nCoordinate  Brief history of The student will be able to:\nGeometry coordinate geometry  Specify locations and the position of\n The 2-D Cartesian CG-4, one point relative to another point\ncoordinate system C-4.5, using coordinates.\n Distance between two CG-9  Represent a floor plan on a grid using\npoints in the 2-D plane coordinates.\n Midpoint of the line-  Compute the distance between two\nsegment between two points using coordinates.\npoints in the 2-D plane  Determine whether three points lie in a\nstraight line using coordinates.\n Compute the position of the midpoint\nof a line segment using coordinates.\n Check whether a triangle is right-\nangled using coordinates.\n Apply computational thinking to model\nsituations on the coordinate plane and\nverify geometric properties through\nsystematic reasoning.\n## UNIT IV: GEOMETRY No. of periods : 69\nIntroduction  History of geometry The student will be able to:\nto Euclid’s  Constructing a square • Describe how geometry grew from the\nGeometry: with a given side as CG-7, practical needs ancient civilisati\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"terms\": [\n    {\n      \"name\": \"\",\n      \"units\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

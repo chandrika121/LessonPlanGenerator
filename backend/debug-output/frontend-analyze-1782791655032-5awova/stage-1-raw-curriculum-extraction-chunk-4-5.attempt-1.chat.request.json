@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: cbse_unit_topic\n- Expected structure type: unit_topic\n- Prefer unit -> topic when the source lists topics directly under a unit\n- Do not invent chapters from unit names in CBSE-style syllabi\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 4 of 5 retry 1.1/2; extract only what is present in this chunk\n\nCurriculum source text:\nscoveries,\nsuch as the contributions of Antoine Lavoisier,\nJoseph Proust, and John Dalton\n- Handle common laboratory chemicals and\napparatus safely\nC-5.1 • Draw diagrams of electron dot structures of atoms\nand molecules\nC-5.2 • Describe how atoms and molecules can lead to\nbeneficial applications, such as medicine, energy\nand peaceful use of atomic science\n- Relate atomic bonding to social bonding\nC-5.3 • Design educational games to write chemical\nformulae using symbols\nC-6.1 • Display awareness about the contributions of\nIndian scientists in promoting the peaceful use of\natomic energy and the traditional use of the red\npigment ‘cinnabar’ obtained from rocks\n\n---\n\n# Page 12\n\nC-7.1 • Describe the basic concepts that matter are made\nof particles; elements combine in fixed ratios to\nform compounds; the law of conservation of mass;\nand different types of bonding (ionic and covalent)\nC-7.2 • Pose question, such as — Are there any chemical\nchanges that do not obey the law of conservation\nof mass?\nC-8.1 • Exhibit creativity and work collaboratively in groups\nto construct simple models of compounds\nC-8.2 • Formulate hypotheses about scientific phenomena\nby applying prior knowledge and understanding of\nscientific concepts and laws, and predict the results\nof data based on the hypotheses\n- Accurately use scientific instruments, apparatus\nand chemicals to collect data\n- Analyse results and findings using scientific terms\n- Represent data in multiple modes, including\nappropriate figures, tables, graphs or digital\nformats\n- Communicate findings and conclusions effectively,\nsuch as those from experiments, activities or\nprojects, both orally and in written form\nEarth as a System: Energy, Matter & Life No. of Periods: 12\nKey Concepts Learning Outcomes\n- Earth as interconnected C-2.8 • Explain the interconnectedness between different\nsystem spheres of the Earth (biosphere, geosphere,\n- Nature of solar energy: hydrosphere, cryosphere and atmosphere)\nsolar radiation, • Explain the nature of solar radiation • Explain that\nelectromagnetic solar radiation is an electromagnetic waves having\n- spectrum, and speed of different Frequencies\nlight • Explain how heat from the Sun warms the Earth’s\n- Solar energy interaction surface differently based on the shape, latitude and\nwith the Earth’s Surface tilt of the Earth\nand differential heating • Explain the interaction of solar radiation with the\nof the Earth (the role of Earth’s surface and relate the differential heating of\nthe atmosphere and the the Earth’s surface with the atmospheric\nEarth’s surface) phenomena, such as air movement, evaporation,\n- Differential warming of etc., and describe phenomena like mountain,\nthe Earth causes winds valley, sea and land breezes\n\n---\n\n# Page 13\n\n- Biogeochemical cycles • Describe how the latitude and tilt of the Earth, and\n(water cycle, carbon absorption and reflection of solar radiation by\ncycle, nitrogen cycle, different surfaces cause differential heating of the\noxygen cycle) Earth’s surface\n- Human impact on • Identify various components of the Earth that\nEarth’s system interact with solar energy\n- Explain the role of the atmosphere in influencing\nweather and climate on the Earth\n- Identify the reflectivity of different materials through\nreliable scientific sources, such as the internet and\nbooks\n- Describe how elements like carbon, nitrogen,\noxygen and water are recycled between biotic and\nabiotic environments\n- Explain biogeochemical cycles, and the roles of\nbiogeochemical cycles in circulating matter and\nenergy continuously between the non-living\nenvironment (abiotic) and living (biotic) organisms,\nmaking nutrients available, and maintaining\nenvironmental balance\nC-6.1 • Reflect the changing nature of Earth’s environment\nthrough our traditional knowledge\nC-7.2 • Pose questions, such as — What will happen if\nthere is no differential heating of the Earth?\nC-8.1 • Draw flow charts, concept maps for\nbiogeochemical cycles, differential heating of the\nEarth’s surface and Electromagnetic spectrum\nC-8.2 • Formulate hypotheses about scientific phenomena\nbased on prior knowledge and understanding of\ndifferential heating of the Earth and biogeochemical\ncycle\n- Predict the results of an experiment or investigation\nbased on their hypotheses\n- Communicate findings and conclusions effectively,\nsuch as those from experiments, activities or\nprojects, both orally and in written form\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

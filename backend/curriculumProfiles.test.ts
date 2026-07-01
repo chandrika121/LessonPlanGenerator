@@ -4,6 +4,7 @@ async function main() {
   process.env.NODE_ENV = "test";
   const {
     buildVersionedCurriculumPayload,
+    cleanupCbseStructure,
     detectCurriculumProfile,
     getCurriculumProfileConfig,
     mergeStage1FactExtractions,
@@ -29,6 +30,15 @@ async function main() {
     "university_curriculum.pdf"
   );
   assert.equal(semester.profile, "term_semester_curriculum");
+
+  const cbseMath = detectCurriculumProfile(
+    "CBSE Mathematics Class IX identify the degree and terms of terms in a polynomial use equations and graphs UNIT II ALGEBRA UNIT IV GEOMETRY UNIT VI STATISTICS AND PROBABILITY",
+    "Maths_SecP1IX_2026-27.pdf"
+  );
+  assert.ok(
+    ["cbse_unit_topic", "cbse_unit_chapter_topic"].includes(cbseMath.profile),
+    `CBSE math syllabus should stay in a CBSE unit-based profile, got ${cbseMath.profile}`
+  );
 
   const competency = detectCurriculumProfile(
     "Competencies Learning Outcomes Outcome 1 Outcome 2 Performance indicators",
@@ -73,6 +83,83 @@ async function main() {
   assert.equal(faithful.classes.length, 1);
   assert.equal(faithful.classes[0].units[0].unit_name, "Database Management");
   assert.deepEqual(faithful.classes[0].units[0].topics, ["SQL", "Joins"]);
+
+  const cleanedCbse = cleanupCbseStructure({
+    classes: [{
+      class_name: "Class IX",
+      subject: "Mathematics",
+      units: [
+        {
+          unit_id: "U4",
+          unit_name: "Geometry",
+          chapters: [
+            { chapter_name: "Lines and Angles", topics: [], subtopics: [] },
+            { chapter_name: "Circles", topics: [], subtopics: [] },
+          ],
+          topics: [],
+          subtopics: [],
+        },
+        {
+          unit_id: "U4A",
+          unit_name: "Geometry (Implicit Unit from Context)",
+          chapters: [
+            { chapter_name: "Triangles - Congruence Theorems", topics: [], subtopics: [] },
+            { chapter_name: "4-gons (Quadrilaterals)", topics: [], subtopics: [] },
+          ],
+          topics: [],
+          subtopics: [],
+        },
+        {
+          unit_id: "U5",
+          unit_name: "Mensuration",
+          chapters: [
+            { chapter_name: "Area and Perimeter", topics: [], subtopics: [] },
+          ],
+          topics: [],
+          subtopics: [],
+        },
+        {
+          unit_id: "U5A",
+          unit_name: "Mensuration: Surface Area and Volume",
+          chapters: [],
+          topics: ["Surface areas and volumes of spheres"],
+          subtopics: [],
+        },
+        {
+          unit_id: "U6",
+          unit_name: "Statistics and Probability",
+          chapters: [
+            { chapter_name: "Statistics", topics: [], subtopics: [] },
+          ],
+          topics: [],
+          subtopics: [],
+        },
+        {
+          unit_id: "U6A",
+          unit_name: "Introduction to Probability",
+          chapters: [],
+          topics: ["Concept of probability and randomness"],
+          subtopics: [],
+        },
+      ],
+    }],
+  });
+
+  assert.equal(cleanedCbse.classes[0].units.length, 3);
+  const cleanedGeometry = cleanedCbse.classes[0].units.find((unit: any) => unit.unit_name === "Geometry");
+  assert.equal(cleanedGeometry?.chapters?.length, 4);
+  const cleanedMensuration = cleanedCbse.classes[0].units.find((unit: any) => unit.unit_name === "Mensuration");
+  assert.equal(cleanedMensuration?.chapters?.length, 2);
+  assert.ok(
+    cleanedMensuration?.chapters?.some((chapter: any) => chapter.chapter_name === "Surface Area and Volume"),
+    "Mensuration chapter promoted as a unit should be merged back into the Mensuration unit"
+  );
+  const cleanedStats = cleanedCbse.classes[0].units.find((unit: any) => unit.unit_name === "Statistics and Probability");
+  assert.equal(cleanedStats?.chapters?.length, 2);
+  assert.ok(
+    cleanedStats?.chapters?.some((chapter: any) => chapter.chapter_name === "Introduction to Probability"),
+    "Standalone Introduction to Probability unit should be merged into Statistics and Probability"
+  );
 
   const v1 = buildVersionedCurriculumPayload("v1", { schema_version: "v1", subject: "Computer Science" }, {
     structureType: "unit_topic",

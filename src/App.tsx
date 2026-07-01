@@ -51,6 +51,7 @@ import {
   SessionAllocation,
   SessionAssessmentCustomization,
   SessionConfig,
+  SessionPptGenerationOptions,
   SessionPlanningDefaults,
   SessionSectionKey,
   SessionPlan,
@@ -59,6 +60,117 @@ import {
 } from "./types";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
+
+const PPT_TEMPLATE_OPTIONS = [
+  {
+    id: "textbook-clean",
+    name: "Textbook Clean",
+    description: "Minimal, textbook-like, high readability classroom slides.",
+  },
+  {
+    id: "academic-split",
+    name: "Academic Split",
+    description: "Balanced text plus visual teaching layout.",
+  },
+  {
+    id: "visual-focus",
+    name: "Visual Focus",
+    description: "Larger visual area with lighter on-slide text.",
+  },
+] as const;
+
+const PPT_THEME_OPTIONS = [
+  {
+    id: "cbse-academic-blue",
+    name: "CBSE Academic Blue",
+    description: "Measured academic blue palette for teacher delivery.",
+    colors: { primary: "#1D4E89", accent: "#D97706", soft: "#E8F0FA" },
+  },
+  {
+    id: "kamalaniketan-classic",
+    name: "Kamalaniketan Classic",
+    description: "Traditional school-deck presentation styling.",
+    colors: { primary: "#4F81BD", accent: "#F79646", soft: "#EDF4FB" },
+  },
+  {
+    id: "kamalaniketan-modern",
+    name: "Kamalaniketan Modern",
+    description: "Contemporary classroom deck with brighter accents.",
+    colors: { primary: "#36ADAA", accent: "#DE8431", soft: "#EEF8F8" },
+  },
+] as const;
+
+const LEGACY_PPT_TEMPLATE_ID = "kamalaniketan-session-12";
+
+const STUDENT_NOTES_PATTERN_DATA_URL = `data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='900' height='260' viewBox='0 0 900 260'>
+    <rect width='900' height='260' fill='#4f819c'/>
+    <g fill='none' stroke='#f4efe3' stroke-width='5' stroke-linecap='round' stroke-linejoin='round' opacity='0.94'>
+      <path d='M25 240 C60 185 78 126 72 42' />
+      <path d='M54 235 C95 188 112 132 108 44' />
+      <path d='M92 240 C132 188 145 128 141 34' />
+      <path d='M145 236 C184 189 201 132 197 46' />
+      <path d='M204 236 C243 186 258 128 255 32' />
+      <path d='M262 239 C304 188 320 129 316 38' />
+      <path d='M326 237 C364 187 380 129 376 42' />
+      <path d='M389 236 C426 186 446 128 441 36' />
+      <path d='M447 240 C488 191 507 131 503 40' />
+      <path d='M512 238 C552 189 568 130 564 34' />
+      <path d='M573 238 C614 188 630 129 626 40' />
+      <path d='M637 236 C675 187 694 126 689 32' />
+      <path d='M699 238 C740 188 757 130 752 39' />
+      <path d='M764 240 C802 188 819 128 815 38' />
+      <path d='M826 238 C866 188 884 130 880 42' />
+      <path d='M20 150 C44 126 59 106 72 78' />
+      <path d='M44 128 C67 105 82 82 95 54' />
+      <path d='M88 156 C112 132 128 109 141 81' />
+      <path d='M147 154 C170 129 188 105 201 76' />
+      <path d='M206 150 C229 126 244 101 257 71' />
+      <path d='M266 156 C292 132 308 109 321 80' />
+      <path d='M328 154 C352 129 369 103 382 72' />
+      <path d='M389 154 C414 129 431 103 444 74' />
+      <path d='M449 157 C476 132 493 108 506 78' />
+      <path d='M513 154 C537 129 553 104 566 74' />
+      <path d='M575 154 C600 130 616 106 629 77' />
+      <path d='M639 152 C663 128 679 103 693 74' />
+      <path d='M701 154 C728 129 744 104 757 73' />
+      <path d='M764 156 C789 129 805 104 819 74' />
+      <path d='M825 154 C850 129 865 105 879 76' />
+      <path d='M62 194 C84 177 97 161 108 138' />
+      <path d='M120 194 C142 176 155 161 167 138' />
+      <path d='M180 194 C201 176 214 161 226 138' />
+      <path d='M238 194 C261 176 274 159 287 135' />
+      <path d='M301 194 C324 176 337 159 349 135' />
+      <path d='M362 194 C384 176 399 159 412 136' />
+      <path d='M422 194 C447 176 461 158 474 134' />
+      <path d='M484 194 C507 176 520 160 533 137' />
+      <path d='M545 194 C567 176 581 160 595 136' />
+      <path d='M606 194 C629 176 643 159 656 135' />
+      <path d='M667 194 C690 176 704 160 718 136' />
+      <path d='M728 194 C751 176 766 159 779 135' />
+      <path d='M790 194 C814 176 829 159 842 134' />
+    </g>
+    <g fill='#f4efe3' opacity='0.96'>
+      <circle cx='92' cy='54' r='18'/><circle cx='78' cy='74' r='9'/><circle cx='109' cy='73' r='9'/>
+      <circle cx='260' cy='62' r='18'/><circle cx='246' cy='82' r='9'/><circle cx='278' cy='80' r='9'/>
+      <circle cx='445' cy='56' r='18'/><circle cx='429' cy='77' r='9'/><circle cx='461' cy='77' r='9'/>
+      <circle cx='612' cy='62' r='18'/><circle cx='598' cy='82' r='9'/><circle cx='630' cy='80' r='9'/>
+      <circle cx='790' cy='54' r='18'/><circle cx='776' cy='74' r='9'/><circle cx='807' cy='73' r='9'/>
+      <circle cx='170' cy='118' r='11'/><circle cx='522' cy='118' r='11'/><circle cx='710' cy='118' r='11'/>
+      <circle cx='336' cy='146' r='11'/><circle cx='612' cy='154' r='11'/><circle cx='116' cy='158' r='11'/>
+    </g>
+  </svg>`
+)}`;
+
+const normalizePptTemplateId = (templateId?: string | null) => {
+  const rawTemplateId = String(templateId || "").trim();
+  if (!rawTemplateId || rawTemplateId === LEGACY_PPT_TEMPLATE_ID) {
+    return "academic-split";
+  }
+  return PPT_TEMPLATE_OPTIONS.some((option) => option.id === rawTemplateId)
+    ? rawTemplateId
+    : "academic-split";
+};
 
 export default function App() {
   const LAST_CURRICULUM_ID_KEY = "lms:lastCurriculumId";
@@ -138,6 +250,7 @@ export default function App() {
   const [activeSubTab, setActiveSubTab] = useState<"teacherNotes" | "studentNotes" | "materials" | "homework" | "assessments" | "assignments">("teacherNotes");
   const [activeMaterialTab, setActiveMaterialTab] = useState<"ppt" | "pdf" | "docx">("ppt");
   const [assessmentCustomizationBySession, setAssessmentCustomizationBySession] = useState<Record<number, SessionAssessmentCustomization>>({});
+  const [pptGenerationOptionsBySession, setPptGenerationOptionsBySession] = useState<Record<number, SessionPptGenerationOptions>>({});
 
   // File drag state
   const [dragActive, setDragActive] = useState<boolean>(false);
@@ -278,6 +391,657 @@ export default function App() {
     return String(value);
   };
 
+  const buildVisualOverlayLabels = (visualSupport?: string[]) => {
+    if (!Array.isArray(visualSupport)) return [];
+    return visualSupport
+      .map((item) => formatRenderableText(item).trim())
+      .filter(Boolean)
+      .slice(0, 5)
+      .map((item, index) => {
+        const colonIndex = item.indexOf(":");
+        if (colonIndex > 0) {
+          return {
+            id: index + 1,
+            title: item.slice(0, colonIndex).trim(),
+            detail: item.slice(colonIndex + 1).trim(),
+          };
+        }
+        return {
+          id: index + 1,
+          title: item,
+          detail: "",
+        };
+      });
+  };
+
+  const getRenderableList = (value: unknown): string[] => {
+    const values = Array.isArray(value) ? value : value == null ? [] : [value];
+    return values
+      .map((item) => formatRenderableText(item).replace(/\s+/g, " ").trim())
+      .filter(Boolean);
+  };
+
+  const buildStudentNotesTemplateContent = (
+    studentNotes: NonNullable<SessionPlan["studentLessonNotes"]>,
+    fallbackTitle?: string,
+  ) => {
+    const normalizeList = (value: unknown) =>
+      getRenderableList(value)
+        .map((item) => normalizePdfText(item).replace(/\s+/g, " ").trim())
+        .filter(Boolean);
+
+    const dedupe = (items: string[]) => Array.from(new Set(items.map((item) => item.trim()).filter(Boolean)));
+    const noteSections: Array<{ title: string; paragraphs: string[]; cues: string[] }> = [];
+
+    const addSection = (title: unknown, paragraphs: unknown[], cues: unknown[] = []) => {
+      const cleanedParagraphs = paragraphs
+        .flatMap((entry) => Array.isArray(entry) ? entry.map((item) => formatRenderableText(item)) : [formatRenderableText(entry)])
+        .map((item) => normalizePdfText(item).replace(/\s+/g, " ").trim())
+        .filter(Boolean);
+      const cleanedCues = dedupe(
+        cues
+          .flatMap((entry) => Array.isArray(entry) ? entry.map((item) => formatRenderableText(item)) : [formatRenderableText(entry)])
+          .map((item) => normalizePdfText(item).replace(/\s+/g, " ").trim())
+      );
+      const heading = normalizePdfText(formatRenderableText(title || "")).replace(/\s+/g, " ").trim();
+      if (!heading && cleanedParagraphs.length === 0 && cleanedCues.length === 0) return;
+      noteSections.push({
+        title: heading || `Notes ${noteSections.length + 1}`,
+        paragraphs: cleanedParagraphs,
+        cues: cleanedCues,
+      });
+    };
+
+    addSection(
+      studentNotes.title || fallbackTitle || "Session Notes",
+      [studentNotes.sessionOverview, studentNotes.introduction],
+      [
+        ...normalizeList(studentNotes.learningObjectives).slice(0, 4),
+        ...normalizeList(studentNotes.quickRecall).slice(0, 4),
+      ],
+    );
+
+    (Array.isArray(studentNotes.sections) ? studentNotes.sections : []).forEach((section, index) => {
+      addSection(
+        section.heading || `Concept ${index + 1}`,
+        [
+          section.explanation,
+          section.detailedExplanation,
+          section.whyItMatters ? `Why it matters: ${formatRenderableText(section.whyItMatters)}` : "",
+          normalizeList(section.examples).length ? `Examples: ${normalizeList(section.examples).join("; ")}` : "",
+          normalizeList(section.importantNotes).length ? `Important notes: ${normalizeList(section.importantNotes).join("; ")}` : "",
+          normalizeList(section.conceptSummary).length ? `Summary: ${normalizeList(section.conceptSummary).join("; ")}` : "",
+        ],
+        [
+          ...normalizeList(section.keyPoints),
+          ...normalizeList(section.terminology),
+          ...normalizeList(section.memoryTechniques),
+          ...normalizeList(section.visualSupport),
+        ],
+      );
+    });
+
+    if (Array.isArray(studentNotes.definitions) && studentNotes.definitions.length > 0) {
+      addSection(
+        "Definitions",
+        studentNotes.definitions.map((item) => `${formatRenderableText(item.term)}: ${formatRenderableText(item.definition)}`),
+        studentNotes.definitions.map((item) => formatRenderableText(item.term)),
+      );
+    }
+
+    if (Array.isArray(studentNotes.workedExamples) && studentNotes.workedExamples.length > 0) {
+      studentNotes.workedExamples.forEach((example, index) => {
+        addSection(
+          example.title || `Worked Example ${index + 1}`,
+          [
+            normalizeList(example.steps).length ? `Steps: ${normalizeList(example.steps).join("; ")}` : "",
+            example.explanation ? `Explanation: ${formatRenderableText(example.explanation)}` : "",
+          ],
+          [example.title || `Example ${index + 1}`],
+        );
+      });
+    }
+
+    if (studentNotes.revisionSection) {
+      addSection(
+        "Revision Recap",
+        [
+          normalizeList(studentNotes.revisionSection.definitions).length ? `Definitions: ${normalizeList(studentNotes.revisionSection.definitions).join("; ")}` : "",
+          normalizeList(studentNotes.revisionSection.facts).length ? `Facts: ${normalizeList(studentNotes.revisionSection.facts).join("; ")}` : "",
+          normalizeList(studentNotes.revisionSection.quickRecap).length ? `Quick recap: ${normalizeList(studentNotes.revisionSection.quickRecap).join("; ")}` : "",
+        ],
+        [
+          ...normalizeList(studentNotes.revisionSection.keywords),
+          ...normalizeList(studentNotes.revisionSection.conceptMap),
+        ],
+      );
+    }
+
+    if (Array.isArray(studentNotes.selfCheckQuestions) && studentNotes.selfCheckQuestions.length > 0) {
+      addSection(
+        "Self Check",
+        studentNotes.selfCheckQuestions.map((item, index) => `Q${index + 1}. ${formatRenderableText(item)}`),
+        studentNotes.selfCheckQuestions.map((item) => formatRenderableText(item)),
+      );
+    }
+
+    const cueItems = dedupe(
+      noteSections.flatMap((section) => section.cues).concat([
+        ...normalizeList(studentNotes.keyTerms),
+        ...normalizeList(studentNotes.easyToRemember),
+        ...normalizeList(studentNotes.didYouKnow),
+      ])
+    );
+
+    const summaryLines = dedupe([
+      ...normalizeList(studentNotes.quickSummary),
+      ...normalizeList(studentNotes.summary),
+      ...normalizeList(studentNotes.quickRevision),
+      ...normalizeList(studentNotes.rememberPoints),
+      ...(normalizeList(studentNotes.keyTerms).length ? [`Keywords: ${normalizeList(studentNotes.keyTerms).join(", ")}`] : []),
+    ]);
+
+    return {
+      noteTitle: normalizePdfText(formatRenderableText(studentNotes.title || fallbackTitle || "Cornell Note")).replace(/\s+/g, " ").trim() || "Cornell Note",
+      cueItems,
+      noteSections,
+      summaryLines,
+    };
+  };
+
+  const noteAccentStyles = {
+    slate: {
+      card: "border-slate-200 bg-white/90",
+      eyebrow: "text-slate-500",
+      badge: "bg-slate-100 text-slate-700",
+    },
+    teal: {
+      card: "border-[#9FCDD2]/45 bg-white/90",
+      eyebrow: "text-[#2C7A78]",
+      badge: "bg-[#36ADAA]/10 text-[#227C79]",
+    },
+    amber: {
+      card: "border-amber-200 bg-white/90",
+      eyebrow: "text-amber-700",
+      badge: "bg-amber-100 text-amber-800",
+    },
+    emerald: {
+      card: "border-emerald-200 bg-white/90",
+      eyebrow: "text-emerald-700",
+      badge: "bg-emerald-100 text-emerald-800",
+    },
+    sky: {
+      card: "border-sky-200 bg-white/90",
+      eyebrow: "text-sky-700",
+      badge: "bg-sky-100 text-sky-800",
+    },
+    rose: {
+      card: "border-rose-200 bg-white/90",
+      eyebrow: "text-rose-700",
+      badge: "bg-rose-100 text-rose-800",
+    },
+  } as const;
+
+  const renderNoteSummaryStat = (label: string, value: string | number, accent: keyof typeof noteAccentStyles = "slate") => (
+    <div className={`rounded-2xl border px-3 py-2 backdrop-blur-sm ${noteAccentStyles[accent].card}`}>
+      <div className={`text-[10px] font-extrabold uppercase tracking-[0.18em] ${noteAccentStyles[accent].eyebrow}`}>{label}</div>
+      <div className="mt-1 text-lg font-display font-black text-slate-800">{value}</div>
+    </div>
+  );
+
+  const renderNoteListSection = ({
+    title,
+    items,
+    accent = "slate",
+    ordered = false,
+    description,
+    className = "",
+  }: {
+    title: string;
+    items: string[];
+    accent?: keyof typeof noteAccentStyles;
+    ordered?: boolean;
+    description?: string;
+    className?: string;
+  }) => {
+    if (items.length === 0) return null;
+    return (
+      <div className={`rounded-[24px] border p-4 shadow-[0_8px_30px_rgba(15,23,42,0.04)] ${noteAccentStyles[accent].card} ${className}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className={`text-[10px] font-extrabold uppercase tracking-[0.18em] ${noteAccentStyles[accent].eyebrow}`}>{title}</div>
+            {description ? <p className="mt-1 text-xs leading-relaxed text-slate-500">{description}</p> : null}
+          </div>
+          <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${noteAccentStyles[accent].badge}`}>{items.length}</span>
+        </div>
+        <ol className={`mt-3 space-y-2 text-xs leading-relaxed text-slate-700 ${ordered ? "list-decimal pl-4" : "list-disc pl-4"}`}>
+          {items.map((item, index) => (
+            <li key={`${title}-${index}`}>{item}</li>
+          ))}
+        </ol>
+      </div>
+    );
+  };
+
+  const renderInlineChipList = ({
+    title,
+    items,
+    accent = "slate",
+  }: {
+    title: string;
+    items: string[];
+    accent?: keyof typeof noteAccentStyles;
+  }) => {
+    if (items.length === 0) return null;
+    return (
+      <div className={`rounded-[24px] border p-4 ${noteAccentStyles[accent].card}`}>
+        <div className={`text-[10px] font-extrabold uppercase tracking-[0.18em] ${noteAccentStyles[accent].eyebrow}`}>{title}</div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {items.map((item, index) => (
+            <span key={`${title}-${index}`} className={`rounded-full px-3 py-1 text-xs font-semibold ${noteAccentStyles[accent].badge}`}>
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderStudentVisualFigure = (
+    asset: any,
+    assetIdx: number,
+    heading: string,
+    visualSupport: string[],
+  ) => {
+    const visualPoints = buildVisualOverlayLabels(visualSupport);
+    return (
+      <figure key={`${heading}-${assetIdx}`} className="overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_12px_32px_rgba(15,23,42,0.06)]">
+        <div className="border-b border-slate-100 bg-[linear-gradient(135deg,rgba(54,173,170,0.08),rgba(233,202,183,0.18))] px-4 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#227C79]">Generated Visual</div>
+              <div className="mt-1 text-sm font-bold text-slate-800">{heading || `Visual ${assetIdx + 1}`}</div>
+            </div>
+            {asset.model ? (
+              <span className="rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-bold text-slate-600 backdrop-blur">
+                {formatRenderableText(asset.model)}
+              </span>
+            ) : null}
+          </div>
+        </div>
+        <div className="bg-[radial-gradient(circle_at_top,rgba(159,205,210,0.16),rgba(255,255,255,0.98)_68%)] p-4">
+          <div className="rounded-[20px] border border-slate-100 bg-white/90 p-4 shadow-inner">
+            <div className="aspect-[4/3] overflow-hidden rounded-[18px] bg-[linear-gradient(160deg,#f8fafc,#eef7f7)]">
+              <img
+                src={asset.imageDataUrl}
+                alt={formatRenderableText(asset.alt || `${heading} visual`)}
+                className="h-full w-full object-contain p-3"
+              />
+            </div>
+          </div>
+        </div>
+        <figcaption className="space-y-3 px-4 pb-4">
+          <div className="text-[11px] leading-relaxed text-slate-500">
+            {asset.alt ? formatRenderableText(asset.alt) : "AI-generated classroom visual"}
+          </div>
+          {visualPoints.length > 0 ? (
+            <div className="rounded-[18px] border border-[#9FCDD2]/35 bg-[#9FCDD2]/10 p-3">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#2C7A78]">Visual Focus</div>
+              <div className="mt-2 space-y-2">
+                {visualPoints.map((label) => (
+                  <div key={`${heading}-${label.id}`} className="flex items-start gap-2 text-xs text-slate-700">
+                    <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-black text-[#227C79] shadow-sm">
+                      {label.id}
+                    </span>
+                    <div>
+                      <span className="font-semibold text-slate-800">{label.title}</span>
+                      {label.detail ? <span className="text-slate-500"> - {label.detail}</span> : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </figcaption>
+      </figure>
+    );
+  };
+
+  const renderTeacherNotesPanel = (teacherNotes: NonNullable<SessionPlan["teacherLessonNotes"]>) => {
+    const learningOutcomes = getRenderableList(teacherNotes.learningOutcomes);
+    const prerequisiteKnowledge = getRenderableList(teacherNotes.prerequisiteKnowledge);
+    const previousSessionRecap = getRenderableList(teacherNotes.previousSessionRecap);
+    const teachingSequence = getRenderableList(teacherNotes.teachingSequence);
+    const guidedPractice = getRenderableList(teacherNotes.guidedPractice);
+    const lessonPurpose = getRenderableList(teacherNotes.lessonPurpose);
+    const formativeChecks = getRenderableList(teacherNotes.formativeChecks);
+    const assessmentQuestions = getRenderableList(teacherNotes.assessmentQuestions);
+    const teacherTips = getRenderableList(teacherNotes.teacherTips);
+    const blackboardSummary = getRenderableList(teacherNotes.blackboardSummary);
+    const sessionSummary = getRenderableList(teacherNotes.sessionSummary);
+    const nextSessionBridge = getRenderableList(teacherNotes.nextSessionBridge);
+    const lessonBlocks = Array.isArray(teacherNotes.lessonBlocks) ? teacherNotes.lessonBlocks : [];
+    const classroomQuestions = Array.isArray(teacherNotes.classroomQuestions) ? teacherNotes.classroomQuestions : [];
+    const conceptFlow = Array.isArray(teacherNotes.conceptFlow) ? teacherNotes.conceptFlow : [];
+    const timePlan = Array.isArray(teacherNotes.timePlan) ? teacherNotes.timePlan : [];
+
+    return (
+      <div className="overflow-hidden rounded-[30px] border border-[#D8E5E8] bg-[linear-gradient(180deg,rgba(250,252,252,1),rgba(243,247,247,1))] shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
+        <div className="border-b border-white/80 bg-[radial-gradient(circle_at_top_left,rgba(159,205,210,0.30),rgba(255,255,255,0.98)_55%),linear-gradient(135deg,rgba(255,255,255,0.9),rgba(233,202,183,0.18))] p-5 md:p-6">
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+            <div className="max-w-3xl space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#2B3437] text-white shadow-sm">
+                  <BookOpen className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#586A71]">Teacher Notes</div>
+                  <h4 className="font-display text-lg font-black tracking-tight text-slate-900">Instruction-ready classroom guide</h4>
+                </div>
+              </div>
+              {teacherNotes.sessionOverview ? (
+                <p className="max-w-3xl text-sm leading-relaxed text-slate-700">{formatRenderableText(teacherNotes.sessionOverview)}</p>
+              ) : null}
+            </div>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:min-w-[420px]">
+              {renderNoteSummaryStat("Outcomes", learningOutcomes.length || "-", "teal")}
+              {renderNoteSummaryStat("Lesson Blocks", lessonBlocks.length || "-", "amber")}
+              {renderNoteSummaryStat("Question Prompts", classroomQuestions.length || "-", "sky")}
+              {renderNoteSummaryStat("Checks", formativeChecks.length || "-", "emerald")}
+            </div>
+          </div>
+
+          {(teacherNotes.sessionOverview || lessonPurpose.length > 0) && (
+            <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
+              {teacherNotes.sessionOverview ? (
+                <div className="rounded-[24px] border border-white/80 bg-white/85 p-4 backdrop-blur-sm">
+                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Session Overview</div>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{formatRenderableText(teacherNotes.sessionOverview)}</p>
+                </div>
+              ) : null}
+              {lessonPurpose.length > 0 ? renderNoteListSection({
+                title: "Lesson Purpose",
+                items: lessonPurpose,
+                accent: "amber",
+                description: "What this lesson is trying to unlock for the teacher and class.",
+              }) : null}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-5 p-5 md:p-6">
+          <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+            {renderNoteListSection({ title: "Teacher-Facing Learning Outcomes", items: learningOutcomes, accent: "teal" })}
+            {renderNoteListSection({ title: "Prerequisite Knowledge", items: prerequisiteKnowledge, accent: "amber" })}
+            {renderNoteListSection({ title: "Previous Session Recap", items: previousSessionRecap, accent: "slate" })}
+            {renderNoteListSection({ title: "Teaching Sequence", items: teachingSequence, accent: "slate", ordered: true })}
+            {renderNoteListSection({ title: "Guided Practice", items: guidedPractice, accent: "emerald" })}
+            {renderNoteListSection({ title: "Formative Checks", items: formativeChecks, accent: "emerald" })}
+            {renderNoteListSection({ title: "Assessment Questions", items: assessmentQuestions, accent: "sky", ordered: true })}
+            {renderNoteListSection({ title: "Teacher Tips", items: teacherTips, accent: "amber" })}
+            {renderNoteListSection({ title: "Blackboard Summary", items: blackboardSummary, accent: "slate" })}
+            {renderNoteListSection({ title: "Session Summary", items: sessionSummary, accent: "teal" })}
+            {renderNoteListSection({ title: "Next Session Bridge", items: nextSessionBridge, accent: "sky" })}
+          </div>
+
+          {Array.isArray(teacherNotes.teachingPlan) && teacherNotes.teachingPlan.length > 0 ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Teaching Plan</div>
+                  <h5 className="mt-1 text-base font-black text-slate-900">Topic pacing snapshot</h5>
+                </div>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-600">{teacherNotes.teachingPlan.length} segments</span>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {teacherNotes.teachingPlan.map((item, idx) => (
+                  <div key={idx} className="rounded-[22px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#f8fafc)] p-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-sm font-bold text-slate-900">{formatRenderableText(item.topic)}</div>
+                      <span className="rounded-full bg-[#36ADAA]/10 px-2.5 py-1 text-[10px] font-bold text-[#227C79]">
+                        {formatRenderableText(item.minutes)} min
+                      </span>
+                    </div>
+                    {item.teachingStrategy ? (
+                      <p className="mt-2 text-xs leading-relaxed text-slate-600">{formatRenderableText(item.teachingStrategy)}</p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {lessonBlocks.length > 0 ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Detailed Lesson Blocks</div>
+                  <h5 className="mt-1 text-base font-black text-slate-900">Step-by-step teaching flow</h5>
+                </div>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-600">{lessonBlocks.length} blocks</span>
+              </div>
+              <div className="mt-5 space-y-4">
+                {lessonBlocks.map((block, idx) => (
+                  <div key={idx} className="rounded-[24px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#f8fafc)] p-4 shadow-[0_8px_24px_rgba(15,23,42,0.04)]">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Block {idx + 1}</div>
+                        <div className="mt-1 text-base font-black text-slate-900">{formatRenderableText(block.title)}</div>
+                      </div>
+                      {block.durationMinutes != null ? (
+                        <span className="rounded-full bg-[#2B3437] px-3 py-1 text-[10px] font-bold text-white">
+                          {formatRenderableText(block.durationMinutes)} min
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <div className="mt-4 grid gap-4 xl:grid-cols-2">
+                      {renderNoteListSection({ title: "Teacher Prompt", items: getRenderableList(block.teacherPrompt), accent: "amber" })}
+                      {renderNoteListSection({ title: "Explanation", items: getRenderableList(block.explanation), accent: "slate" })}
+                      {renderNoteListSection({ title: "Check Understanding", items: getRenderableList(block.checkUnderstanding), accent: "sky" })}
+                      {renderNoteListSection({ title: "Expected Answers", items: getRenderableList(block.expectedAnswers), accent: "emerald" })}
+                      {renderNoteListSection({ title: "Activity", items: getRenderableList(block.activity), accent: "teal" })}
+                      {renderNoteListSection({ title: "Board Work", items: getRenderableList(block.boardWork), accent: "amber" })}
+                    </div>
+
+                    {getRenderableList(block.examples).length > 0 ? (
+                      <div className="mt-4 rounded-[20px] border border-slate-200 bg-white px-4 py-3 text-xs leading-relaxed text-slate-600">
+                        <span className="font-semibold text-slate-800">Examples:</span> {getRenderableList(block.examples).join("; ")}
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {conceptFlow.length > 0 ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Concept Flow</div>
+              <h5 className="mt-1 text-base font-black text-slate-900">How each idea should unfold in class</h5>
+              <div className="mt-4 grid gap-4 xl:grid-cols-2">
+                {conceptFlow.map((concept, idx) => (
+                  <div key={idx} className="rounded-[24px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#f8fafc)] p-4">
+                    <div className="text-sm font-black text-slate-900">{formatRenderableText(concept.conceptName)}</div>
+                    {concept.definition ? <p className="mt-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Definition:</span> {formatRenderableText(concept.definition)}</p> : null}
+                    {concept.coreExplanation ? <p className="mt-2 text-xs leading-relaxed text-slate-700">{formatRenderableText(concept.coreExplanation)}</p> : null}
+                    {renderNoteListSection({ title: "Teacher Moves", items: getRenderableList(concept.teacherMoves), accent: "teal", className: "mt-3" })}
+                    {getRenderableList(concept.examples).length > 0 ? (
+                      <div className="mt-3 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Examples:</span> {getRenderableList(concept.examples).join("; ")}</div>
+                    ) : null}
+                    {getRenderableList(concept.visuals).length > 0 ? (
+                      <div className="mt-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Visual cues:</span> {getRenderableList(concept.visuals).join("; ")}</div>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {classroomQuestions.length > 0 ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Classroom Questions</div>
+              <div className="mt-4 grid gap-3 xl:grid-cols-2">
+                {classroomQuestions.map((question, idx) => (
+                  <div key={idx} className="rounded-[24px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#f8fafc)] p-4 text-xs text-slate-700">
+                    <div className="font-semibold text-slate-900">{formatRenderableText(question.question)}</div>
+                    {question.level ? <div className="mt-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">{formatRenderableText(question.level)}</div> : null}
+                    {question.expectedResponse ? <div className="mt-3 leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Expected response:</span> {formatRenderableText(question.expectedResponse)}</div> : null}
+                    {renderNoteListSection({ title: "Answer Points", items: getRenderableList(question.answerPoints), accent: "emerald", className: "mt-3" })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {timePlan.length > 0 ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Session Time Plan</div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {timePlan.map((block, idx) => (
+                  <div key={idx} className="rounded-[22px] border border-slate-200 bg-white p-4 text-xs text-slate-700">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-slate-900">{formatRenderableText(block.segment)}</span>
+                      <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600">{formatRenderableText(block.minutes)} min</span>
+                    </div>
+                    {block.purpose ? <p className="mt-2 leading-relaxed text-slate-600">{formatRenderableText(block.purpose)}</p> : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {Array.isArray(teacherNotes.commonMisconceptionsDetailed) && teacherNotes.commonMisconceptionsDetailed.length > 0 ? (
+            <div className="rounded-[28px] border border-rose-200 bg-rose-50/70 p-5">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-rose-700">Misconceptions and Corrections</div>
+              <div className="mt-4 grid gap-3 xl:grid-cols-2">
+                {teacherNotes.commonMisconceptionsDetailed.map((item, idx) => (
+                  <div key={idx} className="rounded-[22px] border border-rose-200 bg-white/90 p-4 text-xs">
+                    <div className="font-semibold text-rose-900">{formatRenderableText(item.misconception)}</div>
+                    <div className="mt-2 leading-relaxed text-rose-800"><span className="font-bold">Correction:</span> {formatRenderableText(item.correction)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {(teacherNotes.differentiation?.slowLearners?.length || teacherNotes.differentiation?.averageLearners?.length || teacherNotes.differentiation?.advancedLearners?.length) ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Differentiation</div>
+              <div className="mt-4 grid gap-3 xl:grid-cols-3">
+                {renderNoteListSection({ title: "Slow Learners", items: getRenderableList(teacherNotes.differentiation?.slowLearners), accent: "amber" })}
+                {renderNoteListSection({ title: "Average Learners", items: getRenderableList(teacherNotes.differentiation?.averageLearners), accent: "slate" })}
+                {renderNoteListSection({ title: "Advanced Learners", items: getRenderableList(teacherNotes.differentiation?.advancedLearners), accent: "emerald" })}
+              </div>
+            </div>
+          ) : null}
+
+          {Array.isArray(teacherNotes.endOfClassRecap) && teacherNotes.endOfClassRecap.length > 0 ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">End-of-Class Recap</div>
+              <div className="mt-4 grid gap-3 xl:grid-cols-2">
+                {teacherNotes.endOfClassRecap.map((item, idx) => (
+                  <div key={idx} className="rounded-[24px] border border-slate-200 bg-white p-4 text-xs text-slate-700">
+                    <div className="font-semibold text-slate-900">{formatRenderableText(item.prompt)}</div>
+                    {item.expectedAnswer ? <div className="mt-2 leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Expected answer:</span> {formatRenderableText(item.expectedAnswer)}</div> : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  };
+
+  const renderStudentNotesPanel = (studentNotes: NonNullable<SessionPlan["studentLessonNotes"]>) => {
+    const template = buildStudentNotesTemplateContent(studentNotes, studentNotes.title || "Student Notes");
+    const subjectLabel = formatRenderableText(extractedData?.subject || activeWorkspace?.curriculumSnapshot?.subject || "Subject");
+    const gradeLabel = formatRenderableText(extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "Grade");
+    const dateLabel = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+    return (
+      <div className="overflow-hidden rounded-[30px] border border-[#d7d2c5] bg-[#f6f1ea] shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
+        <div
+          className="h-36 w-full border-b border-[#c6d6db] bg-[#4f819c] bg-cover bg-center"
+          style={{ backgroundImage: `url("${STUDENT_NOTES_PATTERN_DATA_URL}")` }}
+        />
+
+        <div className="relative px-5 pb-6 pt-0 md:px-7">
+          <div className="-mt-9 inline-flex h-16 w-16 items-center justify-center rounded-[6px] border border-[#ddd7cc] bg-white shadow-[0_8px_20px_rgba(15,23,42,0.08)]">
+            <FileText className="h-8 w-8 text-slate-800" />
+          </div>
+
+          <div className="mt-5">
+            <div className="font-mono text-[2rem] font-black tracking-tight text-slate-800 md:text-[2.35rem]">
+              Cornell Note
+            </div>
+            {studentNotes.sessionOverview ? (
+              <p className="mt-3 max-w-4xl font-mono text-[13px] leading-6 text-slate-600">
+                {formatRenderableText(studentNotes.sessionOverview)}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="rounded-[6px] border border-[#f0ece4] bg-[#fbfaf6] px-4 py-3 font-mono text-[12px] text-slate-600 shadow-sm">
+              <span className="mr-2 text-slate-400">topic</span>
+              {template.noteTitle || "Cornell Note"}
+            </div>
+            <div className="rounded-[6px] border border-[#f0ece4] bg-[#fbfaf6] px-4 py-3 font-mono text-[12px] text-slate-600 shadow-sm">
+              <span className="mr-2 text-slate-400">date</span>
+              {dateLabel}  •  {subjectLabel}  •  {gradeLabel}
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-6 xl:grid-cols-[260px_minmax(0,1fr)]">
+            <aside className="rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Keywords - Questions</div>
+              <div className="mt-4 space-y-3 font-mono text-[12px] leading-6 text-slate-700">
+                {template.cueItems.slice(0, 18).map((item, idx) => (
+                  <div key={`${item}-${idx}`} className="flex gap-2">
+                    <span className="text-slate-400">.</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+                {template.cueItems.length === 0 ? (
+                  <div className="text-slate-500">Add cue keywords after generating student notes.</div>
+                ) : null}
+              </div>
+            </aside>
+
+            <section className="rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Notes</div>
+              <div className="mt-4 space-y-5">
+                {template.noteSections.map((section, idx) => (
+                  <article key={`${section.title}-${idx}`} className="font-mono text-[12.5px] leading-7 text-slate-700">
+                    <h5 className="text-[14px] font-black text-slate-800">{section.title}</h5>
+                    <div className="mt-2 space-y-3">
+                      {section.paragraphs.map((paragraph, paragraphIdx) => (
+                        <p key={paragraphIdx}>{paragraph}</p>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          {template.summaryLines.length > 0 ? (
+            <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Summary</div>
+              <div className="mt-3 space-y-2 font-mono text-[12px] leading-6 text-slate-700">
+                {template.summaryLines.slice(0, 8).map((item, idx) => (
+                  <p key={`${item}-${idx}`}>{item}</p>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  };
+
   const getStructuredHomeworkItems = (homework: SessionPlan["homework"]) => {
     if (!homework || !Array.isArray(homework.homework)) {
       return [];
@@ -332,7 +1096,18 @@ export default function App() {
   };
 
   const getPrimaryPptAsset = (slide: NonNullable<ReturnType<typeof getPptSlides>>[number]) =>
-    Array.isArray(slide.assets) ? slide.assets.find((asset) => Boolean(asset.previewUrl)) : undefined;
+    Array.isArray(slide.assets)
+      ? slide.assets.find((asset) => Boolean(asset.imageDataUrl || asset.previewUrl || asset.sourceUrl))
+      : undefined;
+
+  const getPptThemePalette = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => ({
+    primary: ppt?.themeTokens?.colors?.primary || "#1D4E89",
+    accent: ppt?.themeTokens?.colors?.accent || "#D97706",
+    surface: ppt?.themeTokens?.colors?.surface || "#FFFFFF",
+    background: ppt?.themeTokens?.colors?.background || "#F7FAFC",
+    text: ppt?.themeTokens?.colors?.text || "#1F2937",
+    muted: ppt?.themeTokens?.colors?.mutedText || "#6B7280",
+  });
 
   const escapeHtml = (value: unknown) =>
     formatRenderableText(value)
@@ -360,15 +1135,1583 @@ export default function App() {
     URL.revokeObjectURL(objectUrl);
   };
 
-  const buildAssessmentExportBaseName = (session: SessionPlan) => {
+  const triggerBlobDownload = (blob: Blob, fileName: string) => {
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  const normalizePdfText = (value: string) =>
+    value
+      .normalize("NFKD")
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, "\"")
+      .replace(/[\u2013\u2014]/g, "-")
+      .replace(/\u2022/g, "-")
+      .replace(/\u00A0/g, " ")
+      .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, "");
+
+  const escapePdfText = (value: string) =>
+    normalizePdfText(value)
+      .replaceAll("\\", "\\\\")
+      .replaceAll("(", "\\(")
+      .replaceAll(")", "\\)");
+
+  const wrapPdfTextLine = (line: string, maxChars: number) => {
+    const normalizedLine = normalizePdfText(line).trimEnd();
+    if (!normalizedLine.trim()) return [""];
+
+    const words = normalizedLine.split(/\s+/);
+    const wrapped: string[] = [];
+    let currentLine = "";
+
+    words.forEach((word) => {
+      if (!currentLine) {
+        currentLine = word;
+        return;
+      }
+      const candidate = `${currentLine} ${word}`;
+      if (candidate.length <= maxChars) {
+        currentLine = candidate;
+        return;
+      }
+      wrapped.push(currentLine);
+      currentLine = word;
+    });
+
+    if (currentLine) wrapped.push(currentLine);
+    return wrapped;
+  };
+
+  const buildSimplePdfBlob = (title: string, text: string) => {
+    const pageWidth = 612;
+    const pageHeight = 792;
+    const marginX = 54;
+    const topY = 750;
+    const bottomY = 56;
+    const bodyFontSize = 11;
+    const bodyLineHeight = 16;
+    const titleFontSize = 18;
+    const titleLineHeight = 24;
+    const sectionFontSize = 13;
+    const sectionLineHeight = 20;
+    const encoder = new TextEncoder();
+
+    const rawLines = text.split(/\r?\n/);
+    const entries: Array<{ text: string; font: "F1" | "F2"; size: number; lineHeight: number }> = [];
+
+    rawLines.forEach((line, index) => {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        entries.push({ text: "", font: "F1", size: bodyFontSize, lineHeight: 10 });
+        return;
+      }
+
+      const isDocumentTitle = index === 0;
+      const isSectionHeading =
+        index > 0 &&
+        (trimmed.endsWith(":") ||
+          [
+            "MCQ",
+            "MCQ Answer Key",
+            "Short Answer Questions",
+            "Short Answer Key",
+            "Long Answer Questions",
+            "Long Answer Key",
+            "General Marking Guidance",
+            "Instructions",
+          ].includes(trimmed));
+
+      const font = isDocumentTitle || isSectionHeading ? "F2" : "F1";
+      const size = isDocumentTitle ? titleFontSize : isSectionHeading ? sectionFontSize : bodyFontSize;
+      const lineHeight = isDocumentTitle ? titleLineHeight : isSectionHeading ? sectionLineHeight : bodyLineHeight;
+      const maxChars = isDocumentTitle ? 52 : isSectionHeading ? 62 : 82;
+
+      wrapPdfTextLine(trimmed, maxChars).forEach((wrappedLine) => {
+        entries.push({ text: wrappedLine, font, size, lineHeight });
+      });
+    });
+
+    const pages: string[] = [];
+    let currentPageOps: string[] = [];
+    let currentY = topY;
+
+    const pushLineToPage = (line: { text: string; font: "F1" | "F2"; size: number; lineHeight: number }) => {
+      if (!line.text) {
+        currentY -= line.lineHeight;
+        return;
+      }
+      currentPageOps.push("BT");
+      currentPageOps.push(`/${line.font} ${line.size} Tf`);
+      currentPageOps.push(`1 0 0 1 ${marginX} ${currentY} Tm`);
+      currentPageOps.push(`(${escapePdfText(line.text)}) Tj`);
+      currentPageOps.push("ET");
+      currentY -= line.lineHeight;
+    };
+
+    const flushPage = () => {
+      if (currentPageOps.length === 0) return;
+      pages.push(currentPageOps.join("\n"));
+      currentPageOps = [];
+      currentY = topY;
+    };
+
+    entries.forEach((entry) => {
+      if (currentY - entry.lineHeight < bottomY) flushPage();
+      pushLineToPage(entry);
+    });
+    flushPage();
+
+    if (pages.length === 0) {
+      pages.push([
+        "BT",
+        `/F2 ${titleFontSize} Tf`,
+        `1 0 0 1 ${marginX} ${topY} Tm`,
+        `(${escapePdfText(title)}) Tj`,
+        "ET",
+      ].join("\n"));
+    }
+
+    const objects: string[] = [];
+    const pageObjectNumbers: number[] = [];
+    const contentObjectNumbers: number[] = [];
+
+    const addObject = (value: string) => {
+      objects.push(value);
+      return objects.length;
+    };
+
+    const catalogObjectNumber = addObject("<< /Type /Catalog /Pages 2 0 R >>");
+    const pagesObjectNumber = addObject("");
+    const fontObjectNumber = addObject("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+    const boldFontObjectNumber = addObject("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+
+    pages.forEach((pageContent) => {
+      const contentObjectNumber = addObject(`<< /Length ${encoder.encode(pageContent).length} >>\nstream\n${pageContent}\nendstream`);
+      const pageObjectNumber = addObject(
+        `<< /Type /Page /Parent ${pagesObjectNumber} 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${fontObjectNumber} 0 R /F2 ${boldFontObjectNumber} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`
+      );
+      contentObjectNumbers.push(contentObjectNumber);
+      pageObjectNumbers.push(pageObjectNumber);
+    });
+
+    objects[pagesObjectNumber - 1] = `<< /Type /Pages /Kids [${pageObjectNumbers.map((num) => `${num} 0 R`).join(" ")}] /Count ${pageObjectNumbers.length} >>`;
+
+    let pdf = "%PDF-1.4\n";
+    const offsets: number[] = [0];
+
+    objects.forEach((objectValue, index) => {
+      offsets.push(encoder.encode(pdf).length);
+      pdf += `${index + 1} 0 obj\n${objectValue}\nendobj\n`;
+    });
+
+    const xrefOffset = encoder.encode(pdf).length;
+    pdf += `xref\n0 ${objects.length + 1}\n`;
+    pdf += "0000000000 65535 f \n";
+    offsets.slice(1).forEach((offset) => {
+      pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+    });
+    pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalogObjectNumber} 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+    return new Blob([pdf], { type: "application/pdf" });
+  };
+
+  const buildSessionExportBaseName = (session: SessionPlan) => {
     const subjectLabel = extractedData?.subject || activeWorkspace?.curriculumSnapshot?.subject || "subject";
     const gradeLabel = extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "grade";
     return [
       slugifyFileNamePart(subjectLabel),
       slugifyFileNamePart(gradeLabel),
       `session-${session.sessionNumber}`,
-      slugifyFileNamePart(session.title || "assessment"),
+      slugifyFileNamePart(session.title || "lesson-notes"),
     ].join("-");
+  };
+
+  const buildAssessmentExportBaseName = (session: SessionPlan) => buildSessionExportBaseName(session);
+
+  const loadImageElement = (src: string) =>
+    new Promise<HTMLImageElement>((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error("Unable to load note image for PDF export."));
+      image.src = src;
+    });
+
+  const imageDataUrlToJpegBytes = (dataUrl: string) => {
+    const base64 = dataUrl.split(",")[1] || "";
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+    return bytes;
+  };
+
+  const buildImagePdfBlob = (images: Array<{ bytes: Uint8Array; width: number; height: number }>) => {
+    const encoder = new TextEncoder();
+    const pageWidth = 595;
+    const pageHeight = 842;
+    const objects: Array<Array<string | Uint8Array>> = [];
+
+    const addObject = (parts: Array<string | Uint8Array>) => {
+      objects.push(parts);
+      return objects.length;
+    };
+
+    const catalogObjectNumber = addObject(["<< /Type /Catalog /Pages 2 0 R >>"]);
+    const pagesObjectNumber = addObject([""]);
+    const pageObjectNumbers: number[] = [];
+
+    images.forEach((image, index) => {
+      const imageObjectNumber = addObject([
+        `<< /Type /XObject /Subtype /Image /Width ${image.width} /Height ${image.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${image.bytes.length} >>\nstream\n`,
+        image.bytes,
+        "\nendstream",
+      ]);
+      const contentStream = `q\n${pageWidth} 0 0 ${pageHeight} 0 0 cm\n/Im${index + 1} Do\nQ`;
+      const contentObjectNumber = addObject([
+        `<< /Length ${encoder.encode(contentStream).length} >>\nstream\n${contentStream}\nendstream`,
+      ]);
+      const pageObjectNumber = addObject([
+        `<< /Type /Page /Parent ${pagesObjectNumber} 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /XObject << /Im${index + 1} ${imageObjectNumber} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`,
+      ]);
+      pageObjectNumbers.push(pageObjectNumber);
+    });
+
+    objects[pagesObjectNumber - 1] = [`<< /Type /Pages /Kids [${pageObjectNumbers.map((num) => `${num} 0 R`).join(" ")}] /Count ${pageObjectNumbers.length} >>`];
+
+    const byteLength = (part: string | Uint8Array) => (typeof part === "string" ? encoder.encode(part).length : part.length);
+    const chunks: Array<string | Uint8Array> = ["%PDF-1.4\n"];
+    const offsets: number[] = [0];
+    let totalLength = encoder.encode("%PDF-1.4\n").length;
+
+    objects.forEach((parts, index) => {
+      offsets.push(totalLength);
+      const objectStart = `${index + 1} 0 obj\n`;
+      const objectEnd = "\nendobj\n";
+      chunks.push(objectStart);
+      totalLength += encoder.encode(objectStart).length;
+      parts.forEach((part) => {
+        chunks.push(part);
+        totalLength += byteLength(part);
+      });
+      chunks.push(objectEnd);
+      totalLength += encoder.encode(objectEnd).length;
+    });
+
+    const xrefOffset = totalLength;
+    let xref = `xref\n0 ${objects.length + 1}\n`;
+    xref += "0000000000 65535 f \n";
+    offsets.slice(1).forEach((offset) => {
+      xref += `${String(offset).padStart(10, "0")} 00000 n \n`;
+    });
+    xref += `trailer\n<< /Size ${objects.length + 1} /Root ${catalogObjectNumber} 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+    chunks.push(xref);
+
+    return new Blob(chunks, { type: "application/pdf" });
+  };
+
+  const buildStudentCornellNotesPdfBlob = async (session: SessionPlan) => {
+    const studentNotes = session.studentLessonNotes;
+    if (!studentNotes) {
+      throw new Error("Generate the student notes first before downloading the Cornell notes PDF.");
+    }
+
+    const template = buildStudentNotesTemplateContent(studentNotes, session.title);
+    const patternImage = await loadImageElement(STUDENT_NOTES_PATTERN_DATA_URL);
+    const subjectLabel = formatRenderableText(extractedData?.subject || activeWorkspace?.curriculumSnapshot?.subject || "Subject");
+    const gradeLabel = formatRenderableText(extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "Grade");
+    const dateLabel = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+    const canvasWidth = 1240;
+    const canvasHeight = 1754;
+    const pagePadding = 62;
+    const patternHeight = 210;
+    const iconSize = 78;
+    const titleTop = 290;
+    const metaTop = 392;
+    const metaHeight = 52;
+    const metaGap = 24;
+    const contentTop = 490;
+    const contentHeight = 820;
+    const cueWidth = 272;
+    const contentGap = 26;
+    const summaryTop = 1344;
+    const summaryHeight = 270;
+    const totalWidth = canvasWidth - pagePadding * 2;
+    const noteWidth = totalWidth - cueWidth - contentGap;
+
+    const colors = {
+      paper: "#f6f1ea",
+      panel: "#fbfaf7",
+      panelBorder: "#efeae0",
+      ink: "#43403d",
+      muted: "#7c7a76",
+      blue: "#4f819c",
+      blueDark: "#3a647b",
+      summary: "#f9f7f2",
+      line: "#d9d4c8",
+    };
+
+    const drawRoundedRect = (
+      ctx: CanvasRenderingContext2D,
+      x: number,
+      y: number,
+      width: number,
+      height: number,
+      radius: number,
+      fillColor: string,
+      strokeColor?: string,
+      lineWidth = 1,
+    ) => {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+      if (strokeColor) {
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = strokeColor;
+        ctx.stroke();
+      }
+    };
+
+    const wrapCanvasText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number, font: string) => {
+      const normalized = normalizePdfText(text).replace(/\s+/g, " ").trim();
+      if (!normalized) return [];
+      ctx.font = font;
+      const words = normalized.split(/\s+/).filter(Boolean);
+      const lines: string[] = [];
+      let currentLine = "";
+      words.forEach((word) => {
+        const candidate = currentLine ? `${currentLine} ${word}` : word;
+        if (!currentLine || ctx.measureText(candidate).width <= maxWidth) {
+          currentLine = candidate;
+        } else {
+          lines.push(currentLine);
+          currentLine = word;
+        }
+      });
+      if (currentLine) lines.push(currentLine);
+      return lines;
+    };
+
+    const measureCanvas = document.createElement("canvas");
+    measureCanvas.width = canvasWidth;
+    measureCanvas.height = canvasHeight;
+    const measureCtx = measureCanvas.getContext("2d");
+    if (!measureCtx) {
+      throw new Error("Unable to prepare student notes PDF canvas.");
+    }
+
+    const noteTitleFont = "700 24px Courier New";
+    const noteBodyFont = "500 18px Courier New";
+    const cueFont = "500 17px Courier New";
+    const summaryFont = "500 17px Courier New";
+    const sectionGap = 18;
+    const paragraphGap = 10;
+    const noteLineHeight = 24;
+    const cueLineHeight = 22;
+
+    const measureSectionHeight = (section: { title: string; paragraphs: string[] }) => {
+      const titleLines = wrapCanvasText(measureCtx, section.title, noteWidth - 34, noteTitleFont);
+      const titleHeight = Math.max(1, titleLines.length) * 32;
+      const paragraphHeight = section.paragraphs.reduce((total, paragraph) => {
+        const lines = wrapCanvasText(measureCtx, paragraph, noteWidth - 34, noteBodyFont);
+        return total + Math.max(1, lines.length) * noteLineHeight + paragraphGap;
+      }, 0);
+      return titleHeight + paragraphHeight + sectionGap;
+    };
+
+    const availableNoteHeight = contentHeight - 48;
+    const paginatedSections: Array<Array<{ title: string; paragraphs: string[]; cues: string[] }>> = [];
+    let currentPageSections: Array<{ title: string; paragraphs: string[]; cues: string[] }> = [];
+    let currentHeight = 0;
+
+    template.noteSections.forEach((section) => {
+      const sectionHeight = measureSectionHeight(section);
+      if (currentPageSections.length > 0 && currentHeight + sectionHeight > availableNoteHeight) {
+        paginatedSections.push(currentPageSections);
+        currentPageSections = [];
+        currentHeight = 0;
+      }
+      currentPageSections.push(section);
+      currentHeight += sectionHeight;
+    });
+
+    if (currentPageSections.length > 0) {
+      paginatedSections.push(currentPageSections);
+    }
+
+    if (paginatedSections.length === 0) {
+      paginatedSections.push([{ title: template.noteTitle, paragraphs: ["Student lesson notes"], cues: ["Review"] }]);
+    }
+
+    const drawWrappedLines = (
+      ctx: CanvasRenderingContext2D,
+      lines: string[],
+      x: number,
+      y: number,
+      lineHeight: number,
+      color: string,
+      font: string,
+      maxLines?: number,
+    ) => {
+      ctx.font = font;
+      ctx.fillStyle = color;
+      const visibleLines = typeof maxLines === "number" ? lines.slice(0, maxLines) : lines;
+      visibleLines.forEach((line, index) => {
+        ctx.fillText(line, x, y + index * lineHeight);
+      });
+      return visibleLines.length * lineHeight;
+    };
+
+    const drawNotebookIcon = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      drawRoundedRect(ctx, x, y, iconSize, iconSize, 6, "#ffffff", "#ddd7cc", 2);
+      ctx.strokeStyle = "#232323";
+      ctx.lineWidth = 3;
+      ctx.strokeRect(x + 17, y + 15, 34, 42);
+      ctx.beginPath();
+      ctx.moveTo(x + 23, y + 24);
+      ctx.lineTo(x + 45, y + 24);
+      ctx.moveTo(x + 23, y + 31);
+      ctx.lineTo(x + 43, y + 31);
+      ctx.moveTo(x + 23, y + 38);
+      ctx.lineTo(x + 39, y + 38);
+      ctx.stroke();
+      ctx.strokeStyle = "#69c7d1";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(x + 41, y + 54);
+      ctx.lineTo(x + 57, y + 38);
+      ctx.stroke();
+    };
+
+    const renderedPages: HTMLCanvasElement[] = [];
+
+    paginatedSections.forEach((pageSections, pageIndex) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Unable to render student notes PDF page.");
+      }
+
+      ctx.fillStyle = colors.paper;
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      ctx.drawImage(patternImage, 0, 0, canvasWidth, patternHeight);
+
+      drawNotebookIcon(ctx, pagePadding + 10, patternHeight - 40);
+
+      ctx.fillStyle = colors.ink;
+      ctx.font = "700 54px Courier New";
+      ctx.fillText("Cornell Note", pagePadding, titleTop);
+
+      const metaWidth = (totalWidth - metaGap) / 2;
+      [
+        { label: template.noteTitle || "Session Notes", x: pagePadding },
+        { label: `date ${dateLabel}`, x: pagePadding + metaWidth + metaGap },
+      ].forEach((item) => {
+        drawRoundedRect(ctx, item.x, metaTop, metaWidth, metaHeight, 6, colors.panel, colors.panelBorder, 1);
+        ctx.fillStyle = colors.muted;
+        ctx.font = "500 16px Courier New";
+        ctx.fillText(item.label, item.x + 14, metaTop + 31);
+      });
+
+      const cueX = pagePadding;
+      const noteX = pagePadding + cueWidth + contentGap;
+      drawRoundedRect(ctx, cueX, contentTop, cueWidth, contentHeight, 8, colors.panel, colors.panelBorder, 1.2);
+      drawRoundedRect(ctx, noteX, contentTop, noteWidth, contentHeight, 8, colors.panel, colors.panelBorder, 1.2);
+
+      ctx.fillStyle = colors.muted;
+      ctx.font = "700 15px Courier New";
+      ctx.fillText("Keywords - Questions", cueX + 16, contentTop + 22);
+      ctx.fillText("Notes", noteX + 16, contentTop + 22);
+
+      const pageCueItems = Array.from(new Set(pageSections.flatMap((section) => section.cues))).slice(0, 18);
+      let cueY = contentTop + 60;
+      pageCueItems.forEach((item) => {
+        const lines = wrapCanvasText(ctx, item, cueWidth - 34, cueFont);
+        if (cueY + lines.length * cueLineHeight > contentTop + contentHeight - 20) return;
+        ctx.fillStyle = colors.muted;
+        ctx.font = cueFont;
+        ctx.fillText(".", cueX + 12, cueY);
+        drawWrappedLines(ctx, lines, cueX + 26, cueY, cueLineHeight, colors.ink, cueFont, 3);
+        cueY += lines.length * cueLineHeight + 10;
+      });
+
+      if (pageCueItems.length === 0) {
+        ctx.fillStyle = colors.muted;
+        ctx.font = cueFont;
+        ctx.fillText("Generate cue points from the student notes.", cueX + 18, cueY);
+      }
+
+      let noteY = contentTop + 52;
+      pageSections.forEach((section) => {
+        const titleLines = wrapCanvasText(ctx, section.title, noteWidth - 34, noteTitleFont);
+        noteY += drawWrappedLines(ctx, titleLines, noteX + 16, noteY, 30, colors.ink, noteTitleFont);
+        noteY += 4;
+        section.paragraphs.forEach((paragraph) => {
+          const paragraphLines = wrapCanvasText(ctx, paragraph, noteWidth - 34, noteBodyFont);
+          noteY += drawWrappedLines(ctx, paragraphLines, noteX + 16, noteY, noteLineHeight, colors.ink, noteBodyFont);
+          noteY += paragraphGap;
+        });
+        noteY += 10;
+      });
+
+      drawRoundedRect(ctx, pagePadding, summaryTop, totalWidth, summaryHeight, 8, colors.summary, colors.panelBorder, 1.2);
+      ctx.fillStyle = colors.muted;
+      ctx.font = "700 15px Courier New";
+      ctx.fillText("Summary", pagePadding + 16, summaryTop + 24);
+
+      const summaryLines = pageIndex === paginatedSections.length - 1 && template.summaryLines.length > 0
+        ? template.summaryLines
+        : [
+            `subject ${subjectLabel}  •  ${gradeLabel}`,
+            "Continue to the next page for more Cornell notes.",
+          ];
+
+      let summaryY = summaryTop + 58;
+      summaryLines.slice(0, 8).forEach((item) => {
+        const lines = wrapCanvasText(ctx, item, totalWidth - 34, summaryFont);
+        summaryY += drawWrappedLines(ctx, lines, pagePadding + 16, summaryY, 24, colors.ink, summaryFont, 3);
+        summaryY += 6;
+      });
+
+      renderedPages.push(canvas);
+    });
+
+    return buildImagePdfBlob(
+      renderedPages.map((pageCanvas) => ({
+        bytes: imageDataUrlToJpegBytes(pageCanvas.toDataURL("image/jpeg", 0.94)),
+        width: pageCanvas.width,
+        height: pageCanvas.height,
+      }))
+    );
+  };
+
+  const buildProfessionalNotesPdfBlob = async (
+    session: SessionPlan,
+    noteType: "teacher" | "student",
+  ) => {
+    const canvasWidth = 1240;
+    const canvasHeight = 1754;
+    const marginX = 94;
+    const topMargin = 92;
+    const bottomMargin = 92;
+    const contentWidth = canvasWidth - marginX * 2;
+    const maxY = canvasHeight - bottomMargin;
+    const pages: HTMLCanvasElement[] = [];
+    const theme = noteType === "teacher"
+      ? {
+          paper: "#fffdf8",
+          ink: "#1f2933",
+          muted: "#66727f",
+          rule: "#d6dce2",
+          accent: "#334e68",
+          title: "Teacher Lesson Notes",
+          subtitle: "Teacher reference copy",
+        }
+      : {
+          paper: "#fffdf8",
+          ink: "#1f2933",
+          muted: "#66727f",
+          rule: "#d6dce2",
+          accent: "#345b63",
+          title: "Student Lesson Notes",
+          subtitle: "Student study copy",
+        };
+    const sessionMetaLine = [
+      extractedData?.subject || activeWorkspace?.curriculumSnapshot?.subject || "Subject",
+      extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "Grade",
+      `Session ${session.sessionNumber}`,
+      session.duration ? `${session.duration} minutes` : "",
+    ].filter(Boolean).join("  •  ");
+
+    let canvas = document.createElement("canvas");
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    let ctx = canvas.getContext("2d");
+    if (!ctx) {
+      throw new Error("Unable to prepare PDF canvas.");
+    }
+    let y = topMargin;
+    let pageNumber = 1;
+
+    const wrapTextLines = (text: string, maxWidth: number, font: string) => {
+      ctx.font = font;
+      const paragraphs = normalizePdfText(text)
+        .split(/\r?\n/)
+        .map((line) => line.trim());
+      const lines: string[] = [];
+
+      paragraphs.forEach((paragraph, paragraphIndex) => {
+        if (!paragraph) {
+          if (lines.length > 0 && lines[lines.length - 1] !== "") {
+            lines.push("");
+          }
+          return;
+        }
+        const words = paragraph.split(/\s+/).filter(Boolean);
+        let current = "";
+        words.forEach((word) => {
+          const candidate = current ? `${current} ${word}` : word;
+          if (!current || ctx.measureText(candidate).width <= maxWidth) {
+            current = candidate;
+          } else {
+            lines.push(current);
+            current = word;
+          }
+        });
+        if (current) lines.push(current);
+        if (paragraphIndex < paragraphs.length - 1) {
+          lines.push("");
+        }
+      });
+
+      while (lines.length > 0 && lines[lines.length - 1] === "") {
+        lines.pop();
+      }
+      return lines;
+    };
+
+    const measureTextBlock = (text: string, maxWidth: number, lineHeight: number, font: string) => {
+      const lines = wrapTextLines(text, maxWidth, font);
+      if (lines.length === 0) return 0;
+      return lines.reduce((total, line) => total + (line ? lineHeight : Math.round(lineHeight * 0.55)), 0);
+    };
+
+    const drawTextBlock = (
+      text: string,
+      x: number,
+      startY: number,
+      maxWidth: number,
+      lineHeight: number,
+      font: string,
+      color: string,
+    ) => {
+      const lines = wrapTextLines(text, maxWidth, font);
+      ctx.font = font;
+      ctx.fillStyle = color;
+      let cursorY = startY;
+      lines.forEach((line) => {
+        if (!line) {
+          cursorY += Math.round(lineHeight * 0.55);
+          return;
+        }
+        ctx.fillText(line, x, cursorY);
+        cursorY += lineHeight;
+      });
+      return cursorY - startY;
+    };
+
+    const startPage = () => {
+      ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Unable to prepare PDF canvas.");
+      ctx.fillStyle = theme.paper;
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      ctx.strokeStyle = theme.rule;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(marginX, 58);
+      ctx.lineTo(canvasWidth - marginX, 58);
+      ctx.stroke();
+      ctx.fillStyle = theme.muted;
+      ctx.font = "600 11px Helvetica, Arial, sans-serif";
+      ctx.fillText(theme.title.toUpperCase(), marginX, 44);
+      ctx.textAlign = "right";
+      ctx.fillText(`Page ${pageNumber}`, canvasWidth - marginX, 44);
+      ctx.textAlign = "left";
+      ctx.beginPath();
+      ctx.moveTo(marginX, canvasHeight - 52);
+      ctx.lineTo(canvasWidth - marginX, canvasHeight - 52);
+      ctx.stroke();
+      y = topMargin;
+    };
+
+    startPage();
+
+    const newPage = () => {
+      pages.push(canvas);
+      canvas = document.createElement("canvas");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      pageNumber += 1;
+      startPage();
+    };
+
+    const ensureSpace = (needed: number) => {
+      if (y + needed <= maxY) return;
+      newPage();
+    };
+
+    const drawTitleBlock = () => {
+      ensureSpace(140);
+      ctx.fillStyle = theme.ink;
+      ctx.font = "700 28px Georgia, Times New Roman, serif";
+      y += drawTextBlock(session.title || theme.title, marginX, y, contentWidth, 34, "700 28px Georgia, Times New Roman, serif", theme.ink);
+      y += 10;
+      ctx.fillStyle = theme.muted;
+      ctx.font = "400 13px Helvetica, Arial, sans-serif";
+      y += drawTextBlock(`${theme.subtitle}  •  ${sessionMetaLine}`, marginX, y, contentWidth, 18, "400 13px Helvetica, Arial, sans-serif", theme.muted);
+      y += 16;
+      ctx.strokeStyle = theme.rule;
+      ctx.beginPath();
+      ctx.moveTo(marginX, y);
+      ctx.lineTo(canvasWidth - marginX, y);
+      ctx.stroke();
+      y += 28;
+    };
+
+    const drawDivider = (spacingTop = 8, spacingBottom = 14) => {
+      ensureSpace(spacingTop + spacingBottom + 4);
+      y += spacingTop;
+      ctx.strokeStyle = theme.rule;
+      ctx.beginPath();
+      ctx.moveTo(marginX, y);
+      ctx.lineTo(canvasWidth - marginX, y);
+      ctx.stroke();
+      y += spacingBottom;
+    };
+
+    const drawSectionHeading = (title: string, subtitle?: string) => {
+      ensureSpace(subtitle ? 76 : 54);
+      ctx.fillStyle = theme.accent;
+      ctx.font = "700 14px Helvetica, Arial, sans-serif";
+      ctx.fillText(title.toUpperCase(), marginX, y);
+      y += 18;
+      if (subtitle) {
+        y += drawTextBlock(subtitle, marginX, y, contentWidth, 18, "400 12px Helvetica, Arial, sans-serif", theme.muted);
+      }
+      y += 8;
+      ctx.strokeStyle = theme.rule;
+      ctx.beginPath();
+      ctx.moveTo(marginX, y);
+      ctx.lineTo(canvasWidth - marginX, y);
+      ctx.stroke();
+      y += 20;
+    };
+
+    const drawSubheading = (title: string) => {
+      ensureSpace(28);
+      ctx.fillStyle = theme.ink;
+      ctx.font = "700 17px Georgia, Times New Roman, serif";
+      ctx.fillText(title, marginX, y);
+      y += 24;
+    };
+
+    const drawPlainParagraph = (title: string, text: string) => {
+      const normalized = formatRenderableText(text).trim();
+      if (!normalized) return;
+      drawSectionHeading(title);
+      ensureSpace(measureTextBlock(normalized, contentWidth, 23, "400 16px Georgia, Times New Roman, serif") + 12);
+      y += drawTextBlock(normalized, marginX, y, contentWidth, 23, "400 16px Georgia, Times New Roman, serif", theme.ink);
+      y += 10;
+    };
+
+    const drawBodyParagraph = (text: string, options?: { font?: string; lineHeight?: number; color?: string; spacingAfter?: number }) => {
+      const normalized = formatRenderableText(text).trim();
+      if (!normalized) return;
+      const font = options?.font || "400 16px Georgia, Times New Roman, serif";
+      const lineHeight = options?.lineHeight || 23;
+      const color = options?.color || theme.ink;
+      const spacingAfter = options?.spacingAfter ?? 10;
+      ensureSpace(measureTextBlock(normalized, contentWidth, lineHeight, font) + spacingAfter);
+      y += drawTextBlock(normalized, marginX, y, contentWidth, lineHeight, font, color);
+      y += spacingAfter;
+    };
+
+    const drawBulletList = (items: string[], options?: { ordered?: boolean }) => {
+      const filtered = items.map((item) => formatRenderableText(item).trim()).filter(Boolean);
+      if (filtered.length === 0) return;
+      const bulletColumnWidth = options?.ordered ? 22 : 18;
+      const textWidth = contentWidth - bulletColumnWidth;
+
+      filtered.forEach((item, index) => {
+        const height = measureTextBlock(item, textWidth, 22, "400 15px Georgia, Times New Roman, serif");
+        ensureSpace(height + 10);
+        ctx.fillStyle = theme.ink;
+        ctx.font = "400 15px Georgia, Times New Roman, serif";
+        ctx.fillText(options?.ordered ? `${index + 1}.` : "•", marginX, y);
+        const used = drawTextBlock(item, marginX + bulletColumnWidth, y, textWidth, 22, "400 15px Georgia, Times New Roman, serif", theme.ink);
+        y += used + 8;
+      });
+      y += 4;
+    };
+
+    const drawListSection = (title: string, items: string[], options?: { ordered?: boolean }) => {
+      const filtered = items.map((item) => formatRenderableText(item).trim()).filter(Boolean);
+      if (filtered.length === 0) return;
+      drawSectionHeading(title);
+      drawBulletList(filtered, options);
+    };
+
+    const drawLabelValueLines = (entries: Array<{ label: string; values: string[] }>) => {
+      entries.forEach((entry) => {
+        const values = entry.values.map((item) => formatRenderableText(item).trim()).filter(Boolean);
+        if (values.length === 0) return;
+        const composed = values.map((value) => `${entry.label}: ${value}`);
+        drawBulletList(composed);
+      });
+    };
+
+    const drawImageFigure = async (heading: string, src: string, caption: string, notes: string[]) => {
+      const image = await loadImageElement(src);
+      const figureWidth = contentWidth;
+      const figureTitle = formatRenderableText(heading).trim() || "Figure";
+      const captionText = formatRenderableText(caption).trim() || "Illustration";
+      const supportLines = notes.map((item) => formatRenderableText(item).trim()).filter(Boolean).slice(0, 3);
+      const frameHeight = 280;
+      const captionHeight = measureTextBlock(captionText, figureWidth, 18, "400 12px Helvetica, Arial, sans-serif");
+      const supportHeight = supportLines.length > 0
+        ? supportLines.reduce((total, item) => total + measureTextBlock(item, figureWidth - 18, 18, "400 12px Helvetica, Arial, sans-serif") + 6, 0) + 10
+        : 0;
+      ensureSpace(40 + frameHeight + captionHeight + supportHeight + 24);
+
+      drawSubheading(figureTitle);
+      const frameX = marginX;
+      const frameY = y;
+      const frameW = figureWidth;
+      const frameH = frameHeight;
+      ctx.fillStyle = "#ffffff";
+      ctx.strokeStyle = theme.rule;
+      ctx.strokeRect(frameX, frameY, frameW, frameH);
+      const scale = Math.min(frameW / image.width, frameH / image.height);
+      const imgW = image.width * scale;
+      const imgH = image.height * scale;
+      const imgX = frameX + (frameW - imgW) / 2;
+      const imgY = frameY + (frameH - imgH) / 2;
+      ctx.drawImage(image, imgX, imgY, imgW, imgH);
+      y += frameH + 18;
+      y += drawTextBlock(captionText, marginX, y, figureWidth, 18, "400 12px Helvetica, Arial, sans-serif", theme.muted);
+      y += 8;
+      if (supportLines.length > 0) {
+        ctx.fillStyle = theme.accent;
+        ctx.font = "700 12px Helvetica, Arial, sans-serif";
+        ctx.fillText("Visual Notes", marginX, y);
+        y += 18;
+        supportLines.forEach((item) => {
+          const used = drawTextBlock(item, marginX + 18, y, figureWidth - 18, 18, "400 12px Helvetica, Arial, sans-serif", theme.ink);
+          ctx.fillStyle = theme.ink;
+          ctx.font = "400 12px Helvetica, Arial, sans-serif";
+          ctx.fillText("•", marginX, y);
+          y += used + 6;
+        });
+      }
+      y += 6;
+    };
+
+    drawTitleBlock();
+
+    if (noteType === "teacher" && session.teacherLessonNotes) {
+      const teacherNotes = session.teacherLessonNotes;
+      drawPlainParagraph("Session Overview", formatRenderableText(teacherNotes.sessionOverview));
+      drawListSection("Learning Outcomes", getRenderableList(teacherNotes.learningOutcomes));
+      drawListSection("Prerequisite Knowledge", getRenderableList(teacherNotes.prerequisiteKnowledge));
+      drawListSection("Previous Session Recap", getRenderableList(teacherNotes.previousSessionRecap));
+      drawListSection("Lesson Purpose", getRenderableList(teacherNotes.lessonPurpose));
+      drawListSection("Teaching Sequence", getRenderableList(teacherNotes.teachingSequence), { ordered: true });
+      drawListSection("Guided Practice", getRenderableList(teacherNotes.guidedPractice));
+      drawListSection("Formative Checks", getRenderableList(teacherNotes.formativeChecks));
+
+      if (Array.isArray(teacherNotes.lessonBlocks) && teacherNotes.lessonBlocks.length > 0) {
+        drawSectionHeading("Detailed Lesson Blocks", "Stage-wise flow for instruction");
+        teacherNotes.lessonBlocks.forEach((block, index) => {
+          const title = `Block ${index + 1}${block.title ? `: ${formatRenderableText(block.title)}` : ""}${block.durationMinutes != null ? ` (${formatRenderableText(block.durationMinutes)} min)` : ""}`;
+          drawSubheading(title);
+          drawLabelValueLines([
+            { label: "Teacher prompt", values: getRenderableList(block.teacherPrompt) },
+            { label: "Explanation", values: getRenderableList(block.explanation) },
+            { label: "Check understanding", values: getRenderableList(block.checkUnderstanding) },
+            { label: "Expected answer", values: getRenderableList(block.expectedAnswers) },
+            { label: "Activity", values: getRenderableList(block.activity) },
+            { label: "Board work", values: getRenderableList(block.boardWork) },
+            { label: "Example", values: getRenderableList(block.examples) },
+          ]);
+          drawDivider(2, 12);
+        });
+      }
+
+      if (Array.isArray(teacherNotes.classroomQuestions) && teacherNotes.classroomQuestions.length > 0) {
+        drawSectionHeading("Classroom Questions");
+        teacherNotes.classroomQuestions.forEach((question, index) => {
+          drawSubheading(`Prompt ${index + 1}`);
+          drawBulletList([
+            `Question: ${formatRenderableText(question.question)}`,
+            ...(question.level ? [`Level: ${formatRenderableText(question.level)}`] : []),
+            ...(question.expectedResponse ? [`Expected response: ${formatRenderableText(question.expectedResponse)}`] : []),
+            ...getRenderableList(question.answerPoints).map((item) => `Answer point: ${item}`),
+          ]);
+        });
+      }
+
+      if (Array.isArray(teacherNotes.timePlan) && teacherNotes.timePlan.length > 0) {
+        drawSectionHeading("Session Time Plan");
+        teacherNotes.timePlan.forEach((block) => {
+          drawSubheading(`${formatRenderableText(block.segment)}${block.minutes ? ` (${formatRenderableText(block.minutes)} min)` : ""}`);
+          drawBulletList(getRenderableList(block.purpose));
+        });
+      }
+
+      drawListSection("Assessment Questions", getRenderableList(teacherNotes.assessmentQuestions), { ordered: true });
+      drawListSection("Teacher Tips", getRenderableList(teacherNotes.teacherTips));
+      drawListSection("Blackboard Summary", getRenderableList(teacherNotes.blackboardSummary));
+      drawListSection("Session Summary", getRenderableList(teacherNotes.sessionSummary));
+      drawListSection("Next Session Bridge", getRenderableList(teacherNotes.nextSessionBridge));
+    }
+
+    if (noteType === "student" && session.studentLessonNotes) {
+      const studentNotes = session.studentLessonNotes;
+      drawPlainParagraph("Session Overview", formatRenderableText(studentNotes.sessionOverview));
+      drawPlainParagraph("Introduction", formatRenderableText(studentNotes.introduction));
+      drawListSection("Learning Objectives", getRenderableList(studentNotes.learningObjectives));
+      drawListSection("Quick Recall", getRenderableList(studentNotes.quickRecall));
+      drawListSection("Easy to Remember", getRenderableList(studentNotes.easyToRemember));
+
+      if (Array.isArray(studentNotes.sections) && studentNotes.sections.length > 0) {
+        drawSectionHeading("Concept Notes", "Main ideas with supporting explanation and visuals");
+        for (const [index, section] of studentNotes.sections.entries()) {
+          drawSubheading(formatRenderableText(section.heading) || `Concept ${index + 1}`);
+          const explanation = getRenderableList(section.explanation);
+          const detailedExplanation = getRenderableList(section.detailedExplanation);
+          explanation.forEach((item) => {
+            drawBodyParagraph(item);
+          });
+          detailedExplanation.forEach((item) => {
+            drawBodyParagraph(item);
+          });
+          drawLabelValueLines([
+            { label: "Why it matters", values: getRenderableList(section.whyItMatters) },
+            { label: "Key point", values: getRenderableList(section.keyPoints) },
+            { label: "Example", values: getRenderableList(section.examples) },
+            { label: "Terminology", values: getRenderableList(section.terminology) },
+            { label: "Important", values: getRenderableList(section.importantNotes) },
+            { label: "Memory tip", values: getRenderableList(section.memoryTechniques) },
+            { label: "Summary", values: getRenderableList(section.conceptSummary) },
+          ]);
+          const assets = Array.isArray(section.visualAssets) ? section.visualAssets.filter((asset) => Boolean(asset?.imageDataUrl)) : [];
+          for (const [assetIndex, asset] of assets.entries()) {
+            await drawImageFigure(
+              formatRenderableText(section.heading) || `Concept ${index + 1} Visual ${assetIndex + 1}`,
+              asset.imageDataUrl,
+              formatRenderableText(asset.alt || "AI-generated classroom visual"),
+              getRenderableList(section.visualSupport)
+            );
+          }
+          drawDivider(4, 16);
+        }
+      }
+
+      if (Array.isArray(studentNotes.definitions) && studentNotes.definitions.length > 0) {
+        drawSectionHeading("Glossary");
+        studentNotes.definitions.forEach((definition) => {
+          drawSubheading(formatRenderableText(definition.term));
+          getRenderableList(definition.definition).forEach((item) => {
+            drawBodyParagraph(item, { font: "400 15px Georgia, Times New Roman, serif", lineHeight: 22 });
+          });
+        });
+      }
+
+      if (Array.isArray(studentNotes.workedExamples) && studentNotes.workedExamples.length > 0) {
+        drawSectionHeading("Worked Examples");
+        studentNotes.workedExamples.forEach((example, index) => {
+          drawSubheading(`Example ${index + 1}${example.title ? `: ${formatRenderableText(example.title)}` : ""}`);
+          drawLabelValueLines([{ label: "Step", values: getRenderableList(example.steps) }]);
+          getRenderableList(example.explanation).forEach((item) => {
+            drawBodyParagraph(item, { font: "400 15px Georgia, Times New Roman, serif", lineHeight: 22 });
+          });
+        });
+      }
+
+      if (studentNotes.revisionSection) {
+        drawSectionHeading("Revision Section");
+        drawListSection("Definitions", getRenderableList(studentNotes.revisionSection.definitions));
+        drawListSection("Formulas", getRenderableList(studentNotes.revisionSection.formulas));
+        drawListSection("Facts", getRenderableList(studentNotes.revisionSection.facts));
+        drawListSection("Keywords", getRenderableList(studentNotes.revisionSection.keywords));
+        drawListSection("Concept Map", getRenderableList(studentNotes.revisionSection.conceptMap));
+        drawListSection("Quick Recap", getRenderableList(studentNotes.revisionSection.quickRecap));
+      }
+
+      drawListSection("Quick Summary", getRenderableList(studentNotes.quickSummary));
+      drawListSection("Key Terms", getRenderableList(studentNotes.keyTerms));
+
+      if (Array.isArray(studentNotes.fillInTheBlanks) && studentNotes.fillInTheBlanks.length > 0) {
+        drawSectionHeading("Fill in the Blanks");
+        studentNotes.fillInTheBlanks.forEach((item, index) => {
+          drawSubheading(`Prompt ${index + 1}`);
+          drawBulletList([
+            formatRenderableText(item.prompt),
+            ...(item.answer ? [`Answer: ${formatRenderableText(item.answer)}`] : []),
+          ]);
+        });
+      }
+
+      if (Array.isArray(studentNotes.mcqQuestions) && studentNotes.mcqQuestions.length > 0) {
+        drawSectionHeading("MCQs");
+        studentNotes.mcqQuestions.forEach((item, index) => {
+          drawSubheading(`Question ${index + 1}`);
+          drawBulletList([
+            formatRenderableText(item.question),
+            ...getRenderableList(item.options).map((option) => `Option: ${option}`),
+            ...(item.answer ? [`Answer: ${formatRenderableText(item.answer)}`] : []),
+          ]);
+        });
+      }
+
+      if (Array.isArray(studentNotes.veryShortAnswerQuestions) && studentNotes.veryShortAnswerQuestions.length > 0) {
+        drawSectionHeading("Very Short Answer Questions");
+        studentNotes.veryShortAnswerQuestions.forEach((item, index) => {
+          drawSubheading(`Question ${index + 1}`);
+          drawBulletList([
+            formatRenderableText(item.question),
+            ...(item.answer ? [`Answer: ${formatRenderableText(item.answer)}`] : []),
+          ]);
+        });
+      }
+
+      drawListSection("Self-Check Questions", getRenderableList(studentNotes.selfCheckQuestions), { ordered: true });
+      drawListSection("Did You Know?", getRenderableList(studentNotes.didYouKnow));
+      drawListSection("Summary", getRenderableList(studentNotes.summary));
+      drawListSection("Quick Revision", getRenderableList(studentNotes.quickRevision));
+      drawListSection("Remember", getRenderableList(studentNotes.rememberPoints));
+    }
+
+    pages.push(canvas);
+    const renderedPages = pages.map((pageCanvas) => {
+      const dataUrl = pageCanvas.toDataURL("image/jpeg", 0.92);
+      return {
+        bytes: imageDataUrlToJpegBytes(dataUrl),
+        width: pageCanvas.width,
+        height: pageCanvas.height,
+      };
+    });
+    return buildImagePdfBlob(renderedPages);
+  };
+
+  const buildCurriculumPdfBlob = (curriculum: CurriculumExtraction) => {
+    type ExportChapter = {
+      chapterName: string;
+      topics: string[];
+      subtopics: string[];
+    };
+    type ExportUnit = {
+      unitId: string;
+      unitName: string;
+      description: string;
+      topics: string[];
+      subtopics: string[];
+      chapters: ExportChapter[];
+    };
+    type ExportClass = {
+      className: string;
+      subject: string;
+      units: ExportUnit[];
+    };
+
+    const isMeaningfulValue = (value: unknown) => {
+      const normalized = formatRenderableText(value).trim();
+      if (!normalized) return false;
+      if (normalized === "-") return false;
+      return true;
+    };
+
+    const cleanValue = (value: unknown) => {
+      const normalized = formatRenderableText(value).replace(/\s+/g, " ").trim();
+      return isMeaningfulValue(normalized) ? normalized : "";
+    };
+
+    const uniqueMeaningfulList = (values: unknown) => {
+      const source = Array.isArray(values) ? values : [];
+      return [...new Set(source.map((item) => cleanValue(item)).filter(Boolean))];
+    };
+
+    const hasDeepChapterContent = (chapter: ExportChapter, unitName: string) => {
+      const hasTopics = chapter.topics.length > 0;
+      const hasSubtopics = chapter.subtopics.length > 0;
+      const sameAsUnit = cleanValue(chapter.chapterName).toLowerCase() === cleanValue(unitName).toLowerCase();
+      if (sameAsUnit && !hasTopics && !hasSubtopics) return false;
+      return Boolean(cleanValue(chapter.chapterName) || hasTopics || hasSubtopics);
+    };
+
+    const normalizeStructuredUnit = (unit: Record<string, unknown>): ExportUnit => {
+      const unitName = cleanValue(unit.unit_name || unit.unitName || unit.unit_id || unit.unitId || "");
+      const unitTopics = uniqueMeaningfulList(unit.topics);
+      const unitSubtopics = uniqueMeaningfulList(unit.subtopics);
+      const rawChapters = Array.isArray(unit.chapters) ? unit.chapters as Array<Record<string, unknown>> : [];
+      const chapters = rawChapters
+        .map((chapter) => ({
+          chapterName: cleanValue(chapter.chapter_name || chapter.source_chapter_name || chapter.title || ""),
+          topics: uniqueMeaningfulList(chapter.topics),
+          subtopics: uniqueMeaningfulList(chapter.subtopics),
+        }))
+        .filter((chapter) => hasDeepChapterContent(chapter, unitName));
+
+      return {
+        unitId: cleanValue(unit.unit_id || unit.unitId || ""),
+        unitName,
+        description: cleanValue(unit.description || ""),
+        topics: unitTopics,
+        subtopics: unitSubtopics,
+        chapters,
+      };
+    };
+
+    const normalizeFlatUnit = (unit: Record<string, unknown>): ExportUnit => ({
+      unitId: cleanValue(unit.unitId || unit.unit_id || ""),
+      unitName: cleanValue(unit.unitName || unit.unit_name || ""),
+      description: cleanValue(unit.description || ""),
+      topics: uniqueMeaningfulList(unit.topics),
+      subtopics: uniqueMeaningfulList(unit.subtopics),
+      chapters: [],
+    });
+
+    const extractCurriculumHierarchy = (): ExportClass[] => {
+      const curriculumRecord = curriculum as unknown as Record<string, unknown>;
+      const faithfulStructure = curriculumRecord.faithful_structure as Record<string, unknown> | undefined;
+      const normalizedStructure = curriculum.normalizedStructure as Record<string, unknown> | undefined;
+      const stagedStructure = (curriculum.stagedExtraction as Record<string, unknown> | undefined)?.normalizedStructure as Record<string, unknown> | undefined;
+      const prioritizedStructure = faithfulStructure || normalizedStructure || stagedStructure;
+
+      if (prioritizedStructure && Array.isArray(prioritizedStructure.classes)) {
+        return (prioritizedStructure.classes as Array<Record<string, unknown>>)
+          .map((cls) => ({
+            className: cleanValue(cls.class_name || curriculum.gradeLevel || ""),
+            subject: cleanValue(cls.subject || curriculum.subject || ""),
+            units: (Array.isArray(cls.units) ? cls.units as Array<Record<string, unknown>> : [])
+              .map(normalizeStructuredUnit)
+              .filter((unit) => unit.unitName || unit.chapters.length || unit.topics.length || unit.subtopics.length),
+          }))
+          .filter((cls) => cls.units.length > 0);
+      }
+
+      if (Array.isArray(curriculum.units) && curriculum.units.length > 0) {
+        return [{
+          className: cleanValue(curriculum.gradeLevel || ""),
+          subject: cleanValue(curriculum.subject || ""),
+          units: curriculum.units
+            .map((unit) => normalizeFlatUnit(unit as unknown as Record<string, unknown>))
+            .filter((unit) => unit.unitName || unit.description || unit.topics.length || unit.subtopics.length),
+        }];
+      }
+
+      return [];
+    };
+
+    const exportClasses = extractCurriculumHierarchy();
+    const allUnits = exportClasses.flatMap((cls) => cls.units);
+    const allChapters = allUnits.flatMap((unit) => unit.chapters);
+    const totalChapterCount = allChapters.length;
+    const totalSubtopicCount = allUnits.reduce(
+      (sum, unit) => sum + unit.subtopics.length + unit.chapters.reduce((chapterSum, chapter) => chapterSum + chapter.subtopics.length, 0),
+      0
+    );
+
+    const pageWidth = 612;
+    const pageHeight = 792;
+    const marginX = 42;
+    const topY = 752;
+    const bottomY = 42;
+    const contentWidth = pageWidth - marginX * 2;
+    const encoder = new TextEncoder();
+    const pages: string[] = [];
+    let currentPageOps: string[] = [];
+    let currentY = topY;
+
+    const color = {
+      ink: "0.17 0.2 0.22",
+      muted: "0.39 0.45 0.49",
+      teal: "0.21 0.68 0.67",
+      tealSoft: "0.9 0.96 0.96",
+      peachSoft: "0.96 0.91 0.87",
+      border: "0.82 0.86 0.88",
+      white: "1 1 1",
+      rowAlt: "0.98 0.99 0.99",
+    };
+
+    const estimateChars = (width: number, fontSize: number) => Math.max(6, Math.floor(width / (fontSize * 0.52)));
+    const setFill = (rgb: string) => currentPageOps.push(`${rgb} rg`);
+    const setStroke = (rgb: string) => currentPageOps.push(`${rgb} RG`);
+    const drawRect = (x: number, y: number, width: number, height: number, fillRgb?: string, strokeRgb?: string) => {
+      if (fillRgb) setFill(fillRgb);
+      if (strokeRgb) setStroke(strokeRgb);
+      currentPageOps.push(`${x} ${y} ${width} ${height} re ${fillRgb && strokeRgb ? "B" : fillRgb ? "f" : "S"}`);
+    };
+    const drawText = (text: string, x: number, y: number, size: number, font: "F1" | "F2" = "F1", rgb: string = color.ink) => {
+      const normalized = escapePdfText(text);
+      if (!normalized) return;
+      setFill(rgb);
+      currentPageOps.push("BT");
+      currentPageOps.push(`/${font} ${size} Tf`);
+      currentPageOps.push(`1 0 0 1 ${x} ${y} Tm`);
+      currentPageOps.push(`(${normalized}) Tj`);
+      currentPageOps.push("ET");
+    };
+    const wrapForWidth = (text: string, width: number, fontSize: number, maxLines?: number) => {
+      const lines = wrapPdfTextLine(text, estimateChars(width, fontSize));
+      return typeof maxLines === "number" ? lines.slice(0, maxLines) : lines;
+    };
+    const ensureSpace = (requiredHeight: number) => {
+      if (currentY - requiredHeight >= bottomY) return;
+      if (currentPageOps.length) {
+        pages.push(currentPageOps.join("\n"));
+      }
+      currentPageOps = [];
+      currentY = topY;
+    };
+    const drawParagraph = (text: string, options?: { font?: "F1" | "F2"; size?: number; color?: string; gapAfter?: number; maxWidth?: number }) => {
+      const font = options?.font || "F1";
+      const size = options?.size || 10.5;
+      const gapAfter = options?.gapAfter ?? 8;
+      const maxWidth = options?.maxWidth || contentWidth;
+      const lines = wrapForWidth(formatRenderableText(text), maxWidth, size);
+      ensureSpace(lines.length * (size + 3) + gapAfter);
+      lines.forEach((line) => {
+        drawText(line, marginX, currentY, size, font, options?.color || color.ink);
+        currentY -= size + 3;
+      });
+      currentY -= gapAfter;
+    };
+    const drawBulletList = (items: string[], accentRgb: string) => {
+      items.forEach((item) => {
+        const lines = wrapForWidth(formatRenderableText(item), contentWidth - 18, 10.5);
+        ensureSpace(lines.length * 14 + 2);
+        drawText("•", marginX, currentY, 12, "F2", accentRgb);
+        lines.forEach((line, index) => {
+          drawText(line, marginX + 14, currentY - index * 14, 10.5, "F1", color.ink);
+        });
+        currentY -= lines.length * 14 + 2;
+      });
+      currentY -= 6;
+    };
+    const drawSectionTitle = (title: string) => {
+      ensureSpace(30);
+      drawText(title, marginX, currentY, 14, "F2", color.ink);
+      currentY -= 10;
+      drawRect(marginX, currentY, 90, 2, color.teal);
+      currentY -= 14;
+    };
+    const drawMetricCardRow = (items: Array<{ label: string; value: string }>) => {
+      const gap = 10;
+      const cardWidth = (contentWidth - gap * (items.length - 1)) / items.length;
+      const cardHeight = 52;
+      ensureSpace(cardHeight + 12);
+      items.forEach((item, index) => {
+        const x = marginX + index * (cardWidth + gap);
+        drawRect(x, currentY - cardHeight, cardWidth, cardHeight, color.tealSoft, color.border);
+        drawText(item.label.toUpperCase(), x + 10, currentY - 16, 8.5, "F2", color.muted);
+        drawText(item.value, x + 10, currentY - 36, 15, "F2", color.ink);
+      });
+      currentY -= cardHeight + 14;
+    };
+    const fitColumnWidths = (widths: number[]) => {
+      const availableWidth = contentWidth;
+      const totalWidth = widths.reduce((sum, width) => sum + width, 0);
+      if (totalWidth <= availableWidth) return widths;
+      const scale = availableWidth / totalWidth;
+      return widths.map((width) => Math.max(56, Math.floor(width * scale)));
+    };
+    const drawTable = (title: string, headers: string[], rows: string[][], columnWidths: number[]) => {
+      if (!rows.length) return;
+      drawSectionTitle(title);
+      const startX = marginX;
+      const headerHeight = 24;
+      const cellPadding = 6;
+      const bodyFontSize = 9;
+      const headerFontSize = 9;
+      const fittedColumnWidths = fitColumnWidths(columnWidths);
+
+      const drawHeader = () => {
+        ensureSpace(headerHeight + 8);
+        let x = startX;
+        headers.forEach((header, index) => {
+          drawRect(x, currentY - headerHeight, fittedColumnWidths[index], headerHeight, color.teal, color.white);
+          drawText(header, x + cellPadding, currentY - 16, headerFontSize, "F2", color.white);
+          x += fittedColumnWidths[index];
+        });
+        currentY -= headerHeight;
+      };
+
+      drawHeader();
+
+      rows.forEach((row, rowIndex) => {
+        const wrappedCells = row.map((cell, index) =>
+          wrapForWidth(formatRenderableText(cell || "-"), fittedColumnWidths[index] - cellPadding * 2, bodyFontSize, 4)
+        );
+        const rowHeight = Math.max(...wrappedCells.map((lines) => lines.length), 1) * 12 + 10;
+        if (currentY - rowHeight < bottomY) {
+          if (currentPageOps.length) {
+            pages.push(currentPageOps.join("\n"));
+          }
+          currentPageOps = [];
+          currentY = topY;
+          drawHeader();
+        }
+
+        let x = startX;
+        wrappedCells.forEach((lines, index) => {
+          drawRect(x, currentY - rowHeight, fittedColumnWidths[index], rowHeight, rowIndex % 2 === 0 ? color.white : color.rowAlt, color.border);
+          lines.forEach((line, lineIndex) => {
+            drawText(line, x + cellPadding, currentY - 14 - lineIndex * 12, bodyFontSize, "F1", color.ink);
+          });
+          x += fittedColumnWidths[index];
+        });
+        currentY -= rowHeight;
+      });
+
+      currentY -= 16;
+    };
+
+    drawRect(0, pageHeight - 92, pageWidth, 92, color.teal);
+    drawText(formatRenderableText(curriculum.subject || "Curriculum"), marginX, pageHeight - 42, 22, "F2", color.white);
+    drawText(`Extracted Curriculum Report • ${formatRenderableText(curriculum.gradeLevel || "Grade")}`, marginX, pageHeight - 64, 11, "F1", color.white);
+    currentY = pageHeight - 118;
+
+    drawMetricCardRow([
+      { label: "Subject", value: formatRenderableText(curriculum.subject || "N/A") },
+      { label: "Grade", value: formatRenderableText(curriculum.gradeLevel || "N/A") },
+      { label: "Units", value: String(allUnits.length) },
+      { label: "Chapters", value: String(totalChapterCount || 0) },
+    ]);
+
+    if (curriculum.overallDescription) {
+      drawSectionTitle("Overview");
+      drawParagraph(curriculum.overallDescription, { size: 10.5, color: color.muted });
+    }
+
+    if (Array.isArray(curriculum.coreObjectives) && curriculum.coreObjectives.length > 0) {
+      drawSectionTitle("Core Objectives");
+      drawBulletList(curriculum.coreObjectives, color.teal);
+    }
+
+    const unitsOverviewRows = allUnits.map((unit) => ({
+      unitId: unit.unitId,
+      unitName: unit.unitName,
+      description: unit.description,
+      topics: unit.topics.join("; "),
+      subtopics: unit.subtopics.join("; "),
+    }));
+
+    const unitsOverviewColumns = [
+      { key: "unitId", label: "Unit ID", width: 72 },
+      { key: "unitName", label: "Unit Name", width: 130 },
+      { key: "description", label: "Description", width: 180 },
+      { key: "topics", label: "Topics", width: 140 },
+      { key: "subtopics", label: "Subtopics", width: 140 },
+    ].filter((column) => unitsOverviewRows.some((row) => isMeaningfulValue(row[column.key as keyof typeof row])));
+
+    if (unitsOverviewColumns.length > 0 && unitsOverviewRows.length > 0) {
+      drawTable(
+        "Units Overview",
+        unitsOverviewColumns.map((column) => column.label),
+        unitsOverviewRows.map((row) => unitsOverviewColumns.map((column) => row[column.key as keyof typeof row] || "")),
+        unitsOverviewColumns.map((column) => column.width)
+      );
+    }
+
+    exportClasses.forEach((cls, classIndex) => {
+      const structuredUnitRows = cls.units.map((unit) => ({
+        className: cls.className,
+        subject: cls.subject,
+        unitName: unit.unitName,
+        chapterCount: String(unit.chapters.length),
+        topics: unit.topics.join("; "),
+        subtopics: unit.subtopics.join("; "),
+      }));
+
+      const structuredUnitColumns = [
+        { key: "className", label: "Class", width: 84 },
+        { key: "subject", label: "Subject", width: 92 },
+        { key: "unitName", label: "Unit", width: 138 },
+        { key: "chapterCount", label: "Chapters", width: 62 },
+        { key: "topics", label: "Topics", width: 148 },
+        { key: "subtopics", label: "Subtopics", width: 148 },
+      ].filter((column) => structuredUnitRows.some((row) => isMeaningfulValue(row[column.key as keyof typeof row])));
+
+      if (structuredUnitRows.length > 0 && structuredUnitColumns.length > 0) {
+        drawTable(
+          `Structured Units${exportClasses.length > 1 ? ` - Class ${classIndex + 1}` : ""}`,
+          structuredUnitColumns.map((column) => column.label),
+          structuredUnitRows.map((row) => structuredUnitColumns.map((column) => row[column.key as keyof typeof row] || "")),
+          structuredUnitColumns.map((column) => column.width)
+        );
+      }
+
+      const chapterRows = cls.units.flatMap((unit) =>
+        unit.chapters.map((chapter) => ({
+          unitName: unit.unitName,
+          chapterName: chapter.chapterName,
+          topics: chapter.topics.join("; "),
+          subtopics: chapter.subtopics.join("; "),
+        }))
+      );
+
+      const chapterColumns = [
+        { key: "unitName", label: "Unit", width: 138 },
+        { key: "chapterName", label: "Chapter", width: 160 },
+        { key: "topics", label: "Topics", width: 120 },
+        { key: "subtopics", label: "Subtopics", width: 120 },
+      ].filter((column) => chapterRows.some((row) => isMeaningfulValue(row[column.key as keyof typeof row])));
+
+      if (chapterRows.length > 0 && chapterColumns.length > 0) {
+        drawTable(
+          `Chapters${exportClasses.length > 1 ? ` - Class ${classIndex + 1}` : ""}`,
+          chapterColumns.map((column) => column.label),
+          chapterRows.map((row) => chapterColumns.map((column) => row[column.key as keyof typeof row] || "")),
+          chapterColumns.map((column) => column.width)
+        );
+      }
+
+      const topicSubtopicRows = cls.units.flatMap((unit) => {
+        const chapterRowsForUnit = unit.chapters.flatMap((chapter) => {
+          if (chapter.topics.length > 0) {
+            return chapter.topics.map((topic) => ({
+              unitName: unit.unitName,
+              chapterName: chapter.chapterName,
+              topic,
+              subtopic: "",
+            })).concat(
+              chapter.subtopics.map((subtopic) => ({
+                unitName: unit.unitName,
+                chapterName: chapter.chapterName,
+                topic: "",
+                subtopic,
+              }))
+            );
+          }
+
+          if (chapter.subtopics.length > 0) {
+            return chapter.subtopics.map((subtopic) => ({
+              unitName: unit.unitName,
+              chapterName: chapter.chapterName,
+              topic: "",
+              subtopic,
+            }));
+          }
+
+          return [];
+        });
+
+        if (chapterRowsForUnit.length > 0) {
+          return chapterRowsForUnit;
+        }
+
+        if (unit.topics.length > 0 || unit.subtopics.length > 0) {
+          return unit.topics.map((topic) => ({
+            unitName: unit.unitName,
+            chapterName: "",
+            topic,
+            subtopic: "",
+          })).concat(
+            unit.subtopics.map((subtopic) => ({
+              unitName: unit.unitName,
+              chapterName: "",
+              topic: "",
+              subtopic,
+            }))
+          );
+        }
+
+        return [];
+      });
+
+      const detailColumns = [
+        { key: "unitName", label: "Unit", width: 150 },
+        { key: "chapterName", label: "Chapter", width: 160 },
+        { key: "topic", label: "Topic", width: 110 },
+        { key: "subtopic", label: "Subtopic", width: 110 },
+      ].filter((column) => topicSubtopicRows.some((row) => isMeaningfulValue(row[column.key as keyof typeof row])));
+
+      if (topicSubtopicRows.length > 0 && detailColumns.length > 0) {
+        drawSectionTitle(`Topic And Subtopic Details${exportClasses.length > 1 ? ` - Class ${classIndex + 1}` : ""}`);
+        drawParagraph(
+          topicSubtopicRows.some((row) => isMeaningfulValue(row.topic))
+            ? "Showing the deepest non-empty topic and subtopic mapping available from the extracted hierarchy."
+            : "Topics are not available in this extraction, so only meaningful subtopic rows are shown.",
+          { size: 9.5, color: color.muted, gapAfter: 10 }
+        );
+        drawTable(
+          "",
+          detailColumns.map((column) => column.label),
+          topicSubtopicRows.map((row) => detailColumns.map((column) => row[column.key as keyof typeof row] || "")),
+          detailColumns.map((column) => column.width)
+        );
+      }
+    });
+
+    if (allUnits.length === 0) {
+      drawSectionTitle("No Structured Data Available");
+      drawParagraph(
+        "The extracted curriculum does not currently include enough structured unit, chapter, topic, or subtopic data to render tables in the PDF.",
+        { size: 10.5, color: color.muted }
+      );
+    }
+
+    if (currentPageOps.length) {
+      pages.push(currentPageOps.join("\n"));
+    }
+
+    const objects: string[] = [];
+    const addObject = (value: string) => {
+      objects.push(value);
+      return objects.length;
+    };
+    const catalogObjectNumber = addObject("<< /Type /Catalog /Pages 2 0 R >>");
+    const pagesObjectNumber = addObject("");
+    const fontObjectNumber = addObject("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+    const boldFontObjectNumber = addObject("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
+    const pageObjectNumbers: number[] = [];
+
+    pages.forEach((pageContent) => {
+      const contentObjectNumber = addObject(`<< /Length ${encoder.encode(pageContent).length} >>\nstream\n${pageContent}\nendstream`);
+      const pageObjectNumber = addObject(
+        `<< /Type /Page /Parent ${pagesObjectNumber} 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${fontObjectNumber} 0 R /F2 ${boldFontObjectNumber} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`
+      );
+      pageObjectNumbers.push(pageObjectNumber);
+    });
+
+    objects[pagesObjectNumber - 1] = `<< /Type /Pages /Kids [${pageObjectNumbers.map((num) => `${num} 0 R`).join(" ")}] /Count ${pageObjectNumbers.length} >>`;
+
+    let pdf = "%PDF-1.4\n";
+    const offsets: number[] = [0];
+    objects.forEach((objectValue, index) => {
+      offsets.push(encoder.encode(pdf).length);
+      pdf += `${index + 1} 0 obj\n${objectValue}\nendobj\n`;
+    });
+    const xrefOffset = encoder.encode(pdf).length;
+    pdf += `xref\n0 ${objects.length + 1}\n`;
+    pdf += "0000000000 65535 f \n";
+    offsets.slice(1).forEach((offset) => {
+      pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+    });
+    pdf += `trailer\n<< /Size ${objects.length + 1} /Root ${catalogObjectNumber} 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+    return new Blob([pdf], { type: "application/pdf" });
+  };
+
+  const handleDownloadCurriculumPdf = () => {
+    if (!extractedData) {
+      setErrorHeader("Extract a curriculum first before downloading the curriculum PDF.");
+      return;
+    }
+
+    const subjectLabel = extractedData.subject || "curriculum";
+    const gradeLabel = extractedData.gradeLevel || "grade";
+    const fileNameBase = [slugifyFileNamePart(subjectLabel), slugifyFileNamePart(gradeLabel), "extracted-curriculum-table"].join("-");
+    triggerBlobDownload(buildCurriculumPdfBlob(extractedData), `${fileNameBase}.pdf`);
   };
 
   const buildAssessmentQuestionPaperText = (session: SessionPlan) => {
@@ -525,7 +2868,8 @@ export default function App() {
       setErrorHeader("Generate the assessment first before downloading the question paper.");
       return;
     }
-    triggerDownload(buildAssessmentQuestionPaperText(session), `${buildAssessmentExportBaseName(session)}-question-paper.txt`, "text/plain;charset=utf-8");
+    const text = buildAssessmentQuestionPaperText(session);
+    triggerBlobDownload(buildSimplePdfBlob(`${session.title} Question Paper`, text), `${buildAssessmentExportBaseName(session)}-question-paper.pdf`);
   };
 
   const handleDownloadAssessmentAnswerKey = (session: SessionPlan) => {
@@ -533,7 +2877,8 @@ export default function App() {
       setErrorHeader("Generate the assessment first before downloading the answer key.");
       return;
     }
-    triggerDownload(buildAssessmentAnswerKeyText(session), `${buildAssessmentExportBaseName(session)}-answer-key.txt`, "text/plain;charset=utf-8");
+    const text = buildAssessmentAnswerKeyText(session);
+    triggerBlobDownload(buildSimplePdfBlob(`${session.title} Answer Key`, text), `${buildAssessmentExportBaseName(session)}-answer-key.pdf`);
   };
 
   const handleDownloadAssessmentRubrics = (session: SessionPlan) => {
@@ -541,7 +2886,8 @@ export default function App() {
       setErrorHeader("Generate the assessment first before downloading the rubrics.");
       return;
     }
-    triggerDownload(buildAssessmentRubricsText(session), `${buildAssessmentExportBaseName(session)}-rubrics.txt`, "text/plain;charset=utf-8");
+    const text = buildAssessmentRubricsText(session);
+    triggerBlobDownload(buildSimplePdfBlob(`${session.title} Rubrics`, text), `${buildAssessmentExportBaseName(session)}-rubrics.pdf`);
   };
 
   const handleDownloadAssessmentJson = (session: SessionPlan) => {
@@ -556,6 +2902,50 @@ export default function App() {
       assessment: session.assessment,
     };
     triggerDownload(JSON.stringify(payload, null, 2), `${buildAssessmentExportBaseName(session)}-assessment-bundle.json`, "application/json;charset=utf-8");
+  };
+
+  const handleDownloadTeacherNotesPdf = async (session: SessionPlan) => {
+    if (!session.teacherLessonNotes) {
+      setErrorHeader("Generate the teacher notes first before downloading the teacher notes PDF.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Rendering professional teacher notes PDF...");
+
+    try {
+      const pdfBlob = await buildProfessionalNotesPdfBlob(session, "teacher");
+      triggerBlobDownload(pdfBlob, `${buildSessionExportBaseName(session)}-teacher-notes.pdf`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to build the teacher notes PDF.";
+      setErrorHeader(message);
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
+    }
+  };
+
+  const handleDownloadStudentNotesPdf = async (session: SessionPlan) => {
+    if (!session.studentLessonNotes) {
+      setErrorHeader("Generate the student notes first before downloading the student notes PDF.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Rendering Cornell-style student notes PDF...");
+
+    try {
+      const pdfBlob = await buildStudentCornellNotesPdfBlob(session);
+      triggerBlobDownload(pdfBlob, `${buildSessionExportBaseName(session)}-student-notes.pdf`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to build the student notes PDF.";
+      setErrorHeader(message);
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
+    }
   };
 
   const handleExportAllGeneratedDocuments = () => {
@@ -702,8 +3092,9 @@ export default function App() {
         .slice(0, 5)
         .map((item) => `<li>${escapeHtml(item)}</li>`)
         .join("");
-      const visualMarkup = primaryAsset?.previewUrl
-        ? `<img src="${escapeHtml(primaryAsset.previewUrl)}" alt="${escapeHtml(primaryAsset.altText || primaryAsset.purpose || "Slide visual")}" />`
+      const visualSrc = primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "";
+      const visualMarkup = visualSrc
+        ? `<img src="${escapeHtml(visualSrc)}" alt="${escapeHtml(primaryAsset?.altText || primaryAsset?.purpose || "Slide visual")}" />`
         : slide.svgDiagram?.svgCode?.trim().startsWith("<svg")
         ? `<div class="svg-wrap">${slide.svgDiagram.svgCode}</div>`
         : `
@@ -814,6 +3205,44 @@ export default function App() {
   </body>
 </html>`);
     exportWindow.document.close();
+  };
+
+  const handleExportPptx = async (session: SessionPlan) => {
+    const ppt = session.materials?.ppt;
+    if (!ppt || getPptSlides(ppt).length === 0) {
+      setErrorHeader("Generate PPT slides first before exporting the editable PPTX.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Building editable PowerPoint deck...");
+
+    try {
+      const response = await fetch("/api/export-pptx", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ppt,
+          sessionTitle: session.title,
+          sessionNumber: session.sessionNumber,
+          subject: academicConfigDraft.subject,
+          gradeLevel: academicConfigDraft.className,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(await readErrorFromResponse(response, "Failed to export PPTX."));
+      }
+
+      const blob = await response.blob();
+      triggerBlobDownload(blob, `${buildSessionExportBaseName(session)}-slides.pptx`);
+    } catch (error: any) {
+      setErrorHeader(error?.message || "Failed to export PPTX.");
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
+    }
   };
 
   const buildSessionConfigFromWorkspace = (workspace?: PlanningWorkspace | null): SessionConfig => ({
@@ -936,6 +3365,32 @@ export default function App() {
         marksEach: Number(item.marksEach || 0),
       })),
     });
+
+  const getPptGenerationOptions = (sessionNum: number, session?: SessionPlan | null): SessionPptGenerationOptions => ({
+    pptTemplateId:
+      pptGenerationOptionsBySession[sessionNum]?.pptTemplateId ||
+      normalizePptTemplateId(session?.materials?.ppt?.templateId) ||
+      "academic-split",
+    pptThemeId:
+      pptGenerationOptionsBySession[sessionNum]?.pptThemeId ||
+      session?.materials?.ppt?.themeId ||
+      "cbse-academic-blue",
+  });
+
+  const updatePptGenerationOption = (
+    sessionNum: number,
+    field: keyof SessionPptGenerationOptions,
+    value: string,
+  ) => {
+    setPptGenerationOptionsBySession((prev) => ({
+      ...prev,
+      [sessionNum]: {
+        ...getPptGenerationOptions(sessionNum, generatedSessions[sessionNum]),
+        ...(prev[sessionNum] || {}),
+        [field]: value,
+      },
+    }));
+  };
 
   const hasAssessmentSourceContent = (session: SessionPlan | undefined | null) =>
     Boolean(
@@ -2479,6 +4934,7 @@ export default function App() {
 
     const previousOutlineItem = sessionsOutline.find((item) => item.sessionNumber === sessionNum - 1);
     const previousGeneratedSession = previousOutlineItem ? generatedSessions[previousOutlineItem.sessionNumber] : null;
+    const pptGenerationOptions = getPptGenerationOptions(sessionNum, generatedSessions[sessionNum]);
     const previousSessionContext = previousGeneratedSession
       ? `${previousGeneratedSession.title || `Session ${previousOutlineItem?.sessionNumber}`}: ${
           previousGeneratedSession.teacherLessonNotes?.sessionSummary?.join(" ") ||
@@ -2512,6 +4968,7 @@ export default function App() {
           learningOutcomes: outlineItem.learningOutcomes || [],
           previousSessionContext,
           selectedSections,
+          pptGenerationOptions,
           assessmentCustomization: selectedSections.includes("assessment")
             ? buildAssessmentCustomizationPayload(sessionNum)
             : undefined,
@@ -4130,6 +6587,13 @@ export default function App() {
 
                         <div className="flex flex-wrap items-center gap-2">
                           <button
+                            onClick={handleDownloadCurriculumPdf}
+                            className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                            Download Curriculum PDF
+                          </button>
+                          <button
                             onClick={handleApproveCurriculumWorkspace}
                             disabled={!currentWorkspaceId || curriculumApproved}
                             className={`inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-bold transition ${
@@ -5237,325 +7701,23 @@ export default function App() {
                                 "Teacher Notes",
                                 "Generate or refresh the teacher-facing session notes for this lesson."
                               )}
-                              {session.teacherLessonNotes && (
-                                <div className="p-5 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center text-slate-700">
-                                      <BookOpen className="w-4 h-4" />
-                                    </div>
-                                    <h4 className="font-display font-extrabold text-slate-800 text-sm">Teacher Lesson Notes</h4>
+                              {session.teacherLessonNotes ? (
+                                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#36ADAA]/20 bg-[#36ADAA]/6 px-4 py-3">
+                                  <div>
+                                    <p className="text-sm font-black text-slate-800">Teacher Notes PDF</p>
+                                    <p className="text-xs text-slate-500">Download a polished teaching brief with classroom-ready formatting.</p>
                                   </div>
-                                  {session.teacherLessonNotes.sessionOverview && (
-                                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Overview</div>
-                                      <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(session.teacherLessonNotes.sessionOverview)}</p>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.learningOutcomes?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Teacher-Facing Learning Outcomes</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.learningOutcomes.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.teachingPlan?.length && (
-                                    <div className="space-y-2">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Teaching Plan</div>
-                                      <div className="grid gap-2 md:grid-cols-2">
-                                        {session.teacherLessonNotes.teachingPlan.map((item, idx) => (
-                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-1">
-                                            <div className="flex items-center justify-between gap-2">
-                                              <span className="font-semibold text-slate-800">{formatRenderableText(item.topic)}</span>
-                                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">{formatRenderableText(item.minutes)} min</span>
-                                            </div>
-                                            {item.teachingStrategy && <div className="text-slate-600">{formatRenderableText(item.teachingStrategy)}</div>}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.prerequisiteKnowledge?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Prerequisite Knowledge</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.prerequisiteKnowledge.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.previousSessionRecap?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Previous Session Recap</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.previousSessionRecap.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.teachingSequence?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Teaching Sequence</div>
-                                      <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
-                                        {session.teacherLessonNotes.teachingSequence.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ol>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.guidedPractice?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Guided Practice</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.guidedPractice.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.lessonBlocks?.length && (
-                                    <div className="space-y-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Detailed Lesson Blocks</div>
-                                      {session.teacherLessonNotes.lessonBlocks.map((block, idx) => (
-                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-4 space-y-3">
-                                          <div className="flex items-center justify-between gap-2">
-                                            <div className="font-bold text-sm text-slate-800">{formatRenderableText(block.title)}</div>
-                                            {block.durationMinutes != null && (
-                                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">
-                                                {formatRenderableText(block.durationMinutes)} min
-                                              </span>
-                                            )}
-                                          </div>
-                                          {!!block.teacherPrompt?.length && (
-                                            <div>
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Teacher Prompt</div>
-                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                                {block.teacherPrompt.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!block.explanation?.length && (
-                                            <div>
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Explanation</div>
-                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                                {block.explanation.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!block.examples?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-semibold text-slate-700">Examples:</span> {block.examples.map((item) => formatRenderableText(item)).join("; ")}
-                                            </div>
-                                          )}
-                                          {!!block.boardWork?.length && (
-                                            <div className="rounded-xl border border-amber-100 bg-amber-50 px-3 py-2">
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">Board Work</div>
-                                              <ul className="text-xs text-amber-900 list-disc list-inside space-y-1">
-                                                {block.boardWork.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!block.checkUnderstanding?.length && (
-                                            <div>
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Check Understanding</div>
-                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                                {block.checkUnderstanding.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!block.expectedAnswers?.length && (
-                                            <div className="rounded-xl border border-emerald-100 bg-emerald-50 px-3 py-2">
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Expected Answers</div>
-                                              <ul className="text-xs text-emerald-900 list-disc list-inside space-y-1">
-                                                {block.expectedAnswers.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!block.activity?.length && (
-                                            <div>
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Activity</div>
-                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                                {block.activity.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.lessonPurpose?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Lesson Purpose</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.lessonPurpose.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.conceptFlow?.length && (
-                                    <div className="space-y-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Concept Flow</div>
-                                      {session.teacherLessonNotes.conceptFlow.map((concept, idx) => (
-                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 space-y-2">
-                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(concept.conceptName)}</div>
-                                          {concept.definition && <p className="text-xs text-slate-600"><span className="font-semibold text-slate-700">Definition:</span> {formatRenderableText(concept.definition)}</p>}
-                                          {concept.coreExplanation && <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(concept.coreExplanation)}</p>}
-                                          {!!concept.teacherMoves?.length && (
-                                            <div>
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Teacher Moves</div>
-                                              <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                                {concept.teacherMoves.map((item, moveIdx) => <li key={moveIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!concept.examples?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-semibold text-slate-700">Examples:</span> {concept.examples.map((item) => formatRenderableText(item)).join("; ")}
-                                            </div>
-                                          )}
-                                          {!!concept.visuals?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-semibold text-slate-700">Visuals:</span> {concept.visuals.map((item) => formatRenderableText(item)).join("; ")}
-                                            </div>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.classroomQuestions?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Classroom Questions</div>
-                                      <div className="space-y-2">
-                                        {session.teacherLessonNotes.classroomQuestions.map((question, idx) => (
-                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-1">
-                                            <div className="font-semibold text-slate-800">{formatRenderableText(question.question)}</div>
-                                            {question.level && <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{formatRenderableText(question.level)}</div>}
-                                            {question.expectedResponse && <div><span className="font-semibold text-slate-700">Expected response:</span> {formatRenderableText(question.expectedResponse)}</div>}
-                                            {!!question.answerPoints?.length && (
-                                              <ul className="list-disc list-inside space-y-1 text-slate-600">
-                                                {question.answerPoints.map((item, pointIdx) => <li key={pointIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            )}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.timePlan?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Time Plan</div>
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                        {session.teacherLessonNotes.timePlan.map((block, idx) => (
-                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700">
-                                            <div className="flex items-center justify-between gap-2">
-                                              <span className="font-semibold text-slate-800">{formatRenderableText(block.segment)}</span>
-                                              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-bold text-slate-600">{formatRenderableText(block.minutes)} min</span>
-                                            </div>
-                                            {block.purpose && <div className="mt-1 text-slate-600">{formatRenderableText(block.purpose)}</div>}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.formativeChecks?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Formative Checks</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.formativeChecks.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.commonMisconceptionsDetailed?.length && (
-                                    <div className="space-y-2">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Misconceptions and Corrections</div>
-                                      <div className="space-y-2">
-                                        {session.teacherLessonNotes.commonMisconceptionsDetailed.map((item, idx) => (
-                                          <div key={idx} className="rounded-2xl border border-rose-100 bg-rose-50 px-4 py-3 text-xs space-y-1">
-                                            <div className="font-semibold text-rose-900">{formatRenderableText(item.misconception)}</div>
-                                            <div className="text-rose-800"><span className="font-bold">Correction:</span> {formatRenderableText(item.correction)}</div>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.assessmentQuestions?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Assessment Questions</div>
-                                      <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
-                                        {session.teacherLessonNotes.assessmentQuestions.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ol>
-                                    </div>
-                                  )}
-                                  {(!!session.teacherLessonNotes.differentiation?.slowLearners?.length || !!session.teacherLessonNotes.differentiation?.averageLearners?.length || !!session.teacherLessonNotes.differentiation?.advancedLearners?.length) && (
-                                    <div className="space-y-2">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Differentiation</div>
-                                      <div className="grid gap-2 md:grid-cols-3">
-                                        {!!session.teacherLessonNotes.differentiation?.slowLearners?.length && (
-                                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Slow Learners</div>
-                                            <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                              {session.teacherLessonNotes.differentiation.slowLearners.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                            </ul>
-                                          </div>
-                                        )}
-                                        {!!session.teacherLessonNotes.differentiation?.averageLearners?.length && (
-                                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Average Learners</div>
-                                            <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                              {session.teacherLessonNotes.differentiation.averageLearners.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                            </ul>
-                                          </div>
-                                        )}
-                                        {!!session.teacherLessonNotes.differentiation?.advancedLearners?.length && (
-                                          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Advanced Learners</div>
-                                            <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                              {session.teacherLessonNotes.differentiation.advancedLearners.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                            </ul>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.teacherTips?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Teacher Tips</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.teacherTips.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.blackboardSummary?.length && (
-                                    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Blackboard Summary</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.blackboardSummary.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.sessionSummary?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Summary</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.sessionSummary.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.endOfClassRecap?.length && (
-                                    <div className="space-y-2">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">End-of-Class Recap</div>
-                                      <div className="space-y-2">
-                                        {session.teacherLessonNotes.endOfClassRecap.map((item, idx) => (
-                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-1">
-                                            <div className="font-semibold text-slate-800">{formatRenderableText(item.prompt)}</div>
-                                            {item.expectedAnswer && <div><span className="font-bold text-slate-700">Expected answer:</span> {formatRenderableText(item.expectedAnswer)}</div>}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {!!session.teacherLessonNotes.nextSessionBridge?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Next Session Bridge</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.teacherLessonNotes.nextSessionBridge.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
+                                  <button
+                                    onClick={() => void handleDownloadTeacherNotesPdf(session)}
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#2B3437] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#2B3437]/90"
+                                  >
+                                    <Download className="w-3.5 h-3.5" />
+                                    Download Teacher PDF
+                                  </button>
                                 </div>
+                              ) : null}
+                              {session.teacherLessonNotes && (
+                                renderTeacherNotesPanel(session.teacherLessonNotes)
                               )}
 
                               {/* Learning Outcomds if active */}
@@ -5681,290 +7843,22 @@ export default function App() {
                                 "Generate or refresh the student-facing notes for this session."
                               )}
                               {session.studentLessonNotes ? (
-                                <div className="p-5 bg-[#9FCDD2]/10 border border-[#9FCDD2]/35 rounded-3xl space-y-4">
-                                  <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-lg bg-[#9FCDD2]/30 flex items-center justify-center text-[#2B3437]">
-                                      <GraduationCap className="w-4 h-4" />
-                                    </div>
-                                    <h4 className="font-display font-extrabold text-slate-800 text-sm">Student Lesson Notes</h4>
+                                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#1F3B4D]/15 bg-[#1F3B4D]/[0.04] px-4 py-3">
+                                  <div>
+                                    <p className="text-sm font-black text-slate-800">Student Notes PDF</p>
+                                    <p className="text-xs text-slate-500">Download a study handout with refined visuals, summaries, and image placement.</p>
                                   </div>
-                                  {session.studentLessonNotes.title && (
-                                    <div className="font-bold text-sm text-slate-800">{formatRenderableText(session.studentLessonNotes.title)}</div>
-                                  )}
-                                  {session.studentLessonNotes.sessionOverview && (
-                                    <div className="rounded-2xl border border-[#9FCDD2]/40 bg-white px-4 py-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Session Overview</div>
-                                      <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(session.studentLessonNotes.sessionOverview)}</p>
-                                    </div>
-                                  )}
-                                  {session.studentLessonNotes.introduction && (
-                                    <p className="text-xs text-slate-700 leading-relaxed">{session.studentLessonNotes.introduction}</p>
-                                  )}
-                                  {!!session.studentLessonNotes.learningObjectives?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Learning Objectives</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.learningObjectives.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.quickRecall?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Recall</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.quickRecall.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.easyToRemember?.length && (
-                                    <div className="rounded-2xl border border-sky-100 bg-sky-50 px-4 py-3">
-                                      <div className="text-[10px] font-extrabold text-sky-700 uppercase tracking-widest mb-2">Easy to Remember</div>
-                                      <ul className="text-xs text-sky-900 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.easyToRemember.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.sections?.length && (
-                                    <div className="space-y-3">
-                                      {session.studentLessonNotes.sections.map((section, idx) => (
-                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 space-y-2">
-                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(section.heading)}</div>
-                                          <p className="text-xs text-slate-700 leading-relaxed">{formatRenderableText(section.explanation)}</p>
-                                          {section.whyItMatters && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Why it matters:</span> {formatRenderableText(section.whyItMatters)}
-                                            </div>
-                                          )}
-                                          {section.detailedExplanation && (
-                                            <p className="text-xs text-slate-600 leading-relaxed">{formatRenderableText(section.detailedExplanation)}</p>
-                                          )}
-                                          {!!section.keyPoints?.length && (
-                                            <ul className="text-xs text-slate-600 list-disc list-inside space-y-1">
-                                              {section.keyPoints.map((point, pointIdx) => <li key={pointIdx}>{formatRenderableText(point)}</li>)}
-                                            </ul>
-                                          )}
-                                          {!!section.examples?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Examples:</span> {section.examples.map((example) => formatRenderableText(example)).filter(Boolean).join("; ")}
-                                            </div>
-                                          )}
-                                          {!!section.terminology?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Terminology:</span> {section.terminology.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
-                                            </div>
-                                          )}
-                                          {!!section.visualSupport?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Visual support:</span> {section.visualSupport.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
-                                            </div>
-                                          )}
-                                          {!!section.importantNotes?.length && (
-                                            <div className="rounded-xl bg-amber-50 border border-amber-100 px-3 py-2">
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-amber-700 mb-1">Important Notes</div>
-                                              <ul className="text-xs text-amber-900 list-disc list-inside space-y-1">
-                                                {section.importantNotes.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!section.memoryTechniques?.length && (
-                                            <div className="rounded-xl bg-sky-50 border border-sky-100 px-3 py-2">
-                                              <div className="text-[10px] font-bold uppercase tracking-wider text-sky-700 mb-1">Memory Techniques</div>
-                                              <ul className="text-xs text-sky-900 list-disc list-inside space-y-1">
-                                                {section.memoryTechniques.map((item, itemIdx) => <li key={itemIdx}>{formatRenderableText(item)}</li>)}
-                                              </ul>
-                                            </div>
-                                          )}
-                                          {!!section.conceptSummary?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Concept summary:</span> {section.conceptSummary.map((item) => formatRenderableText(item)).filter(Boolean).join("; ")}
-                                            </div>
-                                          )}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.comparisonTables?.length && (
-                                    <div className="space-y-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Comparison Tables</div>
-                                      {session.studentLessonNotes.comparisonTables.map((table, idx) => (
-                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
-                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(table.title)}</div>
-                                          <div className="overflow-x-auto">
-                                            <table className="min-w-full text-xs text-slate-700">
-                                              {table.headers?.length ? (
-                                                <thead>
-                                                  <tr className="bg-slate-50 text-left">
-                                                    {table.headers.map((header, headerIdx) => (
-                                                      <th key={headerIdx} className="px-3 py-2 font-bold text-slate-700">{formatRenderableText(header)}</th>
-                                                    ))}
-                                                  </tr>
-                                                </thead>
-                                              ) : null}
-                                              <tbody>
-                                                {(table.rows || []).map((row, rowIdx) => (
-                                                  <tr key={rowIdx} className="border-t border-slate-100">
-                                                    {row.map((cell, cellIdx) => (
-                                                      <td key={cellIdx} className="px-3 py-2 align-top">{formatRenderableText(cell)}</td>
-                                                    ))}
-                                                  </tr>
-                                                ))}
-                                              </tbody>
-                                            </table>
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.definitions?.length && (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                      {session.studentLessonNotes.definitions.map((definition, idx) => (
-                                        <div key={idx} className="bg-white p-3 rounded-2xl border border-slate-100">
-                                          <div className="text-xs font-extrabold text-slate-800">{formatRenderableText(definition.term)}</div>
-                                          <div className="text-xs text-slate-600 mt-1">{formatRenderableText(definition.definition)}</div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.workedExamples?.length && (
-                                    <div className="space-y-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Worked Examples</div>
-                                      {session.studentLessonNotes.workedExamples.map((example, idx) => (
-                                        <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-100 space-y-2">
-                                          <div className="font-bold text-sm text-slate-800">{formatRenderableText(example.title)}</div>
-                                          {!!example.steps?.length && (
-                                            <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
-                                              {example.steps.map((step, stepIdx) => <li key={stepIdx}>{formatRenderableText(step)}</li>)}
-                                            </ol>
-                                          )}
-                                          {example.explanation && <p className="text-xs text-slate-600 leading-relaxed">{formatRenderableText(example.explanation)}</p>}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {session.studentLessonNotes.revisionSection && (
-                                    <div className="rounded-2xl border border-slate-100 bg-white p-4 space-y-2">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Revision Section</div>
-                                      {!!session.studentLessonNotes.revisionSection.definitions?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Definitions:</span> {session.studentLessonNotes.revisionSection.definitions.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.formulas?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Formulas:</span> {session.studentLessonNotes.revisionSection.formulas.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.facts?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Facts:</span> {session.studentLessonNotes.revisionSection.facts.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.keywords?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Keywords:</span> {session.studentLessonNotes.revisionSection.keywords.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.conceptMap?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Concept map:</span> {session.studentLessonNotes.revisionSection.conceptMap.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                      {!!session.studentLessonNotes.revisionSection.quickRecap?.length && (
-                                        <div className="text-xs text-slate-600"><span className="font-bold text-slate-700">Quick recap:</span> {session.studentLessonNotes.revisionSection.quickRecap.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                      )}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.quickSummary?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Summary</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.quickSummary.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.keyTerms?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Key Terms</div>
-                                      <div className="flex flex-wrap gap-2">
-                                        {session.studentLessonNotes.keyTerms.map((item, idx) => (
-                                          <span key={idx} className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700 border border-slate-200">
-                                            {formatRenderableText(item)}
-                                          </span>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.fillInTheBlanks?.length && (
-                                    <div className="space-y-2">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Fill in the Blanks</div>
-                                      <div className="space-y-2">
-                                        {session.studentLessonNotes.fillInTheBlanks.map((item, idx) => (
-                                          <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700">
-                                            <div>{formatRenderableText(item.prompt)}</div>
-                                            {item.answer && <div className="mt-1 text-slate-500"><span className="font-bold text-slate-700">Answer:</span> {formatRenderableText(item.answer)}</div>}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.mcqQuestions?.length && (
-                                    <div className="space-y-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">MCQs</div>
-                                      {session.studentLessonNotes.mcqQuestions.map((item, idx) => (
-                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-2">
-                                          <div className="font-semibold text-slate-800">{idx + 1}. {formatRenderableText(item.question)}</div>
-                                          {!!item.options?.length && (
-                                            <ul className="list-disc list-inside space-y-1 text-slate-600">
-                                              {item.options.map((option, optionIdx) => <li key={optionIdx}>{formatRenderableText(option)}</li>)}
-                                            </ul>
-                                          )}
-                                          {item.answer && <div className="text-slate-500"><span className="font-bold text-slate-700">Answer:</span> {formatRenderableText(item.answer)}</div>}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.veryShortAnswerQuestions?.length && (
-                                    <div className="space-y-3">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Very Short Answer Questions</div>
-                                      {session.studentLessonNotes.veryShortAnswerQuestions.map((item, idx) => (
-                                        <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-700 space-y-1">
-                                          <div className="font-semibold text-slate-800">{idx + 1}. {formatRenderableText(item.question)}</div>
-                                          {item.answer && <div className="text-slate-500"><span className="font-bold text-slate-700">Answer:</span> {formatRenderableText(item.answer)}</div>}
-                                        </div>
-                                      ))}
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.selfCheckQuestions?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Self-Check Questions</div>
-                                      <ol className="text-xs text-slate-700 list-decimal list-inside space-y-1">
-                                        {session.studentLessonNotes.selfCheckQuestions.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ol>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.didYouKnow?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Did You Know?</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.didYouKnow.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.summary?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Summary</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.summary.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.quickRevision?.length && (
-                                    <div>
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Revision</div>
-                                      <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.quickRevision.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.studentLessonNotes.rememberPoints?.length && (
-                                    <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3">
-                                      <div className="text-[10px] font-extrabold text-emerald-700 uppercase tracking-widest mb-2">Remember</div>
-                                      <ul className="text-xs text-emerald-900 list-disc list-inside space-y-1">
-                                        {session.studentLessonNotes.rememberPoints.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
+                                  <button
+                                    onClick={() => void handleDownloadStudentNotesPdf(session)}
+                                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#1F3B4D] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#1F3B4D]/90"
+                                  >
+                                    <Download className="w-3.5 h-3.5" />
+                                    Download Student PDF
+                                  </button>
                                 </div>
+                              ) : null}
+                              {session.studentLessonNotes ? (
+                                renderStudentNotesPanel(session.studentLessonNotes)
                               ) : (
                                 <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-xs text-slate-500">
                                   Student lesson notes have not been generated for this session yet.
@@ -5981,7 +7875,13 @@ export default function App() {
                                 activeSessionNumber,
                                 outlineItem,
                                 "Materials",
-                                "Generate or refresh the PPT, PDF, and DOC support materials for this session."
+                                "Generate or refresh the PPT, PDF, and DOC support materials for this session.",
+                                {
+                                  dirty:
+                                    getPptGenerationOptions(activeSessionNumber, session).pptTemplateId !== normalizePptTemplateId(session.materials?.ppt?.templateId) ||
+                                    getPptGenerationOptions(activeSessionNumber, session).pptThemeId !== (session.materials?.ppt?.themeId || "cbse-academic-blue"),
+                                  buttonLabel: session.materials?.ppt ? "Regenerate Materials" : "Generate Materials",
+                                }
                               )}
                               
                               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-3 border-b border-slate-100">
@@ -6017,278 +7917,382 @@ export default function App() {
                               </div>
 
                               {/* PPT Template Material */}
-                              {activeMaterialTab === "ppt" && session.materials?.ppt && (
-                                <div className="space-y-4">
-                                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                    <div className="p-3 bg-orange-50 border border-[#DE8431]/20 rounded-xl flex items-center gap-2.5 text-xs text-[#DE8431] flex-1">
-                                      <Info className="w-4 h-4 shrink-0" />
-                                      <span>Presentation Outline: Real presentation slides generated to map exactly to lessons.</span>
-                                    </div>
-                                    <button
-                                      onClick={() => handleExportPptSlidesPdf(session.materials?.ppt)}
-                                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
-                                    >
-                                      <Download className="w-3.5 h-3.5" />
-                                      Export Slides PDF
-                                    </button>
-                                  </div>
+                              {activeMaterialTab === "ppt" && (() => {
+                                const ppt = session.materials?.ppt;
+                                const pptSettings = getPptGenerationOptions(activeSessionNumber, session);
+                                const resolvedTemplateId = normalizePptTemplateId(ppt?.templateId || pptSettings.pptTemplateId);
+                                const selectedTemplate = PPT_TEMPLATE_OPTIONS.find((item) => item.id === normalizePptTemplateId(pptSettings.pptTemplateId)) || PPT_TEMPLATE_OPTIONS[1];
+                                const selectedTheme = PPT_THEME_OPTIONS.find((item) => item.id === pptSettings.pptThemeId) || PPT_THEME_OPTIONS[0];
+                                const themePalette = getPptThemePalette(ppt);
+                                const slides = getPptSlides(ppt);
 
-                                  <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
-                                    <h4 className="font-display font-black text-slate-800 text-base">
-                                      {getPptTitle(session.materials.ppt)}
-                                    </h4>
-                                    <div className="grid gap-2 md:grid-cols-2 text-xs text-slate-600">
-                                      {session.materials.ppt.templateName && (
-                                        <div><span className="font-bold text-slate-700">Template:</span> {formatRenderableText(session.materials.ppt.templateName)}</div>
-                                      )}
-                                      {session.materials.ppt.themeId && (
-                                        <div><span className="font-bold text-slate-700">Theme preset:</span> {formatRenderableText(session.materials.ppt.themeId)}</div>
-                                      )}
-                                    </div>
-                                    {session.materials.ppt.presentationGoal && (
-                                      <p className="text-xs text-slate-600 leading-relaxed">
-                                        <span className="font-bold text-slate-700">Goal:</span> {formatRenderableText(session.materials.ppt.presentationGoal)}
-                                      </p>
-                                    )}
-                                    <div className="grid gap-2 md:grid-cols-2 text-xs text-slate-600">
-                                      {session.materials.ppt.audience && (
-                                        <div><span className="font-bold text-slate-700">Audience:</span> {formatRenderableText(session.materials.ppt.audience)}</div>
-                                      )}
-                                      {session.materials.ppt.theme && (
-                                        <div><span className="font-bold text-slate-700">Theme:</span> {formatRenderableText(session.materials.ppt.theme)}</div>
-                                      )}
-                                    </div>
-                                    {getPptThemeSummary(session.materials.ppt) && (
-                                      <div className="text-xs text-slate-600">
-                                        <span className="font-bold text-slate-700">Theme details:</span> {getPptThemeSummary(session.materials.ppt)}
+                                return (
+                                  <div className="space-y-4">
+                                    <div className="rounded-3xl border border-slate-200 bg-white p-5 space-y-4">
+                                      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                                        <div>
+                                          <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">PPT Settings</div>
+                                          <h4 className="mt-1 font-display font-black text-slate-800 text-base">Teacher Deck Configuration</h4>
+                                          <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                                            Choose a classroom-safe template and theme before generating the CBSE-inspired teaching deck.
+                                          </p>
+                                        </div>
+                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">
+                                          <div className="font-bold text-slate-700">Visual strategy</div>
+                                          <div className="mt-1">SVG/diagram first for explainers, and your Ollama image model for every picture-based visual.</div>
+                                        </div>
                                       </div>
-                                    )}
-                                    {!!session.materials.ppt.coverageSummary?.learningOutcomesCovered?.length && (
-                                      <div className="text-xs text-slate-600">
-                                        <span className="font-bold text-slate-700">LO coverage:</span> {session.materials.ppt.coverageSummary.learningOutcomesCovered.map((item) => formatRenderableText(item)).join("; ")}
-                                      </div>
-                                    )}
-                                    {!!session.materials.ppt.coverageSummary?.topicsCovered?.length && (
-                                      <div className="text-xs text-slate-600">
-                                        <span className="font-bold text-slate-700">Topics:</span> {session.materials.ppt.coverageSummary.topicsCovered.map((item) => formatRenderableText(item)).join("; ")}
-                                      </div>
-                                    )}
-                                  </div>
 
-                                  <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
-                                    {getPptSlides(session.materials.ppt).map((slide, sIdx) => {
-                                      const accent = getPptAccentStyle(sIdx);
-                                      const primaryAsset = getPrimaryPptAsset(slide);
-                                      const hasSvgPreview = Boolean(slide.svgDiagram?.svgCode && slide.svgDiagram.svgCode.trim().startsWith("<svg"));
-                                      
-                                      return (
-                                        <div key={sIdx} className="space-y-3">
-                                          <div className="rounded-[28px] border border-slate-200 bg-[#eef4f7] p-4 shadow-sm">
-                                            <div className="mb-3 flex items-center justify-between px-1">
-                                              <div className="flex items-center gap-2">
-                                                <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-black text-white ${accent.bar}`}>
-                                                  {slide.slideNumber || sIdx + 1}
-                                                </span>
-                                                <div>
-                                                  <div className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
-                                                    {formatRenderableText(slide.templateSlideTitle || "PowerPoint Slide Preview")}
+                                      <div className="grid gap-4 xl:grid-cols-2">
+                                        <div className="space-y-3">
+                                          <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Template</div>
+                                          <div className="grid gap-3">
+                                            {PPT_TEMPLATE_OPTIONS.map((option) => {
+                                              const active = pptSettings.pptTemplateId === option.id;
+                                              return (
+                                                <button
+                                                  key={option.id}
+                                                  type="button"
+                                                  onClick={() => updatePptGenerationOption(activeSessionNumber, "pptTemplateId", option.id)}
+                                                  className={`rounded-2xl border px-4 py-3 text-left transition ${active ? "border-[#36ADAA] bg-[#36ADAA]/8" : "border-slate-200 bg-slate-50 hover:border-slate-300"}`}
+                                                >
+                                                  <div className="text-sm font-black text-slate-800">{option.name}</div>
+                                                  <div className="mt-1 text-xs leading-relaxed text-slate-500">{option.description}</div>
+                                                </button>
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                          <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Theme</div>
+                                          <div className="grid gap-3">
+                                            {PPT_THEME_OPTIONS.map((option) => {
+                                              const active = pptSettings.pptThemeId === option.id;
+                                              return (
+                                                <button
+                                                  key={option.id}
+                                                  type="button"
+                                                  onClick={() => updatePptGenerationOption(activeSessionNumber, "pptThemeId", option.id)}
+                                                  className={`rounded-2xl border px-4 py-3 text-left transition ${active ? "border-[#36ADAA] bg-[#36ADAA]/8" : "border-slate-200 bg-slate-50 hover:border-slate-300"}`}
+                                                >
+                                                  <div className="flex items-center gap-2">
+                                                    <span className="inline-flex h-4 w-4 rounded-full border border-white shadow-sm" style={{ backgroundColor: option.colors.primary }} />
+                                                    <span className="inline-flex h-4 w-4 rounded-full border border-white shadow-sm" style={{ backgroundColor: option.colors.accent }} />
+                                                    <span className="inline-flex h-4 w-4 rounded-full border border-white shadow-sm" style={{ backgroundColor: option.colors.soft }} />
                                                   </div>
-                                                  <div className="text-sm font-display font-black text-slate-800">
-                                                    {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
+                                                  <div className="mt-2 text-sm font-black text-slate-800">{option.name}</div>
+                                                  <div className="mt-1 text-xs leading-relaxed text-slate-500">{option.description}</div>
+                                                </button>
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {ppt ? (
+                                      <>
+                                        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                                          <div className="p-3 border rounded-xl flex items-center gap-2.5 text-xs flex-1" style={{ backgroundColor: `${themePalette.background}`, borderColor: `${themePalette.primary}22`, color: themePalette.primary }}>
+                                            <Info className="w-4 h-4 shrink-0" />
+                                            <span>Production-ready teacher deck generated from the approved session plan, with real slides, notes, and export-ready visual assets.</span>
+                                          </div>
+                                          <div className="flex flex-wrap gap-2">
+                                            <button
+                                              onClick={() => void handleExportPptx(session)}
+                                              className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white transition hover:opacity-90"
+                                              style={{ backgroundColor: themePalette.primary }}
+                                            >
+                                              <Download className="w-3.5 h-3.5" />
+                                              Export Editable PPTX
+                                            </button>
+                                            <button
+                                              onClick={() => handleExportPptSlidesPdf(ppt)}
+                                              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                            >
+                                              <Download className="w-3.5 h-3.5" />
+                                              Export Slides PDF
+                                            </button>
+                                          </div>
+                                        </div>
+
+                                        <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+                                          <h4 className="font-display font-black text-slate-800 text-base">
+                                            {getPptTitle(ppt)}
+                                          </h4>
+                                          <div className="grid gap-2 md:grid-cols-2 text-xs text-slate-600">
+                                            <div><span className="font-bold text-slate-700">Template:</span> {formatRenderableText(ppt.templateName || selectedTemplate.name)}</div>
+                                            <div><span className="font-bold text-slate-700">Theme preset:</span> {formatRenderableText(ppt.themeName || ppt.theme || selectedTheme.name)}</div>
+                                            {ppt.audience && <div><span className="font-bold text-slate-700">Audience:</span> {formatRenderableText(ppt.audience)}</div>}
+                                            <div><span className="font-bold text-slate-700">Deck mode:</span> {formatRenderableText(ppt.deckMode || "teacher-delivery")}</div>
+                                          </div>
+                                          {ppt.presentationGoal && (
+                                            <p className="text-xs text-slate-600 leading-relaxed">
+                                              <span className="font-bold text-slate-700">Goal:</span> {formatRenderableText(ppt.presentationGoal)}
+                                            </p>
+                                          )}
+                                          {getPptThemeSummary(ppt) && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Theme details:</span> {getPptThemeSummary(ppt)}
+                                            </div>
+                                          )}
+                                          {!!ppt.coverageSummary?.learningOutcomesCovered?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">LO coverage:</span> {ppt.coverageSummary.learningOutcomesCovered.map((item) => formatRenderableText(item)).join("; ")}
+                                            </div>
+                                          )}
+                                          {!!ppt.coverageSummary?.topicsCovered?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-700">Topics:</span> {ppt.coverageSummary.topicsCovered.map((item) => formatRenderableText(item)).join("; ")}
+                                            </div>
+                                          )}
+                                        </div>
+
+                                        <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
+                                          {slides.map((slide, sIdx) => {
+                                            const accent = getPptAccentStyle(sIdx);
+                                            const primaryAsset = getPrimaryPptAsset(slide);
+                                            const hasSvgPreview = Boolean(slide.svgDiagram?.svgCode && slide.svgDiagram.svgCode.trim().startsWith("<svg"));
+                                            const primaryVisualSrc = primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "";
+                                            const visualSourceLabel =
+                                              primaryAsset?.sourceKind === "generated-image"
+                                                ? "Generated image"
+                                                : primaryAsset?.sourceKind === "svg-diagram"
+                                                ? "SVG / diagram"
+                                                : primaryAsset?.sourceKind === "reusable-external"
+                                                ? "Legacy external"
+                                                : hasSvgPreview
+                                                ? "SVG / diagram"
+                                                : "Planned visual";
+                                            const previewColumns =
+                                              resolvedTemplateId === "visual-focus"
+                                                ? "2fr 3fr"
+                                                : resolvedTemplateId === "textbook-clean"
+                                                ? "3.2fr 2fr"
+                                                : "3fr 2fr";
+
+                                            return (
+                                              <div key={sIdx} className="space-y-3">
+                                                <div className="rounded-[28px] border border-slate-200 p-4 shadow-sm" style={{ backgroundColor: themePalette.background }}>
+                                                  <div className="mb-3 flex items-center justify-between px-1">
+                                                    <div className="flex items-center gap-2">
+                                                      <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-black text-white ${accent.bar}`}>
+                                                        {slide.slideNumber || sIdx + 1}
+                                                      </span>
+                                                      <div>
+                                                        <div className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+                                                          {formatRenderableText(slide.templateSlideTitle || "PowerPoint Slide Preview")}
+                                                        </div>
+                                                        <div className="text-sm font-display font-black text-slate-800">
+                                                          {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                    <div className="flex flex-col items-end gap-1">
+                                                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${accent.soft} ${accent.text}`}>
+                                                        {formatRenderableText(slide.slideType || "concept")}
+                                                      </span>
+                                                      <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-slate-500 border border-slate-200">
+                                                        {visualSourceLabel}
+                                                      </span>
+                                                    </div>
+                                                  </div>
+
+                                                  <div className="aspect-video overflow-hidden rounded-[22px] border border-slate-300 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
+                                                    <div className="h-4 w-full" style={{ backgroundColor: themePalette.primary }} />
+                                                    <div className="grid h-[calc(100%-1rem)] gap-0" style={{ gridTemplateColumns: previewColumns }}>
+                                                      <div className="flex min-w-0 flex-col px-8 py-7">
+                                                        <div className="mb-5">
+                                                          <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                                            {getPptTitle(ppt)}
+                                                          </div>
+                                                          <h5 className="mt-2 leading-tight" style={{ color: themePalette.text, fontSize: resolvedTemplateId === "textbook-clean" ? "1.55rem" : "1.75rem", fontWeight: 900, fontFamily: ppt.themeTokens?.fonts?.heading || "Georgia, serif" }}>
+                                                            {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
+                                                          </h5>
+                                                        </div>
+
+                                                        {!!slide.onSlideText?.length && (
+                                                          <div className="mb-4 flex flex-wrap gap-2">
+                                                            {slide.onSlideText.slice(0, 3).map((item, idx) => (
+                                                              <span key={idx} className={`rounded-full px-3 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
+                                                                {formatRenderableText(item)}
+                                                              </span>
+                                                            ))}
+                                                          </div>
+                                                        )}
+
+                                                        <div className="space-y-3">
+                                                          {(slide.bulletPoints || []).slice(0, resolvedTemplateId === "visual-focus" ? 4 : 5).map((bp, bpIdx) => (
+                                                            <div key={bpIdx} className="flex items-start gap-3">
+                                                              <span className={`mt-1 inline-block h-2.5 w-2.5 rounded-full ${accent.bar}`} />
+                                                              <p className="text-[13px] leading-6" style={{ color: themePalette.text }}>
+                                                                {formatRenderableText(bp)}
+                                                              </p>
+                                                            </div>
+                                                          ))}
+                                                        </div>
+
+                                                        <div className="mt-auto pt-5">
+                                                          <div className="grid grid-cols-2 gap-3">
+                                                            {slide.studentTakeaway && (
+                                                              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                                                                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Takeaway</div>
+                                                                <div className="mt-1 text-[11px] leading-5 text-slate-700">
+                                                                  {formatRenderableText(slide.studentTakeaway)}
+                                                                </div>
+                                                              </div>
+                                                            )}
+                                                            {slide.timeEstimateMinutes != null && (
+                                                              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                                                                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Timing</div>
+                                                                <div className="mt-1 text-[11px] leading-5 text-slate-700">
+                                                                  {formatRenderableText(slide.timeEstimateMinutes)} minutes
+                                                                </div>
+                                                              </div>
+                                                            )}
+                                                          </div>
+                                                        </div>
+                                                      </div>
+
+                                                      <div className="min-w-0 border-l border-slate-200 bg-slate-50/70 px-5 py-6">
+                                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
+                                                          Visual Panel
+                                                        </div>
+                                                        <div className="mt-3 flex h-[calc(100%-1.5rem)] flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white">
+                                                          {primaryVisualSrc ? (
+                                                            <img
+                                                              src={primaryVisualSrc}
+                                                              alt={primaryAsset?.altText || primaryAsset?.purpose || "Slide visual"}
+                                                              className="h-full w-full object-cover"
+                                                              loading="lazy"
+                                                              referrerPolicy="no-referrer"
+                                                            />
+                                                          ) : hasSvgPreview ? (
+                                                            <div
+                                                              className="flex h-full w-full items-center justify-center bg-white p-4 [&_svg]:h-full [&_svg]:w-full [&_svg]:max-h-full [&_svg]:max-w-full"
+                                                              dangerouslySetInnerHTML={{ __html: slide.svgDiagram?.svgCode || "" }}
+                                                            />
+                                                          ) : (
+                                                            <div className="flex h-full flex-col justify-between p-4">
+                                                              <div>
+                                                                <div className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
+                                                                  {slide.svgDiagram?.title
+                                                                    ? formatRenderableText(slide.svgDiagram.title)
+                                                                    : "Planned visual"}
+                                                                </div>
+                                                                <p className="mt-3 text-xs leading-5 text-slate-600">
+                                                                  {formatRenderableText(slide.visualPlan || "This slide uses a teacher-planned visual area in the final PPT.")}
+                                                                </p>
+                                                              </div>
+                                                              {!!slide.svgDiagram?.instructions?.length && (
+                                                                <ul className="space-y-2 text-[11px] leading-4 text-slate-500">
+                                                                  {slide.svgDiagram.instructions.slice(0, 4).map((item, idx) => (
+                                                                    <li key={idx} className="flex gap-2">
+                                                                      <span className={`mt-1 inline-block h-2 w-2 rounded-full ${accent.bar}`} />
+                                                                      <span>{formatRenderableText(item)}</span>
+                                                                    </li>
+                                                                  ))}
+                                                                </ul>
+                                                              )}
+                                                            </div>
+                                                          )}
+                                                        </div>
+                                                      </div>
+                                                    </div>
                                                   </div>
                                                 </div>
-                                              </div>
-                                              <div className="flex flex-col items-end gap-1">
-                                                <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${accent.soft} ${accent.text}`}>
-                                                  {formatRenderableText(slide.slideType || "concept")}
-                                                </span>
-                                                {slide.templateSlideKey && (
-                                                  <span className="text-[10px] font-mono text-slate-400">
-                                                    {formatRenderableText(slide.templateSlideKey)}
-                                                  </span>
-                                                )}
-                                              </div>
-                                            </div>
 
-                                            <div className="aspect-video overflow-hidden rounded-[22px] border border-slate-300 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
-                                              <div className={`h-4 w-full ${accent.bar}`} />
-                                              <div className="grid h-[calc(100%-1rem)] grid-cols-5 gap-0">
-                                                <div className="col-span-3 flex flex-col px-8 py-7">
-                                                  <div className="mb-5">
-                                                    <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                                      {getPptTitle(session.materials?.ppt)}
-                                                    </div>
-                                                    <h5 className="mt-2 font-display text-[clamp(1.2rem,2vw,2rem)] font-black leading-tight text-slate-900">
-                                                      {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
-                                                    </h5>
+                                                <div className="grid gap-3 md:grid-cols-2">
+                                                  <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Speaker Notes</div>
+                                                    {slide.teacherIntent && (
+                                                      <p className="text-xs leading-relaxed text-slate-600">
+                                                        <span className="font-bold text-slate-700">Teacher intent:</span> {formatRenderableText(slide.teacherIntent)}
+                                                      </p>
+                                                    )}
+                                                    {!!slide.speakerNotes?.length ? (
+                                                      <ul className="list-disc list-inside space-y-1 text-xs text-slate-600">
+                                                        {slide.speakerNotes.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                                      </ul>
+                                                    ) : (
+                                                      <p className="text-xs text-slate-500">No speaker notes were returned for this slide.</p>
+                                                    )}
                                                   </div>
 
-                                                  {!!slide.onSlideText?.length && (
-                                                    <div className="mb-4 flex flex-wrap gap-2">
-                                                      {slide.onSlideText.slice(0, 3).map((item, idx) => (
-                                                        <span key={idx} className={`rounded-full px-3 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
-                                                          {formatRenderableText(item)}
-                                                        </span>
-                                                      ))}
-                                                    </div>
-                                                  )}
-
-                                                  <div className="space-y-3">
-                                                    {(slide.bulletPoints || []).slice(0, 5).map((bp, bpIdx) => (
-                                                      <div key={bpIdx} className="flex items-start gap-3">
-                                                        <span className={`mt-1 inline-block h-2.5 w-2.5 rounded-full ${accent.bar}`} />
-                                                        <p className="text-[13px] leading-6 text-slate-700">
-                                                          {formatRenderableText(bp)}
-                                                        </p>
+                                                  <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Visual & Attribution</div>
+                                                    {slide.visualPlan && (
+                                                      <p className="text-xs leading-relaxed text-slate-600">
+                                                        <span className="font-bold text-slate-700">Visual plan:</span> {formatRenderableText(slide.visualPlan)}
+                                                      </p>
+                                                    )}
+                                                    {!!slide.assets?.length && slide.assets.map((asset, assetIdx) => (
+                                                      <div key={assetIdx} className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
+                                                        <div className="flex flex-wrap gap-2">
+                                                          <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-500 border border-slate-200">
+                                                            {formatRenderableText(asset.sourceKind || "visual")}
+                                                          </span>
+                                                          {asset.model && (
+                                                            <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-500 border border-slate-200">
+                                                              {formatRenderableText(asset.model)}
+                                                            </span>
+                                                          )}
+                                                        </div>
+                                                        {asset.purpose && <div><span className="font-bold text-slate-700">Purpose:</span> {formatRenderableText(asset.purpose)}</div>}
+                                                        {asset.searchQuery && <div><span className="font-bold text-slate-700">Search:</span> {formatRenderableText(asset.searchQuery)}</div>}
+                                                        {(asset.sourceSite || asset.sourceUrl) && <div><span className="font-bold text-slate-700">Source:</span> {[asset.sourceSite, asset.sourceUrl].filter(Boolean).map((item) => formatRenderableText(item)).join(" - ")}</div>}
+                                                        {asset.licenseType && <div><span className="font-bold text-slate-700">License:</span> {formatRenderableText(asset.licenseType)}</div>}
                                                       </div>
                                                     ))}
-                                                  </div>
-
-                                                  <div className="mt-auto pt-5">
-                                                    <div className="grid grid-cols-2 gap-3">
-                                                      {slide.studentTakeaway && (
-                                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                                                          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Takeaway</div>
-                                                          <div className="mt-1 text-[11px] leading-5 text-slate-700">
-                                                            {formatRenderableText(slide.studentTakeaway)}
-                                                          </div>
-                                                        </div>
-                                                      )}
-                                                      {slide.timeEstimateMinutes != null && (
-                                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                                                          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Timing</div>
-                                                          <div className="mt-1 text-[11px] leading-5 text-slate-700">
-                                                            {formatRenderableText(slide.timeEstimateMinutes)} minutes
-                                                          </div>
-                                                        </div>
-                                                      )}
-                                                    </div>
-                                                  </div>
-                                                </div>
-
-                                                <div className="col-span-2 border-l border-slate-200 bg-slate-50/70 px-5 py-6">
-                                                  <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-                                                    Visual Panel
-                                                  </div>
-                                                  <div className="mt-3 flex h-[calc(100%-1.5rem)] flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white">
-                                                    {primaryAsset?.previewUrl ? (
-                                                      <img
-                                                        src={primaryAsset.previewUrl}
-                                                        alt={primaryAsset.altText || primaryAsset.purpose || "Slide visual"}
-                                                        className="h-full w-full object-cover"
-                                                        loading="lazy"
-                                                        referrerPolicy="no-referrer"
-                                                      />
-                                                    ) : hasSvgPreview ? (
-                                                      <div
-                                                        className="flex h-full w-full items-center justify-center bg-white p-4 [&_svg]:h-full [&_svg]:w-full [&_svg]:max-h-full [&_svg]:max-w-full"
-                                                        dangerouslySetInnerHTML={{ __html: slide.svgDiagram?.svgCode || "" }}
-                                                      />
-                                                    ) : (
-                                                      <div className="flex h-full flex-col justify-between p-4">
-                                                        <div>
-                                                          <div className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
-                                                            {slide.svgDiagram?.title
-                                                              ? formatRenderableText(slide.svgDiagram.title)
-                                                              : "Planned visual"}
-                                                          </div>
-                                                          <p className="mt-3 text-xs leading-5 text-slate-600">
-                                                            {formatRenderableText(slide.visualPlan || "This slide uses a teacher-planned visual area in the final PPT.")}
-                                                          </p>
-                                                        </div>
-                                                        {!!slide.svgDiagram?.instructions?.length && (
-                                                          <ul className="space-y-2 text-[11px] leading-4 text-slate-500">
-                                                            {slide.svgDiagram.instructions.slice(0, 4).map((item, idx) => (
-                                                              <li key={idx} className="flex gap-2">
-                                                                <span className={`mt-1 inline-block h-2 w-2 rounded-full ${accent.bar}`} />
-                                                                <span>{formatRenderableText(item)}</span>
-                                                              </li>
-                                                            ))}
-                                                          </ul>
+                                                    {!slide.assets?.length && slide.svgDiagram && (
+                                                      <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
+                                                        <div><span className="font-bold text-slate-700">Diagram:</span> {formatRenderableText(slide.svgDiagram.title || slide.svgDiagram.type || "SVG-supported visual")}</div>
+                                                        {!!slide.svgDiagram.instructions?.length && (
+                                                          <div><span className="font-bold text-slate-700">Instructions:</span> {slide.svgDiagram.instructions.map((item) => formatRenderableText(item)).join("; ")}</div>
                                                         )}
                                                       </div>
+                                                    )}
+                                                    {!!slide.animationHints?.length && (
+                                                      <p className="text-xs leading-relaxed text-slate-600">
+                                                        <span className="font-bold text-slate-700">Animation:</span> {slide.animationHints.map((item) => formatRenderableText(item)).join("; ")}
+                                                      </p>
                                                     )}
                                                   </div>
                                                 </div>
                                               </div>
-                                            </div>
-                                          </div>
-
-                                          <div className="grid gap-3 md:grid-cols-2">
-                                            <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
-                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Speaker Notes</div>
-                                              {slide.teacherIntent && (
-                                                <p className="text-xs leading-relaxed text-slate-600">
-                                                  <span className="font-bold text-slate-700">Teacher intent:</span> {formatRenderableText(slide.teacherIntent)}
-                                                </p>
-                                              )}
-                                              {!!slide.speakerNotes?.length ? (
-                                                <ul className="list-disc list-inside space-y-1 text-xs text-slate-600">
-                                                  {slide.speakerNotes.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                                </ul>
-                                              ) : (
-                                                <p className="text-xs text-slate-500">No speaker notes were returned for this slide.</p>
-                                              )}
-                                            </div>
-
-                                            <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
-                                              <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Visual & Attribution</div>
-                                              {slide.visualPlan && (
-                                                <p className="text-xs leading-relaxed text-slate-600">
-                                                  <span className="font-bold text-slate-700">Visual plan:</span> {formatRenderableText(slide.visualPlan)}
-                                                </p>
-                                              )}
-                                              {!!slide.assets?.length && slide.assets.map((asset, assetIdx) => (
-                                                <div key={assetIdx} className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
-                                                  {asset.purpose && <div><span className="font-bold text-slate-700">Purpose:</span> {formatRenderableText(asset.purpose)}</div>}
-                                                  {asset.searchQuery && <div><span className="font-bold text-slate-700">Search:</span> {formatRenderableText(asset.searchQuery)}</div>}
-                                                  {(asset.sourceSite || asset.sourceUrl) && <div><span className="font-bold text-slate-700">Source:</span> {[asset.sourceSite, asset.sourceUrl].filter(Boolean).map((item) => formatRenderableText(item)).join(" - ")}</div>}
-                                                  {asset.licenseType && <div><span className="font-bold text-slate-700">License:</span> {formatRenderableText(asset.licenseType)}</div>}
-                                                </div>
-                                              ))}
-                                              {!slide.assets?.length && slide.svgDiagram && (
-                                                <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
-                                                  <div><span className="font-bold text-slate-700">Diagram:</span> {formatRenderableText(slide.svgDiagram.title || slide.svgDiagram.type || "SVG-supported visual")}</div>
-                                                  {!!slide.svgDiagram.instructions?.length && (
-                                                    <div><span className="font-bold text-slate-700">Instructions:</span> {slide.svgDiagram.instructions.map((item) => formatRenderableText(item)).join("; ")}</div>
-                                                  )}
-                                                </div>
-                                              )}
-                                              {typeof slide.isOptionalSlotFilled === "boolean" && (
-                                                <p className="text-xs leading-relaxed text-slate-600">
-                                                  <span className="font-bold text-slate-700">Template slot status:</span> {slide.isOptionalSlotFilled ? "Filled from session content" : "Kept intentionally low-density"}
-                                                </p>
-                                              )}
-                                              {!!slide.animationHints?.length && (
-                                                <p className="text-xs leading-relaxed text-slate-600">
-                                                  <span className="font-bold text-slate-700">Animation:</span> {slide.animationHints.map((item) => formatRenderableText(item)).join("; ")}
-                                                </p>
-                                              )}
-                                            </div>
-                                          </div>
+                                            );
+                                          })}
                                         </div>
-                                      );
-                                    })}
-                                  </div>
 
-                                  {!!session.materials.ppt.licenseChecklist?.length && (
-                                    <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
-                                      <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">License Checklist</div>
-                                      <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
-                                        {session.materials.ppt.licenseChecklist.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                  {!!session.materials.ppt.presentationWarnings?.length && (
-                                    <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 space-y-2">
-                                      <div className="text-[10px] font-extrabold text-rose-500 uppercase tracking-widest">Presentation Warnings</div>
-                                      <ul className="list-disc list-inside text-xs text-rose-700 space-y-1">
-                                        {session.materials.ppt.presentationWarnings.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                      </ul>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
+                                        {!!ppt.licenseChecklist?.length && (
+                                          <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">License Checklist</div>
+                                            <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
+                                              {ppt.licenseChecklist.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                            </ul>
+                                          </div>
+                                        )}
+                                        {!!ppt.presentationWarnings?.length && (
+                                          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 space-y-2">
+                                            <div className="text-[10px] font-extrabold text-rose-500 uppercase tracking-widest">Presentation Warnings</div>
+                                            <ul className="list-disc list-inside text-xs text-rose-700 space-y-1">
+                                              {ppt.presentationWarnings.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                            </ul>
+                                          </div>
+                                        )}
+                                      </>
+                                    ) : (
+                                      <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-5 py-8 text-center">
+                                        <div className="text-sm font-display font-black text-slate-800">No PPT Generated Yet</div>
+                                        <p className="mt-2 text-xs leading-relaxed text-slate-500">
+                                          Choose the template and theme above, then generate materials to create the teacher-ready deck.
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+                                );
+                              })()}
 
                               {/* PDF Template Details */}
                               {activeMaterialTab === "pdf" && session.materials?.pdf && (

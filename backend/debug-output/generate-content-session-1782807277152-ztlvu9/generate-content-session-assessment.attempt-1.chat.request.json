@@ -1,0 +1,187 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "assessmentMeta": {
+        "assessmentType": "Mixed formative checks",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "preferredDifficulty": "Balanced",
+        "language": "English",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ],
+        "instructions": [
+          "Answer all questions based only on the concepts taught in this session."
+        ]
+      },
+      "blueprint": {
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "MCQ",
+            "minutes": 5
+          }
+        ]
+      },
+      "mcq": [
+        {
+          "id": "q1",
+          "questionSubtype": "mcq",
+          "question": "MCQ question",
+          "options": [
+            "A. option",
+            "B. option",
+            "C. option",
+            "D. option"
+          ],
+          "answer": "Correct option",
+          "explanation": "Why this option is correct",
+          "marks": 1,
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "easy",
+          "bloomsLevel": "understanding"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q5",
+          "questionSubtype": "shortAnswer",
+          "question": "Short-answer question",
+          "answer": "Model short answer",
+          "expectedLength": "1-2 clear points",
+          "marks": 2,
+          "rubric": [
+            "1 mark for first correct point",
+            "1 mark for second correct point"
+          ],
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "medium",
+          "bloomsLevel": "application"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "q7",
+          "questionSubtype": "longAnswer",
+          "question": "Long-answer question",
+          "answer": "Model long answer",
+          "expectedLength": "4-5 well-structured points with explanation",
+          "marks": 5,
+          "rubric": [
+            "Marks awarded point-wise",
+            "Credit explanation quality",
+            "Credit labelled example or diagram if relevant"
+          ],
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "hard",
+          "bloomsLevel": "analysis"
+        }
+      ],
+      "answerKey": {
+        "mcq": [
+          {
+            "answer": "Correct option",
+            "explanation": "Brief explanation",
+            "marks": 1,
+            "questionSubtype": "mcq"
+          }
+        ],
+        "shortAnswer": [
+          {
+            "answer": "Point-wise short answer",
+            "rubric": [
+              "Point 1",
+              "Point 2"
+            ],
+            "marks": 2,
+            "questionSubtype": "shortAnswer"
+          }
+        ],
+        "longAnswer": [
+          {
+            "answer": "Structured long answer",
+            "rubric": [
+              "Point 1",
+              "Point 2",
+              "Point 3",
+              "Point 4",
+              "Point 5"
+            ],
+            "marks": 5,
+            "questionSubtype": "longAnswer"
+          }
+        ],
+        "generalMarkingGuidance": [
+          "Award marks point-wise for each valid idea.",
+          "Accept equivalent scientific wording if the meaning is correct.",
+          "For long answers, reward structure, explanation, and relevant examples."
+        ]
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL ASSESSMENT GENERATION ENGINE\n\nROLE\nYou are an Expert Assessment Intelligence System, Professional Examination Designer, Curriculum Assessment Specialist, Instructional Evaluation Expert, Learning Measurement Architect, Educational Psychometric Designer, and Academic Question Paper Setter.\n\nYou are designing a complete, pedagogically sound, curriculum-aligned assessment that measures whether the student has achieved the intended learning outcomes of a single classroom session.\n\nPRIMARY OBJECTIVE\nGenerate the assessment block for one classroom session using only the information supplied in the session data.\n\nSession context:\n- Subject: Computer Science\n- Grade/Level: Class XI / Class XII\n- Session title: Computer Systems and Organisation - Session 1\n- Session number: 1 of 17\n- Session duration: 45 minutes\n- Chapter scope: [\"Computer Systems and Organisation\"]\n- Learning outcomes: []\n- Previous session context: No previous session context provided.\n- Learning pace: Balanced\n- Preferred difficulty: Balanced\n- Output language: English\n\nAssessment preferences:\n- Assessment type: Session assessment\n- Requested total marks: 15\n- Requested total questions: 9\n- Requested duration: 15 minutes\n- Assessment preference inputs: []\n- Target blooms emphasis: [\"Remember + Understand\",\"Apply + Analyze\"]\n- Requested question type mix: [{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2},{\"type\":\"longAnswer\",\"label\":\"Long Answer\",\"questionCount\":1,\"marksEach\":5}]\n- Question paper objective: Not specified.\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 15,\n  \"totalQuestions\": 9,\n  \"questionTypes\": [\n    {\n      \"type\": \"mcq\",\n      \"label\": \"MCQs\",\n      \"questionCount\": 3,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 3,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    },\n    {\n      \"type\": \"longAnswer\",\n      \"label\": \"Long Answer\",\n      \"questionCount\": 1,\n      \"marksEach\": 5\n    }\n  ]\n}\n\nSession JSON source of truth:\n{\n  \"id\": \"session-1\",\n  \"sessionNumber\": 1,\n  \"title\": \"Computer Systems and Organisation - Session 1\",\n  \"duration\": 45,\n  \"learningOutcomes\": [],\n  \"introduction\": \"\",\n  \"theory\": null,\n  \"activities\": [],\n  \"teacherLessonNotes\": null,\n  \"studentLessonNotes\": {\n    \"title\": \"Computer Systems and Organisation - Session 1: The Foundation\",\n    \"sessionOverview\": \"Welcome to the first session! We will explore what a computer system really is, breaking it down into its essential parts: hardware, software, data, users, and procedures. You'll learn how these pieces work together like an orchestra.\",\n    \"introduction\": \"Have you ever wondered if your smartphone or laptop counts as a 'computer'? Or why we need both the physical machine (hardware) and the programs running on it (software)? In this session, we lay the groundwork for understanding Computer Systems. We won't just look at wires; we'll see how people, rules, and data turn raw technology into useful tools.\",\n    \"learningObjectives\": [\n      \"Define a computer system as an integrated set of components working together to process information.\",\n      \"Identify and explain the five key elements: Hardware, Software, Data, Users, and Procedures.\",\n      \"Distinguish between different types of software (System vs. Application).\",\n      \"Understand how users interact with systems through input and output devices.\"\n    ],\n    \"keyTerms\": [\n      \"Hardware\",\n      \"System Software\",\n      \"Application Software\",\n      \"Procedures\"\n    ],\n    \"quickSummary\": [\n      \"A computer system is more than hardware; it's people and rules interacting with technology.\",\n      \"Software splits into System (managing) and Application (tasking).\",\n      \"All five elements must work together for the system to be effective.\"\n    ],\n    \"summary\": [\n      \"Computer systems integrate hardware, software, data, users, and procedures.\",\n      \"System software runs the machine; application software helps you do tasks.\"\n    ],\n    \"rememberPoints\": [\n      \"Hardware = Physical\",\n      \"Software = Instructions (System vs App)\",\n      \"Users + Procedures = Human Element\"\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Computer System\",\n        \"definition\": \"An integrated set of components including hardware, software, data, users, and procedures that work together to process information into useful output.\"\n      },\n      {\n        \"term\": \"System Software\",\n        \"definition\": \"Software designed to operate the computer hardware and provide a platform for running application programs (e.g., Operating Systems).\"\n      },\n      {\n        \"term\": \"Application Software\",\n        \"definition\": \"Programs designed to help users perform specific tasks, such as word processing, browsing the web, or playing games.\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"What is a Computer System?\",\n        \"explanation\": \"A computer isn't just the box under your desk. A 'Computer System' is a complete ecosystem where technology, people, and rules come together to solve problems or achieve goals. It's like a car: you need the engine (hardware), fuel and instructions (software/data), a driver (user), and traffic laws (procedures) for i...\",\n        \"keyPoints\": [\n          \"It is an integrated system, not just isolated parts.\",\n          \"Input -> Processing -> Output cycle happens within this system.\",\n          \"Without users or procedures, the hardware is useless.\"\n        ],\n        \"examples\": [\n          \"A library computer: The machine (hardware) runs a catalog program (software), uses book records (data), helps a librarian (user) follow checkout rules (procedures).\",\n          \"An ATM: You insert cash and card, the system processes your request using banking software to dispense money.\"\n        ],\n        \"importantNotes\": [\n          \"Exam Tip: Always remember that a computer system requires human interaction; it is not fully autonomous in the context of this syllabus.\",\n          \"Don't confuse 'Computer Hardware' (the machine) with 'Computer System' (machine + people + rules).\"\n        ],\n        \"conceptSummary\": [\n          \"A computer system is the complete environment where hardware and software interact with users to process data according to procedures.\"\n        ]\n      },\n      {\n        \"heading\": \"The Five Key Elements of a Computer System\",\n        \"explanation\": \"To have a functioning system, you need five distinct elements. If any one is missing or fails, the whole system stops working effectively.\",\n        \"keyPoints\": [\n          \"**Hardware**: The physical machinery (CPU, RAM, Storage).\",\n          \"**Software**: The instructions and programs (OS, Apps).\",\n          \"**Data**: Raw facts processed by the computer.\",\n          \"**Users**: People who operate or benefit from the system.\",\n          \"**Procedures**: Rules and guidelines for using the system.\"\n        ],\n        \"examples\": [\n          \"Hardware: A keyboard is hardware. The 'typing' action requires software drivers to work.\",\n          \"Data: Your name in a database is data until you search it (process) to find your record.\",\n          \"Procedures: The rule that says 'Save your document every 5 minutes' prevents data loss.\"\n        ],\n        \"importantNotes\": [\n          \"Caution: 'Data' is not just files; it includes numbers, text, images, and sound that the computer processes.\",\n          \"Procedures are often overlooked but critical for security (e.g., password policies).\"\n        ],\n        \"conceptSummary\": [\n          \"All five elements—Hardware, Software, Data, Users, and Procedures—are equally essential for a computer system to function.\"\n        ]\n      },\n      {\n        \"heading\": \"System vs. Application Software\",\n        \"explanation\": \"Software is the brain of the operation, but it comes in two main flavors: System Software (the manager) and Application Software (the worker).\",\n        \"keyPoints\": [\n          \"**System Software**: Runs the computer itself (e.g., Windows, Linux, macOS). It manages hardware resources.\",\n          \"**Application Software**: Designed for end-users to perform specific tasks (e.g., Word, Photoshop, Games).\",\n          \"You cannot run application software without system software.\"\n        ],\n        \"examples\": [\n          \"System: The Operating System that lets you turn on the computer and see icons.\",\n          \"Application: Microsoft Excel used by a student to calculate grades.\"\n        ],\n        \"importantNotes\": [\n          \"Exam Point: Device drivers are part of system software; they allow the OS to talk to specific hardware.\",\n          \"Don't confuse 'Utility' programs with general applications; utilities maintain the computer, apps do work for you.\"\n        ],\n        \"conceptSummary\": [\n          \"System software manages resources; application software performs user-specific tasks, and both are required for a complete system.\"\n        ]\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Analyzing a Computer System in Action\",\n        \"steps\": [\n          \"Identify the Hardware: Look for physical items like the laptop screen and keyboard.\",\n          \"Identify the Software: Note what is running, e.g., Windows OS (System) and Chrome Browser (Application).\",\n          \"Identify Data: Recognize the webpage content or files being accessed.\",\n          \"Identify Users: Who is using it? A student researching for a project.\",\n          \"Identify Procedures: What rules are followed? 'Click to save', 'Use strong passwords'.\"\n        ],\n        \"explanation\": \"By breaking down this scenario, we see that the laptop (hardware) alone does nothing. It needs Chrome (software), the search query (data), the student (user), and safety habits (procedures) to be a functional system for learning.\"\n      }\n    ],\n    \"selfCheckQuestions\": [\n      \"Can you list all five components of a computer system?\",\n      \"Why is 'Procedures' considered an essential part of a computer system, not just the machine?\",\n      \"If your mouse stops working but Windows still loads, which element has failed?\"\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"Name one example of system software.\",\n        \"answer\": \"Windows, macOS, or Linux.\"\n      },\n      {\n        \"question\": \"What is the role of 'Procedures' in a computer system?\",\n        \"answer\": \"To provide rules and guidelines for using the system effectively and safely.\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which of the following is NOT one of the five elements of a computer system?\",\n        \"answer\": \"C. Electricity Grid\"\n      },\n      {\n        \"question\": \"Microsoft Word and Google Chrome are examples of:\",\n        \"answer\": \"B. Application Software\"\n      }\n    ]\n  },\n  \"topicCoverage\": []\n}\n\nABSOLUTE RULES\n1. Never hallucinate.\n2. Generate questions only from concepts explicitly present in the provided session information.\n3. Never introduce future chapters, future concepts, unseen formulas, unseen terminology, or external knowledge not taught in this session.\n4. Learning outcomes drive the assessment. Each learning outcome should be assessed by one or more suitable questions.\n5. Prefer conceptual understanding, application, interpretation, analysis, communication, problem solving, and conceptual clarity over trivial recall unless grade-appropriate.\n6. Questions must be fair, age appropriate, clear, grammatically correct, and educationally meaningful.\n7. Arrange questions from easier to more challenging whenever possible.\n8. The generated assessment must exactly match the requested total marks and requested duration.\n9. Follow the assessment type, teacher question-type mix, and the supplied preferences.\n10. Return valid JSON only.\n11. If the teacher requested very short answer questions, place them at the beginning of `shortAnswer` and make their `expectedLength` explicitly very short.\n12. If the teacher requested case study questions, place them inside `longAnswer` as case-based prompts and reflect that in the wording and rubric.\n13. Match the requested question counts and marks exactly. Do not improvise a different paper pattern.\n14. Keep the answer key aligned one-to-one with each generated question and the same marks.\n\nASSESSMENT OUTPUT REQUIREMENTS\n1. When this prompt is used inside a full session-generation prompt, generate only the `assessment` block according to the target schema.\n2. When this prompt is used for assessment-only generation, return an object with the `assessment` property matching the target schema.\n3. Preserve these sections:\n   - `assessmentMeta`\n   - `blueprint`\n   - `mcq`\n   - `shortAnswer`\n   - `longAnswer`\n   - `answerKey`\n4. `assessmentMeta` must clearly state the assessment type, marks, duration, difficulty, language, and student-facing instructions.\n5. `blueprint` must summarize:\n   - learning outcome coverage\n   - difficulty distribution\n   - blooms distribution\n   - question distribution\n   - time allocation\n6. Every question should include, where possible:\n   - `id`\n   - `questionSubtype`\n   - `learningOutcomeIds`\n   - `topicCoverage`\n   - `difficulty`\n   - `bloomsLevel`\n   - Use a single continuous assessment-wide id sequence: `q1`, `q2`, `q3`, ... Do not restart ids by section.\n7. Keep the question paper balanced and aligned with the full session.\n8. MCQ, short-answer, long-answer, and answer-key sections must remain consistent with one another.\n9. Use point-wise rubrics for short and long answers.\n10. Preserve the teacher-requested ordering inside `shortAnswer` and `longAnswer` so subtype mapping remains stable.\n11. Any `blueprint.learningOutcomeCoverage[].questionRefs` must reference those same continuous ids like `q1`, `q2`, `q3`.\n\nTarget schema:\n{\n  \"assessment\": {\n    \"assessmentMeta\": {\n      \"assessmentType\": \"Mixed formative checks\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"preferredDifficulty\": \"Balanced\",\n      \"language\": \"English\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ],\n      \"instructions\": [\n        \"Answer all questions based only on the concepts taught in this session.\"\n      ]\n    },\n    \"blueprint\": {\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"MCQ\",\n          \"minutes\": 5\n        }\n      ]\n    },\n    \"mcq\": [\n      {\n        \"id\": \"q1\",\n        \"questionSubtype\": \"mcq\",\n        \"question\": \"MCQ question\",\n        \"options\": [\n          \"A. option\",\n          \"B. option\",\n          \"C. option\",\n          \"D. option\"\n        ],\n        \"answer\": \"Correct option\",\n        \"explanation\": \"Why this option is correct\",\n        \"marks\": 1,\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"easy\",\n        \"bloomsLevel\": \"understanding\"\n      }\n    ],\n    \"shortAnswer\": [\n      {\n        \"id\": \"q5\",\n        \"questionSubtype\": \"shortAnswer\",\n        \"question\": \"Short-answer question\",\n        \"answer\": \"Model short answer\",\n        \"expectedLength\": \"1-2 clear points\",\n        \"marks\": 2,\n        \"rubric\": [\n          \"1 mark for first correct point\",\n          \"1 mark for second correct point\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"medium\",\n        \"bloomsLevel\": \"application\"\n      }\n    ],\n    \"longAnswer\": [\n      {\n        \"id\": \"q7\",\n        \"questionSubtype\": \"longAnswer\",\n        \"question\": \"Long-answer question\",\n        \"answer\": \"Model long answer\",\n        \"expectedLength\": \"4-5 well-structured points with explanation\",\n        \"marks\": 5,\n        \"rubric\": [\n          \"Marks awarded point-wise\",\n          \"Credit explanation quality\",\n          \"Credit labelled example or diagram if relevant\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"hard\",\n        \"bloomsLevel\": \"analysis\"\n      }\n    ],\n    \"answerKey\": {\n      \"mcq\": [\n        {\n          \"answer\": \"Correct option\",\n          \"explanation\": \"Brief explanation\",\n          \"marks\": 1,\n          \"questionSubtype\": \"mcq\"\n        }\n      ],\n      \"shortAnswer\": [\n        {\n          \"answer\": \"Point-wise short answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\"\n          ],\n          \"marks\": 2,\n          \"questionSubtype\": \"shortAnswer\"\n        }\n      ],\n      \"longAnswer\": [\n        {\n          \"answer\": \"Structured long answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\",\n            \"Point 3\",\n            \"Point 4\",\n            \"Point 5\"\n          ],\n          \"marks\": 5,\n          \"questionSubtype\": \"longAnswer\"\n        }\n      ],\n      \"generalMarkingGuidance\": [\n        \"Award marks point-wise for each valid idea.\",\n        \"Accept equivalent scientific wording if the meaning is correct.\",\n        \"For long answers, reward structure, explanation, and relevant examples.\"\n      ]\n    }\n  }\n}\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"assessmentMeta\": {\n      \"assessmentType\": \"Mixed formative checks\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"preferredDifficulty\": \"Balanced\",\n      \"language\": \"English\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ],\n      \"instructions\": [\n        \"Answer all questions based only on the concepts taught in this session.\"\n      ]\n    },\n    \"blueprint\": {\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"MCQ\",\n          \"minutes\": 5\n        }\n      ]\n    },\n    \"mcq\": [\n      {\n        \"id\": \"q1\",\n        \"questionSubtype\": \"mcq\",\n        \"question\": \"MCQ question\",\n        \"options\": [\n          \"A. option\",\n          \"B. option\",\n          \"C. option\",\n          \"D. option\"\n        ],\n        \"answer\": \"Correct option\",\n        \"explanation\": \"Why this option is correct\",\n        \"marks\": 1,\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"easy\",\n        \"bloomsLevel\": \"understanding\"\n      }\n    ],\n    \"shortAnswer\": [\n      {\n        \"id\": \"q5\",\n        \"questionSubtype\": \"shortAnswer\",\n        \"question\": \"Short-answer question\",\n        \"answer\": \"Model short answer\",\n        \"expectedLength\": \"1-2 clear points\",\n        \"marks\": 2,\n        \"rubric\": [\n          \"1 mark for first correct point\",\n          \"1 mark for second correct point\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"medium\",\n        \"bloomsLevel\": \"application\"\n      }\n    ],\n    \"longAnswer\": [\n      {\n        \"id\": \"q7\",\n        \"questionSubtype\": \"longAnswer\",\n        \"question\": \"Long-answer question\",\n        \"answer\": \"Model long answer\",\n        \"expectedLength\": \"4-5 well-structured points with explanation\",\n        \"marks\": 5,\n        \"rubric\": [\n          \"Marks awarded point-wise\",\n          \"Credit explanation quality\",\n          \"Credit labelled example or diagram if relevant\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"hard\",\n        \"bloomsLevel\": \"analysis\"\n      }\n    ],\n    \"answerKey\": {\n      \"mcq\": [\n        {\n          \"answer\": \"Correct option\",\n          \"explanation\": \"Brief explanation\",\n          \"marks\": 1,\n          \"questionSubtype\": \"mcq\"\n        }\n      ],\n      \"shortAnswer\": [\n        {\n          \"answer\": \"Point-wise short answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\"\n          ],\n          \"marks\": 2,\n          \"questionSubtype\": \"shortAnswer\"\n        }\n      ],\n      \"longAnswer\": [\n        {\n          \"answer\": \"Structured long answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\",\n            \"Point 3\",\n            \"Point 4\",\n            \"Point 5\"\n          ],\n          \"marks\": 5,\n          \"questionSubtype\": \"longAnswer\"\n        }\n      ],\n      \"generalMarkingGuidance\": [\n        \"Award marks point-wise for each valid idea.\",\n        \"Accept equivalent scientific wording if the meaning is correct.\",\n        \"For long answers, reward structure, explanation, and relevant examples.\"\n      ]\n    }\n  }\n}"
+    }
+  ]
+}

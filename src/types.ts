@@ -87,6 +87,11 @@ export interface SessionAssessmentCustomization {
   questionTypes?: AssessmentQuestionTypeRequest[];
 }
 
+export interface SessionPptGenerationOptions {
+  pptTemplateId?: string;
+  pptThemeId?: string;
+}
+
 export type AssessmentRenderedSubtype =
   | "mcq"
   | "veryShortAnswer"
@@ -191,6 +196,13 @@ export interface SessionPlan {
       detailedExplanation?: string;
       observedIn?: string[];
       visualSupport?: string[];
+      visualAssets?: {
+        prompt?: string;
+        alt?: string;
+        imageDataUrl?: string;
+        mimeType?: string;
+        model?: string;
+      }[];
       importantNotes?: string[];
       memoryTechniques?: string[];
       conceptSummary?: string[];
@@ -244,9 +256,11 @@ export interface SessionPlan {
   }[];
   materials?: {
     ppt: {
+      deckMode?: "teacher-delivery";
       templateId?: string;
       templateName?: string;
       themeId?: string;
+      themeName?: string;
       title?: string;
       presentationTitle?: string;
       presentationGoal?: string;
@@ -313,6 +327,10 @@ export interface SessionPlan {
           attributionText?: string;
           altText?: string;
           placementHint?: string;
+          imageDataUrl?: string;
+          mimeType?: string;
+          model?: string;
+          sourceKind?: "reusable-external" | "generated-image" | "svg-diagram" | "none";
         }[];
         svgDiagram?: {
           title?: string;

@@ -1,0 +1,386 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 15,
+      "totalQuestions": 9,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":15,\"totalQuestions\":9,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2},{\"type\":\"longAnswer\",\"label\":\"Long Answer\",\"questionCount\":1,\"marksEach\":5}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 1,
+          "marksEach": 5
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Ensure you distinguish between 'Computer Hardware' and a complete 'Computer System'.",
+        "Time allocation: MCQs (3 mins), Very Short Answers (4 mins), Short Answers (5 mins), Long Answer (3 mins)."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define a computer system as an integrated set of components working together to process information.",
+          "questionRefs": [
+            "q1",
+            "q7"
+          ]
+        },
+        {
+          "outcome": "Identify and explain the five key elements: Hardware, Software, Data, Users, and Procedures.",
+          "questionRefs": [
+            "q2",
+            "q3",
+            "q4",
+            "q8"
+          ]
+        },
+        {
+          "outcome": "Distinguish between different types of software (System vs. Application).",
+          "questionRefs": [
+            "q5",
+            "q6"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 35,
+        "hard": 25
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 35,
+        "application": 30,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 3,
+        "shortAnswer": 5,
+        "longAnswer": 1
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 3
+        },
+        {
+          "section": "Very Short Answer",
+          "minutes": 4
+        },
+        {
+          "section": "Short Answer",
+          "minutes": 5
+        },
+        {
+          "section": "Long Answer",
+          "minutes": 3
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "Which of the following is NOT considered one of the five essential elements of a computer system?",
+        "options": [
+          "A. Hardware",
+          "B. Software",
+          "C. Electricity Grid",
+          "D. Procedures"
+        ],
+        "answer": "C. Electricity Grid",
+        "explanation": "The five essential elements are Hardware, Software, Data, Users, and Procedures. The electricity grid is an external utility, not a core component of the system definition in this context.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Five Key Elements",
+          "Computer System Definition"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "Microsoft Word and Google Chrome are examples of which type of software?",
+        "options": [
+          "A. System Software",
+          "B. Application Software",
+          "C. Hardware Drivers",
+          "D. Procedures"
+        ],
+        "answer": "B. Application Software",
+        "explanation": "Application software is designed to help users perform specific tasks like word processing or browsing, whereas system software manages the hardware.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "System vs. Application Software"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "In the context of a computer system, what is the primary role of 'Procedures'?",
+        "options": [
+          "A. To physically process data",
+          "B. To provide rules and guidelines for using the system effectively and safely",
+          "C. To store raw facts like numbers and text",
+          "D. To act as the physical interface (keyboard/mouse)"
+        ],
+        "answer": "B. To provide rules and guidelines for using the system effectively and safely",
+        "explanation": "Procedures are the human element of rules, such as 'save every 5 minutes' or password policies, which ensure the system functions correctly.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Five Key Elements",
+          "Procedures"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Name one example of system software.",
+        "answer": "Windows, macOS, or Linux (any valid OS).",
+        "expectedLength": "1 specific term",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "System Software Examples"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "What is the role of 'Data' in a computer system?",
+        "answer": "It consists of raw facts (numbers, text, images) processed by the computer.",
+        "expectedLength": "1 sentence defining data's nature",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Data Element"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Why is 'Procedures' considered an essential part of a computer system?",
+        "answer": "It provides the necessary rules and guidelines for safe and effective operation.",
+        "expectedLength": "1 sentence explaining importance",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Procedures Importance"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q7",
+        "questionSubtype": "shortAnswer",
+        "question": "Explain the difference between 'Hardware' and a complete 'Computer System'. Why is distinguishing them important?",
+        "answer": "Hardware refers only to the physical machinery (CPU, RAM). A Computer System includes hardware plus software, data, users, and procedures. Distinguishing them is crucial because without human interaction (users) or rules (procedures), the hardware alone cannot process information into useful output.",
+        "expectedLength": "2-3 clear points defining both terms and their relationship",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly identifying Hardware as physical machinery only.",
+          "1 mark for explaining that a Computer System is an integrated ecosystem including human elements (users/procedures)."
+        ],
+        "learningOutcomeIds": [
+          "LO1",
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Computer System Definition",
+          "Hardware vs. System"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q8",
+        "questionSubtype": "shortAnswer",
+        "question": "Analyze the scenario: A student uses a laptop to research. Identify two elements of this system other than 'Hardware' and explain their specific roles in this context.",
+        "answer": "1. Software (e.g., Browser/OS): Manages resources or provides the interface for searching. 2. Data: The search results, text, and images being viewed on screen that are processed from raw input to useful information.",
+        "expectedLength": "Identification of two elements with specific roles explained",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly identifying a non-hardware element (e.g., Software or Data) and its role in the scenario.",
+          "1 mark for correctly identifying a second distinct element and explaining how it contributes to the specific task."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Five Key Elements",
+          "Application of Concepts"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q9",
+        "questionSubtype": "longAnswer",
+        "question": "Case Study: Consider an ATM (Automated Teller Machine) dispensing cash. A complete analysis of this 'Computer System' requires identifying all five key elements and their interactions.\n\nTask:\n1. Identify the Hardware, Software, Data, Users, and Procedures involved in a typical transaction.\n2. Explain what would happen to the system's effectiveness if any one of these five elements were missing or failed (e.g., no procedures for password entry).\n3. Conclude why this demonstrates that a computer is more than just physical machinery.",
+        "answer": "1. Identification: Hardware = The ATM machine itself; Software = Banking OS and transaction apps; Data = Account balance, card details; Users = Bank customers/staff; Procedures = PIN rules, deposit limits.\n2. Interaction/Failure Analysis: If 'Procedures' (PIN) are missing, security fails. If 'Users' are absent, the system has no purpose. If 'Data' is corrupted, transactions fail. The system stops working effectively if any single element is compromised because they form an integrated ecosystem.\n3. Conclusion: This proves a computer system requires human interaction and rules (procedures) to turn raw technology into useful tools; hardware alone cannot function as a complete system.",
+        "expectedLength": "4-5 well-structured points with explanation of the interdependence",
+        "marks": 5,
+        "rubric": [
+          "1 mark for correctly identifying all five elements in the ATM context (Hardware, Software, Data, Users, Procedures).",
+          "2 marks for explaining how the failure or absence of one element disrupts the entire system's effectiveness.",
+          "1 mark for a clear conclusion linking back to the concept that systems require human interaction/rules beyond just hardware.",
+          "1 mark for logical flow and clarity in connecting the elements."
+        ],
+        "learningOutcomeIds": [
+          "LO1",
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Computer System Definition",
+          "Five Key Elements Integration",
+          "System vs. Hardware Distinction"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "q1",
+          "answer": "C. Electricity Grid",
+          "explanation": "Electricity grid is external; the five elements are Hardware, Software, Data, Users, Procedures.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q2",
+          "answer": "B. Application Software",
+          "explanation": "Word and Chrome are tools for specific user tasks, classifying them as application software.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q3",
+          "answer": "B. To provide rules and guidelines...",
+          "explanation": "Procedures define the human rules (like saving files or password policies) necessary for system operation.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q4",
+          "answer": "Windows, macOS, Linux (any valid OS)",
+          "rubric": [
+            "Correct example of system software"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q5",
+          "answer": "Raw facts processed by the computer (numbers, text, images).",
+          "rubric": [
+            "Mentions raw data/facts"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q6",
+          "answer": "Provides rules/guidelines for safe and effective operation.",
+          "rubric": [
+            "Mentions rules or guidelines"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q7",
+          "answer": "Hardware is physical only; System includes hardware + software/data/users/procedures. Distinguishing them shows humans/rules are needed for utility.",
+          "rubric": [
+            "1 mark: Hardware defined as physical machinery."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q8",
+          "answer": "Identify two non-hardware elements (e.g., Software for interface, Data for content) and explain their specific role in the research task.",
+          "rubric": [
+            "1 mark: Identification of element + role."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "q9",
+          "answer": "Identifies all 5 elements in ATM context. Explains interdependence (failure of one breaks system). Concludes that hardware alone is insufficient without users/procedures.",
+          "rubric": [
+            "1 mark: All 5 elements identified correctly."
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'OS' instead of specific names).",
+        "For long answers, reward structure and clear explanation of interdependence over rote memorization."
+      ]
+    }
+  }
+}

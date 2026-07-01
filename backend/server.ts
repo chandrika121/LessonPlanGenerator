@@ -4,29 +4,34 @@ import dotenv from "dotenv";
 import { promises as fs, readFileSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import os from "os";
+import { execFile } from "child_process";
+import { promisify } from "util";
 import mongoose from "mongoose";
 import { CurriculumModel } from "./models/Curriculum";
 import { PlanningWorkspaceModel } from "./models/PlanningWorkspace";
 
-// Load environment variables
-dotenv.config({ path: "../.env" });
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const ENV_FILE_PATH = path.resolve(__dirname, "../.env");
+
+// Load environment variables
+dotenv.config({ path: ENV_FILE_PATH });
 
 const app = express();
 const PORT = Number(process.env.BACKEND_PORT) || 3002;
 const FRONTEND_PORT = Number(process.env.FRONTEND_PORT) || 4173;
-const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11434";
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "qwen3.5:35b";
-const OLLAMA_SESSION_CONTENT_MODEL = process.env.OLLAMA_SESSION_CONTENT_MODEL || "qwen3.5:35b";
 const OLLAMA_NUM_PREDICT = Number(process.env.OLLAMA_NUM_PREDICT) || 8192;
 const OLLAMA_STAGE1_NUM_PREDICT = Number(process.env.OLLAMA_STAGE1_NUM_PREDICT) || 4096;
 const OLLAMA_TIMEOUT_MS = Number(process.env.OLLAMA_TIMEOUT_MS) || 600000;
+const OLLAMA_IMAGE_TIMEOUT_MS = Number(process.env.OLLAMA_IMAGE_TIMEOUT_MS) || 180000;
+const MAX_STUDENT_NOTE_VISUALS = Number(process.env.MAX_STUDENT_NOTE_VISUALS) || 3;
 const MAX_CHUNK_SPLIT_DEPTH = 2;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/kamalaniketan-lms";
 const DEBUG_OUTPUT_DIR = path.resolve(__dirname, "debug-output");
 const PROMPTS_DIR = path.resolve(__dirname, "prompts");
+const TEMPLATE_PPTX_PATH = path.resolve(PROMPTS_DIR, "Kamalaniketan-pptx template.pptx");
+const execFileAsync = promisify(execFile);
 
 const STAGE_ORDER = [
   "Stage 1: Raw Curriculum Extraction",
@@ -63,6 +68,17 @@ type SessionSectionKey =
   | "assessment"
   | "assignment";
 
+type OllamaGenerationKind =
+  | "default"
+  | "sessionContent"
+  | "teacherNotes"
+  | "studentNotes"
+  | "materials"
+  | "homework"
+  | "assessment"
+  | "assignment"
+  | "image";
+
 type AssessmentQuestionType =
   | "mcq"
   | "veryShortAnswer"
@@ -84,6 +100,11 @@ type SessionAssessmentCustomization = {
   totalMarks?: number | null;
   totalQuestions?: number | null;
   questionTypes?: AssessmentQuestionTypeRequest[];
+};
+
+type SessionPptGenerationOptions = {
+  pptTemplateId?: string;
+  pptThemeId?: string;
 };
 
 type AssessmentRenderedSubtype =
@@ -121,6 +142,224 @@ function renderPrompt(promptName: string, replacements: Record<string, string>):
   return content;
 }
 
+function looksLikeBase64Image(value: string) {
+  const normalized = String(value || "").trim();
+  return normalized.length > 128 && /^[A-Za-z0-9+/=\s]+$/.test(normalized);
+}
+
+function buildImageDataUrl(imageValue: string, mimeType: string = "image/png") {
+  const normalized = String(imageValue || "").trim();
+  if (!normalized) return "";
+  if (normalized.startsWith("data:image/")) return normalized;
+  return `data:${mimeType};base64,${normalized.replace(/\s+/g, "")}`;
+}
+
+function extractGeneratedImagePayload(data: any) {
+  const openAiImage = data?.data?.find?.((item: any) => typeof item?.b64_json === "string" || typeof item?.url === "string");
+  if (typeof openAiImage?.b64_json === "string") {
+    return {
+      imageDataUrl: buildImageDataUrl(openAiImage.b64_json, "image/png"),
+      mimeType: "image/png",
+    };
+  }
+  if (typeof openAiImage?.url === "string" && openAiImage.url.trim()) {
+    return {
+      imageDataUrl: openAiImage.url.trim(),
+      mimeType: openAiImage.url.startsWith("data:image/") ? openAiImage.url.slice(5, openAiImage.url.indexOf(";")) : "image/png",
+    };
+  }
+
+  const possibleImage =
+    (Array.isArray(data?.images) && typeof data.images[0] === "string" && data.images[0]) ||
+    (typeof data?.image === "string" && data.image) ||
+    (typeof data?.response === "string" && looksLikeBase64Image(data.response) ? data.response : "");
+
+  if (typeof possibleImage === "string" && possibleImage.trim()) {
+    return {
+      imageDataUrl: buildImageDataUrl(possibleImage, "image/png"),
+      mimeType: "image/png",
+    };
+  }
+
+  return null;
+}
+
+async function generateImageWithOllama(
+  requestId: string,
+  debugDir: string,
+  stageName: string,
+  prompt: string
+): Promise<{ imageDataUrl: string; mimeType: string; model: string }> {
+  const ollamaConfig = getOllamaConfig("image");
+  const negativePrompt = [
+    "no words",
+    "no text",
+    "no letters",
+    "no typography",
+    "no labels",
+    "no captions",
+    "no title text",
+    "no handwritten text",
+    "no gibberish text",
+    "no watermark",
+  ].join(", ");
+  const endpoints = [
+    {
+      url: `${ollamaConfig.baseUrl}/api/generate`,
+      body: {
+        model: ollamaConfig.model,
+        prompt,
+        stream: false,
+        options: {
+          temperature: 0.2,
+          negative_prompt: negativePrompt,
+        },
+      },
+    },
+    {
+      url: `${ollamaConfig.baseUrl}/v1/images/generations`,
+      body: {
+        model: ollamaConfig.model,
+        prompt,
+        negative_prompt: negativePrompt,
+        n: 1,
+        size: "768x768",
+        response_format: "b64_json",
+      },
+    },
+  ];
+
+  for (let index = 0; index < endpoints.length; index += 1) {
+    const endpoint = endpoints[index];
+    const controller = new AbortController();
+    const timeoutHandle = setTimeout(() => controller.abort(), OLLAMA_IMAGE_TIMEOUT_MS);
+    try {
+      await writeDebugFile(
+        debugDir,
+        `${safeStageName(stageName)}.image-attempt-${index + 1}.request.json`,
+        { url: endpoint.url, body: endpoint.body }
+      );
+
+      const response = await fetch(endpoint.url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(endpoint.body),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        await writeDebugFile(debugDir, `${safeStageName(stageName)}.image-attempt-${index + 1}.error.txt`, errorText);
+        continue;
+      }
+
+      const data = await response.json();
+      await writeDebugFile(debugDir, `${safeStageName(stageName)}.image-attempt-${index + 1}.response.json`, data);
+      const extracted = extractGeneratedImagePayload(data);
+      if (extracted?.imageDataUrl) {
+        return {
+          imageDataUrl: extracted.imageDataUrl,
+          mimeType: extracted.mimeType,
+          model: ollamaConfig.model,
+        };
+      }
+    } catch (error: any) {
+      await writeDebugFile(
+        debugDir,
+        `${safeStageName(stageName)}.image-attempt-${index + 1}.exception.txt`,
+        String(error?.message || error)
+      );
+    } finally {
+      clearTimeout(timeoutHandle);
+    }
+  }
+
+  throw new Error(`Unable to generate an image with Ollama model ${ollamaConfig.model}.`);
+}
+
+async function enrichStudentLessonNotesWithVisuals(
+  requestId: string,
+  debugDir: string,
+  sessionPlan: any,
+  context: {
+    subject?: string;
+    gradeLevel?: string;
+    sessionTitle?: string;
+  }
+) {
+  const sections = Array.isArray(sessionPlan?.studentLessonNotes?.sections)
+    ? sessionPlan.studentLessonNotes.sections
+    : [];
+  if (!sections.length) return sessionPlan;
+
+  let visualsGenerated = 0;
+  const enrichedSections: any[] = [];
+  for (let index = 0; index < sections.length; index += 1) {
+    const section = sections[index];
+    const visualSupport = Array.isArray(section?.visualSupport)
+      ? section.visualSupport.map((item: any) => String(item || "").trim()).filter(Boolean)
+      : [];
+    if (!visualSupport.length || visualsGenerated >= MAX_STUDENT_NOTE_VISUALS) {
+      enrichedSections.push(section);
+      continue;
+    }
+
+    const existingAssets = Array.isArray(section?.visualAssets) ? section.visualAssets.filter(Boolean) : [];
+    if (existingAssets.length > 0) {
+      enrichedSections.push(section);
+      continue;
+    }
+
+    const imagePrompt = [
+      "Create a clean educational study-note illustration for school students.",
+      `Subject: ${String(context.subject || "General Science")}.`,
+      `Grade level: ${String(context.gradeLevel || "School level")}.`,
+      `Session: ${String(context.sessionTitle || "Lesson session")}.`,
+      `Concept: ${String(section?.heading || `Concept ${index + 1}`)}.`,
+      `Visual requirement: ${visualSupport.join(" ")}`,
+      "Style: textbook-friendly, scientific, diagram-like, clear, accurate, uncluttered, centered composition, white or light background, student-safe.",
+      "Important: do not draw any words, letters, labels, captions, heading text, numbering, or watermark inside the image.",
+      "Show the concept visually only. Keep all explanation outside the image.",
+      "Prefer clean shapes, arrows without text, color-coded parts, and simple educational composition.",
+    ].join(" ");
+
+    try {
+      const generatedVisual = await generateImageWithOllama(
+        requestId,
+        debugDir,
+        `student-notes-visual-${index + 1}`,
+        imagePrompt
+      );
+      visualsGenerated += 1;
+      enrichedSections.push({
+        ...section,
+        visualAssets: [
+          {
+            prompt: imagePrompt,
+            alt: `${String(section?.heading || `Student note visual ${index + 1}`)} illustration`,
+            imageDataUrl: generatedVisual.imageDataUrl,
+            mimeType: generatedVisual.mimeType,
+            model: generatedVisual.model,
+          },
+        ],
+      });
+    } catch (error: any) {
+      console.warn(
+        `[Ollama][${requestId}][student-notes-visual-${index + 1}] Visual generation skipped: ${error?.message || error}`
+      );
+      enrichedSections.push(section);
+    }
+  }
+
+  return {
+    ...sessionPlan,
+    studentLessonNotes: {
+      ...sessionPlan.studentLessonNotes,
+      sections: enrichedSections,
+    },
+  };
+}
+
 const ALL_SESSION_SECTIONS: SessionSectionKey[] = [
   "teacherLessonNotes",
   "studentLessonNotes",
@@ -135,19 +374,43 @@ const ALL_SESSION_SECTIONS: SessionSectionKey[] = [
 ];
 
 const KAMALANIKETAN_TEMPLATE_ID = "kamalaniketan-session-12";
+const PPT_TEMPLATE_PRESETS = {
+  "textbook-clean": {
+    templateId: "textbook-clean",
+    templateName: "Textbook Clean",
+    description: "Minimal, textbook-like, high-readability classroom slides.",
+    layoutMode: "textbook-clean",
+    contentDensity: "balanced",
+  },
+  "academic-split": {
+    templateId: "academic-split",
+    templateName: "Academic Split",
+    description: "Balanced text-plus-visual teaching layout.",
+    layoutMode: "academic-split",
+    contentDensity: "balanced",
+  },
+  "visual-focus": {
+    templateId: "visual-focus",
+    templateName: "Visual Focus",
+    description: "Larger visual teaching area with lighter on-slide text.",
+    layoutMode: "visual-focus",
+    contentDensity: "light",
+  },
+} as const;
+
 const KAMALANIKETAN_TEMPLATE_SLIDES = [
   { key: "title_identity", label: "Title / Session Identity", slideType: "title", optional: false },
   { key: "learning_outcomes", label: "Learning Outcomes", slideType: "learning-outcomes", optional: false },
-  { key: "prerequisite_knowledge", label: "Prerequisite Knowledge + Recall", slideType: "prerequisite", optional: true },
-  { key: "lesson_hook", label: "Lesson Hook / Session Opening", slideType: "hook", optional: true },
+  { key: "prerequisite_knowledge", label: "Prior Knowledge / Recall", slideType: "prerequisite", optional: false },
+  { key: "lesson_hook", label: "Lesson Hook / Bridge", slideType: "hook", optional: false },
   { key: "topic_introduction", label: "Topic Introduction", slideType: "introduction", optional: false },
-  { key: "core_concept", label: "Core Concept", slideType: "concept", optional: false },
-  { key: "visual_explanation", label: "Visual Explanation", slideType: "visual-explanation", optional: false },
-  { key: "worked_example", label: "Worked Example / Demonstration", slideType: "worked-example", optional: true },
-  { key: "guided_practice", label: "Guided Practice / Activity", slideType: "guided-practice", optional: true },
-  { key: "quick_assessment", label: "Quick Assessment", slideType: "quick-assessment", optional: true },
-  { key: "summary", label: "Summary", slideType: "summary", optional: false },
-  { key: "homework_next_session", label: "Homework / Next Session", slideType: "homework", optional: true },
+  { key: "core_concept_a", label: "Core Concept A", slideType: "concept", optional: false },
+  { key: "core_concept_b_visual", label: "Core Concept B / Visual Explanation", slideType: "visual-explanation", optional: false },
+  { key: "worked_example", label: "Worked Example / Demonstration", slideType: "worked-example", optional: false },
+  { key: "guided_practice", label: "Guided Practice / Activity", slideType: "guided-practice", optional: false },
+  { key: "quick_assessment", label: "Formative Check / Quick Assessment", slideType: "quick-assessment", optional: false },
+  { key: "summary", label: "Recap / Key Takeaways", slideType: "summary", optional: false },
+  { key: "homework_next_session", label: "Homework / Next Class Bridge", slideType: "homework", optional: false },
 ] as const;
 
 const PPT_THEME_PRESETS: Record<string, {
@@ -186,6 +449,25 @@ const PPT_THEME_PRESETS: Record<string, {
       topBarStyle: "solid academic band",
       cardStyle: "clean rounded content cards",
       visualFrameStyle: "simple textbook-style image frame",
+    },
+  },
+  "cbse-academic-blue": {
+    themeId: "cbse-academic-blue",
+    themeName: "CBSE Academic Blue",
+    fonts: { heading: "Cambria", body: "Aptos" },
+    colors: {
+      primary: "#1D4E89",
+      secondary: "#173B6A",
+      accent: "#D97706",
+      background: "#F7FAFC",
+      surface: "#FFFFFF",
+      text: "#1F2937",
+      mutedText: "#6B7280",
+    },
+    visualStyle: {
+      topBarStyle: "measured academic title band",
+      cardStyle: "light textbook panels",
+      visualFrameStyle: "clean labelled-figure frame",
     },
   },
   "kamalaniketan-modern": {
@@ -319,6 +601,95 @@ function hasAssessmentSourceContent(sessionPlan: any) {
   );
 }
 
+function limitString(value: any, maxLength: number) {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, Math.max(0, maxLength - 3)).trim()}...`;
+}
+
+function limitStringList(values: any, maxItems: number, maxLengthPerItem: number) {
+  return (Array.isArray(values) ? values : [])
+    .map((item: any) => limitString(item, maxLengthPerItem))
+    .filter(Boolean)
+    .slice(0, maxItems);
+}
+
+function compactTeacherLessonNotesForAssessment(notes: any) {
+  if (!notes || typeof notes !== "object") return null;
+
+  return {
+    sessionOverview: limitString(notes.sessionOverview, 500),
+    prerequisiteKnowledge: limitStringList(notes.prerequisiteKnowledge, 6, 180),
+    learningOutcomes: limitStringList(notes.learningOutcomes, 8, 220),
+    lessonPurpose: limitStringList(notes.lessonPurpose, 6, 220),
+    teachingSequence: limitStringList(notes.teachingSequence, 8, 220),
+    guidedPractice: limitStringList(notes.guidedPractice, 6, 220),
+    misconceptions: limitStringList(notes.misconceptions, 6, 180),
+    formativeChecks: limitStringList(notes.formativeChecks, 8, 220),
+    assessmentQuestions: limitStringList(notes.assessmentQuestions, 8, 220),
+    sessionSummary: limitStringList(notes.sessionSummary, 6, 220),
+    conceptFlow: (Array.isArray(notes.conceptFlow) ? notes.conceptFlow : []).slice(0, 6).map((item: any) => ({
+      conceptName: limitString(item?.conceptName, 140),
+      definition: limitString(item?.definition, 220),
+      coreExplanation: limitString(item?.coreExplanation, 320),
+      importance: limitString(item?.importance, 220),
+      keywords: limitStringList(item?.keywords, 6, 80),
+      examples: limitStringList(item?.examples, 4, 160),
+    })),
+    lessonBlocks: (Array.isArray(notes.lessonBlocks) ? notes.lessonBlocks : []).slice(0, 6).map((item: any) => ({
+      title: limitString(item?.title, 140),
+      durationMinutes: Number(item?.durationMinutes || 0) || undefined,
+      explanation: limitStringList(item?.explanation, 3, 220),
+      examples: limitStringList(item?.examples, 3, 180),
+      checkUnderstanding: limitStringList(item?.checkUnderstanding, 3, 180),
+      expectedAnswers: limitStringList(item?.expectedAnswers, 3, 180),
+      activity: limitStringList(item?.activity, 2, 180),
+    })),
+  };
+}
+
+function compactStudentLessonNotesForAssessment(notes: any) {
+  if (!notes || typeof notes !== "object") return null;
+
+  return {
+    title: limitString(notes.title, 220),
+    sessionOverview: limitString(notes.sessionOverview, 500),
+    introduction: limitString(notes.introduction, 500),
+    learningObjectives: limitStringList(notes.learningObjectives, 8, 220),
+    keyTerms: limitStringList(notes.keyTerms, 10, 100),
+    quickSummary: limitStringList(notes.quickSummary, 6, 220),
+    summary: limitStringList(notes.summary, 6, 220),
+    rememberPoints: limitStringList(notes.rememberPoints, 8, 180),
+    definitions: (Array.isArray(notes.definitions) ? notes.definitions : []).slice(0, 10).map((item: any) => ({
+      term: limitString(item?.term, 100),
+      definition: limitString(item?.definition, 220),
+    })),
+    sections: (Array.isArray(notes.sections) ? notes.sections : []).slice(0, 6).map((item: any) => ({
+      heading: limitString(item?.heading, 160),
+      explanation: limitString(item?.explanation, 320),
+      keyPoints: limitStringList(item?.keyPoints, 5, 180),
+      examples: limitStringList(item?.examples, 3, 180),
+      importantNotes: limitStringList(item?.importantNotes, 4, 180),
+      conceptSummary: limitStringList(item?.conceptSummary, 3, 180),
+    })),
+    workedExamples: (Array.isArray(notes.workedExamples) ? notes.workedExamples : []).slice(0, 4).map((item: any) => ({
+      title: limitString(item?.title, 160),
+      steps: limitStringList(item?.steps, 5, 180),
+      explanation: limitString(item?.explanation, 260),
+    })),
+    selfCheckQuestions: limitStringList(notes.selfCheckQuestions, 8, 180),
+    veryShortAnswerQuestions: (Array.isArray(notes.veryShortAnswerQuestions) ? notes.veryShortAnswerQuestions : []).slice(0, 6).map((item: any) => ({
+      question: limitString(item?.question, 180),
+      answer: limitString(item?.answer, 220),
+    })),
+    mcqQuestions: (Array.isArray(notes.mcqQuestions) ? notes.mcqQuestions : []).slice(0, 6).map((item: any) => ({
+      question: limitString(item?.question, 180),
+      answer: limitString(item?.answer, 140),
+    })),
+  };
+}
+
 function buildAssessmentSourceSessionPayload(sessionPlan: any, fallback: Record<string, unknown>) {
   if (!sessionPlan || typeof sessionPlan !== "object") {
     return fallback;
@@ -329,13 +700,27 @@ function buildAssessmentSourceSessionPayload(sessionPlan: any, fallback: Record<
     sessionNumber: sessionPlan.sessionNumber || fallback.sessionNumber,
     title: sessionPlan.title || fallback.title,
     duration: sessionPlan.duration || fallback.duration,
-    learningOutcomes: Array.isArray(sessionPlan.learningOutcomes) ? sessionPlan.learningOutcomes : fallback.learningOutcomes,
-    introduction: sessionPlan.introduction || "",
-    theory: sessionPlan.theory || null,
-    activities: Array.isArray(sessionPlan.activities) ? sessionPlan.activities : [],
-    teacherLessonNotes: sessionPlan.teacherLessonNotes || null,
-    studentLessonNotes: sessionPlan.studentLessonNotes || null,
-    topicCoverage: Array.isArray(sessionPlan.topicCoverage) ? sessionPlan.topicCoverage : [],
+    learningOutcomes: limitStringList(
+      Array.isArray(sessionPlan.learningOutcomes) ? sessionPlan.learningOutcomes : fallback.learningOutcomes,
+      10,
+      220
+    ),
+    introduction: limitString(sessionPlan.introduction, 700),
+    theory: sessionPlan.theory
+      ? {
+          overview: limitString(sessionPlan.theory.overview, 700),
+          keyPoints: limitStringList(sessionPlan.theory.keyPoints, 10, 220),
+          detailedContent: limitString(sessionPlan.theory.detailedContent, 1200),
+        }
+      : null,
+    activities: (Array.isArray(sessionPlan.activities) ? sessionPlan.activities : []).slice(0, 8).map((item: any) => ({
+      name: limitString(item?.name, 160),
+      instructions: limitStringList(item?.instructions, 4, 220),
+      durationMinutes: Number(item?.durationMinutes || 0) || undefined,
+    })),
+    teacherLessonNotes: compactTeacherLessonNotesForAssessment(sessionPlan.teacherLessonNotes),
+    studentLessonNotes: compactStudentLessonNotesForAssessment(sessionPlan.studentLessonNotes),
+    topicCoverage: limitStringList(sessionPlan.topicCoverage, 12, 140),
   };
 }
 
@@ -547,7 +932,24 @@ function stripHtmlTags(value: string) {
   return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+function xmlEscape(value: string) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function slugifyFileNamePart(value: string) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "item";
+}
+
 const pptAssetResolutionCache = new Map<string, any>();
+const USE_REMOTE_PPT_ASSETS = false;
 
 async function resolveOpenverseImage(query: string) {
   const url = `https://api.openverse.engineering/v1/images?q=${encodeURIComponent(query)}&page_size=1`;
@@ -632,16 +1034,16 @@ function inferTemplateSlideKey(slide: any, index: number) {
   const keywordMap: Array<{ key: string; patterns: string[] }> = [
     { key: "title_identity", patterns: ["title", "building blocks", "session identity", "topic name"] },
     { key: "learning_outcomes", patterns: ["learning outcome", "objective"] },
-    { key: "prerequisite_knowledge", patterns: ["prerequisite", "before today", "recall"] },
-    { key: "lesson_hook", patterns: ["hook", "opening", "story", "session opening"] },
+    { key: "prerequisite_knowledge", patterns: ["prerequisite", "before today", "recall", "prior knowledge"] },
+    { key: "lesson_hook", patterns: ["hook", "opening", "story", "session opening", "bridge"] },
     { key: "topic_introduction", patterns: ["introduction", "definition", "topic introduction"] },
-    { key: "core_concept", patterns: ["core concept", "concept", "key difference", "major organelle"] },
-    { key: "visual_explanation", patterns: ["visual explanation", "diagram", "labelled"] },
+    { key: "core_concept_a", patterns: ["core concept a", "core concept", "concept", "key difference", "major organelle"] },
+    { key: "core_concept_b_visual", patterns: ["core concept b", "visual explanation", "diagram", "labelled"] },
     { key: "worked_example", patterns: ["worked example", "demonstration", "example"] },
     { key: "guided_practice", patterns: ["guided practice", "activity"] },
-    { key: "quick_assessment", patterns: ["assessment", "poll", "question"] },
-    { key: "summary", patterns: ["summary", "takeaway", "recap"] },
-    { key: "homework_next_session", patterns: ["homework", "next session", "thank you"] },
+    { key: "quick_assessment", patterns: ["assessment", "poll", "question", "formative"] },
+    { key: "summary", patterns: ["summary", "takeaway", "recap", "key takeaway"] },
+    { key: "homework_next_session", patterns: ["homework", "next session", "next class", "thank you"] },
   ];
 
   const matched = keywordMap.find((entry) => entry.patterns.some((pattern) => normalizedTitle.includes(pattern)));
@@ -656,11 +1058,11 @@ function buildTemplateThemeTokens(ppt: any) {
   const requestedThemeId = String(ppt?.themeId || "").trim();
   const preset =
     (requestedThemeId && PPT_THEME_PRESETS[requestedThemeId]) ||
-    PPT_THEME_PRESETS["kamalaniketan-modern"];
+    PPT_THEME_PRESETS["cbse-academic-blue"];
 
   return {
     themeId: preset.themeId,
-    themeName: String(ppt?.theme || ppt?.themeName || preset.themeName),
+    themeName: String(ppt?.themeName || ppt?.theme || preset.themeName),
     fonts: {
       heading: String(ppt?.themeTokens?.fonts?.heading || preset.fonts.heading),
       body: String(ppt?.themeTokens?.fonts?.body || preset.fonts.body),
@@ -682,18 +1084,240 @@ function buildTemplateThemeTokens(ppt: any) {
   };
 }
 
+function getPptTemplatePreset(templateId?: string | null) {
+  const requestedTemplateId = String(templateId || "").trim();
+  const normalizedTemplateId =
+    !requestedTemplateId || requestedTemplateId === KAMALANIKETAN_TEMPLATE_ID
+      ? "academic-split"
+      : requestedTemplateId;
+  return (
+    (normalizedTemplateId && PPT_TEMPLATE_PRESETS[normalizedTemplateId as keyof typeof PPT_TEMPLATE_PRESETS]) ||
+    PPT_TEMPLATE_PRESETS["academic-split"]
+  );
+}
+
+function shouldPreferSvgVisual(slide: any) {
+  const type = String(slide?.slideType || "").toLowerCase();
+  const key = String(slide?.templateSlideKey || "").toLowerCase();
+  return [
+    "visual-explanation",
+    "concept",
+    "worked-example",
+    "guided-practice",
+    "quick-assessment",
+    "summary",
+  ].includes(type) || [
+    "core_concept_a",
+    "core_concept_b_visual",
+    "worked_example",
+    "guided_practice",
+    "quick_assessment",
+    "summary",
+  ].includes(key);
+}
+
+function buildFallbackSvgDiagram(slide: any, themeTokens: any) {
+  const title = xmlEscape(String(slide?.slideTitle || "Concept Diagram"));
+  const rawItems = Array.isArray(slide?.onSlideText) && slide.onSlideText.length > 0
+    ? slide.onSlideText
+    : Array.isArray(slide?.bulletPoints)
+    ? slide.bulletPoints
+    : [];
+  const items = rawItems.map((item: any) => String(item || "").trim()).filter(Boolean).slice(0, 4);
+  if (!items.length) {
+    return "";
+  }
+
+  const primary = String(themeTokens?.colors?.primary || "#1D4E89").replace("#", "");
+  const accent = String(themeTokens?.colors?.accent || "#D97706").replace("#", "");
+  const surface = String(themeTokens?.colors?.surface || "#FFFFFF").replace("#", "");
+  const muted = String(themeTokens?.colors?.mutedText || "#6B7280").replace("#", "");
+  const text = String(themeTokens?.colors?.text || "#1F2937").replace("#", "");
+  const cardWidth = 760;
+  const cardHeight = 120;
+  const cardX = 100;
+  const startY = 170;
+  const rowGap = 34;
+
+  const cards = items.map((item: string, index: number) => {
+    const y = startY + index * (cardHeight + rowGap);
+    const safeText = xmlEscape(item);
+    const connector = index < items.length - 1
+      ? `<line x1="480" y1="${y + cardHeight}" x2="480" y2="${y + cardHeight + rowGap}" stroke="#${accent}" stroke-width="6" stroke-linecap="round"/>`
+      : "";
+    return `
+      <rect x="${cardX}" y="${y}" width="${cardWidth}" height="${cardHeight}" rx="28" fill="#${surface}" stroke="#${primary}" stroke-width="4"/>
+      <circle cx="154" cy="${y + 60}" r="28" fill="#${accent}"/>
+      <text x="154" y="${y + 70}" text-anchor="middle" font-family="Arial, sans-serif" font-weight="700" font-size="30" fill="#${surface}">${index + 1}</text>
+      <foreignObject x="210" y="${y + 22}" width="600" height="78">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #${text};">
+          ${safeText}
+        </div>
+      </foreignObject>
+      ${connector}
+    `;
+  }).join("");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="${title}">
+  <rect x="0" y="0" width="960" height="720" fill="#F8FBFD"/>
+  <rect x="60" y="52" width="840" height="84" rx="24" fill="#${primary}"/>
+  <text x="88" y="104" font-family="Arial, sans-serif" font-weight="700" font-size="34" fill="#FFFFFF">${title}</text>
+  <text x="88" y="146" font-family="Arial, sans-serif" font-size="18" fill="#${muted}">CBSE-inspired classroom explanation flow</text>
+  ${cards}
+</svg>`;
+}
+
+async function resolvePptSlideAssets(
+  requestId: string,
+  debugDir: string,
+  slide: any,
+  sessionContext: {
+    subject?: string;
+    gradeLevel?: string;
+    sessionTitle?: string;
+  }
+) {
+  const slideTitle = String(slide?.slideTitle || slide?.title || "Slide visual");
+  const existingAssets = Array.isArray(slide?.assets) && slide.assets.length > 0
+    ? slide.assets
+    : [{
+        purpose: `Support visual explanation for ${slideTitle}`,
+        searchQuery: `${sessionContext.subject || "classroom"} ${slideTitle} diagram`,
+        sourceSite: "Ollama image model",
+        sourceUrl: "",
+        licenseType: "Internally generated",
+        attributionText: "",
+        altText: `Illustration or diagram for ${slideTitle}`,
+        placementHint: "Right panel or supporting visual zone",
+      }];
+
+  const preferSvg = shouldPreferSvgVisual(slide);
+  const normalizedAssets = await Promise.all(existingAssets.map(async (asset: any) => {
+    const searchQuery = String(asset?.searchQuery || `${sessionContext.subject || "classroom"} ${slideTitle} diagram`);
+    const needsResolution =
+      !asset?.sourceUrl ||
+      String(asset.sourceUrl).includes("example.com") ||
+      !asset?.previewUrl;
+
+    let resolved = null;
+    if (USE_REMOTE_PPT_ASSETS && !preferSvg && needsResolution) {
+      resolved = await resolveReusableImageAsset(searchQuery);
+    }
+
+    const assetImageDataUrl = typeof asset?.imageDataUrl === "string" ? asset.imageDataUrl : "";
+    const assetMimeType = typeof asset?.mimeType === "string" ? asset.mimeType : "";
+    const assetModel = typeof asset?.model === "string" ? asset.model : "";
+    const finalAsset: Record<string, any> = {
+      purpose: String(asset?.purpose || `Support visual explanation for ${slideTitle}`),
+      searchQuery,
+      sourceSite: String(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "Ollama image model")),
+      sourceUrl: "",
+      previewUrl: assetImageDataUrl || "",
+      licenseType: String(asset?.licenseType || resolved?.licenseType || (preferSvg ? "Internal SVG diagram" : "Internally generated")),
+      attributionText: "",
+      altText: String(asset?.altText || resolved?.altText || `Illustration or diagram for ${slideTitle}`),
+      placementHint: String(asset?.placementHint || "Right panel or supporting visual zone"),
+      imageDataUrl: assetImageDataUrl,
+      mimeType: assetMimeType,
+      model: assetModel,
+      sourceKind: String(
+        assetImageDataUrl
+          ? (asset?.sourceKind || "generated-image")
+          : preferSvg
+          ? "svg-diagram"
+          : "none"
+      ),
+    };
+
+    const hasUsableVisual = Boolean(finalAsset.imageDataUrl);
+    if (!preferSvg && hasUsableVisual) {
+      return finalAsset;
+    }
+    if (preferSvg) {
+      return {
+        ...finalAsset,
+        sourceSite: "Internal SVG",
+        sourceUrl: "",
+        previewUrl: "",
+        imageDataUrl: "",
+        mimeType: "",
+        model: "",
+        licenseType: "Internal SVG diagram",
+        sourceKind: "svg-diagram",
+      };
+    }
+
+    const imagePrompt = [
+      "Create a clean classroom slide visual for a school teacher presentation.",
+      `Subject: ${String(sessionContext.subject || "School subject")}.`,
+      `Grade level: ${String(sessionContext.gradeLevel || "School grade")}.`,
+      `Session title: ${String(sessionContext.sessionTitle || "Lesson session")}.`,
+      `Slide title: ${slideTitle}.`,
+      `Visual requirement: ${String(slide?.visualPlan || finalAsset.purpose || searchQuery)}.`,
+      "Style: accurate, educational, uncluttered, presentation-friendly, white or light background, teacher-safe, no watermark.",
+      "Important: do not include words, labels, text, captions, letters, or numbers inside the image.",
+      "Prefer a clean central composition with diagram-like educational clarity.",
+      "Do not imitate stock-photo websites or watermarked online classroom graphics.",
+    ].join(" ");
+
+    try {
+      const generated = await generateImageWithOllama(
+        requestId,
+        debugDir,
+        `ppt-visual-${slugifyFileNamePart(slideTitle || "slide-visual")}`,
+        imagePrompt
+      );
+
+      return {
+        ...finalAsset,
+        imageDataUrl: generated.imageDataUrl,
+        mimeType: generated.mimeType,
+        model: generated.model,
+        sourceKind: "generated-image",
+        sourceSite: "Ollama image model",
+        sourceUrl: "",
+        previewUrl: generated.imageDataUrl,
+        licenseType: "Internally generated",
+        attributionText: "",
+      };
+    } catch (error) {
+      console.warn(`[PPT Assets] Image fallback failed for "${slideTitle}":`, error);
+      return {
+        ...finalAsset,
+        sourceKind: "none",
+      };
+    }
+  }));
+
+  return normalizedAssets;
+}
+
 async function normalizePptMaterial(ppt: any, sessionContext: {
   subject?: string;
   gradeLevel?: string;
   sessionTitle?: string;
   learningOutcomes?: string[];
   selectedChapters?: string[];
+  requestId?: string;
+  debugDir?: string;
+  generationOptions?: {
+    pptTemplateId?: string;
+    pptThemeId?: string;
+  };
 }) {
   if (!ppt || typeof ppt !== "object") {
     return ppt;
   }
 
-  const themeTokens = buildTemplateThemeTokens(ppt);
+  const templatePreset = getPptTemplatePreset(
+    ppt?.templateId ||
+    sessionContext.generationOptions?.pptTemplateId
+  );
+  const themeTokens = buildTemplateThemeTokens({
+    ...ppt,
+    themeId: ppt?.themeId || sessionContext.generationOptions?.pptThemeId,
+  });
   const rawSlides = Array.isArray(ppt.slides) ? ppt.slides : [];
   const normalizedSlidesBySlot = new Map<string, any>();
 
@@ -720,45 +1344,29 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       KAMALANIKETAN_TEMPLATE_SLIDES.find((entry) => entry.key === inferTemplateSlideKey(slide, index)) ||
       KAMALANIKETAN_TEMPLATE_SLIDES[index] ||
       KAMALANIKETAN_TEMPLATE_SLIDES[KAMALANIKETAN_TEMPLATE_SLIDES.length - 1];
-
-    const existingAssets = Array.isArray(slide?.assets) && slide.assets.length > 0
-      ? slide.assets
-      : [{
-          purpose: `Support visual explanation for ${slideTitle}`,
-          searchQuery: `${sessionContext.subject || "classroom"} ${slideTitle} diagram`,
-          sourceSite: "Openverse",
-          sourceUrl: "",
-          licenseType: "Reusable / verify exact license before export",
-          attributionText: "Add attribution if the final selected asset requires it.",
-          altText: `Illustration or diagram for ${slideTitle}`,
-          placementHint: "Right panel or supporting visual zone",
-        }];
-
-    const normalizedAssets = await Promise.all(existingAssets.map(async (asset: any) => {
-      const searchQuery = String(
-        asset?.searchQuery ||
-        `${sessionContext.subject || "classroom"} ${slideTitle} diagram`
-      );
-      const needsResolution =
-        !asset?.sourceUrl ||
-        String(asset.sourceUrl).includes("example.com") ||
-        !asset?.previewUrl;
-      const resolved = needsResolution ? await resolveReusableImageAsset(searchQuery) : null;
-      return {
-        purpose: String(asset?.purpose || `Support visual explanation for ${slideTitle}`),
-        searchQuery,
-        sourceSite: String(asset?.sourceSite || resolved?.sourceSite || "Openverse"),
-        sourceUrl: String(asset?.sourceUrl || resolved?.sourceUrl || ""),
-        previewUrl: String(asset?.previewUrl || resolved?.previewUrl || resolved?.sourceUrl || ""),
-        licenseType: String(asset?.licenseType || resolved?.licenseType || "Reusable / verify exact license before export"),
-        attributionText: String(asset?.attributionText || resolved?.attributionText || "Add attribution if the final selected asset requires it."),
-        altText: String(asset?.altText || resolved?.altText || `Illustration or diagram for ${slideTitle}`),
-        placementHint: String(asset?.placementHint || "Right panel or supporting visual zone"),
-      };
-    }));
+    const normalizedAssets = await resolvePptSlideAssets(
+      sessionContext.requestId || makeRequestId("ppt-assets"),
+      sessionContext.debugDir || DEBUG_OUTPUT_DIR,
+      {
+        ...slide,
+        slideTitle,
+        templateSlideKey: templateSlot.key,
+      },
+      sessionContext
+    );
+    const rawSvgCode = String(slide?.svgDiagram?.svgCode || "").trim();
+    const shouldUseSvg = shouldPreferSvgVisual({
+      ...slide,
+      templateSlideKey: templateSlot.key,
+    });
+    const svgCode = rawSvgCode || (shouldUseSvg ? buildFallbackSvgDiagram({
+      ...slide,
+      slideTitle,
+      templateSlideKey: templateSlot.key,
+    }, themeTokens) : "");
 
     const normalizedSlide = {
-      templateId: String(slide?.templateId || KAMALANIKETAN_TEMPLATE_ID),
+      templateId: String(slide?.templateId || templatePreset.templateId),
       templateSlideKey: templateSlot.key,
       templateSlideTitle: String(slide?.templateSlideTitle || templateSlot.label),
       isOptionalSlotFilled: typeof slide?.isOptionalSlotFilled === "boolean"
@@ -784,7 +1392,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
         bulletPoints[0] ||
         `Students should understand the core idea behind ${slideTitle}.`
       ),
-      layout: String(slide?.layout || "Title + concise teaching bullets + supporting visual area"),
+      layout: String(slide?.layout || `${templatePreset.layoutMode} layout with concise teaching copy and supporting visual area`),
       bulletPoints,
       onSlideText,
       speakerNotes: Array.isArray(slide?.speakerNotes) && slide.speakerNotes.length > 0
@@ -799,12 +1407,12 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
         ? slide.svgDiagram
         : {
             title: `${slideTitle} visual`,
-            type: "concept diagram",
+            type: shouldUseSvg ? "concept diagram" : "visual support",
             instructions: [
-              `If a sourced image is not precise enough, create a compact SVG diagram for ${slideTitle}.`,
-              "Use labeled arrows, boxes, or structure outlines only when they help learning clarity.",
+              `If a sourced image is not precise enough, use a compact classroom diagram for ${slideTitle}.`,
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity.",
             ],
-            svgCode: "",
+            svgCode,
           },
       animationHints: Array.isArray(slide?.animationHints) && slide.animationHints.length > 0
         ? slide.animationHints.map((item: any) => String(item))
@@ -823,7 +1431,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       return {
         ...existing,
         slideNumber: index + 1,
-        templateId: KAMALANIKETAN_TEMPLATE_ID,
+        templateId: templatePreset.templateId,
         templateSlideKey: templateSlot.key,
         templateSlideTitle: templateSlot.label,
       };
@@ -835,7 +1443,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       : [`Cover the ${templateSlot.label.toLowerCase()} for this session using only taught content.`];
 
     return {
-      templateId: KAMALANIKETAN_TEMPLATE_ID,
+      templateId: templatePreset.templateId,
       templateSlideKey: templateSlot.key,
       templateSlideTitle: templateSlot.label,
       isOptionalSlotFilled: false,
@@ -846,20 +1454,25 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       topicCoverage: sessionContext.selectedChapters || [],
       teacherIntent: `Use the ${templateSlot.label.toLowerCase()} slot without inventing new curriculum content.`,
       studentTakeaway: "",
-      layout: "Kamalaniketan template slide",
+      layout: `${templatePreset.layoutMode} template slide`,
       bulletPoints: lowDensityBullets,
       onSlideText: [lowDensityTitle],
       speakerNotes: ["Leave concise placeholders only when the session does not naturally support this slot."],
-      visualPlan: templateSlot.key === "visual_explanation"
+      visualPlan: templateSlot.key === "core_concept_b_visual"
         ? "Prefer a clean diagram or labelled visual that matches the taught concept."
         : "Use the template visual area only if it strengthens this session's taught content.",
       assets: [],
-      svgDiagram: templateSlot.key === "visual_explanation"
+      svgDiagram: templateSlot.key === "core_concept_b_visual"
+        || templateSlot.key === "core_concept_a"
         ? {
             title: `${lowDensityTitle} visual`,
             type: "labelled diagram",
             instructions: ["Provide a simple session-faithful visual only if the taught concept requires it."],
-            svgCode: "",
+            svgCode: buildFallbackSvgDiagram({
+              slideTitle: lowDensityTitle,
+              onSlideText: lowDensityBullets,
+              templateSlideKey: templateSlot.key,
+            }, themeTokens),
           }
         : null,
       animationHints: [],
@@ -868,9 +1481,11 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
   });
 
   return {
-    templateId: String(ppt?.templateId || KAMALANIKETAN_TEMPLATE_ID),
-    templateName: String(ppt?.templateName || "Kamalaniketan Session PPT Template"),
-    themeId: String(ppt?.themeId || themeTokens.themeId),
+    deckMode: "teacher-delivery",
+    templateId: templatePreset.templateId,
+    templateName: String(ppt?.templateName || templatePreset.templateName),
+    themeId: String(ppt?.themeId || sessionContext.generationOptions?.pptThemeId || themeTokens.themeId),
+    themeName: String(ppt?.themeName || themeTokens.themeName),
     themeTokens,
     title: String(ppt?.title || ppt?.presentationTitle || sessionContext.sessionTitle || "Session Presentation"),
     presentationTitle: String(ppt?.presentationTitle || ppt?.title || sessionContext.sessionTitle || "Session Presentation"),
@@ -881,23 +1496,19 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     audience: String(ppt?.audience || `${sessionContext.gradeLevel || "Grade-aligned"} classroom`),
     theme: String(ppt?.theme || themeTokens.themeName),
     assetSearchPlan: {
-      preferredSources: Array.isArray(ppt?.assetSearchPlan?.preferredSources) && ppt.assetSearchPlan.preferredSources.length > 0
-        ? ppt.assetSearchPlan.preferredSources
-        : ["Openverse", "Wikimedia Commons"],
+      preferredSources: ["Internal SVG", "Ollama image model"],
       safeSearch: typeof ppt?.assetSearchPlan?.safeSearch === "boolean" ? ppt.assetSearchPlan.safeSearch : true,
-      licensingNotes: Array.isArray(ppt?.assetSearchPlan?.licensingNotes) && ppt.assetSearchPlan.licensingNotes.length > 0
-        ? ppt.assetSearchPlan.licensingNotes
-        : ["Use only reusable or public-domain compatible assets."],
+      licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
       fallbackStrategy: String(
         ppt?.assetSearchPlan?.fallbackStrategy ||
-        "Prefer SVG diagrams when external visuals are unnecessary or uncertain."
+        "Prefer SVG diagrams for concept/process slides and use the Ollama image model for all picture-based visuals."
       ),
     },
     licenseChecklist: Array.isArray(ppt?.licenseChecklist) && ppt.licenseChecklist.length > 0
       ? ppt.licenseChecklist
       : [
-          "Verify final selected assets are reusable.",
-          "Keep attribution text where required.",
+          "All visuals should be internally generated or rendered as in-app SVG diagrams.",
+          "Review generated visuals for classroom accuracy before export.",
         ],
     presentationWarnings: Array.isArray(ppt?.presentationWarnings) && ppt.presentationWarnings.length > 0
       ? ppt.presentationWarnings
@@ -921,6 +1532,500 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     },
     slides: normalizedSlides,
   };
+}
+
+const PPT_NOTES_MASTER_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:notesMaster xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"><p:cSld><p:bg><p:bgRef idx="1001"><a:schemeClr val="bg1" /></p:bgRef></p:bg><p:spTree><p:nvGrpSpPr><p:cNvPr id="1" name="" /><p:cNvGrpSpPr /><p:nvPr /></p:nvGrpSpPr><p:grpSpPr><a:xfrm /></p:grpSpPr><p:sp><p:nvSpPr><p:cNvPr id="2" name="Header Placeholder" /><p:cNvSpPr /><p:nvPr><p:ph type="hdr" sz="quarter" /></p:nvPr></p:nvSpPr><p:spPr><a:prstGeom prst="rect"><a:avLst /></a:prstGeom></p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p /></p:txBody></p:sp><p:sp><p:nvSpPr><p:cNvPr id="3" name="Date Placeholder" /><p:cNvSpPr /><p:nvPr><p:ph type="dt" sz="quarter" idx="1" /></p:nvPr></p:nvSpPr><p:spPr><a:prstGeom prst="rect"><a:avLst /></a:prstGeom></p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p /></p:txBody></p:sp><p:sp><p:nvSpPr><p:cNvPr id="4" name="Slide Image Placeholder" /><p:cNvSpPr /><p:nvPr><p:ph type="sldImg" idx="2" /></p:nvPr></p:nvSpPr><p:spPr><a:prstGeom prst="rect"><a:avLst /></a:prstGeom></p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p /></p:txBody></p:sp><p:sp><p:nvSpPr><p:cNvPr id="5" name="Notes Placeholder" /><p:cNvSpPr /><p:nvPr><p:ph type="body" sz="quarter" idx="3" /></p:nvPr></p:nvSpPr><p:spPr><a:prstGeom prst="rect"><a:avLst /></a:prstGeom></p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p /></p:txBody></p:sp><p:sp><p:nvSpPr><p:cNvPr id="6" name="Footer Placeholder" /><p:cNvSpPr /><p:nvPr><p:ph type="ftr" sz="quarter" idx="4" /></p:nvPr></p:nvSpPr><p:spPr><a:prstGeom prst="rect"><a:avLst /></a:prstGeom></p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p /></p:txBody></p:sp><p:sp><p:nvSpPr><p:cNvPr id="7" name="Slide Number Placeholder" /><p:cNvSpPr /><p:nvPr><p:ph type="sldNum" sz="quarter" idx="5" /></p:nvPr></p:nvSpPr><p:spPr><a:prstGeom prst="rect"><a:avLst /></a:prstGeom></p:spPr><p:txBody><a:bodyPr /><a:lstStyle /><a:p /></p:txBody></p:sp></p:spTree></p:cSld><p:clrMap bg1="lt1" tx1="dk1" bg2="lt2" tx2="dk2" accent1="accent1" accent2="accent2" accent3="accent3" accent4="accent4" accent5="accent5" accent6="accent6" hlink="hlink" folHlink="folHlink" /><p:notesStyle><a:lvl1pPr marL="0" algn="l" defTabSz="914400" rtl="0" eaLnBrk="1" latinLnBrk="0" hangingPunct="1"><a:defRPr sz="1200" kern="1200" /></a:lvl1pPr></p:notesStyle></p:notesMaster>`;
+const PPT_NOTES_MASTER_RELS_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Target="/ppt/notesMasters/theme/theme3.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme"/></Relationships>`;
+const PPT_NOTES_THEME_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><a:theme name="LessonPlanGenerator Notes" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:themeElements><a:clrScheme name="LessonPlanGenerator Notes"><a:dk1><a:srgbClr val="000000"/></a:dk1><a:lt1><a:srgbClr val="FFFFFF"/></a:lt1><a:dk2><a:srgbClr val="173B6A"/></a:dk2><a:lt2><a:srgbClr val="E8E8E8"/></a:lt2><a:accent1><a:srgbClr val="1D4E89"/></a:accent1><a:accent2><a:srgbClr val="D97706"/></a:accent2><a:accent3><a:srgbClr val="36ADAA"/></a:accent3><a:accent4><a:srgbClr val="0F9ED5"/></a:accent4><a:accent5><a:srgbClr val="8B5CF6"/></a:accent5><a:accent6><a:srgbClr val="4EA72E"/></a:accent6><a:hlink><a:srgbClr val="467886"/></a:hlink><a:folHlink><a:srgbClr val="96607D"/></a:folHlink></a:clrScheme><a:fontScheme name="Office"><a:majorFont><a:latin typeface="Calibri Light" /><a:ea typeface="Calibri Light" /><a:cs typeface="Calibri Light" /></a:majorFont><a:minorFont><a:latin typeface="Calibri" /><a:ea typeface="Calibri" /><a:cs typeface="Calibri" /></a:minorFont></a:fontScheme><a:fmtScheme name="Office"><a:fillStyleLst><a:solidFill><a:schemeClr val="phClr" /></a:solidFill></a:fillStyleLst><a:lnStyleLst><a:ln w="12700"><a:solidFill><a:schemeClr val="phClr" /></a:solidFill><a:prstDash val="solid" /></a:ln></a:lnStyleLst><a:effectStyleLst><a:effectStyle><a:effectLst /></a:effectStyle></a:effectStyleLst><a:bgFillStyleLst><a:solidFill><a:schemeClr val="phClr" /></a:solidFill></a:bgFillStyleLst></a:fmtScheme></a:themeElements></a:theme>`;
+
+const PPTX_EMU = 914400;
+const PPTX_SLIDE_CX = 18288000;
+const PPTX_SLIDE_CY = 10287000;
+
+function emu(inches: number) {
+  return Math.round(inches * PPTX_EMU);
+}
+
+function toHexColor(value: string | undefined, fallback: string) {
+  const normalized = String(value || fallback).trim();
+  if (!normalized) return fallback.replace("#", "");
+  return normalized.replace(/^#/, "") || fallback.replace("#", "");
+}
+
+function mimeTypeToExtension(mimeType: string, fallback = "png") {
+  const normalized = String(mimeType || "").toLowerCase();
+  if (normalized.includes("png")) return "png";
+  if (normalized.includes("jpeg") || normalized.includes("jpg")) return "jpg";
+  if (normalized.includes("svg")) return "svg";
+  if (normalized.includes("gif")) return "gif";
+  if (normalized.includes("webp")) return "webp";
+  return fallback;
+}
+
+function decodeDataUrl(dataUrl: string) {
+  const match = String(dataUrl || "").match(/^data:([^;,]+)?(?:;charset=[^;,]+)?(?:;base64)?,(.*)$/i);
+  if (!match) return null;
+  const mimeType = match[1] || "application/octet-stream";
+  const encoded = match[2] || "";
+  const isBase64 = String(dataUrl || "").includes(";base64,");
+  const buffer = isBase64
+    ? Buffer.from(encoded, "base64")
+    : Buffer.from(decodeURIComponent(encoded), "utf8");
+  return { mimeType, buffer };
+}
+
+async function fetchBinaryAsset(url: string) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Unable to fetch asset: ${response.status}`);
+  }
+  const arrayBuffer = await response.arrayBuffer();
+  return {
+    buffer: Buffer.from(arrayBuffer),
+    mimeType: response.headers.get("content-type") || "image/jpeg",
+  };
+}
+
+async function resolvePptVisualMedia(slide: any, slideIndex: number) {
+  const preferredAsset = Array.isArray(slide?.assets)
+    ? slide.assets.find((asset: any) => Boolean(asset?.imageDataUrl))
+    : null;
+
+  if (preferredAsset?.imageDataUrl) {
+    const decoded = decodeDataUrl(preferredAsset.imageDataUrl);
+    if (decoded) {
+      return {
+        fileName: `generated-slide-${slideIndex + 1}.${mimeTypeToExtension(decoded.mimeType)}`,
+        buffer: decoded.buffer,
+        mimeType: decoded.mimeType,
+        altText: String(preferredAsset.altText || preferredAsset.purpose || slide?.slideTitle || "Slide visual"),
+        sourceKind: preferredAsset.sourceKind || "generated-image",
+      };
+    }
+  }
+
+  const svgCode = String(slide?.svgDiagram?.svgCode || "").trim();
+  if (svgCode.startsWith("<svg") || svgCode.startsWith("<?xml")) {
+    return {
+      fileName: `diagram-slide-${slideIndex + 1}.svg`,
+      buffer: Buffer.from(svgCode, "utf8"),
+      mimeType: "image/svg+xml",
+      altText: String(slide?.svgDiagram?.title || slide?.slideTitle || "Slide diagram"),
+      sourceKind: "svg-diagram",
+    };
+  }
+
+  const remoteUrl = String(preferredAsset?.previewUrl || preferredAsset?.sourceUrl || "").trim();
+  if (USE_REMOTE_PPT_ASSETS && remoteUrl) {
+    const fetched = await fetchBinaryAsset(remoteUrl);
+    return {
+      fileName: `asset-slide-${slideIndex + 1}.${mimeTypeToExtension(fetched.mimeType)}`,
+      buffer: fetched.buffer,
+      mimeType: fetched.mimeType,
+      altText: String(preferredAsset?.altText || preferredAsset?.purpose || slide?.slideTitle || "Slide visual"),
+      sourceKind: preferredAsset?.sourceKind || "generated-image",
+    };
+  }
+
+  return null;
+}
+
+function buildTextParagraphXml(
+  text: string,
+  options: { fontFace: string; fontSize: number; color: string; bold?: boolean; align?: "l" | "ctr" | "r" }
+) {
+  const safeText = xmlEscape(text);
+  return `<a:p><a:pPr algn="${options.align || "l"}" marL="0" indent="0" lvl="0"/><a:r><a:rPr lang="en-US" sz="${Math.round(options.fontSize * 100)}"${options.bold ? ' b="1"' : ""}><a:solidFill><a:srgbClr val="${options.color}"/></a:solidFill><a:latin typeface="${xmlEscape(options.fontFace)}"/><a:ea typeface="${xmlEscape(options.fontFace)}"/><a:cs typeface="${xmlEscape(options.fontFace)}"/></a:rPr><a:t>${safeText}</a:t></a:r></a:p>`;
+}
+
+function buildTextBoxXml(
+  id: number,
+  x: number,
+  y: number,
+  cx: number,
+  cy: number,
+  paragraphs: string[],
+  options: {
+    fontFace: string;
+    fontSize: number;
+    color: string;
+    bold?: boolean;
+    align?: "l" | "ctr" | "r";
+    fillColor?: string;
+    lineColor?: string;
+    roundRect?: boolean;
+    inset?: number;
+  }
+) {
+  const body = paragraphs.length > 0
+    ? paragraphs.map((paragraph) =>
+        buildTextParagraphXml(paragraph, {
+          fontFace: options.fontFace,
+          fontSize: options.fontSize,
+          color: options.color,
+          bold: options.bold,
+          align: options.align,
+        })
+      ).join("")
+    : "<a:p/>";
+  const geometry = options.roundRect ? "roundRect" : "rect";
+  const fill = options.fillColor
+    ? `<a:solidFill><a:srgbClr val="${options.fillColor}"/></a:solidFill>`
+    : "<a:noFill/>";
+  const line = options.lineColor
+    ? `<a:ln w="12700"><a:solidFill><a:srgbClr val="${options.lineColor}"/></a:solidFill><a:prstDash val="solid"/></a:ln>`
+    : `<a:ln w="0"><a:noFill/><a:prstDash val="solid"/></a:ln>`;
+  const inset = options.inset ?? 0;
+  return `<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="TextBox ${id}"/><p:cNvSpPr txBox="true"/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="${geometry}"><a:avLst/></a:prstGeom>${fill}${line}</p:spPr><p:txBody><a:bodyPr anchor="t" rtlCol="false" tIns="${inset}" lIns="${inset}" bIns="${inset}" rIns="${inset}"><a:spAutoFit/></a:bodyPr><a:lstStyle/>${body}</p:txBody></p:sp>`;
+}
+
+function buildSolidShapeXml(id: number, x: number, y: number, cx: number, cy: number, fillColor: string) {
+  return `<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="Shape ${id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:solidFill><a:srgbClr val="${fillColor}"/></a:solidFill><a:ln w="0"><a:noFill/></a:ln></p:spPr></p:sp>`;
+}
+
+function buildImageShapeXml(id: number, relId: string, x: number, y: number, cx: number, cy: number, borderColor: string) {
+  return `<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="Visual ${id}" descr="Teacher presentation visual"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="roundRect"><a:avLst/></a:prstGeom><a:blipFill rotWithShape="true"><a:blip r:embed="${relId}"/><a:stretch><a:fillRect l="0" t="0" r="0" b="0"/></a:stretch></a:blipFill><a:ln w="12700"><a:solidFill><a:srgbClr val="${borderColor}"/></a:solidFill><a:prstDash val="solid"/></a:ln></p:spPr></p:sp>`;
+}
+
+function buildTemplateLayout(templateId: string, hasVisual: boolean) {
+  if (templateId === "textbook-clean") {
+    return {
+      bandHeight: 0,
+      titleX: emu(1.05),
+      titleY: emu(0.82),
+      titleW: emu(11.4),
+      metaX: emu(1.05),
+      metaY: emu(1.62),
+      metaW: emu(11.4),
+      bodyX: emu(1.05),
+      bodyY: emu(2.22),
+      bodyW: hasVisual ? emu(10.5) : emu(17.75),
+      bodyH: emu(6.0),
+      visualX: emu(12.05),
+      visualY: emu(2.18),
+      visualW: emu(6.75),
+      visualH: emu(4.8),
+      footerY: emu(9.15),
+    };
+  }
+
+  if (templateId === "visual-focus") {
+    return {
+      bandHeight: emu(0.42),
+      titleX: emu(0.95),
+      titleY: emu(0.78),
+      titleW: emu(8.1),
+      metaX: emu(0.95),
+      metaY: emu(1.58),
+      metaW: emu(8.3),
+      bodyX: emu(0.95),
+      bodyY: emu(2.4),
+      bodyW: emu(7.2),
+      bodyH: emu(5.65),
+      visualX: emu(8.65),
+      visualY: emu(1.92),
+      visualW: emu(10.15),
+      visualH: emu(6.5),
+      footerY: emu(9.15),
+    };
+  }
+
+  return {
+    bandHeight: emu(0.42),
+    titleX: emu(0.95),
+    titleY: emu(0.78),
+    titleW: emu(9.8),
+    metaX: emu(0.95),
+    metaY: emu(1.58),
+    metaW: emu(9.8),
+    bodyX: emu(0.95),
+    bodyY: emu(2.3),
+    bodyW: hasVisual ? emu(10.0) : emu(17.8),
+    bodyH: emu(5.9),
+    visualX: emu(11.35),
+    visualY: emu(2.18),
+    visualW: emu(7.45),
+    visualH: emu(5.25),
+    footerY: emu(9.15),
+  };
+}
+
+function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?: string) {
+  const templateId = String(ppt?.templateId || "academic-split");
+  const theme = ppt?.themeTokens || {};
+  const colors = theme.colors || {};
+  const fonts = theme.fonts || {};
+  const primary = toHexColor(colors.primary, "#1D4E89");
+  const accent = toHexColor(colors.accent, "#D97706");
+  const background = toHexColor(colors.background, "#F7FAFC");
+  const surface = toHexColor(colors.surface, "#FFFFFF");
+  const text = toHexColor(colors.text, "#1F2937");
+  const muted = toHexColor(colors.mutedText, "#6B7280");
+  const headingFont = String(fonts.heading || "Cambria");
+  const bodyFont = String(fonts.body || "Aptos");
+  const hasVisual = Boolean(visualRelId);
+  const layout = buildTemplateLayout(templateId, hasVisual);
+  const slideTitle = String(slide?.slideTitle || `Slide ${slideIndex + 1}`);
+  const deckTitle = String(ppt?.presentationTitle || ppt?.title || "Session Presentation");
+  const metaLine = [deckTitle, slide?.templateSlideTitle || slide?.slideType || "Teacher deck"].filter(Boolean).join("  •  ");
+  const notesCount = Array.isArray(slide?.speakerNotes) ? slide.speakerNotes.length : 0;
+  const onSlideText = Array.isArray(slide?.onSlideText) ? slide.onSlideText.slice(0, 3) : [];
+  const bulletPoints = Array.isArray(slide?.bulletPoints) ? slide.bulletPoints.slice(0, templateId === "visual-focus" ? 4 : 5) : [];
+  const bodyParagraphs = [
+    ...onSlideText.map((item: string) => item),
+    ...bulletPoints.map((item: string) => `• ${item}`),
+  ];
+  const footerBits = [
+    slide?.studentTakeaway ? `Takeaway: ${slide.studentTakeaway}` : "",
+    slide?.timeEstimateMinutes != null ? `Timing: ${slide.timeEstimateMinutes} min` : "",
+    notesCount ? `Notes: ${notesCount} cues` : "",
+  ].filter(Boolean);
+
+  let shapeId = 2;
+  const parts: string[] = [];
+  parts.push(buildSolidShapeXml(1, 0, 0, PPTX_SLIDE_CX, PPTX_SLIDE_CY, background));
+  if (layout.bandHeight > 0) {
+    parts.push(buildSolidShapeXml(shapeId++, 0, 0, PPTX_SLIDE_CX, layout.bandHeight, primary));
+  }
+  parts.push(
+    buildTextBoxXml(shapeId++, layout.titleX, layout.titleY, layout.titleW, emu(0.72), [slideTitle], {
+      fontFace: headingFont,
+      fontSize: templateId === "textbook-clean" ? 28 : 30,
+      color: text,
+      bold: true,
+    })
+  );
+  parts.push(
+    buildTextBoxXml(shapeId++, layout.metaX, layout.metaY, layout.metaW, emu(0.42), [metaLine], {
+      fontFace: bodyFont,
+      fontSize: 12,
+      color: muted,
+    })
+  );
+  parts.push(
+    buildTextBoxXml(shapeId++, layout.bodyX, layout.bodyY, layout.bodyW, layout.bodyH, bodyParagraphs.length ? bodyParagraphs : [slide?.visualPlan || "Teacher-guided explanation slide."], {
+      fontFace: bodyFont,
+      fontSize: templateId === "visual-focus" ? 18 : 20,
+      color: text,
+      fillColor: surface,
+      lineColor: primary,
+      roundRect: true,
+      inset: 160000,
+    })
+  );
+  if (visualRelId) {
+    parts.push(buildImageShapeXml(shapeId++, visualRelId, layout.visualX, layout.visualY, layout.visualW, layout.visualH, accent));
+  } else {
+    parts.push(
+      buildTextBoxXml(shapeId++, layout.visualX, layout.visualY, layout.visualW, layout.visualH, [
+        slide?.svgDiagram?.title || "Planned visual",
+        slide?.visualPlan || "Teacher-selected visual support will appear here in export.",
+      ], {
+        fontFace: bodyFont,
+        fontSize: 18,
+        color: muted,
+        fillColor: surface,
+        lineColor: accent,
+        roundRect: true,
+        inset: 160000,
+      })
+    );
+  }
+  if (footerBits.length > 0) {
+    parts.push(
+      buildTextBoxXml(shapeId++, emu(0.95), layout.footerY, emu(17.8), emu(0.48), [footerBits.join("   •   ")], {
+        fontFace: bodyFont,
+        fontSize: 11,
+        color: muted,
+      })
+    );
+  }
+  parts.push(
+    buildTextBoxXml(shapeId++, PPTX_SLIDE_CX - emu(1.65), emu(0.55), emu(0.7), emu(0.34), [String(slide.slideNumber || slideIndex + 1)], {
+      fontFace: bodyFont,
+      fontSize: 11,
+      color: primary,
+      bold: true,
+      align: "r",
+    })
+  );
+
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
+  <p:cSld>
+    <p:spTree>
+      <p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>
+      <p:grpSpPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/><a:chOff x="0" y="0"/><a:chExt cx="0" cy="0"/></a:xfrm></p:grpSpPr>
+      ${parts.join("")}
+    </p:spTree>
+  </p:cSld>
+  <p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr>
+</p:sld>`;
+}
+
+function buildPptSlideRelsXml(slideIndex: number, mediaFileName?: string) {
+  const relationships = [
+    `<Relationship Id="rId1" Target="../slideLayouts/slideLayout7.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout"/>`,
+    `<Relationship Id="rId2" Target="../notesSlides/notesSlide${slideIndex + 1}.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesSlide"/>`,
+  ];
+  if (mediaFileName) {
+    relationships.push(`<Relationship Id="rId3" Target="../media/${xmlEscape(mediaFileName)}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image"/>`);
+  }
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${relationships.join("")}</Relationships>`;
+}
+
+function buildNotesSlideXml(slide: any) {
+  const speakerNotes = Array.isArray(slide?.speakerNotes) && slide.speakerNotes.length > 0
+    ? slide.speakerNotes.map((item: any) => String(item || "").trim()).filter(Boolean)
+    : ["No speaker notes were generated for this slide."];
+  const noteParagraphs = speakerNotes.map((item: string) =>
+    `<a:p><a:pPr lvl="0"/><a:r><a:rPr lang="en-US" sz="1200"><a:latin typeface="Calibri"/><a:ea typeface="Calibri"/><a:cs typeface="Calibri"/></a:rPr><a:t>${xmlEscape(item)}</a:t></a:r></a:p>`
+  ).join("");
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<p:notes xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main">
+  <p:cSld>
+    <p:spTree>
+      <p:nvGrpSpPr><p:cNvPr id="1" name=""/><p:cNvGrpSpPr/><p:nvPr/></p:nvGrpSpPr>
+      <p:grpSpPr><a:xfrm/></p:grpSpPr>
+      <p:sp><p:nvSpPr><p:cNvPr id="2" name="Slide Image Placeholder 1"/><p:cNvSpPr/><p:nvPr><p:ph type="sldImg" idx="0"/></p:nvPr></p:nvSpPr><p:spPr/></p:sp>
+      <p:sp><p:nvSpPr><p:cNvPr id="3" name="Notes Placeholder 2"/><p:cNvSpPr/><p:nvPr><p:ph type="body" idx="1"/></p:nvPr></p:nvSpPr><p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/>${noteParagraphs}</p:txBody></p:sp>
+      <p:sp><p:nvSpPr><p:cNvPr id="4" name="Slide Number Placeholder 3"/><p:cNvSpPr/><p:nvPr><p:ph type="sldNum" idx="5"/></p:nvPr></p:nvSpPr><p:spPr/><p:txBody><a:bodyPr/><a:lstStyle/><a:p/></p:txBody></p:sp>
+    </p:spTree>
+  </p:cSld>
+  <p:clrMapOvr><a:masterClrMapping/></p:clrMapOvr>
+</p:notes>`;
+}
+
+function buildNotesSlideRelsXml(slideIndex: number) {
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Target="/ppt/slides/slide${slideIndex + 1}.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slide"/><Relationship Id="rId2" Target="/ppt/notesMasters/notesMaster1.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesMaster"/></Relationships>`;
+}
+
+function injectNotesMasterIntoPresentationXml(xml: string) {
+  if (xml.includes("<p:notesMasterIdLst>")) {
+    return xml;
+  }
+  return xml.replace(
+    "</p:sldMasterIdLst>",
+    `</p:sldMasterIdLst><p:notesMasterIdLst><p:notesMasterId r:id="rId21"/></p:notesMasterIdLst>`
+  );
+}
+
+function injectNotesMasterIntoPresentationRels(xml: string) {
+  if (xml.includes("notesMaster1.xml")) {
+    return xml;
+  }
+  return xml.replace(
+    "</Relationships>",
+    `<Relationship Id="rId21" Target="notesMasters/notesMaster1.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesMaster"/></Relationships>`
+  );
+}
+
+function injectNotesContentTypes(xml: string, slideCount: number) {
+  let nextXml = xml;
+  if (!nextXml.includes('/ppt/notesMasters/notesMaster1.xml')) {
+    nextXml = nextXml.replace(
+      "</Types>",
+      `<Override ContentType="application/vnd.openxmlformats-officedocument.presentationml.notesMaster+xml" PartName="/ppt/notesMasters/notesMaster1.xml"/><Override ContentType="application/vnd.openxmlformats-officedocument.theme+xml" PartName="/ppt/notesMasters/theme/theme3.xml"/></Types>`
+    );
+  }
+  if (!nextXml.includes('Extension="svg"')) {
+    nextXml = nextXml.replace(
+      '<Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/>',
+      '<Default ContentType="application/vnd.openxmlformats-package.relationships+xml" Extension="rels"/><Default ContentType="image/svg+xml" Extension="svg"/>'
+    );
+  }
+  for (let index = 1; index <= slideCount; index += 1) {
+    const marker = `/ppt/notesSlides/notesSlide${index}.xml`;
+    if (!nextXml.includes(marker)) {
+      nextXml = nextXml.replace(
+        "</Types>",
+        `<Override ContentType="application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml" PartName="${marker}"/></Types>`
+      );
+    }
+  }
+  return nextXml;
+}
+
+async function buildEditablePptxBufferFromMaterial(ppt: any, sessionMeta: {
+  sessionTitle?: string;
+  sessionNumber?: number;
+}) {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "lessonplan-pptx-"));
+  const workDir = path.join(tempRoot, "deck");
+  const outputPath = path.join(tempRoot, "deck.pptx");
+  try {
+    await fs.mkdir(workDir, { recursive: true });
+    await execFileAsync("unzip", ["-qq", TEMPLATE_PPTX_PATH, "-d", workDir]);
+
+    const slides = Array.isArray(ppt?.slides) ? ppt.slides.slice(0, KAMALANIKETAN_TEMPLATE_SLIDES.length) : [];
+    const mediaDir = path.join(workDir, "ppt/media");
+    const slideDir = path.join(workDir, "ppt/slides");
+    const slideRelsDir = path.join(workDir, "ppt/slides/_rels");
+    const notesDir = path.join(workDir, "ppt/notesSlides");
+    const notesRelsDir = path.join(workDir, "ppt/notesSlides/_rels");
+    const notesMasterDir = path.join(workDir, "ppt/notesMasters");
+    const notesMasterRelsDir = path.join(workDir, "ppt/notesMasters/_rels");
+    const notesThemeDir = path.join(workDir, "ppt/notesMasters/theme");
+    await fs.mkdir(mediaDir, { recursive: true });
+    await fs.mkdir(notesDir, { recursive: true });
+    await fs.mkdir(notesRelsDir, { recursive: true });
+    await fs.mkdir(notesMasterDir, { recursive: true });
+    await fs.mkdir(notesMasterRelsDir, { recursive: true });
+    await fs.mkdir(notesThemeDir, { recursive: true });
+
+    for (let index = 0; index < KAMALANIKETAN_TEMPLATE_SLIDES.length; index += 1) {
+      const slide = slides[index] || {
+        ...KAMALANIKETAN_TEMPLATE_SLIDES[index],
+        slideNumber: index + 1,
+        slideTitle: KAMALANIKETAN_TEMPLATE_SLIDES[index].label,
+        bulletPoints: ["No session-specific content was generated for this slot."],
+        speakerNotes: ["Explain only the taught content linked to this slide slot."],
+      };
+      let visual = null;
+      try {
+        visual = await resolvePptVisualMedia(slide, index);
+      } catch (error) {
+        console.warn(`[PPTX Export] Visual resolution failed for slide ${index + 1}:`, error);
+      }
+      if (visual) {
+        await fs.writeFile(path.join(mediaDir, visual.fileName), visual.buffer);
+      }
+      const slideXml = buildPptSlideXml(ppt, slide, index, visual ? "rId3" : undefined);
+      await fs.writeFile(path.join(slideDir, `slide${index + 1}.xml`), slideXml, "utf8");
+      await fs.writeFile(path.join(slideRelsDir, `slide${index + 1}.xml.rels`), buildPptSlideRelsXml(index, visual?.fileName), "utf8");
+      await fs.writeFile(path.join(notesDir, `notesSlide${index + 1}.xml`), buildNotesSlideXml(slide), "utf8");
+      await fs.writeFile(path.join(notesRelsDir, `notesSlide${index + 1}.xml.rels`), buildNotesSlideRelsXml(index), "utf8");
+    }
+
+    await fs.writeFile(path.join(notesMasterDir, "notesMaster1.xml"), PPT_NOTES_MASTER_XML, "utf8");
+    await fs.writeFile(path.join(notesMasterRelsDir, "notesMaster1.xml.rels"), PPT_NOTES_MASTER_RELS_XML, "utf8");
+    await fs.writeFile(path.join(notesThemeDir, "theme3.xml"), PPT_NOTES_THEME_XML, "utf8");
+
+    const presentationXmlPath = path.join(workDir, "ppt/presentation.xml");
+    const presentationRelsPath = path.join(workDir, "ppt/_rels/presentation.xml.rels");
+    const contentTypesPath = path.join(workDir, "[Content_Types].xml");
+    const corePropsPath = path.join(workDir, "docProps/core.xml");
+
+    const presentationXml = injectNotesMasterIntoPresentationXml(await fs.readFile(presentationXmlPath, "utf8"));
+    await fs.writeFile(presentationXmlPath, presentationXml, "utf8");
+
+    const presentationRelsXml = injectNotesMasterIntoPresentationRels(await fs.readFile(presentationRelsPath, "utf8"));
+    await fs.writeFile(presentationRelsPath, presentationRelsXml, "utf8");
+
+    const contentTypesXml = injectNotesContentTypes(await fs.readFile(contentTypesPath, "utf8"), KAMALANIKETAN_TEMPLATE_SLIDES.length);
+    await fs.writeFile(contentTypesPath, contentTypesXml, "utf8");
+
+    const nowIso = new Date().toISOString();
+    const title = xmlEscape(String(ppt?.presentationTitle || ppt?.title || sessionMeta.sessionTitle || "Session Presentation"));
+    const corePropsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${title}</dc:title><dc:creator>Lesson Plan Generator</dc:creator><cp:lastModifiedBy>Lesson Plan Generator</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${nowIso}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${nowIso}</dcterms:modified></cp:coreProperties>`;
+    await fs.writeFile(corePropsPath, corePropsXml, "utf8");
+
+    await execFileAsync("zip", ["-qr", outputPath, "."], { cwd: workDir });
+    return await fs.readFile(outputPath);
+  } finally {
+    await fs.rm(tempRoot, { recursive: true, force: true });
+  }
 }
 
 function extractLearningOutcomeStrings(input: any): string[] {
@@ -1313,7 +2418,7 @@ function detectCurriculumProfile(sourceText: string, fileName: string = "") {
   const file = normalizeSourceText(fileName || "");
   const hasCbse = /\bcbse\b/.test(text) || /\bncert\b/.test(text) || /\bcbse\b/.test(file);
   const hasMultipleClasses = /\bclass xi\b/.test(text) && /\bclass xii\b/.test(text);
-  const hasSemester = /\bsemester\b|\bterm\b|\btrimester\b|\bquarter\b/.test(text);
+  const hasSemester = /\bsemester\b|\btrimester\b|\bquarter\b|\bterm\s*(?:[-–—:]|\d+|[ivxlcdm]+)\b|\btermwise\b|\bterm-wise\b/.test(text);
   const hasCompetencies = /\bcompetenc(?:y|ies)\b|\blearning outcomes?\b|\boutcomes?\b/.test(text);
   const hasLanguageSignals = /\breading\b|\bwriting\b|\bgrammar\b|\bpoetry\b|\bliterature\b|\bspeaking\b|\blistening\b/.test(text);
   const hasUnits = /\bunit\b/.test(text);
@@ -1366,6 +2471,214 @@ function detectCurriculumProfile(sourceText: string, fileName: string = "") {
   }
 
   return { profile, confidence, reasons };
+}
+
+function canonicalCbseUnitCleanupKey(name: string) {
+  return canonicalChapterKey(
+    String(name || "")
+      .replace(/\(\s*implicit unit from context\s*\)/gi, "")
+      .replace(/\bclass\s+[ivxlcdm0-9]+\b/gi, "")
+      .trim()
+  );
+}
+
+function getCbseChapterCandidateKeysFromUnitName(name: string) {
+  const rawName = String(name || "").replace(/\(\s*implicit unit from context\s*\)/gi, "").trim();
+  const suffixAfterColon = rawName.includes(":") ? rawName.split(":").slice(1).join(":").trim() : "";
+  return uniqueStrings([
+    canonicalChapterKey(rawName),
+    canonicalChapterKey(suffixAfterColon),
+  ]).filter(Boolean);
+}
+
+function getCbseUnitNameParts(name: string) {
+  const rawName = String(name || "").replace(/\(\s*implicit unit from context\s*\)/gi, "").trim();
+  const hasColon = rawName.includes(":");
+  const prefix = hasColon ? rawName.split(":")[0].trim() : "";
+  const suffix = hasColon ? rawName.split(":").slice(1).join(":").trim() : "";
+  return { rawName, prefix, suffix };
+}
+
+function getCbsePlannedChapterNames(unit: any) {
+  return uniqueStrings([
+    ...((unit?.chapters || []).map((chapter: any) => chapter?.chapter_name || chapter?.source_chapter_name || "")),
+    ...(unit?.explicit_chapters || []),
+    ...(unit?.possible_chapters || []),
+    ...((unit?.chapter_candidates || []).map((candidate: any) => candidate?.title || candidate?.source_chapter_name || "")),
+  ]).filter(Boolean);
+}
+
+function getCbseLooseContentKey(name: string) {
+  const { rawName } = getCbseUnitNameParts(name);
+  return canonicalChapterKey(
+    rawName.replace(/^(introduction to|basics of|fundamentals of|overview of|concept of)\s+/i, "").trim()
+  );
+}
+
+function mergeCbseChapterLikeData(targetChapter: any, sourceChapter: any) {
+  targetChapter.topics = uniqueStrings([...(targetChapter?.topics || []), ...(sourceChapter?.topics || [])]);
+  targetChapter.subtopics = uniqueStrings([...(targetChapter?.subtopics || []), ...(sourceChapter?.subtopics || [])]);
+  targetChapter.key_concepts = uniqueStrings([...(targetChapter?.key_concepts || []), ...(sourceChapter?.key_concepts || [])]);
+}
+
+function ensureCbseChapterOnUnit(unit: any, chapterName: string) {
+  const targetName = String(chapterName || "").trim();
+  const targetKey = canonicalChapterKey(targetName);
+  const chapters = Array.isArray(unit?.chapters) ? unit.chapters : [];
+  const existing = chapters.find((chapter: any) => {
+    const chapterKey = canonicalChapterKey(chapter?.chapter_name || chapter?.source_chapter_name || "");
+    return chapterKey && chapterKey === targetKey;
+  });
+  if (existing) return existing;
+
+  const nextChapter = {
+    chapter_id: `C${chapters.length + 1}`,
+    chapter_name: targetName,
+    source_chapter_name: targetName,
+    topics: [],
+    subtopics: [],
+    key_concepts: [],
+  };
+  chapters.push(nextChapter);
+  unit.chapters = chapters;
+  return nextChapter;
+}
+
+function mergeCbseUnitLikeData(targetUnit: any, sourceUnit: any) {
+  targetUnit.explicit_chapters = uniqueStrings([...(targetUnit?.explicit_chapters || []), ...(sourceUnit?.explicit_chapters || [])]);
+  targetUnit.headings = uniqueStrings([...(targetUnit?.headings || []), ...(sourceUnit?.headings || [])]);
+  targetUnit.possible_chapters = uniqueStrings([...(targetUnit?.possible_chapters || []), ...(sourceUnit?.possible_chapters || [])]);
+  targetUnit.topics = uniqueStrings([...(targetUnit?.topics || []), ...(sourceUnit?.topics || [])]);
+  targetUnit.subtopics = uniqueStrings([...(targetUnit?.subtopics || []), ...(sourceUnit?.subtopics || [])]);
+  targetUnit.key_concepts = uniqueStrings([...(targetUnit?.key_concepts || []), ...(sourceUnit?.key_concepts || [])]);
+  targetUnit.chapter_candidates = [...(targetUnit?.chapter_candidates || []), ...(sourceUnit?.chapter_candidates || [])];
+  targetUnit.source_nodes = [...(targetUnit?.source_nodes || []), ...(sourceUnit?.source_nodes || [])];
+
+  const targetChapters = Array.isArray(targetUnit?.chapters) ? targetUnit.chapters : [];
+  const sourceChapters = Array.isArray(sourceUnit?.chapters) ? sourceUnit.chapters : [];
+  const chapterByKey = new Map<string, any>();
+  targetChapters.forEach((chapter: any) => {
+    const key = canonicalChapterKey(chapter?.chapter_name || chapter?.source_chapter_name || "");
+    if (key) chapterByKey.set(key, chapter);
+  });
+
+  sourceChapters.forEach((sourceChapter: any, index: number) => {
+    const key = canonicalChapterKey(sourceChapter?.chapter_name || sourceChapter?.source_chapter_name || "");
+    const existingChapter = key ? chapterByKey.get(key) : null;
+    if (existingChapter) {
+      mergeCbseChapterLikeData(existingChapter, sourceChapter);
+      return;
+    }
+    const nextChapter = structuredClone(sourceChapter);
+    nextChapter.chapter_id = nextChapter.chapter_id || `C${targetChapters.length + index + 1}`;
+    targetChapters.push(nextChapter);
+    if (key) chapterByKey.set(key, nextChapter);
+  });
+
+  targetUnit.chapters = targetChapters;
+}
+
+function cleanupCbseStructure(structure: any) {
+  const nextStructure = structuredClone(structure);
+  nextStructure.classes = (nextStructure?.classes || []).map((cls: any) => {
+    const clonedUnits = Array.isArray(cls?.units) ? cls.units.map((unit: any) => structuredClone(unit)) : [];
+    const dedupedUnits: any[] = [];
+    const unitByKey = new Map<string, any>();
+
+    for (const unit of clonedUnits) {
+      const key = canonicalCbseUnitCleanupKey(unit?.unit_name || unit?.unit_id || "");
+      if (key && unitByKey.has(key)) {
+        mergeCbseUnitLikeData(unitByKey.get(key), unit);
+        continue;
+      }
+      dedupedUnits.push(unit);
+      if (key) unitByKey.set(key, unit);
+    }
+
+    const chapterIndex = new Map<string, { unit: any; chapter: any }>();
+    const plannedChapterUnitIndex = new Map<string, any>();
+    dedupedUnits.forEach((unit) => {
+      (unit?.chapters || []).forEach((chapter: any) => {
+        const chapterKey = canonicalChapterKey(chapter?.chapter_name || chapter?.source_chapter_name || "");
+        if (chapterKey) {
+          chapterIndex.set(chapterKey, { unit, chapter });
+        }
+      });
+      getCbsePlannedChapterNames(unit).forEach((chapterName) => {
+        const chapterKey = canonicalChapterKey(chapterName);
+        if (chapterKey && !plannedChapterUnitIndex.has(chapterKey)) {
+          plannedChapterUnitIndex.set(chapterKey, unit);
+        }
+      });
+    });
+
+    const cleanedUnits: any[] = [];
+    dedupedUnits.forEach((unit) => {
+      const unitChapters = Array.isArray(unit?.chapters) ? unit.chapters : [];
+      const hasOwnChapters = unitChapters.length > 0;
+      const chapterCandidates = getCbseChapterCandidateKeysFromUnitName(unit?.unit_name || "");
+      const matchingChapterTarget = chapterCandidates
+        .map((candidateKey) => chapterIndex.get(candidateKey))
+        .find((entry) => entry && entry.unit !== unit);
+
+      if (matchingChapterTarget) {
+        mergeCbseChapterLikeData(matchingChapterTarget.chapter, unit);
+        (unit?.chapters || []).forEach((sourceChapter: any) => {
+          const sourceChapterKey = canonicalChapterKey(sourceChapter?.chapter_name || sourceChapter?.source_chapter_name || "");
+          if (sourceChapterKey && sourceChapterKey === canonicalChapterKey(matchingChapterTarget.chapter?.chapter_name || matchingChapterTarget.chapter?.source_chapter_name || "")) {
+            mergeCbseChapterLikeData(matchingChapterTarget.chapter, sourceChapter);
+          }
+        });
+        return;
+      }
+
+      if (!hasOwnChapters) {
+        const plannedChapterUnit = chapterCandidates
+          .map((candidateKey) => plannedChapterUnitIndex.get(candidateKey))
+          .find((candidateUnit) => candidateUnit && candidateUnit !== unit);
+
+        if (plannedChapterUnit) {
+          const { rawName, suffix } = getCbseUnitNameParts(unit?.unit_name || "");
+          const chapterTitle = suffix || rawName;
+          const targetChapter = ensureCbseChapterOnUnit(plannedChapterUnit, chapterTitle);
+          mergeCbseChapterLikeData(targetChapter, unit);
+          return;
+        }
+
+        const { prefix, suffix } = getCbseUnitNameParts(unit?.unit_name || "");
+        const parentUnit = prefix ? unitByKey.get(canonicalCbseUnitCleanupKey(prefix)) : null;
+        if (parentUnit && parentUnit !== unit && suffix) {
+          const targetChapter = ensureCbseChapterOnUnit(parentUnit, suffix);
+          mergeCbseChapterLikeData(targetChapter, unit);
+          return;
+        }
+
+        const looseContentKey = getCbseLooseContentKey(unit?.unit_name || "");
+        if (looseContentKey && looseContentKey.length >= 5) {
+          const overlappingParentUnit = dedupedUnits.find((candidateUnit) => {
+            if (!candidateUnit || candidateUnit === unit) return false;
+            const candidateUnitKey = canonicalCbseUnitCleanupKey(candidateUnit?.unit_name || candidateUnit?.unit_id || "");
+            return candidateUnitKey.includes(looseContentKey) || looseContentKey.includes(candidateUnitKey);
+          });
+          if (overlappingParentUnit) {
+            const { rawName } = getCbseUnitNameParts(unit?.unit_name || "");
+            const targetChapter = ensureCbseChapterOnUnit(overlappingParentUnit, rawName);
+            mergeCbseChapterLikeData(targetChapter, unit);
+            return;
+          }
+        }
+      }
+
+      cleanedUnits.push(unit);
+    });
+
+    return {
+      ...cls,
+      units: cleanedUnits,
+    };
+  });
+
+  return nextStructure;
 }
 
 function getCurriculumProfileConfig(profile: CurriculumProfile) {
@@ -4473,10 +5786,44 @@ function assertCurriculumReadyForPlanning(curriculum: any) {
 }
 
 let mongoConnectionPromise: Promise<typeof mongoose> | null = null;
+let lastMongoUnavailableLogAt = 0;
+
+function isMongoUnavailableError(error: any) {
+  const message = String(error?.message || "");
+  const causeMessage = String(error?.cause?.message || "");
+  return (
+    error?.name === "MongooseServerSelectionError" ||
+    message.includes("ECONNREFUSED 127.0.0.1:27017") ||
+    message.includes("Server selection timed out") ||
+    causeMessage.includes("ECONNREFUSED 127.0.0.1:27017")
+  );
+}
+
+function logMongoUnavailable(scope: string, error: any) {
+  const now = Date.now();
+  if (now - lastMongoUnavailableLogAt < 15000) {
+    return;
+  }
+  lastMongoUnavailableLogAt = now;
+  console.error(`[${scope}] MongoDB unavailable at ${MONGODB_URI}. ${String(error?.message || error)}`);
+}
+
+function sendMongoUnavailable(res: express.Response, fallbackMessage: string) {
+  return res.status(503).json({
+    error: fallbackMessage,
+    code: "MONGODB_UNAVAILABLE",
+    details: `MongoDB is not reachable at ${MONGODB_URI}.`,
+  });
+}
 
 async function connectToMongo() {
   if (!mongoConnectionPromise) {
-    mongoConnectionPromise = mongoose.connect(MONGODB_URI);
+    mongoConnectionPromise = mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+    }).catch((error) => {
+      mongoConnectionPromise = null;
+      throw error;
+    });
   }
   return mongoConnectionPromise;
 }
@@ -4569,11 +5916,78 @@ type StageValidationResult<T> = {
 };
 
 type OllamaRequestOptions = {
+  baseUrl?: string;
   model?: string;
   numPredict?: number;
   timeoutMs?: number;
   retries?: number;
 };
+
+function refreshRuntimeEnv() {
+  dotenv.config({ path: ENV_FILE_PATH, override: true });
+}
+
+function normalizeSessionPptGenerationOptions(input: any): SessionPptGenerationOptions {
+  if (!input || typeof input !== "object") {
+    return {};
+  }
+  const pptTemplateId = String(input?.pptTemplateId || "").trim();
+  const pptThemeId = String(input?.pptThemeId || "").trim();
+  return {
+    ...(pptTemplateId ? { pptTemplateId } : {}),
+    ...(pptThemeId ? { pptThemeId } : {}),
+  };
+}
+
+function getOllamaConfig(kind: OllamaGenerationKind): { baseUrl: string; model: string } {
+  refreshRuntimeEnv();
+  const defaultBaseUrl = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11434";
+  const defaultModel = process.env.OLLAMA_MODEL || "qwen3.5:35b";
+  const sessionContentBaseUrl = process.env.OLLAMA_SESSION_CONTENT_BASE_URL || defaultBaseUrl;
+  const sessionContentModel = process.env.OLLAMA_SESSION_CONTENT_MODEL || defaultModel;
+  const imageBaseUrl = process.env.OLLAMA_IMAGE_BASE_URL || defaultBaseUrl;
+  const imageModel = process.env.OLLAMA_IMAGE_MODEL || "x/z-image-turbo:bf16";
+
+  switch (kind) {
+    case "teacherNotes":
+      return {
+        baseUrl: process.env.OLLAMA_TEACHER_NOTES_BASE_URL || sessionContentBaseUrl,
+        model: process.env.OLLAMA_TEACHER_NOTES_MODEL || sessionContentModel,
+      };
+    case "studentNotes":
+      return {
+        baseUrl: process.env.OLLAMA_STUDENT_NOTES_BASE_URL || sessionContentBaseUrl,
+        model: process.env.OLLAMA_STUDENT_NOTES_MODEL || sessionContentModel,
+      };
+    case "materials":
+      return {
+        baseUrl: process.env.OLLAMA_MATERIALS_BASE_URL || sessionContentBaseUrl,
+        model: process.env.OLLAMA_MATERIALS_MODEL || sessionContentModel,
+      };
+    case "homework":
+      return {
+        baseUrl: process.env.OLLAMA_HOMEWORK_BASE_URL || sessionContentBaseUrl,
+        model: process.env.OLLAMA_HOMEWORK_MODEL || sessionContentModel,
+      };
+    case "assessment":
+      return {
+        baseUrl: process.env.OLLAMA_ASSESSMENT_BASE_URL || sessionContentBaseUrl,
+        model: process.env.OLLAMA_ASSESSMENT_MODEL || sessionContentModel,
+      };
+    case "assignment":
+      return {
+        baseUrl: process.env.OLLAMA_ASSIGNMENT_BASE_URL || sessionContentBaseUrl,
+        model: process.env.OLLAMA_ASSIGNMENT_MODEL || sessionContentModel,
+      };
+    case "sessionContent":
+      return { baseUrl: sessionContentBaseUrl, model: sessionContentModel };
+    case "image":
+      return { baseUrl: imageBaseUrl, model: imageModel };
+    case "default":
+    default:
+      return { baseUrl: defaultBaseUrl, model: defaultModel };
+  }
+}
 
 class OllamaRequestError extends Error {
   code: string;
@@ -5335,7 +6749,9 @@ async function generateWithOllama(
   let attempt = 0;
   let delay = 1000;
   const retries = Math.max(1, resolvedOptions.retries || 1);
-  const model = resolvedOptions.model || OLLAMA_MODEL;
+  const defaultOllamaConfig = getOllamaConfig("default");
+  const baseUrl = resolvedOptions.baseUrl || defaultOllamaConfig.baseUrl;
+  const model = resolvedOptions.model || defaultOllamaConfig.model;
   const timeoutMs = resolvedOptions.timeoutMs || OLLAMA_TIMEOUT_MS;
   const numPredict = resolvedOptions.numPredict || OLLAMA_NUM_PREDICT;
   while (attempt < retries) {
@@ -5345,7 +6761,7 @@ async function generateWithOllama(
         : "Return valid JSON only with no markdown fences or extra commentary.";
       const fullPrompt = [prompt, schemaHint].filter(Boolean).join("\n\n");
 
-      const requestUrl = `${OLLAMA_BASE_URL}/api/chat`;
+      const requestUrl = `${baseUrl}/api/chat`;
       console.log(`[Ollama][${requestId}][${stageName}] Sending request to: ${requestUrl}`);
       console.log(`[Ollama][${requestId}][${stageName}] Model: ${model}`);
       console.log(`[Ollama][${requestId}][${stageName}] Prompt length: ${fullPrompt.length} characters`);
@@ -5511,7 +6927,8 @@ app.get("/", (_req, res) => {
 });
 
 app.get("/api/health", (_req, res) => {
-  res.json({ status: "ok", ollama: OLLAMA_BASE_URL, model: OLLAMA_MODEL });
+  const defaultOllamaConfig = getOllamaConfig("default");
+  res.json({ status: "ok", ollama: defaultOllamaConfig.baseUrl, model: defaultOllamaConfig.model });
 });
 
 app.get("/api/curriculums", async (_req, res) => {
@@ -5522,6 +6939,10 @@ app.get("/api/curriculums", async (_req, res) => {
       .lean();
     res.json({ success: true, curriculums });
   } catch (error: any) {
+    if (isMongoUnavailableError(error)) {
+      logMongoUnavailable("Curriculums", error);
+      return sendMongoUnavailable(res, "Saved curriculums are unavailable because MongoDB is not connected.");
+    }
     console.error("[Curriculums] List failed:", error);
     res.status(500).json({ error: error?.message || "Failed to load saved curriculums." });
   }
@@ -5536,6 +6957,10 @@ app.get("/api/curriculums/:id", async (req, res) => {
     }
     res.json({ success: true, curriculum });
   } catch (error: any) {
+    if (isMongoUnavailableError(error)) {
+      logMongoUnavailable("Curriculums", error);
+      return sendMongoUnavailable(res, "Saved curriculums are unavailable because MongoDB is not connected.");
+    }
     console.error("[Curriculums] Fetch failed:", error);
     res.status(500).json({ error: error?.message || "Failed to fetch curriculum." });
   }
@@ -6102,6 +7527,7 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
 
     const selectedSections = normalizeSessionSections(req.body?.selectedSections);
     const assessmentCustomization = normalizeAssessmentCustomization(req.body?.assessmentCustomization);
+    const pptGenerationOptions = normalizeSessionPptGenerationOptions(req.body?.pptGenerationOptions);
     const generatedSessionKey = String(roadmapSessionNumber);
     const existingGeneratedSessions = typeof workspace.generationScope?.generatedSessions === "object" && workspace.generationScope?.generatedSessions
       ? workspace.generationScope.generatedSessions
@@ -6142,6 +7568,7 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
       teachingStrategy: workspace.teachingStrategy || {},
       sessionPlanningDefaults: workspace.sessionPlanningDefaults || {},
       assessmentCustomization,
+      pptGenerationOptions,
       sourceSessionPlan: assessmentOnly ? existingSessionPlan : null,
     });
     const mergedSessionPlan = {
@@ -6188,6 +7615,39 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Content generation failed:", error);
     res.status(500).json({ error: error?.message || "Failed to generate session content." });
+  }
+});
+
+app.post("/api/export-pptx", async (req, res) => {
+  try {
+    const rawPpt = req.body?.ppt;
+    const requestId = makeRequestId("export-pptx");
+    const debugDir = await ensureDebugDir(requestId);
+    const ppt = await normalizePptMaterial(rawPpt, {
+      subject: req.body?.subject,
+      gradeLevel: req.body?.gradeLevel,
+      sessionTitle: String(req.body?.sessionTitle || rawPpt?.presentationTitle || rawPpt?.title || "Session Presentation"),
+      requestId,
+      debugDir,
+    });
+    if (!ppt || typeof ppt !== "object" || !Array.isArray(ppt.slides) || ppt.slides.length === 0) {
+      return res.status(400).json({ error: "A generated PPT payload with slides is required." });
+    }
+
+    const sessionTitle = String(req.body?.sessionTitle || ppt.presentationTitle || ppt.title || "session-presentation");
+    const sessionNumber = Math.max(1, toNumberOrZero(req.body?.sessionNumber) || 1);
+    const buffer = await buildEditablePptxBufferFromMaterial(ppt, {
+      sessionTitle,
+      sessionNumber,
+    });
+    const fileName = `${slugifyFileNamePart(sessionTitle)}-session-${sessionNumber}.pptx`;
+
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+    res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+    res.send(buffer);
+  } catch (error: any) {
+    console.error("[PPTX Export] Export failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to export PPTX." });
   }
 });
 
@@ -6433,7 +7893,10 @@ Rules:
 
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.facts.parsed.json`, stage1Facts);
     const rawExtraction = expandStage1FactsToRawExtraction(stage1Facts);
-    const faithfulStructure = buildFaithfulStructureFromRawExtraction(rawExtraction);
+    let faithfulStructure = buildFaithfulStructureFromRawExtraction(rawExtraction);
+    if (detectedProfile.profile === "cbse_unit_topic" || detectedProfile.profile === "cbse_unit_chapter_topic") {
+      faithfulStructure = cleanupCbseStructure(faithfulStructure);
+    }
     await writeDebugFile(debugDir, "faithful-structure.parsed.json", faithfulStructure);
     const faithfulWarnings = collectFaithfulStructureWarnings(faithfulStructure);
     await writeDebugFile(debugDir, "faithful-structure-warnings.json", faithfulWarnings);
@@ -6494,7 +7957,7 @@ Rules:
       stage1Facts.chapters || []
     );
 
-    const normalizedStructure: any = {
+    let normalizedStructure: any = {
       document_metadata: rawExtraction.document_metadata || {},
       source_hierarchy: documentHierarchy,
       classes: enforcedNormalizedClasses,
@@ -6510,6 +7973,9 @@ Rules:
         long_chapter_names_reclassified: uniqueStrings(enforcedNormalizedClasses.flatMap((cls: any) => cls?.validation_report?.long_chapter_names_reclassified || [])),
       },
     };
+    if (detectedProfile.profile === "cbse_unit_topic" || detectedProfile.profile === "cbse_unit_chapter_topic") {
+      normalizedStructure = cleanupCbseStructure(normalizedStructure);
+    }
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[3])}.parsed.json`, normalizedStructure);
     const hierarchyComparison = buildHierarchyComparisonReport(faithfulStructure, normalizedStructure);
     await writeDebugFile(debugDir, "hierarchy-comparison.parsed.json", hierarchyComparison);
@@ -6994,6 +8460,13 @@ app.post("/api/generate-session-details", async (req, res) => {
         detailedExplanation: "A slightly deeper but student-friendly explanation",
         observedIn: ["Where students observe it"],
         visualSupport: ["Diagram or visual suggestion"],
+        visualAssets: [{
+          prompt: "Image generation prompt",
+          alt: "Student-friendly illustration alt text",
+          imageDataUrl: "data:image/png;base64,...",
+          mimeType: "image/png",
+          model: "runtime image model"
+        }],
         importantNotes: ["Exam point or caution note"],
         memoryTechniques: ["Mnemonic or memory tip"],
         conceptSummary: ["One-line takeaway"]
@@ -7125,7 +8598,7 @@ app.post("/api/generate-session-details", async (req, res) => {
     };
 
     const response = await generateWithOllama(requestId, debugDir, "generate-session-details", prompt, schema, {
-      model: OLLAMA_SESSION_CONTENT_MODEL,
+      ...getOllamaConfig("sessionContent"),
     });
     if (response.doneReason === "length") {
       throw new Error("Model output truncated during generate-session-details. Reduce stage scope or increase num_predict.");
@@ -7154,6 +8627,7 @@ async function generateSessionDetailsArtifact({
   teachingStrategy = {},
   sessionPlanningDefaults = {},
   assessmentCustomization = null,
+  pptGenerationOptions = {},
   sourceSessionPlan = null,
 }: {
   subject: string;
@@ -7170,6 +8644,7 @@ async function generateSessionDetailsArtifact({
   teachingStrategy?: Record<string, any>;
   sessionPlanningDefaults?: Record<string, any>;
   assessmentCustomization?: SessionAssessmentCustomization | null;
+  pptGenerationOptions?: SessionPptGenerationOptions;
   sourceSessionPlan?: Record<string, any> | null;
 }) {
   const requestId = makeRequestId("generate-content-session");
@@ -7189,6 +8664,7 @@ async function generateSessionDetailsArtifact({
     teachingStrategy,
     sessionPlanningDefaults,
     assessmentCustomization,
+    pptGenerationOptions,
     sourceSessionPlan,
   });
 
@@ -7289,6 +8765,13 @@ async function generateSessionDetailsArtifact({
         detailedExplanation: "A slightly deeper but student-friendly explanation",
         observedIn: ["Where students observe it"],
         visualSupport: ["Diagram or visual suggestion"],
+        visualAssets: [{
+          prompt: "Image generation prompt",
+          alt: "Student-friendly illustration alt text",
+          imageDataUrl: "data:image/png;base64,...",
+          mimeType: "image/png",
+          model: "runtime image model"
+        }],
         importantNotes: ["Exam point or caution note"],
         memoryTechniques: ["Mnemonic or memory tip"],
         conceptSummary: ["One-line takeaway"]
@@ -7371,12 +8854,12 @@ async function generateSessionDetailsArtifact({
           }
         },
         assetSearchPlan: {
-          preferredSources: ["Openverse", "Wikimedia Commons"],
+          preferredSources: ["Internal SVG", "Ollama image model"],
           safeSearch: true,
-          licensingNotes: ["Use reusable or public domain assets only."],
-          fallbackStrategy: "Prefer SVG diagrams when external imagery is not needed."
+          licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
+          fallbackStrategy: "Prefer SVG diagrams for concept/process slides and the Ollama image model for all picture-based visuals."
         },
-        licenseChecklist: ["Verify reusable license before final export."],
+        licenseChecklist: ["Review generated visuals for classroom accuracy before final export."],
         presentationWarnings: ["Do not include untaught future-session content."],
         coverageSummary: {
           learningOutcomesCovered: ["Learning outcome id or text"],
@@ -7403,11 +8886,11 @@ async function generateSessionDetailsArtifact({
           visualPlan: "What visual should appear and why",
           assets: [{
             purpose: "Why this asset is needed",
-            searchQuery: "openverse or wikimedia search query",
-            sourceSite: "Openverse | Wikimedia Commons",
-            sourceUrl: "https://example.com/asset",
-            licenseType: "CC BY 4.0 | CC0 | Public Domain",
-            attributionText: "Attribution text if required",
+            searchQuery: "ollama image prompt seed",
+            sourceSite: "Ollama image model",
+            sourceUrl: "",
+            licenseType: "Internally generated",
+            attributionText: "",
             altText: "Accessible description",
             placementHint: "Right panel / full bleed / inset"
           }],
@@ -7681,12 +9164,15 @@ async function generateSessionDetailsArtifact({
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
         SESSION_JSON: JSON.stringify(sessionContextPayload, null, 2),
         SLIDE_CONFIG_JSON: JSON.stringify({
-          templateId: KAMALANIKETAN_TEMPLATE_ID,
+          templateId: pptGenerationOptions?.pptTemplateId || "academic-split",
           templateDeck: "Kamalaniketan-pptx template.pptx",
           fixedSlideCount: KAMALANIKETAN_TEMPLATE_SLIDES.length,
           canonicalSlideSequence: KAMALANIKETAN_TEMPLATE_SLIDES,
           themeMode: "themeable_system",
-          defaultThemeId: "kamalaniketan-modern",
+          defaultThemeId: "cbse-academic-blue",
+          selectedTemplateId: pptGenerationOptions?.pptTemplateId || "academic-split",
+          selectedThemeId: pptGenerationOptions?.pptThemeId || "cbse-academic-blue",
+          availableTemplates: Object.values(PPT_TEMPLATE_PRESETS),
           availableThemes: Object.values(PPT_THEME_PRESETS).map((preset) => ({
             themeId: preset.themeId,
             themeName: preset.themeName,
@@ -7694,7 +9180,8 @@ async function generateSessionDetailsArtifact({
             colors: preset.colors,
             visualStyle: preset.visualStyle,
           })),
-          assetPolicy: ["Openverse", "Wikimedia Commons"],
+          assetPolicy: ["Internal SVG", "Ollama image model"],
+          imageFallbackPolicy: "svg first for explainers, Ollama image model for all picture-based visuals",
           deckRatio: "16:9",
           outputDepth: "full_slide_spec",
           diagrams: "svg_preferred_for_process_and_structure",
@@ -7817,6 +9304,18 @@ async function generateSessionDetailsArtifact({
       }
     : baseSchema;
 
+  const generationKind: OllamaGenerationKind = teacherNotesOnly
+    ? "teacherNotes"
+    : studentNotesOnly
+    ? "studentNotes"
+    : materialsOnly
+    ? "materials"
+    : homeworkOnly
+    ? "homework"
+    : assessmentOnly
+    ? "assessment"
+    : "sessionContent";
+
   const response = await generateWithOllama(
     requestId,
     debugDir,
@@ -7834,7 +9333,7 @@ async function generateSessionDetailsArtifact({
     prompt,
     schema,
     {
-      model: OLLAMA_SESSION_CONTENT_MODEL,
+      ...getOllamaConfig(generationKind),
       numPredict:
         assessmentOnly
           ? Math.max(12288, OLLAMA_NUM_PREDICT)
@@ -7855,6 +9354,14 @@ async function generateSessionDetailsArtifact({
     }
   }
   const parsedSession = JSON.parse(sanitizeJsonText(responseText).text || "{}");
+  if (parsedSession?.studentLessonNotes) {
+    const enrichedStudentNotesSession = await enrichStudentLessonNotesWithVisuals(requestId, debugDir, parsedSession, {
+      subject,
+      gradeLevel,
+      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+    });
+    parsedSession.studentLessonNotes = enrichedStudentNotesSession?.studentLessonNotes || parsedSession.studentLessonNotes;
+  }
   if (parsedSession?.materials?.ppt) {
     parsedSession.materials.ppt = await normalizePptMaterial(parsedSession.materials.ppt, {
       subject,
@@ -7862,6 +9369,9 @@ async function generateSessionDetailsArtifact({
       sessionTitle: sessionTitle || `Session ${sessionNumber}`,
       learningOutcomes,
       selectedChapters,
+      requestId,
+      debugDir,
+      generationOptions: pptGenerationOptions,
     });
   }
   if (parsedSession?.assessment && assessmentCustomization && hasAssessmentCustomizationContent(assessmentCustomization)) {
@@ -7924,6 +9434,7 @@ export {
   buildApprovedTheoryHierarchy,
   buildFaithfulStructureFromRawExtraction,
   buildVersionedCurriculumPayload,
+  cleanupCbseStructure,
   detectCurriculumProfile,
   getCurriculumProfileConfig,
   buildNormalizedTeachingBlocks,
@@ -7938,8 +9449,9 @@ export {
 // ======== START SERVER ========
 if (process.env.NODE_ENV !== "test") {
   app.listen(PORT, "0.0.0.0", () => {
+    const defaultOllamaConfig = getOllamaConfig("default");
     console.log(`[Backend] API server running on http://0.0.0.0:${PORT}`);
-    console.log(`[Backend] Ollama: ${OLLAMA_BASE_URL} | Model: ${OLLAMA_MODEL}`);
+    console.log(`[Backend] Ollama: ${defaultOllamaConfig.baseUrl} | Model: ${defaultOllamaConfig.model}`);
     console.log(`[Backend] MongoDB: ${MONGODB_URI}`);
     console.log(`[Backend] CORS enabled for http://localhost:${FRONTEND_PORT}`);
     void connectToMongo()
@@ -7947,7 +9459,7 @@ if (process.env.NODE_ENV !== "test") {
         console.log("[Backend] MongoDB connected");
       })
       .catch((error) => {
-        console.error("[Backend] MongoDB connection failed:", error);
+        logMongoUnavailable("Backend", error);
       });
   });
 }

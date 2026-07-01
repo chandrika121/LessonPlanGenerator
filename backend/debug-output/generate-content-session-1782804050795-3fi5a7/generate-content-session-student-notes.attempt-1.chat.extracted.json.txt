@@ -1,0 +1,298 @@
+{
+  "studentLessonNotes": {
+    "title": "Number System - Session 1: The World of Numbers",
+    "sessionOverview": "In this session, we explore the foundation of mathematics by understanding different types of numbers. You will learn to distinguish between Natural and Whole numbers, discover what makes a number Rational or Irrational, and see how they all fit together on the Number Line.",
+    "introduction": "Welcome! Imagine you are building a house; before you can build walls or a roof, you need a solid foundation. In Mathematics, that foundation is 'The Number System'. Today, we aren't just memorizing rules; we are going to meet all the different characters in our mathematical world and understand exactly who they are.",
+    "learningObjectives": [
+      "After this lesson you will be able to classify numbers into Natural, Whole, Integers, Rational, and Irrational categories.",
+      "You will learn how to identify if a number is rational or irrational based on its decimal expansion.",
+      "You will understand the concept of density in real numbers (how many numbers exist between any two points).",
+      "You will be able to locate these different types of numbers accurately on a Number Line."
+    ],
+    "quickRecall": [
+      "Remember: Counting starts from 1, not 0.",
+      "Previously known: You know how to add and subtract whole numbers.",
+      "You already know: The concept of fractions (like ½ or ¾).",
+      "Quick check: Can you list the first five counting numbers?",
+      "Recall: Zero is a special number that represents 'nothing'."
+    ],
+    "easyToRemember": [
+      "Natural = Counting, Whole = Natural + Zero.",
+      "Rational = Can be written as p/q (a fraction), Irrational = Cannot be written as a simple fraction.",
+      "The Number Line is like a ruler that stretches infinitely in both directions."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Natural vs. Whole Numbers",
+        "headers": ["Feature", "Natural Numbers (N)", "Whole Numbers (W)"],
+        "rows": [
+          ["Definition", "Counting numbers starting from 1.", "All natural numbers plus the number zero."],
+          ["Smallest Number", "1", "0"],
+          ["Symbol", "ℕ", "𝑊"],
+          ["Example Set", "{1, 2, 3, ...}", "{0, 1, 2, 3, ...}"]
+        ]
+      },
+      {
+        "title": "Rational vs. Irrational Numbers",
+        "headers": ["Feature", "Rational Numbers (Q)", "Irrational Numbers"],
+        "rows": [
+          ["Decimal Form", "Terminating or Repeating.", "Non-terminating and Non-repeating."],
+          ["Can be written as p/q?", "Yes, where q ≠ 0.", "No, cannot be expressed as a simple fraction."],
+          ["Examples", "1/2 (0.5), -3 (-3.0), 4/7 (0.571428...)", "√2 (~1.414...), π (~3.14159...)"],
+          ["Location on Line", "Can be pinpointed exactly.", "Also exist between points, but cannot be written as a simple fraction."]
+        ]
+      }
+    ],
+    "sections": [
+      {
+        "heading": "The Family of Numbers: Natural & Whole",
+        "explanation": "Let's start with the most basic numbers we use every day. When you count apples, fingers, or steps, you are using 'Natural Numbers'. These are your friends from 1 onwards. But what if there are no apples? We need a number for that! That is where 'Whole Numbers' come in—they include all Natural numbers plus the special character: Zero.",
+        "keyPoints": [
+          "Natural Numbers (ℕ) = {1, 2, 3, ...}",
+          "Whole Numbers (𝑊) = {0, 1, 2, 3, ...}",
+          "Every Natural number is a Whole number, but not every Whole number is a Natural number.",
+          "Zero is the only whole number that is NOT natural."
+        ],
+        "examples": [
+          "Counting students in your class: You count 1, 2, 3... (Natural).",
+          "A bank account balance of $0 means you have no money yet. This uses Whole numbers.",
+          "The number of fingers on one hand is a Natural number."
+        ],
+        "whyItMatters": "Understanding the difference between starting at 1 or 0 is crucial for computer science (indexing) and advanced math later on.",
+        "terminology": [
+          "Set",
+          "Subset"
+        ],
+        "detailedExplanation": "Think of Natural numbers as a club where you must be born to join. You can't have 'zero' members in the counting sense; if there are zero, the count is empty. Whole numbers expand this club by inviting Zero to sit at the table. This expansion allows us to represent 'nothingness' mathematically.",
+        "observedIn": [
+          "Counting objects",
+          "Calendar dates (Day 1)",
+          "Finger counting"
+        ],
+        "visualSupport": [
+          "A number line starting at 0 and extending right with arrows: 0 -- 1 -- 2 -- 3 ..."
+        ],
+        "importantNotes": [
+          "Exam Tip: Always check if the question asks for 'Natural' or 'Whole'. If it says Natural, do not include 0.",
+          "Caution: Zero is neither positive nor negative."
+        ],
+        "memoryTechniques": [
+          "NATURAL = No zero (Start at 1).",
+          "WHOLE = Whole pie includes the crust (Zero)."
+        ],
+        "conceptSummary": [
+          "Natural numbers start from 1; Whole numbers include Zero."
+        ]
+      },
+      {
+        "heading": "The Great Divide: Rational vs. Irrational Numbers",
+        "explanation": "This is the most exciting part of our session! We split all real numbers into two groups based on how they look when written as decimals.",
+        "keyPoints": [
+          "Rational numbers can be written as a fraction p/q (where q ≠ 0).",
+          "Irrational numbers cannot be written as simple fractions.",
+          "The key difference is in their decimal expansion: Rational = Terminating or Repeating; Irrational = Non-terminating and Non-repeating."
+        ],
+        "examples": [
+          "Rational Example 1: 0.5 (Terminates). This is 1/2.",
+          "Rational Example 2: 0.333... (Repeats). This is 1/3.",
+          "Irrational Example: √2 = 1.41421356... It goes on forever without a pattern."
+        ],
+        "whyItMatters": "Many measurements in the real world, like the diagonal of a square or the circumference of a circle (π), are irrational. We cannot measure them perfectly with simple fractions.",
+        "terminology": [
+          "Terminating Decimal",
+          "Repeating Decimal",
+          "Non-terminating Non-repeating"
+        ],
+        "detailedExplanation": "Imagine you have a pizza and want to share it equally among 3 people. Each gets 1/3, which is 0.333... The '3' repeats forever. This makes it Rational because we know the pattern! Now imagine trying to measure the diagonal of a square with side length 1. You get √2 (approx 1.414...). No matter how many digits you write, there is no repeating pattern and it never ends. That mystery number is Irrational.",
+        "observedIn": [
+          "Geometry: Diagonals of squares",
+          "Nature: Ratios in flower petals or shells (Golden Ratio)",
+          "Engineering: Calculating precise distances"
+        ],
+        "visualSupport": [
+          "A visual comparison showing '0.5' ending vs '1/3 = 0.333...' repeating, and a squiggly line for √2 that never settles."
+        ],
+        "importantNotes": [
+          "Exam Tip: π (Pi) is irrational! Do not use 3.14 as the exact value in proofs.",
+          "Common Mistake: Thinking all decimals are rational. Only those with a repeating pattern or ending are rational."
+        ],
+        "memoryTechniques": [
+          "'Rational' sounds like 'Ratio'. If you can make it into a ratio (fraction), it's Rational!",
+          "Irrational = Irritating because the decimal never stops and has no pattern!"
+        ],
+        "conceptSummary": [
+          "If it ends or repeats, it's Rational. If it goes on forever without repeating, it's Irrational."
+        ]
+      },
+      {
+        "heading": "The Infinite Line: Real Numbers",
+        "explanation": "When we combine all the numbers we've met—Natural, Whole, Integers (positive and negative whole numbers), Rational, and Irrational—we get 'Real Numbers'. They fill up every single spot on a number line.",
+        "keyPoints": [
+          "Every point on the Number Line represents a Real Number.",
+          "There are infinitely many real numbers between any two points.",
+          "The set of Real Numbers (ℝ) includes both Rational and Irrational numbers."
+        ],
+        "examples": [
+          "-5 is an integer, which is also rational (-5/1).",
+          "√9 = 3, so it's a whole number (and thus real), but √2 is irrational.",
+          "Between 0 and 1, there are infinite numbers like 0.1, 0.01, 0.001..."
+        ],
+        "whyItMatters": "This concept helps us understand that the number line has no gaps. It connects all our counting, measuring, and calculating needs into one continuous system.",
+        "terminology": [
+          "Real Number Line",
+          "Density of Numbers"
+        ],
+        "detailedExplanation": "Think of a ruler. You can mark 1 cm, then 2 cm. But you can also measure 0.5 cm, or even smaller fractions like 0.333... cm. No matter how close two points are on the line, there is always another number between them. This property is called 'density'. It means Real Numbers are packed tightly together with no empty spaces.",
+        "observedIn": [
+          "Measuring tape",
+          "Thermometer readings (can be 20.5°C)",
+          "Distance on a road"
+        ],
+        "visualSupport": [
+          "A horizontal line with an arrow at both ends labeled 'Real Numbers'. Mark points for -1, 0, 1, and show that there are dots everywhere in between."
+        ],
+        "importantNotes": [
+          "Exam Tip: Remember √(-4) is NOT a real number (it's imaginary). Real numbers must be positive or negative roots of non-negative numbers.",
+          "Key Distinction: All integers are rational, but not all rationals are integers."
+        ],
+        "memoryTechniques": [
+          "Real = Everything you can touch and measure on the line. No 'imaginary' gaps allowed!"
+        ],
+        "conceptSummary": [
+          "The Real Number Line is a continuous strip containing every possible number we use for measurement."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Rational Number",
+        "definition": "A number that can be expressed in the form p/q where p and q are integers and q is not equal to zero."
+      },
+      {
+        "term": "Irrational Number",
+        "definition": "A real number whose decimal expansion is non-terminating and non-repeating, meaning it cannot be written as a simple fraction."
+      },
+      {
+        "term": "Natural Numbers",
+        "definition": "The set of positive integers starting from 1 (ℕ = {1, 2, 3...})."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Classifying a Number: Is it Rational or Irrational?",
+        "steps": [
+          "Step 1: Look at the number. Let's take √5.",
+          "Step 2: Check if it can be simplified to an integer. √4 = 2, but √5 is not a perfect square.",
+          "Step 3: Recall that roots of non-perfect squares are always irrational.",
+          "Step 4: Conclusion: Since √5 cannot be written as p/q and its decimal (approx 2.236...) never repeats or ends, it is Irrational."
+        ],
+        "explanation": "We use the property that perfect square roots result in integers (which are rational), while non-perfect square roots result in irrational numbers."
+      },
+      {
+        "title": "Finding a Rational Number Between Two Numbers",
+        "steps": [
+          "Step 1: Identify two numbers, say 0.5 and 0.6.",
+          "Step 2: To find a rational number between them, simply take the average (add them and divide by 2).",
+          "Step 3: Calculation: (0.5 + 0.6) / 2 = 1.1 / 2 = 0.55.",
+          "Step 4: Verification: Is 0.55 between 0.5 and 0.6? Yes."
+        ],
+        "explanation": "This method works because the average of two rational numbers is always a rational number, proving there are infinite rationals between any two points."
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Rational: Can be written as p/q.",
+        "Irrational: Non-terminating, non-repeating decimals.",
+        "Natural Numbers: 1, 2, 3..."
+      ],
+      "formulas": [
+        "Average of two numbers a and b = (a + b) / 2"
+      ],
+      "facts": [
+        "π is an irrational number.",
+        "Zero is the only whole number that is not natural."
+      ],
+      "keywords": [
+        "Decimal Expansion",
+        "Perfect Square",
+        "Real Number Line"
+      ],
+      "conceptMap": [
+        "Natural -> Whole -> Integers -> Rational <-> Real (includes Irrational)"
+      ],
+      "quickRecap": [
+        "Check the decimal: Ends/Repeats = Rational. Never ends/no pattern = Irrational."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Is -7 a rational number? Why or why not?",
+      "Can you name an irrational number that is less than 2?",
+      "What is the difference between Natural and Whole numbers?"
+    ],
+    "quickSummary": [
+      "Numbers are classified based on their properties, primarily how they behave as decimals.",
+      "Rational numbers include fractions and integers; Irrational numbers fill the gaps with infinite non-repeating decimals."
+    ],
+    "keyTerms": [
+      "Decimal Expansion",
+      "Fraction p/q",
+      "Real Numbers"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A number that can be written as a fraction is called ________. ",
+        "answer": "rational"
+      },
+      {
+        "prompt": "The smallest whole number is ________.",
+        "answer": "0"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is an irrational number?",
+        "options": [
+          "A. 1/3",
+          "B. √4",
+          "C. π (Pi)",
+          "D. -5"
+        ],
+        "answer": "C. π (Pi)"
+      },
+      {
+        "question": "Which set includes the number zero?",
+        "options": [
+          "A. Natural Numbers",
+          "B. Whole Numbers",
+          "C. Prime Numbers",
+          "D. Counting Numbers"
+        ],
+        "answer": "B. Whole Numbers"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "Is 0 a rational number?",
+        "answer": "Yes, because it can be written as 0/1."
+      },
+      {
+        "question": "Give one example of an irrational number.",
+        "answer": "√2 or π"
+      }
+    ],
+    "didYouKnow": [
+      "The symbol for Real Numbers (ℝ) looks like a double-struck R, standing for 'Real'."
+    ],
+    "summary": [
+      "Today we built the foundation of math by understanding that numbers are not just counting tools but a complex system including fractions and infinite decimals."
+    ],
+    "quickRevision": [
+      "Rational = Fractionable. Irrational = Unfractionable (infinite non-repeating)."
+    ],
+    "rememberPoints": [
+      "Natural -> Starts at 1",
+      "Whole -> Includes 0",
+      "Real Line -> No gaps"
+    ]
+  }
+}

@@ -1,0 +1,333 @@
+Stage 3: Node Enrichment - Class XI - COMPUTER SCIENCE
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XI",
+  "subject": "COMPUTER SCIENCE",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Computer Systems and Organisation",
+      "part_or_section": "",
+      "marks": 10,
+      "topics": [
+        "Basic computer organisation: Introduction to Computer System, hardware, software, input device, output device, CPU, memory (primary, cache and secondary), units of memory (bit, byte, KB, MB, GB, TB, PB)",
+        "Types of software: System software (Operating systems, system utilities, device drivers), programming tools and language translators (assembler, compiler, and interpreter), application software",
+        "Operating System(OS): functions of the operating system, OS user interface",
+        "Boolean logic: NOT, AND, OR, NAND, NOR, XOR, truth tables and De Morgan's laws, Logic circuits",
+        "Number System: Binary, Octal, Decimal and Hexadecimal number system; conversion between number systems"
+      ],
+      "subtopics": [
+        "Encoding Schemes: ASCII, ISCII, and Unicode (UTF8, UTF32)"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computer Systems and Organisation",
+          "source_chapter_name": "Computer Systems and Organisation",
+          "source_heading": "Computer Systems and Organisation",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Computational Thinking and Programming - I",
+      "part_or_section": "",
+      "marks": 45,
+      "topics": [
+        "Introduction to Problem-solving: Steps for Problem-solving (Analyzing the problem, developing an algorithm, coding, testing, and debugging), representation of algorithms using flowchart and pseudocode, decomposition",
+        "Familiarization with the basics of Python programming: Introduction to Python, Features of Python, executing a simple 'hello world' program, execution modes: interactive mode and script mode, Python character set, Python tokens( keyword, identifier, literal, operator, punctuator), variables, concept of l-value and r-value, use of comments",
+        "Knowledge of data types: Number(integer, floating point,complex), boolean, sequence(string, list, tuple), None, Mapping(dictionary), mutable and immutable data types.",
+        "Operators: arithmetic operators, relational operators, logical operators, assignment operators, augmented assignment operators, identity operators (is, is not), membership operators (in not in)",
+        "Expressions, statement, type conversion, and input/output: precedence of operators, expression, evaluation of an expression, type-conversion (explicit and implicit conversion), accepting data as input from the console and displaying output.",
+        "Errors- syntax errors, logical errors, and run-time errors",
+        "Flow of Control: introduction, use of indentation, sequential flow, conditional and iterative flow",
+        "Conditional statements: if, if-else, if-elif-else, flowcharts, simple programs: e.g.: absolute value, sort 3 numbers and divisibility of a number.",
+        "Iterative Statement: for loop, range(), while loop, break and continue statements, nested loops, suggested programs: generating pattern, summation of series, finding the factorial of a positive number, etc.",
+        "Strings: introduction, string operations (concatenation, repetition, membership and slicing), traversing a string using loops, built-in functions/methods–len(), capitalize(), title(), lower(), upper(), count(), find(), index(), endswith(), startswith(), isalnum(), isalpha(), isdigit(), islower(), isupper(), isspace(),lstrip(), rstrip(), strip(), replace(), join(), partition(), split()",
+        "Lists: introduction, indexing, list operations (concatenation, repetition, membership and slicing), traversing a list using loops, built-in functions/methods–len(), list(), append(), extend(), insert(), count(), index(), remove(), pop(), reverse(), sort(), sorted(), min(), max(), sum(); nested lists, suggested programs: finding the maximum, minimum, mean of numeric values stored in a list; linear search on list of numbers and counting the frequency of elements in a list.",
+        "Tuples: introduction, indexing, tuple operations (concatenation, repetition, membership and slicing); built-in functions/methods – len(), tuple(), count(), index(), sorted(), min(), max(), sum(); tuple assignment, nested tuple; suggested programs: finding the minimum, maximum, mean of values stored in a tuple; linear search on a tuple of numbers, counting the frequency of elements in a tuple.",
+        "Dictionary: introduction, accessing items in a dictionary using keys, mutability of a dictionary (adding a new term, modifying an existing item), traversing a dictionary, built-in functions/methods – len(), dict(), keys(), values(), items(), get(), update(), del, clear(), fromkeys(), copy(), pop(), popitem(), setdefault(), max(), min(), sorted(); Suggested programs: count the number of times a character appears in a given string using a dictionary, create a dictionary with names of employees, their salary and access them.",
+        "Introduction to Python modules: Importing module using 'import <module>' and using from statement, importing math module (pi, e, sqrt(), ceil(), floor(), pow(), fabs(), sin(), cos(), tan()); random module (random(), randint(), randrange()), statistics module (mean(), median(), mode())."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computational Thinking and Programming - I",
+          "source_chapter_name": "Computational Thinking and Programming - I",
+          "source_heading": "Computational Thinking and Programming - I",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Society, Law and Ethics",
+      "part_or_section": "",
+      "marks": 15,
+      "topics": [
+        "Digital Footprints",
+        "Digital Society and Netizen: net etiquettes, communication etiquettes, social media etiquettes",
+        "Data Protection: Intellectual property rights (copyright, patent, trademark), violation of IPR (plagiarism, copyright infringement, trademark infringement), open source software and licensing (Creative Commons, GPL and Apache)",
+        "Cyber Crime: definition, hacking, eavesdropping, phishing and fraud emails, ransomware, cyber trolls, cyber bullying",
+        "Cyber safety: safely browsing the web, identity protection, confidentiality",
+        "Malware: viruses, trojans, adware",
+        "E-waste management: proper disposal of used electronic gadgets.",
+        "Information Technology Act (IT Act)",
+        "Technology and society: Gender and disability issues while teaching and using computers"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Society, Law and Ethics",
+          "source_chapter_name": "Society, Law and Ethics",
+          "source_heading": "Society, Law and Ethics",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XI",
+  "subject": "COMPUTER SCIENCE",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Computer Systems and Organisation",
+      "part_or_section": "",
+      "marks": 10,
+      "topics": [
+        "Basic computer organisation: Introduction to Computer System, hardware, software, input device, output device, CPU, memory (primary, cache and secondary), units of memory (bit, byte, KB, MB, GB, TB, PB)",
+        "Types of software: System software (Operating systems, system utilities, device drivers), programming tools and language translators (assembler, compiler, and interpreter), application software",
+        "Operating System(OS): functions of the operating system, OS user interface",
+        "Boolean logic: NOT, AND, OR, NAND, NOR, XOR, truth tables and De Morgan's laws, Logic circuits",
+        "Number System: Binary, Octal, Decimal and Hexadecimal number system; conversion between number systems"
+      ],
+      "subtopics": [
+        "Encoding Schemes: ASCII, ISCII, and Unicode (UTF8, UTF32)"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computer Systems and Organisation",
+          "source_chapter_name": "Computer Systems and Organisation",
+          "source_heading": "Computer Systems and Organisation",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Computational Thinking and Programming - I",
+      "part_or_section": "",
+      "marks": 45,
+      "topics": [
+        "Introduction to Problem-solving: Steps for Problem-solving (Analyzing the problem, developing an algorithm, coding, testing, and debugging), representation of algorithms using flowchart and pseudocode, decomposition",
+        "Familiarization with the basics of Python programming: Introduction to Python, Features of Python, executing a simple 'hello world' program, execution modes: interactive mode and script mode, Python character set, Python tokens( keyword, identifier, literal, operator, punctuator), variables, concept of l-value and r-value, use of comments",
+        "Knowledge of data types: Number(integer, floating point,complex), boolean, sequence(string, list, tuple), None, Mapping(dictionary), mutable and immutable data types.",
+        "Operators: arithmetic operators, relational operators, logical operators, assignment operators, augmented assignment operators, identity operators (is, is not), membership operators (in not in)",
+        "Expressions, statement, type conversion, and input/output: precedence of operators, expression, evaluation of an expression, type-conversion (explicit and implicit conversion), accepting data as input from the console and displaying output.",
+        "Errors- syntax errors, logical errors, and run-time errors",
+        "Flow of Control: introduction, use of indentation, sequential flow, conditional and iterative flow",
+        "Conditional statements: if, if-else, if-elif-else, flowcharts, simple programs: e.g.: absolute value, sort 3 numbers and divisibility of a number.",
+        "Iterative Statement: for loop, range(), while loop, break and continue statements, nested loops, suggested programs: generating pattern, summation of series, finding the factorial of a positive number, etc.",
+        "Strings: introduction, string operations (concatenation, repetition, membership and slicing), traversing a string using loops, built-in functions/methods–len(), capitalize(), title(), lower(), upper(), count(), find(), index(), endswith(), startswith(), isalnum(), isalpha(), isdigit(), islower(), isupper(), isspace(),lstrip(), rstrip(), strip(), replace(), join(), partition(), split()",
+        "Lists: introduction, indexing, list operations (concatenation, repetition, membership and slicing), traversing a list using loops, built-in functions/methods–len(), list(), append(), extend(), insert(), count(), index(), remove(), pop(), reverse(), sort(), sorted(), min(), max(), sum(); nested lists, suggested programs: finding the maximum, minimum, mean of numeric values stored in a list; linear search on list of numbers and counting the frequency of elements in a list.",
+        "Tuples: introduction, indexing, tuple operations (concatenation, repetition, membership and slicing); built-in functions/methods – len(), tuple(), count(), index(), sorted(), min(), max(), sum(); tuple assignment, nested tuple; suggested programs: finding the minimum, maximum, mean of values stored in a tuple; linear search on a tuple of numbers, counting the frequency of elements in a tuple.",
+        "Dictionary: introduction, accessing items in a dictionary using keys, mutability of a dictionary (adding a new term, modifying an existing item), traversing a dictionary, built-in functions/methods – len(), dict(), keys(), values(), items(), get(), update(), del, clear(), fromkeys(), copy(), pop(), popitem(), setdefault(), max(), min(), sorted(); Suggested programs: count the number of times a character appears in a given string using a dictionary, create a dictionary with names of employees, their salary and access them.",
+        "Introduction to Python modules: Importing module using 'import <module>' and using from statement, importing math module (pi, e, sqrt(), ceil(), floor(), pow(), fabs(), sin(), cos(), tan()); random module (random(), randint(), randrange()), statistics module (mean(), median(), mode())."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computational Thinking and Programming - I",
+          "source_chapter_name": "Computational Thinking and Programming - I",
+          "source_heading": "Computational Thinking and Programming - I",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Society, Law and Ethics",
+      "part_or_section": "",
+      "marks": 15,
+      "topics": [
+        "Digital Footprints",
+        "Digital Society and Netizen: net etiquettes, communication etiquettes, social media etiquettes",
+        "Data Protection: Intellectual property rights (copyright, patent, trademark), violation of IPR (plagiarism, copyright infringement, trademark infringement), open source software and licensing (Creative Commons, GPL and Apache)",
+        "Cyber Crime: definition, hacking, eavesdropping, phishing and fraud emails, ransomware, cyber trolls, cyber bullying",
+        "Cyber safety: safely browsing the web, identity protection, confidentiality",
+        "Malware: viruses, trojans, adware",
+        "E-waste management: proper disposal of used electronic gadgets.",
+        "Information Technology Act (IT Act)",
+        "Technology and society: Gender and disability issues while teaching and using computers"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Society, Law and Ethics",
+          "source_chapter_name": "Society, Law and Ethics",
+          "source_heading": "Society, Law and Ethics",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+# Page 1
+
+## COMPUTER SCIENCE
+Subject Code - 083
+## Class XI (2026-27)
+- 1. Learning Outcomes
+Students should be able to:
+a) develop basic computational thinking
+b) explain and use data types
+c) appreciate the notion of algorithms
+d) develop a basic understanding of computer systems- architecture and
+operating system
+e) explain cyber ethics, cyber safety, and cybercrime
+f) understand the value of technology in societies along with consideration of
+gender and disability issues.
+- 2. Distribution of Marks
+## Unit No. Unit Name Marks
+Computer Systems and Organisation
+1 10
+● Input a list/tuple of elements, search for a given element in the list/tuple.
+● Create a dictionary with the roll number, name and marks of n students in a class
+and display the names of students who have marks above 75.
+- 6. Suggested Reading Material
+● NCERT Textbook for Computer Science (Class XI)
+● Support Material on CBSE website
+
+---
+
+# Page 5
+
+## COMPUTER SCIENCE
+Subject Code – 083
+## Class XII (2026-27)
+- 1. Prerequisites
+Computer Science- Class XI
+- 2. Learning Outcomes
+Student should be able to
+a) apply the concept of function.
+b) explain and use the concept of file handling.
+c) use basic data structure: Stacks
+d) explain basics of computer networks.
+e) use Database concepts, SQL along with connectivity between Python and SQL.
+- 3. Distribution of Marks:
+## Unit No. Unit Name Marks
+Computational Thinking and
+1 40
+Programming – 2
+2 Computer Networks 10
+3 Database Management 20
+Total 70
+- 4. Unit wise Syllabus
+## Unit 1: Computational Thinking and Programming – 2
+● Revision of Python topics covered in Class XI.
+● Functions: types of function (built-in functions, functions defined in module, user
+defined functions), creating user defined function, arguments and parameters,
+default parameters, positional parameters, function returning value(s), flow of
+execution, scope of a variable (global scope, local scope)
+● Exception Handling: Introduction, handling exceptions using try-except-finally
+blocks
+● Introduction to files, types of files (Text file, Binary file, CSV file), relative
+and absolute paths
+
+---
+
+# Page 6
+
+● Text file: opening a text file, text file open modes (r, r+, w, w+, a, a+), closing a text
+o GROUP BY and find the min, max, sum, count and average
+● Similar exercise may be framed for other cases.
+● Integrate SQL with Python by importing suitable module.
+- 7. Suggested Reading Material
+● NCERT Textbook for COMPUTER SCIENCE (Class XII)
+● Support Materials on the CBSE website.
+- 8. Project
+The aim of the class project is to create something that is tangible and useful using
+Python file handling/ Python-SQL connectivity. This should be done in groups of two to
+three students and should be started by students at least 6 months before the
+submission deadline. The aim here is to find a real world problem that is worthwhile to
+solve.
+Students are encouraged to visit local businesses and ask them about the problems that
+they are facing. For example, if a business is finding it hard to create invoices for filing
+GST claims, then students can do a project that takes the raw data (list of transactions),
+groups the transactions by category, accounts for the GST tax rates, and creates
+invoices in the appropriate format. Students can be extremely creative here. They can
+use a wide variety of Python libraries to create user friendly applications such as games,
+software for their school, software for their disabled fellow students, and mobile

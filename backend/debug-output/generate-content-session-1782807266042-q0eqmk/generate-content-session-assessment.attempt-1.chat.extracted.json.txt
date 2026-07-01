@@ -1,0 +1,307 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Total Marks: 9 | Duration: 15 minutes."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define a computer system as an integrated set of components working together to process information.",
+          "questionRefs": ["q1", "q2"]
+        },
+        {
+          "outcome": "Identify and explain the five key elements: Hardware, Software, Data, Users, and Procedures.",
+          "questionRefs": ["q3", "q4", "q5"]
+        },
+        {
+          "outcome": "Distinguish between different types of software (System vs. Application).",
+          "questionRefs": ["q6", "q7"]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 43,
+        "medium": 50,
+        "hard": 7
+      },
+      "bloomsDistribution": {
+        "recall": 28,
+        "understanding": 43,
+        "application": 14,
+        "analysis": 14,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 5
+        },
+        {
+          "section": "Very Short Answer",
+          "minutes": 4
+        },
+        {
+          "section": "Short Answer",
+          "minutes": 6
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "Which of the following is NOT one of the five essential elements of a computer system?",
+        "options": [
+          "A. Hardware",
+          "B. Software",
+          "C. Electricity Grid",
+          "D. Procedures"
+        ],
+        "answer": "C. Electricity Grid",
+        "explanation": "The five essential elements are Hardware, Software, Data, Users, and Procedures. The electricity grid is an external utility, not a core component of the system definition taught in this session.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "The Five Key Elements of a Computer System"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "Microsoft Word and Google Chrome are examples of which type of software?",
+        "options": [
+          "A. System Software",
+          "B. Application Software",
+          "C. Hardware Drivers",
+          "D. Procedures"
+        ],
+        "answer": "B. Application Software",
+        "explanation": "Application software is designed to help users perform specific tasks like word processing or browsing, whereas system software manages the computer itself.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "System vs. Application Software"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "In the context of a computer system, what is the primary role of 'Procedures'?",
+        "options": [
+          "A. To physically process data",
+          "B. To provide rules and guidelines for using the system effectively and safely",
+          "C. To store raw facts like text or images",
+          "D. To act as the physical machinery of the computer"
+        ],
+        "answer": "B. To provide rules and guidelines for using the system effectively and safely",
+        "explanation": "Procedures are the human element involving rules (e.g., password policies, saving documents) that ensure the system functions correctly.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "The Five Key Elements of a Computer System"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Name one example of system software.",
+        "answer": "Windows, macOS, or Linux.",
+        "expectedLength": "1 specific term",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for naming any valid operating system (e.g., Windows, Linux, macOS)."
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "System Software Definition"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "What is the role of 'Procedures' in a computer system?",
+        "answer": "To provide rules and guidelines for using the system effectively and safely.",
+        "expectedLength": "1-2 sentences defining purpose",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for mentioning 'rules' or 'guidelines'.",
+          "Credit context of safety or effective usage."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "The Five Key Elements: Procedures"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "shortAnswer",
+        "question": "Explain the difference between System Software and Application Software with one example for each.",
+        "answer": "System software runs the computer hardware (e.g., Windows OS), while application software helps users perform specific tasks (e.g., Microsoft Word). Both are required, but they serve different functions: management vs. task execution.",
+        "expectedLength": "2-3 clear points with examples",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly defining System Software and providing an example (e.g., OS).",
+          "1 mark for correctly distinguishing Application Software as task-specific and providing an example."
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "System vs. Application Software"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q7",
+        "questionSubtype": "shortAnswer",
+        "question": "Why is a computer system considered an 'integrated ecosystem' rather than just the physical machine? List two supporting reasons.",
+        "answer": "A computer system requires more than hardware to function. Two reasons are: 1) It needs users and procedures (human element/rules) to operate, without which it is useless; 2) Software acts as instructions that allow data processing within this ecosystem.",
+        "expectedLength": "Definition + 2 distinct supporting points",
+        "marks": 2,
+        "rubric": [
+          "1 mark for stating the need for human interaction (users/procedures).",
+          "1 mark for mentioning software/data integration or the concept of processing information into output."
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "What is a Computer System?"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "longAnswer": [],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "q1",
+          "answer": "C. Electricity Grid",
+          "explanation": "Electricity grid is external; the 5 elements are Hardware, Software, Data, Users, Procedures.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q2",
+          "answer": "B. Application Software",
+          "explanation": "Word and Chrome are tools for specific user tasks, not system management.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q3",
+          "answer": "B. To provide rules and guidelines...",
+          "explanation": "Procedures define the human interaction rules necessary for system safety and efficiency.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q4",
+          "answer": "Windows / macOS / Linux",
+          "rubric": [
+            "Award 1 mark for any valid OS name."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q5",
+          "answer": "To provide rules and guidelines...",
+          "rubric": [
+            "Award 1 mark for mentioning 'rules' or 'guidelines'.",
+            "Credit context of safety/usage."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q6",
+          "answer": "System software manages hardware (e.g., Windows); Application software performs tasks for users (e.g., Word).",
+          "rubric": [
+            "1 mark for correct definition/example of System Software.",
+            "1 mark for correct distinction/example of Application Software."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q7",
+          "answer": "Requires human element (users/procedures) and software integration to process data; hardware alone is useless.",
+          "rubric": [
+            "1 mark for mentioning users/procedures/human interaction.",
+            "1 mark for explaining the integrated nature or role of software/data."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct.",
+        "For short answers, ensure both parts of a 'difference' or 'reasons' question are addressed."
+      ]
+    }
+  }
+}

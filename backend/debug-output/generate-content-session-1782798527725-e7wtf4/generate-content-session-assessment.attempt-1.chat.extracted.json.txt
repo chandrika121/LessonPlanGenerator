@@ -1,0 +1,168 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Mixed formative checks",
+      "totalMarks": 15,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 4,
+          "marksEach": 1
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Learning outcome text",
+          "questionRefs": [
+            "q1",
+            "q5"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 20,
+        "understanding": 30,
+        "application": 25,
+        "analysis": 15,
+        "evaluation": 10
+      },
+      "questionDistribution": {
+        "mcq": 4,
+        "shortAnswer": 2,
+        "longAnswer": 1
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQ",
+          "minutes": 5
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "MCQ question",
+        "options": [
+          "A. option",
+          "B. option",
+          "C. option",
+          "D. option"
+        ],
+        "answer": "Correct option",
+        "explanation": "Why this option is correct",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Topic"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q5",
+        "questionSubtype": "shortAnswer",
+        "question": "Short-answer question",
+        "answer": "Model short answer",
+        "expectedLength": "1-2 clear points",
+        "marks": 2,
+        "rubric": [
+          "1 mark for first correct point",
+          "1 mark for second correct point"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Topic"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q7",
+        "questionSubtype": "longAnswer",
+        "question": "Long-answer question",
+        "answer": "Model long answer",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "Marks awarded point-wise",
+          "Credit explanation quality",
+          "Credit labelled example or diagram if relevant"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Topic"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "answer": "Correct option",
+          "explanation": "Brief explanation",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "answer": "Point-wise short answer",
+          "rubric": [
+            "Point 1",
+            "Point 2"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [
+        {
+          "answer": "Structured long answer",
+          "rubric": [
+            "Point 1",
+            "Point 2",
+            "Point 3",
+            "Point 4",
+            "Point 5"
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct.",
+        "For long answers, reward structure, explanation, and relevant examples."
+      ]
+    }
+  }
+}

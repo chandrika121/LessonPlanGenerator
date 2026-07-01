@@ -1,0 +1,247 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Mixed formative checks",
+      "totalMarks": 15,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 4,
+          "marksEach": 1
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "LO1",
+          "questionRefs": [
+            "q1",
+            "q5",
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 20,
+        "understanding": 30,
+        "application": 25,
+        "analysis": 15,
+        "evaluation": 10
+      },
+      "questionDistribution": {
+        "mcq": 4,
+        "shortAnswer": 2,
+        "longAnswer": 1
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQ",
+          "minutes": 5
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "Which of the following best describes the primary function of a cell membrane?",
+        "options": [
+          "A. To provide structural support to the cell",
+          "B. To regulate the entry and exit of substances",
+          "C. To produce energy for cellular processes",
+          "D. To store genetic information"
+        ],
+        "answer": "B. To regulate the entry and exit of substances",
+        "explanation": "The cell membrane is selectively permeable, allowing specific molecules to pass in and out.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Biology"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "Which organelle is known as the powerhouse of the cell?",
+        "options": [
+          "A. Nucleus",
+          "B. Ribosome",
+          "C. Mitochondria",
+          "D. Golgi Apparatus"
+        ],
+        "answer": "C. Mitochondria",
+        "explanation": "Mitochondria are responsible for ATP production through cellular respiration.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Biology"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "What is the primary role of ribosomes in a cell?",
+        "options": [
+          "A. Protein synthesis",
+          "B. Lipid production",
+          "C. Waste disposal",
+          "D. DNA replication"
+        ],
+        "answer": "A. Protein synthesis",
+        "explanation": "Ribosomes are the sites where amino acids are assembled into proteins.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Biology"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+        }
+      ],
+      "q4_placeholder": {
+        "id": "q4",
+        "questionSubtype": "mcq",
+        "question": "Which of these is a characteristic of prokaryotic cells?",
+        "options": [
+          "A. Presence of a nucleus",
+          "B. Lack of a membrane-bound nucleus",
+          "C. Large size",
+          "D. Complex organelles"
+        ],
+        "answer": "B. Lack of a membrane-bound nucleus",
+        "explanation": "Prokaryotes lack a defined nucleus and other membrane-bound organelles.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Biology"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      }
+    },
+    "shortAnswer": [
+      {
+        "id": "q5",
+        "questionSubtype": "shortAnswer",
+        "question": "Explain the difference between active and passive transport.",
+        "answer": "Passive transport moves substances along a concentration gradient without energy, while active transport requires energy (ATP) to move substances against a gradient.",
+        "expectedLength": "1-2 clear points",
+        "marks": 2,
+        "rubric": [
+          "1 mark for defining passive transport",
+          "1 mark for identifying the role of ATP in active transport"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Biology"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "shortAnswer",
+        "question": "Describe the function of the Golgi apparatus.",
+        "answer": "The Golgi apparatus modifies, sorts, and packages proteins and lipids for secretion or delivery to other organelles.",
+        "expectedLength": "1-2 clear points",
+        "marks": 2,
+        "rubric": [
+          "1 mark for mentioning modification/sorting",
+          "1 mark for mentioning packaging/distribution"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Biology"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q7",
+        "questionSubtype": "longAnswer",
+        "question": "Compare and contrast plant cells and animal cells, highlighting three key structural differences.",
+        "answer": "Plant cells have a cell wall (cellulose) for structure, while animal cells do not. Plant cells contain chloroplasts for photosynthesis; animal cells do not. Plant cells typically have a large central vacuole, whereas animal cells may have several small vacuoles.",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "Marks awarded point-wise for each structural difference identified",
+          "Credit for clear distinction between the two cell types",
+          "Credit for mentioning specific structures like Cell Wall or Chloroplasts"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Biology"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "answer": "B. To regulate the entry and exit of substances",
+          "explanation": "The cell membrane is selectively permeable.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "answer": "C. Mitochondria",
+          "explanation": "Mitochondria are the site of ATP production.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "answer": "A. Protein synthesis",
+          "explanation": "Ribosomes translate mRNA into proteins.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "answer": "B. Lack of a membrane-bound nucleus",
+          "explanation": "Prokaryotes are defined by the absence of a nuclear membrane.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "answer": "Passive transport (no energy) vs Active transport (requires ATP).",
+          "rubric": [
+            "1 mark for passive definition",
+            "

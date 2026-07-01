@@ -1,0 +1,165 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "studentLessonNotes": {
+      "title": "Student lesson note title",
+      "sessionOverview": "Simple overview of what this session covers",
+      "introduction": "Student-friendly introduction",
+      "learningObjectives": [
+        "After this lesson you will be able to..."
+      ],
+      "quickRecall": [
+        "Short prerequisite revision point"
+      ],
+      "easyToRemember": [
+        "Simple memory line for the concept"
+      ],
+      "comparisonTables": [
+        {
+          "title": "Comparison table title",
+          "headers": [
+            "Feature",
+            "Type A",
+            "Type B"
+          ],
+          "rows": [
+            [
+              "Example feature",
+              "Example A",
+              "Example B"
+            ]
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "heading": "Main idea",
+          "explanation": "Comprehensive but student-friendly explanation",
+          "keyPoints": [
+            "Revision point"
+          ],
+          "examples": [
+            "Worked example or everyday example"
+          ],
+          "whyItMatters": "Why students should care about this concept",
+          "terminology": [
+            "Important term"
+          ],
+          "detailedExplanation": "A slightly deeper but student-friendly explanation",
+          "observedIn": [
+            "Where students observe it"
+          ],
+          "visualSupport": [
+            "Diagram or visual suggestion"
+          ],
+          "importantNotes": [
+            "Exam point or caution note"
+          ],
+          "memoryTechniques": [
+            "Mnemonic or memory tip"
+          ],
+          "conceptSummary": [
+            "One-line takeaway"
+          ]
+        }
+      ],
+      "definitions": [
+        {
+          "term": "Key term",
+          "definition": "Clear definition"
+        }
+      ],
+      "workedExamples": [
+        {
+          "title": "Worked example title",
+          "steps": [
+            "Step 1",
+            "Step 2"
+          ],
+          "explanation": "How this example works"
+        }
+      ],
+      "revisionSection": {
+        "definitions": [
+          "Important definition"
+        ],
+        "formulas": [
+          "Useful formula if applicable"
+        ],
+        "facts": [
+          "Important fact"
+        ],
+        "keywords": [
+          "Keyword"
+        ],
+        "conceptMap": [
+          "Concept map cue"
+        ],
+        "quickRecap": [
+          "Fast revision point"
+        ]
+      },
+      "selfCheckQuestions": [
+        "Question students can answer independently"
+      ],
+      "quickSummary": [
+        "Short summary point"
+      ],
+      "keyTerms": [
+        "Important keyword"
+      ],
+      "fillInTheBlanks": [
+        {
+          "prompt": "A ________ is the basic unit of life.",
+          "answer": "cell"
+        }
+      ],
+      "mcqQuestions": [
+        {
+          "question": "Which organelle controls the cell?",
+          "options": [
+            "A. Ribosome",
+            "B. Nucleus",
+            "C. Vacuole",
+            "D. Cytoplasm"
+          ],
+          "answer": "B. Nucleus"
+        }
+      ],
+      "veryShortAnswerQuestions": [
+        {
+          "question": "What is a cell?",
+          "answer": "The basic structural and functional unit of life."
+        }
+      ],
+      "didYouKnow": [
+        "Interesting supporting fact"
+      ],
+      "summary": [
+        "Short summary point"
+      ],
+      "quickRevision": [
+        "Revision cue"
+      ],
+      "rememberPoints": [
+        "Cell -> Basic Unit of Life"
+      ]
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL STUDENT NOTES CONTENT GENERATION ENGINE\n\nROLE\nYou are an Expert Student Learning Experience Designer, Curriculum Specialist, Instructional Designer, Learning Scientist, Cognitive Psychologist, Academic Content Architect, Subject Matter Expert, Visual Learning Designer, Educational Assessment Specialist, and Student Success Mentor.\n\nYour sole responsibility is to transform ONE classroom session into premium student notes that help students:\n- understand deeply\n- learn independently\n- revise quickly\n- remember longer\n- prepare for assessments\n- develop conceptual clarity\n- build confidence\n\nThese notes must feel like a premium self-learning resource designed for students, not teachers.\n\nPRIMARY OBJECTIVE\nGenerate highly structured, visually organized, engaging, cognitively optimized student notes for ONE instructional session only.\n\nThe notes must remain:\n- session-specific\n- curriculum-aligned\n- concept-focused\n- student-friendly\n- assessment-aware\n- revision-oriented\n- easy to understand\n- easy to revise\n\nThe goal is not to generate the most content.\nThe goal is to generate the best learning experience.\n\nSESSION CONTEXT\n- Subject: Science\n- Grade/Level: Class IX\n- Chapter scope: [\"Tissues\"]\n- Session title: Tissues - Session 1\n- Session number: 1 of 18\n- Session duration: 45 minutes\n- Learning outcomes: []\n- Previous session context: No previous session context provided.\n- Learning pace: Balanced\n- Target difficulty: Balanced\n- Output language: English\n- Reading level: Grade-aligned\n- Response length: Detailed\n- Creativity: Moderate\n\nABSOLUTE RULES\n1. Generate notes for ONE session only.\n2. Never introduce future-session content, future chapters, unseen terminology, or external content not present in the session scope.\n3. Never generate teacher notes, lesson plans, teaching instructions, planning notes, internal reasoning, curriculum metadata, or assessment answer keys.\n4. Everything must be written directly for students.\n5. Use only the supplied session topics, learning outcomes, and scope as the source of truth.\n6. Return valid JSON only.\n7. Match the required schema exactly.\n8. Return real student-facing content, not placeholders.\n\nCORE STUDENT NOTE PHILOSOPHY\nThese notes are:\n- not a textbook\n- not classroom lecture notes\n- not copied study material\n- a student learning companion\n\nEvery section should help students answer:\n- What is this?\n- Why should I learn this?\n- How does it work?\n- Where is it used?\n- How do I remember it?\n- How might I be tested on it?\n\nStudents should never feel overwhelmed.\nStudents should feel guided.\n\nSESSION INTELLIGENCE ENGINE\nBefore generating, internally determine:\n- session goal\n- core concepts\n- supporting concepts\n- prerequisite knowledge\n- realistic session scope\n- learning dependency sequence\n\nOnly include a short prerequisite recall section when useful.\nDo not reteach previous chapters.\n\nTOPIC AND CONCEPT ENGINE\nFor each topic, internally classify its instructional nature, such as:\n- definition\n- concept\n- classification\n- comparison\n- process\n- mechanism\n- structure\n- rule\n- scientific observation\n- application\n- diagram-based concept\n\nThen explain it using the best learning sequence.\nNever compare two concepts before explaining each concept individually.\nFor comparison-heavy content, make sure Concept A and Concept B are each understood first, then give similarities, differences, tables, confusions, memory aids, and revision support.\n\nCONTENT PLANNING ENGINE\nDo not simply explain topics in the order received.\nOrganize the notes in the most logical learning order based on:\n- explanation order\n- example placement\n- comparison opportunities\n- diagram opportunities\n- memory aids\n- revision points\n- misconception prevention\n\nCOGNITIVE SCIENCE ENGINE\nNaturally apply:\n- chunking\n- progressive disclosure\n- scaffolding\n- active recall\n- retrieval practice\n- elaboration\n- worked examples\n- cognitive reinforcement\n- schema building\n\nLEARNING ADAPTATION ENGINE\nAdapt automatically to grade, reading level, pace, and difficulty.\n\nIf the learning pace is slow or the difficulty is low, strongly bias toward:\n- simple language\n- short sentences\n- one concept at a time\n- repeated key terms\n- real-life analogies\n- smaller learning chunks\n- extra memory support\n- built-in quick practice\n\nIf the session duration is short, focus on only the essential concepts.\nNever exceed realistic classroom teaching scope.\n\nDEPTH ENGINE\nDo not leave concepts half explained.\nFor each concept, cover the relevant dimensions where appropriate:\n- what it is\n- why it matters\n- how it works\n- where it is found or used\n- characteristics\n- components\n- types\n- process or mechanism\n- examples\n- non-examples\n- applications\n- misconceptions\n- memory techniques\n- exam perspective\n- revision points\n- summary\n\nDo not mechanically force every dimension.\nUse only what is relevant to the concept.\n\nGLOBAL DEPTH RULE\nBy the end of each concept, the student should be able to answer:\n- What is this concept?\n- How and why does it work?\n- When, where, and why should I use or recognize it?\n\nOUTPUT REQUIREMENTS\n1. Write in a student-first voice.\n2. Keep the structure premium, clean, and revision-friendly.\n3. Include full built-in study practice inside the notes.\n4. Use comparison tables where useful.\n5. Use memory aids where useful.\n6. Use real-life examples where helpful.\n7. Keep explanations age-appropriate and easy to revise later.\n8. When useful, add worked examples, concept summaries, key terms, and quick revision cues.\n9. Do not include empty sections with fake filler. If a field is required by schema, fill it with concise meaningful content.\n\nRETURN THIS EXACT JSON SHAPE\n{\n  \"studentLessonNotes\": {\n    \"title\": \"Student lesson note title\",\n    \"sessionOverview\": \"Friendly one-session overview\",\n    \"introduction\": \"Friendly student-facing introduction\",\n    \"learningObjectives\": [\"After this lesson you will be able to...\"],\n    \"quickRecall\": [\"Short prerequisite revision point\"],\n    \"easyToRemember\": [\"Simple memory line for the concept\"],\n    \"comparisonTables\": [\n      {\n        \"title\": \"Comparison title\",\n        \"headers\": [\"Feature\", \"Type A\", \"Type B\"],\n        \"rows\": [[\"Example feature\", \"Example A\", \"Example B\"]]\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"Concept name\",\n        \"explanation\": \"Simple explanation\",\n        \"keyPoints\": [\"Important point\"],\n        \"examples\": [\"Real-life or classroom example\"],\n        \"whyItMatters\": \"Why students should care about this concept\",\n        \"terminology\": [\"Important term\"],\n        \"detailedExplanation\": \"A deeper but student-friendly explanation\",\n        \"observedIn\": [\"Where students observe it\"],\n        \"visualSupport\": [\"Diagram or visual suggestion\"],\n        \"importantNotes\": [\"Exam point or caution note\"],\n        \"memoryTechniques\": [\"Mnemonic or memory tip\"],\n        \"conceptSummary\": [\"One-line takeaway\"]\n      }\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Key term\",\n        \"definition\": \"Clear student-friendly definition\"\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Worked example title\",\n        \"steps\": [\"Step 1\", \"Step 2\"],\n        \"explanation\": \"How this example works\"\n      }\n    ],\n    \"revisionSection\": {\n      \"definitions\": [\"Important definition\"],\n      \"formulas\": [\"Useful formula if applicable\"],\n      \"facts\": [\"Important fact\"],\n      \"keywords\": [\"Keyword\"],\n      \"conceptMap\": [\"Concept map cue\"],\n      \"quickRecap\": [\"Fast revision point\"]\n    },\n    \"selfCheckQuestions\": [\"Question students can answer independently\"],\n    \"quickSummary\": [\"Short summary point\"],\n    \"keyTerms\": [\"Important keyword\"],\n    \"fillInTheBlanks\": [\n      {\n        \"prompt\": \"A ________ is the basic unit of life.\",\n        \"answer\": \"cell\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which organelle controls the cell?\",\n        \"options\": [\"A. Ribosome\", \"B. Nucleus\", \"C. Vacuole\", \"D. Cytoplasm\"],\n        \"answer\": \"B. Nucleus\"\n      }\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"What is a cell?\",\n        \"answer\": \"The basic structural and functional unit of life.\"\n      }\n    ],\n    \"didYouKnow\": [\"Interesting supporting fact\"],\n    \"summary\": [\"Key learning point\"],\n    \"quickRevision\": [\"Very short revision cue\"],\n    \"rememberPoints\": [\"Cell -> Basic Unit of Life\"]\n  }\n}\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"studentLessonNotes\": {\n    \"title\": \"Student lesson note title\",\n    \"sessionOverview\": \"Simple overview of what this session covers\",\n    \"introduction\": \"Student-friendly introduction\",\n    \"learningObjectives\": [\n      \"After this lesson you will be able to...\"\n    ],\n    \"quickRecall\": [\n      \"Short prerequisite revision point\"\n    ],\n    \"easyToRemember\": [\n      \"Simple memory line for the concept\"\n    ],\n    \"comparisonTables\": [\n      {\n        \"title\": \"Comparison table title\",\n        \"headers\": [\n          \"Feature\",\n          \"Type A\",\n          \"Type B\"\n        ],\n        \"rows\": [\n          [\n            \"Example feature\",\n            \"Example A\",\n            \"Example B\"\n          ]\n        ]\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"Main idea\",\n        \"explanation\": \"Comprehensive but student-friendly explanation\",\n        \"keyPoints\": [\n          \"Revision point\"\n        ],\n        \"examples\": [\n          \"Worked example or everyday example\"\n        ],\n        \"whyItMatters\": \"Why students should care about this concept\",\n        \"terminology\": [\n          \"Important term\"\n        ],\n        \"detailedExplanation\": \"A slightly deeper but student-friendly explanation\",\n        \"observedIn\": [\n          \"Where students observe it\"\n        ],\n        \"visualSupport\": [\n          \"Diagram or visual suggestion\"\n        ],\n        \"importantNotes\": [\n          \"Exam point or caution note\"\n        ],\n        \"memoryTechniques\": [\n          \"Mnemonic or memory tip\"\n        ],\n        \"conceptSummary\": [\n          \"One-line takeaway\"\n        ]\n      }\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Key term\",\n        \"definition\": \"Clear definition\"\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Worked example title\",\n        \"steps\": [\n          \"Step 1\",\n          \"Step 2\"\n        ],\n        \"explanation\": \"How this example works\"\n      }\n    ],\n    \"revisionSection\": {\n      \"definitions\": [\n        \"Important definition\"\n      ],\n      \"formulas\": [\n        \"Useful formula if applicable\"\n      ],\n      \"facts\": [\n        \"Important fact\"\n      ],\n      \"keywords\": [\n        \"Keyword\"\n      ],\n      \"conceptMap\": [\n        \"Concept map cue\"\n      ],\n      \"quickRecap\": [\n        \"Fast revision point\"\n      ]\n    },\n    \"selfCheckQuestions\": [\n      \"Question students can answer independently\"\n    ],\n    \"quickSummary\": [\n      \"Short summary point\"\n    ],\n    \"keyTerms\": [\n      \"Important keyword\"\n    ],\n    \"fillInTheBlanks\": [\n      {\n        \"prompt\": \"A ________ is the basic unit of life.\",\n        \"answer\": \"cell\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which organelle controls the cell?\",\n        \"options\": [\n          \"A. Ribosome\",\n          \"B. Nucleus\",\n          \"C. Vacuole\",\n          \"D. Cytoplasm\"\n        ],\n        \"answer\": \"B. Nucleus\"\n      }\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"What is a cell?\",\n        \"answer\": \"The basic structural and functional unit of life.\"\n      }\n    ],\n    \"didYouKnow\": [\n      \"Interesting supporting fact\"\n    ],\n    \"summary\": [\n      \"Short summary point\"\n    ],\n    \"quickRevision\": [\n      \"Revision cue\"\n    ],\n    \"rememberPoints\": [\n      \"Cell -> Basic Unit of Life\"\n    ]\n  }\n}"
+    }
+  ]
+}

@@ -1,0 +1,373 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 14,
+      "totalQuestions": 8,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 1,
+          "marksEach": 5
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Time allowed: 15 minutes. Total Marks: 14."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will be able to define a cell and explain its role as the basic unit of life.",
+          "questionRefs": [
+            "q2",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Students will differentiate between prokaryotic and eukaryotic cells based on nuclear structure.",
+          "questionRefs": [
+            "q1",
+            "q3",
+            "q6"
+          ]
+        },
+        {
+          "outcome": "Students will describe the functions of the plasma membrane and cell wall.",
+          "questionRefs": [
+            "q4",
+            "q7",
+            "q8"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 35,
+        "medium": 40,
+        "hard": 25
+      },
+      "bloomsDistribution": {
+        "recall": 25,
+        "understanding": 40,
+        "application": 25,
+        "analysis": 10,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2,
+        "longAnswer": 1
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answer & Short Answers",
+          "minutes": 6
+        },
+        {
+          "section": "Long Answer",
+          "minutes": 5
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "Which of the following best describes a prokaryotic cell?",
+        "options": [
+          "A. A cell with a well-defined nucleus surrounded by a membrane.",
+          "B. A simple cell that lacks a distinct, membrane-bound nucleus.",
+          "C. A complex cell found only in plants and animals.",
+          "D. A cell where the DNA is enclosed within a rigid wall."
+        ],
+        "answer": "B",
+        "explanation": "Prokaryotic cells are defined by the absence of a membrane-bound nucleus, unlike eukaryotic cells which have one.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Cell Classification",
+          "Prokaryotes vs Eukaryotes"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "Why is the cell often referred to as the 'brick' of biology?",
+        "options": [
+          "A. Because it was discovered by Robert Hooke in a brick wall.",
+          "B. Because cells are the smallest structural and functional units that make up all living organisms.",
+          "C. Because only plant cells look like bricks.",
+          "D. Because cells are made of calcium carbonate."
+        ],
+        "answer": "B",
+        "explanation": "Just as a building is constructed from individual bricks, complex life forms are built from individual cells which serve as the basic unit of structure and function.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Cell Theory",
+          "Basic Unit of Life"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "Which boundary structure is found in plant cells but NOT in animal cells?",
+        "options": [
+          "A. Plasma Membrane",
+          "B. Cytoplasm",
+          "C. Cell Wall",
+          "D. Nucleus"
+        ],
+        "answer": "C",
+        "explanation": "While both plant and animal cells have a plasma membrane, the rigid cell wall made of cellulose is unique to plants (and fungi/bacteria) among eukaryotes.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Cell Boundaries",
+          "Plant vs Animal Cells"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "recall"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "What is the primary function of the plasma membrane?",
+        "answer": "It acts as a selectively permeable gatekeeper, controlling what enters and leaves the cell.",
+        "expectedLength": "1-2 sentences",
+        "marks": 1,
+        "rubric": [
+          "Mention 'selectively permeable' or 'controls entry/exit'.",
+          "Identify it as a boundary/gatekeeper."
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Plasma Membrane Function"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Define a cell in one sentence.",
+        "answer": "A cell is the smallest structural and functional unit of life that can exist independently or as part of an organism.",
+        "expectedLength": "1 clear definition",
+        "marks": 1,
+        "rubric": [
+          "Identify 'smallest unit' or 'basic unit'.",
+          "Mention it is the fundamental building block of life."
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Definition of Cell"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "shortAnswer",
+        "question": "Differentiate between a prokaryotic and an eukaryotic cell based on the presence of a nucleus.",
+        "answer": "Prokaryotic cells lack a well-defined, membrane-bound nucleus; their genetic material floats freely in the cytoplasm. In contrast, Eukaryotic cells possess a distinct nucleus enclosed by a nuclear membrane that houses the DNA.",
+        "expectedLength": "2-3 clear points comparing both types",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly stating Prokaryotes lack a true/membrane-bound nucleus.",
+          "1 mark for correctly stating Eukaryotes have a membrane-bound nucleus."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Prokaryotic vs Eukaryotic Cells"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q7",
+        "questionSubtype": "shortAnswer",
+        "question": "Explain why plant cells do not burst in hypotonic solutions (like pure water) while animal cells might.",
+        "answer": "Plant cells have a rigid Cell Wall made of cellulose outside the plasma membrane. This wall provides structural support and prevents the cell from bursting when water enters via osmosis, unlike animal cells which rely only on the flexible membrane.",
+        "expectedLength": "2-3 clear points with reasoning",
+        "marks": 2,
+        "rubric": [
+          "1 mark for mentioning the presence of a rigid Cell Wall in plants.",
+          "1 mark for explaining that this wall prevents bursting/provides support against water intake."
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Cell Wall Function",
+          "Plant vs Animal Cells"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q8",
+        "questionSubtype": "longAnswer",
+        "question": "The cell is often described as the 'fundamental unit of life'. Based on your study today, write a comprehensive explanation covering: (1) Why cells are considered the basic units, (2) The two main classifications of cells and their key difference, and (3) How the boundaries (Membrane vs. Wall) contribute to cell survival.",
+        "answer": "1. **Basic Unit**: Cells are the smallest structural and functional units capable of independent life; all living organisms are composed of them, whether unicellular or multicellular.\n2. **Classifications**: Cells are classified into Prokaryotes (simple cells lacking a true nucleus) and Eukaryotes (complex cells with a membrane-bound nucleus). The presence of the nucleus is the primary distinguishing factor.\n3. **Boundaries & Survival**: Every cell has a Plasma Membrane that acts as a selectively permeable gatekeeper, regulating transport to maintain internal balance. Additionally, plant cells possess a rigid Cell Wall made of cellulose which provides structural support and prevents bursting in water, ensuring survival in varying environments.",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "1 mark for defining the cell as the basic/structural unit of life.",
+          "1 mark for correctly identifying Prokaryotes and Eukaryotes.",
+          "1 mark for explaining the key difference (presence/absence of nucleus).",
+          "1 mark for describing the function of the Plasma Membrane (selective permeability/control).",
+          "1 mark for describing the Cell Wall's role in support/preventing bursting."
+        ],
+        "learningOutcomeIds": [
+          "LO1",
+          "LO2",
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Cell Theory",
+          "Classification",
+          "Boundaries and Functions"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "q1",
+          "answer": "B",
+          "explanation": "Prokaryotes lack a membrane-bound nucleus.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q2",
+          "answer": "B",
+          "explanation": "Cells are the basic building blocks of all living things.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q3",
+          "answer": "C",
+          "explanation": "The Cell Wall is unique to plants among the options listed for eukaryotes.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q4",
+          "answer": "It acts as a selectively permeable gatekeeper controlling entry and exit of substances.",
+          "rubric": [
+            "Mention 'selectively permeable' or 'controls transport'.",
+            "Identify it as the boundary/gatekeeper."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q5",
+          "answer": "The smallest structural and functional unit of life.",
+          "rubric": [
+            "Identify 'smallest' or 'basic' unit.",
+            "Mention it is the fundamental building block."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q6",
+          "answer": "Prokaryotes lack a true nucleus (DNA floats in cytoplasm), while Eukaryotes have a membrane-bound nucleus.",
+          "rubric": [
+            "1 mark for correct description of Prokaryotic cells regarding the nucleus.",
+            "1 mark for correct description of Eukaryotic cells regarding the nucleus."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q7",
+          "answer": "Plant cells have a rigid Cell Wall that provides structural support and prevents bursting in water.",
+          "rubric": [
+            "1 mark for mentioning the 'Cell Wall'.",
+            "1 mark for explaining its role in preventing bursting/providing rigidity."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "q8",
+          "answer": "1. Cells are the smallest units of life (structural/functional). 2. Prokaryotes lack a nucleus; Eukaryotes have one. 3. Membrane controls transport; Cell Wall provides support/prevents bursting.",
+          "rubric": [
+            "1 mark for defining cell as basic unit.",
+            "1 mark for distinguishing Pro/Eukaryotic cells by nucleus presence.",
+            "1 mark for explaining Plasma Membrane function (selective permeability).",
+            "1 mark for explaining Cell Wall function (support/rigidity).",
+            "1 mark for overall coherence and structure."
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'gatekeeper' vs 'regulator').",
+        "For long answers, reward structure and clear differentiation between concepts."
+      ]
+    }
+  }
+}

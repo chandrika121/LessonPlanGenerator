@@ -20,7 +20,7 @@ Your responsibility is to create a **classroom-ready teaching presentation** tha
 
 The presentation must be designed to support effective teaching, maximize student engagement, reinforce learning outcomes, and follow sound pedagogical practices.
 
-This project uses a **fixed Kamalaniketan 12-slide session template** and a **themeable design system**.
+This project uses a **fixed 12-slide CBSE-inspired teacher delivery template** and a **themeable design system**.
 
 ## PRIMARY OBJECTIVE
 
@@ -35,11 +35,22 @@ The presentation must:
 * Be visually oriented rather than text heavy.
 * Support teacher delivery instead of replacing it.
 * Match the flow of the Teacher Lesson Notes.
-* Preserve the Kamalaniketan template slide order.
+* Preserve the required 12-slide teacher-delivery order.
 
 The PPT is **not a textbook**, **not lecture notes**, and **not study material**.
 
 It is a classroom teaching aid.
+
+The deck should feel like a strong CBSE classroom session:
+
+* clear opening
+* prior knowledge activation
+* concept explanation
+* worked teaching support
+* guided practice
+* formative check
+* recap
+* homework / next-class bridge
 
 ## INPUTS
 
@@ -76,6 +87,7 @@ The following information will be provided through the placeholders and full ses
 * Response Length
 * Creativity Level
 * Presentation Theme
+* Presentation Template
 * Slide Configuration
 * Complete Session JSON
 
@@ -275,7 +287,9 @@ Never change the order.
 
 Never insert additional slides.
 
-The template id is `kamalaniketan-session-12`.
+The presentation is generated in `teacher-delivery` deck mode.
+
+Use the selected `templateId` and `themeId` from the provided slide configuration.
 
 ## UNIVERSAL 12-SLIDE TEMPLATE
 
@@ -345,10 +359,10 @@ Include:
 * real-life connection
 * key vocabulary
 
-### Slide 6 — `core_concept`
+### Slide 6 — `core_concept_a`
 
 Purpose:
-Teach the primary concept.
+Teach the first major concept.
 
 Include the main concept content for this session:
 
@@ -360,10 +374,10 @@ Include the main concept content for this session:
 * properties
 * formula if relevant
 
-### Slide 7 — `visual_explanation`
+### Slide 7 — `core_concept_b_visual`
 
 Purpose:
-Explain visually.
+Teach the second major concept and support it visually.
 
 Prefer:
 
@@ -377,14 +391,14 @@ Prefer:
 * hierarchy
 * flowchart
 
-Minimal visible text. Teacher explains using the visual.
+Minimal visible text is acceptable here. Teacher explains using the visual.
 
 ### Slide 8 — `worked_example`
 
 Purpose:
 Model the concept.
 
-Generate only if supported by session content:
+Prefer a concrete example, demonstration, or teacher-led modelling move supported by the session content:
 
 * teacher demonstration
 * solved example
@@ -403,7 +417,7 @@ Otherwise keep sparse and session-faithful.
 Purpose:
 Students practice immediately.
 
-Generate only if supported:
+Generate guided student practice supported by the session content:
 
 * activity
 * think-pair-share
@@ -458,18 +472,27 @@ Include:
 
 If homework is unavailable, use reflection / observation / preparation guidance without inventing curriculum.
 
-## THEME SYSTEM RULES
+## TEMPLATE AND THEME RULES
 
 The content structure must remain fixed.
 
-Theme must only affect visual tokens, not instructional sequence.
+Template affects layout behaviour and visible density.
+
+Theme affects visual tokens only, not instructional sequence.
+
+Allowed template ids:
+
+* `textbook-clean`
+* `academic-split`
+* `visual-focus`
 
 Use one of these theme ids:
 
+* `cbse-academic-blue`
 * `kamalaniketan-classic`
 * `kamalaniketan-modern`
 
-Default to `kamalaniketan-modern` unless the session strongly indicates a more classic school-deck presentation.
+Default to the selected template and theme from the provided configuration.
 
 Theme tokens may define:
 
@@ -484,14 +507,14 @@ Theme tokens may define:
 
 Allowed sources:
 
-* Openverse
-* Wikimedia Commons
+* Internal SVG diagrams
+* Ollama image model outputs
 
-Use real reusable image plans for:
+Visual sourcing policy:
 
-* microscopy
-* specimen observation
-* real-world context
+* Prefer `svgDiagram` for structure, process, comparison, cycle, or relationship-heavy slides
+* Use generated image plans for real-world photos, specimen/context visuals, and scene-based teaching visuals
+* Do not rely on external/online image libraries
 
 Use SVG/diagram plans for:
 
@@ -500,11 +523,18 @@ Use SVG/diagram plans for:
 * process
 * relationship-heavy concepts
 
-Keep `svgCode` compact.
+Keep `svgCode` compact when possible.
 
 Never repeat long SVG fragments.
 
 If a strong SVG would be too long, leave `svgCode` empty and provide strong `instructions`.
+
+Every slide should still provide:
+
+* strong `visualPlan`
+* at least one meaningful `assets[]` entry or one meaningful `svgDiagram`
+* alt text
+* placement hint
 
 ## OUTPUT CONTRACT
 
@@ -516,28 +546,30 @@ Use this codebase’s required shape exactly:
 {
   "materials": {
     "ppt": {
-      "templateId": "kamalaniketan-session-12",
-      "templateName": "Kamalaniketan Session PPT Template",
-      "themeId": "kamalaniketan-modern",
+      "deckMode": "teacher-delivery",
+      "templateId": "academic-split",
+      "templateName": "Academic Split",
+      "themeId": "cbse-academic-blue",
+      "themeName": "CBSE Academic Blue",
       "theme": "Theme display name",
       "themeTokens": {
         "fonts": {
-          "heading": "Outfit",
-          "body": "Inter"
+          "heading": "Cambria",
+          "body": "Aptos"
         },
         "colors": {
-          "primary": "#36ADAA",
-          "secondary": "#1EABDA",
-          "accent": "#DE8431",
-          "background": "#EEF4F7",
+          "primary": "#1D4E89",
+          "secondary": "#173B6A",
+          "accent": "#D97706",
+          "background": "#F7FAFC",
           "surface": "#FFFFFF",
-          "text": "#0F172A",
-          "mutedText": "#64748B"
+          "text": "#1F2937",
+          "mutedText": "#6B7280"
         },
         "visualStyle": {
-          "topBarStyle": "bold color band",
-          "cardStyle": "rounded modern educator cards",
-          "visualFrameStyle": "large clean visual panel"
+          "topBarStyle": "measured academic title band",
+          "cardStyle": "light textbook panels",
+          "visualFrameStyle": "clean labelled-figure frame"
         }
       },
       "title": "",
@@ -545,10 +577,10 @@ Use this codebase’s required shape exactly:
       "presentationGoal": "",
       "audience": "",
       "assetSearchPlan": {
-        "preferredSources": ["Openverse", "Wikimedia Commons"],
+        "preferredSources": ["Internal SVG", "Ollama image model"],
         "safeSearch": true,
-        "licensingNotes": ["Use reusable or public domain assets only."],
-        "fallbackStrategy": "Prefer SVG diagrams when external imagery is not needed."
+        "licensingNotes": ["Use internally generated images and in-app SVG diagrams only."],
+        "fallbackStrategy": "Prefer SVG diagrams for concept/process slides and the Ollama image model for all picture-based visuals."
       },
       "licenseChecklist": [""],
       "presentationWarnings": [""],
@@ -560,7 +592,7 @@ Use this codebase’s required shape exactly:
       },
       "slides": [
         {
-          "templateId": "kamalaniketan-session-12",
+          "templateId": "academic-split",
           "templateSlideKey": "title_identity",
           "templateSlideTitle": "Title / Session Identity",
           "isOptionalSlotFilled": true,
@@ -580,12 +612,16 @@ Use this codebase’s required shape exactly:
             {
               "purpose": "",
               "searchQuery": "",
-              "sourceSite": "Openverse | Wikimedia Commons",
+              "sourceSite": "Ollama image model | Internal SVG",
               "sourceUrl": "",
               "licenseType": "",
               "attributionText": "",
               "altText": "",
-              "placementHint": ""
+              "placementHint": "",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "generated-image | svg-diagram | none"
             }
           ],
           "svgDiagram": {
@@ -627,7 +663,8 @@ Before returning the response, verify that:
 * Activities and assessments align with the learning outcomes.
 * The presentation is age-appropriate for the specified grade.
 * Content density matches the session duration and learning pace.
+* Template changes affect layout only, not instructional sequence.
 * Theme changes affect styling, not instructional sequence.
 * The output is valid JSON conforming to the required schema.
 
-The final result should be a **production-ready, classroom-ready, teacher-friendly PowerPoint specification** that can be rendered directly into a presentation while remaining aligned to the Kamalaniketan 12-slide template and the themeable system already implemented in this project.
+The final result should be a **production-ready, classroom-ready, CBSE-inspired teacher PowerPoint specification** that can be rendered directly into a presentation while remaining aligned to the fixed 12-slide teacher-delivery structure and the themeable/template system already implemented in this project.

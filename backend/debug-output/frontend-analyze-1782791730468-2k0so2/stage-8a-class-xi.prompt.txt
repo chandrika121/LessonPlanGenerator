@@ -1,0 +1,140 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8A - Class XI
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "units": [
+    {
+      "unit_id": "class-11-computer-science-u1",
+      "unit_name": "Computer Systems and Organisation",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computer Systems and Organisation"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-computer-science-u2",
+      "unit_name": "Computational Thinking and Programming - I",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Computational Thinking and Programming - I"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-computer-science-u3",
+      "unit_name": "Society, Law and Ethics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Society, Law and Ethics"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-11-computer-science-u1",
+      "unit_name": "Computer Systems and Organisation",
+      "chapter_id": "C1",
+      "chapter_name": "Computer Systems and Organisation"
+    },
+    {
+      "unit_id": "class-11-computer-science-u2",
+      "unit_name": "Computational Thinking and Programming - I",
+      "chapter_id": "C1",
+      "chapter_name": "Computational Thinking and Programming - I"
+    },
+    {
+      "unit_id": "class-11-computer-science-u3",
+      "unit_name": "Society, Law and Ethics",
+      "chapter_id": "C1",
+      "chapter_name": "Society, Law and Ethics"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "CS-XI-U1",
+      "title": "Computer Systems and Organisation Competencies",
+      "description": "Competencies related to computer hardware, software, operating systems, logic circuits, number systems, and encoding schemes.",
+      "competencies": [
+        "Explain basic computer organisation including hardware, software, input/output devices, CPU, and memory units (primary, cache, secondary).",
+        "Differentiate between system software, programming tools/language translators, and application software.",
+        "Describe the functions of an operating system and its user interface.",
+        "Apply Boolean logic operations (NOT, AND, OR, NAND, NOR, XOR) using truth tables and De Morgan's laws to design basic logic circuits.",
+        "Perform conversions between Binary, Octal, Decimal, and Hexadecimal number systems.",
+        "Explain encoding schemes including ASCII, ISCII, Unicode (UTF8, UTF32)."
+      ],
+      "unit_name": "Computer Systems and Organisation",
+      "chapter_name": "Computer Systems and Organisation"
+    },
+    {
+      "code": "CS-XI-U2",
+      "title": "Computational Thinking and Programming - I Competencies",
+      "description": "Competencies related to problem-solving, Python programming fundamentals, data types, operators, control structures, strings, lists, tuples, dictionaries, and modules.",
+      "competencies": [
+        "Apply steps for problem-solving: analyzing the problem, developing algorithms (flowcharts/pseudocode), coding, testing, and debugging.",
+        "Execute basic Python programs in interactive and script modes using appropriate character sets and tokens.",
+        "Identify and use various data types including numbers, booleans, sequences (string, list, tuple), None, mappings (dictionary), and distinguish between mutable/immutable types.",
+        "Utilize arithmetic, relational, logical, assignment, augmented assignment, identity, and membership operators correctly with precedence rules.",
+        "Perform explicit and implicit type conversions and handle input/output operations in Python.",
+        "Distinguish between syntax errors, logical errors, and run-time errors.",
+        "Implement flow of control using sequential, conditional (if, if-else, if-elif-else), and iterative structures with proper indentation.",
+        "Develop programs involving nested loops for pattern generation, series summation, and factorial calculation.",
+        "Manipulate strings including concatenation, repetition, slicing, traversal, and use built-in methods like len(), capitalize(), lower(), upper(), count(), find(), index(), etc.",
+        "Perform list operations such as indexing, concatenation, membership checks, slicing, traversal, and manipulation using methods like append(), extend(), insert(), remove(), pop(), sort(), min(), max(), sum().",
+        "Execute tuple operations including indexing, concatenation, repetition, membership checks, slicing, and use built-in functions.",
+        "Manage dictionaries by accessing items via keys, modifying contents (adding/modifying), traversing, and using methods like get(), update(), pop(), etc.",
+        "Import and utilize Python modules such as math, random, and statistics for specific calculations."
+      ],
+      "unit_name": "Computational Thinking and Programming - I",
+      "chapter_name": "Computational Thinking and Programming - I"
+    },
+    {
+      "code": "CS-XI-U3",
+      "title": "Society, Law and Ethics Competencies",
+      "description": "Competencies related to digital footprints, netiquettes, data protection laws, cyber crimes, safety measures, malware awareness, e-waste management, IT Act, and social issues in technology.",
+      "competencies": [
+        "Understand the concept of digital footprints and their implications.",
+        "Adhere to net etiquettes, communication etiquettes, and social media etiquette norms.",
+        "Explain Intellectual Property Rights (copyright, patent, trademark) and identify violations such as plagiarism and infringement.",
+        "Differentiate between open source software licenses including Creative Commons, GPL, and Apache.",
+        "Identify various cyber crimes including hacking, eavesdropping, phishing, fraud emails, ransomware, cyber trolling, and bullying.",
+        "Apply principles of cyber safety regarding safe browsing, identity protection, and confidentiality.",
+        "Recognize types of malware such as viruses, trojans, and adware.",
+        "Understand the importance of e-waste management for proper disposal of electronic gadgets.",
+        "Explain key provisions of the Information Technology Act (IT Act).",
+        "Analyze gender and disability issues in the context of teaching and using computers."
+      ],
+      "unit_name": "Society, Law and Ethics",
+      "chapter_name": "Society, Law and Ethics"
+    }
+  ]
+}
