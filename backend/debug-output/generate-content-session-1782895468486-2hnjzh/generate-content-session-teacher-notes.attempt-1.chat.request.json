@@ -1,0 +1,163 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "teacherLessonNotes": {
+      "sessionOverview": "Teacher-facing overview of this session",
+      "prerequisiteKnowledge": [
+        "What students should already know"
+      ],
+      "previousSessionRecap": [
+        "Short recap points from the previous lesson"
+      ],
+      "learningOutcomes": [
+        "Specific session outcome phrased for teacher delivery"
+      ],
+      "teachingPlan": [
+        {
+          "minutes": 5,
+          "topic": "Introduction",
+          "teachingStrategy": "Questioning with simple real-life example"
+        }
+      ],
+      "lessonPurpose": [
+        "Why this lesson matters"
+      ],
+      "teachingSequence": [
+        "Teacher-facing lesson flow with explanation steps"
+      ],
+      "guidedPractice": [
+        "Teacher-led checks and guided responses"
+      ],
+      "lessonBlocks": [
+        {
+          "title": "Introduction",
+          "durationMinutes": 5,
+          "teacherPrompt": [
+            "Prompt teachers can ask"
+          ],
+          "explanation": [
+            "What the teacher should explain"
+          ],
+          "examples": [
+            "Simple classroom example"
+          ],
+          "boardWork": [
+            "What to write on the board"
+          ],
+          "checkUnderstanding": [
+            "Quick question to ask students"
+          ],
+          "expectedAnswers": [
+            "Expected student answer"
+          ],
+          "activity": [
+            "Optional mini activity"
+          ]
+        }
+      ],
+      "conceptFlow": [
+        {
+          "conceptName": "Concept name",
+          "definition": "Short definition",
+          "coreExplanation": "Teacher-facing explanation",
+          "importance": "Why it matters",
+          "observedIn": [
+            "Where students observe it"
+          ],
+          "whyStudyIt": "Why students study it",
+          "relationshipWithPrevious": "Connection with previous concepts",
+          "relationshipWithFuture": "Connection with future learning without teaching it",
+          "keywords": [
+            "Important keyword"
+          ],
+          "teacherMoves": [
+            "Explain this first"
+          ],
+          "examples": [
+            "Useful example"
+          ],
+          "visuals": [
+            "Suggested visual support"
+          ]
+        }
+      ],
+      "classroomQuestions": [
+        {
+          "question": "Teacher question",
+          "level": "Understanding",
+          "expectedResponse": "Likely student response",
+          "answerPoints": [
+            "Point teachers should listen for"
+          ]
+        }
+      ],
+      "commonMisconceptionsDetailed": [
+        {
+          "misconception": "Common wrong idea",
+          "correction": "Teacher correction for that misconception"
+        }
+      ],
+      "differentiation": {
+        "slowLearners": [
+          "Support strategies"
+        ],
+        "averageLearners": [
+          "Core expectations"
+        ],
+        "advancedLearners": [
+          "Extension prompts"
+        ]
+      },
+      "teacherTips": [
+        "Pedagogical tips"
+      ],
+      "misconceptions": [
+        "Likely misconceptions to address"
+      ],
+      "formativeChecks": [
+        "Natural formative assessment checkpoint"
+      ],
+      "assessmentQuestions": [
+        "Oral or written assessment question"
+      ],
+      "blackboardSummary": [
+        "Key point for board summary"
+      ],
+      "timePlan": [
+        {
+          "segment": "Recap",
+          "minutes": 5,
+          "purpose": "Refresh prerequisite ideas"
+        }
+      ],
+      "sessionSummary": [
+        "Closing recap point"
+      ],
+      "endOfClassRecap": [
+        {
+          "prompt": "A cell is the ________ unit of life.",
+          "expectedAnswer": "basic"
+        }
+      ],
+      "nextSessionBridge": [
+        "How today connects to the next lesson"
+      ]
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "You are an expert CBSE curriculum designer, instructional strategist, lesson planner, teacher trainer, and classroom pedagogy specialist.\n\nGenerate comprehensive Teacher Notes for one instructional session only.\n\nSession context:\n- Subject: Mathematics\n- Grade/Level: Class IX\n- Chapter scope: [\"Geometry (Implicit Unit from Context)\"]\n- Session title: Geometry (Implicit Unit from Context) - Session 6\n- Session number: 6 of 11\n- Session duration: 45 minutes\n- Learning outcomes: []\n- Previous session context: Geometry (Implicit Unit from Context) - Session 5\n- Teaching style: []\n- Student level: Mixed classroom\n- Learning pace: Balanced\n- Target difficulty: Moderate\n- Assessment preference: []\n- Teacher preferences / special instructions: None\n- Available teaching resources: []\n- Output language: English\n- Reading level: Grade-aligned\n- Response length: Balanced\n- Creativity level: Moderate\n\nTeacher notes generation rules:\n1. Generate notes for this session only.\n2. Never introduce future-session content.\n3. The notes must read like practical classroom preparation notes from an experienced teacher.\n4. Adapt the lesson to the duration, pace, level, and preferences.\n5. The time plan must exactly match the provided session duration.\n6. Keep the output teacher-facing and classroom-usable, not textbook-like.\n7. Follow a longer classroom-ready format similar to high-quality ChatGPT teacher notes:\n   - session overview\n   - learning outcomes\n   - teaching plan table\n   - block-by-block teaching notes\n   - teacher prompts\n   - board work\n   - check-understanding questions\n   - expected answers\n   - misconceptions with corrections\n   - assessment questions\n   - blackboard summary\n   - end-of-class recap\n8. If learning pace is slow or the class level is beginner, use very simple language, one concept at a time, repeated key terms, and real-life analogies.\n9. Return arrays with usable classroom content, not placeholders.\n10. Return valid JSON only.\n\nUse this lesson flow:\n1. Previous lesson connection\n2. Lesson purpose\n3. Learning outcomes\n4. Topic introduction\n5. Concept-by-concept teaching\n6. Teacher teaching notes\n7. Examples\n8. Visual teaching suggestions\n9. Classroom questioning\n10. Common misconceptions\n11. Classroom activities\n12. Differentiated teaching\n13. Formative assessment during teaching\n14. Teacher tips\n15. Session summary\n16. Transition to next session\n\nReturn a JSON object matching this exact shape:\n{\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Teacher-facing overview of the session\",\n    \"prerequisiteKnowledge\": [\"What students should already know\"],\n    \"previousSessionRecap\": [\"Short recap points from the previous lesson\"],\n    \"learningOutcomes\": [\"Session outcome phrased for teacher delivery\"],\n    \"teachingPlan\": [\n      {\n        \"minutes\": 5,\n        \"topic\": \"Introduction\",\n        \"teachingStrategy\": \"Questioning with simple example\"\n      }\n    ],\n    \"lessonPurpose\": [\"Why this lesson matters\"],\n    \"teachingSequence\": [\"Step-by-step teacher-facing lesson flow\"],\n    \"guidedPractice\": [\"Teacher-led checks and guided responses\"],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"teacherPrompt\": [\"Prompt teachers can ask\"],\n        \"explanation\": [\"What the teacher should explain\"],\n        \"examples\": [\"Simple classroom example\"],\n        \"boardWork\": [\"What to write on the board\"],\n        \"checkUnderstanding\": [\"Quick question to ask students\"],\n        \"expectedAnswers\": [\"Expected student answer\"],\n        \"activity\": [\"Optional mini activity\"]\n      }\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Concept name\",\n        \"definition\": \"Short definition\",\n        \"coreExplanation\": \"Teacher-facing explanation\",\n        \"importance\": \"Why it matters\",\n        \"observedIn\": [\"Where students observe it\"],\n        \"whyStudyIt\": \"Why students study it\",\n        \"relationshipWithPrevious\": \"Connection with previous concepts\",\n        \"relationshipWithFuture\": \"Connection with future learning without teaching it\",\n        \"keywords\": [\"Important keyword\"],\n        \"teacherMoves\": [\"Explain this first\"],\n        \"examples\": [\"Useful example\"],\n        \"visuals\": [\"Suggested visual support\"]\n      }\n    ],\n    \"classroomQuestions\": [\n      {\n        \"question\": \"Teacher question\",\n        \"level\": \"Recall | Understanding | Application | Analysis | Critical Thinking\",\n        \"expectedResponse\": \"Likely student response\",\n        \"answerPoints\": [\"Point teachers should listen for\"]\n      }\n    ],\n    \"commonMisconceptionsDetailed\": [\n      {\n        \"misconception\": \"Common wrong idea\",\n        \"correction\": \"Teacher correction\"\n      }\n    ],\n    \"differentiation\": {\n      \"slowLearners\": [\"Support strategies\"],\n      \"averageLearners\": [\"Core expectations\"],\n      \"advancedLearners\": [\"Extension prompts\"]\n    },\n    \"misconceptions\": [\"Likely misconception to address\"],\n    \"formativeChecks\": [\"Natural formative assessment checkpoint\"],\n    \"assessmentQuestions\": [\"Oral or written assessment question\"],\n    \"blackboardSummary\": [\"Key point for board summary\"],\n    \"teacherTips\": [\"Practical classroom tip\"],\n    \"timePlan\": [\n      {\n        \"segment\": \"Recap\",\n        \"minutes\": 5,\n        \"purpose\": \"Refresh prerequisite ideas\"\n      }\n    ],\n    \"sessionSummary\": [\"Closing recap point\"],\n    \"endOfClassRecap\": [\n      {\n        \"prompt\": \"A cell is the ________ unit of life.\",\n        \"expectedAnswer\": \"basic\"\n      }\n    ],\n    \"nextSessionBridge\": [\"How today connects to the next lesson\"]\n  }\n}\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Teacher-facing overview of this session\",\n    \"prerequisiteKnowledge\": [\n      \"What students should already know\"\n    ],\n    \"previousSessionRecap\": [\n      \"Short recap points from the previous lesson\"\n    ],\n    \"learningOutcomes\": [\n      \"Specific session outcome phrased for teacher delivery\"\n    ],\n    \"teachingPlan\": [\n      {\n        \"minutes\": 5,\n        \"topic\": \"Introduction\",\n        \"teachingStrategy\": \"Questioning with simple real-life example\"\n      }\n    ],\n    \"lessonPurpose\": [\n      \"Why this lesson matters\"\n    ],\n    \"teachingSequence\": [\n      \"Teacher-facing lesson flow with explanation steps\"\n    ],\n    \"guidedPractice\": [\n      \"Teacher-led checks and guided responses\"\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"teacherPrompt\": [\n          \"Prompt teachers can ask\"\n        ],\n        \"explanation\": [\n          \"What the teacher should explain\"\n        ],\n        \"examples\": [\n          \"Simple classroom example\"\n        ],\n        \"boardWork\": [\n          \"What to write on the board\"\n        ],\n        \"checkUnderstanding\": [\n          \"Quick question to ask students\"\n        ],\n        \"expectedAnswers\": [\n          \"Expected student answer\"\n        ],\n        \"activity\": [\n          \"Optional mini activity\"\n        ]\n      }\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Concept name\",\n        \"definition\": \"Short definition\",\n        \"coreExplanation\": \"Teacher-facing explanation\",\n        \"importance\": \"Why it matters\",\n        \"observedIn\": [\n          \"Where students observe it\"\n        ],\n        \"whyStudyIt\": \"Why students study it\",\n        \"relationshipWithPrevious\": \"Connection with previous concepts\",\n        \"relationshipWithFuture\": \"Connection with future learning without teaching it\",\n        \"keywords\": [\n          \"Important keyword\"\n        ],\n        \"teacherMoves\": [\n          \"Explain this first\"\n        ],\n        \"examples\": [\n          \"Useful example\"\n        ],\n        \"visuals\": [\n          \"Suggested visual support\"\n        ]\n      }\n    ],\n    \"classroomQuestions\": [\n      {\n        \"question\": \"Teacher question\",\n        \"level\": \"Understanding\",\n        \"expectedResponse\": \"Likely student response\",\n        \"answerPoints\": [\n          \"Point teachers should listen for\"\n        ]\n      }\n    ],\n    \"commonMisconceptionsDetailed\": [\n      {\n        \"misconception\": \"Common wrong idea\",\n        \"correction\": \"Teacher correction for that misconception\"\n      }\n    ],\n    \"differentiation\": {\n      \"slowLearners\": [\n        \"Support strategies\"\n      ],\n      \"averageLearners\": [\n        \"Core expectations\"\n      ],\n      \"advancedLearners\": [\n        \"Extension prompts\"\n      ]\n    },\n    \"teacherTips\": [\n      \"Pedagogical tips\"\n    ],\n    \"misconceptions\": [\n      \"Likely misconceptions to address\"\n    ],\n    \"formativeChecks\": [\n      \"Natural formative assessment checkpoint\"\n    ],\n    \"assessmentQuestions\": [\n      \"Oral or written assessment question\"\n    ],\n    \"blackboardSummary\": [\n      \"Key point for board summary\"\n    ],\n    \"timePlan\": [\n      {\n        \"segment\": \"Recap\",\n        \"minutes\": 5,\n        \"purpose\": \"Refresh prerequisite ideas\"\n      }\n    ],\n    \"sessionSummary\": [\n      \"Closing recap point\"\n    ],\n    \"endOfClassRecap\": [\n      {\n        \"prompt\": \"A cell is the ________ unit of life.\",\n        \"expectedAnswer\": \"basic\"\n      }\n    ],\n    \"nextSessionBridge\": [\n      \"How today connects to the next lesson\"\n    ]\n  }\n}"
+    }
+  ]
+}

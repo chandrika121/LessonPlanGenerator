@@ -1,0 +1,208 @@
+{
+  "teacherLessonNotes": {
+    "sessionOverview": "This session focuses on applying Euclid's axioms and postulates to prove basic properties of lines, specifically that two distinct points determine a unique line. Students will transition from visual intuition to formal geometric reasoning.",
+    "prerequisiteKnowledge": [
+      "Definition of a point, line, ray, and plane",
+      "Basic understanding of Euclid's first three axioms/postulates",
+      "Ability to identify collinear vs non-collinear points"
+    ],
+    "previousSessionRecap": [
+      "Euclid defined geometry based on self-evident truths called postulates.",
+      "Postulate 1: A straight line can be drawn from any point to any other point.",
+      "The concept of 'uniqueness' in geometric constructions."
+    ],
+    "learningOutcomes": [
+      "Students will articulate that exactly one unique line passes through two distinct points.",
+      "Students will use logical deduction (reductio ad absurdum) to justify the uniqueness property.",
+      "Students will distinguish between 'existence' and 'uniqueness' in geometric proofs."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Questioning with simple real-life example"
+      },
+      {
+        "minutes": 10,
+        "topic": "Concept Development: Existence and Uniqueness",
+        "teachingStrategy": "Board demonstration of logical contradiction"
+      },
+      {
+        "minutes": 20,
+        "topic": "Guided Practice & Proof Construction",
+        "teachingStrategy": "Scaffolded problem solving with peer discussion"
+      },
+      {
+        "minutes": 10,
+        "topic": "Assessment and Closure",
+        "teachingStrategy": "Exit ticket style questioning"
+      }
+    ],
+    "lessonPurpose": [
+      "To establish the foundational axiom that two points determine a unique line.",
+      "To introduce students to the structure of geometric proofs using contradiction."
+    ],
+    "teachingSequence": [
+      "Recap Euclid's first postulate and ask if it guarantees uniqueness.",
+      "Pose the problem: Can we draw more than one line through two points?",
+      "Demonstrate a proof by contradiction on the board (Assume 2 lines exist -> derive contradiction).",
+      "Guide students to write their own simplified version of the logic.",
+      "Apply the concept to solve a 'find the number of lines' problem."
+    ],
+    "guidedPractice": [
+      "Ask: If points A and B are distinct, how many lines pass through them? (Answer: 1)",
+      "Ask: What if we assume two lines exist? Where do they intersect?",
+      "Check for understanding of the term 'distinct' in this context."
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction",
+        "durationMinutes": 5,
+        "teacherPrompt": [
+          "If I place two pins on a board and stretch a string between them, can I make the string curve while still touching both pins?"
+        ],
+        "explanation": [
+          "We are moving from 'drawing' lines to proving properties of lines. Today we prove that through any two distinct points, there is exactly one line."
+        ],
+        "examples": [
+          "Two nails on a wall connected by a taut string represent the unique line segment."
+        ],
+        "boardWork": [
+          "Theorem: Through two distinct points, there exists a unique straight line.",
+          "Given: Points A and B (A ≠ B)"
+        ],
+        "boardSteps": [
+          "Step 1: Assume the opposite. Suppose there are TWO lines L1 and L2 passing through A and B.",
+          "Step 2: If two distinct lines share two points, they must coincide everywhere."
+        ],
+        "solutionFlow": [
+          "State assumption of non-uniqueness",
+          "Show contradiction with Euclid's definition of a line",
+          "Conclude uniqueness"
+        ],
+        "checkUnderstanding": [
+          "Why can't we have two different straight lines connecting the same two points?"
+        ],
+        "expectedAnswers": [
+          "Because that would violate the definition of a unique straight path."
+        ],
+        "activity": [
+          "Students draw 3 distinct pairs of dots and attempt to draw 'two' straight lines between each pair, observing it's impossible."
+        ]
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Uniqueness of a Line",
+        "definition": "The property that exactly one line passes through any two distinct points.",
+        "coreExplanation": "While Euclid's first postulate guarantees existence (we can draw it), we must prove uniqueness. We use 'Proof by Contradiction'. If we assume there are two lines, they would have to share more than just the two points or overlap completely, which contradicts them being distinct.",
+        "importance": "This is a fundamental axiom used in all subsequent geometric proofs involving triangles and polygons.",
+        "observedIn": [
+          "Drawing line segments",
+          "Constructing shapes with rulers"
+        ],
+        "whyStudyIt": "To build rigorous logical reasoning skills required for higher-level geometry.",
+        "relationshipWithPrevious": "Directly builds on Euclid's First Postulate (Existence).",
+        "relationshipWithFuture": "Essential for proving properties of triangles (e.g., SSS congruence relies on unique sides)."
+      },
+      {
+        "conceptName": "Proof by Contradiction in Geometry",
+        "definition": "A method where we assume the opposite of what we want to prove and show it leads to an impossible situation.",
+        "coreExplanation": "To prove 'Unique', we start by assuming 'Not Unique' (i.e., at least two lines). We then follow logical steps until we hit a contradiction with known facts or definitions. Therefore, our assumption was wrong.",
+        "importance": "It is the primary tool for proving existence and uniqueness in geometry.",
+        "observedIn": [
+          "Formal proofs",
+          "Logical arguments"
+        ],
+        "whyStudyIt": "Develops critical thinking and structured argumentation skills."
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "If points A, B, and C are collinear, how many lines pass through all three?",
+        "level": "Application",
+        "expectedResponse": "Exactly one line.",
+        "answerPoints": [
+          "Students must recognize that if they lie on the same line defined by any two of them."
+        ]
+      },
+      {
+        "question": "Why do we say 'distinct' points? What happens if A and B are the same point?",
+        "level": "Understanding",
+        "expectedResponse": "If they are the same, infinite lines can pass through that single point.",
+        "answerPoints": [
+          "Distinction is required for uniqueness."
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Students believe 'two points' implies a line segment, not an infinite line, and get confused about the scope.",
+        "correction": "Clarify that while we draw segments to represent them, the geometric object is an infinite straight path extending in both directions."
+      },
+      {
+        "misconception": "Students think 'uniqueness' means there are no other lines nearby, rather than mathematically impossible.",
+        "correction": "Reiterate that it's a logical impossibility for two distinct straight paths to share exactly the same start and end points without overlapping."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Use physical strings or rulers on paper to physically demonstrate they cannot bend into two different shapes between two fixed points.",
+        "Provide a fill-in-the-blank proof template for the contradiction argument."
+      ],
+      "averageLearners": [
+        "Encourage them to verbalize the 'Assume -> Contradict -> Conclude' steps in their own words."
+      ],
+      "advancedLearners": [
+        "Ask: What if we are on a curved surface (spherical geometry)? Does this theorem hold? (Introduce non-Euclidean context as a thought experiment)."
+      ]
+    },
+    "teacherTips": [
+      "Emphasize the word 'distinct' repeatedly; it is the key condition for uniqueness.",
+      "When writing the proof on the board, use different colors to distinguish between the assumption and the contradiction."
+    ],
+    "misconceptions": [
+      "Confusing collinear points with non-collinear points regarding line count",
+      "Thinking a single point determines a unique direction"
+    ],
+    "formativeChecks": [
+      "Ask students to hold up 1 finger for 'one line' and 2 fingers for 'two lines' when given pairs of points."
+    ],
+    "assessmentQuestions": [
+      "Prove that if two distinct lines intersect, they can have only one point in common."
+    ],
+    "blackboardSummary": [
+      "Theorem: Through any two distinct points, there is exactly one unique line.",
+      "Method: Proof by Contradiction (Assume 2 -> Show Impossible)."
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap & Hook",
+        "minutes": 5,
+        "purpose": "Refresh Euclid's postulates and introduce the uniqueness question"
+      },
+      {
+        "segment": "Concept Development: Proof by Contradiction",
+        "minutes": 10,
+        "purpose": "Demonstrate logical flow of proving a unique line exists"
+      },
+      {
+        "segment": "Guided Practice & Application",
+        "minutes": 25,
+        "purpose": "Students apply the logic to new scenarios and solve problems"
+      }
+    ],
+    "sessionSummary": [
+      "We proved that two distinct points determine exactly one unique line using logical contradiction."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "If I have three non-collinear points, how many lines can be formed by connecting them in pairs?",
+        "expectedAnswer": "Three lines (AB, BC, CA)."
+      }
+    ],
+    "nextSessionBridge": [
+      "Tomorrow we will explore what happens when two distinct lines intersect and prove they share exactly one point."
+    ]
+  }
+}

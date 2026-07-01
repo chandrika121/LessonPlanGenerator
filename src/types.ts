@@ -99,6 +99,119 @@ export type AssessmentRenderedSubtype =
   | "longAnswer"
   | "caseStudy";
 
+export interface MathRichText {
+  text?: string;
+  latex?: string;
+  displayLatex?: string;
+}
+
+export type MathDiagramType =
+  | "triangle"
+  | "rightTriangle"
+  | "circle"
+  | "quadrilateral"
+  | "polygon"
+  | "anglePair"
+  | "coordinatePlane"
+  | "numberLine"
+  | "barModel"
+  | "solid3D";
+
+export type MathDiagramTemplate =
+  | "rightTriangle"
+  | "sqrtNumberLineConstruction"
+  | "theodorusSpiral"
+  | "circleRadiusDiameter"
+  | "coordinatePlanePlot"
+  | "rectangleAreaPerimeter"
+  | "anglePair"
+  | "barModel"
+  | "solid3D";
+
+export interface MathDiagramPoint {
+  id: string;
+  x: number;
+  y: number;
+  label?: string;
+}
+
+export interface MathDiagramLine {
+  from: string;
+  to: string;
+  label?: string;
+  style?: "solid" | "dashed";
+  highlight?: boolean;
+}
+
+export interface MathDiagramArc {
+  center: string;
+  radius: number;
+  startAngle: number;
+  endAngle: number;
+  label?: string;
+  highlight?: boolean;
+}
+
+export interface MathDiagramLabel {
+  text: string;
+  x: number;
+  y: number;
+  latex?: string;
+}
+
+export interface MathDiagramSpec {
+  id: string;
+  type: MathDiagramType;
+  template?: MathDiagramTemplate;
+  params?: {
+    roots?: number[];
+    highlightRoot?: number;
+    baseLength?: string | number;
+    height?: string | number;
+    hypotenuse?: string | number;
+    radius?: string | number;
+    diameter?: string | number;
+    width?: string | number;
+    length?: string | number;
+    angleA?: string | number;
+    angleB?: string | number;
+    plottedPoints?: { x: number; y: number; label?: string }[];
+    [key: string]: unknown;
+  };
+  title?: string;
+  caption?: string;
+  points?: MathDiagramPoint[];
+  lines?: MathDiagramLine[];
+  arcs?: MathDiagramArc[];
+  labels?: MathDiagramLabel[];
+  highlights?: string[];
+  measurements?: MathDiagramLabel[];
+  axis?: {
+    xMin?: number;
+    xMax?: number;
+    yMin?: number;
+    yMax?: number;
+    points?: MathDiagramPoint[];
+  };
+  bars?: {
+    label?: string;
+    value?: string | number;
+    segments?: { label?: string; value?: string | number; highlight?: boolean }[];
+  }[];
+  solid?: {
+    width?: string | number;
+    height?: string | number;
+    depth?: string | number;
+  };
+}
+
+export interface MathFormulaCard {
+  title?: string;
+  formula?: string | MathRichText;
+  meaning?: string;
+  whenToUse?: string;
+}
+
 export interface SessionPlan {
   id: string;
   sessionNumber: number;
@@ -123,6 +236,10 @@ export interface SessionPlan {
       explanation?: string[];
       examples?: string[];
       boardWork?: string[];
+      boardSteps?: (string | MathRichText)[];
+      solutionFlow?: (string | MathRichText)[];
+      geometryDiagrams?: MathDiagramSpec[];
+      proofSteps?: (string | MathRichText)[];
       checkUnderstanding?: string[];
       expectedAnswers?: string[];
       activity?: string[];
@@ -164,6 +281,9 @@ export interface SessionPlan {
       teacherMoves?: string[];
       examples?: string[];
       visuals?: string[];
+      solutionFlow?: (string | MathRichText)[];
+      geometryDiagrams?: MathDiagramSpec[];
+      proofSteps?: (string | MathRichText)[];
     }[];
     timePlan?: {
       segment: string;
@@ -185,6 +305,14 @@ export interface SessionPlan {
       title: string;
       headers?: string[];
       rows?: string[][];
+    }[];
+    formulaCards?: MathFormulaCard[];
+    geometryDiagrams?: MathDiagramSpec[];
+    proofSteps?: (string | MathRichText)[];
+    commonMistakes?: {
+      mistake: string;
+      correction?: string;
+      example?: string;
     }[];
     sections?: {
       heading: string;
@@ -210,12 +338,21 @@ export interface SessionPlan {
     definitions?: { term: string; definition: string }[];
     workedExamples?: {
       title: string;
+      problem?: string;
+      diagramRef?: string;
+      given?: (string | MathRichText)[];
+      formula?: (string | MathRichText)[];
       steps?: string[];
+      solutionSteps?: (string | MathRichText)[];
+      reasoning?: (string | MathRichText)[];
       explanation?: string;
+      finalAnswer?: string | MathRichText;
+      latex?: string;
+      displayLatex?: string;
     }[];
     revisionSection?: {
       definitions?: string[];
-      formulas?: string[];
+      formulas?: (string | MathRichText)[];
       facts?: string[];
       keywords?: string[];
       conceptMap?: string[];

@@ -1,0 +1,305 @@
+{
+  "studentLessonNotes": {
+    "title": "Number System - Session 10: Rationalizing Denominators",
+    "sessionOverview": "This session focuses on simplifying expressions with irrational denominators by rationalizing them, a key skill for Class IX Mathematics.",
+    "introduction": "Welcome to Session 10! Today we tackle the tricky-looking fractions where the bottom number (denominator) has a square root. We will learn how to 'clean up' these numbers so they are easier to work with and compare.",
+    "learningObjectives": [
+      "After this lesson you will be able to rationalize denominators of simple surds",
+      "You will understand why we multiply by the conjugate or the root itself",
+      "You can simplify complex fractions involving square roots"
+    ],
+    "quickRecall": [
+      "Product rule for radicals: √a × √b = √(ab)",
+      "Difference of squares identity: (a-b)(a+b) = a² - b²",
+      "Simplifying perfect squares like √16 = 4"
+    ],
+    "easyToRemember": [
+      "If the denominator is just one root, multiply top and bottom by that same root.",
+      "If the denominator has two terms (like a + √b), use its conjugate to make it rational."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Rational vs Irrational Denominators",
+        "headers": [
+          "Feature",
+          "Irrational Denominator",
+          "Rationalized Form"
+        ],
+        "rows": [
+          [
+            "Example Expression",
+            "1/√2",
+            "√2/2"
+          ],
+          [
+            "Denominator Type",
+            "Contains a root (e.g., √2)",
+            "Integer or rational number (e.g., 2)"
+          ],
+          [
+            "Ease of Calculation",
+            "Harder to estimate mentally",
+            "Easier for further operations"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Rationalizing a Single Root",
+        "formula": {
+          "text": "(a/√b) × (√b/√b)",
+          "latex": "\\frac{a}{\\sqrt{b}} \\times \\frac{\\sqrt{b}}{\\sqrt{b}}",
+          "displayLatex": "\\frac{a}{\\sqrt{b}} \\times \\frac{\\sqrt{b}}{\\sqrt{b}}"
+        },
+        "meaning": "Multiply numerator and denominator by the same root to create a perfect square in the bottom.",
+        "whenToUse": "When the denominator is a single surd like √2, √3, etc."
+      },
+      {
+        "title": "Rationalizing Binomials (Conjugates)",
+        "formula": {
+          "text": "(a+b)(a-b) = a² - b²",
+          "latex": "(a + \\sqrt{b})(a - \\sqrt{b}) = a^2 - b",
+          "displayLatex": "(a + \\sqrt{b})(a - \\sqrt{b}) = a^2 - b"
+        },
+        "meaning": "Multiplying a binomial by its conjugate eliminates the square root in the product.",
+        "whenToUse": "When the denominator has two terms, like (3 + √5)."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "numberLine",
+        "template": "sqrtNumberLineConstruction",
+        "params": {
+          "roots": [
+            2,
+            3
+          ],
+          "highlightRoot": 2
+        },
+        "title": "Constructing √2 on the Number Line",
+        "caption": "Visualizing why we need to rationalize: comparing lengths.",
+        "points": [],
+        "lines": [],
+        "arcs": [],
+        "labels": [],
+        "measurements": [],
+        "highlights": [],
+        "axis": {
+          "xMin": 0,
+          "xMax": 6,
+          "yMin": -3,
+          "yMax": 3,
+          "points": [
+            {
+              "id": "R",
+              "x": 2,
+              "y": 0,
+              "label": "sqrt value"
+            }
+          ]
+        },
+        "bars": []
+      }
+    ],
+    "proofSteps": [
+      "Start with the expression containing an irrational denominator.",
+      {
+        "text": "Identify the multiplier needed to make the denominator a rational number (usually √b or its conjugate).",
+        "latex": "Identify the multiplier needed to make the denominator a rational number (usually \\sqrt{b} or its conjugate).",
+        "displayLatex": ""
+      },
+      "Multiply both numerator and denominator by this multiplier.",
+      "Simplify the resulting fraction."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Only multiplying the numerator, not the denominator.",
+        "correction": "Always multiply BOTH top and bottom to keep the value equivalent.",
+        "example": "Incorrect: 1/√2 = √2. Correct: (1×√2)/(√2×√2) = √2/2."
+      },
+      {
+        "mistake": "Forgetting that √a × √a = a, not √(a²).",
+        "correction": "Remember the root and its square cancel out to give just 'a'.",
+        "example": "√3 × √3 = 3."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "What is Rationalizing?",
+        "explanation": "Rationalizing the denominator means removing square roots from the bottom of a fraction. It makes numbers easier to compare and calculate with, just like converting 1/0.5 to 2.",
+        "keyPoints": [
+          "We multiply by '1' in a special form (like √x/√x).",
+          "The value doesn't change, only the appearance."
+        ],
+        "examples": [
+          "Converting 1/√3 to √3/3 makes it easier to estimate as roughly 0.577.",
+          "In geometry, side lengths are often left in radical form for precision before final calculation."
+        ],
+        "whyItMatters": "Standard mathematical practice requires rational denominators for consistency and further algebraic manipulation.",
+        "terminology": [
+          "Rationalizing",
+          "Conjugate",
+          "Surds"
+        ],
+        "detailedExplanation": "When you have a fraction like 1/√2, the denominator is an irrational number. By multiplying by √2/√2 (which equals 1), we turn the bottom into √4 = 2, which is rational.",
+        "observedIn": [
+          "Solving quadratic equations",
+          "Trigonometry problems involving angles like 30° or 60°"
+        ],
+        "visualSupport": [
+          "diagram-1: Number line showing the length of √2."
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "Never forget to simplify the final fraction if possible (e.g., 4/√8 becomes √2)."
+        ],
+        "memoryTechniques": [
+          "Think 'Clean Up': Make the bottom clean and whole."
+        ],
+        "conceptSummary": [
+          "Multiply top and bottom by a root to remove it from the denominator."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Rationalizing",
+        "definition": "The process of eliminating radicals (square roots) from the denominator of a fraction."
+      },
+      {
+        "term": "Conjugate",
+        "definition": "For an expression like (a + √b), its conjugate is (a - √b). Their product removes the root."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Rationalizing a Simple Surd Denominator",
+        "problem": "Simplify: 5 / √3",
+        "diagramRef": "diagram-1",
+        "given": [
+          {
+            "text": "Expression: 5/√3",
+            "latex": "Expression: \\frac{5}{\\sqrt{3}}",
+            "displayLatex": "Expression: \\frac{5}{\\sqrt{3}}"
+          }
+        ],
+        "formula": [
+          "Multiply numerator and denominator by the root in the denominator."
+        ],
+        "steps": [
+          "Identify √3 as the multiplier.",
+          "Perform multiplication on both parts of the fraction.",
+          "Simplify the result."
+        ],
+        "solutionSteps": [
+          {
+            "text": "Multiply numerator and denominator by \\sqrt{3}",
+            "latex": "Multiply numerator and denominator by \\sqrt{3}",
+            "displayLatex": "\\frac{5}{\\sqrt{3}} \\times \\frac{\\sqrt{3}}{\\sqrt{3}}"
+          },
+          {
+            "text": "Simplify the denominator (since \\sqrt{3} \\times \\sqrt{3} = 3)",
+            "latex": "Simplify the denominator (since \\sqrt{3} \\times \\sqrt{3} = 3)",
+            "displayLatex": "\\frac{5\\sqrt{3}}{3}"
+          }
+        ],
+        "reasoning": [
+          {
+            "text": "We use this method because the denominator must be rational.",
+            "latex": "\\sqrt{x} \\cdot \\sqrt{x} = x",
+            "displayLatex": "\\sqrt{x} \\cdot \\sqrt{x} = x"
+          }
+        ],
+        "explanation": "By multiplying by √3/√3, we create a perfect square in the bottom (3) while keeping the value equal to the original fraction. The numerator becomes 5√3.",
+        "finalAnswer": {
+          "text": "\\frac{5\\sqrt{3}}{3}",
+          "latex": "\\frac{5\\sqrt{3}}{3}",
+          "displayLatex": "\\frac{5\\sqrt{3}}{3}"
+        },
+        "latex": "",
+        "displayLatex": ""
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Rationalizing: Removing roots from the denominator."
+      ],
+      "formulas": [
+        "\\frac{a}{\\sqrt{b}} = \\frac{a\\sqrt{b}}{b}"
+      ],
+      "facts": [
+        "√2 ≈ 1.414, √3 ≈ 1.732"
+      ],
+      "keywords": [
+        "Denominator",
+        "Surds",
+        "Conjugate"
+      ],
+      "conceptMap": [
+        "Irrational Fraction -> Multiply by Root -> Rational Denominator"
+      ],
+      "quickRecap": [
+        "Multiply top and bottom by the same root to clear it from below."
+      ]
+    },
+    "selfCheckQuestions": [
+      "What is 2/√5 in rationalized form?",
+      "Why do we multiply both numerator and denominator?"
+    ],
+    "quickSummary": [
+      "Rationalizing makes fractions easier to handle by removing roots from the bottom."
+    ],
+    "keyTerms": [
+      "Surds",
+      "Denominator",
+      "Conjugate"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "To rationalize 1/√7, we multiply by ________ / √7.",
+        "answer": "√7"
+      },
+      {
+        "prompt": "The product of (a + b) and (a - b) is ________. ",
+        "answer": "a² - b²"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "What is the rationalized form of 3/√2?",
+        "options": [
+          "A. \\frac{3}{\\sqrt{4}}",
+          "B. \\frac{3\\sqrt{2}}{2}",
+          "C. \\frac{6}{2}",
+          "D. \\frac{3}{1}"
+        ],
+        "answer": "B. \\frac{3\\sqrt{2}}{2}"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "What is the conjugate of (4 + √5)?",
+        "answer": "(4 - √5)"
+      },
+      {
+        "question": "Simplify: 1/√2 × √2/√2.",
+        "answer": "\\frac{\\sqrt{2}}{2}"
+      }
+    ],
+    "didYouKnow": [
+      "Ancient Greek mathematicians like Euclid worked with lengths rather than numbers, so they often avoided irrational denominators in their geometric proofs."
+    ],
+    "summary": [
+      "Rationalizing the denominator is a standard algebraic technique to simplify expressions involving square roots."
+    ],
+    "quickRevision": [
+      "Multiply by root/root for single terms; multiply by conjugate for binomials."
+    ],
+    "rememberPoints": [
+      "√x × √x = x",
+      "(a+b)(a-b) = a² - b²"
+    ]
+  }
+}

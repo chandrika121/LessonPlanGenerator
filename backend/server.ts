@@ -3117,6 +3117,689 @@ function canonicalizeSubjectName(value: string): string {
     .trim();
 }
 
+function isMathSubject(subject: string): boolean {
+  const normalized = normalizeSourceText(canonicalizeSubjectName(subject || ""));
+  if (!normalized) return false;
+
+  return [
+    "mathematics",
+    "maths",
+    "math",
+    "applied mathematics",
+    "applied math",
+  ].some((candidate) => normalized === candidate || normalized.includes(candidate));
+}
+
+function getNotesPromptName(kind: "teacher" | "student", subject: string) {
+  if (isMathSubject(subject)) {
+    return kind === "teacher"
+      ? "teacher-notes-generation-math.md"
+      : "student-notes-generation-math.md";
+  }
+
+  return kind === "teacher"
+    ? "teacher-notes-generation.md"
+    : "student-notes-generation.md";
+}
+
+const ALLOWED_MATH_DIAGRAM_TYPES = new Set([
+  "triangle",
+  "rightTriangle",
+  "circle",
+  "quadrilateral",
+  "polygon",
+  "anglePair",
+  "coordinatePlane",
+  "numberLine",
+  "barModel",
+  "solid3D",
+]);
+
+const ALLOWED_MATH_DIAGRAM_TEMPLATES = new Set([
+  "rightTriangle",
+  "sqrtNumberLineConstruction",
+  "theodorusSpiral",
+  "circleRadiusDiameter",
+  "coordinatePlanePlot",
+  "rectangleAreaPerimeter",
+  "anglePair",
+  "barModel",
+  "solid3D",
+]);
+
+function getDiagramTypeForTemplate(template: string, fallbackType = "") {
+  switch (template) {
+    case "sqrtNumberLineConstruction":
+    case "theodorusSpiral":
+      return "numberLine";
+    case "circleRadiusDiameter":
+      return "circle";
+    case "coordinatePlanePlot":
+      return "coordinatePlane";
+    case "rectangleAreaPerimeter":
+      return "quadrilateral";
+    case "anglePair":
+      return "anglePair";
+    case "barModel":
+      return "barModel";
+    case "solid3D":
+      return "solid3D";
+    case "rightTriangle":
+      return "rightTriangle";
+    default:
+      return fallbackType;
+  }
+}
+
+function sanitizeMathDiagramTemplate(value: any, type = "") {
+  const requested = String(value || "").trim();
+  if (ALLOWED_MATH_DIAGRAM_TEMPLATES.has(requested)) return requested;
+  switch (type) {
+    case "rightTriangle":
+      return "rightTriangle";
+    case "circle":
+      return "circleRadiusDiameter";
+    case "coordinatePlane":
+      return "coordinatePlanePlot";
+    case "barModel":
+      return "barModel";
+    case "solid3D":
+      return "solid3D";
+    case "anglePair":
+      return "anglePair";
+    default:
+      return "";
+  }
+}
+
+function sanitizeMathDiagramParams(raw: any, template = "") {
+  const params = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};
+  const roots = (Array.isArray(params.roots) ? params.roots : [])
+    .map((value: any) => Math.round(safeNumber(value, 0, 1, 20)))
+    .filter((value: number, index: number, values: number[]) => value >= 1 && values.indexOf(value) === index)
+    .slice(0, 8);
+  const plottedPoints = (Array.isArray(params.plottedPoints) ? params.plottedPoints : [])
+    .filter((point: any) => point && typeof point === "object")
+    .slice(0, 8)
+    .map((point: any) => ({
+      x: safeNumber(point.x, 0, -50, 50),
+      y: safeNumber(point.y, 0, -50, 50),
+      label: sanitizeMathText(point.label || "", 40),
+    }));
+
+  const sanitized: Record<string, any> = {
+    baseLength: sanitizeMathText(params.baseLength || "", 40),
+    height: sanitizeMathText(params.height || "", 40),
+    hypotenuse: sanitizeMathText(params.hypotenuse || "", 40),
+    radius: sanitizeMathText(params.radius || "", 40),
+    diameter: sanitizeMathText(params.diameter || "", 40),
+    width: sanitizeMathText(params.width || "", 40),
+    length: sanitizeMathText(params.length || "", 40),
+    angleA: sanitizeMathText(params.angleA || "", 40),
+    angleB: sanitizeMathText(params.angleB || "", 40),
+  };
+
+  if (roots.length > 0) sanitized.roots = roots;
+  if (params.highlightRoot != null) sanitized.highlightRoot = Math.round(safeNumber(params.highlightRoot, roots[roots.length - 1] || 2, 1, 20));
+  if (plottedPoints.length > 0) sanitized.plottedPoints = plottedPoints;
+
+  if (template === "sqrtNumberLineConstruction" || template === "theodorusSpiral") {
+    sanitized.roots = roots.length > 0 ? roots : [2, 3, 5];
+    sanitized.highlightRoot = Math.round(safeNumber(sanitized.highlightRoot, sanitized.roots[sanitized.roots.length - 1], 1, 20));
+  }
+
+  return Object.fromEntries(Object.entries(sanitized).filter(([, value]) => value !== ""));
+}
+
+function inferMathDiagramTemplateFromText(text: string) {
+  const normalized = normalizeSourceText(text || "");
+  if (/\btheodorus|spiral\b/.test(normalized)) return "theodorusSpiral";
+  if (/(√|sqrt|square root|irrational).*(number line|construct|locate)|\bconstructing sqrt\b/.test(normalized)) {
+    return "sqrtNumberLineConstruction";
+  }
+  if (/\bcircle|radius|diameter|chord|arc|sector\b/.test(normalized)) return "circleRadiusDiameter";
+  if (/\bcoordinate|graph|axis|axes|plot\b/.test(normalized)) return "coordinatePlanePlot";
+  if (/\brectangle|area|perimeter\b/.test(normalized)) return "rectangleAreaPerimeter";
+  if (/\bright triangle|pythagoras|pythagorean|hypotenuse\b/.test(normalized)) return "rightTriangle";
+  if (/\bangle|linear pair|vertically opposite|parallel lines\b/.test(normalized)) return "anglePair";
+  if (/\bcuboid|cube|cylinder|cone|sphere|surface area|volume\b/.test(normalized)) return "solid3D";
+  if (/\bratio|part|whole|fraction\b/.test(normalized)) return "barModel";
+  return "";
+}
+
+function safeNumber(value: any, fallback: number, min: number, max: number) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(min, Math.min(max, parsed));
+}
+
+function sanitizeMathText(value: any, maxLength: number) {
+  return limitString(String(value || "").replace(/<[^>]*>/g, " ").replace(/\bscript\b/gi, " ").replace(/\s+/g, " "), maxLength);
+}
+
+function consumeLatexMathToken(value: string, startIndex: number) {
+  const source = String(value || "");
+  const length = source.length;
+  let index = startIndex;
+  const consumeBalanced = (openChar: string, closeChar: string) => {
+    if (source[index] !== openChar) return false;
+    let depth = 0;
+    while (index < length) {
+      const char = source[index];
+      if (char === openChar) depth += 1;
+      if (char === closeChar) {
+        depth -= 1;
+        if (depth === 0) {
+          index += 1;
+          return true;
+        }
+      }
+      index += 1;
+    }
+    return false;
+  };
+
+  if (source.startsWith("\\sqrt", index)) {
+    index += 5;
+    while (source[index] === " ") index += 1;
+    if (source[index] === "{") {
+      consumeBalanced("{", "}");
+    } else if (source[index] === "(") {
+      consumeBalanced("(", ")");
+    } else {
+      while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
+    }
+    return index;
+  }
+
+  if (source[index] === "\\") {
+    index += 1;
+    while (index < length && /[A-Za-z]/.test(source[index])) index += 1;
+    while (index < length && source[index] === " ") index += 1;
+    if (source[index] === "{") {
+      consumeBalanced("{", "}");
+    }
+    return index;
+  }
+
+  while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
+  while (index < length) {
+    while (source[index] === " ") index += 1;
+    if (source[index] === "^" || source[index] === "_") {
+      index += 1;
+      while (source[index] === " ") index += 1;
+      if (source[index] === "{") {
+        consumeBalanced("{", "}");
+      } else if (/[A-Za-z0-9]/.test(source[index] || "")) {
+        index += 1;
+      }
+      continue;
+    }
+    if (source[index] === "(") {
+      consumeBalanced("(", ")");
+      continue;
+    }
+    if (source[index] === "{") {
+      consumeBalanced("{", "}");
+      continue;
+    }
+    if (source[index] === "[") {
+      consumeBalanced("[", "]");
+      continue;
+    }
+    if (source.startsWith("\\sqrt", index) || source[index] === "\\") {
+      index = consumeLatexMathToken(source, index);
+      continue;
+    }
+    break;
+  }
+
+  return index;
+}
+
+function repairMalformedLatexFractions(value: string) {
+  let next = String(value || "").trim();
+  if (!next.includes("\\frac")) return next;
+  next = next.replace(/\\frac\s*\{([^{}]+)\}\s*([^{}\s][^\n]*)/g, (_match, numerator, denominator) => {
+    const cleanDenominator = String(denominator || "").trim();
+    return cleanDenominator ? `\\frac{${numerator}}{${cleanDenominator}}` : `\\frac{${numerator}}`;
+  });
+
+  return next.replace(/\\frac(?!\s*\{)([^\n]+)/g, (_match, tail) => {
+    const source = String(tail || "").trim();
+    if (!source) return "\\frac";
+    const splitIndex = consumeLatexMathToken(source, 0);
+    const numerator = source.slice(0, splitIndex).trim();
+    const denominator = source.slice(splitIndex).trim();
+    if (!numerator || !denominator) return `\\frac ${source}`;
+    return `\\frac{${numerator}}{${denominator}}`;
+  });
+}
+
+function normalizeInlineMathText(value: string) {
+  let next = String(value || "").trim();
+  if (!next) return "";
+  next = next
+    .replace(/√\s*([A-Za-z0-9]+)/g, "\\sqrt{$1}")
+    .replace(/\bsqrt\s*\(\s*([^)]+?)\s*\)/gi, "\\sqrt{$1}")
+    .replace(/\b([A-Za-z])2\b/g, "$1^2")
+    .replace(/\b([A-Za-z])3\b/g, "$1^3")
+    .replace(/(\d)\s*\/\s*\(?\s*([A-Za-z0-9\\][^ ]*)\s*\)?/g, "\\frac{$1}{$2}")
+    .replace(/\[\s*([^\]]+?)\s*\]\s*\/\s*\[\s*([^\]]+?)\s*\]/g, "\\frac{$1}{$2}");
+  next = repairMalformedLatexFractions(next);
+  return next;
+}
+
+function looksStronglyMathLike(value: string) {
+  const text = String(value || "").trim();
+  if (!text) return false;
+  if (/\\[a-zA-Z]+/.test(text)) return true;
+  if (/√|\bsqrt\s*\(/i.test(text)) return true;
+  if (/\b\d+\s*\/\s*[\dA-Za-z(\[]/.test(text)) return true;
+  if (/\[[^\]]+\]\s*\/\s*\[[^\]]+\]/.test(text)) return true;
+  if (/[A-Za-z0-9)\]}]\s*=\s*[A-Za-z0-9({\\[]/.test(text)) return true;
+  if (/\b[a-zA-Z]\^?\d\b/.test(text)) return true;
+  return false;
+}
+
+function upgradeMathExpressionValue(value: any) {
+  const sanitized = sanitizeMathRichText(value);
+  if (!sanitized) return sanitized;
+  if (typeof sanitized === "string") {
+    if (!looksStronglyMathLike(sanitized)) return sanitized;
+    const latex = normalizeInlineMathText(sanitized);
+    return {
+      text: sanitized,
+      latex,
+      displayLatex: /\\frac|=/.test(latex) ? latex : "",
+    };
+  }
+
+  const next = {
+    text: sanitizeMathText(sanitized.text || "", 500),
+    latex: sanitizeMathText(sanitized.latex || "", 500),
+    displayLatex: sanitizeMathText(sanitized.displayLatex || "", 500),
+  };
+  if (!next.latex && looksStronglyMathLike(next.text)) {
+    next.latex = normalizeInlineMathText(next.text);
+  }
+  if (!next.displayLatex && next.latex && /\\frac|=/.test(next.latex)) {
+    next.displayLatex = next.latex;
+  }
+  return next.text || next.latex || next.displayLatex ? next : "";
+}
+
+function sanitizeMathRichText(value: any) {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return sanitizeMathText(value, 500);
+  }
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return {
+      text: sanitizeMathText(value.text || "", 500),
+      latex: sanitizeMathText(value.latex || "", 500),
+      displayLatex: sanitizeMathText(value.displayLatex || "", 500),
+    };
+  }
+  return sanitizeMathText(value, 500);
+}
+
+function sanitizeMathRichTextList(values: any, maxItems = 10) {
+  const list = Array.isArray(values) ? values : values == null ? [] : [values];
+  return list.map(sanitizeMathRichText).filter(Boolean).slice(0, maxItems);
+}
+
+function upgradeMathRichTextList(values: any, maxItems = 10) {
+  const list = Array.isArray(values) ? values : values == null ? [] : [values];
+  return list.map(upgradeMathExpressionValue).filter(Boolean).slice(0, maxItems);
+}
+
+function sanitizeMathDiagramSpec(raw: any, index = 0) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const inferredTemplate = inferMathDiagramTemplateFromText([raw.template, raw.title, raw.caption].filter(Boolean).join(" "));
+  const template = sanitizeMathDiagramTemplate(raw.template || inferredTemplate, String(raw.type || ""));
+  const rawType = String(raw.type || "").trim();
+  const type = ALLOWED_MATH_DIAGRAM_TYPES.has(rawType) ? rawType : getDiagramTypeForTemplate(template);
+  if (!type) return null;
+
+  const points = (Array.isArray(raw.points) ? raw.points : [])
+    .filter((point: any) => point && typeof point === "object")
+    .slice(0, 12)
+    .map((point: any, pointIndex: number) => ({
+      id: sanitizeMathText(point.id || `P${pointIndex + 1}`, 16),
+      x: safeNumber(point.x, 60 + pointIndex * 30, 0, 320),
+      y: safeNumber(point.y, 120, 0, 220),
+      label: sanitizeMathText(point.label || point.id || `P${pointIndex + 1}`, 24),
+    }));
+  const pointIds = new Set(points.map((point: any) => point.id));
+  const lines = (Array.isArray(raw.lines) ? raw.lines : [])
+    .filter((line: any) => line && typeof line === "object" && pointIds.has(String(line.from || "")) && pointIds.has(String(line.to || "")))
+    .slice(0, 16)
+    .map((line: any) => ({
+      from: String(line.from),
+      to: String(line.to),
+      label: sanitizeMathText(line.label || "", 40),
+      style: String(line.style || "") === "dashed" ? "dashed" : "solid",
+      highlight: Boolean(line.highlight),
+    }));
+  const arcs = (Array.isArray(raw.arcs) ? raw.arcs : [])
+    .filter((arc: any) => arc && typeof arc === "object" && pointIds.has(String(arc.center || "")))
+    .slice(0, 8)
+    .map((arc: any) => ({
+      center: String(arc.center),
+      radius: safeNumber(arc.radius, 30, 5, 160),
+      startAngle: safeNumber(arc.startAngle, 0, -360, 360),
+      endAngle: safeNumber(arc.endAngle, 90, -360, 360),
+      label: sanitizeMathText(arc.label || "", 40),
+      highlight: Boolean(arc.highlight),
+    }));
+  const labels = (Array.isArray(raw.labels) ? raw.labels : [])
+    .filter((label: any) => label && typeof label === "object")
+    .slice(0, 12)
+    .map((label: any) => ({
+      text: sanitizeMathText(label.text || label.latex || "", 80),
+      latex: sanitizeMathText(label.latex || "", 80),
+      x: safeNumber(label.x, 160, 0, 320),
+      y: safeNumber(label.y, 110, 0, 220),
+    }));
+  const measurements = (Array.isArray(raw.measurements) ? raw.measurements : [])
+    .filter((label: any) => label && typeof label === "object")
+    .slice(0, 8)
+    .map((label: any) => ({
+      text: sanitizeMathText(label.text || label.latex || "", 80),
+      latex: sanitizeMathText(label.latex || "", 80),
+      x: safeNumber(label.x, 160, 0, 320),
+      y: safeNumber(label.y, 110, 0, 220),
+    }));
+  const axis = raw.axis && typeof raw.axis === "object" && !Array.isArray(raw.axis)
+    ? {
+        xMin: safeNumber(raw.axis.xMin, -5, -50, 50),
+        xMax: safeNumber(raw.axis.xMax, 5, -50, 50),
+        yMin: safeNumber(raw.axis.yMin, -3, -50, 50),
+        yMax: safeNumber(raw.axis.yMax, 3, -50, 50),
+        points: (Array.isArray(raw.axis.points) ? raw.axis.points : []).slice(0, 10).map((point: any, pointIndex: number) => ({
+          id: sanitizeMathText(point?.id || `P${pointIndex + 1}`, 16),
+          x: safeNumber(point?.x, 0, -50, 50),
+          y: safeNumber(point?.y, 0, -50, 50),
+          label: sanitizeMathText(point?.label || point?.id || "", 40),
+        })),
+      }
+    : undefined;
+  const bars = (Array.isArray(raw.bars) ? raw.bars : [])
+    .filter((bar: any) => bar && typeof bar === "object")
+    .slice(0, 5)
+    .map((bar: any) => ({
+      label: sanitizeMathText(bar.label || "", 40),
+      value: sanitizeMathText(bar.value || "", 40),
+      segments: (Array.isArray(bar.segments) ? bar.segments : []).slice(0, 6).map((segment: any) => ({
+        label: sanitizeMathText(segment?.label || "", 40),
+        value: sanitizeMathText(segment?.value || "", 40),
+        highlight: Boolean(segment?.highlight),
+      })),
+    }));
+  const solid = raw.solid && typeof raw.solid === "object" && !Array.isArray(raw.solid)
+    ? {
+        width: sanitizeMathText(raw.solid.width || "", 40),
+        height: sanitizeMathText(raw.solid.height || "", 40),
+        depth: sanitizeMathText(raw.solid.depth || "", 40),
+      }
+    : undefined;
+
+  return {
+    id: sanitizeMathText(raw.id || `diagram-${index + 1}`, 60),
+    type,
+    template: sanitizeMathDiagramTemplate(template, type) || undefined,
+    params: sanitizeMathDiagramParams(raw.params || {}, template),
+    title: sanitizeMathText(raw.title || type, 120),
+    caption: sanitizeMathText(raw.caption || "", 220),
+    points,
+    lines,
+    arcs,
+    labels,
+    measurements,
+    highlights: limitStringList(raw.highlights || [], 8, 40),
+    axis,
+    bars,
+    solid,
+  };
+}
+
+function hasCrowdedMathDiagramLabels(diagram: any) {
+  const labels = [
+    ...(Array.isArray(diagram?.labels) ? diagram.labels : []),
+    ...(Array.isArray(diagram?.measurements) ? diagram.measurements : []),
+    ...(Array.isArray(diagram?.points) ? diagram.points.map((point: any) => ({
+      x: Number(point.x) + 8,
+      y: Number(point.y) - 8,
+      text: point.label || point.id,
+    })) : []),
+  ].filter((label: any) => Number.isFinite(Number(label.x)) && Number.isFinite(Number(label.y)));
+
+  for (let outer = 0; outer < labels.length; outer += 1) {
+    for (let inner = outer + 1; inner < labels.length; inner += 1) {
+      const dx = Math.abs(Number(labels[outer].x) - Number(labels[inner].x));
+      const dy = Math.abs(Number(labels[outer].y) - Number(labels[inner].y));
+      if (dx < 42 && dy < 16) return true;
+    }
+  }
+  return false;
+}
+
+function repairMathDiagramSpec(diagram: any, contextText = "") {
+  if (!diagram) return null;
+  const template = diagram.template || inferMathDiagramTemplateFromText([
+    contextText,
+    diagram.title,
+    diagram.caption,
+    ...(Array.isArray(diagram.labels) ? diagram.labels.map((label: any) => label.text || label.latex || "") : []),
+    ...(Array.isArray(diagram.lines) ? diagram.lines.map((line: any) => line.label || "") : []),
+  ].filter(Boolean).join(" "));
+
+  const shouldTemplateRepair =
+    Boolean(template) ||
+    hasCrowdedMathDiagramLabels(diagram) ||
+    ((diagram.type === "rightTriangle" || diagram.type === "triangle" || diagram.type === "quadrilateral") && (!Array.isArray(diagram.lines) || diagram.lines.length < 2)) ||
+    ((diagram.type === "coordinatePlane" || diagram.type === "numberLine") && !diagram.axis);
+
+  if (!shouldTemplateRepair) return diagram;
+
+  const fallbackType = getDiagramTypeForTemplate(template, diagram.type);
+  const fallback = buildFallbackMathDiagramSpec(fallbackType, diagram.title || contextText || "Math diagram", template, diagram.params);
+  return fallback ? { ...fallback, id: diagram.id || fallback.id, title: diagram.title || fallback.title, caption: diagram.caption || fallback.caption } : diagram;
+}
+
+function inferMathDiagramTypeFromText(text: string) {
+  const normalized = normalizeSourceText(text || "");
+  if (/(√|sqrt|square root|irrational).*(number line|construct|locate)|\bconstructing sqrt\b/.test(normalized)) return "numberLine";
+  if (/\bcoordinate|graph|axis|axes|plot\b/.test(normalized)) return "coordinatePlane";
+  if (/\bnumber line|integer|rational number\b/.test(normalized)) return "numberLine";
+  if (/\bcircle|radius|diameter|chord|arc|sector\b/.test(normalized)) return "circle";
+  if (/\bright triangle|pythagoras|pythagorean|hypotenuse\b/.test(normalized)) return "rightTriangle";
+  if (/\btriangle|congruence|similarity|median|altitude\b/.test(normalized)) return "triangle";
+  if (/\bquadrilateral|rectangle|square|parallelogram|rhombus|trapezium\b/.test(normalized)) return "quadrilateral";
+  if (/\bangle|linear pair|vertically opposite|parallel lines\b/.test(normalized)) return "anglePair";
+  if (/\bcuboid|cube|cylinder|cone|sphere|surface area|volume\b/.test(normalized)) return "solid3D";
+  if (/\bratio|part|whole|fraction\b/.test(normalized)) return "barModel";
+  return "";
+}
+
+function buildFallbackMathDiagramSpec(type: string, title: string, templateOverride = "", params: any = {}) {
+  const id = `auto-${String(type || "diagram").toLowerCase()}-1`;
+  const safeTitle = limitString(title || "Math diagram", 120);
+  const template = sanitizeMathDiagramTemplate(templateOverride, type);
+  if (template === "sqrtNumberLineConstruction" || template === "theodorusSpiral") {
+    return sanitizeMathDiagramSpec({
+      id,
+      type: "numberLine",
+      template,
+      params: sanitizeMathDiagramParams(params, template),
+      title: safeTitle || "Square root construction",
+      caption: "Construction uses right triangles and transfers the resulting length to the number line.",
+      axis: { xMin: 0, xMax: 6, points: [{ id: "R", x: 2, y: 0, label: "sqrt value" }] },
+    });
+  }
+  switch (type) {
+    case "circle":
+      return sanitizeMathDiagramSpec({
+        id,
+        type,
+        template: template || "circleRadiusDiameter",
+        params: sanitizeMathDiagramParams(params, template || "circleRadiusDiameter"),
+        title: safeTitle || "Circle diagram",
+        caption: "Circle diagram with center, radius, and boundary.",
+        points: [{ id: "O", x: 160, y: 105, label: "O" }, { id: "A", x: 230, y: 105, label: "A" }],
+        lines: [{ from: "O", to: "A", label: "r", highlight: true }],
+      });
+    case "coordinatePlane":
+      return sanitizeMathDiagramSpec({ id, type, template: template || "coordinatePlanePlot", params: sanitizeMathDiagramParams(params, template || "coordinatePlanePlot"), title: safeTitle || "Coordinate plane", axis: { xMin: -5, xMax: 5, yMin: -3, yMax: 3, points: [{ id: "P", x: 2, y: 2, label: "P" }] } });
+    case "numberLine":
+      return sanitizeMathDiagramSpec({ id, type, template, params: sanitizeMathDiagramParams(params, template), title: safeTitle || "Number line", axis: { xMin: -5, xMax: 5, points: [{ id: "A", x: 2, y: 0, label: "2" }] } });
+    case "quadrilateral":
+      return sanitizeMathDiagramSpec({
+        id,
+        type,
+        template: template || "rectangleAreaPerimeter",
+        params: sanitizeMathDiagramParams(params, template || "rectangleAreaPerimeter"),
+        title: safeTitle || "Quadrilateral",
+        points: [{ id: "A", x: 70, y: 65 }, { id: "B", x: 240, y: 65 }, { id: "C", x: 260, y: 155 }, { id: "D", x: 55, y: 155 }],
+        lines: [{ from: "A", to: "B" }, { from: "B", to: "C" }, { from: "C", to: "D" }, { from: "D", to: "A" }],
+      });
+    case "anglePair":
+      return sanitizeMathDiagramSpec({
+        id,
+        type,
+        template: template || "anglePair",
+        params: sanitizeMathDiagramParams(params, template || "anglePair"),
+        title: safeTitle || "Angle pair",
+        points: [{ id: "O", x: 150, y: 140 }, { id: "A", x: 65, y: 140 }, { id: "B", x: 245, y: 140 }, { id: "C", x: 210, y: 65 }],
+        lines: [{ from: "O", to: "A" }, { from: "O", to: "B" }, { from: "O", to: "C", highlight: true }],
+        arcs: [{ center: "O", radius: 36, startAngle: -38, endAngle: 0, label: "x" }],
+      });
+    case "solid3D":
+      return sanitizeMathDiagramSpec({ id, type, template: template || "solid3D", params: sanitizeMathDiagramParams(params, template || "solid3D"), title: safeTitle || "Solid shape", solid: { width: "l", height: "h", depth: "b" } });
+    case "barModel":
+      return sanitizeMathDiagramSpec({ id, type, template: template || "barModel", params: sanitizeMathDiagramParams(params, template || "barModel"), title: safeTitle || "Bar model", bars: [{ label: "Whole", segments: [{ label: "Part A", value: "x", highlight: true }, { label: "Part B", value: "known" }] }] });
+    case "triangle":
+    case "rightTriangle":
+    default:
+      return sanitizeMathDiagramSpec({
+        id,
+        type: type || "rightTriangle",
+        template: template || "rightTriangle",
+        params: sanitizeMathDiagramParams(params, template || "rightTriangle"),
+        title: safeTitle || "Triangle diagram",
+        points: [{ id: "A", x: 65, y: 155 }, { id: "B", x: 245, y: 155 }, { id: "C", x: 65, y: 55 }],
+        lines: [{ from: "A", to: "B", label: "base" }, { from: "A", to: "C", label: "height" }, { from: "B", to: "C", label: "hypotenuse", highlight: true }],
+      });
+  }
+}
+
+function normalizeMathStudentNotes(notes: any, context: { selectedChapters?: string[]; sessionTitle?: string }) {
+  if (!notes || typeof notes !== "object") return notes;
+  const nextNotes = structuredClone(notes);
+  if (Array.isArray(nextNotes.sections)) {
+    nextNotes.sections = nextNotes.sections.map((section: any) => ({
+      ...section,
+      visualAssets: [],
+    }));
+  }
+
+  const sourceText = [
+    context.sessionTitle || "",
+    ...(context.selectedChapters || []),
+    nextNotes.title || "",
+    nextNotes.sessionOverview || "",
+    ...(Array.isArray(nextNotes.sections) ? nextNotes.sections.map((section: any) => [section?.heading, section?.explanation, section?.detailedExplanation, ...(Array.isArray(section?.visualSupport) ? section.visualSupport : [])].filter(Boolean).join(" ")) : []),
+    ...(Array.isArray(nextNotes.workedExamples) ? nextNotes.workedExamples.map((example: any) => [example?.title, example?.problem].filter(Boolean).join(" ")) : []),
+  ].join(" ");
+
+  nextNotes.geometryDiagrams = (Array.isArray(nextNotes.geometryDiagrams) ? nextNotes.geometryDiagrams : [])
+    .map((diagram: any, index: number) => sanitizeMathDiagramSpec(diagram, index))
+    .map((diagram: any) => repairMathDiagramSpec(diagram, sourceText))
+    .filter(Boolean);
+  const fallbackType = inferMathDiagramTypeFromText(sourceText);
+  if (fallbackType && nextNotes.geometryDiagrams.length === 0) {
+    const fallback = buildFallbackMathDiagramSpec(
+      fallbackType,
+      nextNotes.title || context.sessionTitle || "Math diagram",
+      inferMathDiagramTemplateFromText(sourceText)
+    );
+    if (fallback) nextNotes.geometryDiagrams.push(fallback);
+  }
+
+  nextNotes.formulaCards = (Array.isArray(nextNotes.formulaCards) ? nextNotes.formulaCards : [])
+    .filter((card: any) => card && typeof card === "object")
+    .slice(0, 8)
+    .map((card: any) => ({
+      title: limitString(card.title || "", 120),
+      formula: upgradeMathExpressionValue(card.formula || ""),
+      meaning: limitString(card.meaning || "", 220),
+      whenToUse: limitString(card.whenToUse || "", 220),
+    }));
+  if (nextNotes.formulaCards.length === 0 && Array.isArray(nextNotes.revisionSection?.formulas)) {
+    nextNotes.formulaCards = nextNotes.revisionSection.formulas.slice(0, 6).map((formula: any, index: number) => ({
+      title: `Formula ${index + 1}`,
+      formula: upgradeMathExpressionValue(formula),
+      meaning: "",
+      whenToUse: "",
+    }));
+  }
+
+  nextNotes.proofSteps = upgradeMathRichTextList(nextNotes.proofSteps || [], 12);
+  nextNotes.commonMistakes = (Array.isArray(nextNotes.commonMistakes) ? nextNotes.commonMistakes : [])
+    .filter((item: any) => item && typeof item === "object")
+    .slice(0, 8)
+    .map((item: any) => ({
+      mistake: limitString(item.mistake || "", 220),
+      correction: limitString(item.correction || "", 220),
+      example: limitString(item.example || "", 220),
+    }));
+  nextNotes.workedExamples = (Array.isArray(nextNotes.workedExamples) ? nextNotes.workedExamples : []).map((example: any) => ({
+    ...example,
+    diagramRef: limitString(example?.diagramRef || (nextNotes.geometryDiagrams.length ? nextNotes.geometryDiagrams[0].id : ""), 60),
+    given: upgradeMathRichTextList(example?.given || [], 8),
+    formula: upgradeMathRichTextList(example?.formula || [], 6),
+    solutionSteps: upgradeMathRichTextList(example?.solutionSteps || example?.steps || [], 12),
+    reasoning: upgradeMathRichTextList(example?.reasoning || [], 8),
+    finalAnswer: upgradeMathExpressionValue(example?.finalAnswer || ""),
+    svgCode: undefined,
+    rawSvg: undefined,
+    visualAssets: undefined,
+  }));
+  return nextNotes;
+}
+
+function normalizeMathTeacherNotes(notes: any) {
+  if (!notes || typeof notes !== "object") return notes;
+  const nextNotes = structuredClone(notes);
+  const normalizeMathBlock = (block: any, index: number) => ({
+    ...block,
+    boardSteps: sanitizeMathRichTextList(block?.boardSteps || [], 12),
+    solutionFlow: sanitizeMathRichTextList(block?.solutionFlow || [], 12),
+    proofSteps: sanitizeMathRichTextList(block?.proofSteps || [], 12),
+    geometryDiagrams: (Array.isArray(block?.geometryDiagrams) ? block.geometryDiagrams : [])
+      .map((diagram: any, diagramIndex: number) => sanitizeMathDiagramSpec(diagram, diagramIndex + index * 10))
+      .filter(Boolean),
+    svgCode: undefined,
+    rawSvg: undefined,
+  });
+  nextNotes.lessonBlocks = (Array.isArray(nextNotes.lessonBlocks) ? nextNotes.lessonBlocks : []).map(normalizeMathBlock);
+  nextNotes.conceptFlow = (Array.isArray(nextNotes.conceptFlow) ? nextNotes.conceptFlow : []).map(normalizeMathBlock);
+  return nextNotes;
+}
+
+function normalizeMathGeneratedNotes(session: any, context: { subject?: string; selectedChapters?: string[]; sessionTitle?: string }) {
+  if (!isMathSubject(context.subject || "")) return session;
+  const nextSession = structuredClone(session);
+  if (nextSession.studentLessonNotes) {
+    nextSession.studentLessonNotes = normalizeMathStudentNotes(nextSession.studentLessonNotes, context);
+  }
+  if (nextSession.teacherLessonNotes) {
+    nextSession.teacherLessonNotes = normalizeMathTeacherNotes(nextSession.teacherLessonNotes);
+  }
+  return nextSession;
+}
+
 function isLanguageSubject(subject: string): boolean {
   const normalized = normalizeSourceText(subject || "");
   return [
@@ -8693,6 +9376,20 @@ async function generateSessionDetailsArtifact({
         explanation: ["What the teacher should explain"],
         examples: ["Simple classroom example"],
         boardWork: ["What to write on the board"],
+        boardSteps: ["Step 1 on the board", "Step 2 on the board"],
+        solutionFlow: ["Solve line by line", "State the final answer clearly"],
+        proofSteps: ["Reasoning or theorem step"],
+        geometryDiagrams: [{
+          id: "diagram-1",
+          type: "rightTriangle",
+          title: "Right triangle diagram",
+          caption: "Textbook-style diagram used during board work",
+          points: [{ id: "A", x: 65, y: 155, label: "A" }, { id: "B", x: 245, y: 155, label: "B" }, { id: "C", x: 65, y: 55, label: "C" }],
+          lines: [{ from: "A", to: "B", label: "base" }, { from: "A", to: "C", label: "height" }, { from: "B", to: "C", label: "hypotenuse", highlight: true }],
+          arcs: [],
+          labels: [{ text: "90 deg", x: 82, y: 142 }],
+          measurements: []
+        }],
         checkUnderstanding: ["Quick question to ask students"],
         expectedAnswers: ["Expected student answer"],
         activity: ["Optional mini activity"]
@@ -8709,7 +9406,20 @@ async function generateSessionDetailsArtifact({
         keywords: ["Important keyword"],
         teacherMoves: ["Explain this first"],
         examples: ["Useful example"],
-        visuals: ["Suggested visual support"]
+        visuals: ["Suggested visual support"],
+        solutionFlow: ["State the formula", "Substitute values", "Simplify carefully"],
+        proofSteps: ["State the known fact", "Apply the theorem", "Conclude the result"],
+        geometryDiagrams: [{
+          id: "concept-diagram-1",
+          type: "anglePair",
+          title: "Angle pair",
+          caption: "Use when the concept needs a board diagram",
+          points: [],
+          lines: [],
+          arcs: [],
+          labels: [],
+          measurements: []
+        }]
       }],
       classroomQuestions: [{
         question: "Teacher question",
@@ -8755,6 +9465,29 @@ async function generateSessionDetailsArtifact({
         headers: ["Feature", "Type A", "Type B"],
         rows: [["Example feature", "Example A", "Example B"]]
       }],
+      formulaCards: [{
+        title: "Formula title",
+        formula: { text: "Formula in readable form", latex: "a^2 + b^2 = c^2" },
+        meaning: "What the formula means",
+        whenToUse: "When students should use it"
+      }],
+      geometryDiagrams: [{
+        id: "diagram-1",
+        type: "rightTriangle",
+        title: "Right triangle diagram",
+        caption: "A clean labelled geometry diagram",
+        points: [{ id: "A", x: 65, y: 155, label: "A" }, { id: "B", x: 245, y: 155, label: "B" }, { id: "C", x: 65, y: 55, label: "C" }],
+        lines: [{ from: "A", to: "B", label: "base" }, { from: "A", to: "C", label: "height" }, { from: "B", to: "C", label: "hypotenuse", highlight: true }],
+        arcs: [],
+        labels: [{ text: "90 deg", x: 82, y: 142 }],
+        measurements: []
+      }],
+      proofSteps: ["Reasoning step 1", "Reasoning step 2"],
+      commonMistakes: [{
+        mistake: "Common incorrect step",
+        correction: "Correct method",
+        example: "Short example"
+      }],
       sections: [{
         heading: "Main idea",
         explanation: "Comprehensive but student-friendly explanation",
@@ -8779,8 +9512,17 @@ async function generateSessionDetailsArtifact({
       definitions: [{ term: "Key term", definition: "Clear definition" }],
       workedExamples: [{
         title: "Worked example title",
+        problem: "Solve the problem clearly",
+        diagramRef: "diagram-1",
+        given: ["Given value 1", "Given value 2"],
+        formula: ["Required formula"],
         steps: ["Step 1", "Step 2"],
-        explanation: "How this example works"
+        solutionSteps: ["Write formula", "Substitute values", "Simplify", "State final answer"],
+        reasoning: ["Why this method applies"],
+        explanation: "How this example works",
+        finalAnswer: "Final answer with unit",
+        latex: "x = y + z",
+        displayLatex: "\\\\frac{a+b}{c}"
       }],
       revisionSection: {
         definitions: ["Important definition"],
@@ -9102,8 +9844,10 @@ async function generateSessionDetailsArtifact({
     "- Add learningOutcomeCoverage, difficultyDistribution, bloomsDistribution, questionDistribution, and timeAllocation in blueprint.",
     "- Keep answer keys and rubrics aligned with the generated questions.",
   ].join("\n");
+  const teacherNotesPromptName = getNotesPromptName("teacher", subject);
+  const studentNotesPromptName = getNotesPromptName("student", subject);
   const prompt = teacherNotesOnly
-    ? renderPrompt("teacher-notes-generation.md", {
+    ? renderPrompt(teacherNotesPromptName, {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
@@ -9126,7 +9870,7 @@ async function generateSessionDetailsArtifact({
         CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
       })
     : studentNotesOnly
-    ? renderPrompt("student-notes-generation.md", {
+    ? renderPrompt(studentNotesPromptName, {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
@@ -9353,8 +10097,12 @@ async function generateSessionDetailsArtifact({
       throw new Error("Model output truncated during session content generation. Reduce session scope or increase num_predict.");
     }
   }
-  const parsedSession = JSON.parse(sanitizeJsonText(responseText).text || "{}");
-  if (parsedSession?.studentLessonNotes) {
+  const parsedSession = normalizeMathGeneratedNotes(JSON.parse(sanitizeJsonText(responseText).text || "{}"), {
+    subject,
+    selectedChapters,
+    sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+  });
+  if (parsedSession?.studentLessonNotes && !isMathSubject(subject)) {
     const enrichedStudentNotesSession = await enrichStudentLessonNotesWithVisuals(requestId, debugDir, parsedSession, {
       subject,
       gradeLevel,
@@ -9441,6 +10189,10 @@ export {
   buildLanguageFallbackStage1Facts,
   expandStage1FactsToRawExtraction,
   isLanguageSubject,
+  isMathSubject,
+  getNotesPromptName,
+  normalizeMathGeneratedNotes,
+  sanitizeMathDiagramSpec,
   mergeStage1FactExtractions,
   sanitizeStage3EnrichmentToSource,
   sanitizeJsonText,

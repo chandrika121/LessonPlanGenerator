@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import katex from "katex";
+import "katex/dist/katex.min.css";
 import { motion } from "motion/react";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
@@ -51,6 +53,8 @@ import {
   SessionAllocation,
   SessionAssessmentCustomization,
   SessionConfig,
+  MathDiagramSpec,
+  MathFormulaCard,
   SessionPptGenerationOptions,
   SessionPlanningDefaults,
   SessionSectionKey,
@@ -372,8 +376,48 @@ export default function App() {
 
   const stringifyMultilineList = (value?: string[]) => (value || []).join("\n");
 
+  const latexToReadableText = (value: string) =>
+    String(value || "")
+      .replace(/\\\\/g, "\\")
+      .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, "($1)/($2)")
+      .replace(/\\sqrt\{([^{}]+)\}/g, "√($1)")
+      .replace(/\\times/g, "×")
+      .replace(/\\cdot/g, "·")
+      .replace(/\\div/g, "÷")
+      .replace(/\\left/g, "")
+      .replace(/\\right/g, "")
+      .replace(/\\,/g, " ")
+      .replace(/\\;/g, " ")
+      .replace(/\\:/g, " ")
+      .replace(/\\text\{([^{}]+)\}/g, "$1")
+      .replace(/\{|\}/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const formatMathReadableText = (value: unknown): string => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return typeof value === "string" ? value : value == null ? "" : String(value);
+    }
+    const mathValue = value as { text?: unknown; latex?: unknown; displayLatex?: unknown };
+    const text = typeof mathValue.text === "string" ? mathValue.text.trim() : "";
+    const latex = typeof mathValue.displayLatex === "string" && mathValue.displayLatex.trim()
+      ? mathValue.displayLatex.trim()
+      : typeof mathValue.latex === "string" ? mathValue.latex.trim() : "";
+    const readableLatex = latexToReadableText(latex);
+    if (text && readableLatex) {
+      return text.includes(readableLatex) ? text : `${text} ${readableLatex}`.trim();
+    }
+    return text || readableLatex;
+  };
+
   const formatRenderableText = (value: unknown): string => {
     if (value == null) return "";
+    if (typeof value === "object" && !Array.isArray(value)) {
+      const mathReadable = formatMathReadableText(value);
+      if (mathReadable) {
+        return mathReadable;
+      }
+    }
     if (typeof value === "string") return value;
     if (typeof value === "number" || typeof value === "boolean") return String(value);
     if (Array.isArray(value)) {
@@ -389,6 +433,13 @@ export default function App() {
       return entries.join(" | ");
     }
     return String(value);
+  };
+
+  const getRenderableMathLines = (value: unknown): string[] => {
+    const values = Array.isArray(value) ? value : value == null ? [] : [value];
+    return values
+      .map((item) => formatRenderableText(item).replace(/\s+/g, " ").trim())
+      .filter(Boolean);
   };
 
   const buildVisualOverlayLabels = (visualSupport?: string[]) => {
@@ -420,6 +471,581 @@ export default function App() {
       .map((item) => formatRenderableText(item).replace(/\s+/g, " ").trim())
       .filter(Boolean);
   };
+
+  const getMathLatex = (value: unknown): string => {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return "";
+    const mathValue = value as { latex?: unknown; displayLatex?: unknown };
+    return String(mathValue.displayLatex || mathValue.latex || "").trim();
+  };
+
+  const consumeLatexMathToken = (value: string, startIndex: number) => {
+    const source = String(value || "");
+    const length = source.length;
+    let index = startIndex;
+    const consumeBalanced = (openChar: string, closeChar: string) => {
+      if (source[index] !== openChar) return false;
+      let depth = 0;
+      while (index < length) {
+        const char = source[index];
+        if (char === openChar) depth += 1;
+        if (char === closeChar) {
+          depth -= 1;
+          if (depth === 0) {
+            index += 1;
+            return true;
+          }
+        }
+        index += 1;
+      }
+      return false;
+    };
+
+    if (source.startsWith("\\sqrt", index)) {
+      index += 5;
+      while (source[index] === " ") index += 1;
+      if (source[index] === "{") {
+        consumeBalanced("{", "}");
+      } else if (source[index] === "(") {
+        consumeBalanced("(", ")");
+      } else {
+        while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
+      }
+      return index;
+    }
+
+    if (source[index] === "\\") {
+      index += 1;
+      while (index < length && /[A-Za-z]/.test(source[index])) index += 1;
+      while (source[index] === " ") index += 1;
+      if (source[index] === "{") {
+        consumeBalanced("{", "}");
+      }
+      return index;
+    }
+
+    while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
+    while (index < length) {
+      while (source[index] === " ") index += 1;
+      if (source[index] === "^" || source[index] === "_") {
+        index += 1;
+        while (source[index] === " ") index += 1;
+        if (source[index] === "{") {
+          consumeBalanced("{", "}");
+        } else if (/[A-Za-z0-9]/.test(source[index] || "")) {
+          index += 1;
+        }
+        continue;
+      }
+      if (source[index] === "(") {
+        consumeBalanced("(", ")");
+        continue;
+      }
+      if (source[index] === "{") {
+        consumeBalanced("{", "}");
+        continue;
+      }
+      if (source[index] === "[") {
+        consumeBalanced("[", "]");
+        continue;
+      }
+      if (source.startsWith("\\sqrt", index) || source[index] === "\\") {
+        index = consumeLatexMathToken(source, index);
+        continue;
+      }
+      break;
+    }
+    return index;
+  };
+
+  const repairMalformedLatexFractions = (value: string) => {
+    let next = String(value || "").trim();
+    if (!next.includes("\\frac")) return next;
+    next = next.replace(/\\frac\s*\{([^{}]+)\}\s*([^{}\s][^\n]*)/g, (_match, numerator, denominator) => {
+      const cleanDenominator = String(denominator || "").trim();
+      return cleanDenominator ? `\\frac{${numerator}}{${cleanDenominator}}` : `\\frac{${numerator}}`;
+    });
+
+    return next.replace(/\\frac(?!\s*\{)([^\n]+)/g, (_match, tail) => {
+      const source = String(tail || "").trim();
+      if (!source) return "\\frac";
+      const splitIndex = consumeLatexMathToken(source, 0);
+      const numerator = source.slice(0, splitIndex).trim();
+      const denominator = source.slice(splitIndex).trim();
+      if (!numerator || !denominator) return `\\frac ${source}`;
+      return `\\frac{${numerator}}{${denominator}}`;
+    });
+  };
+
+  const normalizeInlineMathText = (value: string) =>
+    repairMalformedLatexFractions(
+      String(value || "")
+      .replace(/√\s*([A-Za-z0-9]+)/g, "\\sqrt{$1}")
+      .replace(/\bsqrt\s*\(\s*([^)]+?)\s*\)/gi, "\\sqrt{$1}")
+      .replace(/\b([A-Za-z])2\b/g, "$1^2")
+      .replace(/\b([A-Za-z])3\b/g, "$1^3")
+      .replace(/\[\s*([^\]]+?)\s*\]\s*\/\s*\[\s*([^\]]+?)\s*\]/g, "\\frac{$1}{$2}")
+      .replace(/(\d+)\s*\/\s*\(\s*([^)]+?)\s*\)/g, "\\frac{$1}{$2}")
+      .replace(/(\d+)\s*\/\s*([A-Za-z0-9\\sqrt{}]+)/g, "\\frac{$1}{$2}")
+    );
+
+  const shouldRenderStringAsLatex = (value: string) => {
+    const text = value.trim();
+    if (!text) return false;
+    if (/\\[a-zA-Z]+|[_^]/.test(text)) return true;
+    if (/√|\bsqrt\s*\(/i.test(text)) return true;
+    if (!/[=+\-*/×÷√]/.test(text)) return false;
+    if (/[.:;]\s+[A-Za-z]{3,}/.test(text)) return false;
+    if (/\b(apply|because|therefore|hence|when|where|given|substitute|simplify|answer|hypotenuse|formula)\b/i.test(text)) return false;
+    const words = text.match(/[A-Za-z]{3,}/g) || [];
+    return words.length <= 2;
+  };
+
+  const extractInlineMathSegments = (value: string) => {
+    const text = String(value || "").trim();
+    if (!text) return [];
+    const pattern = /(\\frac\{[^}]+\}\{[^}]+\}|\\sqrt\{[^}]+\}|√\s*[A-Za-z0-9]+|\bsqrt\s*\([^)]+\)|[A-Za-z0-9()[\]{}+\-*/^ ]+\s*=\s*[A-Za-z0-9()[\]{}+\-*/^ ]+|\[[^\]]+\]\s*\/\s*\[[^\]]+\]|\d+\s*\/\s*\([^)]+\)|\d+\s*\/\s*[A-Za-z0-9]+)/g;
+    const segments: Array<{ type: "text" | "math"; value: string }> = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    while ((match = pattern.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        const prose = text.slice(lastIndex, match.index);
+        if (prose.trim()) segments.push({ type: "text", value: prose });
+      }
+      const token = match[0].trim();
+      if (token) {
+        segments.push({ type: shouldRenderStringAsLatex(token) || /[=√/\\]/.test(token) ? "math" : "text", value: token });
+      }
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < text.length) {
+      const prose = text.slice(lastIndex);
+      if (prose.trim()) segments.push({ type: "text", value: prose });
+    }
+    return segments.length > 0 ? segments : [{ type: "text", value: text }];
+  };
+
+  const renderMathLatex = (latex: string, displayMode = false, fallback = "") => {
+    const normalizedLatex = normalizeInlineMathText(latex);
+    try {
+      return (
+        <span
+          className={displayMode ? "block overflow-x-auto py-1" : "inline-block align-middle"}
+          dangerouslySetInnerHTML={{
+            __html: katex.renderToString(normalizedLatex, {
+              displayMode,
+              throwOnError: false,
+              strict: false,
+            }),
+          }}
+        />
+      );
+    } catch {
+      return <span className="whitespace-pre-wrap font-mono">{fallback || latexToReadableText(normalizedLatex) || latex}</span>;
+    }
+  };
+
+  const renderMixedMathLine = (value: unknown, displayMode = false) => {
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const mathValue = value as { text?: unknown; latex?: unknown; displayLatex?: unknown };
+      const inlineLatex = String(mathValue.latex || "").trim();
+      const displayLatex = String(mathValue.displayLatex || "").trim();
+      const text = formatRenderableText(mathValue.text || "").trim();
+      if (displayLatex && !text) {
+        return renderMathLatex(displayLatex, true, text || displayLatex);
+      }
+      if (displayLatex || inlineLatex) {
+        return (
+          <span className={`whitespace-pre-wrap font-mono ${displayMode ? "block" : "inline-flex flex-wrap items-center gap-2"}`}>
+            {text ? <span>{text}</span> : null}
+            {displayLatex ? renderMathLatex(displayLatex, true, text || displayLatex) : inlineLatex ? renderMathLatex(inlineLatex, false, text || inlineLatex) : null}
+          </span>
+        );
+      }
+    }
+
+    if (typeof value === "string") {
+      const segments = extractInlineMathSegments(value);
+      if (segments.some((segment) => segment.type === "math")) {
+        return (
+          <span className={`whitespace-pre-wrap font-mono ${displayMode ? "block" : "inline-flex flex-wrap items-center gap-2"}`}>
+            {segments.map((segment, index) => segment.type === "math"
+              ? <span key={`${segment.value}-${index}`}>{renderMathLatex(segment.value, false, segment.value)}</span>
+              : <span key={`${segment.value}-${index}`}>{segment.value}</span>)}
+          </span>
+        );
+      }
+    }
+
+    return renderMathExpression(value, displayMode);
+  };
+
+  const renderMathExpression = (value: unknown, displayMode = false) => {
+    const latex = getMathLatex(value) || (typeof value === "string" && shouldRenderStringAsLatex(value) ? normalizeInlineMathText(value.trim()) : "");
+    const fallback = formatRenderableText(value).trim();
+    if (!latex) {
+      return <span className="whitespace-pre-wrap font-mono">{fallback}</span>;
+    }
+
+    return renderMathLatex(latex, displayMode, fallback);
+  };
+
+  const getMathDiagramList = (value: unknown): MathDiagramSpec[] =>
+    Array.isArray(value)
+      ? value.filter((item): item is MathDiagramSpec => Boolean(item && typeof item === "object" && (item as MathDiagramSpec).type))
+      : [];
+
+  const escapeSvgText = (value: unknown) =>
+    formatRenderableText(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\"", "&quot;")
+      .replaceAll("'", "&#39;");
+
+  const getDefaultDiagramSpec = (type: MathDiagramSpec["type"], id = "diagram"): MathDiagramSpec => {
+    switch (type) {
+      case "circle":
+        return {
+          id,
+          type,
+          title: "Circle",
+          points: [{ id: "O", x: 160, y: 105, label: "O" }, { id: "A", x: 230, y: 105, label: "A" }],
+          lines: [{ from: "O", to: "A", label: "r", highlight: true }],
+          labels: [{ text: "radius", x: 188, y: 94 }],
+        };
+      case "quadrilateral":
+        return {
+          id,
+          type,
+          title: "Quadrilateral",
+          points: [
+            { id: "A", x: 70, y: 65, label: "A" },
+            { id: "B", x: 240, y: 65, label: "B" },
+            { id: "C", x: 260, y: 155, label: "C" },
+            { id: "D", x: 55, y: 155, label: "D" },
+          ],
+          lines: [{ from: "A", to: "B" }, { from: "B", to: "C" }, { from: "C", to: "D" }, { from: "D", to: "A" }],
+        };
+      case "coordinatePlane":
+        return { id, type, title: "Coordinate Plane", axis: { xMin: -5, xMax: 5, yMin: -3, yMax: 3, points: [{ id: "P", x: 2, y: 2, label: "P(2, 2)" }] } };
+      case "numberLine":
+        return { id, type, title: "Number Line", axis: { xMin: -5, xMax: 5, points: [{ id: "A", x: 2, y: 0, label: "2" }] } };
+      case "barModel":
+        return { id, type, title: "Bar Model", bars: [{ label: "Whole", segments: [{ label: "Part A", value: "x", highlight: true }, { label: "Part B", value: "8" }] }] };
+      case "solid3D":
+        return { id, type, title: "Cuboid", solid: { width: "l", height: "h", depth: "b" } };
+      case "anglePair":
+        return {
+          id,
+          type,
+          title: "Angle Pair",
+          points: [{ id: "O", x: 150, y: 140, label: "O" }, { id: "A", x: 65, y: 140, label: "A" }, { id: "B", x: 245, y: 140, label: "B" }, { id: "C", x: 210, y: 65, label: "C" }],
+          lines: [{ from: "O", to: "A" }, { from: "O", to: "B" }, { from: "O", to: "C", highlight: true }],
+          arcs: [{ center: "O", radius: 36, startAngle: -38, endAngle: 0, label: "x" }, { center: "O", radius: 50, startAngle: 180, endAngle: 322, label: "180 - x" }],
+        };
+      case "triangle":
+      case "polygon":
+      case "rightTriangle":
+      default:
+        return {
+          id,
+          type: type || "rightTriangle",
+          title: type === "triangle" ? "Triangle" : "Right Triangle",
+          points: [
+            { id: "A", x: 65, y: 155, label: "A" },
+            { id: "B", x: 245, y: 155, label: "B" },
+            { id: "C", x: 65, y: 55, label: "C" },
+          ],
+          lines: [
+            { from: "A", to: "B", label: "base" },
+            { from: "A", to: "C", label: "height" },
+            { from: "B", to: "C", label: "hypotenuse", highlight: true },
+          ],
+          labels: type === "rightTriangle" ? [{ text: "90 deg", x: 82, y: 142 }] : [],
+        };
+    }
+  };
+
+  const normalizeDiagramForRender = (diagram: MathDiagramSpec): MathDiagramSpec => {
+    const base = getDefaultDiagramSpec(diagram.type, diagram.id || "diagram");
+    return {
+      ...base,
+      ...diagram,
+      points: Array.isArray(diagram.points) && diagram.points.length > 0 ? diagram.points : base.points,
+      lines: Array.isArray(diagram.lines) && diagram.lines.length > 0 ? diagram.lines : base.lines,
+      arcs: Array.isArray(diagram.arcs) ? diagram.arcs : base.arcs,
+      labels: Array.isArray(diagram.labels) && diagram.labels.length > 0 ? diagram.labels : base.labels,
+      axis: diagram.axis || base.axis,
+      bars: Array.isArray(diagram.bars) && diagram.bars.length > 0 ? diagram.bars : base.bars,
+      solid: diagram.solid || base.solid,
+    };
+  };
+
+  const getPointMap = (points: MathDiagramSpec["points"] = []) =>
+    new Map(points.map((point) => [point.id, point]));
+
+  const polarPoint = (center: { x: number; y: number }, radius: number, angleDeg: number) => {
+    const angle = (angleDeg * Math.PI) / 180;
+    return { x: center.x + radius * Math.cos(angle), y: center.y + radius * Math.sin(angle) };
+  };
+
+  const getDiagramTemplate = (diagram: MathDiagramSpec) => {
+    if (diagram.template) return diagram.template;
+    switch (diagram.type) {
+      case "rightTriangle":
+        return "rightTriangle";
+      case "circle":
+        return "circleRadiusDiameter";
+      case "coordinatePlane":
+        return "coordinatePlanePlot";
+      case "quadrilateral":
+        return "rectangleAreaPerimeter";
+      case "anglePair":
+        return "anglePair";
+      case "barModel":
+        return "barModel";
+      case "solid3D":
+        return "solid3D";
+      default:
+        return "";
+    }
+  };
+
+  const getDiagramParams = (diagram: MathDiagramSpec): Record<string, unknown> =>
+    diagram.params && typeof diagram.params === "object" ? diagram.params : {};
+
+  const getTemplateRoots = (diagram: MathDiagramSpec) => {
+    const params = getDiagramParams(diagram);
+    const roots = Array.isArray(params.roots)
+      ? params.roots.map((root) => Number(root)).filter((root) => Number.isFinite(root) && root >= 1 && root <= 20)
+      : [];
+    return roots.length > 0 ? Array.from(new Set(roots)).slice(0, 8) : [2, 3, 5];
+  };
+
+  const svgText = (text: unknown, x: number, y: number, options: { anchor?: string; size?: number; weight?: number | string; fill?: string } = {}) =>
+    `<text x="${x}" y="${y}" text-anchor="${options.anchor || "start"}" font-family="Georgia, 'Times New Roman', serif" font-size="${options.size || 12}" font-weight="${options.weight || 700}" fill="${options.fill || "#0F172A"}">${escapeSvgText(text)}</text>`;
+
+  const buildTemplateDiagramSvg = (diagram: MathDiagramSpec) => {
+    const template = getDiagramTemplate(diagram);
+    const params = getDiagramParams(diagram);
+    const title = escapeSvgText(diagram.title || diagram.type);
+    const stroke = "#334155";
+    const accent = "#0F9F9B";
+    const highlight = "#D97706";
+
+    if (template === "sqrtNumberLineConstruction" || template === "theodorusSpiral") {
+      const roots = getTemplateRoots(diagram);
+      const highlightRoot = Number(params.highlightRoot || roots[roots.length - 1] || 2);
+      const maxRoot = Math.max(highlightRoot, ...roots, 2);
+      const maxValue = Math.ceil(Math.sqrt(maxRoot)) + 1;
+      const axisStart = 58;
+      const axisEnd = 462;
+      const axisY = 238;
+      const toX = (value: number) => axisStart + (value / maxValue) * (axisEnd - axisStart);
+      const ticks = Array.from({ length: maxValue + 1 }, (_, index) => index);
+
+      if (template === "theodorusSpiral") {
+        const center = { x: 176, y: 192 };
+        const scale = 41;
+        let angle = 0;
+        const points = [{ x: center.x + scale, y: center.y, label: "1" }];
+        for (let root = 2; root <= Math.max(...roots, highlightRoot, 2); root += 1) {
+          angle += Math.atan(1 / Math.sqrt(root - 1));
+          points.push({
+            x: center.x + Math.sqrt(root) * scale * Math.cos(-angle),
+            y: center.y + Math.sqrt(root) * scale * Math.sin(-angle),
+            label: `√${root}`,
+          });
+        }
+        const triangles = points.slice(1).map((point, index) => {
+          const previous = points[index];
+          const isTarget = index + 2 === highlightRoot;
+          return `<path d="M ${center.x} ${center.y} L ${previous.x} ${previous.y} L ${point.x} ${point.y} Z" fill="${isTarget ? "#FEF3C7" : "#ECFEFF"}" stroke="${isTarget ? highlight : "#94A3B8"}" stroke-width="${isTarget ? 2.6 : 1.4}" opacity="${isTarget ? 0.95 : 0.58}"/>`;
+        }).join("");
+        const pointLabels = points.slice(1).filter((_, index) => roots.includes(index + 2) || index + 2 === highlightRoot).map((point, index) => {
+          const labelY = point.y + (index % 2 === 0 ? -12 : 18);
+          return `${svgText(point.label, point.x, labelY, { anchor: "middle", size: 12, fill: point.label === `√${highlightRoot}` ? "#92400E" : "#0F766E" })}`;
+        }).join("");
+        return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-label="${title}">
+  <rect width="520" height="300" rx="18" fill="#F8FAFC"/>
+  ${svgText(title, 24, 34, { size: 18, weight: 800 })}
+  <circle cx="${center.x}" cy="${center.y}" r="4.5" fill="#0F172A"/>
+  ${triangles}
+  ${pointLabels}
+  ${svgText("unit steps create successive √n lengths", 300, 232, { size: 12, weight: 600, fill: "#475569" })}
+</svg>`;
+      }
+
+      const rootMarkers = roots.map((root, index) => {
+        const value = Math.sqrt(root);
+        const x = toX(value);
+        const arcHeight = 24 + index * 13;
+        const isTarget = root === highlightRoot;
+        const labelY = axisY + 38 + (index % 2) * 18;
+        return `
+  <path d="M ${axisStart} ${axisY} Q ${(axisStart + x) / 2} ${axisY - arcHeight * 2} ${x} ${axisY}" fill="none" stroke="${isTarget ? highlight : accent}" stroke-width="${isTarget ? 3 : 2}" stroke-linecap="round"/>
+  <circle cx="${x}" cy="${axisY}" r="${isTarget ? 5 : 4}" fill="${isTarget ? highlight : accent}"/>
+  ${svgText(`√${root}`, x, labelY, { anchor: "middle", size: 12, fill: isTarget ? "#92400E" : "#0F766E" })}`;
+      }).join("");
+      return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-label="${title}">
+  <rect width="520" height="300" rx="18" fill="#F8FAFC"/>
+  ${svgText(title, 24, 34, { size: 18, weight: 800 })}
+  <line x1="${axisStart}" y1="${axisY}" x2="${axisEnd}" y2="${axisY}" stroke="${stroke}" stroke-width="2.2"/>
+  <path d="M ${axisEnd - 8} ${axisY - 5} L ${axisEnd} ${axisY} L ${axisEnd - 8} ${axisY + 5}" fill="none" stroke="${stroke}" stroke-width="2.2"/>
+  ${ticks.map((tick) => `<line x1="${toX(tick)}" y1="${axisY - 6}" x2="${toX(tick)}" y2="${axisY + 6}" stroke="#64748B"/>${svgText(tick, toX(tick), axisY + 24, { anchor: "middle", size: 11, weight: 600, fill: "#475569" })}`).join("")}
+  <path d="M ${axisStart} ${axisY} L ${axisStart + 70} ${axisY} L ${axisStart + 70} ${axisY - 70} Z" fill="#ECFEFF" stroke="#94A3B8" stroke-width="1.8"/>
+  <path d="M ${axisStart + 58} ${axisY} L ${axisStart + 58} ${axisY - 12} L ${axisStart + 70} ${axisY - 12}" fill="none" stroke="${accent}" stroke-width="2"/>
+  ${svgText("1", axisStart + 35, axisY - 8, { anchor: "middle", size: 11, fill: "#334155" })}
+  ${svgText("1", axisStart + 78, axisY - 34, { size: 11, fill: "#334155" })}
+  ${rootMarkers}
+  ${svgText("Transfer each constructed hypotenuse length onto the number line.", 24, 282, { size: 12, weight: 600, fill: "#475569" })}
+</svg>`;
+    }
+
+    return "";
+  };
+
+  const buildMathDiagramSvg = (rawDiagram: MathDiagramSpec) => {
+    const diagram = normalizeDiagramForRender(rawDiagram);
+    const points = diagram.points || [];
+    const pointMap = getPointMap(points);
+    const title = escapeSvgText(diagram.title || diagram.type);
+    const caption = "";
+    const stroke = "#334155";
+    const accent = "#0F9F9B";
+    const highlight = "#D97706";
+    const templateMarkup = buildTemplateDiagramSvg(diagram);
+    if (templateMarkup) return templateMarkup;
+
+    if (diagram.type === "coordinatePlane" || diagram.type === "numberLine") {
+      const axis = diagram.axis || {};
+      const xMin = Number(axis.xMin ?? -5);
+      const xMax = Number(axis.xMax ?? 5);
+      const yMin = Number(axis.yMin ?? -3);
+      const yMax = Number(axis.yMax ?? 3);
+      const toX = (x: number) => 40 + ((x - xMin) / Math.max(1, xMax - xMin)) * 240;
+      const toY = (y: number) => 180 - ((y - yMin) / Math.max(1, yMax - yMin)) * 140;
+      const ticks = Array.from({ length: xMax - xMin + 1 }, (_, index) => xMin + index);
+      const axisPoints = Array.isArray(axis.points) ? axis.points : [];
+      return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="${title}">
+  <rect width="320" height="220" rx="16" fill="#F8FAFC"/>
+  <text x="18" y="26" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#0F172A">${title}</text>
+  ${diagram.type === "coordinatePlane" ? `<line x1="40" y1="${toY(0)}" x2="280" y2="${toY(0)}" stroke="${stroke}" stroke-width="2"/><line x1="${toX(0)}" y1="40" x2="${toX(0)}" y2="180" stroke="${stroke}" stroke-width="2"/>` : `<line x1="40" y1="120" x2="280" y2="120" stroke="${stroke}" stroke-width="2"/>`}
+  ${ticks.map((tick) => `<line x1="${toX(tick)}" y1="${diagram.type === "coordinatePlane" ? toY(0) - 4 : 114}" x2="${toX(tick)}" y2="${diagram.type === "coordinatePlane" ? toY(0) + 4 : 126}" stroke="#64748B"/><text x="${toX(tick)}" y="${diagram.type === "coordinatePlane" ? toY(0) + 18 : 146}" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#475569">${tick}</text>`).join("")}
+  ${axisPoints.map((point) => `<circle cx="${toX(Number(point.x))}" cy="${diagram.type === "coordinatePlane" ? toY(Number(point.y)) : 120}" r="5" fill="${highlight}"/><text x="${toX(Number(point.x)) + 8}" y="${diagram.type === "coordinatePlane" ? toY(Number(point.y)) - 8 : 108}" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#92400E">${escapeSvgText(point.label || point.id)}</text>`).join("")}
+  ${caption ? `<text x="18" y="205" font-family="Arial, sans-serif" font-size="11" fill="#64748B">${caption}</text>` : ""}
+</svg>`;
+    }
+
+    if (diagram.type === "barModel") {
+      const bars = diagram.bars || [];
+      return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="${title}">
+  <rect width="320" height="220" rx="16" fill="#F8FAFC"/>
+  <text x="18" y="26" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#0F172A">${title}</text>
+  ${bars.map((bar, barIndex) => {
+    const y = 62 + barIndex * 54;
+    const segments = bar.segments && bar.segments.length > 0 ? bar.segments : [{ label: bar.label, value: bar.value }];
+    const segmentWidth = 220 / Math.max(1, segments.length);
+    return `<text x="24" y="${y + 22}" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">${escapeSvgText(bar.label || `Bar ${barIndex + 1}`)}</text>${segments.map((segment, index) => {
+      const x = 78 + index * segmentWidth;
+      return `<rect x="${x}" y="${y}" width="${segmentWidth}" height="34" fill="${segment.highlight ? "#FEF3C7" : "#E0F2FE"}" stroke="${segment.highlight ? highlight : accent}" stroke-width="2"/><text x="${x + segmentWidth / 2}" y="${y + 22}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">${escapeSvgText(segment.value || segment.label || "")}</text>`;
+    }).join("")}`;
+  }).join("")}
+  ${caption ? `<text x="18" y="205" font-family="Arial, sans-serif" font-size="11" fill="#64748B">${caption}</text>` : ""}
+</svg>`;
+    }
+
+    if (diagram.type === "solid3D") {
+      const solid = diagram.solid || {};
+      return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="${title}">
+  <rect width="320" height="220" rx="16" fill="#F8FAFC"/>
+  <text x="18" y="26" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#0F172A">${title}</text>
+  <polygon points="80,78 205,78 245,115 120,115" fill="#DBEAFE" stroke="${stroke}" stroke-width="2"/>
+  <polygon points="120,115 245,115 245,170 120,170" fill="#E0F2FE" stroke="${stroke}" stroke-width="2"/>
+  <polygon points="80,78 120,115 120,170 80,132" fill="#F8FAFC" stroke="${stroke}" stroke-width="2"/>
+  <line x1="80" y1="132" x2="205" y2="132" stroke="#94A3B8" stroke-dasharray="5 5"/>
+  <line x1="205" y1="78" x2="205" y2="132" stroke="#94A3B8" stroke-dasharray="5 5"/>
+  <line x1="205" y1="132" x2="245" y2="170" stroke="#94A3B8" stroke-dasharray="5 5"/>
+  <text x="170" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#334155">width ${escapeSvgText(solid.width || "l")}</text>
+  <text x="254" y="146" font-family="Arial, sans-serif" font-size="12" fill="#334155">height ${escapeSvgText(solid.height || "h")}</text>
+  <text x="77" y="157" text-anchor="end" font-family="Arial, sans-serif" font-size="12" fill="#334155">depth ${escapeSvgText(solid.depth || "b")}</text>
+  ${caption ? `<text x="18" y="205" font-family="Arial, sans-serif" font-size="11" fill="#64748B">${caption}</text>` : ""}
+</svg>`;
+    }
+
+    const lineMarkup = (diagram.lines || []).map((line) => {
+      const from = pointMap.get(line.from);
+      const to = pointMap.get(line.to);
+      if (!from || !to) return "";
+      const midX = (from.x + to.x) / 2;
+      const midY = (from.y + to.y) / 2;
+      return `<line x1="${from.x}" y1="${from.y}" x2="${to.x}" y2="${to.y}" stroke="${line.highlight ? highlight : stroke}" stroke-width="${line.highlight ? 4 : 2.5}" stroke-linecap="round" ${line.style === "dashed" ? "stroke-dasharray=\"6 5\"" : ""}/>${line.label ? `<text x="${midX}" y="${midY - 8}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="${line.highlight ? "#92400E" : "#334155"}">${escapeSvgText(line.label)}</text>` : ""}`;
+    }).join("");
+    const arcMarkup = (diagram.arcs || []).map((arc) => {
+      const center = pointMap.get(arc.center);
+      if (!center) return "";
+      const start = polarPoint(center, Number(arc.radius || 30), Number(arc.startAngle || 0));
+      const end = polarPoint(center, Number(arc.radius || 30), Number(arc.endAngle || 90));
+      const largeArc = Math.abs(Number(arc.endAngle || 0) - Number(arc.startAngle || 0)) > 180 ? 1 : 0;
+      const labelPoint = polarPoint(center, Number(arc.radius || 30) + 14, (Number(arc.startAngle || 0) + Number(arc.endAngle || 0)) / 2);
+      return `<path d="M ${start.x} ${start.y} A ${arc.radius} ${arc.radius} 0 ${largeArc} 1 ${end.x} ${end.y}" fill="none" stroke="${arc.highlight ? highlight : accent}" stroke-width="2.5"/>${arc.label ? `<text x="${labelPoint.x}" y="${labelPoint.y}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#0F766E">${escapeSvgText(arc.label)}</text>` : ""}`;
+    }).join("");
+    const pointMarkup = points.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="4.5" fill="#0F172A"/><text x="${point.x + 8}" y="${point.y - 8}" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#0F172A">${escapeSvgText(point.label || point.id)}</text>`).join("");
+    const labelMarkup = [...(diagram.labels || []), ...(diagram.measurements || [])]
+      .map((label) => `<text x="${label.x}" y="${label.y}" font-family="Arial, sans-serif" font-size="12" font-weight="700" fill="#334155">${escapeSvgText(label.text || label.latex || "")}</text>`)
+      .join("");
+    const polygonPoints = (diagram.type === "polygon" || diagram.type === "quadrilateral" || diagram.type === "triangle" || diagram.type === "rightTriangle")
+      ? points.map((point) => `${point.x},${point.y}`).join(" ")
+      : "";
+
+    return `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="${title}">
+  <rect width="320" height="220" rx="16" fill="#F8FAFC"/>
+  <text x="18" y="26" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#0F172A">${title}</text>
+  ${diagram.type === "circle" ? `<circle cx="${pointMap.get("O")?.x || 160}" cy="${pointMap.get("O")?.y || 105}" r="70" fill="#ECFEFF" stroke="${stroke}" stroke-width="2.5"/>` : ""}
+  ${polygonPoints ? `<polygon points="${polygonPoints}" fill="#ECFEFF" stroke="none" opacity="0.75"/>` : ""}
+  ${lineMarkup}
+  ${diagram.type === "rightTriangle" ? `<path d="M 65 135 L 85 135 L 85 155" fill="none" stroke="${accent}" stroke-width="2.5"/>` : ""}
+  ${arcMarkup}
+  ${pointMarkup}
+  ${labelMarkup}
+  ${caption ? `<text x="18" y="205" font-family="Arial, sans-serif" font-size="11" fill="#64748B">${caption}</text>` : ""}
+</svg>`;
+  };
+
+  const renderGeometryDiagram = (diagram: MathDiagramSpec, compact = false) => {
+    const normalized = normalizeDiagramForRender(diagram);
+    return (
+      <figure className={`overflow-hidden rounded-[8px] border border-[#e7dfd2] bg-white shadow-sm ${compact ? "" : "p-3"}`}>
+        <div
+          className="mx-auto aspect-[16/11] w-full max-w-[520px] [&_svg]:h-full [&_svg]:w-full"
+          dangerouslySetInnerHTML={{ __html: buildMathDiagramSvg(normalized) }}
+        />
+        {normalized.caption ? (
+          <figcaption className="px-3 pb-3 pt-1 font-mono text-[11px] leading-5 text-slate-500">
+            {formatRenderableText(normalized.caption)}
+          </figcaption>
+        ) : null}
+      </figure>
+    );
+  };
+
+  const renderFormulaCard = (card: MathFormulaCard, index: number) => (
+    <div key={`${card.title || "formula"}-${index}`} className="rounded-[6px] border border-[#e7dfd2] bg-white p-4 shadow-sm">
+      <div className="font-mono text-[12px] font-black uppercase tracking-[0.08em] text-slate-500">{formatRenderableText(card.title || `Formula ${index + 1}`)}</div>
+      <div className="mt-3 rounded-[6px] bg-[#f8fafc] px-3 py-2 text-[14px] text-slate-900">
+        {renderMathExpression(card.formula || "", true)}
+      </div>
+      {card.meaning ? <p className="mt-3 font-mono text-[12px] leading-6 text-slate-700">{formatRenderableText(card.meaning)}</p> : null}
+      {card.whenToUse ? <p className="mt-2 font-mono text-[12px] leading-6 text-slate-600"><span className="font-bold text-slate-800">Use when:</span> {formatRenderableText(card.whenToUse)}</p> : null}
+    </div>
+  );
 
   const buildStudentNotesTemplateContent = (
     studentNotes: NonNullable<SessionPlan["studentLessonNotes"]>,
@@ -491,26 +1117,43 @@ export default function App() {
 
     if (Array.isArray(studentNotes.workedExamples) && studentNotes.workedExamples.length > 0) {
       studentNotes.workedExamples.forEach((example, index) => {
+        const formulaLines = normalizeList(example.formula);
+        const solutionLines = normalizeList(example.solutionSteps);
+        const givenLines = normalizeList(example.given);
+        const plainStepLines = normalizeList(example.steps);
         addSection(
           example.title || `Worked Example ${index + 1}`,
           [
-            normalizeList(example.steps).length ? `Steps: ${normalizeList(example.steps).join("; ")}` : "",
+            example.problem ? `Problem: ${formatRenderableText(example.problem)}` : "",
+            ...givenLines.map((item, itemIndex) => `${itemIndex === 0 ? "Given" : "Given"}: ${item}`),
+            ...formulaLines.map((item, itemIndex) => `${itemIndex === 0 ? "Formula" : "Formula"}: ${item}`),
+            ...(solutionLines.length > 0
+              ? solutionLines.map((item, itemIndex) => `Step ${itemIndex + 1}: ${item}`)
+              : plainStepLines.map((item, itemIndex) => `Step ${itemIndex + 1}: ${item}`)),
             example.explanation ? `Explanation: ${formatRenderableText(example.explanation)}` : "",
+            example.finalAnswer ? `Final answer: ${formatRenderableText(example.finalAnswer)}` : "",
           ],
-          [example.title || `Example ${index + 1}`],
+          [
+            example.title || `Example ${index + 1}`,
+            ...formulaLines,
+            ...(example.finalAnswer ? [formatRenderableText(example.finalAnswer)] : []),
+          ],
         );
       });
     }
 
     if (studentNotes.revisionSection) {
+      const revisionFormulaLines = normalizeList(studentNotes.revisionSection.formulas);
       addSection(
         "Revision Recap",
         [
           normalizeList(studentNotes.revisionSection.definitions).length ? `Definitions: ${normalizeList(studentNotes.revisionSection.definitions).join("; ")}` : "",
+          revisionFormulaLines.length ? `Formulas: ${revisionFormulaLines.join("; ")}` : "",
           normalizeList(studentNotes.revisionSection.facts).length ? `Facts: ${normalizeList(studentNotes.revisionSection.facts).join("; ")}` : "",
           normalizeList(studentNotes.revisionSection.quickRecap).length ? `Quick recap: ${normalizeList(studentNotes.revisionSection.quickRecap).join("; ")}` : "",
         ],
         [
+          ...revisionFormulaLines,
           ...normalizeList(studentNotes.revisionSection.keywords),
           ...normalizeList(studentNotes.revisionSection.conceptMap),
         ],
@@ -542,10 +1185,34 @@ export default function App() {
     ]);
 
     return {
-      noteTitle: normalizePdfText(formatRenderableText(studentNotes.title || fallbackTitle || "Cornell Note")).replace(/\s+/g, " ").trim() || "Cornell Note",
+      noteTitle: normalizePdfText(formatRenderableText(studentNotes.title || fallbackTitle || "Session Notes")).replace(/\s+/g, " ").trim() || "Session Notes",
       cueItems,
       noteSections,
       summaryLines,
+    };
+  };
+
+  const buildStudentCornellHeading = (
+    session: Pick<SessionPlan, "title" | "sessionNumber" | "studentLessonNotes">,
+    template: ReturnType<typeof buildStudentNotesTemplateContent>,
+    context: { subjectLabel: string; gradeLabel: string; dateLabel: string },
+  ) => {
+    const normalize = (value: unknown) => normalizePdfText(formatRenderableText(value)).replace(/\s+/g, " ").trim();
+    const primaryHeading = normalize(session.title || template.noteTitle || "Session Notes") || "Session Notes";
+    const candidateSecondary = normalize(session.studentLessonNotes?.title || template.noteTitle || "");
+    const secondaryHeading = candidateSecondary && candidateSecondary.toLowerCase() !== primaryHeading.toLowerCase()
+      ? candidateSecondary
+      : "";
+    const sessionLabel = Number.isFinite(Number(session.sessionNumber)) ? `Session ${session.sessionNumber}` : "Session";
+    const metaLine = [sessionLabel, context.subjectLabel, context.gradeLabel, context.dateLabel].filter(Boolean).join("  •  ");
+    const topicLabel = secondaryHeading || primaryHeading;
+
+    return {
+      primaryHeading,
+      secondaryHeading,
+      topicLabel,
+      sessionLabel,
+      metaLine,
     };
   };
 
@@ -842,11 +1509,26 @@ export default function App() {
                       {renderNoteListSection({ title: "Expected Answers", items: getRenderableList(block.expectedAnswers), accent: "emerald" })}
                       {renderNoteListSection({ title: "Activity", items: getRenderableList(block.activity), accent: "teal" })}
                       {renderNoteListSection({ title: "Board Work", items: getRenderableList(block.boardWork), accent: "amber" })}
+                      {renderNoteListSection({ title: "Board Steps", items: getRenderableMathLines(block.boardSteps), accent: "slate", ordered: true })}
+                      {renderNoteListSection({ title: "Solution Flow", items: getRenderableMathLines(block.solutionFlow), accent: "emerald", ordered: true })}
                     </div>
 
                     {getRenderableList(block.examples).length > 0 ? (
                       <div className="mt-4 rounded-[20px] border border-slate-200 bg-white px-4 py-3 text-xs leading-relaxed text-slate-600">
                         <span className="font-semibold text-slate-800">Examples:</span> {getRenderableList(block.examples).join("; ")}
+                      </div>
+                    ) : null}
+                    {getRenderableMathLines(block.proofSteps).length > 0 ? (
+                      <div className="mt-4 rounded-[20px] border border-sky-100 bg-sky-50/70 p-4">
+                        <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-sky-700">Proof / Reasoning Steps</div>
+                        <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs leading-relaxed text-sky-900">
+                          {getRenderableMathLines(block.proofSteps).map((item, stepIdx) => <li key={`${item}-${stepIdx}`}>{renderMathExpression(item)}</li>)}
+                        </ol>
+                      </div>
+                    ) : null}
+                    {getMathDiagramList(block.geometryDiagrams).length > 0 ? (
+                      <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                        {getMathDiagramList(block.geometryDiagrams).map((diagram) => <div key={diagram.id}>{renderGeometryDiagram(diagram, true)}</div>)}
                       </div>
                     ) : null}
                   </div>
@@ -871,6 +1553,27 @@ export default function App() {
                     ) : null}
                     {getRenderableList(concept.visuals).length > 0 ? (
                       <div className="mt-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Visual cues:</span> {getRenderableList(concept.visuals).join("; ")}</div>
+                    ) : null}
+                    {getRenderableMathLines(concept.solutionFlow).length > 0 ? (
+                      <div className="mt-3 rounded-[18px] border border-emerald-100 bg-emerald-50/70 p-3">
+                        <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-700">Solution Flow</div>
+                        <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs leading-relaxed text-emerald-900">
+                          {getRenderableMathLines(concept.solutionFlow).map((item, stepIdx) => <li key={`${item}-${stepIdx}`}>{renderMathExpression(item)}</li>)}
+                        </ol>
+                      </div>
+                    ) : null}
+                    {getRenderableMathLines(concept.proofSteps).length > 0 ? (
+                      <div className="mt-3 rounded-[18px] border border-sky-100 bg-sky-50/70 p-3">
+                        <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-sky-700">Proof Steps</div>
+                        <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs leading-relaxed text-sky-900">
+                          {getRenderableMathLines(concept.proofSteps).map((item, stepIdx) => <li key={`${item}-${stepIdx}`}>{renderMathExpression(item)}</li>)}
+                        </ol>
+                      </div>
+                    ) : null}
+                    {getMathDiagramList(concept.geometryDiagrams).length > 0 ? (
+                      <div className="mt-3 grid gap-3">
+                        {getMathDiagramList(concept.geometryDiagrams).map((diagram) => <div key={diagram.id}>{renderGeometryDiagram(diagram, true)}</div>)}
+                      </div>
                     ) : null}
                   </div>
                 ))}
@@ -954,11 +1657,26 @@ export default function App() {
     );
   };
 
-  const renderStudentNotesPanel = (studentNotes: NonNullable<SessionPlan["studentLessonNotes"]>) => {
-    const template = buildStudentNotesTemplateContent(studentNotes, studentNotes.title || "Student Notes");
+  const renderStudentNotesPanel = (session: SessionPlan, studentNotes: NonNullable<SessionPlan["studentLessonNotes"]>) => {
+    const template = buildStudentNotesTemplateContent(studentNotes, session.title || studentNotes.title || "Student Notes");
     const subjectLabel = formatRenderableText(extractedData?.subject || activeWorkspace?.curriculumSnapshot?.subject || "Subject");
     const gradeLabel = formatRenderableText(extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "Grade");
     const dateLabel = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const heading = buildStudentCornellHeading(session, template, { subjectLabel, gradeLabel, dateLabel });
+    const revisionFormulaLines = getRenderableMathLines(studentNotes.revisionSection?.formulas);
+    const formulaCards = Array.isArray(studentNotes.formulaCards) ? studentNotes.formulaCards : [];
+    const geometryDiagrams = getMathDiagramList(studentNotes.geometryDiagrams);
+    const proofSteps = getRenderableMathLines(studentNotes.proofSteps);
+    const commonMistakes = Array.isArray(studentNotes.commonMistakes) ? studentNotes.commonMistakes : [];
+    const comparisonTables = Array.isArray(studentNotes.comparisonTables) ? studentNotes.comparisonTables : [];
+    const diagramById = new Map(geometryDiagrams.map((diagram) => [diagram.id, diagram]));
+    const workedExampleDiagramRefs = new Set(
+      (Array.isArray(studentNotes.workedExamples) ? studentNotes.workedExamples : [])
+        .map((example) => example.diagramRef)
+        .filter((id): id is string => Boolean(id))
+    );
+    const visualBankDiagrams = geometryDiagrams.filter((diagram) => !workedExampleDiagramRefs.has(diagram.id));
+    const renderedInlineDiagramIds = new Set<string>();
 
     return (
       <div className="overflow-hidden rounded-[30px] border border-[#d7d2c5] bg-[#f6f1ea] shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
@@ -973,8 +1691,17 @@ export default function App() {
           </div>
 
           <div className="mt-5">
-            <div className="font-mono text-[2rem] font-black tracking-tight text-slate-800 md:text-[2.35rem]">
-              Cornell Note
+            <div className="font-mono text-[11px] font-black uppercase tracking-[0.22em] text-[#4f819c]">Student Notes</div>
+            <div className="mt-2 font-mono text-[1.9rem] font-black leading-tight tracking-tight text-slate-800 md:text-[2.35rem]">
+              {heading.primaryHeading}
+            </div>
+            {heading.secondaryHeading ? (
+              <div className="mt-2 max-w-4xl font-mono text-[13px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                {heading.secondaryHeading}
+              </div>
+            ) : null}
+            <div className="mt-3 font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">
+              {heading.metaLine}
             </div>
             {studentNotes.sessionOverview ? (
               <p className="mt-3 max-w-4xl font-mono text-[13px] leading-6 text-slate-600">
@@ -985,12 +1712,13 @@ export default function App() {
 
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <div className="rounded-[6px] border border-[#f0ece4] bg-[#fbfaf6] px-4 py-3 font-mono text-[12px] text-slate-600 shadow-sm">
-              <span className="mr-2 text-slate-400">topic</span>
-              {template.noteTitle || "Cornell Note"}
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Lesson Focus</div>
+              <div className="mt-2 text-[13px] font-bold text-slate-700">{heading.topicLabel || "Session Notes"}</div>
             </div>
             <div className="rounded-[6px] border border-[#f0ece4] bg-[#fbfaf6] px-4 py-3 font-mono text-[12px] text-slate-600 shadow-sm">
-              <span className="mr-2 text-slate-400">date</span>
-              {dateLabel}  •  {subjectLabel}  •  {gradeLabel}
+              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Session Details</div>
+              <div className="mt-2 text-[13px] font-bold text-slate-700">{heading.sessionLabel}</div>
+              <div className="mt-1 text-[12px] text-slate-500">{subjectLabel}  •  {gradeLabel}  •  {dateLabel}</div>
             </div>
           </div>
 
@@ -1027,12 +1755,148 @@ export default function App() {
             </section>
           </div>
 
+          {formulaCards.length > 0 ? (
+            <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Formula Cards</div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {formulaCards.map((card, idx) => renderFormulaCard(card, idx))}
+              </div>
+            </div>
+          ) : null}
+
+          {comparisonTables.length > 0 ? (
+            <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Tables</div>
+              <div className="mt-4 grid gap-4">
+                {comparisonTables.map((table, tableIdx) => (
+                  <div key={`${table.title}-${tableIdx}`} className="overflow-hidden rounded-[6px] border border-[#e7dfd2] bg-white">
+                    <div className="border-b border-[#e7dfd2] bg-[#f8fafc] px-4 py-3 font-mono text-[13px] font-black text-slate-800">{formatRenderableText(table.title || `Table ${tableIdx + 1}`)}</div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-[520px] border-collapse font-mono text-[12px] text-slate-700">
+                        {Array.isArray(table.headers) && table.headers.length > 0 ? (
+                          <thead>
+                            <tr className="bg-[#fbfaf7]">
+                              {table.headers.map((header, idx) => <th key={`${header}-${idx}`} className="border-b border-[#e7dfd2] px-4 py-3 text-left font-black text-slate-800">{formatRenderableText(header)}</th>)}
+                            </tr>
+                          </thead>
+                        ) : null}
+                        <tbody>
+                          {(Array.isArray(table.rows) ? table.rows : []).map((row, rowIdx) => (
+                            <tr key={rowIdx} className="odd:bg-white even:bg-[#fbfaf7]">
+                              {(Array.isArray(row) ? row : []).map((cell, cellIdx) => <td key={`${rowIdx}-${cellIdx}`} className="border-b border-[#efeae0] px-4 py-3 align-top">{renderMathExpression(cell)}</td>)}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {visualBankDiagrams.length > 0 ? (
+            <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Geometry Diagrams</div>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                {visualBankDiagrams.map((diagram) => (
+                  <div key={diagram.id}>{renderGeometryDiagram(diagram)}</div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {proofSteps.length > 0 ? (
+            <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Proof / Reasoning Flow</div>
+              <ol className="mt-4 list-decimal space-y-3 pl-5 font-mono text-[12px] leading-6 text-slate-700">
+                {proofSteps.map((item, idx) => <li key={`${formatRenderableText(item)}-${idx}`}>{renderMixedMathLine(item)}</li>)}
+              </ol>
+            </div>
+          ) : null}
+
           {template.summaryLines.length > 0 ? (
             <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
               <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Summary</div>
               <div className="mt-3 space-y-2 font-mono text-[12px] leading-6 text-slate-700">
                 {template.summaryLines.slice(0, 8).map((item, idx) => (
                   <p key={`${item}-${idx}`}>{item}</p>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {revisionFormulaLines.length > 0 ? (
+            <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Formula Bank</div>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                {revisionFormulaLines.map((item, idx) => (
+                  <div key={`${item}-${idx}`} className="rounded-[6px] border border-[#e7dfd2] bg-white px-4 py-3 font-mono text-[12px] leading-6 text-slate-700">
+                    {renderMixedMathLine(item)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {Array.isArray(studentNotes.workedExamples) && studentNotes.workedExamples.length > 0 ? (
+            <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Worked Solutions</div>
+              <div className="mt-4 space-y-4">
+                {studentNotes.workedExamples.map((example, idx) => {
+                  const givenLines = getRenderableMathLines(example.given);
+                  const formulaLines = getRenderableMathLines(example.formula);
+                  const solutionLines = getRenderableMathLines(example.solutionSteps);
+                  const reasoningLines = getRenderableMathLines(example.reasoning);
+                  const stepLines = getRenderableList(example.steps);
+                  const finalAnswer = formatRenderableText(example.finalAnswer).trim();
+                  const linkedDiagram = example.diagramRef ? diagramById.get(example.diagramRef) : null;
+                  const shouldRenderLinkedDiagram = Boolean(linkedDiagram && !renderedInlineDiagramIds.has(linkedDiagram.id));
+                  if (linkedDiagram && shouldRenderLinkedDiagram) renderedInlineDiagramIds.add(linkedDiagram.id);
+                  return (
+                    <div key={`${example.title || "worked-example"}-${idx}`} className="rounded-[6px] border border-[#e7dfd2] bg-white p-4">
+                      <div className="font-mono text-[13px] font-black text-slate-800">{formatRenderableText(example.title || `Worked Example ${idx + 1}`)}</div>
+                      {linkedDiagram && shouldRenderLinkedDiagram ? <div className="mt-3">{renderGeometryDiagram(linkedDiagram, true)}</div> : null}
+                      {linkedDiagram && !shouldRenderLinkedDiagram ? <div className="mt-2 font-mono text-[11px] text-slate-500">Uses the diagram shown above.</div> : null}
+                      {example.problem ? <p className="mt-2 font-mono text-[12px] leading-6 text-slate-700"><span className="font-bold text-slate-800">Problem:</span> {formatRenderableText(example.problem)}</p> : null}
+                      {givenLines.length > 0 ? <div className="mt-2 space-y-1 font-mono text-[12px] leading-6 text-slate-700">{(Array.isArray(example.given) ? example.given : []).map((item, givenIdx) => <div key={`${formatRenderableText(item)}-${givenIdx}`}><span className="font-bold text-slate-800">{givenIdx === 0 ? "Given:" : ""}</span>{givenIdx === 0 ? " " : ""}{renderMixedMathLine(item)}</div>)}</div> : null}
+                      {formulaLines.length > 0 ? <div className="mt-2 rounded-[6px] bg-[#f8fafc] px-3 py-2 font-mono text-[12px] leading-6 text-slate-700 space-y-1">{(Array.isArray(example.formula) ? example.formula : []).map((item, formulaIdx) => <div key={`${formatRenderableText(item)}-${formulaIdx}`}><span className="font-bold text-slate-800">{formulaIdx === 0 ? "Formula:" : ""}</span>{formulaIdx === 0 ? " " : ""}{renderMixedMathLine(item, true)}</div>)}</div> : null}
+                      {solutionLines.length > 0 ? (
+                        <ol className="mt-3 list-decimal space-y-2 pl-5 font-mono text-[12px] leading-6 text-slate-700">
+                          {(Array.isArray(example.solutionSteps) ? example.solutionSteps : []).map((item, stepIdx) => <li key={`${formatRenderableText(item)}-${stepIdx}`}>{renderMixedMathLine(item)}</li>)}
+                        </ol>
+                      ) : stepLines.length > 0 ? (
+                        <ol className="mt-3 list-decimal space-y-2 pl-5 font-mono text-[12px] leading-6 text-slate-700">
+                          {(Array.isArray(example.steps) ? example.steps : []).map((item, stepIdx) => <li key={`${formatRenderableText(item)}-${stepIdx}`}>{renderMixedMathLine(item)}</li>)}
+                        </ol>
+                      ) : null}
+                      {reasoningLines.length > 0 ? (
+                        <div className="mt-3 rounded-[6px] border border-sky-100 bg-sky-50 px-3 py-2">
+                          <div className="font-mono text-[11px] font-black uppercase tracking-[0.08em] text-sky-700">Reasoning</div>
+                          <ol className="mt-2 list-decimal space-y-1 pl-4 font-mono text-[12px] leading-6 text-sky-900">
+                            {(Array.isArray(example.reasoning) ? example.reasoning : []).map((item, reasonIdx) => <li key={`${formatRenderableText(item)}-${reasonIdx}`}>{renderMixedMathLine(item)}</li>)}
+                          </ol>
+                        </div>
+                      ) : null}
+                      {example.explanation ? <p className="mt-3 font-mono text-[12px] leading-6 text-slate-700">{formatRenderableText(example.explanation)}</p> : null}
+                      {finalAnswer ? <div className="mt-3 rounded-[6px] border border-emerald-200 bg-emerald-50 px-3 py-2 font-mono text-[12px] font-bold text-emerald-800">Final answer: {renderMixedMathLine(example.finalAnswer || finalAnswer, true)}</div> : null}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+
+          {commonMistakes.length > 0 ? (
+            <div className="mt-6 rounded-[8px] border border-rose-100 bg-rose-50/70 p-4 shadow-sm">
+              <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-rose-700">Common Mistakes</div>
+              <div className="mt-4 grid gap-3 md:grid-cols-2">
+                {commonMistakes.map((item, idx) => (
+                  <div key={`${item.mistake}-${idx}`} className="rounded-[6px] border border-rose-100 bg-white px-4 py-3 font-mono text-[12px] leading-6">
+                    <div className="font-black text-rose-800">{formatRenderableText(item.mistake)}</div>
+                    {item.correction ? <div className="mt-2 text-slate-700"><span className="font-bold">Correction:</span> {formatRenderableText(item.correction)}</div> : null}
+                    {item.example ? <div className="mt-2 text-slate-600"><span className="font-bold">Example:</span> {renderMixedMathLine(item.example)}</div> : null}
+                  </div>
                 ))}
               </div>
             </div>
@@ -1427,13 +2291,16 @@ export default function App() {
     const subjectLabel = formatRenderableText(extractedData?.subject || activeWorkspace?.curriculumSnapshot?.subject || "Subject");
     const gradeLabel = formatRenderableText(extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "Grade");
     const dateLabel = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const heading = buildStudentCornellHeading(session, template, { subjectLabel, gradeLabel, dateLabel });
 
     const canvasWidth = 1240;
     const canvasHeight = 1754;
     const pagePadding = 62;
     const patternHeight = 210;
     const iconSize = 78;
-    const titleTop = 290;
+    const titleTop = 274;
+    const subtitleTop = 328;
+    const metaLineTop = 358;
     const metaTop = 392;
     const metaHeight = 52;
     const metaGap = 24;
@@ -1602,6 +2469,103 @@ export default function App() {
 
     const renderedPages: HTMLCanvasElement[] = [];
 
+    const drawCornellHeader = (
+      ctx: CanvasRenderingContext2D,
+      leftLabel: string,
+      rightLabel: string,
+      rightEyebrow: string,
+    ) => {
+      const headingLines = wrapCanvasText(ctx, heading.primaryHeading, totalWidth, "700 44px Courier New");
+      drawWrappedLines(ctx, headingLines, pagePadding, titleTop, 46, colors.ink, "700 44px Courier New", 2);
+      if (heading.secondaryHeading) {
+        const secondaryLines = wrapCanvasText(ctx, heading.secondaryHeading, totalWidth, "700 18px Courier New");
+        drawWrappedLines(ctx, secondaryLines, pagePadding, subtitleTop, 22, colors.muted, "700 18px Courier New", 2);
+      }
+      ctx.fillStyle = colors.muted;
+      ctx.font = "700 14px Courier New";
+      ctx.fillText(heading.metaLine, pagePadding, metaLineTop);
+
+      const metaWidth = (totalWidth - metaGap) / 2;
+      [
+        { label: leftLabel, eyebrow: "lesson focus", x: pagePadding },
+        { label: rightLabel, eyebrow: rightEyebrow, x: pagePadding + metaWidth + metaGap },
+      ].forEach((item) => {
+        drawRoundedRect(ctx, item.x, metaTop, metaWidth, metaHeight, 6, colors.panel, colors.panelBorder, 1);
+        ctx.fillStyle = colors.muted;
+        ctx.font = "700 10px Courier New";
+        ctx.fillText(item.eyebrow, item.x + 14, metaTop + 16);
+        ctx.fillStyle = colors.ink;
+        ctx.font = "700 15px Courier New";
+        ctx.fillText(item.label, item.x + 14, metaTop + 35);
+      });
+    };
+
+    const createCornellCanvas = (
+      pageLabel: string,
+      cueItems: string[],
+      summaryLinesInput: string[],
+      pageIndex: number,
+    ) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Unable to render student notes PDF page.");
+      }
+
+      ctx.fillStyle = colors.paper;
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      ctx.drawImage(patternImage, 0, 0, canvasWidth, patternHeight);
+
+      drawNotebookIcon(ctx, pagePadding + 10, patternHeight - 40);
+
+      drawCornellHeader(
+        ctx,
+        pageLabel || heading.topicLabel || "Session Notes",
+        `${heading.sessionLabel}  •  ${dateLabel}`,
+        `${subjectLabel} • ${gradeLabel}`,
+      );
+
+      const cueX = pagePadding;
+      const noteX = pagePadding + cueWidth + contentGap;
+      drawRoundedRect(ctx, cueX, contentTop, cueWidth, contentHeight, 8, colors.panel, colors.panelBorder, 1.2);
+      drawRoundedRect(ctx, noteX, contentTop, noteWidth, contentHeight, 8, colors.panel, colors.panelBorder, 1.2);
+
+      ctx.fillStyle = colors.muted;
+      ctx.font = "700 15px Courier New";
+      ctx.fillText("Keywords - Questions", cueX + 16, contentTop + 22);
+      ctx.fillText("Notes", noteX + 16, contentTop + 22);
+
+      let cueY = contentTop + 60;
+      Array.from(new Set(cueItems)).slice(0, 18).forEach((item) => {
+        const lines = wrapCanvasText(ctx, item, cueWidth - 34, cueFont);
+        if (cueY + lines.length * cueLineHeight > contentTop + contentHeight - 20) return;
+        ctx.fillStyle = colors.muted;
+        ctx.font = cueFont;
+        ctx.fillText(".", cueX + 12, cueY);
+        drawWrappedLines(ctx, lines, cueX + 26, cueY, cueLineHeight, colors.ink, cueFont, 3);
+        cueY += lines.length * cueLineHeight + 10;
+      });
+
+      drawRoundedRect(ctx, pagePadding, summaryTop, totalWidth, summaryHeight, 8, colors.summary, colors.panelBorder, 1.2);
+      ctx.fillStyle = colors.muted;
+      ctx.font = "700 15px Courier New";
+      ctx.fillText("Summary", pagePadding + 16, summaryTop + 24);
+
+      const summaryLines = summaryLinesInput.length > 0
+        ? summaryLinesInput
+        : [`subject ${subjectLabel}  •  ${gradeLabel}`, pageIndex === 0 ? "Continue to the next page for more session notes." : "Visual note page."];
+      let summaryY = summaryTop + 58;
+      summaryLines.slice(0, 8).forEach((item) => {
+        const lines = wrapCanvasText(ctx, item, totalWidth - 34, summaryFont);
+        summaryY += drawWrappedLines(ctx, lines, pagePadding + 16, summaryY, 24, colors.ink, summaryFont, 3);
+        summaryY += 6;
+      });
+
+      return { canvas, ctx, noteX, noteY: contentTop + 52 };
+    };
+
     paginatedSections.forEach((pageSections, pageIndex) => {
       const canvas = document.createElement("canvas");
       canvas.width = canvasWidth;
@@ -1617,20 +2581,12 @@ export default function App() {
 
       drawNotebookIcon(ctx, pagePadding + 10, patternHeight - 40);
 
-      ctx.fillStyle = colors.ink;
-      ctx.font = "700 54px Courier New";
-      ctx.fillText("Cornell Note", pagePadding, titleTop);
-
-      const metaWidth = (totalWidth - metaGap) / 2;
-      [
-        { label: template.noteTitle || "Session Notes", x: pagePadding },
-        { label: `date ${dateLabel}`, x: pagePadding + metaWidth + metaGap },
-      ].forEach((item) => {
-        drawRoundedRect(ctx, item.x, metaTop, metaWidth, metaHeight, 6, colors.panel, colors.panelBorder, 1);
-        ctx.fillStyle = colors.muted;
-        ctx.font = "500 16px Courier New";
-        ctx.fillText(item.label, item.x + 14, metaTop + 31);
-      });
+      drawCornellHeader(
+        ctx,
+        heading.topicLabel || "Session Notes",
+        `${heading.sessionLabel}  •  ${dateLabel}`,
+        `${subjectLabel} • ${gradeLabel}`,
+      );
 
       const cueX = pagePadding;
       const noteX = pagePadding + cueWidth + contentGap;
@@ -1682,7 +2638,7 @@ export default function App() {
         ? template.summaryLines
         : [
             `subject ${subjectLabel}  •  ${gradeLabel}`,
-            "Continue to the next page for more Cornell notes.",
+            "Continue to the next page for more session notes.",
           ];
 
       let summaryY = summaryTop + 58;
@@ -1694,6 +2650,67 @@ export default function App() {
 
       renderedPages.push(canvas);
     });
+
+    const visualItems: Array<{ title: string; caption: string; src: string; cues: string[] }> = [];
+    (Array.isArray(studentNotes.sections) ? studentNotes.sections : []).forEach((section) => {
+      const assets = Array.isArray(section.visualAssets) ? section.visualAssets : [];
+      assets.forEach((asset) => {
+        if (!asset?.imageDataUrl) return;
+        visualItems.push({
+          title: formatRenderableText(section.heading || asset.alt || "Generated Visual"),
+          caption: formatRenderableText(asset.alt || section.heading || "Generated lesson visual"),
+          src: asset.imageDataUrl,
+          cues: [
+            formatRenderableText(section.heading || "Visual"),
+            ...getRenderableList(section.visualSupport).slice(0, 4),
+          ],
+        });
+      });
+    });
+
+    const diagramRefs = new Set(
+      (Array.isArray(studentNotes.workedExamples) ? studentNotes.workedExamples : [])
+        .map((example) => example.diagramRef)
+        .filter(Boolean)
+    );
+    getMathDiagramList(studentNotes.geometryDiagrams).forEach((diagram) => {
+      const svgMarkup = buildMathDiagramSvg(diagram);
+      visualItems.push({
+        title: formatRenderableText(diagram.title || diagram.type || "Math Diagram"),
+        caption: formatRenderableText(diagram.caption || (diagramRefs.has(diagram.id) ? "Diagram used in the worked example." : "Math diagram")),
+        src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`,
+        cues: [formatRenderableText(diagram.type || "Diagram"), formatRenderableText(diagram.title || "Geometry")],
+      });
+    });
+
+    for (const [visualIndex, visual] of visualItems.entries()) {
+      const { canvas, ctx, noteX, noteY } = createCornellCanvas(
+        visual.title || "Visual Notes",
+        visual.cues,
+        [visual.caption || "Study the visual and connect it to the written solution."],
+        visualIndex + paginatedSections.length,
+      );
+      const image = await loadImageElement(visual.src);
+      let cursorY = noteY;
+      const titleLines = wrapCanvasText(ctx, visual.title, noteWidth - 34, noteTitleFont);
+      cursorY += drawWrappedLines(ctx, titleLines, noteX + 16, cursorY, 30, colors.ink, noteTitleFont, 3);
+      cursorY += 18;
+
+      const frameX = noteX + 16;
+      const frameY = cursorY;
+      const frameW = noteWidth - 32;
+      const frameH = 560;
+      drawRoundedRect(ctx, frameX, frameY, frameW, frameH, 8, "#ffffff", colors.panelBorder, 1.2);
+      const scale = Math.min((frameW - 28) / image.width, (frameH - 28) / image.height);
+      const imgW = image.width * scale;
+      const imgH = image.height * scale;
+      ctx.drawImage(image, frameX + (frameW - imgW) / 2, frameY + (frameH - imgH) / 2, imgW, imgH);
+      cursorY += frameH + 24;
+
+      const captionLines = wrapCanvasText(ctx, visual.caption, noteWidth - 34, noteBodyFont);
+      drawWrappedLines(ctx, captionLines, noteX + 16, cursorY, noteLineHeight, colors.ink, noteBodyFont, 5);
+      renderedPages.push(canvas);
+    }
 
     return buildImagePdfBlob(
       renderedPages.map((pageCanvas) => ({
@@ -2015,6 +3032,37 @@ export default function App() {
       y += 6;
     };
 
+    const drawMathDiagramFigure = async (diagram: MathDiagramSpec) => {
+      const svgMarkup = buildMathDiagramSvg(diagram);
+      const image = await loadImageElement(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`);
+      await drawImageFigure(
+        diagram.title || diagram.type,
+        image.src,
+        diagram.caption || diagram.title || diagram.type,
+        []
+      );
+    };
+
+    const drawCompactTable = (title: string, headers: string[] = [], rows: string[][] = []) => {
+      if (!headers.length && !rows.length) return;
+      drawSectionHeading(title || "Table");
+      if (headers.length) {
+        drawBodyParagraph(headers.join(" | "), {
+          font: "700 13px Helvetica, Arial, sans-serif",
+          lineHeight: 19,
+          color: theme.accent,
+          spacingAfter: 6,
+        });
+      }
+      rows.forEach((row) => {
+        drawBodyParagraph(row.map((cell) => formatRenderableText(cell)).join(" | "), {
+          font: "400 13px Helvetica, Arial, sans-serif",
+          lineHeight: 19,
+          spacingAfter: 6,
+        });
+      });
+    };
+
     drawTitleBlock();
 
     if (noteType === "teacher" && session.teacherLessonNotes) {
@@ -2030,7 +3078,7 @@ export default function App() {
 
       if (Array.isArray(teacherNotes.lessonBlocks) && teacherNotes.lessonBlocks.length > 0) {
         drawSectionHeading("Detailed Lesson Blocks", "Stage-wise flow for instruction");
-        teacherNotes.lessonBlocks.forEach((block, index) => {
+        for (const [index, block] of teacherNotes.lessonBlocks.entries()) {
           const title = `Block ${index + 1}${block.title ? `: ${formatRenderableText(block.title)}` : ""}${block.durationMinutes != null ? ` (${formatRenderableText(block.durationMinutes)} min)` : ""}`;
           drawSubheading(title);
           drawLabelValueLines([
@@ -2040,10 +3088,42 @@ export default function App() {
             { label: "Expected answer", values: getRenderableList(block.expectedAnswers) },
             { label: "Activity", values: getRenderableList(block.activity) },
             { label: "Board work", values: getRenderableList(block.boardWork) },
+            { label: "Board step", values: getRenderableMathLines(block.boardSteps) },
+            { label: "Solution flow", values: getRenderableMathLines(block.solutionFlow) },
+            { label: "Proof step", values: getRenderableMathLines(block.proofSteps) },
             { label: "Example", values: getRenderableList(block.examples) },
           ]);
+          for (const diagram of getMathDiagramList(block.geometryDiagrams)) {
+            await drawMathDiagramFigure(diagram);
+          }
           drawDivider(2, 12);
-        });
+        }
+      }
+
+      if (Array.isArray(teacherNotes.conceptFlow) && teacherNotes.conceptFlow.length > 0) {
+        drawSectionHeading("Concept Flow");
+        for (const [index, concept] of teacherNotes.conceptFlow.entries()) {
+          drawSubheading(`Concept ${index + 1}: ${formatRenderableText(concept.conceptName)}`);
+          drawLabelValueLines([
+            { label: "Definition", values: getRenderableList(concept.definition) },
+            { label: "Core explanation", values: getRenderableList(concept.coreExplanation) },
+            { label: "Importance", values: getRenderableList(concept.importance) },
+            { label: "Observed in", values: getRenderableList(concept.observedIn) },
+            { label: "Why study it", values: getRenderableList(concept.whyStudyIt) },
+            { label: "Relationship with previous", values: getRenderableList(concept.relationshipWithPrevious) },
+            { label: "Relationship with future", values: getRenderableList(concept.relationshipWithFuture) },
+            { label: "Keywords", values: getRenderableList(concept.keywords) },
+            { label: "Teacher moves", values: getRenderableList(concept.teacherMoves) },
+            { label: "Examples", values: getRenderableList(concept.examples) },
+            { label: "Visuals", values: getRenderableList(concept.visuals) },
+            { label: "Solution flow", values: getRenderableMathLines(concept.solutionFlow) },
+            { label: "Proof step", values: getRenderableMathLines(concept.proofSteps) },
+          ]);
+          for (const diagram of getMathDiagramList(concept.geometryDiagrams)) {
+            await drawMathDiagramFigure(diagram);
+          }
+          drawDivider(2, 12);
+        }
       }
 
       if (Array.isArray(teacherNotes.classroomQuestions) && teacherNotes.classroomQuestions.length > 0) {
@@ -2076,11 +3156,43 @@ export default function App() {
 
     if (noteType === "student" && session.studentLessonNotes) {
       const studentNotes = session.studentLessonNotes;
+      const exportedMathDiagrams = getMathDiagramList(studentNotes.geometryDiagrams);
+      const exportedDiagramById = new Map(exportedMathDiagrams.map((diagram) => [diagram.id, diagram]));
+      const exportedWorkedDiagramRefs = new Set(
+        (Array.isArray(studentNotes.workedExamples) ? studentNotes.workedExamples : [])
+          .map((example) => example.diagramRef)
+          .filter((id): id is string => Boolean(id))
+      );
+      const exportedInlineDiagramIds = new Set<string>();
       drawPlainParagraph("Session Overview", formatRenderableText(studentNotes.sessionOverview));
       drawPlainParagraph("Introduction", formatRenderableText(studentNotes.introduction));
       drawListSection("Learning Objectives", getRenderableList(studentNotes.learningObjectives));
       drawListSection("Quick Recall", getRenderableList(studentNotes.quickRecall));
       drawListSection("Easy to Remember", getRenderableList(studentNotes.easyToRemember));
+
+      if (Array.isArray(studentNotes.formulaCards) && studentNotes.formulaCards.length > 0) {
+        drawSectionHeading("Formula Cards");
+        studentNotes.formulaCards.forEach((card, index) => {
+          drawSubheading(formatRenderableText(card.title || `Formula ${index + 1}`));
+          drawLabelValueLines([
+            { label: "Formula", values: getRenderableList(card.formula) },
+            { label: "Meaning", values: getRenderableList(card.meaning) },
+            { label: "Use when", values: getRenderableList(card.whenToUse) },
+          ]);
+        });
+      }
+
+      if (Array.isArray(studentNotes.comparisonTables) && studentNotes.comparisonTables.length > 0) {
+        studentNotes.comparisonTables.forEach((table) => {
+          drawCompactTable(formatRenderableText(table.title || "Comparison Table"), getRenderableList(table.headers), Array.isArray(table.rows) ? table.rows : []);
+        });
+      }
+
+      for (const diagram of exportedMathDiagrams.filter((item) => !exportedWorkedDiagramRefs.has(item.id))) {
+        await drawMathDiagramFigure(diagram);
+      }
+
+      drawListSection("Proof / Reasoning Flow", getRenderableMathLines(studentNotes.proofSteps), { ordered: true });
 
       if (Array.isArray(studentNotes.sections) && studentNotes.sections.length > 0) {
         drawSectionHeading("Concept Notes", "Main ideas with supporting explanation and visuals");
@@ -2103,7 +3215,9 @@ export default function App() {
             { label: "Memory tip", values: getRenderableList(section.memoryTechniques) },
             { label: "Summary", values: getRenderableList(section.conceptSummary) },
           ]);
-          const assets = Array.isArray(section.visualAssets) ? section.visualAssets.filter((asset) => Boolean(asset?.imageDataUrl)) : [];
+          const assets = Array.isArray(section.visualAssets)
+            ? section.visualAssets.filter((asset) => Boolean(asset?.imageDataUrl))
+            : [];
           for (const [assetIndex, asset] of assets.entries()) {
             await drawImageFigure(
               formatRenderableText(section.heading) || `Concept ${index + 1} Visual ${assetIndex + 1}`,
@@ -2128,19 +3242,32 @@ export default function App() {
 
       if (Array.isArray(studentNotes.workedExamples) && studentNotes.workedExamples.length > 0) {
         drawSectionHeading("Worked Examples");
-        studentNotes.workedExamples.forEach((example, index) => {
+        for (const [index, example] of studentNotes.workedExamples.entries()) {
           drawSubheading(`Example ${index + 1}${example.title ? `: ${formatRenderableText(example.title)}` : ""}`);
-          drawLabelValueLines([{ label: "Step", values: getRenderableList(example.steps) }]);
+          const linkedDiagram = example.diagramRef ? exportedDiagramById.get(example.diagramRef) : null;
+          if (linkedDiagram && !exportedInlineDiagramIds.has(linkedDiagram.id)) {
+            await drawMathDiagramFigure(linkedDiagram);
+            exportedInlineDiagramIds.add(linkedDiagram.id);
+          }
+          drawLabelValueLines([
+            { label: "Problem", values: getRenderableList(example.problem) },
+            { label: "Diagram", values: linkedDiagram ? [] : getRenderableList(example.diagramRef) },
+            { label: "Given", values: getRenderableMathLines(example.given) },
+            { label: "Formula", values: getRenderableMathLines(example.formula) },
+            { label: "Step", values: getRenderableMathLines(example.solutionSteps).length > 0 ? getRenderableMathLines(example.solutionSteps) : getRenderableList(example.steps) },
+            { label: "Reasoning", values: getRenderableMathLines(example.reasoning) },
+            { label: "Final Answer", values: getRenderableList(example.finalAnswer) },
+          ]);
           getRenderableList(example.explanation).forEach((item) => {
             drawBodyParagraph(item, { font: "400 15px Georgia, Times New Roman, serif", lineHeight: 22 });
           });
-        });
+        }
       }
 
       if (studentNotes.revisionSection) {
         drawSectionHeading("Revision Section");
         drawListSection("Definitions", getRenderableList(studentNotes.revisionSection.definitions));
-        drawListSection("Formulas", getRenderableList(studentNotes.revisionSection.formulas));
+        drawListSection("Formulas", getRenderableMathLines(studentNotes.revisionSection.formulas));
         drawListSection("Facts", getRenderableList(studentNotes.revisionSection.facts));
         drawListSection("Keywords", getRenderableList(studentNotes.revisionSection.keywords));
         drawListSection("Concept Map", getRenderableList(studentNotes.revisionSection.conceptMap));
@@ -2189,6 +3316,17 @@ export default function App() {
       drawListSection("Summary", getRenderableList(studentNotes.summary));
       drawListSection("Quick Revision", getRenderableList(studentNotes.quickRevision));
       drawListSection("Remember", getRenderableList(studentNotes.rememberPoints));
+      if (Array.isArray(studentNotes.commonMistakes) && studentNotes.commonMistakes.length > 0) {
+        drawSectionHeading("Common Mistakes");
+        studentNotes.commonMistakes.forEach((mistake, index) => {
+          drawSubheading(`Mistake ${index + 1}`);
+          drawLabelValueLines([
+            { label: "Mistake", values: getRenderableList(mistake.mistake) },
+            { label: "Correction", values: getRenderableList(mistake.correction) },
+            { label: "Example", values: getRenderableList(mistake.example) },
+          ]);
+        });
+      }
     }
 
     pages.push(canvas);
@@ -2934,7 +4072,7 @@ export default function App() {
 
     setErrorHeader(null);
     setLoading(true);
-    setLoadingMessage("Rendering Cornell-style student notes PDF...");
+    setLoadingMessage("Rendering Cornell-style student notes PDF with visuals...");
 
     try {
       const pdfBlob = await buildStudentCornellNotesPdfBlob(session);
@@ -7858,7 +8996,7 @@ export default function App() {
                                 </div>
                               ) : null}
                               {session.studentLessonNotes ? (
-                                renderStudentNotesPanel(session.studentLessonNotes)
+                                renderStudentNotesPanel(session, session.studentLessonNotes)
                               ) : (
                                 <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-xs text-slate-500">
                                   Student lesson notes have not been generated for this session yet.

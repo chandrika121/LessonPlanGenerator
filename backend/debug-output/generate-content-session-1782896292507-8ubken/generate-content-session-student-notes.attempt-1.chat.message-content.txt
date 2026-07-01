@@ -1,0 +1,227 @@
+{
+  "studentLessonNotes": {
+    "title": "Geometry (Implicit Unit from Context) - Session 6: Properties of Triangles",
+    "sessionOverview": "In this session, we explore the fundamental properties that define triangles. You will learn how angles and sides relate to each other through key rules like the Angle Sum Property and the Triangle Inequality Theorem.",
+    "introduction": "Welcome back! Today is Session 6 of our Geometry journey. If you've been following along, you know we are building a strong foundation in shapes. Triangles might look simple with just three sides, but they hold some powerful rules that help us solve complex problems without even measuring anything!",
+    "learningObjectives": [
+      "After this lesson you will be able to calculate the missing angle of any triangle using the Angle Sum Property.",
+      "You will understand why a straight line is 180° and how it connects to triangles.",
+      "You will learn the Triangle Inequality Theorem to determine if three given lengths can form a valid triangle.",
+      "You will be able to classify triangles based on their sides (scalene, isosceles, equilateral) and angles."
+    ],
+    "quickRecall": [
+      "Remember: A straight line measures 180°.",
+      "Previously learned: The sum of interior angles in a polygon depends on the number of sides.",
+      "You already know: Basic definitions of acute, obtuse, and right-angled triangles."
+    ],
+    "easyToRemember": [
+      "Three corners make 180°; two small sides must beat the big one to close the gap!"
+    ],
+    "comparisonTables": [
+      {
+        "title": "Types of Triangles by Sides",
+        "headers": ["Feature", "Scalene Triangle", "Isosceles Triangle"],
+        "rows": [
+          ["Side Lengths", "All three sides are different lengths.", "At least two sides are equal in length."],
+          ["Angle Measures", "All angles have different measures.", "The angles opposite the equal sides are also equal."],
+          ["Symmetry", "No lines of symmetry.", "One line of symmetry (if exactly two sides are equal)."]
+        ]
+      },
+      {
+        "title": "Types of Triangles by Angles",
+        "headers": ["Feature", "Acute Triangle", "Obtuse Triangle"],
+        "rows": [
+          ["Angle Measures", "All three angles are less than 90°.", "One angle is greater than 90°, the other two are acute."],
+          ["Visual Shape", "Looks 'pointy' on all corners.", "Has one wide, open corner."]
+        ]
+      }
+    ],
+    "sections": [
+      {
+        "heading": "The Angle Sum Property",
+        "explanation": "No matter how big or small a triangle is, if you add up its three interior angles, the total will always be 180°. This is like taking a straight line and bending it into a triangle shape.",
+        "keyPoints": [
+          "Sum of all internal angles = 180°",
+          "If two angles are known, subtract their sum from 180° to find the third."
+        ],
+        "examples": [
+          "Example: If you have a triangle with angles 50° and 60°, the missing angle is 180 - (50 + 60) = 70°.",
+          "Real-life: The corners of a slice of pizza or a road sign often form triangles where this rule applies."
+        ],
+        "whyItMatters": "This property allows you to solve for unknown angles in any triangle without needing a protractor, which is crucial for geometry proofs and real-world construction.",
+        "terminology": [
+          "Interior Angles",
+          "Sum of Angles"
+        ],
+        "detailedExplanation": "Imagine walking along the perimeter of a triangle. You turn at each corner to face the next side. By the time you complete one full loop and return to your starting position facing forward, you have turned exactly 360°. The turns you make are actually related to the exterior angles (180° - interior angle). Since there are three corners, the total turning is 3 * 180° = 540°, but since we turn in a circle (360°), the sum of the 'turns' inside adds up to 180°. A simpler way: Draw a line parallel to one side through the opposite vertex. The angles on that straight line add up to 180°, and they are equal to the triangle's internal angles.",
+        "observedIn": [
+          "Roof trusses in houses",
+          "Traffic signs (Yield, Stop)",
+          "Bridge supports"
+        ],
+        "visualSupport": [
+          "Diagram showing a triangle with arrows indicating 180° sum."
+        ],
+        "importantNotes": [
+          "Exam Point: Always check if the angles add up to exactly 180°. If they don't, it's not a valid Euclidean triangle.",
+          "Caution: Do not confuse interior angle sums with exterior angle properties (which also sum to 360°)."
+        ],
+        "memoryTechniques": [
+          "Mnemonic: 'T-R-I-A-N-G-L-E' -> T(180) R(eally I(nside A)n G(lue L)eaves E(nds at 180)"
+        ],
+        "conceptSummary": [
+          "The three angles of any triangle always add up to exactly 180 degrees."
+        ]
+      },
+      {
+        "heading": "Triangle Inequality Theorem",
+        "explanation": "This rule tells us which combinations of side lengths can actually form a closed shape. You cannot just pick any three numbers and make a triangle.",
+        "keyPoints": [
+          "The sum of the lengths of any two sides must be greater than the length of the third side.",
+          "If Side A + Side B = Side C, it forms a straight line (degenerate), not a triangle."
+        ],
+        "examples": [
+          "Valid: Sides 3cm, 4cm, and 5cm. (3+4 > 5). This works!",
+          "Invalid: Sides 1cm, 2cm, and 10cm. (1+2 = 3), which is NOT greater than 10. You can't reach across to close the gap."
+        ],
+        "whyItMatters": "This prevents impossible geometric constructions and helps in real-life scenarios like determining if three sticks of wood are long enough to form a stable frame.",
+        "terminology": [
+          "Triangle Inequality",
+          "Side Lengths"
+        ],
+        "detailedExplanation": "Think of the sides as strings. If you have two short strings and one very long string, no matter how hard you pull them together at the ends, they will never meet to form a triangle because the gap is too wide. The 'shortest path' between any two points on a straight line is that line itself; going via a third point (the other vertex) must always be longer than the direct distance.",
+        "observedIn": [
+          "Building frames",
+          "Navigation paths (shortest route)",
+          "Fencing problems"
+        ],
+        "visualSupport": [
+          "Diagram showing two short sticks failing to meet a long stick versus three medium sticks forming a triangle."
+        ],
+        "importantNotes": [
+          "Exam Point: To check validity, you only need to add the two shortest sides and compare them to the longest side. If Shortest + Middle > Longest, it works.",
+          "Caution: Do not assume any three numbers form a triangle."
+        ],
+        "memoryTechniques": [
+          "Phrase: 'Two small must beat one big.'"
+        ],
+        "conceptSummary": [
+          "Any two sides combined must be longer than the third side to close the shape."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Scalene Triangle",
+        "definition": "A triangle where all three sides have different lengths and no angles are equal."
+      },
+      {
+        "term": "Isosceles Triangle",
+        "definition": "A triangle with at least two sides of equal length, which means the base angles opposite those sides are also equal."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Finding a Missing Angle",
+        "steps": [
+          "Identify the known angles: 45° and 70°.",
+          "Add them together: 45 + 70 = 115°.",
+          "Subtract from total sum (180°): 180 - 115 = 65°."
+        ],
+        "explanation": "We used the Angle Sum Property. Since we know two angles, we simply subtract their combined value from the fixed total of 180° to find the missing piece."
+      },
+      {
+        "title": "Checking Triangle Validity",
+        "steps": [
+          "Identify side lengths: 5cm, 6cm, and 12cm.",
+          "Find the two shortest sides: 5 and 6.",
+          "Add them: 5 + 6 = 11."
+        ],
+        "explanation": "We compare the sum of the shorter sides (11) to the longest side (12). Since 11 is not greater than 12, these lengths cannot form a triangle. The sticks would just lie flat or leave a gap."
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Angle Sum Property: Interior angles add to 180°.",
+        "Triangle Inequality: Sum of any two sides > third side."
+      ],
+      "formulas": [
+        "A + B + C = 180°",
+        "Side A + Side B > Side C"
+      ],
+      "facts": [
+        "An equilateral triangle has all angles equal to 60°.",
+        "The longest side is always opposite the largest angle."
+      ],
+      "keywords": [
+        "Inequality",
+        "Interior Angles",
+        "Scalene"
+      ],
+      "conceptMap": [
+        "Triangle -> Properties (Angles & Sides) -> Rules for Existence and Calculation"
+      ],
+      "quickRecap": [
+        "Sum of angles is always 180°.",
+        "Two short sides must beat the long one."
+      ]
+    },
+    "selfCheckQuestions": [
+      "If a triangle has two equal angles, what can you say about its sides?",
+      "Can a triangle have side lengths of 2cm, 3cm, and 6cm? Why or why not?"
+    ],
+    "quickSummary": [
+      "Triangles are defined by strict rules: angles sum to 180°, and sides must satisfy the inequality theorem."
+    ],
+    "keyTerms": [
+      "Angle Sum Property",
+      "Triangle Inequality Theorem"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "The sum of all interior angles in a triangle is always ________ degrees.",
+        "answer": "180"
+      },
+      {
+        "prompt": "In an isosceles triangle, the sides opposite to equal angles are ________. ",
+        "answer": "equal"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which set of side lengths can form a valid triangle?",
+        "options": [
+          "A. 2, 3, 6",
+          "B. 4, 5, 9",
+          "C. 5, 7, 10",
+          "D. 1, 2, 4"
+        ],
+        "answer": "C. 5, 7, 10"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "What is the sum of angles in a triangle?",
+        "answer": "180 degrees."
+      },
+      {
+        "question": "Name a type of triangle with all sides equal.",
+        "answer": "Equilateral Triangle."
+      }
+    ],
+    "didYouKnow": [
+      "The ancient Greek mathematician Euclid proved the Angle Sum Property over 2,000 years ago in his book 'Elements'!"
+    ],
+    "summary": [
+      "Understanding these two properties gives you the power to analyze any triangle's shape and validity instantly."
+    ],
+    "quickRevision": [
+      "180° sum rule",
+      "Short + Short > Long"
+    ],
+    "rememberPoints": [
+      "Triangle Angles -> 180° Total",
+      "Sides -> Must Close the Gap (Inequality)"
+    ]
+  }
+}

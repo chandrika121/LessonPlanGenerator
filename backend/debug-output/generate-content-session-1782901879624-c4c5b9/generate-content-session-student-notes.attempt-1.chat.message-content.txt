@@ -1,0 +1,276 @@
+{
+  "studentLessonNotes": {
+    "title": "Number System - Session 4: Locating Irrational Numbers",
+    "sessionOverview": "This session focuses on using the Pythagorean theorem to find exact positions of irrational numbers like √2, √3, and √5 on a number line.",
+    "introduction": "Welcome back! In our last session, we learned that irrational numbers exist. Today, we will learn how to 'pin down' these elusive numbers on the number line using simple right-angled triangles.",
+    "learningObjectives": [
+      "After this lesson you will be able to construct a spiral of squares representing √2, √3, etc.,",
+      "You will be able to locate any square root up to √10 on the number line using geometric construction."
+    ],
+    "quickRecall": [
+      "The Pythagorean theorem states: In a right triangle with legs 'a' and 'b', the hypotenuse 'c' is given by c² = a² + b².",
+      "√2 is an irrational number approximately equal to 1.414."
+    ],
+    "easyToRemember": [
+      "Hypotenuse squared equals sum of legs squared: c² = a² + b²"
+    ],
+    "comparisonTables": [
+      {
+        "title": "Rational vs Irrational on Number Line",
+        "headers": [
+          "Feature",
+          "Rational Numbers",
+          "Irrational Numbers"
+        ],
+        "rows": [
+          [
+            "Decimal Form",
+            "Terminating or Repeating (e.g., 0.5, 0.33...)",
+            "Non-terminating and Non-repeating (e.g., √2 ≈ 1.41421...)"
+          ],
+          [
+            "Location on Number Line",
+            "Can be found by simple division of segments",
+            "Requires geometric construction using right triangles"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Pythagorean Theorem for Construction",
+        "formula": {
+          "text": "c = √(a² + b²)",
+          "latex": "c^2 = a^2 + b^2"
+        },
+        "meaning": "The length of the hypotenuse (c) is found by taking the square root of the sum of the squares of the two legs.",
+        "whenToUse": "When you need to find the distance from the origin to create a specific irrational number like √n on a graph."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "rightTriangle",
+        "title": "Constructing √2 and √3",
+        "caption": "A spiral of right triangles starting from the origin to locate irrational numbers.",
+        "points": [
+          {
+            "id": "O",
+            "x": 100,
+            "y": 450,
+            "label": "O"
+          },
+          {
+            "id": "A",
+            "x": 200,
+            "y": 450,
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "x": 180,
+            "y": 370,
+            "label": "B"
+          }
+        ],
+        "lines": [
+          {
+            "from": "O",
+            "to": "A",
+            "label": "OA = 1 unit (Base)"
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "AB = 1 unit (Height)",
+            "highlight": true
+          },
+          {
+            "from": "O",
+            "to": "B",
+            "label": "OB = √2 units"
+          }
+        ],
+        "arcs": [],
+        "labels": [
+          {
+            "text": "90°",
+            "x": 185,
+            "y": 435
+          },
+          {
+            "text": "√2",
+            "x": 160,
+            "y": 410
+          }
+        ],
+        "measurements": []
+      }
+    ],
+    "proofSteps": [
+      "Start with a right triangle where both legs are of length 1 unit.",
+      "Apply Pythagoras: Hypotenuse² = 1² + 1² = 2, so Hypotenuse = √2."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Adding the lengths directly (e.g., saying hypotenuse is 1+1=2)",
+        "correction": "Always square the legs first, add them, then take the square root.",
+        "example": "Incorrect: √(1+1) = √2. Correct: Hypotenuse² = 1² + 1² → c = √2."
+      },
+      {
+        "mistake": "Using the wrong angle for construction",
+        "correction": "Ensure the new leg is perpendicular (90 degrees) to the previous hypotenuse.",
+        "example": "If constructing √3, draw a line of length 1 unit perpendicular to the side of length √2."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "Locating Square Roots on Number Line",
+        "explanation": "We can locate irrational numbers like √2, √3, etc., by constructing a series of right-angled triangles. We start with a triangle where the legs are 1 unit each.",
+        "keyPoints": [
+          "The first hypotenuse is always √(1² + 1²) = √2.",
+          "To find √3, we use √2 as one leg and add another perpendicular leg of length 1."
+        ],
+        "examples": [
+          "Constructing a spiral: O-A-B-C where OA=1, AB=1 (gives OB=√2), BC=1 (perpendicular to OB gives OC=√3)."
+        ],
+        "whyItMatters": "This proves that every irrational number has a unique, exact spot on the real number line.",
+        "terminology": [
+          "Hypotenuse",
+          "Perpendicular"
+        ],
+        "detailedExplanation": "Imagine walking along the number line. You can stop exactly at 1 or 2. But where is √2? We build a triangle with base 1 and height 1. The diagonal (hypotenuse) has length √2. If we swing an arc from this point to the number line, that intersection is exactly √2.",
+        "observedIn": [
+          "Geometry problems involving distance",
+          "Number line construction tasks"
+        ],
+        "visualSupport": [
+          "Diagram showing a spiral of triangles growing outwards."
+        ],
+        "importantNotes": [
+          "Always measure the new leg as exactly 1 unit perpendicular to the previous hypotenuse.",
+          "The order matters: √2 comes before √3 on the number line."
+        ],
+        "memoryTechniques": [
+          "Think of a 'growing spiral' where each step adds another square root."
+        ],
+        "conceptSummary": [
+          "Use Pythagoras to turn integer legs into irrational hypotenuses for placement on the number line."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Irrational Number",
+        "definition": "A number that cannot be written as a simple fraction p/q and has a non-terminating, non-repeating decimal expansion."
+      },
+      {
+        "term": "Hypotenuse",
+        "definition": "The longest side of a right-angled triangle, opposite the 90-degree angle."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Locating √5 on Number Line",
+        "problem": "Construct and locate √5 on the number line using geometric construction.",
+        "diagramRef": "diagram-1",
+        "given": [
+          "Start with a right triangle where legs are 2 units and 1 unit."
+        ],
+        "formula": [
+          "c = √(a² + b²)"
+        ],
+        "steps": [
+          "Draw base OA of length 2 units.",
+          "At point A, draw a perpendicular line AB of length 1 unit.",
+          "Join O to B."
+        ],
+        "solutionSteps": [
+          "Identify legs: a = 2, b = 1",
+          "Apply formula: OB² = 2² + 1²",
+          "Calculate: OB² = 4 + 1 = 5",
+          "Result: OB = √5"
+        ],
+        "reasoning": [
+          "We need a hypotenuse of length √5. Since (√5)² = 5, we look for two squares that add up to 5."
+        ],
+        "explanation": "By choosing legs of 2 and 1, the resulting diagonal is exactly √5 units long. We can then use a compass centered at O with radius OB to mark this point on the number line.",
+        "finalAnswer": "The length of the hypotenuse is √5 units.",
+        "latex": "\\sqrt{2^2 + 1^2} = \\sqrt{5}",
+        "displayLatex": "\\\\frac{\\\\text{Hypotenuse}}{\\\\text{Legs}} = \\\\sqrt{a^2+b^2}"
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Irrational number",
+        "Pythagorean theorem"
+      ],
+      "formulas": [
+        "c² = a² + b²"
+      ],
+      "facts": [
+        "√2 ≈ 1.41, √3 ≈ 1.73, √5 ≈ 2.24",
+        "The construction works for any integer n by finding factors of n."
+      ],
+      "keywords": [
+        "Number line",
+        "Construction"
+      ],
+      "conceptMap": [
+        "Legs -> Pythagoras -> Hypotenuse (Irrational) -> Number Line"
+      ],
+      "quickRecap": [
+          "To find √n, look for a² + b² = n."
+      ]
+    },
+    "selfCheckQuestions": [
+      "What is the length of the hypotenuse if legs are 3 and 4?",
+      "Can you locate √7 on the number line? Which two integers squared add up to 7?"
+    ],
+    "quickSummary": [
+      "We use right triangles with integer sides to generate irrational lengths."
+    ],
+    "keyTerms": [
+      "Hypotenuse",
+      "Perpendicular"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "To locate √2, we construct a triangle with legs of length ____ and ____. The hypotenuse will be ____.",
+        "answer": "1; 1; √2"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which construction gives the number √5?",
+        "options": [
+          "A. Legs of length 3 and 4",
+          "B. Legs of length 1 and 2",
+          "C. Leg of length 5",
+          "D. Legs of length 0 and 5"
+        ],
+        "answer": "B. Legs of length 1 and 2"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "What is the first step to locate √3 on a number line?",
+        "answer": "Construct a right triangle with legs 1 and 1 (to get √2), then add another leg of length 1 perpendicular to it."
+      }
+    ],
+    "didYouKnow": [
+      "The ancient Greeks, specifically Pythagoras' followers, were so shocked by the discovery that numbers like √2 could not be written as fractions that they called them 'incommensurable' and kept this secret for a long time."
+    ],
+    "summary": [
+      "Geometric construction allows us to visualize irrational numbers precisely on the number line."
+    ],
+    "quickRevision": [
+      "√n comes from legs where sum of squares = n"
+    ],
+    "rememberPoints": [
+      "1² + 1² = √2",
+      "(√2)² + 1² = √3",
+      "2² + 1² = √5"
+    ]
+  }
+}

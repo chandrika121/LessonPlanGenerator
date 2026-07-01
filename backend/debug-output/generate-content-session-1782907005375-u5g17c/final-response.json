@@ -1,0 +1,380 @@
+{
+  "studentLessonNotes": {
+    "title": "Geometry Session 2: Pythagoras Theorem & Triangle Properties",
+    "sessionOverview": "This session introduces the Pythagorean theorem for right-angled triangles, explores special triangle properties like isosceles and equilateral types, and applies these concepts to solve real-world distance problems.",
+    "introduction": "Welcome back! In Session 1, we reviewed basic shapes. Today, we unlock a powerful tool used by architects and engineers: the Pythagorean theorem. We will learn how to find missing sides in right-angled triangles and distinguish between different types of special triangles.",
+    "learningObjectives": [
+      "State and apply the Pythagorean theorem (a² + b² = c²).",
+      "Identify properties of isosceles, equilateral, and scalene triangles.",
+      "Calculate unknown side lengths using substitution and simplification.",
+      "Distinguish between acute, right, and obtuse angles in geometric figures."
+    ],
+    "quickRecall": [
+      "Sum of interior angles in any triangle is always 180°.",
+      "A square has four equal sides and four right angles (90°)."
+    ],
+    "easyToRemember": [
+      "For a right-angled triangle: The sum of the squares on the legs equals the square on the hypotenuse."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Triangle Types Comparison",
+        "headers": [
+          "Feature",
+          "Isosceles Triangle",
+          "Equilateral Triangle"
+        ],
+        "rows": [
+          [
+            "Side Lengths",
+            "Two sides equal, one different",
+            "All three sides equal"
+          ],
+          [
+            "Angle Measures",
+            "Base angles are equal; vertex angle varies",
+            "All three angles are 60°"
+          ],
+          [
+            "Symmetry Lines",
+            "One line of symmetry (from vertex to base)",
+            "Three lines of symmetry"
+          ]
+        ]
+      },
+      {
+        "title": "Pythagorean Triplets vs. Non-Triplets",
+        "headers": [
+          "Feature",
+          "Integer Triplet",
+          "Non-Integer / Irrational Result"
+        ],
+        "rows": [
+          [
+            "Example Sides (a, b, c)",
+            "(3, 4, 5) or (6, 8, 10)",
+            "(2, 3, √13)"
+          ],
+          [
+            "Calculation Result",
+            "c is a whole number",
+            "c involves square roots"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Pythagorean Theorem",
+        "formula": {
+          "text": "a² + b² = c²",
+          "latex": "\\frac{\\sqrt{3}}{2}",
+          "displayLatex": "\\frac{\\sqrt{3}}{2}"
+        },
+        "meaning": "The square of the hypotenuse (c) equals the sum of the squares of the other two sides (a and b).",
+        "whenToUse": "Only when you have a right-angled triangle and need to find a missing side length."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "rightTriangle",
+        "template": "rightTriangle",
+        "params": {
+          "baseLength": "3 units",
+          "height": "4 units",
+          "hypotenuse": "5 units"
+        },
+        "title": "Right Triangle with Sides 3-4-5",
+        "caption": "A standard right triangle illustrating the Pythagorean theorem.",
+        "points": [
+          {
+            "id": "A",
+            "x": 65,
+            "y": 155,
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "x": 245,
+            "y": 155,
+            "label": "B"
+          },
+          {
+            "id": "C",
+            "x": 65,
+            "y": 55,
+            "label": "C"
+          }
+        ],
+        "lines": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "base",
+            "style": "solid",
+            "highlight": false
+          },
+          {
+            "from": "A",
+            "to": "C",
+            "label": "height",
+            "style": "solid",
+            "highlight": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "hypotenuse",
+            "style": "solid",
+            "highlight": true
+          }
+        ],
+        "arcs": [],
+        "labels": [],
+        "measurements": [],
+        "highlights": [],
+        "bars": []
+      }
+    ],
+    "proofSteps": [
+      "Identify the right angle and label sides a, b (legs) and c (hypotenuse).",
+      "Substitute known values into the formula a² + b² = c².",
+      "Calculate squares of legs, sum them, then take the square root to find c."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Adding sides directly instead of squaring (e.g., 3+4=7).",
+        "correction": "Always square each side first: a² + b² = c².",
+        "example": "For legs 3 and 4, calculate 9 + 16 = 25, then √25 = 5."
+      },
+      {
+        "mistake": "Using the theorem on non-right triangles.",
+        "correction": "Verify a right angle exists (look for the square symbol) before applying Pythagoras.",
+        "example": "Do not use this formula if all angles are acute or one is obtuse."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "The Pythagorean Theorem",
+        "explanation": "This theorem connects the three sides of a right-angled triangle. It states that the area of the square built on the hypotenuse is equal to the sum of the areas of the squares built on the other two sides.",
+        "keyPoints": [
+          "Applies ONLY to right triangles.",
+          "The longest side (hypotenuse) is always opposite the 90° angle."
+        ],
+        "examples": [
+          "Finding the diagonal length of a rectangular TV screen or a ladder leaning against a wall."
+        ],
+        "whyItMatters": "Used in construction, navigation, and computer graphics to calculate distances.",
+        "terminology": [
+          "Hypotenuse",
+          "Legs"
+        ],
+        "detailedExplanation": "If you have sides of length 3cm and 4cm forming a right angle, the third side will be exactly 5cm. This relationship holds true for any size triangle as long as it has a right angle.",
+        "observedIn": [
+          "Roof trusses",
+          "Staircase designs"
+        ],
+        "visualSupport": [
+          "diagram-1"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "Remember: c is always the hypotenuse."
+        ],
+        "memoryTechniques": [
+          "Hippos Eat Cakes (Hypotenuse, Legs/Height/Base)"
+        ],
+        "conceptSummary": [
+          "a² + b² = c² for right triangles only."
+        ]
+      },
+      {
+        "heading": "Special Triangles",
+        "explanation": "Triangles can be classified by their sides and angles. Isosceles triangles have two equal sides, while equilateral triangles are perfectly symmetrical with all three sides and angles equal.",
+        "keyPoints": [
+          "Isosceles: 2 equal sides, base angles equal.",
+          "Equilateral: 3 equal sides, each angle is 60°."
+        ],
+        "examples": [
+          "A slice of pizza (equilateral if cut perfectly), a tent shape (isosceles)."
+        ],
+        "whyItMatters": "Understanding symmetry helps in geometry proofs and design.",
+        "terminology": [
+          "Base angles",
+          "Vertex angle"
+        ],
+        "detailedExplanation": "In an equilateral triangle, if you know one side is 5cm, all sides are 5cm. If you know the base of an isosceles triangle and its height, you can use Pythagoras to find the equal slanted sides.",
+        "observedIn": [
+          "Traffic signs (yield sign)",
+          "Bridge supports"
+        ],
+        "visualSupport": [
+          "diagram-1"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "Equilateral triangles are always acute."
+        ],
+        "memoryTechniques": [
+          "E for Equal (all sides/angles)"
+        ],
+        "conceptSummary": [
+          "Isosceles = 2 equal; Equilateral = all equal."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Hypotenuse",
+        "definition": "The longest side of a right-angled triangle, located opposite the right angle."
+      },
+      {
+        "term": "Isosceles Triangle",
+        "definition": "A triangle with at least two sides of equal length and corresponding base angles that are equal."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Finding the Hypotenuse",
+        "problem": "Find the length of the hypotenuse in a right-angled triangle where the legs measure 6 cm and 8 cm.",
+        "diagramRef": "diagram-1",
+        "given": [
+          {
+            "text": "Leg a = 6 cm",
+            "latex": "\\frac{\\sqrt{3}}{2}",
+            "displayLatex": "\\frac{\\sqrt{3}}{2}"
+          },
+          {
+            "text": "Leg b = 8 cm",
+            "latex": "\\frac{\\sqrt{5}}{2}",
+            "displayLatex": "\\frac{\\sqrt{5}}{2}"
+          }
+        ],
+        "formula": [
+          {
+            "text": "a² + b² = c²",
+            "latex": "c^2 = a^2 + b^2",
+            "displayLatex": "c^2 = a^2 + b^2"
+          }
+        ],
+        "steps": [
+          "Identify the known sides.",
+          "Substitute into Pythagorean formula."
+        ],
+        "solutionSteps": [
+          {
+            "text": "Write the formula",
+            "latex": "",
+            "displayLatex": "\\frac{\\sqrt{3}}{2}"
+          },
+          {
+            "text": "Substitute values: 6² + 8² = c²",
+            "latex": "",
+            "displayLatex": "c^2 = 6^2 + 8^2"
+          },
+          {
+            "text": "Calculate squares: 36 + 64 = c²",
+            "latex": "Calculate squares: 36 + 64 = c²",
+            "displayLatex": "\\frac{\\sqrt{5}}{2}"
+          }
+        ],
+        "reasoning": [
+          {
+            "text": "Since it is a right triangle, we use Pythagoras.",
+            "latex": "\\frac{\\sqrt{3}}{2}",
+            "displayLatex": "\\frac{\\sqrt{3}}{2}"
+          }
+        ],
+        "explanation": "We square the lengths of the legs (6 and 8), add them together to get the area of the hypotenuse's square, then take the square root to find the length.",
+        "finalAnswer": {
+          "text": "c = 10 cm",
+          "latex": "c = 10 cm",
+          "displayLatex": "\\frac{\\sqrt{3}}{2}"
+        },
+        "latex": "x = y + z",
+        "displayLatex": "\\\\frac{a+b}{c}"
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Hypotenuse is the side opposite the right angle."
+      ],
+      "formulas": [
+        "a² + b² = c²"
+      ],
+      "facts": [
+        "Sum of angles in a triangle is 180°."
+      ],
+      "keywords": [
+        "Right-angled",
+        "Hypotenuse",
+        "Isosceles"
+      ],
+      "conceptMap": [
+        "Triangle -> Right Triangle -> Pythagoras Theorem"
+      ],
+      "quickRecap": [
+        "Square the legs, add them, then square root."
+      ]
+    },
+    "selfCheckQuestions": [
+      "If a right triangle has sides 5 and 12, what is the hypotenuse?",
+      "True or False: The Pythagorean theorem works for all triangles.",
+      "How many lines of symmetry does an equilateral triangle have?"
+    ],
+    "quickSummary": [
+      "Pythagoras helps find missing sides in right triangles."
+    ],
+    "keyTerms": [
+      "Hypotenuse",
+      "Legs",
+      "Isosceles"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "In a right triangle, the side opposite the 90° angle is called the ________.",
+        "answer": "hypotenuse"
+      },
+      {
+        "prompt": "An equilateral triangle has all sides ________. ",
+        "answer": "equal"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is a Pythagorean triplet?",
+        "options": [
+          "A. 2, 3, 4",
+          "B. 5, 12, 13",
+          "C. 7, 8, 9",
+          "D. 10, 11, 12"
+        ],
+        "answer": "B. 5, 12, 13"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "What is the sum of angles in a triangle?",
+        "answer": "180 degrees."
+      },
+      {
+        "question": "Name one property of an equilateral triangle.",
+        "answer": "All sides are equal (or all angles are 60°)."
+      }
+    ],
+    "didYouKnow": [
+      "The Pythagorean theorem was known to Babylonian mathematicians over 1,000 years before Pythagoras!"
+    ],
+    "summary": [
+      "We learned how to use a² + b² = c² for right triangles and identified special triangle types."
+    ],
+    "quickRevision": [
+      "Check for the square symbol (90°) before using Pythagoras."
+    ],
+    "rememberPoints": [
+      "3-4-5 is a common triplet.",
+      "Equilateral = 60°, 60°, 60°."
+    ]
+  }
+}
