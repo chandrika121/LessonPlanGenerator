@@ -94,8 +94,10 @@ async function main() {
   });
   const upgradedExample = upgradedMath.studentLessonNotes.workedExamples[0];
   assert.equal(typeof upgradedExample.given[0], "object");
+  assert.equal(upgradedExample.given[0].text, "");
   assert.equal(String(upgradedExample.given[0].latex).includes("\\frac"), true);
   assert.equal(typeof upgradedExample.solutionSteps[1], "object");
+  assert.equal(upgradedExample.solutionSteps[1].text, "");
   assert.equal(String(upgradedExample.solutionSteps[1].latex).includes("\\frac"), true);
   assert.equal(typeof upgradedExample.finalAnswer, "object");
 
@@ -118,6 +120,98 @@ async function main() {
   assert.equal(typeof repairedExample.solutionSteps[0], "object");
   assert.equal(repairedExample.solutionSteps[0].latex, "\\frac{4(2+\\sqrt{3})}{4-3}");
   assert.equal(repairedExample.finalAnswer.latex, "\\frac{4(2+\\sqrt{3})}{4-3}");
+
+  const latexTextHybrid = normalizeMathGeneratedNotes({
+    studentLessonNotes: {
+      title: "Rationalising surds",
+      sections: [{
+        heading: "Main idea",
+        explanation: "Simplify \\frac{3}{\\sqrt{5}} by rationalizing the denominator.",
+      }],
+      proofSteps: ["\\text{Expression: } \\frac{3}{\\sqrt{5}}"],
+      workedExamples: [{
+        title: "Labelled expression",
+        given: ["\\text{Expression: } \\frac{3}{\\sqrt{5}}"],
+        formula: ["\\text{Rule: } \\frac{a}{\\sqrt{b}} = \\frac{a\\sqrt{b}}{b}"],
+        solutionSteps: ["\\text{Multiply by: } \\sqrt{5}"],
+        finalAnswer: "\\text{Answer: } \\frac{3\\sqrt{5}}{5}",
+      }],
+      revisionSection: {
+        formulas: ["\\text{Expression: } \\frac{3}{\\sqrt{5}}"],
+      },
+    },
+  }, {
+    subject: "Mathematics",
+    selectedChapters: ["Real numbers"],
+    sessionTitle: "Rationalising denominators",
+  });
+  const labelledExample = latexTextHybrid.studentLessonNotes.workedExamples[0];
+  assert.equal(typeof latexTextHybrid.studentLessonNotes.sections[0].explanation, "string");
+  assert.equal(typeof latexTextHybrid.studentLessonNotes.workedExamples[0].solutionSteps[0], "object");
+  assert.equal(typeof latexTextHybrid.studentLessonNotes.proofSteps[0], "object");
+  assert.equal(latexTextHybrid.studentLessonNotes.proofSteps[0].text, "Expression:");
+  assert.equal(latexTextHybrid.studentLessonNotes.proofSteps[0].latex, "\\frac{3}{\\sqrt{5}}");
+  assert.equal(typeof labelledExample.given[0], "object");
+  assert.equal(labelledExample.given[0].text, "Expression:");
+  assert.equal(labelledExample.given[0].latex, "\\frac{3}{\\sqrt{5}}");
+  assert.equal(labelledExample.formula[0].text, "Rule:");
+  assert.equal(labelledExample.formula[0].displayLatex, "\\frac{a}{\\sqrt{b}} = \\frac{a\\sqrt{b}}{b}");
+  assert.equal(labelledExample.solutionSteps[0].text, "Multiply by:");
+  assert.equal(labelledExample.solutionSteps[0].latex, "\\sqrt{5}");
+  assert.equal(labelledExample.finalAnswer.text, "Answer:");
+  assert.equal(labelledExample.finalAnswer.latex, "\\frac{3\\sqrt{5}}{5}");
+  assert.equal(typeof latexTextHybrid.studentLessonNotes.revisionSection.formulas[0], "object");
+  assert.equal(latexTextHybrid.studentLessonNotes.revisionSection.formulas[0].text, "Expression:");
+
+  const partiallyNormalizedMathObject = normalizeMathGeneratedNotes({
+    studentLessonNotes: {
+      title: "Rationalising surds",
+      workedExamples: [{
+        title: "Already object-shaped but duplicated",
+        given: [{
+          text: "Expression: 5/√3",
+          latex: "Expression: \\frac{5}{\\sqrt{3}}",
+          displayLatex: "Expression: \\frac{5}{\\sqrt{3}}",
+        }],
+        finalAnswer: {
+          text: "\\text{Answer: } \\frac{5\\sqrt{3}}{3}",
+          latex: "\\text{Answer: } \\frac{5\\sqrt{3}}{3}",
+          displayLatex: "\\text{Answer: } \\frac{5\\sqrt{3}}{3}",
+        },
+      }],
+    },
+  }, {
+    subject: "Mathematics",
+    selectedChapters: ["Real numbers"],
+    sessionTitle: "Rationalising denominators",
+  });
+  const normalizedObjectExample = partiallyNormalizedMathObject.studentLessonNotes.workedExamples[0];
+  assert.equal(normalizedObjectExample.given[0].text, "Expression:");
+  assert.equal(normalizedObjectExample.given[0].latex, "\\frac{5}{\\sqrt{3}}");
+  assert.equal(normalizedObjectExample.given[0].displayLatex, "\\frac{5}{\\sqrt{3}}");
+  assert.equal(normalizedObjectExample.finalAnswer.text, "Answer:");
+  assert.equal(normalizedObjectExample.finalAnswer.latex, "\\frac{5\\sqrt{3}}{3}");
+  assert.equal(normalizedObjectExample.finalAnswer.displayLatex, "\\frac{5\\sqrt{3}}{3}");
+
+  const legTypoCleanup = normalizeMathGeneratedNotes({
+    studentLessonNotes: {
+      title: "Pythagoras theorem",
+      workedExamples: [{
+        title: "Find the hypotenuse",
+        given: [
+          "Leg a = 6 cm",
+          { text: "Leg b = 8 cm", latex: "b = 8" },
+        ],
+      }],
+    },
+  }, {
+    subject: "Mathematics",
+    selectedChapters: ["Triangles"],
+    sessionTitle: "Right triangle applications",
+  });
+  const typoCleanupExample = legTypoCleanup.studentLessonNotes.workedExamples[0];
+  assert.equal(typoCleanupExample.given[0], "Let a = 6 cm");
+  assert.equal(typoCleanupExample.given[1], "Let b = 8 cm");
 }
 
 main().catch((error) => {

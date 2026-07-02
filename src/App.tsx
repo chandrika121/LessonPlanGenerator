@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
+import katexStyles from "katex/dist/katex.min.css?inline";
 import { motion } from "motion/react";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
@@ -53,6 +54,7 @@ import {
   SessionAllocation,
   SessionAssessmentCustomization,
   SessionConfig,
+  MathRichText,
   MathDiagramSpec,
   MathFormulaCard,
   SessionPptGenerationOptions,
@@ -174,6 +176,23 @@ const normalizePptTemplateId = (templateId?: string | null) => {
   return PPT_TEMPLATE_OPTIONS.some((option) => option.id === rawTemplateId)
     ? rawTemplateId
     : "academic-split";
+};
+
+type StudentNoteRichValue = string | MathRichText;
+type StudentNoteRichLine = StudentNoteRichValue[];
+type StudentNoteBlock =
+  | { type: "line"; value: StudentNoteRichLine; displayMode?: boolean }
+  | { type: "list"; items: StudentNoteRichLine[]; ordered?: boolean; label?: string };
+type StudentNoteSection = {
+  title: string;
+  blocks: StudentNoteBlock[];
+  cues: StudentNoteRichLine[];
+};
+type StudentNotesTemplate = {
+  noteTitle: string;
+  cueItems: StudentNoteRichLine[];
+  noteSections: StudentNoteSection[];
+  summaryLines: StudentNoteRichLine[];
 };
 
 export default function App() {
@@ -517,8 +536,9 @@ export default function App() {
       index += 1;
       while (index < length && /[A-Za-z]/.test(source[index])) index += 1;
       while (source[index] === " ") index += 1;
-      if (source[index] === "{") {
-        consumeBalanced("{", "}");
+      while (source[index] === "{") {
+        if (!consumeBalanced("{", "}")) break;
+        while (source[index] === " ") index += 1;
       }
       return index;
     }
@@ -579,6 +599,9 @@ export default function App() {
   const normalizeInlineMathText = (value: string) =>
     repairMalformedLatexFractions(
       String(value || "")
+      .replace(/\\\$/g, "$")
+      .replace(/^\$+|\$+$/g, "")
+      .replace(/\$/g, "")
       .replace(/√\s*([A-Za-z0-9]+)/g, "\\sqrt{$1}")
       .replace(/\bsqrt\s*\(\s*([^)]+?)\s*\)/gi, "\\sqrt{$1}")
       .replace(/\b([A-Za-z])2\b/g, "$1^2")
@@ -588,41 +611,395 @@ export default function App() {
       .replace(/(\d+)\s*\/\s*([A-Za-z0-9\\sqrt{}]+)/g, "\\frac{$1}{$2}")
     );
 
+  type MathStringClassification = "plain_text" | "mixed_inline_math" | "full_latex_line";
+  type StudentNoteRenderSegment = { type: "text" | "math"; value: string; displayMode: boolean };
+  type StudentNoteRenderPlan = { classification: MathStringClassification; segments: StudentNoteRenderSegment[] };
+
+  const countNaturalLanguageWordsOutsideLatex = (value: string) => {
+    const stripped = String(value || "")
+      .replace(/\\text\{[^{}]*\}/g, " ")
+      .replace(/\\[a-zA-Z]+/g, " ")
+      .replace(/[{}[\]()_^=+\-*/×÷\\.,;:]/g, " ");
+    return (stripped.match(/[A-Za-z]{3,}/g) || []).length;
+  };
+
+  const looksLikeStandaloneLatexMath = (value: string) => {
+    const text = value.trim();
+    if (!text) return false;
+    const proseWordCount = countNaturalLanguageWordsOutsideLatex(text);
+    if (proseWordCount > 0) return false;
+    if (!(/\\[a-zA-Z]+|[_^=+\-*/×÷√]/.test(text) || /\d+\s*\/\s*[A-Za-z0-9(\\√]/.test(text))) return false;
+    const normalized = normalizeInlineMathText(text);
+    return /\\[a-zA-Z]+|[_^=+\-*/×÷√]/.test(normalized);
+  };
+
+  const unwrapLatexMathDelimiters = (value: string) => {
+    const text = String(value || "").trim();
+    if (!text) return "";
+    if (text.startsWith("\\(") && text.endsWith("\\)")) {
+      return text.slice(2, -2).trim();
+    }
+    if (text.startsWith("\\[") && text.endsWith("\\]")) {
+      return text.slice(2, -2).trim();
+    }
+    if (text.startsWith("$$") && text.endsWith("$$")) {
+      return text.slice(2, -2).trim();
+    }
+    if (text.startsWith("$") && text.endsWith("$")) {
+      return text.slice(1, -1).trim();
+    }
+    return text;
+  };
+
+  const normalizeMathSetupWording = (value: string) =>
+    String(value || "").trim().replace(/^Leg\s+([a-z])\s*=/i, "Let $1 =");
+
+  const splitStudentNoteLeadingLabelAndMath = (value: string): MathRichText | null => {
+    const text = normalizeMathSetupWording(value);
+    if (!text) return null;
+
+    const latexTextMatch = text.match(/^\\text\{([^{}]*)\}\s*(.+)$/s);
+    if (latexTextMatch) {
+      const labelText = formatRenderableText(latexTextMatch[1] || "").replace(/\s+/g, " ").trim();
+      const mathText = unwrapLatexMathDelimiters(latexTextMatch[2] || "");
+      if (!mathText || !looksLikeStandaloneLatexMath(mathText)) return null;
+      const latex = normalizeInlineMathText(mathText);
+      return {
+        ...(labelText ? { text: labelText } : {}),
+        latex,
+        ...(/\\frac|=/.test(latex) ? { displayLatex: latex } : {}),
+      };
+    }
+
+    const plainLabelMatch = text.match(/^([A-Za-z][A-Za-z0-9 ()/\-]{0,60}:)\s*(.+)$/s);
+    if (!plainLabelMatch) return null;
+    const labelText = formatRenderableText(plainLabelMatch[1] || "").replace(/\s+/g, " ").trim();
+    const mathText = unwrapLatexMathDelimiters(plainLabelMatch[2] || "");
+    if (!mathText || !looksLikeStandaloneLatexMath(mathText)) return null;
+    const latex = normalizeInlineMathText(mathText);
+    return {
+      ...(labelText ? { text: labelText } : {}),
+      latex,
+      ...(/\\frac|=/.test(latex) ? { displayLatex: latex } : {}),
+    };
+  };
+
+  const normalizeStudentNoteMathRichText = (value: MathRichText): MathRichText | null => {
+    const rawText = typeof value.text === "string" ? normalizeMathSetupWording(value.text) : "";
+    const rawLatex = typeof value.latex === "string" ? value.latex.trim() : "";
+    const rawDisplayLatex = typeof value.displayLatex === "string" ? value.displayLatex.trim() : "";
+    const splitTextMath = rawText ? splitStudentNoteLeadingLabelAndMath(rawText) : null;
+    const splitLatexMath = rawLatex ? splitStudentNoteLeadingLabelAndMath(rawLatex) : null;
+    const splitDisplayMath = rawDisplayLatex ? splitStudentNoteLeadingLabelAndMath(rawDisplayLatex) : null;
+
+    const normalizedLatex = normalizeInlineMathText(
+      unwrapLatexMathDelimiters(splitLatexMath?.latex || rawLatex)
+    );
+    const normalizedDisplayLatex = normalizeInlineMathText(
+      unwrapLatexMathDelimiters(splitDisplayMath?.displayLatex || splitDisplayMath?.latex || rawDisplayLatex)
+    );
+
+    let text = rawText;
+    if (splitTextMath) {
+      const splitLatex = normalizeInlineMathText(splitTextMath.latex || splitTextMath.displayLatex || "");
+      const candidateLatex = normalizedDisplayLatex || normalizedLatex;
+      if (!candidateLatex || splitLatex === candidateLatex) {
+        text = splitTextMath.text || "";
+      }
+    }
+    if (splitLatexMath?.text && (!text || text === rawLatex)) {
+      text = splitLatexMath.text;
+    }
+    if (splitDisplayMath?.text && (!text || text === rawDisplayLatex)) {
+      text = splitDisplayMath.text;
+    }
+
+    const latex = normalizedLatex || splitTextMath?.latex || "";
+    const displayLatex = normalizedDisplayLatex || splitTextMath?.displayLatex || (latex && /\\frac|=/.test(latex) ? latex : "");
+
+    const letAssignmentMatch = text.match(/^Let\s+([a-z])\s*=/i);
+    if (letAssignmentMatch && (new RegExp(`^${letAssignmentMatch[1]}\\s*=`, "i").test(latex) || new RegExp(`^${letAssignmentMatch[1]}\\s*=`, "i").test(displayLatex))) {
+      return { text };
+    }
+
+    if (!text && !latex && !displayLatex) return null;
+    return {
+      ...(text ? { text } : {}),
+      ...(latex ? { latex } : {}),
+      ...(displayLatex ? { displayLatex } : {}),
+    };
+  };
+
+  const looksLikeFullLatexLine = (value: string) => {
+    const text = value.trim();
+    if (!text) return false;
+    const leadingTextMathMatch = text.match(/^\\text\{([^{}]*)\}\s*(.+)$/s);
+    if (leadingTextMathMatch) {
+      return looksLikeStandaloneLatexMath(leadingTextMathMatch[2] || "");
+    }
+    return looksLikeStandaloneLatexMath(text);
+  };
+
   const shouldRenderStringAsLatex = (value: string) => {
     const text = value.trim();
     if (!text) return false;
-    if (/\\[a-zA-Z]+|[_^]/.test(text)) return true;
-    if (/√|\bsqrt\s*\(/i.test(text)) return true;
-    if (!/[=+\-*/×÷√]/.test(text)) return false;
-    if (/[.:;]\s+[A-Za-z]{3,}/.test(text)) return false;
-    if (/\b(apply|because|therefore|hence|when|where|given|substitute|simplify|answer|hypotenuse|formula)\b/i.test(text)) return false;
-    const words = text.match(/[A-Za-z]{3,}/g) || [];
-    return words.length <= 2;
+    return looksLikeStandaloneLatexMath(text);
+  };
+
+  const consumeInlineMathSpan = (value: string, startIndex: number) => {
+    const source = String(value || "");
+    const length = source.length;
+    let index = startIndex;
+    const consumeBalanced = (openChar: string, closeChar: string) => {
+      if (source[index] !== openChar) return false;
+      let depth = 0;
+      while (index < length) {
+        const char = source[index];
+        if (char === openChar) depth += 1;
+        if (char === closeChar) {
+          depth -= 1;
+          if (depth === 0) {
+            index += 1;
+            return true;
+          }
+        }
+        index += 1;
+      }
+      return false;
+    };
+
+    const consumeInlineAtom = () => {
+      while (source[index] === " ") index += 1;
+
+      if (source[index] === "\\") {
+        index = consumeLatexMathToken(source, index);
+      } else if (source.startsWith("sqrt(", index)) {
+        index += 5;
+        let depth = 1;
+        while (index < length && depth > 0) {
+          if (source[index] === "(") depth += 1;
+          if (source[index] === ")") depth -= 1;
+          index += 1;
+        }
+      } else if (source[index] === "√") {
+        index += 1;
+        while (source[index] === " ") index += 1;
+        if (source[index] === "(") {
+          let depth = 1;
+          index += 1;
+          while (index < length && depth > 0) {
+            if (source[index] === "(") depth += 1;
+            if (source[index] === ")") depth -= 1;
+            index += 1;
+          }
+        } else if (source[index] === "{") {
+          let depth = 1;
+          index += 1;
+          while (index < length && depth > 0) {
+            if (source[index] === "{") depth += 1;
+            if (source[index] === "}") depth -= 1;
+            index += 1;
+          }
+        } else {
+          while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
+        }
+      } else if (source[index] === "(") {
+        consumeBalanced("(", ")");
+      } else if (source[index] === "{") {
+        consumeBalanced("{", "}");
+      } else if (source[index] === "[") {
+        consumeBalanced("[", "]");
+      } else {
+        while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
+      }
+
+      while (index < length) {
+        while (source[index] === " ") index += 1;
+        if (source[index] === "^" || source[index] === "_") {
+          index += 1;
+          while (source[index] === " ") index += 1;
+          if (source[index] === "{") {
+            consumeBalanced("{", "}");
+          } else if (source[index] === "(") {
+            consumeBalanced("(", ")");
+          } else if (source[index] === "[") {
+            consumeBalanced("[", "]");
+          } else if (source[index] === "\\" || source.startsWith("sqrt(", index) || source[index] === "√") {
+            consumeInlineAtom();
+          } else {
+            while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
+          }
+          continue;
+        }
+        break;
+      }
+    };
+
+    consumeInlineAtom();
+
+    while (index < length) {
+      while (source[index] === " ") index += 1;
+      if (/^[+\-*/=×÷]$/.test(source[index] || "")) {
+        index += 1;
+        consumeInlineAtom();
+        continue;
+      }
+      if (source[index] === "(" || source[index] === "{" || source[index] === "[") {
+        consumeInlineAtom();
+        continue;
+      }
+      break;
+    }
+
+    while (index > startIndex && /[.,;:]/.test(source[index - 1] || "")) {
+      index -= 1;
+    }
+
+    return index;
+  };
+
+  const isPotentialInlineMathStart = (value: string, startIndex: number) => {
+    const source = String(value || "");
+    const char = source[startIndex] || "";
+    if (char === "\\" || char === "√" || source.startsWith("sqrt(", startIndex)) return true;
+    if (!/[A-Za-z0-9([{]/.test(char)) return false;
+    const end = consumeInlineMathSpan(source, startIndex);
+    const token = source.slice(startIndex, end).trim();
+    if (!token) return false;
+    if (/^[A-Za-z]{3,}$/.test(token)) return false;
+    return /\\[a-zA-Z]+|[_^=+\-*/×÷√]/.test(token) || /\d+\s*\/\s*[A-Za-z0-9(\\√]/.test(token);
   };
 
   const extractInlineMathSegments = (value: string) => {
     const text = String(value || "").trim();
     if (!text) return [];
-    const pattern = /(\\frac\{[^}]+\}\{[^}]+\}|\\sqrt\{[^}]+\}|√\s*[A-Za-z0-9]+|\bsqrt\s*\([^)]+\)|[A-Za-z0-9()[\]{}+\-*/^ ]+\s*=\s*[A-Za-z0-9()[\]{}+\-*/^ ]+|\[[^\]]+\]\s*\/\s*\[[^\]]+\]|\d+\s*\/\s*\([^)]+\)|\d+\s*\/\s*[A-Za-z0-9]+)/g;
+
+    if (text.includes("$")) {
+      const dollarSegments: Array<{ type: "text" | "math"; value: string }> = [];
+      let cursor = 0;
+      while (cursor < text.length) {
+        const openIndex = text.indexOf("$", cursor);
+        if (openIndex === -1) {
+          const tail = text.slice(cursor);
+          if (tail.trim()) dollarSegments.push({ type: "text", value: tail });
+          break;
+        }
+
+        if (openIndex > cursor) {
+          const prose = text.slice(cursor, openIndex);
+          if (prose.trim()) dollarSegments.push({ type: "text", value: prose });
+        }
+
+        const closeIndex = text.indexOf("$", openIndex + 1);
+        if (closeIndex === -1) {
+          const remainder = text.slice(openIndex + 1);
+          if (remainder.trim()) dollarSegments.push({ type: "math", value: remainder });
+          break;
+        }
+
+        const mathContent = unwrapLatexMathDelimiters(text.slice(openIndex, closeIndex + 1)).trim();
+        if (mathContent) {
+          dollarSegments.push({ type: "math", value: mathContent });
+        }
+        cursor = closeIndex + 1;
+      }
+
+      if (dollarSegments.some((segment) => segment.type === "math")) {
+        return dollarSegments;
+      }
+    }
+
     const segments: Array<{ type: "text" | "math"; value: string }> = [];
-    let lastIndex = 0;
-    let match: RegExpExecArray | null;
-    while ((match = pattern.exec(text)) !== null) {
-      if (match.index > lastIndex) {
-        const prose = text.slice(lastIndex, match.index);
+    let cursor = 0;
+    let lastTextIndex = 0;
+
+    while (cursor < text.length) {
+      if (!isPotentialInlineMathStart(text, cursor)) {
+        cursor += 1;
+        continue;
+      }
+
+      if (cursor > lastTextIndex) {
+        const prose = text.slice(lastTextIndex, cursor);
         if (prose.trim()) segments.push({ type: "text", value: prose });
       }
-      const token = match[0].trim();
+
+      const end = consumeInlineMathSpan(text, cursor);
+      const token = text.slice(cursor, end).trim();
       if (token) {
         segments.push({ type: shouldRenderStringAsLatex(token) || /[=√/\\]/.test(token) ? "math" : "text", value: token });
       }
-      lastIndex = match.index + match[0].length;
+      cursor = Math.max(end, cursor + 1);
+      lastTextIndex = cursor;
     }
-    if (lastIndex < text.length) {
-      const prose = text.slice(lastIndex);
+
+    if (lastTextIndex < text.length) {
+      const prose = text.slice(lastTextIndex);
       if (prose.trim()) segments.push({ type: "text", value: prose });
     }
+
     return segments.length > 0 ? segments : [{ type: "text", value: text }];
+  };
+
+  const classifyMathString = (value: string): MathStringClassification => {
+    const text = String(value || "").trim();
+    if (!text) return "plain_text";
+    if (looksLikeFullLatexLine(text)) return "full_latex_line";
+    const segments = extractInlineMathSegments(text);
+    return segments.some((segment) => segment.type === "math") ? "mixed_inline_math" : "plain_text";
+  };
+
+  const getStudentNoteRenderPlan = (value: StudentNoteRichValue): StudentNoteRenderPlan => {
+    if (isMathRichText(value)) {
+      const normalizedValue = normalizeStudentNoteMathRichText(value);
+      if (!normalizedValue) return { classification: "plain_text", segments: [] };
+      const text = formatRenderableText(normalizedValue.text || "").trim();
+      const inlineLatex = String(normalizedValue.latex || "").trim();
+      const displayLatex = String(normalizedValue.displayLatex || "").trim();
+      if (displayLatex && !text) {
+        return {
+          classification: "full_latex_line",
+          segments: [{ type: "math", value: displayLatex, displayMode: true }],
+        };
+      }
+      return {
+        classification: inlineLatex || displayLatex ? "mixed_inline_math" : "plain_text",
+        segments: [
+          ...(text ? [{ type: "text" as const, value: text, displayMode: false }] : []),
+          ...(displayLatex ? [{ type: "math" as const, value: displayLatex, displayMode: true }] : []),
+          ...(!displayLatex && inlineLatex ? [{ type: "math" as const, value: inlineLatex, displayMode: false }] : []),
+        ],
+      };
+    }
+
+    const text = String(value || "").trim();
+    if (!text) return { classification: "plain_text", segments: [] };
+    const normalizedText = normalizeMathSetupWording(text);
+    const upgradedValue = splitStudentNoteLeadingLabelAndMath(normalizedText);
+    if (upgradedValue) {
+      return getStudentNoteRenderPlan(upgradedValue);
+    }
+    const classification = classifyMathString(normalizedText);
+    if (classification === "full_latex_line") {
+      return {
+        classification,
+        segments: [{ type: "math", value: normalizeInlineMathText(normalizedText), displayMode: false }],
+      };
+    }
+    if (classification === "mixed_inline_math") {
+      return {
+        classification,
+        segments: extractInlineMathSegments(normalizedText).map((segment) => ({
+          type: segment.type as "text" | "math",
+          value: segment.type === "math" ? normalizeInlineMathText(segment.value) : segment.value,
+          displayMode: false,
+        })),
+      };
+    }
+    return {
+      classification: "plain_text",
+      segments: [{ type: "text", value: normalizedText, displayMode: false }],
+    };
   };
 
   const renderMathLatex = (latex: string, displayMode = false, fallback = "") => {
@@ -630,7 +1007,7 @@ export default function App() {
     try {
       return (
         <span
-          className={displayMode ? "block overflow-x-auto py-1" : "inline-block align-middle"}
+          className={displayMode ? "block max-w-full overflow-x-auto py-1" : "inline-block max-w-full overflow-x-auto align-middle"}
           dangerouslySetInnerHTML={{
             __html: katex.renderToString(normalizedLatex, {
               displayMode,
@@ -647,29 +1024,30 @@ export default function App() {
 
   const renderMixedMathLine = (value: unknown, displayMode = false) => {
     if (value && typeof value === "object" && !Array.isArray(value)) {
-      const mathValue = value as { text?: unknown; latex?: unknown; displayLatex?: unknown };
-      const inlineLatex = String(mathValue.latex || "").trim();
-      const displayLatex = String(mathValue.displayLatex || "").trim();
-      const text = formatRenderableText(mathValue.text || "").trim();
-      if (displayLatex && !text) {
-        return renderMathLatex(displayLatex, true, text || displayLatex);
+      const plan = getStudentNoteRenderPlan(value as StudentNoteRichValue);
+      if (plan.classification === "full_latex_line" && plan.segments[0]?.type === "math") {
+        return renderMathLatex(plan.segments[0].value, true, plan.segments[0].value);
       }
-      if (displayLatex || inlineLatex) {
+      if (plan.segments.length > 0) {
         return (
-          <span className={`whitespace-pre-wrap font-mono ${displayMode ? "block" : "inline-flex flex-wrap items-center gap-2"}`}>
-            {text ? <span>{text}</span> : null}
-            {displayLatex ? renderMathLatex(displayLatex, true, text || displayLatex) : inlineLatex ? renderMathLatex(inlineLatex, false, text || inlineLatex) : null}
+          <span className={`whitespace-pre-wrap font-mono ${displayMode ? "block space-y-1" : "inline-flex flex-wrap items-center gap-2"}`}>
+            {plan.segments.map((segment, index) => segment.type === "math"
+              ? <span key={`${segment.value}-${index}`}>{renderMathLatex(segment.value, displayMode || segment.displayMode, segment.value)}</span>
+              : <span key={`${segment.value}-${index}`}>{segment.value}</span>)}
           </span>
         );
       }
     }
 
     if (typeof value === "string") {
-      const segments = extractInlineMathSegments(value);
-      if (segments.some((segment) => segment.type === "math")) {
+      const plan = getStudentNoteRenderPlan(value);
+      if (plan.classification === "full_latex_line" && plan.segments[0]?.type === "math") {
+        return renderMathExpression(plan.segments[0].value, displayMode);
+      }
+      if (plan.classification === "mixed_inline_math") {
         return (
           <span className={`whitespace-pre-wrap font-mono ${displayMode ? "block" : "inline-flex flex-wrap items-center gap-2"}`}>
-            {segments.map((segment, index) => segment.type === "math"
+            {plan.segments.map((segment, index) => segment.type === "math"
               ? <span key={`${segment.value}-${index}`}>{renderMathLatex(segment.value, false, segment.value)}</span>
               : <span key={`${segment.value}-${index}`}>{segment.value}</span>)}
           </span>
@@ -681,13 +1059,157 @@ export default function App() {
   };
 
   const renderMathExpression = (value: unknown, displayMode = false) => {
-    const latex = getMathLatex(value) || (typeof value === "string" && shouldRenderStringAsLatex(value) ? normalizeInlineMathText(value.trim()) : "");
+    const latex = getMathLatex(value) || (typeof value === "string" && (looksLikeFullLatexLine(value) || shouldRenderStringAsLatex(value)) ? normalizeInlineMathText(value.trim()) : "");
     const fallback = formatRenderableText(value).trim();
     if (!latex) {
       return <span className="whitespace-pre-wrap font-mono">{fallback}</span>;
     }
 
     return renderMathLatex(latex, displayMode, fallback);
+  };
+
+  const isMathRichText = (value: unknown): value is MathRichText =>
+    Boolean(
+      value
+      && typeof value === "object"
+      && !Array.isArray(value)
+      && ("text" in (value as MathRichText) || "latex" in (value as MathRichText) || "displayLatex" in (value as MathRichText))
+    );
+
+  const normalizeStudentNoteRichValue = (value: unknown): StudentNoteRichValue | null => {
+    if (value == null) return null;
+    if (isMathRichText(value)) {
+      return normalizeStudentNoteMathRichText(value);
+    }
+    if (typeof value === "string") {
+      if (!value.trim()) return null;
+      return splitStudentNoteLeadingLabelAndMath(value) || value;
+    }
+    if (typeof value === "number" || typeof value === "boolean") {
+      return String(value);
+    }
+    const fallback = formatRenderableText(value).trim();
+    return fallback || null;
+  };
+
+  const normalizeStudentNoteRichLine = (...parts: unknown[]): StudentNoteRichLine =>
+    parts
+      .flatMap((part) => Array.isArray(part) ? part : [part])
+      .map((part) => normalizeStudentNoteRichValue(part))
+      .filter((part): part is StudentNoteRichValue => Boolean(part));
+
+  const normalizeStudentNoteRichLines = (value: unknown): StudentNoteRichLine[] => {
+    const values = Array.isArray(value) ? value : value == null ? [] : [value];
+    return values
+      .map((item) => normalizeStudentNoteRichLine(item))
+      .filter((line) => line.length > 0);
+  };
+
+  const formatStudentNoteRichLine = (line: StudentNoteRichLine): string =>
+    line
+      .map((item) => formatRenderableText(item).replace(/\s+/g, " ").trim())
+      .filter(Boolean)
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const dedupeStudentNoteRichLines = (lines: StudentNoteRichLine[]) => {
+    const seen = new Set<string>();
+    return lines.filter((line) => {
+      const key = formatStudentNoteRichLine(line);
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  };
+
+  const normalizeStudentNoteCueText = (value: string) =>
+    normalizeMathSetupWording(
+      String(value || "")
+        .replace(/\s*\(\s*implicit unit from context\s*\)\s*/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+    );
+
+  const studentNoteCueVerbPattern = /^(state|identify|define|name|list|recall|write|draw|find|solve|use|apply|explain|compare|construct|prove|calculate|simplify|rationalize|show)\b/i;
+
+  const isLikelyStudentNoteCueText = (value: string) => {
+    const text = normalizeStudentNoteCueText(value);
+    if (!text) return false;
+    if (text.includes("?")) return true;
+    if (studentNoteCueVerbPattern.test(text)) return true;
+    if (text.split(/\s+/).length <= 6) return true;
+    if (/^[A-Za-z][A-Za-z0-9 ()/\-]{0,40}:\s*.+$/.test(text) && text.length <= 72) return true;
+    return false;
+  };
+
+  const buildStudentNoteCueLine = (...parts: unknown[]): StudentNoteRichLine | null => {
+    const line = normalizeStudentNoteRichLine(...parts);
+    if (line.length === 0) return null;
+    const formatted = normalizeStudentNoteCueText(formatStudentNoteRichLine(line));
+    if (!formatted || !isLikelyStudentNoteCueText(formatted) || formatted.length > 96) {
+      return null;
+    }
+    return line;
+  };
+
+  const buildStudentNoteCueLines = (value: unknown): StudentNoteRichLine[] => {
+    const values = Array.isArray(value) ? value : value == null ? [] : [value];
+    return values
+      .map((item) => buildStudentNoteCueLine(item))
+      .filter((line): line is StudentNoteRichLine => Boolean(line));
+  };
+
+  const hasStudentNoteBlockContent = (block: StudentNoteBlock) =>
+    block.type === "line"
+      ? block.value.length > 0
+      : block.items.length > 0;
+
+  const renderStudentNoteRichLine = (line: StudentNoteRichLine, displayMode = false) => {
+    if (line.length === 0) return null;
+    if (line.length === 1) {
+      return renderMixedMathLine(line[0], displayMode);
+    }
+
+    return (
+      <span className={`font-mono ${displayMode ? "block space-y-1" : "inline-flex flex-wrap items-center gap-2 whitespace-pre-wrap"}`}>
+        {line.map((item, index) => (
+          <span key={`${formatRenderableText(item)}-${index}`} className={displayMode ? "block" : "inline-flex items-center"}>
+            {renderMixedMathLine(item, displayMode)}
+          </span>
+        ))}
+      </span>
+    );
+  };
+
+  const renderStudentNoteBlock = (block: StudentNoteBlock, keyPrefix: string, className = "font-mono text-[12.5px] leading-7 text-slate-700") => {
+    if (block.type === "line") {
+      return (
+        <p key={keyPrefix} className={className}>
+          {renderStudentNoteRichLine(block.value, Boolean(block.displayMode))}
+        </p>
+      );
+    }
+
+    return (
+      <div key={keyPrefix} className={className}>
+        {block.label ? <div className="font-bold text-slate-800">{block.label}</div> : null}
+        {block.ordered ? (
+          <ol className="mt-1 list-decimal space-y-2 pl-5">
+            {block.items.map((item, index) => <li key={`${keyPrefix}-${index}`}>{renderStudentNoteRichLine(item)}</li>)}
+          </ol>
+        ) : (
+          <div className="mt-1 space-y-2">
+            {block.items.map((item, index) => (
+              <div key={`${keyPrefix}-${index}`} className="flex gap-2">
+                <span className="text-slate-400">.</span>
+                <span className="min-w-0 flex-1">{renderStudentNoteRichLine(item)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
   const getMathDiagramList = (value: unknown): MathDiagramSpec[] =>
@@ -1050,40 +1572,43 @@ export default function App() {
   const buildStudentNotesTemplateContent = (
     studentNotes: NonNullable<SessionPlan["studentLessonNotes"]>,
     fallbackTitle?: string,
-  ) => {
-    const normalizeList = (value: unknown) =>
-      getRenderableList(value)
-        .map((item) => normalizePdfText(item).replace(/\s+/g, " ").trim())
-        .filter(Boolean);
+  ): StudentNotesTemplate => {
+    const noteSections: StudentNoteSection[] = [];
 
-    const dedupe = (items: string[]) => Array.from(new Set(items.map((item) => item.trim()).filter(Boolean)));
-    const noteSections: Array<{ title: string; paragraphs: string[]; cues: string[] }> = [];
+    const buildLineBlock = (...parts: unknown[]): StudentNoteBlock | null => {
+      const value = normalizeStudentNoteRichLine(...parts);
+      return value.length > 0 ? { type: "line", value } : null;
+    };
 
-    const addSection = (title: unknown, paragraphs: unknown[], cues: unknown[] = []) => {
-      const cleanedParagraphs = paragraphs
-        .flatMap((entry) => Array.isArray(entry) ? entry.map((item) => formatRenderableText(item)) : [formatRenderableText(entry)])
-        .map((item) => normalizePdfText(item).replace(/\s+/g, " ").trim())
-        .filter(Boolean);
-      const cleanedCues = dedupe(
-        cues
-          .flatMap((entry) => Array.isArray(entry) ? entry.map((item) => formatRenderableText(item)) : [formatRenderableText(entry)])
-          .map((item) => normalizePdfText(item).replace(/\s+/g, " ").trim())
-      );
+    const buildListBlock = (
+      label: string,
+      value: unknown,
+      options?: { ordered?: boolean }
+    ): StudentNoteBlock | null => {
+      const items = normalizeStudentNoteRichLines(value);
+      return items.length > 0 ? { type: "list", label, items, ordered: options?.ordered } : null;
+    };
+
+    const addSection = (title: unknown, blocks: Array<StudentNoteBlock | null>, cues: StudentNoteRichLine[] = []) => {
+      const cleanedBlocks = blocks.filter((block): block is StudentNoteBlock => Boolean(block && hasStudentNoteBlockContent(block)));
+      const cleanedCues = dedupeStudentNoteRichLines(cues);
       const heading = normalizePdfText(formatRenderableText(title || "")).replace(/\s+/g, " ").trim();
-      if (!heading && cleanedParagraphs.length === 0 && cleanedCues.length === 0) return;
+      if (!heading && cleanedBlocks.length === 0 && cleanedCues.length === 0) return;
       noteSections.push({
         title: heading || `Notes ${noteSections.length + 1}`,
-        paragraphs: cleanedParagraphs,
+        blocks: cleanedBlocks,
         cues: cleanedCues,
       });
     };
 
     addSection(
       studentNotes.title || fallbackTitle || "Session Notes",
-      [studentNotes.sessionOverview, studentNotes.introduction],
       [
-        ...normalizeList(studentNotes.learningObjectives).slice(0, 4),
-        ...normalizeList(studentNotes.quickRecall).slice(0, 4),
+        buildLineBlock(studentNotes.sessionOverview),
+        buildLineBlock(studentNotes.introduction),
+      ],
+      [
+        ...buildStudentNoteCueLines(studentNotes.quickRecall).slice(0, 4),
       ],
     );
 
@@ -1091,18 +1616,18 @@ export default function App() {
       addSection(
         section.heading || `Concept ${index + 1}`,
         [
-          section.explanation,
-          section.detailedExplanation,
-          section.whyItMatters ? `Why it matters: ${formatRenderableText(section.whyItMatters)}` : "",
-          normalizeList(section.examples).length ? `Examples: ${normalizeList(section.examples).join("; ")}` : "",
-          normalizeList(section.importantNotes).length ? `Important notes: ${normalizeList(section.importantNotes).join("; ")}` : "",
-          normalizeList(section.conceptSummary).length ? `Summary: ${normalizeList(section.conceptSummary).join("; ")}` : "",
+          buildLineBlock(section.explanation),
+          buildLineBlock(section.detailedExplanation),
+          buildLineBlock("Why it matters: ", section.whyItMatters),
+          buildListBlock("Examples", section.examples),
+          buildListBlock("Important notes", section.importantNotes),
+          buildListBlock("Summary", section.conceptSummary),
         ],
         [
-          ...normalizeList(section.keyPoints),
-          ...normalizeList(section.terminology),
-          ...normalizeList(section.memoryTechniques),
-          ...normalizeList(section.visualSupport),
+          ...buildStudentNoteCueLines(section.keyPoints),
+          ...buildStudentNoteCueLines(section.terminology),
+          ...buildStudentNoteCueLines(section.memoryTechniques),
+          ...buildStudentNoteCueLines(section.visualSupport),
         ],
       );
     });
@@ -1110,52 +1635,51 @@ export default function App() {
     if (Array.isArray(studentNotes.definitions) && studentNotes.definitions.length > 0) {
       addSection(
         "Definitions",
-        studentNotes.definitions.map((item) => `${formatRenderableText(item.term)}: ${formatRenderableText(item.definition)}`),
-        studentNotes.definitions.map((item) => formatRenderableText(item.term)),
+        studentNotes.definitions.map((item) => buildLineBlock(`${formatRenderableText(item.term)}: `, item.definition)),
+        studentNotes.definitions
+          .map((item) => buildStudentNoteCueLine(item.term))
+          .filter((line): line is StudentNoteRichLine => Boolean(line)),
       );
     }
 
     if (Array.isArray(studentNotes.workedExamples) && studentNotes.workedExamples.length > 0) {
       studentNotes.workedExamples.forEach((example, index) => {
-        const formulaLines = normalizeList(example.formula);
-        const solutionLines = normalizeList(example.solutionSteps);
-        const givenLines = normalizeList(example.given);
-        const plainStepLines = normalizeList(example.steps);
+        const solutionLines = normalizeStudentNoteRichLines(example.solutionSteps);
         addSection(
           example.title || `Worked Example ${index + 1}`,
           [
-            example.problem ? `Problem: ${formatRenderableText(example.problem)}` : "",
-            ...givenLines.map((item, itemIndex) => `${itemIndex === 0 ? "Given" : "Given"}: ${item}`),
-            ...formulaLines.map((item, itemIndex) => `${itemIndex === 0 ? "Formula" : "Formula"}: ${item}`),
-            ...(solutionLines.length > 0
-              ? solutionLines.map((item, itemIndex) => `Step ${itemIndex + 1}: ${item}`)
-              : plainStepLines.map((item, itemIndex) => `Step ${itemIndex + 1}: ${item}`)),
-            example.explanation ? `Explanation: ${formatRenderableText(example.explanation)}` : "",
-            example.finalAnswer ? `Final answer: ${formatRenderableText(example.finalAnswer)}` : "",
+            buildLineBlock("Problem: ", example.problem),
+            buildListBlock("Given", example.given),
+            buildListBlock("Formula", example.formula),
+            solutionLines.length > 0
+              ? buildListBlock("Step", example.solutionSteps, { ordered: true })
+              : buildListBlock("Step", example.steps, { ordered: true }),
+            buildListBlock("Reasoning", example.reasoning, { ordered: true }),
+            buildLineBlock("Explanation: ", example.explanation),
+            buildLineBlock("Final answer: ", example.finalAnswer),
           ],
           [
-            example.title || `Example ${index + 1}`,
-            ...formulaLines,
-            ...(example.finalAnswer ? [formatRenderableText(example.finalAnswer)] : []),
+            ...[buildStudentNoteCueLine(example.title || `Example ${index + 1}`)].filter((line): line is StudentNoteRichLine => Boolean(line)),
+            ...buildStudentNoteCueLines(example.formula),
+            ...buildStudentNoteCueLines(example.finalAnswer),
           ],
         );
       });
     }
 
     if (studentNotes.revisionSection) {
-      const revisionFormulaLines = normalizeList(studentNotes.revisionSection.formulas);
       addSection(
         "Revision Recap",
         [
-          normalizeList(studentNotes.revisionSection.definitions).length ? `Definitions: ${normalizeList(studentNotes.revisionSection.definitions).join("; ")}` : "",
-          revisionFormulaLines.length ? `Formulas: ${revisionFormulaLines.join("; ")}` : "",
-          normalizeList(studentNotes.revisionSection.facts).length ? `Facts: ${normalizeList(studentNotes.revisionSection.facts).join("; ")}` : "",
-          normalizeList(studentNotes.revisionSection.quickRecap).length ? `Quick recap: ${normalizeList(studentNotes.revisionSection.quickRecap).join("; ")}` : "",
+          buildListBlock("Definitions", studentNotes.revisionSection.definitions),
+          buildListBlock("Formulas", studentNotes.revisionSection.formulas),
+          buildListBlock("Facts", studentNotes.revisionSection.facts),
+          buildListBlock("Quick recap", studentNotes.revisionSection.quickRecap),
         ],
         [
-          ...revisionFormulaLines,
-          ...normalizeList(studentNotes.revisionSection.keywords),
-          ...normalizeList(studentNotes.revisionSection.conceptMap),
+          ...buildStudentNoteCueLines(studentNotes.revisionSection.formulas),
+          ...buildStudentNoteCueLines(studentNotes.revisionSection.keywords),
+          ...buildStudentNoteCueLines(studentNotes.revisionSection.conceptMap),
         ],
       );
     }
@@ -1163,25 +1687,28 @@ export default function App() {
     if (Array.isArray(studentNotes.selfCheckQuestions) && studentNotes.selfCheckQuestions.length > 0) {
       addSection(
         "Self Check",
-        studentNotes.selfCheckQuestions.map((item, index) => `Q${index + 1}. ${formatRenderableText(item)}`),
-        studentNotes.selfCheckQuestions.map((item) => formatRenderableText(item)),
+        [{ type: "list", items: normalizeStudentNoteRichLines(studentNotes.selfCheckQuestions), ordered: true }],
+        buildStudentNoteCueLines(studentNotes.selfCheckQuestions),
       );
     }
 
-    const cueItems = dedupe(
+    const cueItems = dedupeStudentNoteRichLines(
       noteSections.flatMap((section) => section.cues).concat([
-        ...normalizeList(studentNotes.keyTerms),
-        ...normalizeList(studentNotes.easyToRemember),
-        ...normalizeList(studentNotes.didYouKnow),
+        ...buildStudentNoteCueLines(studentNotes.keyTerms),
+        ...buildStudentNoteCueLines(studentNotes.easyToRemember),
+        ...buildStudentNoteCueLines(studentNotes.learningObjectives),
+        ...buildStudentNoteCueLines(studentNotes.didYouKnow),
       ])
     );
 
-    const summaryLines = dedupe([
-      ...normalizeList(studentNotes.quickSummary),
-      ...normalizeList(studentNotes.summary),
-      ...normalizeList(studentNotes.quickRevision),
-      ...normalizeList(studentNotes.rememberPoints),
-      ...(normalizeList(studentNotes.keyTerms).length ? [`Keywords: ${normalizeList(studentNotes.keyTerms).join(", ")}`] : []),
+    const summaryLines = dedupeStudentNoteRichLines([
+      ...normalizeStudentNoteRichLines(studentNotes.quickSummary),
+      ...normalizeStudentNoteRichLines(studentNotes.summary),
+      ...normalizeStudentNoteRichLines(studentNotes.quickRevision),
+      ...normalizeStudentNoteRichLines(studentNotes.rememberPoints),
+      ...(getRenderableList(studentNotes.keyTerms).length
+        ? [normalizeStudentNoteRichLine(`Keywords: ${getRenderableList(studentNotes.keyTerms).join(", ")}`)]
+        : []),
     ]);
 
     return {
@@ -1198,14 +1725,28 @@ export default function App() {
     context: { subjectLabel: string; gradeLabel: string; dateLabel: string },
   ) => {
     const normalize = (value: unknown) => normalizePdfText(formatRenderableText(value)).replace(/\s+/g, " ").trim();
+    const canonicalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+    const extractTopicLabel = (value: string) => {
+      const text = normalize(value);
+      if (!text) return "";
+      const colonSplit = text.match(/^(?:[A-Za-z][A-Za-z &/\-]*\s+)?Session\s+\d+\s*:\s*(.+)$/i);
+      if (colonSplit) return colonSplit[1].trim();
+      const subjectSessionSplit = text.match(/^[A-Za-z][A-Za-z &/\-]*\s+Session\s+\d+\s*:\s*(.+)$/i);
+      if (subjectSessionSplit) return subjectSessionSplit[1].trim();
+      const dashSessionSplit = text.match(/^(.+?)\s*-\s*Session\s+\d+$/i);
+      if (dashSessionSplit) return dashSessionSplit[1].trim();
+      return text;
+    };
     const primaryHeading = normalize(session.title || template.noteTitle || "Session Notes") || "Session Notes";
     const candidateSecondary = normalize(session.studentLessonNotes?.title || template.noteTitle || "");
-    const secondaryHeading = candidateSecondary && candidateSecondary.toLowerCase() !== primaryHeading.toLowerCase()
-      ? candidateSecondary
+    const primaryTopic = extractTopicLabel(primaryHeading);
+    const candidateTopic = extractTopicLabel(candidateSecondary);
+    const secondaryHeading = candidateTopic && canonicalize(candidateTopic) !== canonicalize(primaryHeading)
+      ? candidateTopic
       : "";
     const sessionLabel = Number.isFinite(Number(session.sessionNumber)) ? `Session ${session.sessionNumber}` : "Session";
     const metaLine = [sessionLabel, context.subjectLabel, context.gradeLabel, context.dateLabel].filter(Boolean).join("  •  ");
-    const topicLabel = secondaryHeading || primaryHeading;
+    const topicLabel = candidateTopic || primaryTopic || secondaryHeading || primaryHeading;
 
     return {
       primaryHeading,
@@ -1290,6 +1831,40 @@ export default function App() {
     );
   };
 
+  const renderRichNoteListSection = ({
+    title,
+    items,
+    accent = "slate",
+    ordered = false,
+    description,
+    className = "",
+  }: {
+    title: string;
+    items: StudentNoteRichLine[];
+    accent?: keyof typeof noteAccentStyles;
+    ordered?: boolean;
+    description?: string;
+    className?: string;
+  }) => {
+    if (items.length === 0) return null;
+    return (
+      <div className={`rounded-[24px] border p-4 shadow-[0_8px_30px_rgba(15,23,42,0.04)] ${noteAccentStyles[accent].card} ${className}`}>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <div className={`text-[10px] font-extrabold uppercase tracking-[0.18em] ${noteAccentStyles[accent].eyebrow}`}>{title}</div>
+            {description ? <p className="mt-1 text-xs leading-relaxed text-slate-500">{description}</p> : null}
+          </div>
+          <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${noteAccentStyles[accent].badge}`}>{items.length}</span>
+        </div>
+        <ol className={`mt-3 space-y-2 text-xs leading-relaxed text-slate-700 ${ordered ? "list-decimal pl-4" : "list-disc pl-4"}`}>
+          {items.map((item, index) => (
+            <li key={`${title}-${formatStudentNoteRichLine(item)}-${index}`}>{renderStudentNoteRichLine(item)}</li>
+          ))}
+        </ol>
+      </div>
+    );
+  };
+
   const renderInlineChipList = ({
     title,
     items,
@@ -1311,6 +1886,38 @@ export default function App() {
           ))}
         </div>
       </div>
+    );
+  };
+
+  const renderRichParagraph = (
+    value: unknown,
+    className = "text-xs leading-relaxed text-slate-700",
+    displayMode = false,
+  ) => {
+    const line = normalizeStudentNoteRichLine(value);
+    if (line.length === 0) return null;
+    return <p className={className}>{renderStudentNoteRichLine(line, displayMode)}</p>;
+  };
+
+  const renderRichList = (
+    value: unknown,
+    options?: {
+      ordered?: boolean;
+      className?: string;
+      itemClassName?: string;
+    },
+  ) => {
+    const items = normalizeStudentNoteRichLines(value);
+    if (items.length === 0) return null;
+    const ListTag = options?.ordered ? "ol" : "ul";
+    return (
+      <ListTag className={options?.className || `${options?.ordered ? "list-decimal" : "list-disc"} list-inside space-y-1 text-xs text-slate-700`}>
+        {items.map((item, index) => (
+          <li key={`${formatStudentNoteRichLine(item)}-${index}`} className={options?.itemClassName}>
+            {renderStudentNoteRichLine(item)}
+          </li>
+        ))}
+      </ListTag>
     );
   };
 
@@ -1375,18 +1982,18 @@ export default function App() {
   };
 
   const renderTeacherNotesPanel = (teacherNotes: NonNullable<SessionPlan["teacherLessonNotes"]>) => {
-    const learningOutcomes = getRenderableList(teacherNotes.learningOutcomes);
-    const prerequisiteKnowledge = getRenderableList(teacherNotes.prerequisiteKnowledge);
-    const previousSessionRecap = getRenderableList(teacherNotes.previousSessionRecap);
-    const teachingSequence = getRenderableList(teacherNotes.teachingSequence);
-    const guidedPractice = getRenderableList(teacherNotes.guidedPractice);
-    const lessonPurpose = getRenderableList(teacherNotes.lessonPurpose);
-    const formativeChecks = getRenderableList(teacherNotes.formativeChecks);
-    const assessmentQuestions = getRenderableList(teacherNotes.assessmentQuestions);
-    const teacherTips = getRenderableList(teacherNotes.teacherTips);
-    const blackboardSummary = getRenderableList(teacherNotes.blackboardSummary);
-    const sessionSummary = getRenderableList(teacherNotes.sessionSummary);
-    const nextSessionBridge = getRenderableList(teacherNotes.nextSessionBridge);
+    const learningOutcomes = normalizeStudentNoteRichLines(teacherNotes.learningOutcomes);
+    const prerequisiteKnowledge = normalizeStudentNoteRichLines(teacherNotes.prerequisiteKnowledge);
+    const previousSessionRecap = normalizeStudentNoteRichLines(teacherNotes.previousSessionRecap);
+    const teachingSequence = normalizeStudentNoteRichLines(teacherNotes.teachingSequence);
+    const guidedPractice = normalizeStudentNoteRichLines(teacherNotes.guidedPractice);
+    const lessonPurpose = normalizeStudentNoteRichLines(teacherNotes.lessonPurpose);
+    const formativeChecks = normalizeStudentNoteRichLines(teacherNotes.formativeChecks);
+    const assessmentQuestions = normalizeStudentNoteRichLines(teacherNotes.assessmentQuestions);
+    const teacherTips = normalizeStudentNoteRichLines(teacherNotes.teacherTips);
+    const blackboardSummary = normalizeStudentNoteRichLines(teacherNotes.blackboardSummary);
+    const sessionSummary = normalizeStudentNoteRichLines(teacherNotes.sessionSummary);
+    const nextSessionBridge = normalizeStudentNoteRichLines(teacherNotes.nextSessionBridge);
     const lessonBlocks = Array.isArray(teacherNotes.lessonBlocks) ? teacherNotes.lessonBlocks : [];
     const classroomQuestions = Array.isArray(teacherNotes.classroomQuestions) ? teacherNotes.classroomQuestions : [];
     const conceptFlow = Array.isArray(teacherNotes.conceptFlow) ? teacherNotes.conceptFlow : [];
@@ -1407,7 +2014,7 @@ export default function App() {
                 </div>
               </div>
               {teacherNotes.sessionOverview ? (
-                <p className="max-w-3xl text-sm leading-relaxed text-slate-700">{formatRenderableText(teacherNotes.sessionOverview)}</p>
+                <p className="max-w-3xl text-sm leading-relaxed text-slate-700">{renderMixedMathLine(teacherNotes.sessionOverview)}</p>
               ) : null}
             </div>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:min-w-[420px]">
@@ -1423,10 +2030,10 @@ export default function App() {
               {teacherNotes.sessionOverview ? (
                 <div className="rounded-[24px] border border-white/80 bg-white/85 p-4 backdrop-blur-sm">
                   <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Session Overview</div>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{formatRenderableText(teacherNotes.sessionOverview)}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{renderMixedMathLine(teacherNotes.sessionOverview)}</p>
                 </div>
               ) : null}
-              {lessonPurpose.length > 0 ? renderNoteListSection({
+              {lessonPurpose.length > 0 ? renderRichNoteListSection({
                 title: "Lesson Purpose",
                 items: lessonPurpose,
                 accent: "amber",
@@ -1438,17 +2045,17 @@ export default function App() {
 
         <div className="space-y-5 p-5 md:p-6">
           <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-            {renderNoteListSection({ title: "Teacher-Facing Learning Outcomes", items: learningOutcomes, accent: "teal" })}
-            {renderNoteListSection({ title: "Prerequisite Knowledge", items: prerequisiteKnowledge, accent: "amber" })}
-            {renderNoteListSection({ title: "Previous Session Recap", items: previousSessionRecap, accent: "slate" })}
-            {renderNoteListSection({ title: "Teaching Sequence", items: teachingSequence, accent: "slate", ordered: true })}
-            {renderNoteListSection({ title: "Guided Practice", items: guidedPractice, accent: "emerald" })}
-            {renderNoteListSection({ title: "Formative Checks", items: formativeChecks, accent: "emerald" })}
-            {renderNoteListSection({ title: "Assessment Questions", items: assessmentQuestions, accent: "sky", ordered: true })}
-            {renderNoteListSection({ title: "Teacher Tips", items: teacherTips, accent: "amber" })}
-            {renderNoteListSection({ title: "Blackboard Summary", items: blackboardSummary, accent: "slate" })}
-            {renderNoteListSection({ title: "Session Summary", items: sessionSummary, accent: "teal" })}
-            {renderNoteListSection({ title: "Next Session Bridge", items: nextSessionBridge, accent: "sky" })}
+            {renderRichNoteListSection({ title: "Teacher-Facing Learning Outcomes", items: learningOutcomes, accent: "teal" })}
+            {renderRichNoteListSection({ title: "Prerequisite Knowledge", items: prerequisiteKnowledge, accent: "amber" })}
+            {renderRichNoteListSection({ title: "Previous Session Recap", items: previousSessionRecap, accent: "slate" })}
+            {renderRichNoteListSection({ title: "Teaching Sequence", items: teachingSequence, accent: "slate", ordered: true })}
+            {renderRichNoteListSection({ title: "Guided Practice", items: guidedPractice, accent: "emerald" })}
+            {renderRichNoteListSection({ title: "Formative Checks", items: formativeChecks, accent: "emerald" })}
+            {renderRichNoteListSection({ title: "Assessment Questions", items: assessmentQuestions, accent: "sky", ordered: true })}
+            {renderRichNoteListSection({ title: "Teacher Tips", items: teacherTips, accent: "amber" })}
+            {renderRichNoteListSection({ title: "Blackboard Summary", items: blackboardSummary, accent: "slate" })}
+            {renderRichNoteListSection({ title: "Session Summary", items: sessionSummary, accent: "teal" })}
+            {renderRichNoteListSection({ title: "Next Session Bridge", items: nextSessionBridge, accent: "sky" })}
           </div>
 
           {Array.isArray(teacherNotes.teachingPlan) && teacherNotes.teachingPlan.length > 0 ? (
@@ -1464,13 +2071,13 @@ export default function App() {
                 {teacherNotes.teachingPlan.map((item, idx) => (
                   <div key={idx} className="rounded-[22px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#f8fafc)] p-4">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="text-sm font-bold text-slate-900">{formatRenderableText(item.topic)}</div>
+                      <div className="text-sm font-bold text-slate-900">{renderMixedMathLine(item.topic)}</div>
                       <span className="rounded-full bg-[#36ADAA]/10 px-2.5 py-1 text-[10px] font-bold text-[#227C79]">
                         {formatRenderableText(item.minutes)} min
                       </span>
                     </div>
                     {item.teachingStrategy ? (
-                      <p className="mt-2 text-xs leading-relaxed text-slate-600">{formatRenderableText(item.teachingStrategy)}</p>
+                      <p className="mt-2 text-xs leading-relaxed text-slate-600">{renderMixedMathLine(item.teachingStrategy)}</p>
                     ) : null}
                   </div>
                 ))}
@@ -1503,26 +2110,31 @@ export default function App() {
                     </div>
 
                     <div className="mt-4 grid gap-4 xl:grid-cols-2">
-                      {renderNoteListSection({ title: "Teacher Prompt", items: getRenderableList(block.teacherPrompt), accent: "amber" })}
-                      {renderNoteListSection({ title: "Explanation", items: getRenderableList(block.explanation), accent: "slate" })}
-                      {renderNoteListSection({ title: "Check Understanding", items: getRenderableList(block.checkUnderstanding), accent: "sky" })}
-                      {renderNoteListSection({ title: "Expected Answers", items: getRenderableList(block.expectedAnswers), accent: "emerald" })}
-                      {renderNoteListSection({ title: "Activity", items: getRenderableList(block.activity), accent: "teal" })}
-                      {renderNoteListSection({ title: "Board Work", items: getRenderableList(block.boardWork), accent: "amber" })}
-                      {renderNoteListSection({ title: "Board Steps", items: getRenderableMathLines(block.boardSteps), accent: "slate", ordered: true })}
-                      {renderNoteListSection({ title: "Solution Flow", items: getRenderableMathLines(block.solutionFlow), accent: "emerald", ordered: true })}
+                      {renderRichNoteListSection({ title: "Teacher Prompt", items: normalizeStudentNoteRichLines(block.teacherPrompt), accent: "amber" })}
+                      {renderRichNoteListSection({ title: "Explanation", items: normalizeStudentNoteRichLines(block.explanation), accent: "slate" })}
+                      {renderRichNoteListSection({ title: "Check Understanding", items: normalizeStudentNoteRichLines(block.checkUnderstanding), accent: "sky" })}
+                      {renderRichNoteListSection({ title: "Expected Answers", items: normalizeStudentNoteRichLines(block.expectedAnswers), accent: "emerald" })}
+                      {renderRichNoteListSection({ title: "Activity", items: normalizeStudentNoteRichLines(block.activity), accent: "teal" })}
+                      {renderRichNoteListSection({ title: "Board Work", items: normalizeStudentNoteRichLines(block.boardWork), accent: "amber" })}
+                      {renderRichNoteListSection({ title: "Board Steps", items: normalizeStudentNoteRichLines(block.boardSteps), accent: "slate", ordered: true })}
+                      {renderRichNoteListSection({ title: "Solution Flow", items: normalizeStudentNoteRichLines(block.solutionFlow), accent: "emerald", ordered: true })}
                     </div>
 
-                    {getRenderableList(block.examples).length > 0 ? (
+                    {normalizeStudentNoteRichLines(block.examples).length > 0 ? (
                       <div className="mt-4 rounded-[20px] border border-slate-200 bg-white px-4 py-3 text-xs leading-relaxed text-slate-600">
-                        <span className="font-semibold text-slate-800">Examples:</span> {getRenderableList(block.examples).join("; ")}
+                        <span className="font-semibold text-slate-800">Examples:</span>{" "}
+                        <span className="space-y-2">
+                          {normalizeStudentNoteRichLines(block.examples).map((item, exampleIdx) => (
+                            <span key={`${formatStudentNoteRichLine(item)}-${exampleIdx}`} className="block">{renderStudentNoteRichLine(item)}</span>
+                          ))}
+                        </span>
                       </div>
                     ) : null}
-                    {getRenderableMathLines(block.proofSteps).length > 0 ? (
+                    {normalizeStudentNoteRichLines(block.proofSteps).length > 0 ? (
                       <div className="mt-4 rounded-[20px] border border-sky-100 bg-sky-50/70 p-4">
                         <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-sky-700">Proof / Reasoning Steps</div>
                         <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs leading-relaxed text-sky-900">
-                          {getRenderableMathLines(block.proofSteps).map((item, stepIdx) => <li key={`${item}-${stepIdx}`}>{renderMathExpression(item)}</li>)}
+                          {normalizeStudentNoteRichLines(block.proofSteps).map((item, stepIdx) => <li key={`${formatStudentNoteRichLine(item)}-${stepIdx}`}>{renderStudentNoteRichLine(item)}</li>)}
                         </ol>
                       </div>
                     ) : null}
@@ -1544,29 +2156,29 @@ export default function App() {
               <div className="mt-4 grid gap-4 xl:grid-cols-2">
                 {conceptFlow.map((concept, idx) => (
                   <div key={idx} className="rounded-[24px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#f8fafc)] p-4">
-                    <div className="text-sm font-black text-slate-900">{formatRenderableText(concept.conceptName)}</div>
-                    {concept.definition ? <p className="mt-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Definition:</span> {formatRenderableText(concept.definition)}</p> : null}
-                    {concept.coreExplanation ? <p className="mt-2 text-xs leading-relaxed text-slate-700">{formatRenderableText(concept.coreExplanation)}</p> : null}
-                    {renderNoteListSection({ title: "Teacher Moves", items: getRenderableList(concept.teacherMoves), accent: "teal", className: "mt-3" })}
-                    {getRenderableList(concept.examples).length > 0 ? (
-                      <div className="mt-3 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Examples:</span> {getRenderableList(concept.examples).join("; ")}</div>
+                    <div className="text-sm font-black text-slate-900">{renderMixedMathLine(concept.conceptName)}</div>
+                    {concept.definition ? <p className="mt-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Definition:</span> {renderMixedMathLine(concept.definition)}</p> : null}
+                    {concept.coreExplanation ? <p className="mt-2 text-xs leading-relaxed text-slate-700">{renderMixedMathLine(concept.coreExplanation)}</p> : null}
+                    {renderRichNoteListSection({ title: "Teacher Moves", items: normalizeStudentNoteRichLines(concept.teacherMoves), accent: "teal", className: "mt-3" })}
+                    {normalizeStudentNoteRichLines(concept.examples).length > 0 ? (
+                      <div className="mt-3 space-y-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Examples:</span>{normalizeStudentNoteRichLines(concept.examples).map((item, exampleIdx) => <div key={`${formatStudentNoteRichLine(item)}-${exampleIdx}`}>{renderStudentNoteRichLine(item)}</div>)}</div>
                     ) : null}
-                    {getRenderableList(concept.visuals).length > 0 ? (
-                      <div className="mt-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Visual cues:</span> {getRenderableList(concept.visuals).join("; ")}</div>
+                    {normalizeStudentNoteRichLines(concept.visuals).length > 0 ? (
+                      <div className="mt-2 space-y-2 text-xs leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Visual cues:</span>{normalizeStudentNoteRichLines(concept.visuals).map((item, visualIdx) => <div key={`${formatStudentNoteRichLine(item)}-${visualIdx}`}>{renderStudentNoteRichLine(item)}</div>)}</div>
                     ) : null}
-                    {getRenderableMathLines(concept.solutionFlow).length > 0 ? (
+                    {normalizeStudentNoteRichLines(concept.solutionFlow).length > 0 ? (
                       <div className="mt-3 rounded-[18px] border border-emerald-100 bg-emerald-50/70 p-3">
                         <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-700">Solution Flow</div>
                         <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs leading-relaxed text-emerald-900">
-                          {getRenderableMathLines(concept.solutionFlow).map((item, stepIdx) => <li key={`${item}-${stepIdx}`}>{renderMathExpression(item)}</li>)}
+                          {normalizeStudentNoteRichLines(concept.solutionFlow).map((item, stepIdx) => <li key={`${formatStudentNoteRichLine(item)}-${stepIdx}`}>{renderStudentNoteRichLine(item)}</li>)}
                         </ol>
                       </div>
                     ) : null}
-                    {getRenderableMathLines(concept.proofSteps).length > 0 ? (
+                    {normalizeStudentNoteRichLines(concept.proofSteps).length > 0 ? (
                       <div className="mt-3 rounded-[18px] border border-sky-100 bg-sky-50/70 p-3">
                         <div className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-sky-700">Proof Steps</div>
                         <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs leading-relaxed text-sky-900">
-                          {getRenderableMathLines(concept.proofSteps).map((item, stepIdx) => <li key={`${item}-${stepIdx}`}>{renderMathExpression(item)}</li>)}
+                          {normalizeStudentNoteRichLines(concept.proofSteps).map((item, stepIdx) => <li key={`${formatStudentNoteRichLine(item)}-${stepIdx}`}>{renderStudentNoteRichLine(item)}</li>)}
                         </ol>
                       </div>
                     ) : null}
@@ -1587,10 +2199,10 @@ export default function App() {
               <div className="mt-4 grid gap-3 xl:grid-cols-2">
                 {classroomQuestions.map((question, idx) => (
                   <div key={idx} className="rounded-[24px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#f8fafc)] p-4 text-xs text-slate-700">
-                    <div className="font-semibold text-slate-900">{formatRenderableText(question.question)}</div>
+                    <div className="font-semibold text-slate-900">{renderMixedMathLine(question.question)}</div>
                     {question.level ? <div className="mt-2 inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-slate-600">{formatRenderableText(question.level)}</div> : null}
-                    {question.expectedResponse ? <div className="mt-3 leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Expected response:</span> {formatRenderableText(question.expectedResponse)}</div> : null}
-                    {renderNoteListSection({ title: "Answer Points", items: getRenderableList(question.answerPoints), accent: "emerald", className: "mt-3" })}
+                    {question.expectedResponse ? <div className="mt-3 leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Expected response:</span> {renderMixedMathLine(question.expectedResponse)}</div> : null}
+                    {renderRichNoteListSection({ title: "Answer Points", items: normalizeStudentNoteRichLines(question.answerPoints), accent: "emerald", className: "mt-3" })}
                   </div>
                 ))}
               </div>
@@ -1604,10 +2216,10 @@ export default function App() {
                 {timePlan.map((block, idx) => (
                   <div key={idx} className="rounded-[22px] border border-slate-200 bg-white p-4 text-xs text-slate-700">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-slate-900">{formatRenderableText(block.segment)}</span>
+                      <span className="font-semibold text-slate-900">{renderMixedMathLine(block.segment)}</span>
                       <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-bold text-slate-600">{formatRenderableText(block.minutes)} min</span>
                     </div>
-                    {block.purpose ? <p className="mt-2 leading-relaxed text-slate-600">{formatRenderableText(block.purpose)}</p> : null}
+                    {block.purpose ? <p className="mt-2 leading-relaxed text-slate-600">{renderMixedMathLine(block.purpose)}</p> : null}
                   </div>
                 ))}
               </div>
@@ -1620,8 +2232,8 @@ export default function App() {
               <div className="mt-4 grid gap-3 xl:grid-cols-2">
                 {teacherNotes.commonMisconceptionsDetailed.map((item, idx) => (
                   <div key={idx} className="rounded-[22px] border border-rose-200 bg-white/90 p-4 text-xs">
-                    <div className="font-semibold text-rose-900">{formatRenderableText(item.misconception)}</div>
-                    <div className="mt-2 leading-relaxed text-rose-800"><span className="font-bold">Correction:</span> {formatRenderableText(item.correction)}</div>
+                    <div className="font-semibold text-rose-900">{renderMixedMathLine(item.misconception)}</div>
+                    <div className="mt-2 leading-relaxed text-rose-800"><span className="font-bold">Correction:</span> {renderMixedMathLine(item.correction)}</div>
                   </div>
                 ))}
               </div>
@@ -1632,9 +2244,9 @@ export default function App() {
             <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
               <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Differentiation</div>
               <div className="mt-4 grid gap-3 xl:grid-cols-3">
-                {renderNoteListSection({ title: "Slow Learners", items: getRenderableList(teacherNotes.differentiation?.slowLearners), accent: "amber" })}
-                {renderNoteListSection({ title: "Average Learners", items: getRenderableList(teacherNotes.differentiation?.averageLearners), accent: "slate" })}
-                {renderNoteListSection({ title: "Advanced Learners", items: getRenderableList(teacherNotes.differentiation?.advancedLearners), accent: "emerald" })}
+                {renderRichNoteListSection({ title: "Slow Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.slowLearners), accent: "amber" })}
+                {renderRichNoteListSection({ title: "Average Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.averageLearners), accent: "slate" })}
+                {renderRichNoteListSection({ title: "Advanced Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.advancedLearners), accent: "emerald" })}
               </div>
             </div>
           ) : null}
@@ -1645,8 +2257,8 @@ export default function App() {
               <div className="mt-4 grid gap-3 xl:grid-cols-2">
                 {teacherNotes.endOfClassRecap.map((item, idx) => (
                   <div key={idx} className="rounded-[24px] border border-slate-200 bg-white p-4 text-xs text-slate-700">
-                    <div className="font-semibold text-slate-900">{formatRenderableText(item.prompt)}</div>
-                    {item.expectedAnswer ? <div className="mt-2 leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Expected answer:</span> {formatRenderableText(item.expectedAnswer)}</div> : null}
+                    <div className="font-semibold text-slate-900">{renderMixedMathLine(item.prompt)}</div>
+                    {item.expectedAnswer ? <div className="mt-2 leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Expected answer:</span> {renderMixedMathLine(item.expectedAnswer)}</div> : null}
                   </div>
                 ))}
               </div>
@@ -1663,10 +2275,10 @@ export default function App() {
     const gradeLabel = formatRenderableText(extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "Grade");
     const dateLabel = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
     const heading = buildStudentCornellHeading(session, template, { subjectLabel, gradeLabel, dateLabel });
-    const revisionFormulaLines = getRenderableMathLines(studentNotes.revisionSection?.formulas);
+    const revisionFormulaLines = normalizeStudentNoteRichLines(studentNotes.revisionSection?.formulas);
     const formulaCards = Array.isArray(studentNotes.formulaCards) ? studentNotes.formulaCards : [];
     const geometryDiagrams = getMathDiagramList(studentNotes.geometryDiagrams);
-    const proofSteps = getRenderableMathLines(studentNotes.proofSteps);
+    const proofSteps = normalizeStudentNoteRichLines(studentNotes.proofSteps);
     const commonMistakes = Array.isArray(studentNotes.commonMistakes) ? studentNotes.commonMistakes : [];
     const comparisonTables = Array.isArray(studentNotes.comparisonTables) ? studentNotes.comparisonTables : [];
     const diagramById = new Map(geometryDiagrams.map((diagram) => [diagram.id, diagram]));
@@ -1705,7 +2317,7 @@ export default function App() {
             </div>
             {studentNotes.sessionOverview ? (
               <p className="mt-3 max-w-4xl font-mono text-[13px] leading-6 text-slate-600">
-                {formatRenderableText(studentNotes.sessionOverview)}
+                {renderMixedMathLine(studentNotes.sessionOverview)}
               </p>
             ) : null}
           </div>
@@ -1727,9 +2339,9 @@ export default function App() {
               <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Keywords - Questions</div>
               <div className="mt-4 space-y-3 font-mono text-[12px] leading-6 text-slate-700">
                 {template.cueItems.slice(0, 18).map((item, idx) => (
-                  <div key={`${item}-${idx}`} className="flex gap-2">
+                  <div key={`${formatStudentNoteRichLine(item)}-${idx}`} className="flex gap-2">
                     <span className="text-slate-400">.</span>
-                    <span>{item}</span>
+                    <span className="min-w-0 flex-1">{renderStudentNoteRichLine(item)}</span>
                   </div>
                 ))}
                 {template.cueItems.length === 0 ? (
@@ -1745,9 +2357,7 @@ export default function App() {
                   <article key={`${section.title}-${idx}`} className="font-mono text-[12.5px] leading-7 text-slate-700">
                     <h5 className="text-[14px] font-black text-slate-800">{section.title}</h5>
                     <div className="mt-2 space-y-3">
-                      {section.paragraphs.map((paragraph, paragraphIdx) => (
-                        <p key={paragraphIdx}>{paragraph}</p>
-                      ))}
+                      {section.blocks.map((block, blockIdx) => renderStudentNoteBlock(block, `${section.title}-${blockIdx}`))}
                     </div>
                   </article>
                 ))}
@@ -1810,7 +2420,7 @@ export default function App() {
             <div className="mt-6 rounded-[8px] border border-[#efeae0] bg-[#fbfaf7] p-4 shadow-sm">
               <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Proof / Reasoning Flow</div>
               <ol className="mt-4 list-decimal space-y-3 pl-5 font-mono text-[12px] leading-6 text-slate-700">
-                {proofSteps.map((item, idx) => <li key={`${formatRenderableText(item)}-${idx}`}>{renderMixedMathLine(item)}</li>)}
+                {proofSteps.map((item, idx) => <li key={`${formatStudentNoteRichLine(item)}-${idx}`}>{renderStudentNoteRichLine(item)}</li>)}
               </ol>
             </div>
           ) : null}
@@ -1820,7 +2430,7 @@ export default function App() {
               <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Summary</div>
               <div className="mt-3 space-y-2 font-mono text-[12px] leading-6 text-slate-700">
                 {template.summaryLines.slice(0, 8).map((item, idx) => (
-                  <p key={`${item}-${idx}`}>{item}</p>
+                  <p key={`${formatStudentNoteRichLine(item)}-${idx}`}>{renderStudentNoteRichLine(item)}</p>
                 ))}
               </div>
             </div>
@@ -1831,8 +2441,8 @@ export default function App() {
               <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Formula Bank</div>
               <div className="mt-3 grid gap-3 md:grid-cols-2">
                 {revisionFormulaLines.map((item, idx) => (
-                  <div key={`${item}-${idx}`} className="rounded-[6px] border border-[#e7dfd2] bg-white px-4 py-3 font-mono text-[12px] leading-6 text-slate-700">
-                    {renderMixedMathLine(item)}
+                  <div key={`${formatStudentNoteRichLine(item)}-${idx}`} className="rounded-[6px] border border-[#e7dfd2] bg-white px-4 py-3 font-mono text-[12px] leading-6 text-slate-700">
+                    {item.length === 1 ? renderMathExpression(item[0], true) : renderStudentNoteRichLine(item)}
                   </div>
                 ))}
               </div>
@@ -1844,10 +2454,10 @@ export default function App() {
               <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate-500">Worked Solutions</div>
               <div className="mt-4 space-y-4">
                 {studentNotes.workedExamples.map((example, idx) => {
-                  const givenLines = getRenderableMathLines(example.given);
-                  const formulaLines = getRenderableMathLines(example.formula);
-                  const solutionLines = getRenderableMathLines(example.solutionSteps);
-                  const reasoningLines = getRenderableMathLines(example.reasoning);
+                  const givenLines = normalizeStudentNoteRichLines(example.given);
+                  const formulaLines = normalizeStudentNoteRichLines(example.formula);
+                  const solutionLines = normalizeStudentNoteRichLines(example.solutionSteps);
+                  const reasoningLines = normalizeStudentNoteRichLines(example.reasoning);
                   const stepLines = getRenderableList(example.steps);
                   const finalAnswer = formatRenderableText(example.finalAnswer).trim();
                   const linkedDiagram = example.diagramRef ? diagramById.get(example.diagramRef) : null;
@@ -1858,12 +2468,32 @@ export default function App() {
                       <div className="font-mono text-[13px] font-black text-slate-800">{formatRenderableText(example.title || `Worked Example ${idx + 1}`)}</div>
                       {linkedDiagram && shouldRenderLinkedDiagram ? <div className="mt-3">{renderGeometryDiagram(linkedDiagram, true)}</div> : null}
                       {linkedDiagram && !shouldRenderLinkedDiagram ? <div className="mt-2 font-mono text-[11px] text-slate-500">Uses the diagram shown above.</div> : null}
-                      {example.problem ? <p className="mt-2 font-mono text-[12px] leading-6 text-slate-700"><span className="font-bold text-slate-800">Problem:</span> {formatRenderableText(example.problem)}</p> : null}
-                      {givenLines.length > 0 ? <div className="mt-2 space-y-1 font-mono text-[12px] leading-6 text-slate-700">{(Array.isArray(example.given) ? example.given : []).map((item, givenIdx) => <div key={`${formatRenderableText(item)}-${givenIdx}`}><span className="font-bold text-slate-800">{givenIdx === 0 ? "Given:" : ""}</span>{givenIdx === 0 ? " " : ""}{renderMixedMathLine(item)}</div>)}</div> : null}
-                      {formulaLines.length > 0 ? <div className="mt-2 rounded-[6px] bg-[#f8fafc] px-3 py-2 font-mono text-[12px] leading-6 text-slate-700 space-y-1">{(Array.isArray(example.formula) ? example.formula : []).map((item, formulaIdx) => <div key={`${formatRenderableText(item)}-${formulaIdx}`}><span className="font-bold text-slate-800">{formulaIdx === 0 ? "Formula:" : ""}</span>{formulaIdx === 0 ? " " : ""}{renderMixedMathLine(item, true)}</div>)}</div> : null}
+                      {example.problem ? <p className="mt-2 font-mono text-[12px] leading-6 text-slate-700"><span className="font-bold text-slate-800">Problem:</span> {renderMixedMathLine(example.problem)}</p> : null}
+                      {givenLines.length > 0 ? (
+                        <div className="mt-2 space-y-1 font-mono text-[12px] leading-6 text-slate-700">
+                          {givenLines.map((item, givenIdx) => (
+                            <div key={`${formatStudentNoteRichLine(item)}-${givenIdx}`}>
+                              <span className="font-bold text-slate-800">{givenIdx === 0 ? "Given:" : ""}</span>
+                              {givenIdx === 0 ? " " : ""}
+                              {renderStudentNoteRichLine(item)}
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
+                      {formulaLines.length > 0 ? (
+                        <div className="mt-2 space-y-2 rounded-[6px] bg-[#f8fafc] px-3 py-2 font-mono text-[12px] leading-6 text-slate-700">
+                          {formulaLines.map((item, formulaIdx) => (
+                            <div key={`${formatStudentNoteRichLine(item)}-${formulaIdx}`}>
+                              <span className="font-bold text-slate-800">{formulaIdx === 0 ? "Formula:" : ""}</span>
+                              {formulaIdx === 0 ? " " : ""}
+                              {item.length === 1 ? renderMathExpression(item[0], true) : renderStudentNoteRichLine(item)}
+                            </div>
+                          ))}
+                        </div>
+                      ) : null}
                       {solutionLines.length > 0 ? (
                         <ol className="mt-3 list-decimal space-y-2 pl-5 font-mono text-[12px] leading-6 text-slate-700">
-                          {(Array.isArray(example.solutionSteps) ? example.solutionSteps : []).map((item, stepIdx) => <li key={`${formatRenderableText(item)}-${stepIdx}`}>{renderMixedMathLine(item)}</li>)}
+                          {solutionLines.map((item, stepIdx) => <li key={`${formatStudentNoteRichLine(item)}-${stepIdx}`}>{renderStudentNoteRichLine(item)}</li>)}
                         </ol>
                       ) : stepLines.length > 0 ? (
                         <ol className="mt-3 list-decimal space-y-2 pl-5 font-mono text-[12px] leading-6 text-slate-700">
@@ -1874,11 +2504,11 @@ export default function App() {
                         <div className="mt-3 rounded-[6px] border border-sky-100 bg-sky-50 px-3 py-2">
                           <div className="font-mono text-[11px] font-black uppercase tracking-[0.08em] text-sky-700">Reasoning</div>
                           <ol className="mt-2 list-decimal space-y-1 pl-4 font-mono text-[12px] leading-6 text-sky-900">
-                            {(Array.isArray(example.reasoning) ? example.reasoning : []).map((item, reasonIdx) => <li key={`${formatRenderableText(item)}-${reasonIdx}`}>{renderMixedMathLine(item)}</li>)}
+                            {reasoningLines.map((item, reasonIdx) => <li key={`${formatStudentNoteRichLine(item)}-${reasonIdx}`}>{renderStudentNoteRichLine(item)}</li>)}
                           </ol>
                         </div>
                       ) : null}
-                      {example.explanation ? <p className="mt-3 font-mono text-[12px] leading-6 text-slate-700">{formatRenderableText(example.explanation)}</p> : null}
+                      {example.explanation ? <p className="mt-3 font-mono text-[12px] leading-6 text-slate-700">{renderMixedMathLine(example.explanation)}</p> : null}
                       {finalAnswer ? <div className="mt-3 rounded-[6px] border border-emerald-200 bg-emerald-50 px-3 py-2 font-mono text-[12px] font-bold text-emerald-800">Final answer: {renderMixedMathLine(example.finalAnswer || finalAnswer, true)}</div> : null}
                     </div>
                   );
@@ -1893,8 +2523,8 @@ export default function App() {
               <div className="mt-4 grid gap-3 md:grid-cols-2">
                 {commonMistakes.map((item, idx) => (
                   <div key={`${item.mistake}-${idx}`} className="rounded-[6px] border border-rose-100 bg-white px-4 py-3 font-mono text-[12px] leading-6">
-                    <div className="font-black text-rose-800">{formatRenderableText(item.mistake)}</div>
-                    {item.correction ? <div className="mt-2 text-slate-700"><span className="font-bold">Correction:</span> {formatRenderableText(item.correction)}</div> : null}
+                    <div className="font-black text-rose-800">{renderMixedMathLine(item.mistake)}</div>
+                    {item.correction ? <div className="mt-2 text-slate-700"><span className="font-bold">Correction:</span> {renderMixedMathLine(item.correction)}</div> : null}
                     {item.example ? <div className="mt-2 text-slate-600"><span className="font-bold">Example:</span> {renderMixedMathLine(item.example)}</div> : null}
                   </div>
                 ))}
@@ -1981,6 +2611,38 @@ export default function App() {
       .replaceAll("\"", "&quot;")
       .replaceAll("'", "&#39;");
 
+  const renderRichValueToExportHtml = (value: unknown, options?: { displayMode?: boolean; wrapperClassName?: string }) => {
+    const normalizedValue = normalizeStudentNoteRichValue(value);
+    if (!normalizedValue) return "";
+    const renderPlan = getStudentNoteRenderPlan(normalizedValue);
+    if (renderPlan.segments.length === 0) return "";
+
+    const content = renderPlan.segments.map((segment) => {
+      if (segment.type === "math") {
+        const displayMode = Boolean(options?.displayMode || segment.displayMode || renderPlan.classification === "full_latex_line");
+        const normalizedLatex = normalizeInlineMathText(segment.value);
+        try {
+          return `<span class="${displayMode ? "export-rich-math export-rich-math-display" : "export-rich-math"}">${katex.renderToString(normalizedLatex, {
+            displayMode,
+            throwOnError: false,
+            strict: false,
+          })}</span>`;
+        } catch {
+          return `<span class="export-rich-text">${escapeHtml(latexToReadableText(normalizedLatex) || segment.value)}</span>`;
+        }
+      }
+      return `<span class="export-rich-text">${escapeHtml(segment.value)}</span>`;
+    }).join("");
+
+    if (!content) return "";
+    const wrapperClassName = [
+      "export-rich-line",
+      renderPlan.classification === "full_latex_line" || options?.displayMode ? "export-rich-line-display" : "",
+      options?.wrapperClassName || "",
+    ].filter(Boolean).join(" ");
+    return `<span class="${wrapperClassName}">${content}</span>`;
+  };
+
   const slugifyFileNamePart = (value: string) =>
     value
       .toLowerCase()
@@ -2010,8 +2672,14 @@ export default function App() {
     URL.revokeObjectURL(objectUrl);
   };
 
+  const stripImplicitUnitFromContextLabel = (value: string) =>
+    String(value || "")
+      .replace(/\s*\(\s*implicit unit from context\s*\)\s*/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
   const normalizePdfText = (value: string) =>
-    value
+    stripImplicitUnitFromContextLabel(value)
       .normalize("NFKD")
       .replace(/[\u2018\u2019]/g, "'")
       .replace(/[\u201C\u201D]/g, "\"")
@@ -2325,6 +2993,188 @@ export default function App() {
       line: "#d9d4c8",
     };
 
+    type StudentNotePdfVariant = "note" | "cue" | "summary";
+    const studentNoteSnippetCache = new Map<string, Promise<{ image: HTMLImageElement; height: number }>>();
+    const escapeStudentNoteHtml = (value: string) =>
+      stripImplicitUnitFromContextLabel(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+
+    const getStudentNoteRichSegments = (value: StudentNoteRichValue) =>
+      getStudentNoteRenderPlan(value).segments;
+
+    const renderStudentNoteMathHtml = (latex: string, displayMode = false, fallback = "") => {
+      const normalizedLatex = normalizeInlineMathText(latex);
+      try {
+        return katex.renderToString(normalizedLatex, {
+          displayMode,
+          throwOnError: false,
+          strict: false,
+        });
+      } catch {
+        return `<span class="student-note-pdf-text">${escapeStudentNoteHtml(fallback || latexToReadableText(normalizedLatex) || latex)}</span>`;
+      }
+    };
+
+    const renderStudentNoteRichValueToHtml = (value: StudentNoteRichValue, displayMode = false) => {
+      const renderPlan = getStudentNoteRenderPlan(value);
+      const segments = renderPlan.segments;
+      if (segments.length === 0) return "";
+      return segments.map((segment) => {
+        if (segment.type === "math") {
+          const shouldDisplay = displayMode || segment.displayMode || renderPlan.classification === "full_latex_line";
+          return `<span class="${shouldDisplay ? "student-note-pdf-math student-note-pdf-math-display" : "student-note-pdf-math"}">${renderStudentNoteMathHtml(segment.value, shouldDisplay, segment.value)}</span>`;
+        }
+        return `<span class="student-note-pdf-text">${escapeStudentNoteHtml(segment.value)}</span>`;
+      }).join("");
+    };
+
+    const renderStudentNoteRichLineToHtml = (line: StudentNoteRichLine, options?: { displayMode?: boolean; className?: string }) => {
+      const isFullLatexLine = line.length === 1 && getStudentNoteRenderPlan(line[0]).classification === "full_latex_line";
+      const content = line
+        .map((item) => renderStudentNoteRichValueToHtml(item, Boolean(options?.displayMode)))
+        .filter(Boolean)
+        .join("");
+      if (!content) return "";
+      const className = ["student-note-pdf-line", options?.displayMode || isFullLatexLine ? "student-note-pdf-line-display" : "", options?.className || ""]
+        .filter(Boolean)
+        .join(" ");
+      return `<div class="${className}">${content}</div>`;
+    };
+
+    const renderStudentNoteBlockToHtml = (block: StudentNoteBlock) => {
+      if (block.type === "line") {
+        const content = renderStudentNoteRichLineToHtml(block.value, { displayMode: block.displayMode, className: "student-note-pdf-paragraph" });
+        return content ? `<div class="student-note-pdf-block">${content}</div>` : "";
+      }
+
+      const listItems = block.items
+        .map((item) => renderStudentNoteRichLineToHtml(item, { className: "student-note-pdf-list-line" }))
+        .filter(Boolean)
+        .map((item) => `<li>${item}</li>`)
+        .join("");
+      if (!listItems) return "";
+      const label = block.label ? `<div class="student-note-pdf-list-label">${escapeStudentNoteHtml(block.label)}</div>` : "";
+      return `<div class="student-note-pdf-block">${label}<${block.ordered ? "ol" : "ul"} class="student-note-pdf-list ${block.ordered ? "student-note-pdf-list-ordered" : "student-note-pdf-list-unordered"}">${listItems}</${block.ordered ? "ol" : "ul"}></div>`;
+    };
+
+    const getStudentNotePdfCss = (variant: StudentNotePdfVariant) => {
+      const fontSize = variant === "note" ? 18 : 17;
+      const lineHeight = variant === "note" ? 1.55 : 1.45;
+      const listSpacing = variant === "note" ? 10 : 8;
+      return `
+        ${katexStyles}
+        * { box-sizing: border-box; }
+        body { margin: 0; padding: 0; background: transparent; }
+        .student-note-pdf-root {
+          width: 100%;
+          color: ${colors.ink};
+          font-family: "Courier New", "Liberation Mono", monospace;
+          font-size: ${fontSize}px;
+          line-height: ${lineHeight};
+          white-space: normal;
+        }
+        .student-note-pdf-line {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          column-gap: 8px;
+          row-gap: 6px;
+          width: 100%;
+        }
+        .student-note-pdf-line-display {
+          display: block;
+        }
+        .student-note-pdf-paragraph {
+          margin: 0;
+        }
+        .student-note-pdf-block + .student-note-pdf-block {
+          margin-top: ${listSpacing}px;
+        }
+        .student-note-pdf-list-label {
+          font-weight: 700;
+          margin-bottom: 6px;
+        }
+        .student-note-pdf-list {
+          margin: 0;
+          padding-left: 22px;
+        }
+        .student-note-pdf-list li + li {
+          margin-top: ${listSpacing}px;
+        }
+        .student-note-pdf-list-line {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          column-gap: 8px;
+          row-gap: 6px;
+        }
+        .student-note-pdf-math {
+          display: inline-flex;
+          max-width: 100%;
+          align-items: center;
+        }
+        .student-note-pdf-math-display {
+          display: block;
+          width: 100%;
+          overflow: hidden;
+        }
+        .student-note-pdf-text {
+          white-space: pre-wrap;
+        }
+        .student-note-pdf-root .katex .katex-mathml,
+        .student-note-pdf-root .katex annotation {
+          display: none !important;
+        }
+        .student-note-pdf-root .katex-display {
+          margin: 0.3em 0 0;
+          overflow: hidden;
+        }
+      `;
+    };
+
+    const createStudentNotePdfSnippet = async (html: string, width: number, variant: StudentNotePdfVariant) => {
+      const normalizedHtml = html.trim();
+      if (!normalizedHtml) {
+        return { image: await loadImageElement("data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA="), height: 1 };
+      }
+      const cacheKey = `${variant}:${width}:${normalizedHtml}`;
+      if (!studentNoteSnippetCache.has(cacheKey)) {
+        studentNoteSnippetCache.set(cacheKey, (async () => {
+          const measureHost = document.createElement("div");
+          measureHost.style.position = "fixed";
+          measureHost.style.left = "-100000px";
+          measureHost.style.top = "0";
+          measureHost.style.width = `${width}px`;
+          measureHost.style.visibility = "hidden";
+          measureHost.style.pointerEvents = "none";
+          measureHost.innerHTML = `<style>${getStudentNotePdfCss(variant)}</style><div class="student-note-pdf-root">${normalizedHtml}</div>`;
+          document.body.appendChild(measureHost);
+          const measuredRoot = measureHost.querySelector(".student-note-pdf-root") as HTMLElement | null;
+          const height = Math.max(1, Math.ceil(measuredRoot?.getBoundingClientRect().height || 1));
+          measureHost.remove();
+
+          const scale = 2;
+          const svgMarkup = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${width * scale}" height="${height * scale}" viewBox="0 0 ${width} ${height}">
+              <foreignObject x="0" y="0" width="${width}" height="${height}">
+                <div xmlns="http://www.w3.org/1999/xhtml">
+                  <style>${getStudentNotePdfCss(variant)}</style>
+                  <div class="student-note-pdf-root">${normalizedHtml}</div>
+                </div>
+              </foreignObject>
+            </svg>
+          `;
+          const image = await loadImageElement(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`);
+          return { image, height };
+        })());
+      }
+      return studentNoteSnippetCache.get(cacheKey)!;
+    };
+
     const drawRoundedRect = (
       ctx: CanvasRenderingContext2D,
       x: number,
@@ -2385,47 +3235,110 @@ export default function App() {
     }
 
     const noteTitleFont = "700 24px Courier New";
-    const noteBodyFont = "500 18px Courier New";
-    const cueFont = "500 17px Courier New";
-    const summaryFont = "500 17px Courier New";
-    const sectionGap = 18;
-    const paragraphGap = 10;
-    const noteLineHeight = 24;
-    const cueLineHeight = 22;
+    const blockGap = 10;
+    const noteContentWidth = noteWidth - 34;
+    const noteTitleLineHeight = 30;
+    const noteTitleBottomGap = 4;
+    const sectionBottomGap = 10;
 
-    const measureSectionHeight = (section: { title: string; paragraphs: string[] }) => {
-      const titleLines = wrapCanvasText(measureCtx, section.title, noteWidth - 34, noteTitleFont);
-      const titleHeight = Math.max(1, titleLines.length) * 32;
-      const paragraphHeight = section.paragraphs.reduce((total, paragraph) => {
-        const lines = wrapCanvasText(measureCtx, paragraph, noteWidth - 34, noteBodyFont);
-        return total + Math.max(1, lines.length) * noteLineHeight + paragraphGap;
-      }, 0);
-      return titleHeight + paragraphHeight + sectionGap;
+    type PreparedStudentNoteBlock = {
+      block: StudentNoteBlock;
+      snippet: { image: HTMLImageElement; height: number };
+    };
+    type PreparedStudentNoteSection = {
+      title: string;
+      titleLines: string[];
+      titleHeight: number;
+      cues: StudentNoteRichLine[];
+      blocks: PreparedStudentNoteBlock[];
+    };
+    type PaginatedStudentNoteSection = PreparedStudentNoteSection & { blocks: PreparedStudentNoteBlock[] };
+
+    const prepareStudentNoteSection = async (section: StudentNoteSection): Promise<PreparedStudentNoteSection> => {
+      const titleLines = wrapCanvasText(measureCtx, section.title, noteContentWidth, noteTitleFont);
+      const preparedBlocks: PreparedStudentNoteBlock[] = [];
+      for (const block of section.blocks) {
+        const snippetHtml = renderStudentNoteBlockToHtml(block);
+        if (!snippetHtml) continue;
+        const snippet = await createStudentNotePdfSnippet(snippetHtml, noteContentWidth, "note");
+        preparedBlocks.push({ block, snippet });
+      }
+      return {
+        title: section.title,
+        titleLines,
+        titleHeight: Math.max(1, titleLines.length) * noteTitleLineHeight + noteTitleBottomGap,
+        cues: section.cues,
+        blocks: preparedBlocks,
+      };
     };
 
+    const preparedSections = await Promise.all(template.noteSections.map((section) => prepareStudentNoteSection(section)));
+    if (preparedSections.length === 0) {
+      preparedSections.push(await prepareStudentNoteSection({
+        title: template.noteTitle,
+        blocks: [{ type: "line", value: normalizeStudentNoteRichLine("Student lesson notes") }],
+        cues: [normalizeStudentNoteRichLine("Review")],
+      }));
+    }
+
     const availableNoteHeight = contentHeight - 48;
-    const paginatedSections: Array<Array<{ title: string; paragraphs: string[]; cues: string[] }>> = [];
-    let currentPageSections: Array<{ title: string; paragraphs: string[]; cues: string[] }> = [];
+    const paginatedSections: PaginatedStudentNoteSection[][] = [];
+    let currentPageSections: PaginatedStudentNoteSection[] = [];
     let currentHeight = 0;
 
-    template.noteSections.forEach((section) => {
-      const sectionHeight = measureSectionHeight(section);
-      if (currentPageSections.length > 0 && currentHeight + sectionHeight > availableNoteHeight) {
+    const pushCurrentPage = () => {
+      if (currentPageSections.length > 0) {
         paginatedSections.push(currentPageSections);
         currentPageSections = [];
         currentHeight = 0;
       }
-      currentPageSections.push(section);
-      currentHeight += sectionHeight;
-    });
+    };
 
-    if (currentPageSections.length > 0) {
-      paginatedSections.push(currentPageSections);
+    for (const section of preparedSections) {
+      if (section.blocks.length === 0) {
+        const emptySectionHeight = section.titleHeight + sectionBottomGap;
+        if (currentPageSections.length > 0 && currentHeight + emptySectionHeight > availableNoteHeight) {
+          pushCurrentPage();
+        }
+        currentPageSections.push({ ...section, blocks: [] });
+        currentHeight += emptySectionHeight;
+        continue;
+      }
+
+      let blockIndex = 0;
+      while (blockIndex < section.blocks.length) {
+        const firstBlockHeight = section.blocks[blockIndex].snippet.height + blockGap;
+        const minimumChunkHeight = section.titleHeight + firstBlockHeight + sectionBottomGap;
+        if (currentPageSections.length > 0 && currentHeight + minimumChunkHeight > availableNoteHeight) {
+          pushCurrentPage();
+        }
+
+        const chunkBlocks: PreparedStudentNoteBlock[] = [];
+        let chunkHeight = section.titleHeight;
+        while (blockIndex < section.blocks.length) {
+          const blockHeight = section.blocks[blockIndex].snippet.height + blockGap;
+          const projectedHeight = currentHeight + chunkHeight + blockHeight + sectionBottomGap;
+          if (chunkBlocks.length > 0 && projectedHeight > availableNoteHeight) {
+            break;
+          }
+          chunkBlocks.push(section.blocks[blockIndex]);
+          chunkHeight += blockHeight;
+          blockIndex += 1;
+          if (projectedHeight > availableNoteHeight) {
+            break;
+          }
+        }
+
+        currentPageSections.push({ ...section, blocks: chunkBlocks });
+        currentHeight += chunkHeight + sectionBottomGap;
+
+        if (blockIndex < section.blocks.length) {
+          pushCurrentPage();
+        }
+      }
     }
 
-    if (paginatedSections.length === 0) {
-      paginatedSections.push([{ title: template.noteTitle, paragraphs: ["Student lesson notes"], cues: ["Review"] }]);
-    }
+    pushCurrentPage();
 
     const drawWrappedLines = (
       ctx: CanvasRenderingContext2D,
@@ -2500,10 +3413,23 @@ export default function App() {
       });
     };
 
-    const createCornellCanvas = (
+    const cueContentWidth = cueWidth - 34;
+    const summaryContentWidth = totalWidth - 34;
+    const buildDefaultSummaryLines = (pageIndex: number, isVisualPage = false): StudentNoteRichLine[] => [
+      normalizeStudentNoteRichLine(`Subject ${subjectLabel}  •  ${gradeLabel}`),
+      normalizeStudentNoteRichLine(
+        isVisualPage
+          ? "Visual note page."
+          : pageIndex === paginatedSections.length - 1
+            ? "Review the summary and connect it to the worked steps above."
+            : "Continue to the next page for more session notes."
+      ),
+    ];
+
+    const createCornellCanvas = async (
       pageLabel: string,
-      cueItems: string[],
-      summaryLinesInput: string[],
+      cueItems: StudentNoteRichLine[],
+      summaryLinesInput: StudentNoteRichLine[],
       pageIndex: number,
     ) => {
       const canvas = document.createElement("canvas");
@@ -2537,16 +3463,19 @@ export default function App() {
       ctx.fillText("Keywords - Questions", cueX + 16, contentTop + 22);
       ctx.fillText("Notes", noteX + 16, contentTop + 22);
 
-      let cueY = contentTop + 60;
-      Array.from(new Set(cueItems)).slice(0, 18).forEach((item) => {
-        const lines = wrapCanvasText(ctx, item, cueWidth - 34, cueFont);
-        if (cueY + lines.length * cueLineHeight > contentTop + contentHeight - 20) return;
+      let cueY = contentTop + 52;
+      const uniqueCueItems = dedupeStudentNoteRichLines(cueItems).slice(0, 18);
+      for (const item of uniqueCueItems) {
+        const snippetHtml = renderStudentNoteRichLineToHtml(item);
+        if (!snippetHtml) continue;
+        const snippet = await createStudentNotePdfSnippet(snippetHtml, cueContentWidth, "cue");
+        if (cueY + snippet.height > contentTop + contentHeight - 24) break;
         ctx.fillStyle = colors.muted;
-        ctx.font = cueFont;
-        ctx.fillText(".", cueX + 12, cueY);
-        drawWrappedLines(ctx, lines, cueX + 26, cueY, cueLineHeight, colors.ink, cueFont, 3);
-        cueY += lines.length * cueLineHeight + 10;
-      });
+        ctx.font = "500 17px Courier New";
+        ctx.fillText(".", cueX + 12, cueY + 16);
+        ctx.drawImage(snippet.image, cueX + 26, cueY, cueContentWidth, snippet.height);
+        cueY += snippet.height + 10;
+      }
 
       drawRoundedRect(ctx, pagePadding, summaryTop, totalWidth, summaryHeight, 8, colors.summary, colors.panelBorder, 1.2);
       ctx.fillStyle = colors.muted;
@@ -2555,114 +3484,64 @@ export default function App() {
 
       const summaryLines = summaryLinesInput.length > 0
         ? summaryLinesInput
-        : [`subject ${subjectLabel}  •  ${gradeLabel}`, pageIndex === 0 ? "Continue to the next page for more session notes." : "Visual note page."];
+        : buildDefaultSummaryLines(pageIndex);
       let summaryY = summaryTop + 58;
-      summaryLines.slice(0, 8).forEach((item) => {
-        const lines = wrapCanvasText(ctx, item, totalWidth - 34, summaryFont);
-        summaryY += drawWrappedLines(ctx, lines, pagePadding + 16, summaryY, 24, colors.ink, summaryFont, 3);
-        summaryY += 6;
-      });
+      for (const item of summaryLines.slice(0, 8)) {
+        const snippetHtml = renderStudentNoteRichLineToHtml(item);
+        if (!snippetHtml) continue;
+        const snippet = await createStudentNotePdfSnippet(snippetHtml, summaryContentWidth, "summary");
+        if (summaryY + snippet.height > summaryTop + summaryHeight - 20) break;
+        ctx.drawImage(snippet.image, pagePadding + 16, summaryY, summaryContentWidth, snippet.height);
+        summaryY += snippet.height + 6;
+      }
 
       return { canvas, ctx, noteX, noteY: contentTop + 52 };
     };
 
-    paginatedSections.forEach((pageSections, pageIndex) => {
-      const canvas = document.createElement("canvas");
-      canvas.width = canvasWidth;
-      canvas.height = canvasHeight;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        throw new Error("Unable to render student notes PDF page.");
-      }
-
-      ctx.fillStyle = colors.paper;
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-      ctx.drawImage(patternImage, 0, 0, canvasWidth, patternHeight);
-
-      drawNotebookIcon(ctx, pagePadding + 10, patternHeight - 40);
-
-      drawCornellHeader(
-        ctx,
+    for (const [pageIndex, pageSections] of paginatedSections.entries()) {
+      const pageCueItems = dedupeStudentNoteRichLines(pageSections.flatMap((section) => section.cues));
+      const summaryLines = pageIndex === paginatedSections.length - 1 && template.summaryLines.length > 0
+        ? template.summaryLines
+        : buildDefaultSummaryLines(pageIndex);
+      const { canvas, ctx, noteX, noteY: startNoteY } = await createCornellCanvas(
         heading.topicLabel || "Session Notes",
-        `${heading.sessionLabel}  •  ${dateLabel}`,
-        `${subjectLabel} • ${gradeLabel}`,
+        pageCueItems,
+        summaryLines,
+        pageIndex,
       );
-
-      const cueX = pagePadding;
-      const noteX = pagePadding + cueWidth + contentGap;
-      drawRoundedRect(ctx, cueX, contentTop, cueWidth, contentHeight, 8, colors.panel, colors.panelBorder, 1.2);
-      drawRoundedRect(ctx, noteX, contentTop, noteWidth, contentHeight, 8, colors.panel, colors.panelBorder, 1.2);
-
-      ctx.fillStyle = colors.muted;
-      ctx.font = "700 15px Courier New";
-      ctx.fillText("Keywords - Questions", cueX + 16, contentTop + 22);
-      ctx.fillText("Notes", noteX + 16, contentTop + 22);
-
-      const pageCueItems = Array.from(new Set(pageSections.flatMap((section) => section.cues))).slice(0, 18);
-      let cueY = contentTop + 60;
-      pageCueItems.forEach((item) => {
-        const lines = wrapCanvasText(ctx, item, cueWidth - 34, cueFont);
-        if (cueY + lines.length * cueLineHeight > contentTop + contentHeight - 20) return;
-        ctx.fillStyle = colors.muted;
-        ctx.font = cueFont;
-        ctx.fillText(".", cueX + 12, cueY);
-        drawWrappedLines(ctx, lines, cueX + 26, cueY, cueLineHeight, colors.ink, cueFont, 3);
-        cueY += lines.length * cueLineHeight + 10;
-      });
 
       if (pageCueItems.length === 0) {
         ctx.fillStyle = colors.muted;
-        ctx.font = cueFont;
-        ctx.fillText("Generate cue points from the student notes.", cueX + 18, cueY);
+        ctx.font = "500 17px Courier New";
+        ctx.fillText("Generate cue points from the student notes.", pagePadding + 18, contentTop + 68);
       }
 
-      let noteY = contentTop + 52;
-      pageSections.forEach((section) => {
-        const titleLines = wrapCanvasText(ctx, section.title, noteWidth - 34, noteTitleFont);
-        noteY += drawWrappedLines(ctx, titleLines, noteX + 16, noteY, 30, colors.ink, noteTitleFont);
-        noteY += 4;
-        section.paragraphs.forEach((paragraph) => {
-          const paragraphLines = wrapCanvasText(ctx, paragraph, noteWidth - 34, noteBodyFont);
-          noteY += drawWrappedLines(ctx, paragraphLines, noteX + 16, noteY, noteLineHeight, colors.ink, noteBodyFont);
-          noteY += paragraphGap;
-        });
-        noteY += 10;
-      });
-
-      drawRoundedRect(ctx, pagePadding, summaryTop, totalWidth, summaryHeight, 8, colors.summary, colors.panelBorder, 1.2);
-      ctx.fillStyle = colors.muted;
-      ctx.font = "700 15px Courier New";
-      ctx.fillText("Summary", pagePadding + 16, summaryTop + 24);
-
-      const summaryLines = pageIndex === paginatedSections.length - 1 && template.summaryLines.length > 0
-        ? template.summaryLines
-        : [
-            `subject ${subjectLabel}  •  ${gradeLabel}`,
-            "Continue to the next page for more session notes.",
-          ];
-
-      let summaryY = summaryTop + 58;
-      summaryLines.slice(0, 8).forEach((item) => {
-        const lines = wrapCanvasText(ctx, item, totalWidth - 34, summaryFont);
-        summaryY += drawWrappedLines(ctx, lines, pagePadding + 16, summaryY, 24, colors.ink, summaryFont, 3);
-        summaryY += 6;
-      });
+      let noteY = startNoteY;
+      for (const section of pageSections) {
+        noteY += drawWrappedLines(ctx, section.titleLines, noteX + 16, noteY, noteTitleLineHeight, colors.ink, noteTitleFont);
+        noteY += noteTitleBottomGap;
+        for (const block of section.blocks) {
+          ctx.drawImage(block.snippet.image, noteX + 16, noteY, noteContentWidth, block.snippet.height);
+          noteY += block.snippet.height + blockGap;
+        }
+        noteY += sectionBottomGap;
+      }
 
       renderedPages.push(canvas);
-    });
+    }
 
-    const visualItems: Array<{ title: string; caption: string; src: string; cues: string[] }> = [];
+    const visualItems: Array<{ title: string; caption: StudentNoteRichLine; src: string; cues: StudentNoteRichLine[] }> = [];
     (Array.isArray(studentNotes.sections) ? studentNotes.sections : []).forEach((section) => {
       const assets = Array.isArray(section.visualAssets) ? section.visualAssets : [];
       assets.forEach((asset) => {
         if (!asset?.imageDataUrl) return;
         visualItems.push({
           title: formatRenderableText(section.heading || asset.alt || "Generated Visual"),
-          caption: formatRenderableText(asset.alt || section.heading || "Generated lesson visual"),
+          caption: normalizeStudentNoteRichLine(asset.alt || section.heading || "Generated lesson visual"),
           src: asset.imageDataUrl,
           cues: [
-            formatRenderableText(section.heading || "Visual"),
-            ...getRenderableList(section.visualSupport).slice(0, 4),
+            normalizeStudentNoteRichLine(section.heading || "Visual"),
+            ...normalizeStudentNoteRichLines(section.visualSupport).slice(0, 4),
           ],
         });
       });
@@ -2677,22 +3556,25 @@ export default function App() {
       const svgMarkup = buildMathDiagramSvg(diagram);
       visualItems.push({
         title: formatRenderableText(diagram.title || diagram.type || "Math Diagram"),
-        caption: formatRenderableText(diagram.caption || (diagramRefs.has(diagram.id) ? "Diagram used in the worked example." : "Math diagram")),
+        caption: normalizeStudentNoteRichLine(diagram.caption || (diagramRefs.has(diagram.id) ? "Diagram used in the worked example." : "Math diagram")),
         src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgMarkup)}`,
-        cues: [formatRenderableText(diagram.type || "Diagram"), formatRenderableText(diagram.title || "Geometry")],
+        cues: [
+          normalizeStudentNoteRichLine(diagram.type || "Diagram"),
+          normalizeStudentNoteRichLine(diagram.title || "Geometry"),
+        ],
       });
     });
 
     for (const [visualIndex, visual] of visualItems.entries()) {
-      const { canvas, ctx, noteX, noteY } = createCornellCanvas(
+      const { canvas, ctx, noteX, noteY } = await createCornellCanvas(
         visual.title || "Visual Notes",
         visual.cues,
-        [visual.caption || "Study the visual and connect it to the written solution."],
+        [visual.caption.length > 0 ? visual.caption : normalizeStudentNoteRichLine("Study the visual and connect it to the written solution.")],
         visualIndex + paginatedSections.length,
       );
       const image = await loadImageElement(visual.src);
       let cursorY = noteY;
-      const titleLines = wrapCanvasText(ctx, visual.title, noteWidth - 34, noteTitleFont);
+      const titleLines = wrapCanvasText(ctx, visual.title, noteContentWidth, noteTitleFont);
       cursorY += drawWrappedLines(ctx, titleLines, noteX + 16, cursorY, 30, colors.ink, noteTitleFont, 3);
       cursorY += 18;
 
@@ -2707,8 +3589,11 @@ export default function App() {
       ctx.drawImage(image, frameX + (frameW - imgW) / 2, frameY + (frameH - imgH) / 2, imgW, imgH);
       cursorY += frameH + 24;
 
-      const captionLines = wrapCanvasText(ctx, visual.caption, noteWidth - 34, noteBodyFont);
-      drawWrappedLines(ctx, captionLines, noteX + 16, cursorY, noteLineHeight, colors.ink, noteBodyFont, 5);
+      const captionHtml = renderStudentNoteRichLineToHtml(visual.caption);
+      if (captionHtml) {
+        const captionSnippet = await createStudentNotePdfSnippet(captionHtml, noteContentWidth, "note");
+        ctx.drawImage(captionSnippet.image, noteX + 16, cursorY, noteContentWidth, captionSnippet.height);
+      }
       renderedPages.push(canvas);
     }
 
@@ -4224,11 +5109,11 @@ export default function App() {
       const primaryAsset = getPrimaryPptAsset(slide);
       const onSlideTags = (slide.onSlideText || [])
         .slice(0, 3)
-        .map((item) => `<span class="tag ${accent.exportTagClass}">${escapeHtml(item)}</span>`)
+        .map((item) => `<span class="tag ${accent.exportTagClass}">${renderRichValueToExportHtml(item)}</span>`)
         .join("");
       const bullets = (slide.bulletPoints || [])
         .slice(0, 5)
-        .map((item) => `<li>${escapeHtml(item)}</li>`)
+        .map((item) => `<li>${renderRichValueToExportHtml(item)}</li>`)
         .join("");
       const visualSrc = primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "";
       const visualMarkup = visualSrc
@@ -4237,8 +5122,8 @@ export default function App() {
         ? `<div class="svg-wrap">${slide.svgDiagram.svgCode}</div>`
         : `
           <div class="visual-fallback">
-            <div class="visual-chip">${escapeHtml(slide.svgDiagram?.title || "Planned Visual")}</div>
-            <p>${escapeHtml(slide.visualPlan || "Visual will be finalized during export.")}</p>
+            <div class="visual-chip">${renderRichValueToExportHtml(slide.svgDiagram?.title || "Planned Visual")}</div>
+            <p>${renderRichValueToExportHtml(slide.visualPlan || "Visual will be finalized during export.")}</p>
           </div>
         `;
 
@@ -4248,12 +5133,12 @@ export default function App() {
             <div class="slide-bar ${accent.exportBarClass}"></div>
             <div class="slide-grid">
               <div class="slide-copy">
-                <div class="deck-label">${escapeHtml(getPptTitle(ppt))}</div>
-                <h1>${escapeHtml(slide.slideTitle || `Slide ${index + 1}`)}</h1>
+                <div class="deck-label">${renderRichValueToExportHtml(getPptTitle(ppt))}</div>
+                <h1>${renderRichValueToExportHtml(slide.slideTitle || `Slide ${index + 1}`)}</h1>
                 ${onSlideTags ? `<div class="tag-row">${onSlideTags}</div>` : ""}
                 ${bullets ? `<ul class="bullet-list">${bullets}</ul>` : ""}
                 <div class="slide-footer">
-                  ${slide.studentTakeaway ? `<div class="info-card"><div class="info-label">Takeaway</div><div>${escapeHtml(slide.studentTakeaway)}</div></div>` : ""}
+                  ${slide.studentTakeaway ? `<div class="info-card"><div class="info-label">Takeaway</div><div>${renderRichValueToExportHtml(slide.studentTakeaway)}</div></div>` : ""}
                   ${slide.timeEstimateMinutes != null ? `<div class="info-card"><div class="info-label">Timing</div><div>${escapeHtml(slide.timeEstimateMinutes)} minutes</div></div>` : ""}
                 </div>
               </div>
@@ -4281,6 +5166,7 @@ export default function App() {
     <title>${docTitle} - Slides PDF</title>
     <style>
       @page { size: landscape; margin: 10mm; }
+      ${katexStyles}
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; background: #eef4f7; color: #0f172a; font-family: Inter, Arial, sans-serif; }
       body { padding: 18px; }
@@ -4326,6 +5212,13 @@ export default function App() {
       .tag-purple { background: rgba(127, 100, 234, 0.12); color: #5f49c3; }
       .tag-orange { background: rgba(222, 132, 49, 0.12); color: #b8651d; }
       .tag-green { background: rgba(60, 197, 131, 0.12); color: #269c63; }
+      .export-rich-line { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 100%; }
+      .export-rich-line-display { display: block; width: 100%; }
+      .export-rich-text { white-space: pre-wrap; }
+      .export-rich-math { display: inline-flex; max-width: 100%; overflow-x: auto; vertical-align: middle; }
+      .export-rich-math-display { display: block; width: 100%; }
+      .katex .katex-mathml, .katex annotation { display: none !important; }
+      .katex-display { margin: 0.25em 0; overflow: hidden; }
       @media print {
         body { padding: 0; background: #ffffff; }
         .slide-shell { box-shadow: none; }
@@ -9157,17 +10050,17 @@ export default function App() {
 
                                         <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
                                           <h4 className="font-display font-black text-slate-800 text-base">
-                                            {getPptTitle(ppt)}
+                                            {renderMixedMathLine(getPptTitle(ppt))}
                                           </h4>
                                           <div className="grid gap-2 md:grid-cols-2 text-xs text-slate-600">
                                             <div><span className="font-bold text-slate-700">Template:</span> {formatRenderableText(ppt.templateName || selectedTemplate.name)}</div>
                                             <div><span className="font-bold text-slate-700">Theme preset:</span> {formatRenderableText(ppt.themeName || ppt.theme || selectedTheme.name)}</div>
-                                            {ppt.audience && <div><span className="font-bold text-slate-700">Audience:</span> {formatRenderableText(ppt.audience)}</div>}
+                                            {ppt.audience && <div><span className="font-bold text-slate-700">Audience:</span> {renderMixedMathLine(ppt.audience)}</div>}
                                             <div><span className="font-bold text-slate-700">Deck mode:</span> {formatRenderableText(ppt.deckMode || "teacher-delivery")}</div>
                                           </div>
                                           {ppt.presentationGoal && (
                                             <p className="text-xs text-slate-600 leading-relaxed">
-                                              <span className="font-bold text-slate-700">Goal:</span> {formatRenderableText(ppt.presentationGoal)}
+                                              <span className="font-bold text-slate-700">Goal:</span> {renderMixedMathLine(ppt.presentationGoal)}
                                             </p>
                                           )}
                                           {getPptThemeSummary(ppt) && (
@@ -9177,12 +10070,12 @@ export default function App() {
                                           )}
                                           {!!ppt.coverageSummary?.learningOutcomesCovered?.length && (
                                             <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">LO coverage:</span> {ppt.coverageSummary.learningOutcomesCovered.map((item) => formatRenderableText(item)).join("; ")}
+                                              <span className="font-bold text-slate-700">LO coverage:</span> {ppt.coverageSummary.learningOutcomesCovered.map((item, idx) => <span key={idx} className="mr-2 inline-block">{renderMixedMathLine(item)}</span>)}
                                             </div>
                                           )}
                                           {!!ppt.coverageSummary?.topicsCovered?.length && (
                                             <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Topics:</span> {ppt.coverageSummary.topicsCovered.map((item) => formatRenderableText(item)).join("; ")}
+                                              <span className="font-bold text-slate-700">Topics:</span> {ppt.coverageSummary.topicsCovered.map((item, idx) => <span key={idx} className="mr-2 inline-block">{renderMixedMathLine(item)}</span>)}
                                             </div>
                                           )}
                                         </div>
@@ -9192,7 +10085,7 @@ export default function App() {
                                             const accent = getPptAccentStyle(sIdx);
                                             const primaryAsset = getPrimaryPptAsset(slide);
                                             const hasSvgPreview = Boolean(slide.svgDiagram?.svgCode && slide.svgDiagram.svgCode.trim().startsWith("<svg"));
-                                            const primaryVisualSrc = primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "";
+                                            const primaryVisualSrc = formatRenderableText(primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "");
                                             const visualSourceLabel =
                                               primaryAsset?.sourceKind === "generated-image"
                                                 ? "Generated image"
@@ -9220,10 +10113,10 @@ export default function App() {
                                                       </span>
                                                       <div>
                                                         <div className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
-                                                          {formatRenderableText(slide.templateSlideTitle || "PowerPoint Slide Preview")}
+                                                          {renderMixedMathLine(slide.templateSlideTitle || "PowerPoint Slide Preview")}
                                                         </div>
                                                         <div className="text-sm font-display font-black text-slate-800">
-                                                          {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
+                                                          {renderMixedMathLine(slide.slideTitle || `Slide ${sIdx + 1}`)}
                                                         </div>
                                                       </div>
                                                     </div>
@@ -9243,10 +10136,10 @@ export default function App() {
                                                       <div className="flex min-w-0 flex-col px-8 py-7">
                                                         <div className="mb-5">
                                                           <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                                            {getPptTitle(ppt)}
+                                                            {renderMixedMathLine(getPptTitle(ppt))}
                                                           </div>
                                                           <h5 className="mt-2 leading-tight" style={{ color: themePalette.text, fontSize: resolvedTemplateId === "textbook-clean" ? "1.55rem" : "1.75rem", fontWeight: 900, fontFamily: ppt.themeTokens?.fonts?.heading || "Georgia, serif" }}>
-                                                            {formatRenderableText(slide.slideTitle || `Slide ${sIdx + 1}`)}
+                                                            {renderMixedMathLine(slide.slideTitle || `Slide ${sIdx + 1}`)}
                                                           </h5>
                                                         </div>
 
@@ -9254,7 +10147,7 @@ export default function App() {
                                                           <div className="mb-4 flex flex-wrap gap-2">
                                                             {slide.onSlideText.slice(0, 3).map((item, idx) => (
                                                               <span key={idx} className={`rounded-full px-3 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
-                                                                {formatRenderableText(item)}
+                                                                {renderMixedMathLine(item)}
                                                               </span>
                                                             ))}
                                                           </div>
@@ -9265,7 +10158,7 @@ export default function App() {
                                                             <div key={bpIdx} className="flex items-start gap-3">
                                                               <span className={`mt-1 inline-block h-2.5 w-2.5 rounded-full ${accent.bar}`} />
                                                               <p className="text-[13px] leading-6" style={{ color: themePalette.text }}>
-                                                                {formatRenderableText(bp)}
+                                                                {renderMixedMathLine(bp)}
                                                               </p>
                                                             </div>
                                                           ))}
@@ -9277,7 +10170,7 @@ export default function App() {
                                                               <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
                                                                 <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Takeaway</div>
                                                                 <div className="mt-1 text-[11px] leading-5 text-slate-700">
-                                                                  {formatRenderableText(slide.studentTakeaway)}
+                                                                  {renderMixedMathLine(slide.studentTakeaway)}
                                                                 </div>
                                                               </div>
                                                             )}
@@ -9301,7 +10194,7 @@ export default function App() {
                                                           {primaryVisualSrc ? (
                                                             <img
                                                               src={primaryVisualSrc}
-                                                              alt={primaryAsset?.altText || primaryAsset?.purpose || "Slide visual"}
+                                                              alt={formatRenderableText(primaryAsset?.altText || primaryAsset?.purpose || "Slide visual")}
                                                               className="h-full w-full object-cover"
                                                               loading="lazy"
                                                               referrerPolicy="no-referrer"
@@ -9316,11 +10209,11 @@ export default function App() {
                                                               <div>
                                                                 <div className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
                                                                   {slide.svgDiagram?.title
-                                                                    ? formatRenderableText(slide.svgDiagram.title)
+                                                                    ? renderMixedMathLine(slide.svgDiagram.title)
                                                                     : "Planned visual"}
                                                                 </div>
                                                                 <p className="mt-3 text-xs leading-5 text-slate-600">
-                                                                  {formatRenderableText(slide.visualPlan || "This slide uses a teacher-planned visual area in the final PPT.")}
+                                                                  {renderMixedMathLine(slide.visualPlan || "This slide uses a teacher-planned visual area in the final PPT.")}
                                                                 </p>
                                                               </div>
                                                               {!!slide.svgDiagram?.instructions?.length && (
@@ -9328,7 +10221,7 @@ export default function App() {
                                                                   {slide.svgDiagram.instructions.slice(0, 4).map((item, idx) => (
                                                                     <li key={idx} className="flex gap-2">
                                                                       <span className={`mt-1 inline-block h-2 w-2 rounded-full ${accent.bar}`} />
-                                                                      <span>{formatRenderableText(item)}</span>
+                                                                      <span>{renderMixedMathLine(item)}</span>
                                                                     </li>
                                                                   ))}
                                                                 </ul>
@@ -9346,12 +10239,12 @@ export default function App() {
                                                     <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Speaker Notes</div>
                                                     {slide.teacherIntent && (
                                                       <p className="text-xs leading-relaxed text-slate-600">
-                                                        <span className="font-bold text-slate-700">Teacher intent:</span> {formatRenderableText(slide.teacherIntent)}
+                                                        <span className="font-bold text-slate-700">Teacher intent:</span> {renderMixedMathLine(slide.teacherIntent)}
                                                       </p>
                                                     )}
                                                     {!!slide.speakerNotes?.length ? (
                                                       <ul className="list-disc list-inside space-y-1 text-xs text-slate-600">
-                                                        {slide.speakerNotes.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                                        {slide.speakerNotes.map((item, idx) => <li key={idx}>{renderMixedMathLine(item)}</li>)}
                                                       </ul>
                                                     ) : (
                                                       <p className="text-xs text-slate-500">No speaker notes were returned for this slide.</p>
@@ -9362,7 +10255,7 @@ export default function App() {
                                                     <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Visual & Attribution</div>
                                                     {slide.visualPlan && (
                                                       <p className="text-xs leading-relaxed text-slate-600">
-                                                        <span className="font-bold text-slate-700">Visual plan:</span> {formatRenderableText(slide.visualPlan)}
+                                                        <span className="font-bold text-slate-700">Visual plan:</span> {renderMixedMathLine(slide.visualPlan)}
                                                       </p>
                                                     )}
                                                     {!!slide.assets?.length && slide.assets.map((asset, assetIdx) => (
@@ -9377,23 +10270,23 @@ export default function App() {
                                                             </span>
                                                           )}
                                                         </div>
-                                                        {asset.purpose && <div><span className="font-bold text-slate-700">Purpose:</span> {formatRenderableText(asset.purpose)}</div>}
-                                                        {asset.searchQuery && <div><span className="font-bold text-slate-700">Search:</span> {formatRenderableText(asset.searchQuery)}</div>}
+                                                        {asset.purpose && <div><span className="font-bold text-slate-700">Purpose:</span> {renderMixedMathLine(asset.purpose)}</div>}
+                                                        {asset.searchQuery && <div><span className="font-bold text-slate-700">Search:</span> {renderMixedMathLine(asset.searchQuery)}</div>}
                                                         {(asset.sourceSite || asset.sourceUrl) && <div><span className="font-bold text-slate-700">Source:</span> {[asset.sourceSite, asset.sourceUrl].filter(Boolean).map((item) => formatRenderableText(item)).join(" - ")}</div>}
                                                         {asset.licenseType && <div><span className="font-bold text-slate-700">License:</span> {formatRenderableText(asset.licenseType)}</div>}
                                                       </div>
                                                     ))}
                                                     {!slide.assets?.length && slide.svgDiagram && (
                                                       <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
-                                                        <div><span className="font-bold text-slate-700">Diagram:</span> {formatRenderableText(slide.svgDiagram.title || slide.svgDiagram.type || "SVG-supported visual")}</div>
+                                                        <div><span className="font-bold text-slate-700">Diagram:</span> {renderMixedMathLine(slide.svgDiagram.title || slide.svgDiagram.type || "SVG-supported visual")}</div>
                                                         {!!slide.svgDiagram.instructions?.length && (
-                                                          <div><span className="font-bold text-slate-700">Instructions:</span> {slide.svgDiagram.instructions.map((item) => formatRenderableText(item)).join("; ")}</div>
+                                                          <div><span className="font-bold text-slate-700">Instructions:</span> {slide.svgDiagram.instructions.map((item, idx) => <span key={idx} className="mr-2 inline-block">{renderMixedMathLine(item)}</span>)}</div>
                                                         )}
                                                       </div>
                                                     )}
                                                     {!!slide.animationHints?.length && (
                                                       <p className="text-xs leading-relaxed text-slate-600">
-                                                        <span className="font-bold text-slate-700">Animation:</span> {slide.animationHints.map((item) => formatRenderableText(item)).join("; ")}
+                                                        <span className="font-bold text-slate-700">Animation:</span> {slide.animationHints.map((item, idx) => <span key={idx} className="mr-2 inline-block">{renderMixedMathLine(item)}</span>)}
                                                       </p>
                                                     )}
                                                   </div>
@@ -9407,7 +10300,7 @@ export default function App() {
                                           <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
                                             <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">License Checklist</div>
                                             <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
-                                              {ppt.licenseChecklist.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                              {ppt.licenseChecklist.map((item, idx) => <li key={idx}>{renderMixedMathLine(item)}</li>)}
                                             </ul>
                                           </div>
                                         )}
@@ -9415,7 +10308,7 @@ export default function App() {
                                           <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 space-y-2">
                                             <div className="text-[10px] font-extrabold text-rose-500 uppercase tracking-widest">Presentation Warnings</div>
                                             <ul className="list-disc list-inside text-xs text-rose-700 space-y-1">
-                                              {ppt.presentationWarnings.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
+                                              {ppt.presentationWarnings.map((item, idx) => <li key={idx}>{renderMixedMathLine(item)}</li>)}
                                             </ul>
                                           </div>
                                         )}
@@ -9443,7 +10336,7 @@ export default function App() {
 
                                   <div className="text-center pb-4 border-b border-dashed border-slate-200">
                                     <h4 className="font-display font-black text-[#2B3437] text-lg">
-                                      {session.materials.pdf.documentTitle}
+                                      {renderMixedMathLine(session.materials.pdf.documentTitle)}
                                     </h4>
                                     <span className="text-xs text-slate-400 font-sans italic">
                                       Classroom Fact sheet & Printable Reference Guide
@@ -9457,7 +10350,7 @@ export default function App() {
                                     <ul className="text-xs space-y-2 list-decimal list-inside pl-2">
                                       {session.materials.pdf.keyInformation.map((info, idx) => (
                                         <li key={idx} className="leading-relaxed">
-                                          {formatRenderableText(info)}
+                                          {renderMixedMathLine(info)}
                                         </li>
                                       ))}
                                     </ul>
@@ -9482,13 +10375,13 @@ export default function App() {
 
                                   <div className="space-y-3">
                                     <h4 className="font-display font-extrabold text-slate-800 text-sm">
-                                      {session.materials.docx.outlineTitle}
+                                      {renderMixedMathLine(session.materials.docx.outlineTitle)}
                                     </h4>
 
                                     <div className="space-y-2">
                                       {session.materials.docx.sections.map((sec, idx) => (
                                         <div key={idx} className="bg-white p-3 rounded-xl border border-slate-100 text-xs leading-relaxed">
-                                          {formatRenderableText(sec)}
+                                          {renderMixedMathLine(sec)}
                                         </div>
                                       ))}
                                     </div>
@@ -9532,7 +10425,7 @@ export default function App() {
                                       </div>
 
                                       <p className="text-xs text-slate-700 font-medium leading-relaxed pt-1">
-                                        {formatRenderableText(session.homework.task)}
+                                        {renderMixedMathLine(session.homework.task)}
                                       </p>
                                     </div>
                                   ) : getStructuredHomeworkItems(session.homework).length > 0 ? (
@@ -9575,7 +10468,7 @@ export default function App() {
                                                 {formatRenderableText(item.type || `Task ${item.id}`)}
                                               </div>
                                               <div className="font-bold text-sm text-slate-800 mt-1">
-                                                {formatRenderableText(item.title || item.question || `Homework Task ${item.id}`)}
+                                                {renderMixedMathLine(item.title || item.question || `Homework Task ${item.id}`)}
                                               </div>
                                             </div>
                                             <div className="flex flex-wrap gap-2 text-[10px]">
@@ -9599,34 +10492,30 @@ export default function App() {
 
                                           {item.instructions && (
                                             <p className="text-xs text-slate-700 leading-relaxed">
-                                              <span className="font-bold text-slate-800">Instructions:</span> {formatRenderableText(item.instructions)}
+                                              <span className="font-bold text-slate-800">Instructions:</span> {renderMixedMathLine(item.instructions)}
                                             </p>
                                           )}
                                           {item.question && (
                                             <p className="text-xs text-slate-700 leading-relaxed">
-                                              <span className="font-bold text-slate-800">Question:</span> {formatRenderableText(item.question)}
+                                              <span className="font-bold text-slate-800">Question:</span> {renderMixedMathLine(item.question)}
                                             </p>
                                           )}
                                           {!!item.options?.length && (
-                                            <ul className="list-disc list-inside text-xs text-slate-700 space-y-1">
-                                              {item.options.map((option, optionIdx) => (
-                                                <li key={optionIdx}>{formatRenderableText(option)}</li>
-                                              ))}
-                                            </ul>
+                                            renderRichList(item.options, { className: "list-disc list-inside text-xs text-slate-700 space-y-1" })
                                           )}
                                           {item.answerSpace && (
                                             <p className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Answer space:</span> {formatRenderableText(item.answerSpace)}
+                                              <span className="font-bold text-slate-700">Answer space:</span> {renderMixedMathLine(item.answerSpace)}
                                             </p>
                                           )}
                                           {item.visualRequirement && (
                                             <p className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Visual requirement:</span> {formatRenderableText(item.visualRequirement)}
+                                              <span className="font-bold text-slate-700">Visual requirement:</span> {renderMixedMathLine(item.visualRequirement)}
                                             </p>
                                           )}
                                           {item.expectedResponse && (
                                             <p className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Expected response:</span> {formatRenderableText(item.expectedResponse)}
+                                              <span className="font-bold text-slate-700">Expected response:</span> {renderMixedMathLine(item.expectedResponse)}
                                             </p>
                                           )}
                                           {!!item.topicCoverage?.length && (
@@ -9929,11 +10818,9 @@ export default function App() {
                                       )}
 
                                       {!!session.assessment.assessmentMeta?.instructions?.length && (
-                                        <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                                          <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Assessment Instructions</div>
-                                          <ul className="text-xs text-slate-700 list-disc list-inside space-y-1">
-                                            {session.assessment.assessmentMeta.instructions.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                          </ul>
+                                          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                                            <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Assessment Instructions</div>
+                                          {renderRichList(session.assessment.assessmentMeta.instructions, { className: "text-xs text-slate-700 list-disc list-inside space-y-1" })}
                                         </div>
                                       )}
 
@@ -9941,7 +10828,7 @@ export default function App() {
                                         <div className="rounded-2xl border border-slate-200 bg-white p-4">
                                           <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Paper Objective</div>
                                           <p className="text-xs text-slate-700 leading-relaxed">
-                                            {formatRenderableText(session.assessment.assessmentMeta.paperObjective)}
+                                            {renderMixedMathLine(session.assessment.assessmentMeta.paperObjective)}
                                           </p>
                                         </div>
                                       )}
@@ -9970,7 +10857,7 @@ export default function App() {
                                               <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Learning Outcome Coverage</div>
                                               {session.assessment.blueprint.learningOutcomeCoverage.map((item, idx) => (
                                                 <div key={idx} className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
-                                                  <div className="font-semibold text-slate-800">{formatRenderableText(item.outcome)}</div>
+                                                  <div className="font-semibold text-slate-800">{renderMixedMathLine(item.outcome)}</div>
                                                   {!!item.questionRefs?.length && (
                                                     <div className="mt-1 text-slate-500">Questions: {item.questionRefs.map((ref) => formatRenderableText(ref)).join(", ")}</div>
                                                   )}
@@ -10041,7 +10928,7 @@ export default function App() {
                                             {session.assessment.mcq.map((q, idx) => (
                                               <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
                                                 <p className="font-extrabold pb-1">{`Q${idx + 1}`}. ({q.marks || 1} mark)</p>
-                                                <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
+                                                <p className="leading-relaxed">{renderMixedMathLine(q.question)}</p>
                                                 {q.questionSubtype && (
                                                   <p className="mt-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
                                                 )}
@@ -10050,9 +10937,7 @@ export default function App() {
                                                     {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
                                                   </p>
                                                 )}
-                                                <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
-                                                  {q.options.map((option, optionIdx) => <li key={optionIdx}>{formatRenderableText(option)}</li>)}
-                                                </ul>
+                                                {renderRichList(q.options, { className: "mt-2 list-disc list-inside space-y-1 text-slate-600" })}
                                               </div>
                                             ))}
                                           </div>
@@ -10063,8 +10948,8 @@ export default function App() {
                                             {(Array.isArray(session.assessment.answerKey?.mcq) ? session.assessment.answerKey.mcq : []).map((ans, idx) => (
                                               <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
                                                 <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{idx + 1}</p>
-                                                <p className="leading-relaxed font-mono">{formatRenderableText(ans.answer)}</p>
-                                                {ans.explanation && <p className="leading-relaxed mt-1">{formatRenderableText(ans.explanation)}</p>}
+                                                <p className="leading-relaxed font-mono">{renderMixedMathLine(ans.answer)}</p>
+                                                {ans.explanation && <p className="leading-relaxed mt-1">{renderMixedMathLine(ans.explanation)}</p>}
                                               </div>
                                             ))}
                                           </div>
@@ -10083,8 +10968,8 @@ export default function App() {
                                                 {q.questionSubtype && (
                                                   <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
                                                 )}
-                                                <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
-                                                {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {formatRenderableText(q.expectedLength)}</p>}
+                                                <p className="leading-relaxed">{renderMixedMathLine(q.question)}</p>
+                                                {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {renderMixedMathLine(q.expectedLength)}</p>}
                                                 {(q.difficulty || q.bloomsLevel) && (
                                                   <p className="mt-1 text-slate-500">
                                                     {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
@@ -10103,11 +10988,9 @@ export default function App() {
                                                 {ans.questionSubtype && (
                                                   <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(ans.questionSubtype)}</p>
                                                 )}
-                                                <p className="leading-relaxed">{formatRenderableText(ans.answer)}</p>
+                                                <p className="leading-relaxed">{renderMixedMathLine(ans.answer)}</p>
                                                 {!!ans.rubric?.length && (
-                                                  <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
-                                                    {ans.rubric.map((item, rubricIdx) => <li key={rubricIdx}>{formatRenderableText(item)}</li>)}
-                                                  </ul>
+                                                  renderRichList(ans.rubric, { className: "mt-2 list-disc list-inside space-y-1 text-slate-600" })
                                                 )}
                                               </div>
                                             ))}
@@ -10127,8 +11010,8 @@ export default function App() {
                                                 {q.questionSubtype && (
                                                   <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
                                                 )}
-                                                <p className="leading-relaxed">{formatRenderableText(q.question)}</p>
-                                                {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {formatRenderableText(q.expectedLength)}</p>}
+                                                <p className="leading-relaxed">{renderMixedMathLine(q.question)}</p>
+                                                {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {renderMixedMathLine(q.expectedLength)}</p>}
                                                 {(q.difficulty || q.bloomsLevel) && (
                                                   <p className="mt-1 text-slate-500">
                                                     {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
@@ -10147,11 +11030,9 @@ export default function App() {
                                                 {ans.questionSubtype && (
                                                   <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(ans.questionSubtype)}</p>
                                                 )}
-                                                <p className="leading-relaxed whitespace-pre-wrap">{formatRenderableText(ans.answer)}</p>
+                                                <p className="leading-relaxed whitespace-pre-wrap">{renderMixedMathLine(ans.answer)}</p>
                                                 {!!ans.rubric?.length && (
-                                                  <ul className="mt-2 list-disc list-inside space-y-1 text-slate-600">
-                                                    {ans.rubric.map((item, rubricIdx) => <li key={rubricIdx}>{formatRenderableText(item)}</li>)}
-                                                  </ul>
+                                                  renderRichList(ans.rubric, { className: "mt-2 list-disc list-inside space-y-1 text-slate-600" })
                                                 )}
                                               </div>
                                             ))}
@@ -10161,11 +11042,9 @@ export default function App() {
                                     )}
 
                                     {!!session.assessment.answerKey?.generalMarkingGuidance?.length && (
-                                      <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl">
-                                        <div className="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest mb-2">CBSE-style Marking Guidance</div>
-                                        <ul className="text-xs text-amber-900 list-disc list-inside space-y-1">
-                                          {session.assessment.answerKey.generalMarkingGuidance.map((item, idx) => <li key={idx}>{formatRenderableText(item)}</li>)}
-                                        </ul>
+                                        <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl">
+                                          <div className="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest mb-2">CBSE-style Marking Guidance</div>
+                                        {renderRichList(session.assessment.answerKey.generalMarkingGuidance, { className: "text-xs text-amber-900 list-disc list-inside space-y-1" })}
                                       </div>
                                     )}
                                   </div>
@@ -10204,7 +11083,7 @@ export default function App() {
                                         Assignment Task description
                                       </span>
                                       <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                                        {session.assignment.taskDescription}
+                                        {renderMixedMathLine(session.assignment.taskDescription)}
                                       </p>
                                     </div>
 
@@ -10217,7 +11096,7 @@ export default function App() {
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                                         {session.assignment.rubric.map((rub, rIdx) => (
                                             <div key={rIdx} className="bg-white p-3 rounded-xl border border-slate-100 text-[11px] text-slate-600">
-                                              {formatRenderableText(rub)}
+                                              {renderMixedMathLine(rub)}
                                             </div>
                                           ))}
                                         </div>
@@ -10231,7 +11110,7 @@ export default function App() {
                                           Teacher Grading Answer Key reference
                                         </span>
                                         <p className="text-xs text-slate-700 font-mono leading-relaxed whitespace-pre-wrap">
-                                          {formatRenderableText(session.assignment.answerKey)}
+                                          {renderMixedMathLine(session.assignment.answerKey)}
                                         </p>
                                       </div>
                                     )}

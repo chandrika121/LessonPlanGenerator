@@ -1,0 +1,252 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "teacherLessonNotes": {
+      "sessionOverview": "Teacher-facing overview of this session",
+      "prerequisiteKnowledge": [
+        "What students should already know"
+      ],
+      "previousSessionRecap": [
+        "Short recap points from the previous lesson"
+      ],
+      "learningOutcomes": [
+        "Specific session outcome phrased for teacher delivery"
+      ],
+      "teachingPlan": [
+        {
+          "minutes": 5,
+          "topic": "Introduction",
+          "teachingStrategy": "Questioning with simple real-life example"
+        }
+      ],
+      "lessonPurpose": [
+        "Why this lesson matters"
+      ],
+      "teachingSequence": [
+        "Teacher-facing lesson flow with explanation steps"
+      ],
+      "guidedPractice": [
+        "Teacher-led checks and guided responses"
+      ],
+      "lessonBlocks": [
+        {
+          "title": "Introduction",
+          "durationMinutes": 5,
+          "teacherPrompt": [
+            "Prompt teachers can ask"
+          ],
+          "explanation": [
+            "What the teacher should explain"
+          ],
+          "examples": [
+            "Simple classroom example"
+          ],
+          "boardWork": [
+            "What to write on the board"
+          ],
+          "boardSteps": [
+            "Step 1 on the board",
+            "Step 2 on the board"
+          ],
+          "solutionFlow": [
+            "Solve line by line",
+            "State the final answer clearly"
+          ],
+          "proofSteps": [
+            "Reasoning or theorem step"
+          ],
+          "geometryDiagrams": [
+            {
+              "id": "diagram-1",
+              "type": "rightTriangle",
+              "title": "Right triangle diagram",
+              "caption": "Textbook-style diagram used during board work",
+              "points": [
+                {
+                  "id": "A",
+                  "x": 65,
+                  "y": 155,
+                  "label": "A"
+                },
+                {
+                  "id": "B",
+                  "x": 245,
+                  "y": 155,
+                  "label": "B"
+                },
+                {
+                  "id": "C",
+                  "x": 65,
+                  "y": 55,
+                  "label": "C"
+                }
+              ],
+              "lines": [
+                {
+                  "from": "A",
+                  "to": "B",
+                  "label": "base"
+                },
+                {
+                  "from": "A",
+                  "to": "C",
+                  "label": "height"
+                },
+                {
+                  "from": "B",
+                  "to": "C",
+                  "label": "hypotenuse",
+                  "highlight": true
+                }
+              ],
+              "arcs": [],
+              "labels": [
+                {
+                  "text": "90 deg",
+                  "x": 82,
+                  "y": 142
+                }
+              ],
+              "measurements": []
+            }
+          ],
+          "checkUnderstanding": [
+            "Quick question to ask students"
+          ],
+          "expectedAnswers": [
+            "Expected student answer"
+          ],
+          "activity": [
+            "Optional mini activity"
+          ]
+        }
+      ],
+      "conceptFlow": [
+        {
+          "conceptName": "Concept name",
+          "definition": "Short definition",
+          "coreExplanation": "Teacher-facing explanation",
+          "importance": "Why it matters",
+          "observedIn": [
+            "Where students observe it"
+          ],
+          "whyStudyIt": "Why students study it",
+          "relationshipWithPrevious": "Connection with previous concepts",
+          "relationshipWithFuture": "Connection with future learning without teaching it",
+          "keywords": [
+            "Important keyword"
+          ],
+          "teacherMoves": [
+            "Explain this first"
+          ],
+          "examples": [
+            "Useful example"
+          ],
+          "visuals": [
+            "Suggested visual support"
+          ],
+          "solutionFlow": [
+            "State the formula",
+            "Substitute values",
+            "Simplify carefully"
+          ],
+          "proofSteps": [
+            "State the known fact",
+            "Apply the theorem",
+            "Conclude the result"
+          ],
+          "geometryDiagrams": [
+            {
+              "id": "concept-diagram-1",
+              "type": "anglePair",
+              "title": "Angle pair",
+              "caption": "Use when the concept needs a board diagram",
+              "points": [],
+              "lines": [],
+              "arcs": [],
+              "labels": [],
+              "measurements": []
+            }
+          ]
+        }
+      ],
+      "classroomQuestions": [
+        {
+          "question": "Teacher question",
+          "level": "Understanding",
+          "expectedResponse": "Likely student response",
+          "answerPoints": [
+            "Point teachers should listen for"
+          ]
+        }
+      ],
+      "commonMisconceptionsDetailed": [
+        {
+          "misconception": "Common wrong idea",
+          "correction": "Teacher correction for that misconception"
+        }
+      ],
+      "differentiation": {
+        "slowLearners": [
+          "Support strategies"
+        ],
+        "averageLearners": [
+          "Core expectations"
+        ],
+        "advancedLearners": [
+          "Extension prompts"
+        ]
+      },
+      "teacherTips": [
+        "Pedagogical tips"
+      ],
+      "misconceptions": [
+        "Likely misconceptions to address"
+      ],
+      "formativeChecks": [
+        "Natural formative assessment checkpoint"
+      ],
+      "assessmentQuestions": [
+        "Oral or written assessment question"
+      ],
+      "blackboardSummary": [
+        "Key point for board summary"
+      ],
+      "timePlan": [
+        {
+          "segment": "Recap",
+          "minutes": 5,
+          "purpose": "Refresh prerequisite ideas"
+        }
+      ],
+      "sessionSummary": [
+        "Closing recap point"
+      ],
+      "endOfClassRecap": [
+        {
+          "prompt": "A cell is the ________ unit of life.",
+          "expectedAnswer": "basic"
+        }
+      ],
+      "nextSessionBridge": [
+        "How today connects to the next lesson"
+      ]
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "You are an expert mathematics teacher educator, CBSE instructional strategist, classroom problem-solving coach, and board-work designer.\n\nGenerate comprehensive Teacher Notes for one mathematics instructional session only.\n\nSession context:\n- Subject: Mathematics\n- Grade/Level: Class IX\n- Chapter scope: [\"Introduction to Polynomials\"]\n- Session title: Introduction to Polynomials - Session 1\n- Session number: 1 of 11\n- Session duration: 45 minutes\n- Learning outcomes: []\n- Previous session context: Geometry (Implicit Unit from Context) - Session 11\n- Teaching style: []\n- Student level: Mixed classroom\n- Learning pace: Balanced\n- Target difficulty: Moderate\n- Assessment preference: []\n- Teacher preferences / special instructions: None\n- Available teaching resources: []\n- Output language: English\n- Reading level: Grade-aligned\n- Response length: Balanced\n- Creativity level: Moderate\n\nMathematics-specific rules:\n1. Generate notes for this session only.\n2. Keep the output teacher-facing and classroom-usable, not textbook-like.\n3. Use non-generic mathematics examples that match the visible session scope.\n4. When a concept involves solving, show formula selection, substitution, simplification, and final answer steps.\n5. Use board-friendly sequencing. Prefer short explicit steps over long prose.\n6. If a worked solution is included, show the order a teacher should write it on the board.\n7. Include likely student errors such as sign mistakes, skipped steps, unit errors, or formula misuse where relevant.\n8. Use readable equation-friendly text. You may include plain-text equations or LaTeX-style strings in `latex` / `displayLatex` fields when helpful.\n9. The time plan must exactly match the provided session duration.\n10. Return valid JSON only.\n11. For geometry, mensuration, coordinate geometry, triangles, circles, constructions, transformations, and 3D solids, include board-ready structured `geometryDiagrams`.\n12. Do not return raw SVG, HTML, markdown tables, or script-like markup. Return diagram JSON only.\n13. For theorem or construction lessons, include `proofSteps` and board-diagram steps.\n14. For every geometry worked example or teacher demonstration, connect the diagram, known facts, formula/theorem, reasoning, and final conclusion.\n15. Do not request AI image generation or include image prompts, base64 images, screenshots, `visualAssets`, or decorative picture descriptions.\n16. Prefer diagram `template` plus `params` over arbitrary point coordinates. Approved templates are: `rightTriangle`, `sqrtNumberLineConstruction`, `theodorusSpiral`, `circleRadiusDiameter`, `coordinatePlanePlot`, `rectangleAreaPerimeter`, `anglePair`, `barModel`, `solid3D`.\n17. For square-root constructions or irrational numbers on the number line, use `template: \"sqrtNumberLineConstruction\"` or `template: \"theodorusSpiral\"` and include a clear construction sequence in `boardSteps`.\n18. For `boardSteps`, `solutionFlow`, and `proofSteps`, use structured math objects whenever an expression appears instead of burying equations inside plain prose.\n19. Prefer `{ \"text\": \"Substitute values\", \"displayLatex\": \"3^2 + 4^2 = c^2\" }` or `{ \"text\": \"Apply\", \"latex\": \"a^2 + b^2 = c^2\" }` for mixed instructional lines.\n\nReturn a JSON object matching this exact shape:\n{\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Teacher-facing overview of the math session\",\n    \"prerequisiteKnowledge\": [\"What students should already know\"],\n    \"previousSessionRecap\": [\"Short recap points from the previous lesson\"],\n    \"learningOutcomes\": [\"Session outcome phrased for teacher delivery\"],\n    \"teachingPlan\": [\n      {\n        \"minutes\": 5,\n        \"topic\": \"Introduction\",\n        \"teachingStrategy\": \"Questioning with simple example\"\n      }\n    ],\n    \"lessonPurpose\": [\"Why this lesson matters\"],\n    \"teachingSequence\": [\"Step-by-step teacher-facing lesson flow\"],\n    \"guidedPractice\": [\"Teacher-led checks and guided responses\"],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"teacherPrompt\": [\"Prompt teachers can ask\"],\n        \"explanation\": [\"What the teacher should explain\"],\n        \"examples\": [\"Simple classroom example\"],\n        \"boardWork\": [\"What to write on the board\"],\n        \"boardSteps\": [\"Step 1 on the board\", \"Step 2 on the board\"],\n        \"solutionFlow\": [\"State the formula\", \"Substitute values\", \"Simplify carefully\", \"State the final answer\"],\n        \"proofSteps\": [\"State the known fact\", \"Apply the theorem\", \"Conclude the result\"],\n        \"geometryDiagrams\": [\n          {\n            \"id\": \"teacher-diagram-1\",\n            \"type\": \"rightTriangle\",\n            \"template\": \"rightTriangle\",\n            \"params\": {\n              \"baseLength\": \"3 units\",\n              \"height\": \"4 units\",\n              \"hypotenuse\": \"5 units\"\n            },\n            \"title\": \"Board triangle\",\n            \"caption\": \"Diagram to draw before the solution\",\n            \"points\": [\n              { \"id\": \"A\", \"x\": 65, \"y\": 155, \"label\": \"A\" },\n              { \"id\": \"B\", \"x\": 245, \"y\": 155, \"label\": \"B\" },\n              { \"id\": \"C\", \"x\": 65, \"y\": 55, \"label\": \"C\" }\n            ],\n            \"lines\": [\n              { \"from\": \"A\", \"to\": \"B\", \"label\": \"base\" },\n              { \"from\": \"A\", \"to\": \"C\", \"label\": \"height\" },\n              { \"from\": \"B\", \"to\": \"C\", \"label\": \"hypotenuse\", \"highlight\": true }\n            ],\n            \"arcs\": [],\n            \"labels\": [{ \"text\": \"90 deg\", \"x\": 82, \"y\": 142 }],\n            \"measurements\": []\n          }\n        ],\n        \"checkUnderstanding\": [\"Quick question to ask students\"],\n        \"expectedAnswers\": [\"Expected student answer\"],\n        \"activity\": [\"Optional mini activity\"]\n      }\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Concept name\",\n        \"definition\": \"Short definition\",\n        \"coreExplanation\": \"Teacher-facing explanation\",\n        \"importance\": \"Why it matters\",\n        \"observedIn\": [\"Where students observe it\"],\n        \"whyStudyIt\": \"Why students study it\",\n        \"relationshipWithPrevious\": \"Connection with previous concepts\",\n        \"relationshipWithFuture\": \"Connection with future learning without teaching it\",\n        \"keywords\": [\"Important keyword\"],\n        \"teacherMoves\": [\"Explain this first\"],\n        \"examples\": [\"Useful example\"],\n        \"visuals\": [\"Suggested visual support\"],\n        \"solutionFlow\": [\"Identify known values\", \"Apply the correct method\", \"Show the final result clearly\"],\n        \"proofSteps\": [\"Reasoning step 1\", \"Reasoning step 2\"],\n        \"geometryDiagrams\": [\n          {\n            \"id\": \"concept-diagram-1\",\n            \"type\": \"anglePair\",\n            \"title\": \"Concept diagram\",\n            \"caption\": \"Use this when a diagram improves explanation\",\n            \"points\": [],\n            \"lines\": [],\n            \"arcs\": [],\n            \"labels\": [],\n            \"measurements\": []\n          }\n        ]\n      }\n    ],\n    \"classroomQuestions\": [\n      {\n        \"question\": \"Teacher question\",\n        \"level\": \"Recall | Understanding | Application | Analysis | Critical Thinking\",\n        \"expectedResponse\": \"Likely student response\",\n        \"answerPoints\": [\"Point teachers should listen for\"]\n      }\n    ],\n    \"commonMisconceptionsDetailed\": [\n      {\n        \"misconception\": \"Common wrong idea\",\n        \"correction\": \"Teacher correction\"\n      }\n    ],\n    \"differentiation\": {\n      \"slowLearners\": [\"Support strategies\"],\n      \"averageLearners\": [\"Core expectations\"],\n      \"advancedLearners\": [\"Extension prompts\"]\n    },\n    \"misconceptions\": [\"Likely misconception to address\"],\n    \"formativeChecks\": [\"Natural formative assessment checkpoint\"],\n    \"assessmentQuestions\": [\"Oral or written assessment question\"],\n    \"blackboardSummary\": [\"Key point for board summary\"],\n    \"teacherTips\": [\"Practical classroom tip\"],\n    \"timePlan\": [\n      {\n        \"segment\": \"Recap\",\n        \"minutes\": 5,\n        \"purpose\": \"Refresh prerequisite ideas\"\n      }\n    ],\n    \"sessionSummary\": [\"Closing recap point\"],\n    \"endOfClassRecap\": [\n      {\n        \"prompt\": \"A final recall prompt\",\n        \"expectedAnswer\": \"Expected answer\"\n      }\n    ],\n    \"nextSessionBridge\": [\"How today connects to the next lesson\"]\n  }\n}\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Teacher-facing overview of this session\",\n    \"prerequisiteKnowledge\": [\n      \"What students should already know\"\n    ],\n    \"previousSessionRecap\": [\n      \"Short recap points from the previous lesson\"\n    ],\n    \"learningOutcomes\": [\n      \"Specific session outcome phrased for teacher delivery\"\n    ],\n    \"teachingPlan\": [\n      {\n        \"minutes\": 5,\n        \"topic\": \"Introduction\",\n        \"teachingStrategy\": \"Questioning with simple real-life example\"\n      }\n    ],\n    \"lessonPurpose\": [\n      \"Why this lesson matters\"\n    ],\n    \"teachingSequence\": [\n      \"Teacher-facing lesson flow with explanation steps\"\n    ],\n    \"guidedPractice\": [\n      \"Teacher-led checks and guided responses\"\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"teacherPrompt\": [\n          \"Prompt teachers can ask\"\n        ],\n        \"explanation\": [\n          \"What the teacher should explain\"\n        ],\n        \"examples\": [\n          \"Simple classroom example\"\n        ],\n        \"boardWork\": [\n          \"What to write on the board\"\n        ],\n        \"boardSteps\": [\n          \"Step 1 on the board\",\n          \"Step 2 on the board\"\n        ],\n        \"solutionFlow\": [\n          \"Solve line by line\",\n          \"State the final answer clearly\"\n        ],\n        \"proofSteps\": [\n          \"Reasoning or theorem step\"\n        ],\n        \"geometryDiagrams\": [\n          {\n            \"id\": \"diagram-1\",\n            \"type\": \"rightTriangle\",\n            \"title\": \"Right triangle diagram\",\n            \"caption\": \"Textbook-style diagram used during board work\",\n            \"points\": [\n              {\n                \"id\": \"A\",\n                \"x\": 65,\n                \"y\": 155,\n                \"label\": \"A\"\n              },\n              {\n                \"id\": \"B\",\n                \"x\": 245,\n                \"y\": 155,\n                \"label\": \"B\"\n              },\n              {\n                \"id\": \"C\",\n                \"x\": 65,\n                \"y\": 55,\n                \"label\": \"C\"\n              }\n            ],\n            \"lines\": [\n              {\n                \"from\": \"A\",\n                \"to\": \"B\",\n                \"label\": \"base\"\n              },\n              {\n                \"from\": \"A\",\n                \"to\": \"C\",\n                \"label\": \"height\"\n              },\n              {\n                \"from\": \"B\",\n                \"to\": \"C\",\n                \"label\": \"hypotenuse\",\n                \"highlight\": true\n              }\n            ],\n            \"arcs\": [],\n            \"labels\": [\n              {\n                \"text\": \"90 deg\",\n                \"x\": 82,\n                \"y\": 142\n              }\n            ],\n            \"measurements\": []\n          }\n        ],\n        \"checkUnderstanding\": [\n          \"Quick question to ask students\"\n        ],\n        \"expectedAnswers\": [\n          \"Expected student answer\"\n        ],\n        \"activity\": [\n          \"Optional mini activity\"\n        ]\n      }\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Concept name\",\n        \"definition\": \"Short definition\",\n        \"coreExplanation\": \"Teacher-facing explanation\",\n        \"importance\": \"Why it matters\",\n        \"observedIn\": [\n          \"Where students observe it\"\n        ],\n        \"whyStudyIt\": \"Why students study it\",\n        \"relationshipWithPrevious\": \"Connection with previous concepts\",\n        \"relationshipWithFuture\": \"Connection with future learning without teaching it\",\n        \"keywords\": [\n          \"Important keyword\"\n        ],\n        \"teacherMoves\": [\n          \"Explain this first\"\n        ],\n        \"examples\": [\n          \"Useful example\"\n        ],\n        \"visuals\": [\n          \"Suggested visual support\"\n        ],\n        \"solutionFlow\": [\n          \"State the formula\",\n          \"Substitute values\",\n          \"Simplify carefully\"\n        ],\n        \"proofSteps\": [\n          \"State the known fact\",\n          \"Apply the theorem\",\n          \"Conclude the result\"\n        ],\n        \"geometryDiagrams\": [\n          {\n            \"id\": \"concept-diagram-1\",\n            \"type\": \"anglePair\",\n            \"title\": \"Angle pair\",\n            \"caption\": \"Use when the concept needs a board diagram\",\n            \"points\": [],\n            \"lines\": [],\n            \"arcs\": [],\n            \"labels\": [],\n            \"measurements\": []\n          }\n        ]\n      }\n    ],\n    \"classroomQuestions\": [\n      {\n        \"question\": \"Teacher question\",\n        \"level\": \"Understanding\",\n        \"expectedResponse\": \"Likely student response\",\n        \"answerPoints\": [\n          \"Point teachers should listen for\"\n        ]\n      }\n    ],\n    \"commonMisconceptionsDetailed\": [\n      {\n        \"misconception\": \"Common wrong idea\",\n        \"correction\": \"Teacher correction for that misconception\"\n      }\n    ],\n    \"differentiation\": {\n      \"slowLearners\": [\n        \"Support strategies\"\n      ],\n      \"averageLearners\": [\n        \"Core expectations\"\n      ],\n      \"advancedLearners\": [\n        \"Extension prompts\"\n      ]\n    },\n    \"teacherTips\": [\n      \"Pedagogical tips\"\n    ],\n    \"misconceptions\": [\n      \"Likely misconceptions to address\"\n    ],\n    \"formativeChecks\": [\n      \"Natural formative assessment checkpoint\"\n    ],\n    \"assessmentQuestions\": [\n      \"Oral or written assessment question\"\n    ],\n    \"blackboardSummary\": [\n      \"Key point for board summary\"\n    ],\n    \"timePlan\": [\n      {\n        \"segment\": \"Recap\",\n        \"minutes\": 5,\n        \"purpose\": \"Refresh prerequisite ideas\"\n      }\n    ],\n    \"sessionSummary\": [\n      \"Closing recap point\"\n    ],\n    \"endOfClassRecap\": [\n      {\n        \"prompt\": \"A cell is the ________ unit of life.\",\n        \"expectedAnswer\": \"basic\"\n      }\n    ],\n    \"nextSessionBridge\": [\n      \"How today connects to the next lesson\"\n    ]\n  }\n}"
+    }
+  ]
+}

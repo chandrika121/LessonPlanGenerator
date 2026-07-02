@@ -941,6 +941,48 @@ function xmlEscape(value: string) {
     .replace(/'/g, "&apos;");
 }
 
+function latexToExportPlainText(value: string) {
+  return String(value || "")
+    .replace(/\$\$/g, "")
+    .replace(/\$/g, "")
+    .replace(/\\\((.*?)\\\)/g, "$1")
+    .replace(/\\\[(.*?)\\\]/g, "$1")
+    .replace(/\\text\{([^{}]*)\}/g, "$1")
+    .replace(/\\frac\{([^{}]+)\}\{([^{}]+)\}/g, "$1/$2")
+    .replace(/\\sqrt\{([^{}]+)\}/g, "sqrt($1)")
+    .replace(/\\cdot/g, "·")
+    .replace(/\\times/g, "×")
+    .replace(/\\div/g, "÷")
+    .replace(/\\[a-zA-Z]+/g, " ")
+    .replace(/[{}]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function renderableToExportPlainText(value: any) {
+  if (value == null) return "";
+  if (Array.isArray(value)) {
+    return value.map((item) => renderableToExportPlainText(item)).filter(Boolean).join("; ");
+  }
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+  if (typeof value === "object") {
+    const text = typeof value.text === "string" ? value.text.trim() : "";
+    const latex = typeof value.displayLatex === "string" && value.displayLatex.trim()
+      ? value.displayLatex.trim()
+      : typeof value.latex === "string" ? value.latex.trim() : "";
+    const readableLatex = latexToExportPlainText(latex);
+    if (text && readableLatex) {
+      return text.includes(readableLatex) ? text : `${text} ${readableLatex}`.trim();
+    }
+    if (text || readableLatex) {
+      return text || readableLatex;
+    }
+  }
+  return String(value);
+}
+
 function slugifyFileNamePart(value: string) {
   return String(value || "")
     .toLowerCase()
@@ -1117,13 +1159,13 @@ function shouldPreferSvgVisual(slide: any) {
 }
 
 function buildFallbackSvgDiagram(slide: any, themeTokens: any) {
-  const title = xmlEscape(String(slide?.slideTitle || "Concept Diagram"));
+  const title = xmlEscape(renderableToExportPlainText(slide?.slideTitle || "Concept Diagram"));
   const rawItems = Array.isArray(slide?.onSlideText) && slide.onSlideText.length > 0
     ? slide.onSlideText
     : Array.isArray(slide?.bulletPoints)
     ? slide.bulletPoints
     : [];
-  const items = rawItems.map((item: any) => String(item || "").trim()).filter(Boolean).slice(0, 4);
+  const items = rawItems.map((item: any) => renderableToExportPlainText(item).trim()).filter(Boolean).slice(0, 4);
   if (!items.length) {
     return "";
   }
@@ -1178,7 +1220,7 @@ async function resolvePptSlideAssets(
     sessionTitle?: string;
   }
 ) {
-  const slideTitle = String(slide?.slideTitle || slide?.title || "Slide visual");
+  const slideTitle = renderableToExportPlainText(slide?.slideTitle || slide?.title || "Slide visual");
   const existingAssets = Array.isArray(slide?.assets) && slide.assets.length > 0
     ? slide.assets
     : [{
@@ -1194,7 +1236,7 @@ async function resolvePptSlideAssets(
 
   const preferSvg = shouldPreferSvgVisual(slide);
   const normalizedAssets = await Promise.all(existingAssets.map(async (asset: any) => {
-    const searchQuery = String(asset?.searchQuery || `${sessionContext.subject || "classroom"} ${slideTitle} diagram`);
+    const searchQuery = renderableToExportPlainText(asset?.searchQuery || `${sessionContext.subject || "classroom"} ${slideTitle} diagram`);
     const needsResolution =
       !asset?.sourceUrl ||
       String(asset.sourceUrl).includes("example.com") ||
@@ -1209,15 +1251,15 @@ async function resolvePptSlideAssets(
     const assetMimeType = typeof asset?.mimeType === "string" ? asset.mimeType : "";
     const assetModel = typeof asset?.model === "string" ? asset.model : "";
     const finalAsset: Record<string, any> = {
-      purpose: String(asset?.purpose || `Support visual explanation for ${slideTitle}`),
+      purpose: renderableToExportPlainText(asset?.purpose || `Support visual explanation for ${slideTitle}`),
       searchQuery,
-      sourceSite: String(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "Ollama image model")),
+      sourceSite: renderableToExportPlainText(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "Ollama image model")),
       sourceUrl: "",
       previewUrl: assetImageDataUrl || "",
-      licenseType: String(asset?.licenseType || resolved?.licenseType || (preferSvg ? "Internal SVG diagram" : "Internally generated")),
+      licenseType: renderableToExportPlainText(asset?.licenseType || resolved?.licenseType || (preferSvg ? "Internal SVG diagram" : "Internally generated")),
       attributionText: "",
-      altText: String(asset?.altText || resolved?.altText || `Illustration or diagram for ${slideTitle}`),
-      placementHint: String(asset?.placementHint || "Right panel or supporting visual zone"),
+      altText: renderableToExportPlainText(asset?.altText || resolved?.altText || `Illustration or diagram for ${slideTitle}`),
+      placementHint: renderableToExportPlainText(asset?.placementHint || "Right panel or supporting visual zone"),
       imageDataUrl: assetImageDataUrl,
       mimeType: assetMimeType,
       model: assetModel,
@@ -1310,6 +1352,42 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     return ppt;
   }
 
+  const isMathRichTextValue = (value: any) =>
+    Boolean(
+      value
+      && typeof value === "object"
+      && !Array.isArray(value)
+      && ("text" in value || "latex" in value || "displayLatex" in value)
+    );
+
+  const preserveRenderableValue = (value: any, fallback = "") => {
+    if (isMathRichTextValue(value)) {
+      return structuredClone(value);
+    }
+    if (value == null) return fallback;
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+      return String(value);
+    }
+    return fallback;
+  };
+
+  const preserveRenderableList = (value: any, fallback: any[] = []) =>
+    Array.isArray(value)
+      ? value.map((item) => preserveRenderableValue(item)).filter((item) => item !== "")
+      : fallback;
+
+  const renderableTextLabel = (value: any, fallback = "") => {
+    if (isMathRichTextValue(value)) {
+      const text = typeof value.text === "string" ? value.text.trim() : "";
+      const latex = typeof value.displayLatex === "string" && value.displayLatex.trim()
+        ? value.displayLatex.trim()
+        : typeof value.latex === "string" ? value.latex.trim() : "";
+      return text || latex || fallback;
+    }
+    const normalized = preserveRenderableValue(value, fallback);
+    return typeof normalized === "string" ? normalized : fallback;
+  };
+
   const templatePreset = getPptTemplatePreset(
     ppt?.templateId ||
     sessionContext.generationOptions?.pptTemplateId
@@ -1323,16 +1401,16 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
 
   for (let index = 0; index < rawSlides.length; index += 1) {
     const slide = rawSlides[index];
-    const slideTitle = String(
+    const slideTitle = preserveRenderableValue(
       slide?.slideTitle ||
       slide?.title ||
       `Slide ${index + 1}`
     );
     const bulletPoints = Array.isArray(slide?.bulletPoints)
-      ? slide.bulletPoints.map((item: any) => String(item))
+      ? preserveRenderableList(slide.bulletPoints)
       : [];
     const onSlideText = Array.isArray(slide?.onSlideText)
-      ? slide.onSlideText.map((item: any) => String(item))
+      ? preserveRenderableList(slide.onSlideText)
       : bulletPoints.slice(0, 4);
     const learningOutcomeIds = Array.isArray(slide?.learningOutcomeIds) && slide.learningOutcomeIds.length > 0
       ? slide.learningOutcomeIds.map((item: any) => String(item))
@@ -1344,6 +1422,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       KAMALANIKETAN_TEMPLATE_SLIDES.find((entry) => entry.key === inferTemplateSlideKey(slide, index)) ||
       KAMALANIKETAN_TEMPLATE_SLIDES[index] ||
       KAMALANIKETAN_TEMPLATE_SLIDES[KAMALANIKETAN_TEMPLATE_SLIDES.length - 1];
+    const slideTitleText = renderableTextLabel(slideTitle, `Slide ${index + 1}`);
     const normalizedAssets = await resolvePptSlideAssets(
       sessionContext.requestId || makeRequestId("ppt-assets"),
       sessionContext.debugDir || DEBUG_OUTPUT_DIR,
@@ -1368,7 +1447,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     const normalizedSlide = {
       templateId: String(slide?.templateId || templatePreset.templateId),
       templateSlideKey: templateSlot.key,
-      templateSlideTitle: String(slide?.templateSlideTitle || templateSlot.label),
+      templateSlideTitle: preserveRenderableValue(slide?.templateSlideTitle || templateSlot.label, templateSlot.label),
       isOptionalSlotFilled: typeof slide?.isOptionalSlotFilled === "boolean"
         ? slide.isOptionalSlotFilled
         : Boolean(
@@ -1379,34 +1458,34 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
             slide?.speakerNotes?.length
           ),
       slideNumber: Number(slide?.slideNumber) || index + 1,
-      slideType: String(slide?.slideType || templateSlot.slideType),
-      slideTitle,
-      learningOutcomeIds,
-      topicCoverage,
-      teacherIntent: String(
+      slideType: preserveRenderableValue(slide?.slideType || templateSlot.slideType, templateSlot.slideType),
+        slideTitle,
+        learningOutcomeIds,
+        topicCoverage,
+      teacherIntent: preserveRenderableValue(
         slide?.teacherIntent ||
-        `Use this slide to teach ${slideTitle} clearly and keep it aligned to the session flow.`
+        `Use this slide to teach ${slideTitleText} clearly and keep it aligned to the session flow.`
       ),
-      studentTakeaway: String(
+      studentTakeaway: preserveRenderableValue(
         slide?.studentTakeaway ||
         bulletPoints[0] ||
-        `Students should understand the core idea behind ${slideTitle}.`
+        `Students should understand the core idea behind ${slideTitleText}.`
       ),
-      layout: String(slide?.layout || `${templatePreset.layoutMode} layout with concise teaching copy and supporting visual area`),
+      layout: preserveRenderableValue(slide?.layout || `${templatePreset.layoutMode} layout with concise teaching copy and supporting visual area`),
       bulletPoints,
       onSlideText,
       speakerNotes: Array.isArray(slide?.speakerNotes) && slide.speakerNotes.length > 0
-        ? slide.speakerNotes.map((item: any) => String(item))
+        ? preserveRenderableList(slide.speakerNotes)
         : bulletPoints.map((item: string) => `Explain: ${item}`),
-      visualPlan: String(
+      visualPlan: preserveRenderableValue(
         slide?.visualPlan ||
-        `Use a precise classroom visual for ${slideTitle}. Prefer diagram/SVG when conceptual accuracy matters.`
+        `Use a precise classroom visual for ${slideTitleText}. Prefer diagram/SVG when conceptual accuracy matters.`
       ),
       assets: normalizedAssets,
       svgDiagram: slide?.svgDiagram
         ? slide.svgDiagram
         : {
-            title: `${slideTitle} visual`,
+            title: `${slideTitleText} visual`,
             type: shouldUseSvg ? "concept diagram" : "visual support",
             instructions: [
               `If a sourced image is not precise enough, use a compact classroom diagram for ${slideTitle}.`,
@@ -1415,7 +1494,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
             svgCode,
           },
       animationHints: Array.isArray(slide?.animationHints) && slide.animationHints.length > 0
-        ? slide.animationHints.map((item: any) => String(item))
+        ? preserveRenderableList(slide.animationHints)
         : ["Reveal bullets progressively while explaining."],
       timeEstimateMinutes: Number(slide?.timeEstimateMinutes) || 4,
     };
@@ -1487,19 +1566,19 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     themeId: String(ppt?.themeId || sessionContext.generationOptions?.pptThemeId || themeTokens.themeId),
     themeName: String(ppt?.themeName || themeTokens.themeName),
     themeTokens,
-    title: String(ppt?.title || ppt?.presentationTitle || sessionContext.sessionTitle || "Session Presentation"),
-    presentationTitle: String(ppt?.presentationTitle || ppt?.title || sessionContext.sessionTitle || "Session Presentation"),
-    presentationGoal: String(
+    title: preserveRenderableValue(ppt?.title || ppt?.presentationTitle || sessionContext.sessionTitle || "Session Presentation", "Session Presentation"),
+    presentationTitle: preserveRenderableValue(ppt?.presentationTitle || ppt?.title || sessionContext.sessionTitle || "Session Presentation", "Session Presentation"),
+    presentationGoal: preserveRenderableValue(
       ppt?.presentationGoal ||
       `Teach all key concepts from ${sessionContext.sessionTitle || "this session"} in clear classroom sequence.`
     ),
-    audience: String(ppt?.audience || `${sessionContext.gradeLevel || "Grade-aligned"} classroom`),
-    theme: String(ppt?.theme || themeTokens.themeName),
+    audience: preserveRenderableValue(ppt?.audience || `${sessionContext.gradeLevel || "Grade-aligned"} classroom`),
+    theme: preserveRenderableValue(ppt?.theme || themeTokens.themeName, themeTokens.themeName),
     assetSearchPlan: {
       preferredSources: ["Internal SVG", "Ollama image model"],
       safeSearch: typeof ppt?.assetSearchPlan?.safeSearch === "boolean" ? ppt.assetSearchPlan.safeSearch : true,
       licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
-      fallbackStrategy: String(
+      fallbackStrategy: preserveRenderableValue(
         ppt?.assetSearchPlan?.fallbackStrategy ||
         "Prefer SVG diagrams for concept/process slides and use the Ollama image model for all picture-based visuals."
       ),
@@ -1766,18 +1845,18 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?
   const bodyFont = String(fonts.body || "Aptos");
   const hasVisual = Boolean(visualRelId);
   const layout = buildTemplateLayout(templateId, hasVisual);
-  const slideTitle = String(slide?.slideTitle || `Slide ${slideIndex + 1}`);
-  const deckTitle = String(ppt?.presentationTitle || ppt?.title || "Session Presentation");
-  const metaLine = [deckTitle, slide?.templateSlideTitle || slide?.slideType || "Teacher deck"].filter(Boolean).join("  •  ");
+  const slideTitle = renderableToExportPlainText(slide?.slideTitle || `Slide ${slideIndex + 1}`);
+  const deckTitle = renderableToExportPlainText(ppt?.presentationTitle || ppt?.title || "Session Presentation");
+  const metaLine = [deckTitle, renderableToExportPlainText(slide?.templateSlideTitle || slide?.slideType || "Teacher deck")].filter(Boolean).join("  •  ");
   const notesCount = Array.isArray(slide?.speakerNotes) ? slide.speakerNotes.length : 0;
-  const onSlideText = Array.isArray(slide?.onSlideText) ? slide.onSlideText.slice(0, 3) : [];
-  const bulletPoints = Array.isArray(slide?.bulletPoints) ? slide.bulletPoints.slice(0, templateId === "visual-focus" ? 4 : 5) : [];
+  const onSlideText = Array.isArray(slide?.onSlideText) ? slide.onSlideText.slice(0, 3).map((item: any) => renderableToExportPlainText(item)) : [];
+  const bulletPoints = Array.isArray(slide?.bulletPoints) ? slide.bulletPoints.slice(0, templateId === "visual-focus" ? 4 : 5).map((item: any) => renderableToExportPlainText(item)) : [];
   const bodyParagraphs = [
-    ...onSlideText.map((item: string) => item),
+    ...onSlideText,
     ...bulletPoints.map((item: string) => `• ${item}`),
   ];
   const footerBits = [
-    slide?.studentTakeaway ? `Takeaway: ${slide.studentTakeaway}` : "",
+    slide?.studentTakeaway ? `Takeaway: ${renderableToExportPlainText(slide.studentTakeaway)}` : "",
     slide?.timeEstimateMinutes != null ? `Timing: ${slide.timeEstimateMinutes} min` : "",
     notesCount ? `Notes: ${notesCount} cues` : "",
   ].filter(Boolean);
@@ -1804,7 +1883,7 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?
     })
   );
   parts.push(
-    buildTextBoxXml(shapeId++, layout.bodyX, layout.bodyY, layout.bodyW, layout.bodyH, bodyParagraphs.length ? bodyParagraphs : [slide?.visualPlan || "Teacher-guided explanation slide."], {
+    buildTextBoxXml(shapeId++, layout.bodyX, layout.bodyY, layout.bodyW, layout.bodyH, bodyParagraphs.length ? bodyParagraphs : [renderableToExportPlainText(slide?.visualPlan || "Teacher-guided explanation slide.")], {
       fontFace: bodyFont,
       fontSize: templateId === "visual-focus" ? 18 : 20,
       color: text,
@@ -1819,8 +1898,8 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?
   } else {
     parts.push(
       buildTextBoxXml(shapeId++, layout.visualX, layout.visualY, layout.visualW, layout.visualH, [
-        slide?.svgDiagram?.title || "Planned visual",
-        slide?.visualPlan || "Teacher-selected visual support will appear here in export.",
+        renderableToExportPlainText(slide?.svgDiagram?.title || "Planned visual"),
+        renderableToExportPlainText(slide?.visualPlan || "Teacher-selected visual support will appear here in export."),
       ], {
         fontFace: bodyFont,
         fontSize: 18,
@@ -1877,7 +1956,7 @@ function buildPptSlideRelsXml(slideIndex: number, mediaFileName?: string) {
 
 function buildNotesSlideXml(slide: any) {
   const speakerNotes = Array.isArray(slide?.speakerNotes) && slide.speakerNotes.length > 0
-    ? slide.speakerNotes.map((item: any) => String(item || "").trim()).filter(Boolean)
+    ? slide.speakerNotes.map((item: any) => renderableToExportPlainText(item).trim()).filter(Boolean)
     : ["No speaker notes were generated for this slide."];
   const noteParagraphs = speakerNotes.map((item: string) =>
     `<a:p><a:pPr lvl="0"/><a:r><a:rPr lang="en-US" sz="1200"><a:latin typeface="Calibri"/><a:ea typeface="Calibri"/><a:cs typeface="Calibri"/></a:rPr><a:t>${xmlEscape(item)}</a:t></a:r></a:p>`
@@ -2017,7 +2096,7 @@ async function buildEditablePptxBufferFromMaterial(ppt: any, sessionMeta: {
     await fs.writeFile(contentTypesPath, contentTypesXml, "utf8");
 
     const nowIso = new Date().toISOString();
-    const title = xmlEscape(String(ppt?.presentationTitle || ppt?.title || sessionMeta.sessionTitle || "Session Presentation"));
+    const title = xmlEscape(renderableToExportPlainText(ppt?.presentationTitle || ppt?.title || sessionMeta.sessionTitle || "Session Presentation"));
     const corePropsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${title}</dc:title><dc:creator>Lesson Plan Generator</dc:creator><cp:lastModifiedBy>Lesson Plan Generator</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${nowIso}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${nowIso}</dcterms:modified></cp:coreProperties>`;
     await fs.writeFile(corePropsPath, corePropsXml, "utf8");
 
@@ -2182,6 +2261,29 @@ function escapeEmbeddedJsonStringValueByKey(raw: string, key: string) {
   });
 }
 
+function escapeEmbeddedJsonStringValueByMultilineKey(raw: string, key: string) {
+  const pattern = new RegExp(`("${key}"\\s*:\\s*")([\\s\\S]*?)("(?:\\s*,|\\s*}))`, "g");
+  return raw.replace(pattern, (_match, prefix: string, content: string, suffix: string) => {
+    let escapedContent = "";
+    let isEscaped = false;
+
+    for (const char of content) {
+      if (char === "\"" && !isEscaped) {
+        escapedContent += "\\\"";
+        continue;
+      }
+
+      escapedContent += char;
+      isEscaped = char === "\\" && !isEscaped;
+      if (char !== "\\") {
+        isEscaped = false;
+      }
+    }
+
+    return `${prefix}${escapedContent}${suffix}`;
+  });
+}
+
 function sanitizeJsonText(raw: string): { text: string; changed: boolean; fixes: string[] } {
   let changed = false;
   const fixes: string[] = [];
@@ -2192,15 +2294,55 @@ function sanitizeJsonText(raw: string): { text: string; changed: boolean; fixes:
     changed = true;
     fixes.push("escaped_embedded_quotes:svgCode");
   }
+  const multilineRiskyKeys = [
+    "instructions",
+    "question",
+    "answerSpace",
+    "visualRequirement",
+    "expectedResponse",
+    "task",
+    "taskDescription",
+    "description",
+    "overview",
+    "detailedContent",
+    "introduction",
+  ];
+  multilineRiskyKeys.forEach((key) => {
+    const escaped = escapeEmbeddedJsonStringValueByMultilineKey(source, key);
+    if (escaped !== source) {
+      source = escaped;
+      changed = true;
+      fixes.push(`escaped_embedded_quotes:${key}`);
+    }
+  });
 
   let output = "";
   let inString = false;
   let escaped = false;
+  const isValidJsonEscapeChar = (char: string | undefined) =>
+    char === "\"" ||
+    char === "\\" ||
+    char === "/" ||
+    char === "b" ||
+    char === "f" ||
+    char === "n" ||
+    char === "r" ||
+    char === "t" ||
+    char === "u";
 
   for (let index = 0; index < source.length; index += 1) {
     const char = source[index];
 
     if (inString) {
+      if (!escaped && char === "\\") {
+        const nextChar = source[index + 1];
+        if (!isValidJsonEscapeChar(nextChar)) {
+          output += "\\\\";
+          changed = true;
+          fixes.push(`escaped_invalid_backslash:${nextChar || "eof"}`);
+          continue;
+        }
+      }
       output += char;
       if (escaped) {
         escaped = false;
@@ -3402,26 +3544,135 @@ function looksStronglyMathLike(value: string) {
   return false;
 }
 
+function countNaturalLanguageWordsOutsideLatex(value: string) {
+  const stripped = String(value || "")
+    .replace(/\\text\{[^{}]*\}/g, " ")
+    .replace(/\\[a-zA-Z]+/g, " ")
+    .replace(/[{}[\]()_^=+\-*/×÷\\.,;:']/g, " ");
+  return (stripped.match(/[A-Za-z]{3,}/g) || []).length;
+}
+
+function looksLikeStandaloneMathText(value: string) {
+  const text = sanitizeMathText(value, 500).trim();
+  if (!text) return false;
+  if (!looksStronglyMathLike(text)) return false;
+  const proseWordCount = countNaturalLanguageWordsOutsideLatex(text);
+  if (proseWordCount > 0) return false;
+  const normalized = normalizeInlineMathText(text);
+  return /\\[a-zA-Z]+|[_^=+\-*/×÷√]/.test(normalized);
+}
+
+function unwrapLatexMathDelimiters(value: string) {
+  const text = sanitizeMathText(value, 500).trim();
+  if (!text) return "";
+  if (text.startsWith("\\(") && text.endsWith("\\)")) {
+    return text.slice(2, -2).trim();
+  }
+  if (text.startsWith("\\[") && text.endsWith("\\]")) {
+    return text.slice(2, -2).trim();
+  }
+  if (text.startsWith("$$") && text.endsWith("$$")) {
+    return text.slice(2, -2).trim();
+  }
+  if (text.startsWith("$") && text.endsWith("$")) {
+    return text.slice(1, -1).trim();
+  }
+  return text;
+}
+
+function splitLeadingLatexTextAndMath(value: string) {
+  const text = sanitizeMathText(value, 500).trim();
+  if (!text) return null;
+  const match = text.match(/^\\text\{([^{}]*)\}\s*(.+)$/s);
+  if (!match) return null;
+  const labelText = sanitizeMathText(match[1] || "", 220).replace(/\s+/g, " ").trim();
+  const mathText = unwrapLatexMathDelimiters(match[2] || "");
+  if (!mathText || !looksStronglyMathLike(mathText)) return null;
+  const latex = normalizeInlineMathText(mathText);
+  return {
+    text: labelText,
+    latex,
+    displayLatex: /\\frac|=/.test(latex) ? latex : "",
+  };
+}
+
+function splitLeadingPlainTextAndMath(value: string) {
+  const text = sanitizeMathText(value, 500).trim();
+  if (!text) return null;
+  const match = text.match(/^([A-Za-z][A-Za-z0-9 ()/\-]{0,60}:)\s*(.+)$/s);
+  if (!match) return null;
+  const labelText = sanitizeMathText(match[1] || "", 220).replace(/\s+/g, " ").trim();
+  const mathText = unwrapLatexMathDelimiters(match[2] || "");
+  if (!mathText || !looksStronglyMathLike(mathText)) return null;
+  const latex = normalizeInlineMathText(mathText);
+  return {
+    text: labelText,
+    latex,
+    displayLatex: /\\frac|=/.test(latex) ? latex : "",
+  };
+}
+
+function splitLeadingStructuredMathLabel(value: string) {
+  return splitLeadingLatexTextAndMath(value) || splitLeadingPlainTextAndMath(value);
+}
+
+function normalizeMathSetupWording(value: string) {
+  const text = sanitizeMathText(value, 500).trim();
+  if (!text) return "";
+  return text.replace(/^Leg\s+([a-z])\s*=/i, "Let $1 =");
+}
+
 function upgradeMathExpressionValue(value: any) {
   const sanitized = sanitizeMathRichText(value);
   if (!sanitized) return sanitized;
   if (typeof sanitized === "string") {
-    if (!looksStronglyMathLike(sanitized)) return sanitized;
-    const latex = normalizeInlineMathText(sanitized);
+    const normalizedString = normalizeMathSetupWording(sanitized);
+    const splitTextMath = splitLeadingStructuredMathLabel(normalizedString);
+    if (splitTextMath) return splitTextMath;
+    if (!looksStronglyMathLike(normalizedString)) return normalizedString;
+    if (!looksLikeStandaloneMathText(normalizedString)) return normalizedString;
+    const latex = normalizeInlineMathText(normalizedString);
     return {
-      text: sanitized,
+      text: "",
       latex,
       displayLatex: /\\frac|=/.test(latex) ? latex : "",
     };
   }
 
   const next = {
-    text: sanitizeMathText(sanitized.text || "", 500),
+    text: normalizeMathSetupWording(sanitizeMathText(sanitized.text || "", 500)),
     latex: sanitizeMathText(sanitized.latex || "", 500),
     displayLatex: sanitizeMathText(sanitized.displayLatex || "", 500),
   };
-  if (!next.latex && looksStronglyMathLike(next.text)) {
+  const letAssignmentMatch = next.text.match(/^Let\s+([a-z])\s*=/i);
+  if (letAssignmentMatch && (new RegExp(`^${letAssignmentMatch[1]}\\s*=`, "i").test(next.latex) || new RegExp(`^${letAssignmentMatch[1]}\\s*=`, "i").test(next.displayLatex))) {
+    return next.text;
+  }
+  const splitTextMath = next.text ? splitLeadingStructuredMathLabel(next.text) : null;
+  const splitLatexMath = next.latex ? splitLeadingStructuredMathLabel(next.latex) : null;
+  const splitDisplayMath = next.displayLatex ? splitLeadingStructuredMathLabel(next.displayLatex) : null;
+
+  next.latex = normalizeInlineMathText(unwrapLatexMathDelimiters(splitLatexMath?.latex || next.latex));
+  next.displayLatex = normalizeInlineMathText(unwrapLatexMathDelimiters(splitDisplayMath?.displayLatex || splitDisplayMath?.latex || next.displayLatex));
+
+  if (splitTextMath) {
+    const candidateLatex = next.displayLatex || next.latex;
+    const splitLatex = normalizeInlineMathText(splitTextMath.latex || splitTextMath.displayLatex || "");
+    if (!candidateLatex || splitLatex === candidateLatex) {
+      next.text = splitTextMath.text;
+      if (!next.latex) next.latex = splitTextMath.latex;
+      if (!next.displayLatex && splitTextMath.displayLatex) next.displayLatex = splitTextMath.displayLatex;
+    }
+  }
+  if (splitLatexMath?.text && (!next.text || next.text === sanitized.latex)) {
+    next.text = splitLatexMath.text;
+  }
+  if (splitDisplayMath?.text && (!next.text || next.text === sanitized.displayLatex)) {
+    next.text = splitDisplayMath.text;
+  }
+  if (!next.latex && looksLikeStandaloneMathText(next.text)) {
     next.latex = normalizeInlineMathText(next.text);
+    next.text = "";
   }
   if (!next.displayLatex && next.latex && /\\frac|=/.test(next.latex)) {
     next.displayLatex = next.latex;
@@ -3727,6 +3978,13 @@ function normalizeMathStudentNotes(notes: any, context: { selectedChapters?: str
     if (fallback) nextNotes.geometryDiagrams.push(fallback);
   }
 
+  if (nextNotes.revisionSection && typeof nextNotes.revisionSection === "object") {
+    nextNotes.revisionSection = {
+      ...nextNotes.revisionSection,
+      formulas: upgradeMathRichTextList(nextNotes.revisionSection.formulas || [], 10),
+    };
+  }
+
   nextNotes.formulaCards = (Array.isArray(nextNotes.formulaCards) ? nextNotes.formulaCards : [])
     .filter((card: any) => card && typeof card === "object")
     .slice(0, 8)
@@ -3772,20 +4030,282 @@ function normalizeMathStudentNotes(notes: any, context: { selectedChapters?: str
 function normalizeMathTeacherNotes(notes: any) {
   if (!notes || typeof notes !== "object") return notes;
   const nextNotes = structuredClone(notes);
+  const upgradeList = (value: any, maxItems = 10) => upgradeMathRichTextList(value, maxItems);
+  const upgradeValue = (value: any) => upgradeMathExpressionValue(value);
   const normalizeMathBlock = (block: any, index: number) => ({
     ...block,
+    teacherPrompt: upgradeList(block?.teacherPrompt || [], 12),
+    explanation: upgradeList(block?.explanation || [], 12),
+    examples: upgradeList(block?.examples || [], 12),
+    boardWork: upgradeList(block?.boardWork || [], 12),
     boardSteps: sanitizeMathRichTextList(block?.boardSteps || [], 12),
     solutionFlow: sanitizeMathRichTextList(block?.solutionFlow || [], 12),
     proofSteps: sanitizeMathRichTextList(block?.proofSteps || [], 12),
+    checkUnderstanding: upgradeList(block?.checkUnderstanding || [], 12),
+    expectedAnswers: upgradeList(block?.expectedAnswers || [], 12),
+    activity: upgradeList(block?.activity || [], 12),
     geometryDiagrams: (Array.isArray(block?.geometryDiagrams) ? block.geometryDiagrams : [])
       .map((diagram: any, diagramIndex: number) => sanitizeMathDiagramSpec(diagram, diagramIndex + index * 10))
       .filter(Boolean),
     svgCode: undefined,
     rawSvg: undefined,
   });
+  nextNotes.prerequisiteKnowledge = upgradeList(nextNotes.prerequisiteKnowledge || [], 10);
+  nextNotes.previousSessionRecap = upgradeList(nextNotes.previousSessionRecap || [], 10);
+  nextNotes.teachingSequence = upgradeList(nextNotes.teachingSequence || [], 14);
+  nextNotes.guidedPractice = upgradeList(nextNotes.guidedPractice || [], 12);
+  nextNotes.lessonPurpose = upgradeList(nextNotes.lessonPurpose || [], 10);
+  nextNotes.formativeChecks = upgradeList(nextNotes.formativeChecks || [], 10);
+  nextNotes.assessmentQuestions = upgradeList(nextNotes.assessmentQuestions || [], 12);
+  nextNotes.teacherTips = upgradeList(nextNotes.teacherTips || [], 10);
+  nextNotes.blackboardSummary = upgradeList(nextNotes.blackboardSummary || [], 10);
+  nextNotes.sessionSummary = upgradeList(nextNotes.sessionSummary || [], 10);
+  nextNotes.nextSessionBridge = upgradeList(nextNotes.nextSessionBridge || [], 8);
+  nextNotes.misconceptions = upgradeList(nextNotes.misconceptions || [], 10);
   nextNotes.lessonBlocks = (Array.isArray(nextNotes.lessonBlocks) ? nextNotes.lessonBlocks : []).map(normalizeMathBlock);
-  nextNotes.conceptFlow = (Array.isArray(nextNotes.conceptFlow) ? nextNotes.conceptFlow : []).map(normalizeMathBlock);
+  nextNotes.conceptFlow = (Array.isArray(nextNotes.conceptFlow) ? nextNotes.conceptFlow : []).map((concept: any, index: number) => ({
+    ...normalizeMathBlock(concept, index),
+    conceptName: upgradeValue(concept?.conceptName || ""),
+    definition: upgradeValue(concept?.definition || ""),
+    coreExplanation: upgradeValue(concept?.coreExplanation || ""),
+    importance: upgradeValue(concept?.importance || ""),
+    observedIn: upgradeList(concept?.observedIn || [], 10),
+    whyStudyIt: upgradeValue(concept?.whyStudyIt || ""),
+    relationshipWithPrevious: upgradeValue(concept?.relationshipWithPrevious || ""),
+    relationshipWithFuture: upgradeValue(concept?.relationshipWithFuture || ""),
+    keywords: upgradeList(concept?.keywords || [], 10),
+    teacherMoves: upgradeList(concept?.teacherMoves || [], 10),
+    visuals: upgradeList(concept?.visuals || [], 10),
+  }));
+  nextNotes.classroomQuestions = (Array.isArray(nextNotes.classroomQuestions) ? nextNotes.classroomQuestions : []).map((question: any) => ({
+    ...question,
+    question: upgradeValue(question?.question || ""),
+    expectedResponse: upgradeValue(question?.expectedResponse || ""),
+    answerPoints: upgradeList(question?.answerPoints || [], 10),
+  }));
+  nextNotes.commonMisconceptionsDetailed = (Array.isArray(nextNotes.commonMisconceptionsDetailed) ? nextNotes.commonMisconceptionsDetailed : []).map((item: any) => ({
+    ...item,
+    misconception: upgradeValue(item?.misconception || ""),
+    correction: upgradeValue(item?.correction || ""),
+  }));
+  if (nextNotes.differentiation && typeof nextNotes.differentiation === "object") {
+    nextNotes.differentiation = {
+      ...nextNotes.differentiation,
+      slowLearners: upgradeList(nextNotes.differentiation.slowLearners || [], 10),
+      averageLearners: upgradeList(nextNotes.differentiation.averageLearners || [], 10),
+      advancedLearners: upgradeList(nextNotes.differentiation.advancedLearners || [], 10),
+    };
+  }
+  nextNotes.endOfClassRecap = (Array.isArray(nextNotes.endOfClassRecap) ? nextNotes.endOfClassRecap : []).map((item: any) => ({
+    ...item,
+    prompt: upgradeValue(item?.prompt || ""),
+    expectedAnswer: upgradeValue(item?.expectedAnswer || ""),
+  }));
+  nextNotes.timePlan = (Array.isArray(nextNotes.timePlan) ? nextNotes.timePlan : []).map((item: any) => ({
+    ...item,
+    purpose: upgradeValue(item?.purpose || ""),
+  }));
   return nextNotes;
+}
+
+function normalizeMathMaterials(materials: any) {
+  if (!materials || typeof materials !== "object") return materials;
+  const nextMaterials = structuredClone(materials);
+  const upgradeList = (value: any, maxItems = 10) => upgradeMathRichTextList(value, maxItems);
+  const upgradeValue = (value: any) => upgradeMathExpressionValue(value);
+
+  if (nextMaterials.ppt && typeof nextMaterials.ppt === "object") {
+    nextMaterials.ppt = {
+      ...nextMaterials.ppt,
+      title: upgradeValue(nextMaterials.ppt.title || ""),
+      presentationTitle: upgradeValue(nextMaterials.ppt.presentationTitle || ""),
+      presentationGoal: upgradeValue(nextMaterials.ppt.presentationGoal || ""),
+      audience: upgradeValue(nextMaterials.ppt.audience || ""),
+      theme: upgradeValue(nextMaterials.ppt.theme || ""),
+      licenseChecklist: upgradeList(nextMaterials.ppt.licenseChecklist || [], 10),
+      presentationWarnings: upgradeList(nextMaterials.ppt.presentationWarnings || [], 10),
+      coverageSummary: nextMaterials.ppt.coverageSummary && typeof nextMaterials.ppt.coverageSummary === "object"
+        ? {
+            ...nextMaterials.ppt.coverageSummary,
+            learningOutcomesCovered: upgradeList(nextMaterials.ppt.coverageSummary.learningOutcomesCovered || [], 10),
+            topicsCovered: upgradeList(nextMaterials.ppt.coverageSummary.topicsCovered || [], 10),
+            taughtConceptsCovered: upgradeList(nextMaterials.ppt.coverageSummary.taughtConceptsCovered || [], 10),
+            omittedContent: upgradeList(nextMaterials.ppt.coverageSummary.omittedContent || [], 10),
+          }
+        : nextMaterials.ppt.coverageSummary,
+      slides: (Array.isArray(nextMaterials.ppt.slides) ? nextMaterials.ppt.slides : []).map((slide: any) => ({
+        ...slide,
+        slideTitle: upgradeValue(slide?.slideTitle || ""),
+        bulletPoints: upgradeList(slide?.bulletPoints || [], 8),
+        teacherIntent: upgradeValue(slide?.teacherIntent || ""),
+        studentTakeaway: upgradeValue(slide?.studentTakeaway || ""),
+        layout: upgradeValue(slide?.layout || ""),
+        onSlideText: upgradeList(slide?.onSlideText || [], 8),
+        speakerNotes: upgradeList(slide?.speakerNotes || [], 10),
+        visualPlan: upgradeValue(slide?.visualPlan || ""),
+        animationHints: upgradeList(slide?.animationHints || [], 8),
+        assets: (Array.isArray(slide?.assets) ? slide.assets : []).map((asset: any) => ({
+          ...asset,
+          purpose: upgradeValue(asset?.purpose || ""),
+          searchQuery: upgradeValue(asset?.searchQuery || ""),
+          sourceSite: upgradeValue(asset?.sourceSite || ""),
+          sourceUrl: upgradeValue(asset?.sourceUrl || ""),
+          previewUrl: upgradeValue(asset?.previewUrl || ""),
+          licenseType: upgradeValue(asset?.licenseType || ""),
+          attributionText: upgradeValue(asset?.attributionText || ""),
+          altText: upgradeValue(asset?.altText || ""),
+          placementHint: upgradeValue(asset?.placementHint || ""),
+          model: upgradeValue(asset?.model || ""),
+        })),
+        svgDiagram: slide?.svgDiagram && typeof slide.svgDiagram === "object"
+          ? {
+              ...slide.svgDiagram,
+              title: upgradeValue(slide.svgDiagram.title || ""),
+              instructions: upgradeList(slide.svgDiagram.instructions || [], 8),
+            }
+          : slide?.svgDiagram,
+      })),
+    };
+  }
+
+  if (nextMaterials.pdf && typeof nextMaterials.pdf === "object") {
+    nextMaterials.pdf = {
+      ...nextMaterials.pdf,
+      documentTitle: upgradeValue(nextMaterials.pdf.documentTitle || ""),
+      keyInformation: upgradeList(nextMaterials.pdf.keyInformation || [], 14),
+    };
+  }
+
+  if (nextMaterials.docx && typeof nextMaterials.docx === "object") {
+    nextMaterials.docx = {
+      ...nextMaterials.docx,
+      outlineTitle: upgradeValue(nextMaterials.docx.outlineTitle || ""),
+      sections: upgradeList(nextMaterials.docx.sections || [], 18),
+    };
+  }
+
+  return nextMaterials;
+}
+
+function normalizeMathHomework(homework: any) {
+  if (!homework || typeof homework !== "object") return homework;
+  const nextHomework = structuredClone(homework);
+  const upgradeList = (value: any, maxItems = 10) => upgradeMathRichTextList(value, maxItems);
+  const upgradeValue = (value: any) => upgradeMathExpressionValue(value);
+  nextHomework.task = upgradeValue(nextHomework.task || "");
+  if (nextHomework.sessionInformation && typeof nextHomework.sessionInformation === "object") {
+    nextHomework.sessionInformation = {
+      ...nextHomework.sessionInformation,
+      sessionTitle: upgradeValue(nextHomework.sessionInformation.sessionTitle || ""),
+      subject: upgradeValue(nextHomework.sessionInformation.subject || ""),
+      grade: upgradeValue(nextHomework.sessionInformation.grade || ""),
+      difficultyLevel: upgradeValue(nextHomework.sessionInformation.difficultyLevel || ""),
+      learningPace: upgradeValue(nextHomework.sessionInformation.learningPace || ""),
+      estimatedHomeworkDuration: upgradeValue(nextHomework.sessionInformation.estimatedHomeworkDuration || ""),
+    };
+  }
+  nextHomework.homework = (Array.isArray(nextHomework.homework) ? nextHomework.homework : []).map((item: any) => ({
+    ...item,
+    type: upgradeValue(item?.type || ""),
+    title: upgradeValue(item?.title || ""),
+    estimatedTime: upgradeValue(item?.estimatedTime || ""),
+    instructions: upgradeValue(item?.instructions || ""),
+    question: upgradeValue(item?.question || ""),
+    options: upgradeList(item?.options || [], 8),
+    answerSpace: upgradeValue(item?.answerSpace || ""),
+    visualRequirement: upgradeValue(item?.visualRequirement || ""),
+    expectedResponse: upgradeValue(item?.expectedResponse || ""),
+  }));
+  if (nextHomework.summary && typeof nextHomework.summary === "object") {
+    nextHomework.summary = {
+      ...nextHomework.summary,
+      estimatedCompletionTime: upgradeValue(nextHomework.summary.estimatedCompletionTime || ""),
+      learningOutcomesCovered: upgradeList(nextHomework.summary.learningOutcomesCovered || [], 10),
+      topicsCovered: upgradeList(nextHomework.summary.topicsCovered || [], 10),
+      subtopicsCovered: upgradeList(nextHomework.summary.subtopicsCovered || [], 10),
+    };
+  }
+  return nextHomework;
+}
+
+function normalizeMathAssessment(assessment: any) {
+  if (!assessment || typeof assessment !== "object") return assessment;
+  const nextAssessment = structuredClone(assessment);
+  const upgradeList = (value: any, maxItems = 10) => upgradeMathRichTextList(value, maxItems);
+  const upgradeValue = (value: any) => upgradeMathExpressionValue(value);
+  if (nextAssessment.assessmentMeta && typeof nextAssessment.assessmentMeta === "object") {
+    nextAssessment.assessmentMeta = {
+      ...nextAssessment.assessmentMeta,
+      paperObjective: upgradeValue(nextAssessment.assessmentMeta.paperObjective || ""),
+      instructions: upgradeList(nextAssessment.assessmentMeta.instructions || [], 10),
+    };
+  }
+  if (nextAssessment.blueprint && typeof nextAssessment.blueprint === "object") {
+    nextAssessment.blueprint = {
+      ...nextAssessment.blueprint,
+      learningOutcomeCoverage: (Array.isArray(nextAssessment.blueprint.learningOutcomeCoverage) ? nextAssessment.blueprint.learningOutcomeCoverage : []).map((item: any) => ({
+        ...item,
+        outcome: upgradeValue(item?.outcome || ""),
+        questionRefs: upgradeList(item?.questionRefs || [], 10),
+      })),
+      timeAllocation: (Array.isArray(nextAssessment.blueprint.timeAllocation) ? nextAssessment.blueprint.timeAllocation : []).map((item: any) => ({
+        ...item,
+        section: upgradeValue(item?.section || ""),
+      })),
+    };
+  }
+  nextAssessment.mcq = (Array.isArray(nextAssessment.mcq) ? nextAssessment.mcq : []).map((item: any) => ({
+    ...item,
+    question: upgradeValue(item?.question || ""),
+    options: upgradeList(item?.options || [], 8),
+    answer: upgradeValue(item?.answer || ""),
+    explanation: upgradeValue(item?.explanation || ""),
+  }));
+  nextAssessment.shortAnswer = (Array.isArray(nextAssessment.shortAnswer) ? nextAssessment.shortAnswer : []).map((item: any) => ({
+    ...item,
+    question: upgradeValue(item?.question || ""),
+    answer: upgradeValue(item?.answer || ""),
+    expectedLength: upgradeValue(item?.expectedLength || ""),
+    rubric: upgradeList(item?.rubric || [], 8),
+  }));
+  nextAssessment.longAnswer = (Array.isArray(nextAssessment.longAnswer) ? nextAssessment.longAnswer : []).map((item: any) => ({
+    ...item,
+    question: upgradeValue(item?.question || ""),
+    answer: upgradeValue(item?.answer || ""),
+    expectedLength: upgradeValue(item?.expectedLength || ""),
+    rubric: upgradeList(item?.rubric || [], 10),
+  }));
+  if (nextAssessment.answerKey && typeof nextAssessment.answerKey === "object") {
+    nextAssessment.answerKey = {
+      ...nextAssessment.answerKey,
+      mcq: (Array.isArray(nextAssessment.answerKey.mcq) ? nextAssessment.answerKey.mcq : []).map((item: any) => ({
+        ...item,
+        answer: upgradeValue(item?.answer || ""),
+        explanation: upgradeValue(item?.explanation || ""),
+      })),
+      shortAnswer: (Array.isArray(nextAssessment.answerKey.shortAnswer) ? nextAssessment.answerKey.shortAnswer : []).map((item: any) => ({
+        ...item,
+        answer: upgradeValue(item?.answer || ""),
+        rubric: upgradeList(item?.rubric || [], 8),
+      })),
+      longAnswer: (Array.isArray(nextAssessment.answerKey.longAnswer) ? nextAssessment.answerKey.longAnswer : []).map((item: any) => ({
+        ...item,
+        answer: upgradeValue(item?.answer || ""),
+        rubric: upgradeList(item?.rubric || [], 10),
+      })),
+      generalMarkingGuidance: upgradeList(nextAssessment.answerKey.generalMarkingGuidance || [], 10),
+    };
+  }
+  return nextAssessment;
+}
+
+function normalizeMathAssignment(assignment: any) {
+  if (!assignment || typeof assignment !== "object") return assignment;
+  const nextAssignment = structuredClone(assignment);
+  nextAssignment.taskDescription = upgradeMathExpressionValue(nextAssignment.taskDescription || "");
+  nextAssignment.rubric = upgradeMathRichTextList(nextAssignment.rubric || [], 10);
+  nextAssignment.answerKey = upgradeMathExpressionValue(nextAssignment.answerKey || "");
+  return nextAssignment;
 }
 
 function normalizeMathGeneratedNotes(session: any, context: { subject?: string; selectedChapters?: string[]; sessionTitle?: string }) {
@@ -3796,6 +4316,18 @@ function normalizeMathGeneratedNotes(session: any, context: { subject?: string; 
   }
   if (nextSession.teacherLessonNotes) {
     nextSession.teacherLessonNotes = normalizeMathTeacherNotes(nextSession.teacherLessonNotes);
+  }
+  if (nextSession.materials) {
+    nextSession.materials = normalizeMathMaterials(nextSession.materials);
+  }
+  if (nextSession.homework) {
+    nextSession.homework = normalizeMathHomework(nextSession.homework);
+  }
+  if (nextSession.assessment) {
+    nextSession.assessment = normalizeMathAssessment(nextSession.assessment);
+  }
+  if (nextSession.assignment) {
+    nextSession.assignment = normalizeMathAssignment(nextSession.assignment);
   }
   return nextSession;
 }

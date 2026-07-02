@@ -40,6 +40,7 @@ STRICT OUTPUT CONTRACT
 21. Prefer this shape for mixed math lines: `{ "text": "Multiply numerator and denominator by", "latex": "\\frac{\\sqrt{3}}{\\sqrt{3}}" }`.
 22. Use `displayLatex` for standalone expressions such as `\\frac{5}{\\sqrt{3}}`, multi-step substitutions, or final simplified equations that should appear on their own line.
 23. Do not put a full narrated sentence and the full expression into one plain string when a structured math object can be used.
+24. For variable setup lines, use natural wording like `Let a = 6 cm` or `Take b = 8 cm`. Never write malformed labels like `Leg a = 6 cm`.
 
 Return exactly this top-level shape:
 {
@@ -131,7 +132,7 @@ Return exactly this top-level shape:
         "title": "Worked example title",
         "problem": "Problem statement",
         "diagramRef": "diagram-1",
-        "given": [{ "text": "Given values or conditions", "latex": "a = 3, b = 4" }],
+        "given": [{ "text": "Let a = 3 and b = 4", "latex": "a = 3, b = 4" }],
         "formula": [{ "text": "Relevant formula", "latex": "a^2 + b^2 = c^2" }],
         "steps": ["Step 1", "Step 2"],
         "solutionSteps": [

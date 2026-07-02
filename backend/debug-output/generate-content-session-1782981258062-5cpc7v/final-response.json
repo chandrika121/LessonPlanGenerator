@@ -1,0 +1,391 @@
+{
+  "teacherLessonNotes": {
+    "sessionOverview": "This session focuses on applying the Pythagorean Theorem and its converse to solve real-world problems involving right-angled triangles. Students will learn to identify hypotenuses, calculate missing sides (both legs and hypotenuse), and verify if a triangle is right-angled using side lengths.",
+    "prerequisiteKnowledge": [
+      "Definition of a right-angled triangle",
+      "Identification of base, height, and hypotenuse in various orientations",
+      "Basic arithmetic with squares and square roots (e.g., 3²=9, √25=5)",
+      "Understanding that the sum of angles in a triangle is 180°"
+    ],
+    "previousSessionRecap": [
+      "Definition of Pythagorean Theorem: In a right-angled triangle, (Hypotenuse)² = (Base)² + (Height)²",
+      "Identification of the longest side as the hypotenuse opposite to 90°",
+      "Basic calculation practice with integer triples like (3,4,5)"
+    ],
+    "learningOutcomes": [
+      "Students will correctly identify the hypotenuse in a given right triangle diagram.",
+      "Students will calculate an unknown side length using algebraic substitution into Pythagoras' formula.",
+      "Students will determine if three given lengths form a right-angled triangle by checking the converse of the theorem."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction & Recall",
+        "teachingStrategy": "Quick-fire questioning with visual cues"
+      },
+      {
+        "minutes": 10,
+        "topic": "Finding the Hypotenuse",
+        "teachingStrategy": "Board demonstration of formula substitution and simplification"
+      },
+      {
+        "minutes": 15,
+        "topic": "Finding a Leg & Converse Application",
+        "teachingStrategy": "Guided problem-solving with error analysis on sign mistakes"
+      },
+      {
+        "minutes": 10,
+        "topic": "Real-world Context (Ladder Problem)",
+        "teachingStrategy": "Word problem translation to geometric model"
+      }
+    ],
+    "lessonPurpose": [
+      "To bridge the gap between theoretical theorem knowledge and practical calculation skills.",
+      "To develop algebraic fluency within a geometric context."
+    ],
+    "teachingSequence": [
+      "Recap definition of Pythagoras' Theorem using a labeled diagram on the board.",
+      "Demonstrate finding the hypotenuse with integer values (3, 4 -> 5).",
+      "Introduce solving for a leg: rearrange formula to c² - b² = a² or √(c² - b²).",
+      "Present a 'Converse' problem: Given sides 6, 8, 10. Is it right-angled?",
+      "Discuss common errors: subtracting squares incorrectly (e.g., (a-b)² vs a²-b²)."
+    ],
+    "guidedPractice": [
+      "Ask students to identify the hypotenuse in three different orientations of triangles.",
+      "Have students solve for x where sides are 5 and x, hypotenuse is 13.",
+      "Check if (7, 24, 25) forms a right triangle."
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction & Hypotenuse Calculation",
+        "durationMinutes": 5,
+        "teacherPrompt": [
+          "Look at this diagram. Which side is the hypotenuse? Why?",
+          "If base=3 and height=4, what equation do we write?"
+        ],
+        "explanation": [
+          "The hypotenuse is always opposite the right angle (90°) and is the longest side.",
+          "We start with c² = a² + b². We substitute known values first."
+        ],
+        "examples": [
+          "Triangle ABC, ∠B=90°. AB=3cm, BC=4cm. Find AC."
+        ],
+        "boardWork": [
+          "Given: Right △ABC, ∠B = 90°",
+          "AB = 3 cm, BC = 4 cm",
+          "Find: Hypotenuse (AC)"
+        ],
+        "boardSteps": [
+          {
+            "text": "State Formula",
+            "latex": "",
+            "displayLatex": "c^2 = a^2 + b^2"
+          },
+          {
+            "text": "Substitute Values",
+            "latex": "",
+            "displayLatex": "(AC)^2 = 3^2 + 4^2"
+          },
+          {
+            "text": "Simplify Squares",
+            "latex": "",
+            "displayLatex": "(AC)^2 = 9 + 16"
+          },
+          {
+            "text": "Add and Solve for AC",
+            "latex": "",
+            "displayLatex": "(AC)^2 = 25 \\implies AC = \\sqrt{25} = 5"
+          }
+        ],
+        "solutionFlow": [
+          "Identify known sides a=3, b=4.",
+          "Apply c² = a² + b² -> c² = 9 + 16.",
+          "Calculate sum: c² = 25.",
+          "Take square root: c = 5."
+        ],
+        "proofSteps": [
+          "State Pythagoras Theorem for right △ABC",
+          "Substitute given lengths into the theorem"
+        ],
+        "geometryDiagrams": [
+          {
+            "id": "diagram-1",
+            "type": "rightTriangle",
+            "template": "rightTriangle",
+            "params": {},
+            "title": "Right triangle with legs 3 and 4",
+            "caption": "Draw this before writing steps",
+            "points": [
+              {
+                "id": "A",
+                "x": 65,
+                "y": 155,
+                "label": "C"
+              },
+              {
+                "id": "B",
+                "x": 245,
+                "y": 155,
+                "label": "A"
+              },
+              {
+                "id": "C",
+                "x": 65,
+                "y": 55,
+                "label": "B"
+              }
+            ],
+            "lines": [
+              {
+                "from": "A",
+                "to": "B",
+                "label": "4 cm",
+                "style": "solid",
+                "highlight": false
+              },
+              {
+                "from": "A",
+                "to": "C",
+                "label": "3 cm",
+                "style": "solid",
+                "highlight": false
+              },
+              {
+                "from": "B",
+                "to": "C",
+                "label": "? (AC)",
+                "style": "solid",
+                "highlight": true
+              }
+            ],
+            "arcs": [],
+            "labels": [
+              {
+                "text": "90°",
+                "latex": "",
+                "x": 82,
+                "y": 142
+              }
+            ],
+            "measurements": [],
+            "highlights": [],
+            "bars": []
+          }
+        ],
+        "checkUnderstanding": [
+          "Why did we add the squares instead of subtracting?"
+        ],
+        "expectedAnswers": [
+          "Because we are finding the hypotenuse (longest side), so c² = a² + b²."
+        ],
+        "activity": []
+      },
+      {
+        "title": "Finding a Leg & Converse",
+        "durationMinutes": 15,
+        "teacherPrompt": [
+          "If the hypotenuse is 13 and one leg is 5, how do we find the other?",
+          "Does a triangle with sides 6cm, 8cm, and 9cm have a right angle?"
+        ],
+        "explanation": [
+          "To find a missing leg: Rearrange to (Leg)² = (Hypotenuse)² - (Other Leg)².",
+          "For the converse: Check if sum of squares of two smaller sides equals square of largest side."
+        ],
+        "examples": [
+          "Problem 1: Hyp=13, Base=5. Find Height.",
+          "Problem 2: Sides are 6, 8, 9. Is it right-angled?"
+        ],
+        "boardWork": [
+          "Case A: c=13, a=5. Find b.",
+          "b² = 13² - 5²",
+          "b² = 169 - 25 = 144 -> b=12",
+          "",
+          "Case B (Converse): Sides 6, 8, 9.",
+          "Check: Is 6² + 8² = 9²?"
+        ],
+        "boardSteps": [
+          {
+            "text": "Rearrange for missing leg",
+            "latex": "",
+            "displayLatex": "b^2 = c^2 - a^2"
+          },
+          {
+            "text": "Substitute and Calculate (Case A)",
+            "latex": "",
+            "displayLatex": "b^2 = 13^2 - 5^2 \\implies b^2 = 169 - 25 = 144"
+          },
+          {
+            "text": "Solve for b",
+            "latex": "",
+            "displayLatex": "b = \\sqrt{144} = 12"
+          },
+          {
+            "text": "Check Converse (Case B)",
+            "latex": "",
+            "displayLatex": "6^2 + 8^2 = 36 + 64 = 100"
+          },
+          {
+            "text": "Conclusion (Case B)",
+            "latex": "",
+            "displayLatex": "100 \\neq 81, so NOT a right triangle."
+          }
+        ],
+        "solutionFlow": [
+          "Identify the unknown leg as 'b'.",
+          "Apply formula b² = c² - a².",
+          "Calculate squares: 169 and 25.",
+          "Subtract to get 144, then root to get 12.",
+          "Identify largest side (hypotenuse candidate) as 9.",
+          "Sum of smaller squares = 36 + 64 = 100.",
+          "Compare with square of largest: 81. They don't match."
+        ],
+        "proofSteps": [
+          "State the Converse Theorem condition",
+          "Perform arithmetic verification"
+        ],
+        "geometryDiagrams": [],
+        "checkUnderstanding": [
+          "What is a common mistake students make when subtracting squares?"
+        ],
+        "expectedAnswers": [
+          "Students might calculate (13-5)² = 8² instead of 13² - 5²."
+        ],
+        "activity": []
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Pythagorean Theorem Application",
+        "definition": "In a right-angled triangle, the square of the hypotenuse equals the sum of squares of the other two sides.",
+        "coreExplanation": "This theorem allows us to find any missing side length if we know the other two. It also serves as a test (converse) to determine if a given set of three lengths can form a right triangle.",
+        "importance": "It is fundamental for coordinate geometry, trigonometry in higher classes, and real-world measurement problems like ladders or diagonals.",
+        "observedIn": [
+          "Diagonal calculations",
+          "Distance between two points on a grid"
+        ],
+        "whyStudyIt": "To solve practical engineering and construction problems where direct measurement is impossible.",
+        "relationshipWithPrevious": "Builds directly on the definition of right triangles learned in Session 5.",
+        "relationshipWithFuture": "Essential foundation for Trigonometry (SOH CAH TOA) and Coordinate Geometry distance formula.",
+        "keywords": [
+          "Hypotenuse",
+          "Converse Theorem",
+          "Square Root"
+        ],
+        "teacherMoves": [
+          "Emphasize that c is always the longest side in a² + b² = c²."
+        ],
+        "examples": [
+          "Ladder leaning against a wall.",
+          "Diagonal of a rectangle."
+        ],
+        "visuals": [
+          "Diagram showing ladder, ground, and wall forming a right triangle"
+        ],
+        "solutionFlow": [
+          "Identify the known values (a, b, or c).",
+          "Select correct formula: c² = a² + b² OR a² = c² - b².",
+          "Substitute numbers carefully.",
+          "Solve for unknown."
+        ],
+        "proofSteps": [
+          "State the known side lengths.",
+          "Apply Pythagoras theorem or its converse condition.",
+          "Conclude if triangle is right-angled or find missing length."
+        ],
+        "geometryDiagrams": [],
+        "boardSteps": []
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "If a² + b² = c², what happens to the equation if we want to solve for 'a'?",
+        "level": "Understanding",
+        "expectedResponse": "We rearrange it to a² = c² - b².",
+        "answerPoints": [
+          "Student recognizes algebraic manipulation of the theorem."
+        ]
+      },
+      {
+        "question": "Why can't we use Pythagoras' theorem for an obtuse triangle?",
+        "level": "Analysis",
+        "expectedResponse": "Because it only applies to right-angled triangles (90°).",
+        "answerPoints": [
+          "Student identifies the specific condition of the theorem."
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Students often calculate (a-b)² instead of a² - b² when finding a missing leg.",
+        "correction": "Explicitly write out the squares first: 13² = 169, then subtract. Do not combine numbers before squaring."
+      },
+      {
+        "misconception": "Confusing which side is the hypotenuse in non-standard orientations (e.g., triangle rotated).",
+        "correction": "Always ask: 'Which angle is 90°?' The opposite side is always c. Mark it clearly."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Provide a pre-filled formula sheet with blanks (c² = __ + __).",
+        "Use color coding: Red for hypotenuse, Blue for legs on the board diagram.",
+        "Focus only on integer solutions first."
+      ],
+      "averageLearners": [
+        "Standard problems requiring substitution and square root calculation.",
+        "Word problems involving ladders or diagonals."
+      ],
+      "advancedLearners": [
+        "Problems with non-integer results (e.g., √50) asking for approximation to 1 decimal place.",
+        "Converse theorem applied to coordinate geometry points: Are A(0,3), B(4,0), C(0,0) a right triangle?"
+      ]
+    },
+    "teacherTips": [
+      "When writing on the board, always draw the square symbol (□) at the 90° angle to reinforce visual identification.",
+      "Remind students that √25 is +5 in geometry contexts; negative lengths are impossible."
+    ],
+    "misconceptions": [
+      "Thinking any triangle with integer sides must be a right triangle.",
+      "Adding squares of all three sides together (a²+b²+c²)."
+    ],
+    "formativeChecks": [
+      "Ask students to hold up fingers: 1 for 'hypotenuse', 2 for 'leg' when you call out side lengths."
+    ],
+    "assessmentQuestions": [
+      "A ladder is placed against a wall. The foot of the ladder is 5m from the wall, and it reaches 12m up the wall. How long is the ladder?"
+    ],
+    "blackboardSummary": [
+      "Pythagoras: c² = a² + b²",
+      "Find Hypotenuse: Add squares.",
+      "Find Leg: Subtract smaller square from larger, then root."
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap & Intro",
+        "minutes": 5,
+        "purpose": "Refresh prerequisite ideas"
+      },
+      {
+        "segment": "Hypotenuse Calculation",
+        "minutes": 10,
+        "purpose": "Master basic substitution"
+      },
+      {
+        "segment": "Leg & Converse Application",
+        "minutes": 25,
+        "purpose": "Deepen understanding and error correction"
+      }
+    ],
+    "sessionSummary": [
+      "We learned to use Pythagoras' theorem for both finding missing sides and verifying right triangles."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "If the hypotenuse is 10 and one leg is 6, what is the other leg?",
+        "expectedAnswer": "8 (since √(100-36) = √64 = 8)"
+      }
+    ],
+    "nextSessionBridge": [
+      "Tomorrow we will use this theorem to find distances between points on a coordinate plane."
+    ]
+  }
+}

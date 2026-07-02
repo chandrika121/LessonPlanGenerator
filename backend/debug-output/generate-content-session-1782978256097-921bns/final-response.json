@@ -1,0 +1,332 @@
+{
+  "studentLessonNotes": {
+    "title": "Geometry Session 6: Pythagoras Theorem & Applications",
+    "sessionOverview": "This session introduces the Pythagorean theorem, explores how to identify right-angled triangles using side lengths, and applies these concepts to solve real-world problems involving distances.",
+    "introduction": "Welcome back! Today we unlock a powerful tool in geometry: finding unknown sides of right-angled triangles. Whether you are calculating the length of a ladder needed for a roof or the shortest path across a park, this theorem is your go-to guide.",
+    "learningObjectives": [
+      "State and apply Pythagoras' Theorem (a² + b² = c²)",
+      "Identify right-angled triangles using converse logic",
+      "Solve real-world problems involving distances"
+    ],
+    "quickRecall": [
+      "What is the sum of angles in a triangle? (180°)",
+      "How do you square a number?"
+    ],
+    "easyToRemember": [
+      "The hypotenuse squared equals the other two sides added together."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Right vs. Non-Right Triangles",
+        "headers": [
+          "Feature",
+          "Right-Angled Triangle",
+          "Non-Right (Obtuse/Acute)"
+        ],
+        "rows": [
+          [
+            "Angle Measure",
+            "One angle is exactly 90°",
+            "No angle is 90°"
+          ],
+          [
+            "Pythagoras Check",
+            "a² + b² = c² holds true",
+            "a² + b² ≠ c² (usually < or >)"
+          ],
+          [
+            "Longest Side Name",
+            "Hypotenuse",
+            "Opposite the largest angle"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Pythagoras' Theorem",
+        "formula": {
+          "text": "a² + b² = c²",
+          "latex": "a^2 + b^2 = c^2",
+          "displayLatex": "a^2 + b^2 = c^2"
+        },
+        "meaning": "The square of the hypotenuse (longest side) is equal to the sum of the squares of the other two sides.",
+        "whenToUse": "Only when you have a right-angled triangle and need to find an unknown side length."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "rightTriangle",
+        "template": "rightTriangle",
+        "params": {
+          "baseLength": "3 units",
+          "height": "4 units",
+          "hypotenuse": "5 units"
+        },
+        "title": "Standard 3-4-5 Right Triangle",
+        "caption": "A classic right triangle used for Pythagoras examples.",
+        "points": [
+          {
+            "id": "A",
+            "x": 65,
+            "y": 155,
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "x": 245,
+            "y": 155,
+            "label": "B"
+          },
+          {
+            "id": "C",
+            "x": 65,
+            "y": 55,
+            "label": "C"
+          }
+        ],
+        "lines": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "base",
+            "style": "solid",
+            "highlight": false
+          },
+          {
+            "from": "A",
+            "to": "C",
+            "label": "height",
+            "style": "solid",
+            "highlight": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "hypotenuse",
+            "style": "solid",
+            "highlight": true
+          }
+        ],
+        "arcs": [],
+        "labels": [],
+        "measurements": [],
+        "highlights": [],
+        "bars": []
+      }
+    ],
+    "proofSteps": [
+      "Identify the right angle to locate the hypotenuse.",
+      "Label the other two sides as 'a' and 'b'.",
+      "Square both known lengths.",
+      "Add the squared values together.",
+      "Take the square root of the sum."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Adding side lengths directly (e.g., 3 + 4 = 7).",
+        "correction": "Always square the sides first, then add.",
+        "example": "Incorrect: c = a + b. Correct: c² = a² + b²."
+      },
+      {
+        "mistake": "Forgetting to take the final square root.",
+        "correction": "If you find x² = 25, then x must be √25 = 5.",
+        "example": "Result: c² = 100. Final Answer: c = 10."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "The Pythagorean Theorem",
+        "explanation": "In any right-angled triangle, the square of the length of the hypotenuse (the side opposite the right angle) is equal to the sum of the squares of the lengths of the other two sides.",
+        "keyPoints": [
+          "The longest side is always called the 'hypotenuse'.",
+          "It only works for triangles with a 90° angle."
+        ],
+        "examples": [
+          "A ladder leaning against a wall forms a right triangle with the ground and the wall.",
+          "Finding the diagonal of a rectangular TV screen."
+        ],
+        "whyItMatters": "This theorem connects algebra (squaring numbers) with geometry, allowing us to calculate distances that are hard to measure directly.",
+        "terminology": [
+          "Hypotenuse",
+          "Legs"
+        ],
+        "detailedExplanation": "Imagine squares built on each side of the triangle. The area of the square on the hypotenuse is exactly equal to the combined areas of the squares on the two legs.",
+        "observedIn": [
+          "Construction",
+          "Navigation",
+          "Computer Graphics"
+        ],
+        "visualSupport": [
+          "diagram-1"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "Always check if the triangle is right-angled before using this formula."
+        ],
+        "memoryTechniques": [
+          "\"Big Square = Small Squares Added\""
+        ],
+        "conceptSummary": [
+          "a² + b² = c² for right triangles only."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Hypotenuse",
+        "definition": "The longest side of a right-angled triangle, located opposite the 90-degree angle."
+      },
+      {
+        "term": "Pythagorean Triple",
+        "definition": "A set of three positive integers (a, b, c) that fit the equation a² + b² = c², such as (3, 4, 5)."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Finding an Unknown Hypotenuse",
+        "problem": "A right-angled triangle has legs of length 6 cm and 8 cm. Calculate the length of the hypotenuse.",
+        "diagramRef": "diagram-1",
+        "given": [
+          {
+            "text": "Leg a = 6 cm",
+            "latex": "a=6",
+            "displayLatex": "a=6"
+          },
+          {
+            "text": "Leg b = 8 cm",
+            "latex": "b=8",
+            "displayLatex": "b=8"
+          }
+        ],
+        "formula": [
+          {
+            "text": "Pythagoras' Theorem: a² + b² = c²",
+            "latex": "a^2 + b^2 = c^2",
+            "displayLatex": "a^2 + b^2 = c^2"
+          }
+        ],
+        "steps": [
+          "Identify knowns and unknown.",
+          "Substitute values into formula.",
+          "Calculate squares and sum."
+        ],
+        "solutionSteps": [
+          {
+            "text": "Write the formula",
+            "latex": "",
+            "displayLatex": "a^2 + b^2 = c^2"
+          },
+          {
+            "text": "Substitute a=6, b=8",
+            "latex": "",
+            "displayLatex": "6^2 + 8^2 = c^2"
+          },
+          {
+            "text": "Calculate squares: 36 and 64",
+            "latex": "",
+            "displayLatex": "36 + 64 = c^2"
+          },
+          {
+            "text": "Add to find c²",
+            "latex": "",
+            "displayLatex": "100 = c^2"
+          },
+          {
+            "text": "Take square root for final answer",
+            "latex": "",
+            "displayLatex": "c = \\sqrt{100} = 10"
+          }
+        ],
+        "reasoning": [
+          {
+            "text": "Since we need the longest side, c is our target.",
+            "latex": "c > a, b",
+            "displayLatex": ""
+          }
+        ],
+        "explanation": "We square both known sides (36 and 64), add them to get 100, and then find that 10 squared equals 100. Thus, the hypotenuse is 10 cm.",
+        "finalAnswer": {
+          "text": "The hypotenuse is 10 cm",
+          "latex": "",
+          "displayLatex": "c = 10 \\text{ cm}"
+        },
+        "latex": "",
+        "displayLatex": ""
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Hypotenuse: Longest side opposite the right angle."
+      ],
+      "formulas": [
+        {
+          "text": "",
+          "latex": "\\(a^2 + b^2 = c^2\\)",
+          "displayLatex": "\\(a^2 + b^2 = c^2\\)"
+        }
+      ],
+      "facts": [
+        "(3, 4, 5) and (6, 8, 10) are common Pythagorean triples."
+      ],
+      "keywords": [
+        "Right-angled",
+        "Square root"
+      ],
+      "conceptMap": [
+        "Triangle -> Right Angle -> Hypotenuse Formula"
+      ],
+      "quickRecap": [
+        "Square the legs, add them, then square root."
+      ]
+    },
+    "selfCheckQuestions": [
+      "If a triangle has sides 5 and 12, is it right-angled if the third side is 13?",
+      "Why can't you use Pythagoras' theorem on an equilateral triangle?"
+    ],
+    "quickSummary": [
+      "Pythagoras helps find missing lengths in right triangles."
+    ],
+    "keyTerms": [
+      "Hypotenuse",
+      "Legs"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "In the formula a² + b² = c², 'c' represents the ________.",
+        "answer": "hypotenuse"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of these is NOT a Pythagorean triple?",
+        "options": [
+          "A. 3, 4, 5",
+          "B. 6, 8, 10",
+          "C. 5, 12, 13",
+          "D. 4, 5, 7"
+        ],
+        "answer": "D. 4, 5, 7"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "What is the hypotenuse?",
+        "answer": "The longest side of a right-angled triangle."
+      }
+    ],
+    "didYouKnow": [
+      "Ancient Babylonians knew about Pythagorean triples over 1,000 years before Pythagoras was born!"
+    ],
+    "summary": [
+      "Use a² + b² = c² to solve for missing sides in right triangles."
+    ],
+    "quickRevision": [
+      "Check for the square symbol (90°) first!"
+    ],
+    "rememberPoints": [
+      "Hypotenuse is always opposite 90°. Square, Add, Root."
+    ]
+  }
+}

@@ -1,0 +1,332 @@
+{
+  "teacherLessonNotes": {
+    "sessionOverview": "Introduction to Polynomials: Defining polynomials, identifying coefficients and degrees, classifying by number of terms (monomial, binomial, trinomial), and determining the degree of a polynomial. Students will distinguish between valid polynomials and non-polynomial expressions involving negative or fractional exponents.",
+    "prerequisiteKnowledge": [
+      "Understanding of variables and constants",
+      "Rules for adding/subtracting algebraic terms (like terms)",
+      "Exponent laws: $x^a \cdot x^b = x^{a+b}$, $(x^a)^b = x^{ab}$",
+      "Concept of rational numbers"
+    ],
+    "previousSessionRecap": [
+      "Reviewing the concept of variables and constants from previous algebraic expressions.",
+      "Quick recall: What makes terms 'like' or 'unlike'? (Same variable part, different coefficients)."
+    ],
+    "learningOutcomes": [
+      "Students will define a polynomial in one variable with non-negative integer exponents.",
+      "Students will identify the degree of any given polynomial expression.",
+      "Students will classify polynomials as monomials, binomials, or trinomials based on term count."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Questioning with simple real-life example"
+      },
+      {
+        "minutes": 10,
+        "topic": "Definition & Classification",
+        "teachingStrategy": "Direct instruction with board examples and student classification"
+      },
+      {
+        "minutes": 20,
+        "topic": "Degree of Polynomials",
+        "teachingStrategy": "Guided practice solving for degree in complex expressions"
+      },
+      {
+        "minutes": 10,
+        "topic": "Non-Polynomials & Assessment",
+        "teachingStrategy": "Error analysis and quick formative check"
+      }
+    ],
+    "lessonPurpose": [
+      "To establish the strict definition of a polynomial which is foundational for factorization in later sessions.",
+      "To enable students to quickly identify the 'degree' as it determines the shape and behavior of graphs (future topic).",
+      "To prevent common errors regarding negative exponents early on."
+    ],
+    "teachingSequence": [
+      "Recap variables and exponent rules via quick oral questions.",
+      "Write a list of expressions on the board; ask students to sort them into 'Polynomials' and 'Not Polynomials'.",
+      "Derive the definition: Sum of terms where exponents are whole numbers (0, 1, 2...).",
+      "Introduce terminology: Monomial (1 term), Binomial (2 terms), Trinomial (3 terms).",
+      "Define Degree: The highest power of the variable in a polynomial.",
+      "Work through examples involving simplification before identifying degree.",
+      "Address common misconceptions about coefficients and zero exponents."
+    ],
+    "guidedPractice": [
+      "Teacher writes $P(x) = 3x^2 - x + 5$; asks for terms, coefficient of $x$, and degree.",
+      "Student volunteers identify if $\sqrt{y} + 1$ is a polynomial (No).",
+      "Class solves: Find the degree of $(x+1)(x-1)$."
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction & Definition",
+        "durationMinutes": 5,
+        "teacherPrompt": [
+          "Look at these expressions. Which ones look like 'polynomials' and which do not? Why?",
+          "What happens if we have $x^{-2}$ or $\sqrt{x}$?"
+        ],
+        "explanation": [
+          "A polynomial is an algebraic expression where variables only appear with non-negative integer exponents (0, 1, 2...).",
+          "The coefficients must be real numbers.",
+          "No variable in the denominator and no fractional/negative powers."
+        ],
+        "examples": [
+          "$3x^2 + 5$ is a polynomial.",
+          "$\frac{1}{x} = x^{-1}$ is NOT a polynomial.",
+          "$\sqrt{x} = x^{1/2}$ is NOT a polynomial."
+        ],
+        "boardWork": [
+          "Definition: $P(x) = a_n x^n + ... + a_0$ where $n \in W$",
+          "Valid: $4x^3 - 2x$, Invalid: $\sqrt{x} + 1$"
+        ],
+        "boardSteps": [
+          {
+            "text": "Write definition clearly",
+            "displayLatex": "\\text{Polynomial: } a_n x^n + \\dots + a_0, n \\in W"
+          },
+          {
+            "text": "List examples and non-examples side-by-side",
+            "displayLatex": "\\begin{aligned} &\\text{Valid}: 2x^3 - x \\\\ &\\text{Invalid}: x^{-1}, \\sqrt{x} + 5 \\end{aligned}"
+          }
+        ],
+        "solutionFlow": [
+          "Identify the exponent of each term.",
+          "Check if all exponents are whole numbers (0, 1, 2...).",
+          "Conclude validity."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": [],
+        "checkUnderstanding": [
+          "Is $5x^3 + x^{-1}$ a polynomial? Why?"
+        ],
+        "expectedAnswers": [
+          "No, because the exponent -1 is not a whole number."
+        ],
+        "activity": []
+      },
+      {
+        "title": "Classification & Degree",
+        "durationMinutes": 20,
+        "teacherPrompt": [
+          "How many terms are in $x^3 + x$?",
+          "What is the 'degree' of a polynomial? Is it always obvious?"
+        ],
+        "explanation": [
+          "Classification: Monomial (1 term), Binomial (2 terms), Trinomial (3 terms).",
+          "Degree: The highest power of the variable in any single term.",
+          "Crucial Step: Always simplify the expression first before finding the degree."
+        ],
+        "examples": [
+          "$x^4 + 1$ is a Binomial, Degree = 4.",
+          "$(x+2)(x-3) \rightarrow x^2 - x - 6$. This is a Trinomial (after expansion), Degree = 2."
+        ],
+        "boardWork": [
+          "Classification Rules",
+          "Degree Definition: Max power of variable",
+          "Example Worked Solution"
+        ],
+        "boardSteps": [
+          {
+            "text": "Write expression to simplify",
+            "displayLatex": "(2x + 1)(3x - 4)"
+          },
+          {
+            "text": "Expand using distributive property (FOIL)",
+            "displayLatex": "= 6x^2 - 8x + 3x - 4"
+          },
+          {
+            "text": "Combine like terms",
+            "displayLatex": "= 6x^2 - 5x - 4"
+          },
+          {
+            "text": "Identify degree and classification",
+            "displayLatex": "\\text{Degree: } 2, \\quad \\text{Classification: Trinomial}"
+          }
+        ],
+        "solutionFlow": [
+          "Expand the expression fully.",
+          "Combine like terms to get standard form $a_n x^n + ...$.",
+          "Identify the highest exponent as the degree."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": [],
+        "checkUnderstanding": [
+          "Find the degree of $(x^2 - 1)(x+1)$ without expanding fully if possible, or expand to verify."
+        ],
+        "expectedAnswers": [
+          "Degree is 3 (since $x^2 \cdot x = x^3$)."
+        ],
+        "activity": []
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Polynomial Definition",
+        "definition": "An algebraic expression consisting of variables and coefficients, involving only the operations of addition, subtraction, multiplication, and non-negative integer exponents.",
+        "coreExplanation": "The key constraint is that powers must be whole numbers. If a variable has a negative power (like $1/x$) or fractional power (like $\sqrt{x}$), it fails the definition.",
+        "importance": "This distinction separates polynomials from rational functions and radical expressions, which have different rules for differentiation and integration later on.",
+        "observedIn": [
+          "Algebraic simplification problems",
+          "Graphing polynomial curves"
+        ],
+        "whyStudyIt": "Polynomials are the building blocks of algebra; understanding their structure is required for factorization, division algorithms, and solving equations.",
+        "relationshipWithPrevious": "Builds on exponent laws learned in Class VIII (e.g., $x^2 \cdot x = x^3$).",
+        "relationshipWithFuture": "Directly leads to the Factor Theorem and Remainder Theorem in Session 4, and graphing polynomials in higher grades.",
+        "keywords": [
+          "Coefficient",
+          "Degree",
+          "Whole number exponent"
+        ],
+        "teacherMoves": [
+          "Emphasize 'Non-negative integer' repeatedly."
+        ],
+        "examples": [
+          "$P(x) = 3x^2 - x + 5$",
+          "$Q(y) = y^{1/2} + 1$ (Not a polynomial)"
+        ],
+        "visuals": [],
+        "solutionFlow": [
+          "Check exponents of all variables.",
+          "Verify they are integers $\ge 0$."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": []
+      },
+      {
+        "conceptName": "Degree of a Polynomial",
+        "definition": "The highest power (exponent) of the variable in a polynomial expression.",
+        "coreExplanation": "Students often mistake the coefficient for the degree or forget to simplify first. The degree determines the maximum number of roots and the end behavior of the graph.",
+        "importance": "It classifies polynomials as linear, quadratic, cubic, etc., which dictates how we solve them later.",
+        "observedIn": [
+          "$3x^4 + 2$ (Degree 4)",
+          "$(x+1)^2 = x^2 + 2x + 1$ (Degree 2)"
+        ],
+        "whyStudyIt": "Knowing the degree tells us how many solutions to expect and what shape the graph will have.",
+        "relationshipWithPrevious": "Uses exponent rules from previous sessions.",
+        "relationshipWithFuture": "Essential for identifying roots in Session 4 (Factor Theorem).",
+        "keywords": [
+          "Highest power",
+          "Leading term"
+        ],
+        "teacherMoves": [
+          "Always ask 'Is it simplified?' before stating the degree."
+        ],
+        "examples": [
+          "$5x^3 - 2$ (Degree 3)",
+          "$(x+1)(x-1) = x^2 - 1$ (Degree 2)"
+        ],
+        "visuals": [],
+        "solutionFlow": [
+          "Expand if necessary.",
+          "Identify the term with the largest exponent.",
+          "State that number as the degree."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": []
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "Is $x^2 + \sqrt{3}x - 1$ a polynomial? What is its degree?",
+        "level": "Understanding",
+        "expectedResponse": "Yes, it is a polynomial. The coefficient $\sqrt{3}$ is allowed; the exponent of x must be checked.",
+        "answerPoints": [
+          "Recognizing that coefficients can be irrational (like $\sqrt{3}$).",
+          "Identifying degree as 2."
+        ]
+      },
+      {
+        "question": "Find the degree of $(x+1)(x^2 - x + 1)$.",
+        "level": "Application",
+        "expectedResponse": "Degree is 3 (since $x \cdot x^2 = x^3$).",
+        "answerPoints": [
+          "Multiplying highest powers to find the new degree without full expansion."
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Students think $\sqrt{x}$ is a polynomial because it looks algebraic.",
+        "correction": "Rewrite $\sqrt{x}$ as $x^{1/2}$. Since 1/2 is not an integer, it fails the definition."
+      },
+      {
+        "misconception": "Students identify degree from unsimplified expressions like $(x+1)^3$ and say 'degree is 1' because they see x.",
+        "correction": "Emphasize that you must expand or multiply highest powers first. The term $x^3$ appears after expansion."
+      },
+      {
+        "misconception": "Confusing the coefficient with the degree (e.g., in $5x^2$, saying degree is 5).",
+        "correction": "Point to the exponent as the 'power' and the number multiplying it as the 'coefficient'. Use color coding on board."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Provide a checklist: 1. Expand? 2. Combine terms? 3. Find highest power?",
+        "Use visual aids to highlight exponents in different colors."
+      ],
+      "averageLearners": [
+        "Focus on standard form identification and simple expansion problems.",
+        "Ensure they can distinguish between coefficient and degree clearly."
+      ],
+      "advancedLearners": [
+        "Ask them to construct a polynomial of degree 3 with specific coefficients (e.g., no x term).",
+        "Challenge: Is $x^2 + \frac{1}{x}$ a polynomial? Why not?"
+      ]
+    },
+    "teacherTips": [
+      "Write the definition on the board and keep it visible throughout the session.",
+      "Use red chalk for exponents to draw attention to them when checking validity."
+    ],
+    "misconceptions": [
+      "Thinking negative coefficients make an expression non-polynomial (e.g., $-x^2$ is fine).",
+      "Forgetting that constants are polynomials of degree 0.",
+      "Assuming $\sqrt{3}$ makes it invalid."
+    ],
+    "formativeChecks": [
+      "Thumbs up/down for: Is $5/x$ a polynomial?",
+      "Exit ticket: Write one valid and one invalid expression with justification."
+    ],
+    "assessmentQuestions": [
+      "Determine the degree of $(2x-1)(3x+4)$.",
+      "Classify $P(x) = x^3 - 5$ as monomial, binomial, or trinomial."
+    ],
+    "blackboardSummary": [
+      "Polynomial: Exponents must be whole numbers (0, 1, 2...).",
+      "Degree: Highest power of variable.",
+      "Types: Mono(1), Bi(2), Tri(3)."
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap & Intro",
+        "minutes": 5,
+        "purpose": "Refresh exponent rules and introduce definition"
+      },
+      {
+        "segment": "Classification Rules",
+        "minutes": 10,
+        "purpose": "Define monomial/binomial/trinomial with examples"
+      },
+      {
+        "segment": "Degree & Simplification",
+        "minutes": 20,
+        "purpose": "Practice finding degree in expanded and factored forms"
+      },
+      {
+        "segment": "Assessment & Recap",
+        "minutes": 10,
+        "purpose": "Check understanding of non-polynomials and summary"
+      }
+    ],
+    "sessionSummary": [
+      "Polynomials require whole number exponents. The degree is the highest power after simplification."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "Is $x^2 + \sqrt{3}x - 1$ a polynomial? What is its degree?",
+        "expectedAnswer": "Yes, it is. Degree is 2."
+      }
+    ],
+    "nextSessionBridge": [
+      "Now that we can identify polynomials and their degrees, next session we will learn to evaluate them (finding the value of a polynomial at specific points)."
+    ]
+  }
+}

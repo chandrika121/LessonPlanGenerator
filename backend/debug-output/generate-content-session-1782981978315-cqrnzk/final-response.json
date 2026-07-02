@@ -1,0 +1,478 @@
+{
+  "studentLessonNotes": {
+    "title": "Introduction to Polynomials - Session 1",
+    "sessionOverview": "This session introduces the fundamental concepts of polynomials, including definitions, classification by degree and number of terms, and how to evaluate them.",
+    "introduction": "Welcome to our journey into Algebra! Today we move beyond simple numbers to explore expressions called 'Polynomials'. Think of these as flexible mathematical sentences that can help us model real-world situations like calculating areas or predicting growth patterns.",
+    "learningObjectives": [
+      "Define a polynomial and identify its coefficients, variables, and exponents",
+      "Classify polynomials by their degree (linear, quadratic, cubic)",
+      "Classify polynomials by the number of terms (monomial, binomial, trinomial)",
+      "Evaluate a polynomial for specific values of the variable"
+    ],
+    "quickRecall": [
+      "Exponents represent repeated multiplication: x^3 = x * x * x",
+      "Coefficients are the numerical factors in front of variables (e.g., 5x has coefficient 5)"
+    ],
+    "easyToRemember": [
+      "Polynomials cannot have negative exponents, fractional exponents on variables, or variables in denominators."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Classification by Number of Terms",
+        "headers": [
+          "Number of Terms",
+          "Name",
+          "Example"
+        ],
+        "rows": [
+          [
+            "1 term",
+            "Monomial",
+            "7x^2, -3y, 5"
+          ],
+          [
+            "2 terms",
+            "Binomial",
+            "x + 4, a^2 - b^2"
+          ],
+          [
+            "3 terms",
+            "Trinomial",
+            "x^2 + 2x + 1, 3a^2b - ab + c"
+          ]
+        ]
+      },
+      {
+        "title": "Classification by Degree (Highest Power)",
+        "headers": [
+          "Degree",
+          "Name",
+          "General Form Example"
+        ],
+        "rows": [
+          [
+            "1",
+            "Linear Polynomial",
+            "ax + b (e.g., 2x - 5)"
+          ],
+          [
+            "2",
+            "Quadratic Polynomial",
+            "ax^2 + bx + c (e.g., x^2 + 3x + 1)"
+          ],
+          [
+            "3",
+            "Cubic Polynomial",
+            "ax^3 + bx^2 + cx + d (e.g., x^3 - 4x)"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Degree of a Polynomial",
+        "formula": {
+          "text": "The highest power of the variable in the polynomial.",
+          "latex": "= \\max(n_1, n_2, ..., n_k)",
+          "displayLatex": "= \\max(n_1, n_2, ..., n_k)"
+        },
+        "meaning": "It tells us the 'size' or complexity of the polynomial. It is determined by looking at all exponents and picking the largest one.",
+        "whenToUse": "Used to name polynomials (linear, quadratic) and determine their behavior."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "quadrilateral",
+        "template": "rectangleAreaPerimeter",
+        "params": {},
+        "title": "Polynomial Area Model",
+        "caption": "A rectangle with algebraic dimensions representing a polynomial expression.",
+        "points": [
+          {
+            "id": "A",
+            "x": 70,
+            "y": 65,
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "x": 240,
+            "y": 65,
+            "label": "B"
+          },
+          {
+            "id": "C",
+            "x": 260,
+            "y": 155,
+            "label": "C"
+          },
+          {
+            "id": "D",
+            "x": 55,
+            "y": 155,
+            "label": "D"
+          }
+        ],
+        "lines": [
+          {
+            "from": "A",
+            "to": "B",
+            "label": "",
+            "style": "solid",
+            "highlight": false
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "",
+            "style": "solid",
+            "highlight": false
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "label": "",
+            "style": "solid",
+            "highlight": false
+          },
+          {
+            "from": "D",
+            "to": "A",
+            "label": "",
+            "style": "solid",
+            "highlight": false
+          }
+        ],
+        "arcs": [],
+        "labels": [],
+        "measurements": [],
+        "highlights": [],
+        "bars": []
+      }
+    ],
+    "proofSteps": [
+      "Identify all terms in the expression.",
+      "Check if any exponents are negative or fractional (if so, it's not a polynomial).",
+      "Find the highest exponent among all variable terms."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Thinking 1/x is a polynomial term.",
+        "correction": "Rewrite as x^-1. Since exponents must be non-negative integers, this makes it not a polynomial.",
+        "example": "\\frac{5}{x} \\text{ is NOT a polynomial."
+      },
+      {
+        "mistake": "Confusing the number of terms with the degree.",
+        "correction": "Count how many parts are added/subtracted for 'terms'. Look at the highest power for 'degree'.",
+        "example": "\\text{In } 2x^3 + x, \\text{ there are 2 terms but degree is 3."
+      },
+      {
+        "mistake": "Ignoring constant terms when finding degree.",
+        "correction": "A non-zero constant has a degree of 0. It does not affect the highest power unless it's the only term.",
+        "example": "\\text{In } x^2 + 5, \\text{ the degree is still 2."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "What is a Polynomial?",
+        "explanation": "A polynomial is an algebraic expression consisting of variables and coefficients, involving only the operations of addition, subtraction, multiplication, and non-negative integer exponents. The word 'poly' means many, and 'nomial' refers to terms.",
+        "keyPoints": [
+          "Variables must have whole number powers (0, 1, 2, ...).",
+          "No variables in the denominator.",
+          "No radicals on variables."
+        ],
+        "examples": [
+          "3x^2 + 4x - 7 is a polynomial.",
+          "\\sqrt{x} = x^{1/2} is NOT a polynomial (fractional exponent).",
+          "\\frac{1}{y+1} is NOT a polynomial (variable in denominator)."
+        ],
+        "whyItMatters": "Polynomials are the building blocks of algebra. They model everything from projectile motion to economic trends.",
+        "terminology": [
+          "Coefficient",
+          "Variable",
+          "Constant Term"
+        ],
+        "detailedExplanation": "Let's break down 4x^3 - 2x + 5. Here, 'x' is the variable. The numbers multiplying x are coefficients (4 and -2). The number standing alone without a variable is the constant term (5). Each part separated by plus or minus signs is called a 'term'.",
+        "observedIn": [
+          "Calculating areas of shapes with unknown sides.",
+          "Physics formulas for motion."
+        ],
+        "visualSupport": [
+          "diagram-1"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "The degree of a constant polynomial (like 5) is 0, not undefined. However, the zero polynomial (just '0') has an undefined degree."
+        ],
+        "memoryTechniques": [
+          "\"P\" for Positive exponents only!"
+        ],
+        "conceptSummary": [
+          "Polynomials are sums of terms with whole number powers."
+        ]
+      },
+      {
+        "heading": "Classifying Polynomials",
+        "explanation": "We classify polynomials in two main ways: by how many parts (terms) they have, and by their 'size' or complexity (degree).",
+        "keyPoints": [
+          "Monomial = 1 term.",
+          "Binomial = 2 terms.",
+          "Trinomial = 3 terms.",
+          "Degree determines if it's Linear (1), Quadratic (2), etc."
+        ],
+        "examples": [
+          "\\text{Linear: } x + 5",
+          "\\text{Quadratic: } x^2 - 9",
+          "\\text{Cubic: } x^3 + 2x"
+        ],
+        "whyItMatters": "Knowing the degree helps us predict how many solutions an equation might have and what its graph looks like.",
+        "terminology": [
+          "Degree",
+          "Linear",
+          "Quadratic",
+          "Cubic"
+        ],
+        "detailedExplanation": "The 'degree' is simply the highest exponent in the expression. For example, in 3x^4 + x - 10, the powers are 4 and 1 (and 0 for the constant). The highest is 4, so it's a polynomial of degree 4.",
+        "observedIn": [
+          "Naming functions in higher math."
+        ],
+        "visualSupport": [],
+        "visualAssets": [],
+        "importantNotes": [
+          "Always look at the variable with the highest power to find the degree, even if its coefficient is small (e.g., 0.1x^5)."
+        ],
+        "memoryTechniques": [
+          "\"Quad\" sounds like \"Four\", but Quadratic means Degree 2."
+        ],
+        "conceptSummary": [
+          "Degree = Highest exponent; Terms = Count of parts separated by + or -."
+        ]
+      },
+      {
+        "heading": "Evaluating Polynomials",
+        "explanation": "To evaluate a polynomial means to find its value when the variable is replaced by a specific number. This involves substitution and simplification.",
+        "keyPoints": [
+          "Replace every instance of the variable with parentheses around the new number.",
+          "Follow order of operations (PEMDAS/BODMAS).",
+          "Be careful with negative signs."
+        ],
+        "examples": [
+          "\\text{If } P(x) = 2x^2 - x, \\text{ find } P(3)."
+        ],
+        "whyItMatters": "This is how we use formulas to get real answers in science and engineering.",
+        "terminology": [
+          "Substitution",
+          "Evaluate"
+        ],
+        "detailedExplanation": "When substituting a negative number, always put it in parentheses. For example, if x = -2, then x^2 becomes (-2)^2 which is 4, not -4.",
+        "observedIn": [
+          "Calculating costs based on quantity."
+        ],
+        "visualSupport": [],
+        "visualAssets": [],
+        "importantNotes": [
+          "A common mistake is forgetting to square the negative sign if parentheses are omitted: (-2)^2 = 4, but -2^2 = -4."
+        ],
+        "memoryTechniques": [
+          "\"Plug and Play\": Plug in the number, then play with the math rules."
+        ],
+        "conceptSummary": [
+          "Evaluation is substitution followed by simplification."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Polynomial",
+        "definition": "An expression consisting of variables and coefficients, involving only addition, subtraction, multiplication, and non-negative integer exponents."
+      },
+      {
+        "term": "Degree",
+        "definition": "The highest power (exponent) of the variable in a polynomial term or expression."
+      },
+      {
+        "term": "Coefficient",
+        "definition": "The numerical factor of a term containing a variable."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Classifying and Evaluating a Polynomial",
+        "problem": "Given the polynomial P(x) = 3x^2 - 5x + 7. (a) Identify its degree and number of terms. (b) Evaluate P(2).",
+        "diagramRef": "diagram-1",
+        "given": [
+          {
+            "text": "Let x = 2 for evaluation.",
+            "latex": "P(x) = 3x^2 - 5x + 7",
+            "displayLatex": "P(x) = 3x^2 - 5x + 7"
+          }
+        ],
+        "formula": [
+          {
+            "text": "Degree is the highest exponent.",
+            "latex": "= \\max(\\text{exponents})",
+            "displayLatex": "= \\max(\\text{exponents})"
+          },
+          {
+            "text": "Evaluation involves substitution.",
+            "latex": "P(a) = 3a^2 - 5a + 7",
+            "displayLatex": "P(a) = 3a^2 - 5a + 7"
+          }
+        ],
+        "steps": [
+          "Identify the highest power for degree.",
+          "Count the terms separated by signs.",
+          "Substitute x with 2 and simplify."
+        ],
+        "solutionSteps": [
+          {
+            "text": "Analyze exponents: The powers are 2, 1 (for -5x), and 0 (for constant).",
+            "latex": "",
+            "displayLatex": "\\max(2, 1, 0) = 2"
+          },
+          {
+            "text": "Count terms: There are three distinct parts.",
+            "latex": "",
+            "displayLatex": "3 \\text{ terms}"
+          },
+          {
+            "text": "Substitute x = 2 into the expression.",
+            "latex": "",
+            "displayLatex": "P(2) = 3(2)^2 - 5(2) + 7"
+          },
+          {
+            "text": "Calculate exponents first: 2^2 = 4.",
+            "latex": "",
+            "displayLatex": "= 3(4) - 10 + 7"
+          },
+          {
+            "text": "Multiply and add/subtract left to right.",
+            "latex": "",
+            "displayLatex": "= 12 - 10 + 7"
+          }
+        ],
+        "reasoning": [
+          {
+            "text": "The highest power determines the degree, which is quadratic here.",
+            "latex": "= 2 \\implies \\text{Quadratic}",
+            "displayLatex": "= 2 \\implies \\text{Quadratic}"
+          },
+          {
+            "text": "Substitution requires replacing every x with (2).",
+            "latex": "(2)^2 = 4",
+            "displayLatex": "(2)^2 = 4"
+          }
+        ],
+        "explanation": "First, we look at the exponents to find the degree. The highest is 2, so it's a quadratic polynomial of degree 2. It has three terms: 3x^2, -5x, and +7. For evaluation, we replace x with 2 carefully.",
+        "finalAnswer": {
+          "text": "Degree = 2; Value at x=2 is 9",
+          "latex": "",
+          "displayLatex": "= 2, \\quad P(2) = 9"
+        },
+        "latex": "",
+        "displayLatex": ""
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Polynomial: Expression with non-negative integer exponents.",
+        "Degree: Highest exponent in the polynomial."
+      ],
+      "formulas": [
+        "Linear: ax + b",
+        "Quadratic: ax^2 + bx + c"
+      ],
+      "facts": [
+        "A constant term has degree 0.",
+        "Polynomials cannot have variables in the denominator."
+      ],
+      "keywords": [
+        "Monomial",
+        "Binomial",
+        "Trinomial",
+        "Coefficient"
+      ],
+      "conceptMap": [
+        "Terms -> Monomial/Binomial/Trinomial",
+        "Degree -> Linear/Quadratic/Cubic"
+      ],
+      "quickRecap": [
+        "Check exponents for degree, count parts for terms."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Is 2x^-1 a polynomial? Why or why not?",
+      "What is the degree of P(x) = x^5 - x + 3?",
+      "Classify 4y^3 as monomial, binomial, or trinomial.",
+      "Evaluate Q(t) = t^2 - 3t for t = -1."
+    ],
+    "quickSummary": [
+      "Polynomials are expressions with whole number exponents. They are classified by degree (highest power) and terms (number of parts)."
+    ],
+    "keyTerms": [
+      "Degree",
+      "Coefficient",
+      "Monomial",
+      "Quadratic"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A polynomial with exactly two terms is called a ________.",
+        "answer": "binomial"
+      },
+      {
+        "prompt": "The degree of the constant term 7 is ________. ",
+        "answer": "0"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is a polynomial?",
+        "options": [
+          "A. x^2 + \\sqrt{x}",
+          "B. 3x^{-1} + 5",
+          "C. 4x^2 - 7x + 9",
+          "D. \\frac{1}{x+1}"
+        ],
+        "answer": "C. 4x^2 - 7x + 9"
+      },
+      {
+        "question": "What is the degree of the polynomial P(x) = x^3 + 5?",
+        "options": [
+          "A. 1",
+          "B. 2",
+          "C. 3",
+          "D. 0"
+        ],
+        "answer": "C. 3"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "Is -5 a polynomial?",
+        "answer": "Yes, it is a constant polynomial of degree 0."
+      },
+      {
+        "question": "How many terms are in x^2 + y^3?",
+        "answer": "Two (it is a binomial)."
+      }
+    ],
+    "didYouKnow": [
+      "The word 'polynomial' comes from Greek, where 'poly' means 'many' and 'nomos' means 'part'.",
+      "Polynomials are used in computer graphics to create smooth curves for animations."
+    ],
+    "summary": [
+      "We learned that polynomials must have non-negative integer exponents. We can classify them by degree (linear, quadratic) or terms (mono-, bi-, tri-). Evaluating means substituting a value and simplifying.",
+      "Remember: No negative powers! The highest power is the key to classification."
+    ],
+    "quickRevision": [
+      "Degree = Highest exponent. Terms = Count parts. Evaluate = Substitute & Simplify."
+    ],
+    "rememberPoints": [
+      "Polynomials -> Whole number exponents only.",
+      "Linear (1), Quadratic (2), Cubic (3).",
+      "Monomial (1 term), Binomial (2 terms)."
+    ]
+  }
+}

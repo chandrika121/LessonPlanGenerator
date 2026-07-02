@@ -105,6 +105,8 @@ export interface MathRichText {
   displayLatex?: string;
 }
 
+export type RenderableMathText = string | MathRichText;
+
 export type MathDiagramType =
   | "triangle"
   | "rightTriangle"
@@ -227,60 +229,60 @@ export interface SessionPlan {
       topic: string;
       teachingStrategy?: string;
     }[];
-    teachingSequence?: string[];
-    guidedPractice?: string[];
+    teachingSequence?: RenderableMathText[];
+    guidedPractice?: RenderableMathText[];
     lessonBlocks?: {
       title: string;
       durationMinutes?: number;
-      teacherPrompt?: string[];
-      explanation?: string[];
-      examples?: string[];
-      boardWork?: string[];
+      teacherPrompt?: RenderableMathText[];
+      explanation?: RenderableMathText[];
+      examples?: RenderableMathText[];
+      boardWork?: RenderableMathText[];
       boardSteps?: (string | MathRichText)[];
       solutionFlow?: (string | MathRichText)[];
       geometryDiagrams?: MathDiagramSpec[];
       proofSteps?: (string | MathRichText)[];
-      checkUnderstanding?: string[];
-      expectedAnswers?: string[];
-      activity?: string[];
+      checkUnderstanding?: RenderableMathText[];
+      expectedAnswers?: RenderableMathText[];
+      activity?: RenderableMathText[];
     }[];
     differentiation?: {
-      slowLearners?: string[];
-      averageLearners?: string[];
-      advancedLearners?: string[];
+      slowLearners?: RenderableMathText[];
+      averageLearners?: RenderableMathText[];
+      advancedLearners?: RenderableMathText[];
     };
-    teacherTips?: string[];
-    misconceptions?: string[];
-    lessonPurpose?: string[];
+    teacherTips?: RenderableMathText[];
+    misconceptions?: RenderableMathText[];
+    lessonPurpose?: RenderableMathText[];
     classroomQuestions?: {
-      question: string;
+      question: RenderableMathText;
       level?: string;
-      expectedResponse?: string;
-      answerPoints?: string[];
+      expectedResponse?: RenderableMathText;
+      answerPoints?: RenderableMathText[];
     }[];
     commonMisconceptionsDetailed?: {
-      misconception: string;
-      correction: string;
+      misconception: RenderableMathText;
+      correction: RenderableMathText;
     }[];
-    assessmentQuestions?: string[];
-    blackboardSummary?: string[];
+    assessmentQuestions?: RenderableMathText[];
+    blackboardSummary?: RenderableMathText[];
     endOfClassRecap?: {
-      prompt: string;
-      expectedAnswer?: string;
+      prompt: RenderableMathText;
+      expectedAnswer?: RenderableMathText;
     }[];
     conceptFlow?: {
-      conceptName: string;
-      definition?: string;
-      coreExplanation?: string;
-      importance?: string;
-      observedIn?: string[];
-      whyStudyIt?: string;
-      relationshipWithPrevious?: string;
-      relationshipWithFuture?: string;
-      keywords?: string[];
-      teacherMoves?: string[];
-      examples?: string[];
-      visuals?: string[];
+      conceptName: RenderableMathText;
+      definition?: RenderableMathText;
+      coreExplanation?: RenderableMathText;
+      importance?: RenderableMathText;
+      observedIn?: RenderableMathText[];
+      whyStudyIt?: RenderableMathText;
+      relationshipWithPrevious?: RenderableMathText;
+      relationshipWithFuture?: RenderableMathText;
+      keywords?: RenderableMathText[];
+      teacherMoves?: RenderableMathText[];
+      examples?: RenderableMathText[];
+      visuals?: RenderableMathText[];
       solutionFlow?: (string | MathRichText)[];
       geometryDiagrams?: MathDiagramSpec[];
       proofSteps?: (string | MathRichText)[];
@@ -288,19 +290,19 @@ export interface SessionPlan {
     timePlan?: {
       segment: string;
       minutes: number;
-      purpose?: string;
+      purpose?: RenderableMathText;
     }[];
-    formativeChecks?: string[];
-    sessionSummary?: string[];
-    nextSessionBridge?: string[];
+    formativeChecks?: RenderableMathText[];
+    sessionSummary?: RenderableMathText[];
+    nextSessionBridge?: RenderableMathText[];
   };
   studentLessonNotes?: {
     title?: string;
-    sessionOverview?: string;
-    introduction?: string;
-    learningObjectives?: string[];
-    quickRecall?: string[];
-    easyToRemember?: string[];
+    sessionOverview?: RenderableMathText;
+    introduction?: RenderableMathText;
+    learningObjectives?: RenderableMathText[];
+    quickRecall?: RenderableMathText[];
+    easyToRemember?: RenderableMathText[];
     comparisonTables?: {
       title: string;
       headers?: string[];
@@ -316,14 +318,14 @@ export interface SessionPlan {
     }[];
     sections?: {
       heading: string;
-      explanation: string;
-      keyPoints?: string[];
-      examples?: string[];
-      whyItMatters?: string;
-      terminology?: string[];
-      detailedExplanation?: string;
-      observedIn?: string[];
-      visualSupport?: string[];
+      explanation: RenderableMathText;
+      keyPoints?: RenderableMathText[];
+      examples?: RenderableMathText[];
+      whyItMatters?: RenderableMathText;
+      terminology?: RenderableMathText[];
+      detailedExplanation?: RenderableMathText;
+      observedIn?: RenderableMathText[];
+      visualSupport?: RenderableMathText[];
       visualAssets?: {
         prompt?: string;
         alt?: string;
@@ -331,53 +333,53 @@ export interface SessionPlan {
         mimeType?: string;
         model?: string;
       }[];
-      importantNotes?: string[];
-      memoryTechniques?: string[];
-      conceptSummary?: string[];
+      importantNotes?: RenderableMathText[];
+      memoryTechniques?: RenderableMathText[];
+      conceptSummary?: RenderableMathText[];
     }[];
-    definitions?: { term: string; definition: string }[];
+    definitions?: { term: RenderableMathText; definition: RenderableMathText }[];
     workedExamples?: {
       title: string;
-      problem?: string;
+      problem?: RenderableMathText;
       diagramRef?: string;
       given?: (string | MathRichText)[];
       formula?: (string | MathRichText)[];
-      steps?: string[];
+      steps?: RenderableMathText[];
       solutionSteps?: (string | MathRichText)[];
       reasoning?: (string | MathRichText)[];
-      explanation?: string;
-      finalAnswer?: string | MathRichText;
+      explanation?: RenderableMathText;
+      finalAnswer?: RenderableMathText;
       latex?: string;
       displayLatex?: string;
     }[];
     revisionSection?: {
-      definitions?: string[];
+      definitions?: RenderableMathText[];
       formulas?: (string | MathRichText)[];
-      facts?: string[];
-      keywords?: string[];
-      conceptMap?: string[];
-      quickRecap?: string[];
+      facts?: RenderableMathText[];
+      keywords?: RenderableMathText[];
+      conceptMap?: RenderableMathText[];
+      quickRecap?: RenderableMathText[];
     };
-    selfCheckQuestions?: string[];
-    quickSummary?: string[];
-    keyTerms?: string[];
+    selfCheckQuestions?: RenderableMathText[];
+    quickSummary?: RenderableMathText[];
+    keyTerms?: RenderableMathText[];
     fillInTheBlanks?: {
-      prompt: string;
-      answer?: string;
+      prompt: RenderableMathText;
+      answer?: RenderableMathText;
     }[];
     mcqQuestions?: {
-      question: string;
-      options: string[];
-      answer?: string;
+      question: RenderableMathText;
+      options: RenderableMathText[];
+      answer?: RenderableMathText;
     }[];
     veryShortAnswerQuestions?: {
-      question: string;
-      answer?: string;
+      question: RenderableMathText;
+      answer?: RenderableMathText;
     }[];
-    didYouKnow?: string[];
-    summary?: string[];
-    quickRevision?: string[];
-    rememberPoints?: string[];
+    didYouKnow?: RenderableMathText[];
+    summary?: RenderableMathText[];
+    quickRevision?: RenderableMathText[];
+    rememberPoints?: RenderableMathText[];
   };
   learningOutcomes?: string[];
   introduction?: string;
@@ -398,11 +400,11 @@ export interface SessionPlan {
       templateName?: string;
       themeId?: string;
       themeName?: string;
-      title?: string;
-      presentationTitle?: string;
-      presentationGoal?: string;
-      audience?: string;
-      theme?: string;
+      title?: RenderableMathText;
+      presentationTitle?: RenderableMathText;
+      presentationGoal?: RenderableMathText;
+      audience?: RenderableMathText;
+      theme?: RenderableMathText;
       themeTokens?: {
         fonts?: {
           heading?: string;
@@ -429,94 +431,94 @@ export interface SessionPlan {
         licensingNotes?: string[];
         fallbackStrategy?: string;
       };
-      licenseChecklist?: string[];
-      presentationWarnings?: string[];
+      licenseChecklist?: RenderableMathText[];
+      presentationWarnings?: RenderableMathText[];
       coverageSummary?: {
-        learningOutcomesCovered?: string[];
-        topicsCovered?: string[];
-        taughtConceptsCovered?: string[];
-        omittedContent?: string[];
+        learningOutcomesCovered?: RenderableMathText[];
+        topicsCovered?: RenderableMathText[];
+        taughtConceptsCovered?: RenderableMathText[];
+        omittedContent?: RenderableMathText[];
       };
       slides: {
         templateId?: string;
         templateSlideKey?: string;
         templateSlideTitle?: string;
         isOptionalSlotFilled?: boolean;
-        slideTitle?: string;
-        bulletPoints?: string[];
+        slideTitle?: RenderableMathText;
+        bulletPoints?: RenderableMathText[];
         slideNumber?: number;
         slideType?: string;
         learningOutcomeIds?: string[];
         topicCoverage?: string[];
-        teacherIntent?: string;
-        studentTakeaway?: string;
-        layout?: string;
-        onSlideText?: string[];
-        speakerNotes?: string[];
-        visualPlan?: string;
+        teacherIntent?: RenderableMathText;
+        studentTakeaway?: RenderableMathText;
+        layout?: RenderableMathText;
+        onSlideText?: RenderableMathText[];
+        speakerNotes?: RenderableMathText[];
+        visualPlan?: RenderableMathText;
         assets?: {
-          purpose?: string;
-          searchQuery?: string;
-          sourceSite?: string;
-          sourceUrl?: string;
-          previewUrl?: string;
-          licenseType?: string;
-          attributionText?: string;
-          altText?: string;
-          placementHint?: string;
+          purpose?: RenderableMathText;
+          searchQuery?: RenderableMathText;
+          sourceSite?: RenderableMathText;
+          sourceUrl?: RenderableMathText;
+          previewUrl?: RenderableMathText;
+          licenseType?: RenderableMathText;
+          attributionText?: RenderableMathText;
+          altText?: RenderableMathText;
+          placementHint?: RenderableMathText;
           imageDataUrl?: string;
           mimeType?: string;
-          model?: string;
+          model?: RenderableMathText;
           sourceKind?: "reusable-external" | "generated-image" | "svg-diagram" | "none";
         }[];
         svgDiagram?: {
-          title?: string;
+          title?: RenderableMathText;
           type?: string;
-          instructions?: string[];
+          instructions?: RenderableMathText[];
           svgCode?: string;
         };
-        animationHints?: string[];
+        animationHints?: RenderableMathText[];
         timeEstimateMinutes?: number;
       }[];
     };
-    pdf: { documentTitle: string; keyInformation: string[] };
-    docx: { outlineTitle: string; sections: string[] };
+    pdf: { documentTitle: RenderableMathText; keyInformation: RenderableMathText[] };
+    docx: { outlineTitle: RenderableMathText; sections: RenderableMathText[] };
   };
   homework?: {
-    task?: string;
+    task?: RenderableMathText;
     estimatedTimeMinutes?: number;
     sessionInformation?: {
       sessionNumber?: string;
-      sessionTitle?: string;
-      subject?: string;
-      grade?: string;
-      difficultyLevel?: string;
-      learningPace?: string;
-      estimatedHomeworkDuration?: string;
+      sessionTitle?: RenderableMathText;
+      subject?: RenderableMathText;
+      grade?: RenderableMathText;
+      difficultyLevel?: RenderableMathText;
+      learningPace?: RenderableMathText;
+      estimatedHomeworkDuration?: RenderableMathText;
     };
     homework?: {
       id: number;
-      type?: string;
-      title?: string;
+      type?: RenderableMathText;
+      title?: RenderableMathText;
       learningOutcomeIds?: string[];
       topicCoverage?: string[];
       difficulty?: string;
       marks?: number;
-      estimatedTime?: string;
-      instructions?: string;
-      question?: string;
-      options?: string[];
-      answerSpace?: string;
-      visualRequirement?: string;
-      expectedResponse?: string;
+      estimatedTime?: RenderableMathText;
+      instructions?: RenderableMathText;
+      question?: RenderableMathText;
+      options?: RenderableMathText[];
+      answerSpace?: RenderableMathText;
+      visualRequirement?: RenderableMathText;
+      expectedResponse?: RenderableMathText;
     }[];
     summary?: {
       totalQuestions?: number;
       totalMarks?: number;
-      estimatedCompletionTime?: string;
-      learningOutcomesCovered?: string[];
-      topicsCovered?: string[];
-      subtopicsCovered?: string[];
+      estimatedCompletionTime?: RenderableMathText;
+      learningOutcomesCovered?: RenderableMathText[];
+      topicsCovered?: RenderableMathText[];
+      subtopicsCovered?: RenderableMathText[];
       taskDistribution?: Record<string, number>;
       homeExperimentIncluded?: boolean;
       parentEngagementIncluded?: boolean;
@@ -530,15 +532,15 @@ export interface SessionPlan {
       durationMinutes?: number;
       preferredDifficulty?: string;
       language?: string;
-      paperObjective?: string;
+      paperObjective?: RenderableMathText;
       requestSignature?: string;
       requestedQuestionTypes?: AssessmentQuestionTypeRequest[];
-      instructions?: string[];
+      instructions?: RenderableMathText[];
     };
     blueprint?: {
       learningOutcomeCoverage?: {
-        outcome: string;
-        questionRefs: string[];
+        outcome: RenderableMathText;
+        questionRefs: RenderableMathText[];
       }[];
       difficultyDistribution?: {
         easy?: number;
@@ -559,17 +561,17 @@ export interface SessionPlan {
         longAnswer?: number;
       };
       timeAllocation?: {
-        section: string;
+        section: RenderableMathText;
         minutes: number;
       }[];
     };
     mcq?: {
       id?: string;
       questionSubtype?: "mcq";
-      question: string;
-      options: string[];
-      answer: string;
-      explanation?: string;
+      question: RenderableMathText;
+      options: RenderableMathText[];
+      answer: RenderableMathText;
+      explanation?: RenderableMathText;
       marks?: number;
       learningOutcomeIds?: string[];
       topicCoverage?: string[];
@@ -579,11 +581,11 @@ export interface SessionPlan {
     shortAnswer?: {
       id?: string;
       questionSubtype?: "veryShortAnswer" | "shortAnswer";
-      question: string;
-      answer: string;
-      expectedLength?: string;
+      question: RenderableMathText;
+      answer: RenderableMathText;
+      expectedLength?: RenderableMathText;
       marks?: number;
-      rubric?: string[];
+      rubric?: RenderableMathText[];
       learningOutcomeIds?: string[];
       topicCoverage?: string[];
       difficulty?: string;
@@ -592,27 +594,27 @@ export interface SessionPlan {
     longAnswer?: {
       id?: string;
       questionSubtype?: "longAnswer" | "caseStudy";
-      question: string;
-      answer: string;
-      expectedLength?: string;
+      question: RenderableMathText;
+      answer: RenderableMathText;
+      expectedLength?: RenderableMathText;
       marks?: number;
-      rubric?: string[];
+      rubric?: RenderableMathText[];
       learningOutcomeIds?: string[];
       topicCoverage?: string[];
       difficulty?: string;
       bloomsLevel?: string;
     }[];
     answerKey?: {
-      mcq?: { answer: string; explanation?: string; marks?: number; questionSubtype?: "mcq" }[];
-      shortAnswer?: { answer: string; rubric?: string[]; marks?: number; questionSubtype?: "veryShortAnswer" | "shortAnswer" }[];
-      longAnswer?: { answer: string; rubric?: string[]; marks?: number; questionSubtype?: "longAnswer" | "caseStudy" }[];
-      generalMarkingGuidance?: string[];
+      mcq?: { answer: RenderableMathText; explanation?: RenderableMathText; marks?: number; questionSubtype?: "mcq" }[];
+      shortAnswer?: { answer: RenderableMathText; rubric?: RenderableMathText[]; marks?: number; questionSubtype?: "veryShortAnswer" | "shortAnswer" }[];
+      longAnswer?: { answer: RenderableMathText; rubric?: RenderableMathText[]; marks?: number; questionSubtype?: "longAnswer" | "caseStudy" }[];
+      generalMarkingGuidance?: RenderableMathText[];
     };
   };
   assignment?: {
-    taskDescription: string;
-    rubric: string[];
-    answerKey: string;
+    taskDescription: RenderableMathText;
+    rubric: RenderableMathText[];
+    answerKey: RenderableMathText;
   };
 }
 
