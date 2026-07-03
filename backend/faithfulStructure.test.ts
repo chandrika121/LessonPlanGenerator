@@ -104,6 +104,71 @@ async function main() {
   const planningDatabaseUnit = planningClassXII.units.find((unit: any) => unit.unit_name === "Database Management");
   assert.ok(planningDatabaseUnit, "Planning hierarchy should still include Database Management as a unit");
 
+  const englishStage1 = mergeStage1FactExtractions([{
+    document_metadata: {
+      subject: "English",
+      class: "Class IX",
+    },
+    classes: [
+      { class_name: "Class IX", subject: "English" },
+    ],
+    units: [
+      {
+        class_name: "Class IX",
+        subject: "English",
+        part_or_section: "Beehive",
+        unit_id: "U3",
+        unit_name: "Prose",
+        topics: ["The Fun They Had", "The Sound of Music"],
+      },
+      {
+        class_name: "Class IX",
+        subject: "English",
+        part_or_section: "Section C - Literature",
+        unit_id: "U3",
+        unit_name: "First Flight",
+      },
+    ],
+    chapters: [
+      {
+        class_name: "Class IX",
+        subject: "English",
+        part_or_section: "Section C - Literature",
+        unit_id: "U3",
+        unit_name: "First Flight",
+        chapter_name: "Poems",
+        topics: ["Dust of Snow", "The Road Not Taken"],
+      },
+    ],
+  }]);
+
+  const englishRaw = expandStage1FactsToRawExtraction(englishStage1);
+  const englishFaithful = buildFaithfulStructureFromRawExtraction(englishRaw);
+  const englishClassIX = englishFaithful.classes.find((cls: any) => cls.class_name === "Class IX");
+  assert.ok(englishClassIX, "English faithful structure should preserve Class IX");
+  assert.equal(
+    new Set((englishClassIX.units || []).map((unit: any) => unit.unit_id)).size,
+    (englishClassIX.units || []).length,
+    "English faithful structure should normalize duplicate unit ids within the same class"
+  );
+  const proseUnit = englishClassIX.units.find((unit: any) => unit.unit_name === "Prose");
+  assert.equal(proseUnit?.part_or_section, "Beehive");
+  assert.deepEqual(
+    (proseUnit?.chapters || []).map((chapter: any) => chapter.chapter_name),
+    ["The Fun They Had", "The Sound of Music"],
+    "English category units should promote lesson titles into faithful chapters"
+  );
+  const firstFlightUnit = englishClassIX.units.find((unit: any) => unit.unit_name === "First Flight");
+  assert.deepEqual(
+    (firstFlightUnit?.chapters || []).map((chapter: any) => chapter.chapter_name),
+    ["Dust of Snow", "The Road Not Taken"],
+    "English book/category containers should promote actual lesson titles instead of keeping category labels as final chapters"
+  );
+  assert.ok(
+    (firstFlightUnit?.chapters || []).every((chapter: any) => chapter.category_name === "Poems"),
+    "Promoted English chapters should preserve their category label"
+  );
+
   console.log("faithful structure regression passed");
 }
 

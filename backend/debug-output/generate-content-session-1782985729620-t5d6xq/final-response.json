@@ -1,0 +1,166 @@
+{
+  "homework": {
+    "sessionInformation": {
+      "sessionNumber": "1",
+      "sessionTitle": "Introduction to Polynomials - Session 1",
+      "subject": "Mathematics",
+      "grade": "Class IX",
+      "difficultyLevel": "Moderate",
+      "learningPace": "Balanced",
+      "estimatedHomeworkDuration": "45 minutes"
+    },
+    "homework": [
+      {
+        "id": 1,
+        "type": "Identification and Classification",
+        "title": "Identifying Polynomials in One Variable",
+        "learningOutcomeIds": [
+          "LO-01"
+        ],
+        "topicCoverage": [
+          "Definition of a Polynomial",
+          "Degree of a Polynomial",
+          "Classification by Number of Terms"
+        ],
+        "difficulty": "Moderate",
+        "marks": 5,
+        "estimatedTime": "8 minutes",
+        "instructions": "Examine the following expressions. Determine if each is a polynomial in one variable or not. If it is a polynomial, state its degree and classify it as Monomial, Binomial, Trinomial, or Polynomial.",
+        "question": {
+          "text": "For each expression below:",
+          "latex": "1. State 'Yes' (Polynomial) or 'No'. 2. If Yes, write the Degree. 3. Classify by number of terms. a) 4x^2 - 3x + 7 b) y^2 + \\sqrt{2} c) 3sqrt(t) + t*\\sqrt{9} d) (\\frac{1}{x)}+ x e) 5",
+          "displayLatex": "1. State 'Yes' (Polynomial) or 'No'. 2. If Yes, write the Degree. 3. Classify by number of terms. a) 4x^2 - 3x + 7 b) y^2 + \\sqrt{2} c) 3sqrt(t) + t*\\sqrt{9} d) (\\frac{1}{x)}+ x e) 5"
+        },
+        "options": [],
+        "answerSpace": "Write your answers in a table format: Expression | Is Polynomial? | Degree | Classification.",
+        "visualRequirement": "",
+        "expectedResponse": "a) Yes, Degree 2, Trinomial. b) No (irrational exponent). c) No (variable under root with non-integer power equivalent to fractional index >1/2 or similar context depending on strict definition taught; typically treated as not polynomial if variable is in radical unless simplified to integer powers). d) No (negative degree/x in denominator). e) Yes, Degree 0, Monomial."
+      },
+      {
+        "id": 2,
+        "type": "Numerical Problem",
+        "title": "Finding the Coefficient of a Variable Term",
+        "learningOutcomeIds": [
+          "LO-01"
+        ],
+        "topicCoverage": [
+          "Coefficients in Polynomials",
+          "Constant Terms"
+        ],
+        "difficulty": "Moderate",
+        "marks": 5,
+        "estimatedTime": "7 minutes",
+        "instructions": "Identify the coefficient of x^2 and the constant term for each given polynomial. If a specific power is missing, its coefficient is zero.",
+        "question": "Find the coefficient of x^2 in: a) 1 + x b) pi*x^2 - sqrt(3) c) (x/2)^2 d) 5",
+        "options": [],
+        "answerSpace": {
+          "text": "List each expression and state:",
+          "latex": "Coefficient of x^2 = [value], Constant Term = [value].",
+          "displayLatex": "Coefficient of x^2 = [value], Constant Term = [value]."
+        },
+        "visualRequirement": "",
+        "expectedResponse": "a) Coeff=0, Const=1. b) Coeff=sqrt(3), Const=-sqrt(3). c) Coeff=1/4, Const=0. d) Coeff=0, Const=5."
+      },
+      {
+        "id": 3,
+        "type": "Application Question",
+        "title": "Real-World Polynomial Modeling",
+        "learningOutcomeIds": [
+          "LO-02"
+        ],
+        "topicCoverage": [
+          "Forming Polynomials from Context",
+          "Degree and Coefficients in Real Life"
+        ],
+        "difficulty": "Moderate to High (HOTS)",
+        "marks": 5,
+        "estimatedTime": "10 minutes",
+        "instructions": "Read the scenario below. Form a polynomial expression that represents the total cost or quantity described.",
+        "question": "A rectangular garden has a length of (2x + 3) meters and a width of (x - 4) meters. a) Write an algebraic expression for the area of the garden in terms of x. b) Identify the degree of this polynomial representing the area. c) If x = 5, calculate the actual area.",
+        "options": [],
+        "answerSpace": "a) Expression: [Area Formula]. b) Degree: [Number]. c) Calculation steps and final value.",
+        "visualRequirement": "Draw a simple rectangle labeled with length (2x+3) and width (x-4).",
+        "expectedResponse": "a) Area = (2x + 3)(x - 4) = 2x^2 - 8x + 3x - 12 = 2x^2 - 5x - 12. b) Degree: 2. c) Substitute x=5: 2(25) - 5(5) - 12 = 50 - 25 - 12 = 13 sq meters."
+      },
+      {
+        "id": 4,
+        "type": "True/False with Justification",
+        "title": "Conceptual Understanding of Polynomials",
+        "learningOutcomeIds": [
+          "LO-01"
+        ],
+        "topicCoverage": [
+          "Definition Constraints (Non-negative integer exponents)"
+        ],
+        "difficulty": "Moderate",
+        "marks": 5,
+        "estimatedTime": "8 minutes",
+        "instructions": "State whether the following statements are True or False. Provide a brief reason for your answer.",
+        "question": "1. Every polynomial is a monomial. 2. The degree of a constant term (non-zero) is 0. 3. x + y^2 - xy is a polynomial in one variable. 4. A binomial can have at most two terms with non-zero coefficients.",
+        "options": [],
+        "answerSpace": "Statement | True/False | Reason",
+        "visualRequirement": "",
+        "expectedResponse": "1. False (Monomials are a subset). 2. True. 3. False (Two variables x and y). 4. True."
+      },
+      {
+        "id": 5,
+        "type": "Differentiation - Extension",
+        "title": "Challenge: Constructing Polynomials",
+        "learningOutcomeIds": [
+          "LO-02"
+        ],
+        "topicCoverage": [
+          "Creating Custom Polynomials",
+          "Degree and Coefficients"
+        ],
+        "difficulty": "High (HOTS)",
+        "marks": 5,
+        "estimatedTime": "7 minutes",
+        "instructions": "Create a polynomial in one variable that satisfies the following conditions: 1. Degree is exactly 3. 2. The coefficient of x^2 is -4. 3. It has no constant term (constant = 0). 4. Write it down and identify its degree.",
+        "options": [],
+        "answerSpace": "Write your polynomial expression clearly.",
+        "visualRequirement": "",
+        "expectedResponse": {
+          "text": "Example:",
+          "latex": "x^3 - 4x^2 + 5x (or any valid combination). Degree must be identified as 3.",
+          "displayLatex": ""
+        },
+        "question": ""
+      }
+    ],
+    "summary": {
+      "totalQuestions": 5,
+      "totalMarks": 25,
+      "estimatedCompletionTime": "40 minutes",
+      "learningOutcomesCovered": [
+        "Identify polynomials in one variable and determine their degree.",
+        "Classify polynomials by number of terms (Monomial, Binomial, Trinomial).",
+        "Formulate polynomial expressions from real-world scenarios."
+      ],
+      "topicsCovered": [
+        "Definition of a Polynomial",
+        "Degree of a Polynomial",
+        "Coefficients and Constant Terms"
+      ],
+      "subtopicsCovered": [
+        "Classification by Number of Terms",
+        "Real-World Modeling with Polynomials",
+        "Identifying Non-Polynomials (Negative/Fractional exponents)"
+      ],
+      "taskDistribution": {
+        "Identification and Classification": 1,
+        "Numerical Problem": 1,
+        "Application Question": 1,
+        "True/False with Justification": 1,
+        "Differentiation - Extension": 1
+      },
+      "homeExperimentIncluded": false,
+      "parentEngagementIncluded": true
+    },
+    "task": ""
+  },
+  "id": "session-1",
+  "sessionNumber": 1,
+  "title": "Introduction to Polynomials - Session 1",
+  "duration": 45
+}

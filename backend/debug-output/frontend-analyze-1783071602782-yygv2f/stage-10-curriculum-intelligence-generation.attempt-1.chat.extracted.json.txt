@@ -1,0 +1,96 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Reading Comprehension through Unseen Passage",
+      "prerequisites": [],
+      "dependent_topics": ["Grammar Accuracy Exercises", "Descriptive Paragraph Writing"]
+    },
+    {
+      "topic": "Grammar Accuracy Exercises",
+      "prerequisites": ["Reading Comprehension through Unseen Passage"],
+      "dependent_topics": ["Descriptive Paragraph Writing", "Story Writing and Diary Entry"]
+    },
+    {
+      "topic": "Descriptive Paragraph Writing",
+      "prerequisites": ["Grammar Accuracy Exercises"],
+      "dependent_topics": ["Reference to the Context Analysis"]
+    },
+    {
+      "topic": "Story Writing and Diary Entry",
+      "prerequisites": ["Grammar Accuracy Exercises"],
+      "dependent_topics": ["Reference to the Context Analysis"]
+    },
+    {
+      "topic": "Reference to the Context Analysis",
+      "prerequisites": ["Descriptive Paragraph Writing", "Story Writing and Diary Entry"],
+      "dependent_topics": ["Short Answer Questions Discussion"]
+    },
+    {
+      "topic": "Short Answer Questions Discussion",
+      "prerequisites": ["Reference to the Context Analysis"],
+      "dependent_topics": ["Long Answer Type Creative Writing"]
+    },
+    {
+      "topic": "Long Answer Type Creative Writing",
+      "prerequisites": ["Short Answer Questions Discussion"],
+      "dependent_topics": ["Role Play and Skit Performance"]
+    },
+    {
+      "topic": "Role Play and Skit Performance",
+      "prerequisites": ["Long Answer Type Creative Writing"],
+      "dependent_topics": ["Group Discussion and Peer Interaction"]
+    },
+    {
+      "topic": "Group Discussion and Peer Interaction",
+      "prerequisites": ["Role Play and Skit Performance"],
+      "dependent_topics": []
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Reading Skills",
+      "chapter_name": "Reading Skills",
+      "difficulty_level": "Foundational to Primary",
+      "concept_density": "High",
+      "estimated_teaching_hours": "15",
+      "estimated_sessions": "8",
+      "practical_requirement": "Unseen passage reading and comprehension exercises",
+      "assessment_requirement": "Discursive and case-based factual passages (20 marks)"
+    },
+    {
+      "unit_name": "Writing Skills and Grammar",
+      "chapter_name": "Writing Skills and Grammar",
+      "difficulty_level": "Primary to Middle",
+      "concept_density": "High",
+      "estimated_teaching_hours": "20",
+      "estimated_sessions": "10",
+      "practical_requirement": "Gap filling, editing, transformation exercises; descriptive paragraph and story writing",
+      "assessment_requirement": "Grammar (10 marks) and Writing Skills (10 marks)"
+    },
+    {
+      "unit_name": "Language through Literature",
+      "chapter_name": "Reference to the Context",
+      "difficulty_level": "Middle to Secondary",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "25",
+      "estimated_sessions": "12",
+      "practical_requirement": "Extract analysis from Drama/Prose and Poetry; MCQs/Objective questions",
+      "assessment_requirement": "Reference to Context (10 marks)"
+    },
+    {
+      "unit_name": "Language through Literature",
+      "chapter_name": "Short & Long Answer Questions",
+      "difficulty_level": "Secondary to Senior Secondary",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "30",
+      "estimated_sessions": "15",
+      "practical_requirement": "Short and long answer writing; role play, skit, dramatization",
+      "assessment_requirement": "Short Answer (18 marks) and Long Answer (12 marks)"
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [],
+    "invalid_chapter_names": []
+  }
+}

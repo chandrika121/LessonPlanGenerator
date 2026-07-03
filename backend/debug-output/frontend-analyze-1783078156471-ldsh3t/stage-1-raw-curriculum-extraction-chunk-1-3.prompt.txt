@@ -1,0 +1,90 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+- Detected curriculum profile: mixed_or_unknown
+- Expected structure type: mixed
+- Use the most source-faithful hierarchy available
+- Preserve ambiguous structure conservatively and avoid invented chapters
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 1 of 3 retry 1.1/2 retry 2.1/2; extract only what is present in this chunk
+
+Curriculum source text:
+# Page 1
+
+ह िं दी मातृभाषा
+हिषय कोड - 002
+कक्षा 9िीिं - 10िीिं (202 5 - 2 6 )
+राष्ट् र ीय हिक्षा नीहत 2020 तथा केंद्रीय माध्यममक मिक्षा बोर्ड ारा द्व समय - समय पर दक्षता आधाररत मिक्षा , कला
+समेमकत अमधगम , अनुभवात्मक अमधगम को अपनाने की बात की गई है , जो मिक्षामथडयोों की मतभा प्र को उजागर करने ,
+खेल - खेल में सीखने पर बल देने , आनोंदपूर्ड ज्ञ ानाजडन और मवद्याजडन के मवमवध तरीकोों को अपनाने तथा अनुभव के ारा द्व
+सीखने पर बल देती है।
+दक्षता आधाररत हिक्षा से तात्पयड है - सीखने और मूल्ाोंकन करने का एक ऐसा मिकोर् दृ , जो मिक्षाथी के सीखने के
+मतफल प्र और मवषय में मविेष दक्षता को ाप्त प्र करने पर बल देता है। दक्षता वह क्ष मता , कौिल , ज्ञ ान और मिकोर् दृ है ,
+जो ि व्यक्त को वास्तमवक जीवन में कायड करने में सहायता करती है। इससे मिक्षाथी यह सीख सकते हैं मक ज्ञ ान और
+कौिल को मकस कार प्र ाप्त प्र मकया जाए तथा उन्हें वास्तमवक जीवन की समस्याओों पर कैसे लागू मकया जाए।
+जीवनोपयोगी बनाना तथा वास्तमवक जीवन के अनुभवोों से पाठ को समृद्ध करना , ही दक्षता आधाररत मिक्षा है । इसके
+मलए उच्च स्त रीय म ों तन कौिल पर मविेष बल देने की आवश्यकता है।
+कला समेहकत अहधगम को मिक्षर् - अमधगम मिया प्र में सुमनमित करना अत्यमधक आवश्यक है। कला के सोंसार में
+कल्पना की एक अलग ही उडान होती है। कला एक ि व्यक्त की र नात्मक अमभव्यक्ति है। कला समेमकत अमधगम से
+तात्पयड है - कला के मवमवध पोों रू सोंगीत , नृत्य , नाटक , कमवता , रोंगिाला , यात्रा , मूमतडकला , आभूषर् बनाना , गीत मलखना ,
+नुक्कड नाटक , कोलाज , पोस्टर , कला दिडनी प्र को मिक्षर् अमधगम की मिया प्र का अमभन्न महस्सा बनाना। मकसी मवषय
+को आरोंभ करने के मलए आइस मकोंग ब्रे गमतमवमध के रू प में तथा सामोंजस्यपूर्ड समझ पैदा करने के मलए अोंतरमवषयक
+या बहुमवषयक पररयोजनाओों के रू प में कला समेमकत अमधगम का योग प्र मकया जाना ामहए। इससे पाठ अमधक
+रो क एवों ाह्य ग्र हो जाएगा।
+अनुभिात्मक अहधगम या आनुभहिक ज्ञ ानार्जन का उद्देश्य िैमक्षक वातावरर् को मिक्षाथी केंमद्रत बनाने के साथ -
+साथ स्व यों मूल्ाोंकन करने , आलो नात्मक रू प से सो ने , मनर्डय लेने तथा ज्ञ ान का मनमाडर् कर उसमें पारोंगत होने से
+है। यहााँ मिक्षक की भूममका सुमवधा प्र दाता व प्रेक्ष क की रहती है। ज्ञ ानाजडन - अनुभामवक ज्ञ ानाजडन , सहयोगात्मक तथा
+स्व तोंत्र रू प से होता है और यह मिक्षामथडयोों को एक साथ कायड करने तथा स्व यों के अनुभव ारा द्व सीखने पर बल देता है।
+यह मसद्धाोंत और व्य वहार के बी की दूरी को कम करता है।
+माध्यममक र स्त तक आते - आते मवद्याथी मकिोर हो ु का होता है और उसमें सुनने , बोलने , पढ़ने , मलखने के साथ - साथ
+आलो नात्मक मि दृ मवकमसत होने लगती है। भाषा के सौोंदयाडत्मक पक्ष , कथात्मकता / गीतात्मकता , दृश्य - श्रव्य और मप्रोंट
+की भाषा की समझ , िब्द िक्तियोों की समझ , राजनैमतक एवों सामामजक े तना का मवकास , स्व यों की अक्तिता का सोंदभड
+और आवश्यकता के अनुसार उपयुि भाषा - योग प्र , िब्दोों का सुम ों मतत योग प्र , भाषा की मनयमबद्ध कृमत प्र आमद से
+मवद्याथी पररम त हो जाता है। इतना ही नहीों , वह मवमवध मवधाओों और अमभव्यक्ति की अनेक िैमलयोों से भी पररम त हो
+ु का होता है। अब मवद्याथी की मि दृ आस - पडोस , राज्य - देि की सीमा को लााँघते ए हु वैमिक मक्षमतज तक फैल जाती है।
+1
+
+---

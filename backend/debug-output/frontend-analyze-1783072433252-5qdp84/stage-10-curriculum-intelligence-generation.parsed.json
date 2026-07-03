@@ -1,0 +1,167 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Reading Comprehension through Unseen Passage",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Grammar Application",
+        "Reference to the Context"
+      ]
+    },
+    {
+      "topic": "Grammar Application",
+      "prerequisites": [
+        "Reading Comprehension through Unseen Passage"
+      ],
+      "dependent_topics": [
+        "Creative Writing",
+        "Short & Long Answer Questions"
+      ]
+    },
+    {
+      "topic": "Creative Writing",
+      "prerequisites": [
+        "Grammar Application"
+      ],
+      "dependent_topics": [
+        "Reference to the Context"
+      ]
+    },
+    {
+      "topic": "Reference to the Context",
+      "prerequisites": [
+        "Reading Comprehension through Unseen Passage",
+        "Grammar Application",
+        "Creative Writing"
+      ],
+      "dependent_topics": [
+        "Prose Literature (Beehive)",
+        "Poetry Literature (Beehive)",
+        "Prose Literature (Moments)"
+      ]
+    },
+    {
+      "topic": "Prose Literature (Beehive)",
+      "prerequisites": [
+        "Reference to the Context"
+      ],
+      "dependent_topics": [
+        "Vocabulary and Expression"
+      ]
+    },
+    {
+      "topic": "Poetry Literature (Beehive)",
+      "prerequisites": [
+        "Reference to the Context"
+      ],
+      "dependent_topics": [
+        "Vocabulary and Expression"
+      ]
+    },
+    {
+      "topic": "Prose Literature (Moments)",
+      "prerequisites": [
+        "Reference to the Context"
+      ],
+      "dependent_topics": [
+        "Vocabulary and Expression"
+      ]
+    },
+    {
+      "topic": "Vocabulary and Expression",
+      "prerequisites": [
+        "Prose Literature (Beehive)",
+        "Poetry Literature (Beehive)",
+        "Prose Literature (Moments)"
+      ],
+      "dependent_topics": []
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Reading Skills",
+      "chapter_name": "Reading Skills",
+      "difficulty_level": "Foundational to Middle",
+      "concept_density": "High",
+      "estimated_teaching_hours": "15",
+      "estimated_sessions": "8",
+      "practical_requirement": "Reading Aloud, Silent Reading, Vocabulary Games",
+      "assessment_requirement": "Unseen Passage Comprehension (20 Marks)"
+    },
+    {
+      "unit_name": "Writing Skills and Grammar",
+      "chapter_name": "Writing Skills and Grammar",
+      "difficulty_level": "Middle to Secondary",
+      "concept_density": "High",
+      "estimated_teaching_hours": "20",
+      "estimated_sessions": "12",
+      "practical_requirement": "Grammar Drills, Creative Writing Workshops",
+      "assessment_requirement": "Grammar Application & Creative Writing (20 Marks)"
+    },
+    {
+      "unit_name": "Language through Literature",
+      "chapter_name": "Reference to the Context",
+      "difficulty_level": "Secondary",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "18",
+      "estimated_sessions": "10",
+      "practical_requirement": "Context Analysis, Literary Appreciation",
+      "assessment_requirement": "Reference to Context (10 Marks)"
+    },
+    {
+      "unit_name": "Language through Literature",
+      "chapter_name": "Short & Long Answer Questions",
+      "difficulty_level": "Secondary",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "25",
+      "estimated_sessions": "14",
+      "practical_requirement": "Critical Thinking, Creative Response",
+      "assessment_requirement": "Short & Long Answer Questions (30 Marks)"
+    },
+    {
+      "unit_name": "Beehive (Prose)",
+      "chapter_name": "My Childhood",
+      "difficulty_level": "Middle to Secondary",
+      "concept_density": "Medium",
+      "estimated_teaching_hours": "12",
+      "estimated_sessions": "6",
+      "practical_requirement": "Storytelling, Character Analysis",
+      "assessment_requirement": "Prose Literature Understanding"
+    },
+    {
+      "unit_name": "Beehive (Poems)",
+      "chapter_name": "A Legend of the Northland",
+      "difficulty_level": "Middle to Secondary",
+      "concept_density": "Medium",
+      "estimated_teaching_hours": "12",
+      "estimated_sessions": "6",
+      "practical_requirement": "Poetry Recitation, Imagery Analysis",
+      "assessment_requirement": "Poetry Literature Understanding"
+    },
+    {
+      "unit_name": "Moments (Prose)",
+      "chapter_name": "The Lost Child",
+      "difficulty_level": "Middle to Secondary",
+      "concept_density": "Medium",
+      "estimated_teaching_hours": "12",
+      "estimated_sessions": "6",
+      "practical_requirement": "Narrative Analysis, Theme Identification",
+      "assessment_requirement": "Prose Literature Understanding"
+    },
+    {
+      "unit_name": "Words and Expressions - I (Workbook)",
+      "chapter_name": "Units 1 to 6",
+      "difficulty_level": "Foundational to Middle",
+      "concept_density": "Low to Medium",
+      "estimated_teaching_hours": "10",
+      "estimated_sessions": "5",
+      "practical_requirement": "Vocabulary Building, Expression Practice",
+      "assessment_requirement": "Vocabulary and Expression"
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [],
+    "invalid_chapter_names": []
+  }
+}

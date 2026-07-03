@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: mixed_or_unknown\n- Expected structure type: mixed\n- Use the most source-faithful hierarchy available\n- Preserve ambiguous structure conservatively and avoid invented chapters\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 1 of 3 retry 1.1/2 retry 2.1/2; extract only what is present in this chunk\n\nCurriculum source text:\n# Page 1\n\nह िं दी मातृभाषा\nहिषय कोड - 002\nकक्षा 9िीिं - 10िीिं (202 5 - 2 6 )\nराष्ट् र ीय हिक्षा नीहत 2020 तथा केंद्रीय माध्यममक मिक्षा बोर्ड ारा द्व समय - समय पर दक्षता आधाररत मिक्षा , कला\nसमेमकत अमधगम , अनुभवात्मक अमधगम को अपनाने की बात की गई है , जो मिक्षामथडयोों की मतभा प्र को उजागर करने ,\nखेल - खेल में सीखने पर बल देने , आनोंदपूर्ड ज्ञ ानाजडन और मवद्याजडन के मवमवध तरीकोों को अपनाने तथा अनुभव के ारा द्व\nसीखने पर बल देती है।\nदक्षता आधाररत हिक्षा से तात्पयड है - सीखने और मूल्ाोंकन करने का एक ऐसा मिकोर् दृ , जो मिक्षाथी के सीखने के\nमतफल प्र और मवषय में मविेष दक्षता को ाप्त प्र करने पर बल देता है। दक्षता वह क्ष मता , कौिल , ज्ञ ान और मिकोर् दृ है ,\nजो ि व्यक्त को वास्तमवक जीवन में कायड करने में सहायता करती है। इससे मिक्षाथी यह सीख सकते हैं मक ज्ञ ान और\nकौिल को मकस कार प्र ाप्त प्र मकया जाए तथा उन्हें वास्तमवक जीवन की समस्याओों पर कैसे लागू मकया जाए।\nजीवनोपयोगी बनाना तथा वास्तमवक जीवन के अनुभवोों से पाठ को समृद्ध करना , ही दक्षता आधाररत मिक्षा है । इसके\nमलए उच्च स्त रीय म ों तन कौिल पर मविेष बल देने की आवश्यकता है।\nकला समेहकत अहधगम को मिक्षर् - अमधगम मिया प्र में सुमनमित करना अत्यमधक आवश्यक है। कला के सोंसार में\nकल्पना की एक अलग ही उडान होती है। कला एक ि व्यक्त की र नात्मक अमभव्यक्ति है। कला समेमकत अमधगम से\nतात्पयड है - कला के मवमवध पोों रू सोंगीत , नृत्य , नाटक , कमवता , रोंगिाला , यात्रा , मूमतडकला , आभूषर् बनाना , गीत मलखना ,\nनुक्कड नाटक , कोलाज , पोस्टर , कला दिडनी प्र को मिक्षर् अमधगम की मिया प्र का अमभन्न महस्सा बनाना। मकसी मवषय\nको आरोंभ करने के मलए आइस मकोंग ब्रे गमतमवमध के रू प में तथा सामोंजस्यपूर्ड समझ पैदा करने के मलए अोंतरमवषयक\nया बहुमवषयक पररयोजनाओों के रू प में कला समेमकत अमधगम का योग प्र मकया जाना ामहए। इससे पाठ अमधक\nरो क एवों ाह्य ग्र हो जाएगा।\nअनुभिात्मक अहधगम या आनुभहिक ज्ञ ानार्जन का उद्देश्य िैमक्षक वातावरर् को मिक्षाथी केंमद्रत बनाने के साथ -\nसाथ स्व यों मूल्ाोंकन करने , आलो नात्मक रू प से सो ने , मनर्डय लेने तथा ज्ञ ान का मनमाडर् कर उसमें पारोंगत होने से\nहै। यहााँ मिक्षक की भूममका सुमवधा प्र दाता व प्रेक्ष क की रहती है। ज्ञ ानाजडन - अनुभामवक ज्ञ ानाजडन , सहयोगात्मक तथा\nस्व तोंत्र रू प से होता है और यह मिक्षामथडयोों को एक साथ कायड करने तथा स्व यों के अनुभव ारा द्व सीखने पर बल देता है।\nयह मसद्धाोंत और व्य वहार के बी की दूरी को कम करता है।\nमाध्यममक र स्त तक आते - आते मवद्याथी मकिोर हो ु का होता है और उसमें सुनने , बोलने , पढ़ने , मलखने के साथ - साथ\nआलो नात्मक मि दृ मवकमसत होने लगती है। भाषा के सौोंदयाडत्मक पक्ष , कथात्मकता / गीतात्मकता , दृश्य - श्रव्य और मप्रोंट\nकी भाषा की समझ , िब्द िक्तियोों की समझ , राजनैमतक एवों सामामजक े तना का मवकास , स्व यों की अक्तिता का सोंदभड\nऔर आवश्यकता के अनुसार उपयुि भाषा - योग प्र , िब्दोों का सुम ों मतत योग प्र , भाषा की मनयमबद्ध कृमत प्र आमद से\nमवद्याथी पररम त हो जाता है। इतना ही नहीों , वह मवमवध मवधाओों और अमभव्यक्ति की अनेक िैमलयोों से भी पररम त हो\nु का होता है। अब मवद्याथी की मि दृ आस - पडोस , राज्य - देि की सीमा को लााँघते ए हु वैमिक मक्षमतज तक फैल जाती है।\n1\n\n---\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

@@ -1,0 +1,410 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 15,
+      "totalQuestions": 9,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 1,
+          "marksEach": 5
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Ensure exponents are non-negative integers for polynomials.",
+        "Show working for calculation-based questions."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will define a polynomial in one variable and distinguish valid expressions from invalid ones (negative/fractional exponents).",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Students will identify the degree of any given polynomial expression.",
+          "questionRefs": [
+            "q3",
+            "q4",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Students will classify polynomials as monomials, binomials, or trinomials based on term count.",
+          "questionRefs": [
+            "q6",
+            "q7"
+          ]
+        },
+        {
+          "outcome": "Students will distinguish between valid polynomials and non-polynomial expressions (e.g., negative exponents) with justification.",
+          "questionRefs": [
+            "q8",
+            "q9"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 45,
+        "medium": 30,
+        "hard": 25
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 35,
+        "application": 30,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 3,
+        "shortAnswer": 2,
+        "longAnswer": 1
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answer",
+          "minutes": 3
+        },
+        {
+          "section": "Short Answer",
+          "minutes": 5
+        },
+        {
+          "section": "Long Answer",
+          "minutes": 3
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "Which of the following expressions is a valid polynomial in one variable?",
+        "options": [
+          "A. $x^2 + \\frac{1}{x}$",
+          "B. $3x^{\\sqrt{2}} - 5$",
+          "C. $4x^3 - x + 7$",
+          "D. $y^{-2} + y$"
+        ],
+        "answer": "C. $4x^3 - x + 7$",
+        "explanation": "Option C contains only non-negative integer exponents (3, 1). Option A has a negative exponent ($x^{-1}$), B has a fractional exponent, and D involves two variables or negative exponents depending on interpretation, but strictly fails the single-variable polynomial definition in this context.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition",
+          "Valid vs Invalid Expressions"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "What is the degree of the polynomial $P(x) = 5x^4 - x + \\sqrt{3}$?",
+        "options": [
+          "A. 1",
+          "B. 2",
+          "C. 4",
+          "D. 0"
+        ],
+        "answer": "C. 4",
+        "explanation": "The degree is the highest power of the variable $x$. Here, the powers are 4, 1, and 0 (for the constant). The highest is 4.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Degree of a Polynomial"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "The expression $Q(y) = 2y^5 - y$ is classified as a:",
+        "options": [
+          "A. Monomial",
+          "B. Binomial",
+          "C. Trinomial",
+          "D. Quadratic"
+        ],
+        "answer": "B. Binomial",
+        "explanation": "The expression has exactly two terms ($2y^5$ and $-y$), making it a binomial.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Classification by Terms"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Is the expression $\\frac{x}{\\pi} + 1$ a polynomial? Answer Yes or No.",
+        "answer": "Yes",
+        "expectedLength": "One word (Yes/No)",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Yes'.",
+          "(Note: $\\pi$ is a constant coefficient divisor, so exponents remain integers)."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition Constants"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "What is the degree of the constant polynomial $P(x) = 7$?",
+        "answer": "0",
+        "expectedLength": "One number (0)",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for '0'.",
+          "(Note: Constant terms have degree 0)."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Degree of Constants"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Classify the polynomial $R(z) = z^3 + 2z - 1$ as a monomial, binomial, or trinomial.",
+        "answer": "Trinomial",
+        "expectedLength": "One word (Monomial/Binomial/Trinomial)",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Trinomial'.",
+          "(Note: It has three terms)."
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Classification by Terms"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      }
+    ],
+    "longAnswer": [],
+    "shortAnswer": [
+      {
+        "id": "q7",
+        "questionSubtype": "shortAnswer",
+        "question": "Identify the degree and classify as monomial, binomial, or trinomial for $P(x) = 2x^3 - x + \\sqrt{5}$.",
+        "answer": "Degree: 3; Classification: Trinomial",
+        "expectedLength": "Two distinct pieces of information (degree value and classification name)",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly identifying the degree as 3.",
+          "1 mark for correctly classifying it as a trinomial."
+        ],
+        "learningOutcomeIds": [
+          "LO2",
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Degree Identification",
+          "Classification by Terms"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q8",
+        "questionSubtype": "shortAnswer",
+        "question": "Find the coefficient of $x$ in the polynomial expression: $5 - 3x + x^2$. Explain briefly why it is negative.",
+        "answer": "-3. The term containing $x$ is written as '-3x', so the numerical factor (coefficient) includes the sign attached to it.",
+        "expectedLength": "The number and a brief explanation of the sign",
+        "marks": 2,
+        "rubric": [
+          "1 mark for identifying -3 correctly.",
+          "1 mark for explaining that the coefficient carries the negative sign from the subtraction operation."
+        ],
+        "learningOutcomeIds": [
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Coefficients and Signs"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q9",
+        "questionSubtype": "longAnswer",
+        "question": "Consider the expression $E(x) = \\frac{x^2 + 1}{\\sqrt{2}}$. \n\na) Determine if this is a polynomial. Justify your answer using the definition of exponents.\nb) If it were written as $F(y) = y^{-3} + 4$, explain why F(y) fails to be a polynomial, referencing specific exponent rules taught in class.",
+        "answer": "a) Yes, E(x) is a polynomial. Dividing by the constant $\\sqrt{2}$ does not change the exponents of the variable x (which are 2 and 0). The expression can be rewritten as $(1/\\sqrt{2})x^2 + (1/\\sqrt{2})$, which has non-negative integer exponents.\nb) F(y) is NOT a polynomial because it contains $y^{-3}$. Polynomials require all variable exponents to be whole numbers (0, 1, 2...). A negative exponent like -3 implies the variable is in the denominator ($1/y^3$), which violates the definition of a polynomial.",
+        "expectedLength": "Two distinct justifications: one for validity based on constants vs variables, and one for invalidity based on negative exponents.",
+        "marks": 5,
+        "rubric": [
+          "2 marks for correctly identifying E(x) as a polynomial with valid reasoning (constant divisor does not affect exponent status).",
+          "1 mark for stating that F(y) is not a polynomial due to the negative exponent.",
+          "1 mark for explaining that $y^{-3}$ implies division by variable or non-integer power, violating the definition.",
+          "1 mark for clear structure and correct use of terminology (exponents, whole numbers)."
+        ],
+        "learningOutcomeIds": [
+          "LO1",
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition Constraints",
+          "Negative Exponents vs Polynomials"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "q1",
+          "answer": "C. $4x^3 - x + 7$",
+          "explanation": "Only option C has non-negative integer exponents for the variable.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q2",
+          "answer": "C. 4",
+          "explanation": "The highest power of x is 4.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q3",
+          "answer": "B. Binomial",
+          "explanation": "It has exactly two terms.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q4",
+          "answer": "Yes",
+          "rubric": [
+            "Award 1 mark for 'Yes'."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q5",
+          "answer": "0",
+          "rubric": [
+            "Award 1 mark for '0'."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q6",
+          "answer": "Trinomial",
+          "rubric": [
+            "Award 1 mark for 'Trinomial'."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q7",
+          "answer": "Degree: 3; Classification: Trinomial",
+          "rubric": [
+            "1 mark for Degree = 3.",
+            "1 mark for Classification = Trinomial."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q8",
+          "answer": "-3. The coefficient includes the negative sign attached to x.",
+          "rubric": [
+            "1 mark for -3.",
+            "1 mark for explanation of sign."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "q9",
+          "answer": "a) Yes. Dividing by a constant ($\\sqrt{2}$) does not change the exponents (which are 0 and 2). b) No, because $y^{-3}$ is a negative exponent, which means y is in the denominator. Polynomials must have non-negative integer exponents.",
+          "rubric": [
+            "1 mark for correct 'Yes' with reasoning about constants.",
+            "1 mark for identifying that constant division preserves polynomial status.",
+            "1 mark for stating F(y) is not a polynomial due to negative exponent.",
+            "1 mark for explaining the rule regarding non-negative integer exponents.",
+            "1 mark for clarity and structure."
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea in short/long answers.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'whole number' vs 'non-negative integer').",
+        "For long answers, reward structure and clear justification of definitions."
+      ]
+    }
+  }
+}

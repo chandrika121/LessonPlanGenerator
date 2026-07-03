@@ -8,6 +8,7 @@ import os from "os";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import mongoose from "mongoose";
+import { Agent } from "undici";
 import { CurriculumModel } from "./models/Curriculum";
 import { PlanningWorkspaceModel } from "./models/PlanningWorkspace";
 
@@ -25,6 +26,7 @@ const OLLAMA_NUM_PREDICT = Number(process.env.OLLAMA_NUM_PREDICT) || 8192;
 const OLLAMA_STAGE1_NUM_PREDICT = Number(process.env.OLLAMA_STAGE1_NUM_PREDICT) || 4096;
 const OLLAMA_TIMEOUT_MS = Number(process.env.OLLAMA_TIMEOUT_MS) || 600000;
 const OLLAMA_IMAGE_TIMEOUT_MS = Number(process.env.OLLAMA_IMAGE_TIMEOUT_MS) || 180000;
+const OLLAMA_ASSESSMENT_TIMEOUT_MS = Number(process.env.OLLAMA_ASSESSMENT_TIMEOUT_MS) || Math.max(900000, OLLAMA_TIMEOUT_MS);
 const MAX_STUDENT_NOTE_VISUALS = Number(process.env.MAX_STUDENT_NOTE_VISUALS) || 3;
 const MAX_CHUNK_SPLIT_DEPTH = 2;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/kamalaniketan-lms";
@@ -32,6 +34,10 @@ const DEBUG_OUTPUT_DIR = path.resolve(__dirname, "debug-output");
 const PROMPTS_DIR = path.resolve(__dirname, "prompts");
 const TEMPLATE_PPTX_PATH = path.resolve(PROMPTS_DIR, "Kamalaniketan-pptx template.pptx");
 const execFileAsync = promisify(execFile);
+const OLLAMA_FETCH_DISPATCHER = new Agent({
+  headersTimeout: 0,
+  bodyTimeout: 0,
+});
 
 const STAGE_ORDER = [
   "Stage 1: Raw Curriculum Extraction",
@@ -142,6 +148,360 @@ function renderPrompt(promptName: string, replacements: Record<string, string>):
   return content;
 }
 
+const ENGLISH_INTELLIGENCE_PROMPT_NAME = "english-subject-intelligence-layer.md";
+const ENGLISH_SUBJECT_ALIASES = [
+  "english",
+  "english language",
+  "first language english",
+  "communicative english",
+  "core english",
+  "elective english",
+  "english literature",
+];
+const INDIC_CURRICULUM_EXTRACTION_MODEL = "qwen3.5:35b";
+const INDIC_CURRICULUM_SUBJECT_ALIASES = [
+  "hindi",
+  "hindi language",
+  "हिंदी",
+  "हिन्दी",
+  "tamil",
+  "tamil language",
+  "தமிழ்",
+];
+
+let cachedEnglishIntelligenceLayer: string | null = null;
+const ENGLISH_EXAM_SECTION_LABELS = [
+  "section a",
+  "section b",
+  "section c",
+  "section d",
+  "reading skills",
+  "reading comprehension",
+  "writing skills",
+  "writing and grammar",
+  "literature textbook",
+  "prescribed books",
+];
+const ENGLISH_CONTAINER_LABELS = [
+  "prose",
+  "poems",
+  "poetry",
+  "drama",
+  "supplementary reader",
+  "supplementary reading",
+  "workbook",
+  "workbook units",
+  "reading",
+  "reading skills",
+  "writing",
+  "writing skills",
+  "grammar",
+  "vocabulary",
+  "literature",
+  "main course book",
+  "textbook",
+  "reader",
+  "beehive",
+  "moments",
+  "first flight",
+  "footprints without feet",
+  "honeydew",
+  "it so happened",
+  "words and expressions",
+];
+const ENGLISH_ASSESSMENT_ONLY_CHAPTER_LABELS = [
+  "reference to the context",
+  "reference to context",
+  "short & long answer questions",
+  "short and long answer questions",
+  "short answer questions",
+  "long answer questions",
+];
+
+function normalizeEnglishSubjectHint(value: string): string {
+  return normalizeSourceText(canonicalizeSubjectName(value || ""));
+}
+
+function isEnglishSubject(subject: string): boolean {
+  const normalized = normalizeEnglishSubjectHint(subject);
+  if (!normalized) return false;
+  return ENGLISH_SUBJECT_ALIASES.some((candidate) => normalized === candidate || normalized.includes(candidate));
+}
+
+function detectEnglishModeFromCurriculumInput(sourceText: string, fileName = ""): boolean {
+  const normalizedFileName = normalizeEnglishSubjectHint(fileName);
+  if (isEnglishSubject(normalizedFileName)) {
+    return true;
+  }
+
+  const normalizedSourceSample = normalizeSourceText(String(sourceText || "").slice(0, 12000));
+  if (!normalizedSourceSample) {
+    return false;
+  }
+
+  if (ENGLISH_SUBJECT_ALIASES.some((candidate) => normalizedSourceSample.includes(candidate))) {
+    return true;
+  }
+
+  const languageSignals = [
+    "grammar",
+    "literature",
+    "poetry",
+    "prose",
+    "reading",
+    "writing",
+    "speaking",
+    "listening",
+    "comprehension",
+  ];
+
+  return normalizedSourceSample.includes("english") && languageSignals.some((signal) => normalizedSourceSample.includes(signal));
+}
+
+function shouldUseEnglishIntelligence({
+  subject = "",
+  sourceText = "",
+  fileName = "",
+}: {
+  subject?: string;
+  sourceText?: string;
+  fileName?: string;
+}) {
+  return isEnglishSubject(subject) || detectEnglishModeFromCurriculumInput(sourceText, fileName);
+}
+
+function normalizeIndicSubjectHint(value: string): string {
+  return normalizeSourceText(canonicalizeSubjectName(value || ""));
+}
+
+function isIndicCurriculumSubject(subject: string): boolean {
+  const normalized = normalizeIndicSubjectHint(subject);
+  if (!normalized) return false;
+  return INDIC_CURRICULUM_SUBJECT_ALIASES.some((candidate) => normalized === candidate || normalized.includes(candidate));
+}
+
+function detectIndicCurriculumModeFromInput(sourceText: string, fileName = ""): boolean {
+  const normalizedFileName = normalizeIndicSubjectHint(fileName);
+  if (isIndicCurriculumSubject(normalizedFileName)) {
+    return true;
+  }
+
+  const normalizedSourceSample = normalizeSourceText(String(sourceText || "").slice(0, 12000));
+  if (!normalizedSourceSample) {
+    return false;
+  }
+
+  return INDIC_CURRICULUM_SUBJECT_ALIASES.some((candidate) =>
+    normalizedSourceSample.includes(candidate)
+  );
+}
+
+function getCurriculumExtractionOllamaOverrides({
+  subject = "",
+  sourceText = "",
+  fileName = "",
+}: {
+  subject?: string;
+  sourceText?: string;
+  fileName?: string;
+}): Partial<OllamaRequestOptions> {
+  const shouldUseIndicModel =
+    isIndicCurriculumSubject(subject) ||
+    detectIndicCurriculumModeFromInput(sourceText, fileName);
+
+  if (!shouldUseIndicModel) {
+    return {};
+  }
+
+  return {
+    baseUrl: process.env.OLLAMA_CURRICULUM_INDIC_BASE_URL || process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11435",
+    model: process.env.OLLAMA_CURRICULUM_INDIC_MODEL || INDIC_CURRICULUM_EXTRACTION_MODEL,
+  };
+}
+
+function getEnglishIntelligenceLayerText(): string {
+  if (cachedEnglishIntelligenceLayer == null) {
+    cachedEnglishIntelligenceLayer = loadPrompt(ENGLISH_INTELLIGENCE_PROMPT_NAME).trim();
+  }
+  return cachedEnglishIntelligenceLayer;
+}
+
+function renderPromptWithEnglishIntelligence(
+  promptName: string,
+  replacements: Record<string, string>,
+  options: { englishMode?: boolean; stageLabel?: string } = {}
+): string {
+  const englishLayer = options.englishMode
+    ? [
+        "# English Subject Intelligence Layer (Active)",
+        options.stageLabel
+          ? `Apply this English subject intelligence while completing: ${options.stageLabel}.`
+          : "Apply this English subject intelligence while completing the task below.",
+        "",
+        getEnglishIntelligenceLayerText(),
+      ].join("\n")
+    : "";
+
+  const rendered = renderPrompt(promptName, {
+    ...replacements,
+    ENGLISH_INTELLIGENCE_LAYER: englishLayer,
+  });
+
+  if (englishLayer && !rendered.includes(englishLayer)) {
+    return `${englishLayer}\n\n${rendered}`;
+  }
+
+  return rendered;
+}
+
+function isEnglishExamSectionLabel(value: string): boolean {
+  const normalized = normalizeSourceText(value || "");
+  if (!normalized) return false;
+  return ENGLISH_EXAM_SECTION_LABELS.some((candidate) => normalized.includes(candidate));
+}
+
+function isEnglishContainerLabel(value: string): boolean {
+  const normalized = normalizeSourceText(value || "");
+  if (!normalized) return false;
+  return ENGLISH_CONTAINER_LABELS.some((candidate) => normalized === candidate || normalized.includes(candidate));
+}
+
+function isLikelyEnglishLessonTitleCandidate(value: string): boolean {
+  const trimmed = String(value || "").trim();
+  const normalized = normalizeSourceText(trimmed);
+  if (!trimmed || trimmed.length < 4) return false;
+  if (isEnglishExamSectionLabel(trimmed) || isEnglishContainerLabel(trimmed)) return false;
+  if (/\b(class|section|unit|chapter|grammar|writing|reading|literature|assessment|question paper|marks)\b/i.test(normalized)) {
+    return false;
+  }
+  return /[a-z]/i.test(trimmed);
+}
+
+function isEnglishAssessmentOnlyChapterLabel(value: string): boolean {
+  const normalized = normalizeSourceText(value || "");
+  if (!normalized) return false;
+  return ENGLISH_ASSESSMENT_ONLY_CHAPTER_LABELS.some((candidate) => normalized === candidate || normalized.includes(candidate));
+}
+
+function buildEnglishPromotedChapter(
+  chapterName: string,
+  context: {
+    partOrSection?: string;
+    bookName?: string;
+    categoryName?: string;
+  }
+) {
+  const examSectionName = isEnglishExamSectionLabel(context.partOrSection || "") ? String(context.partOrSection || "").trim() : "";
+  const bookName = !examSectionName ? String(context.bookName || "").trim() : String(context.bookName || "").trim();
+  const categoryName = String(context.categoryName || "").trim();
+  return {
+    chapter_name: stripInternalParserLabel(chapterName),
+    source_chapter_name: stripInternalParserLabel(chapterName),
+    part_or_section: String(context.partOrSection || "").trim(),
+    exam_section_name: examSectionName,
+    book_name: bookName,
+    category_name: categoryName,
+    structure_role: "chapter",
+    content_path: [examSectionName, bookName, categoryName, chapterName].filter(Boolean).join(" > "),
+    topics: [],
+    subtopics: [],
+    key_concepts: [],
+  };
+}
+
+function normalizeEnglishChapterDetailsForUnit({
+  unitName,
+  partOrSection,
+  unitTopics,
+  unitSubtopics,
+  chapterDetails,
+}: {
+  unitName: string;
+  partOrSection: string;
+  unitTopics: string[];
+  unitSubtopics: string[];
+  chapterDetails: any[];
+}) {
+  const normalizedUnitName = String(unitName || "").trim();
+  const normalizedPartOrSection = String(partOrSection || "").trim();
+  const unitLooksLikeContainer = isEnglishContainerLabel(normalizedUnitName);
+  const partLooksLikeExamSection = isEnglishExamSectionLabel(normalizedPartOrSection);
+  const inferredBookName = !partLooksLikeExamSection && normalizedPartOrSection ? normalizedPartOrSection : "";
+
+  if ((!chapterDetails || chapterDetails.length === 0) && unitLooksLikeContainer) {
+    const promotedTitles = uniqueStrings([...(unitTopics || []), ...(unitSubtopics || [])]).filter(isLikelyEnglishLessonTitleCandidate);
+    if (promotedTitles.length >= 2) {
+      return promotedTitles.map((title) =>
+        buildEnglishPromotedChapter(title, {
+          partOrSection: normalizedPartOrSection,
+          bookName: inferredBookName,
+          categoryName: normalizedUnitName,
+        })
+      );
+    }
+  }
+
+  if (!Array.isArray(chapterDetails) || chapterDetails.length === 0) {
+    return chapterDetails;
+  }
+
+  const promotedChapterDetails: any[] = [];
+  let promotedAnyChapter = false;
+
+  for (const chapter of chapterDetails) {
+    const chapterName = String(chapter?.chapter_name || chapter?.source_chapter_name || "").trim();
+    const chapterTitles = uniqueStrings([...(chapter?.topics || []), ...(chapter?.subtopics || [])]).filter(isLikelyEnglishLessonTitleCandidate);
+    if (isEnglishContainerLabel(chapterName) && chapterTitles.length > 0) {
+      promotedAnyChapter = true;
+      for (const title of chapterTitles) {
+        promotedChapterDetails.push({
+          ...buildEnglishPromotedChapter(title, {
+            partOrSection: String(chapter?.part_or_section || normalizedPartOrSection || "").trim(),
+            bookName: unitLooksLikeContainer ? inferredBookName : normalizedUnitName,
+            categoryName: chapterName,
+          }),
+          key_concepts: uniqueStrings(chapter?.key_concepts || []),
+        });
+      }
+      continue;
+    }
+
+    promotedChapterDetails.push({
+      ...chapter,
+      part_or_section: String(chapter?.part_or_section || normalizedPartOrSection || "").trim(),
+      exam_section_name: isEnglishExamSectionLabel(chapter?.part_or_section || normalizedPartOrSection || "")
+        ? String(chapter?.part_or_section || normalizedPartOrSection || "").trim()
+        : "",
+      book_name: unitLooksLikeContainer ? inferredBookName : normalizedUnitName,
+      category_name: unitLooksLikeContainer ? normalizedUnitName : "",
+      structure_role: isEnglishContainerLabel(chapterName) ? "category" : "chapter",
+      content_path: [
+        isEnglishExamSectionLabel(chapter?.part_or_section || normalizedPartOrSection || "")
+          ? String(chapter?.part_or_section || normalizedPartOrSection || "").trim()
+          : "",
+        unitLooksLikeContainer ? inferredBookName : normalizedUnitName,
+        unitLooksLikeContainer ? normalizedUnitName : "",
+        chapterName,
+      ].filter(Boolean).join(" > "),
+    });
+  }
+
+  return promotedAnyChapter
+    ? uniqueStrings(promotedChapterDetails.map((chapter: any) => chapter?.chapter_name || "")).map((chapterName) =>
+        promotedChapterDetails.find((chapter: any) => String(chapter?.chapter_name || "") === chapterName)
+      ).filter(Boolean)
+    : promotedChapterDetails;
+}
+
+function deriveDocumentPageCount(sourceText: string): string {
+  const pageNumbers = [
+    ...Array.from(sourceText.matchAll(/(?:^|\n)\s*#*\s*page\s+(\d+)\b/gi)).map((match) => Number(match[1] || 0)),
+    ...Array.from(sourceText.matchAll(/\bpage\s+\d+\s*(?:of|\/)\s*(\d+)\b/gi)).map((match) => Number(match[1] || 0)),
+  ].filter((value) => Number.isFinite(value) && value > 0);
+  if (!pageNumbers.length) return "";
+  return String(Math.max(...pageNumbers));
+}
+
 function looksLikeBase64Image(value: string) {
   const normalized = String(value || "").trim();
   return normalized.length > 128 && /^[A-Za-z0-9+/=\s]+$/.test(normalized);
@@ -245,7 +605,8 @@ async function generateImageWithOllama(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(endpoint.body),
         signal: controller.signal,
-      });
+        dispatcher: OLLAMA_FETCH_DISPATCHER,
+      } as any);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -742,6 +1103,210 @@ function buildRequestedSubtypeSequence(
         }))
       : []
   );
+}
+
+function parseTopLevelJsonObjectMembers(objectText: string) {
+  const source = String(objectText || "");
+  if (!source.trim().startsWith("{")) return null;
+  const members: Array<{ key: string; valueText: string }> = [];
+  let index = 0;
+
+  const skipWhitespace = () => {
+    while (index < source.length && /\s/.test(source[index])) index += 1;
+  };
+
+  const readJsonStringToken = () => {
+    if (source[index] !== "\"") return null;
+    const start = index;
+    index += 1;
+    let escaped = false;
+    while (index < source.length) {
+      const char = source[index];
+      if (!escaped && char === "\"") {
+        index += 1;
+        return source.slice(start, index);
+      }
+      escaped = !escaped && char === "\\";
+      if (char !== "\\") escaped = false;
+      index += 1;
+    }
+    return null;
+  };
+
+  const readBalancedValue = (openChar: string, closeChar: string) => {
+    const start = index;
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+    while (index < source.length) {
+      const char = source[index];
+      if (inString) {
+        escaped = !escaped && char === "\\";
+        if (!escaped && char === "\"") inString = false;
+        if (char !== "\\") escaped = false;
+        index += 1;
+        continue;
+      }
+      if (char === "\"") {
+        inString = true;
+        index += 1;
+        continue;
+      }
+      if (char === openChar) depth += 1;
+      if (char === closeChar) {
+        depth -= 1;
+        index += 1;
+        if (depth === 0) {
+          return source.slice(start, index);
+        }
+        continue;
+      }
+      index += 1;
+    }
+    return null;
+  };
+
+  const readPrimitiveValue = () => {
+    const start = index;
+    while (index < source.length && source[index] !== "," && source[index] !== "}") {
+      index += 1;
+    }
+    return source.slice(start, index).trim();
+  };
+
+  skipWhitespace();
+  if (source[index] !== "{") return null;
+  index += 1;
+
+  while (index < source.length) {
+    skipWhitespace();
+    if (source[index] === "}") {
+      index += 1;
+      break;
+    }
+    const keyToken = readJsonStringToken();
+    if (!keyToken) return null;
+    const key = JSON.parse(keyToken);
+    skipWhitespace();
+    if (source[index] !== ":") return null;
+    index += 1;
+    skipWhitespace();
+
+    let valueText: string | null = null;
+    const char = source[index];
+    if (char === "\"") {
+      valueText = readJsonStringToken();
+    } else if (char === "{") {
+      valueText = readBalancedValue("{", "}");
+    } else if (char === "[") {
+      valueText = readBalancedValue("[", "]");
+    } else {
+      valueText = readPrimitiveValue();
+    }
+    if (valueText == null) return null;
+    members.push({ key, valueText });
+
+    skipWhitespace();
+    if (source[index] === ",") {
+      index += 1;
+      continue;
+    }
+    if (source[index] === "}") {
+      index += 1;
+      break;
+    }
+  }
+
+  return members;
+}
+
+function mergeDuplicateArrayMembers(objectText: string, keysToMerge: string[]) {
+  const members = parseTopLevelJsonObjectMembers(objectText);
+  if (!members) return objectText;
+
+  const mergeKeySet = new Set(keysToMerge);
+  const mergedMembers: Array<{ key: string; valueText: string }> = [];
+  const mergedIndexByKey = new Map<string, number>();
+
+  const mergeArrayValueText = (left: string, right: string) => {
+    const leftItems = left.trim().replace(/^\[/, "").replace(/\]$/, "").trim();
+    const rightItems = right.trim().replace(/^\[/, "").replace(/\]$/, "").trim();
+    if (!leftItems) return `[${rightItems}]`;
+    if (!rightItems) return `[${leftItems}]`;
+    return `[${leftItems},${rightItems}]`;
+  };
+
+  members.forEach((member) => {
+    if (
+      mergeKeySet.has(member.key) &&
+      member.valueText.trim().startsWith("[") &&
+      mergedIndexByKey.has(member.key)
+    ) {
+      const targetIndex = mergedIndexByKey.get(member.key)!;
+      mergedMembers[targetIndex] = {
+        ...mergedMembers[targetIndex],
+        valueText: mergeArrayValueText(mergedMembers[targetIndex].valueText, member.valueText),
+      };
+      return;
+    }
+
+    if (mergeKeySet.has(member.key) && member.valueText.trim().startsWith("[")) {
+      mergedIndexByKey.set(member.key, mergedMembers.length);
+    }
+    mergedMembers.push(member);
+  });
+
+  return `{\n${mergedMembers.map((member) => `  ${JSON.stringify(member.key)}: ${member.valueText}`).join(",\n")}\n}`;
+}
+
+function repairDuplicateAssessmentArrayKeys(rawJsonText: string) {
+  const source = String(rawJsonText || "");
+  const repairObjectProperty = (input: string, propertyName: string, keysToMerge: string[]) => {
+    const propertyToken = `"${propertyName}"`;
+    const propertyIndex = input.indexOf(propertyToken);
+    if (propertyIndex === -1) return input;
+    const colonIndex = input.indexOf(":", propertyIndex + propertyToken.length);
+    if (colonIndex === -1) return input;
+    const openBraceIndex = input.indexOf("{", colonIndex + 1);
+    if (openBraceIndex === -1) return input;
+
+    let index = openBraceIndex;
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+    while (index < input.length) {
+      const char = input[index];
+      if (inString) {
+        escaped = !escaped && char === "\\";
+        if (!escaped && char === "\"") inString = false;
+        if (char !== "\\") escaped = false;
+        index += 1;
+        continue;
+      }
+      if (char === "\"") {
+        inString = true;
+        index += 1;
+        continue;
+      }
+      if (char === "{") depth += 1;
+      if (char === "}") {
+        depth -= 1;
+        index += 1;
+        if (depth === 0) {
+          const originalObjectText = input.slice(openBraceIndex, index);
+          const repairedObjectText = mergeDuplicateArrayMembers(originalObjectText, keysToMerge);
+          return `${input.slice(0, openBraceIndex)}${repairedObjectText}${input.slice(index)}`;
+        }
+        continue;
+      }
+      index += 1;
+    }
+    return input;
+  };
+
+  let repaired = repairObjectProperty(source, "assessment", ["mcq", "shortAnswer", "longAnswer"]);
+  repaired = repairObjectProperty(repaired, "answerKey", ["mcq", "shortAnswer", "longAnswer", "generalMarkingGuidance"]);
+  return repaired;
 }
 
 function normalizeAssessmentResponseToCustomization(
@@ -2205,6 +2770,68 @@ async function hydrateWorkspacePptMaterials(workspace: any) {
   };
 }
 
+function stripWorkspaceGeneratedSessions(workspace: any) {
+  if (!workspace || typeof workspace !== "object") {
+    return workspace;
+  }
+
+  const baseWorkspace =
+    typeof workspace.toObject === "function"
+      ? workspace.toObject()
+      : { ...workspace };
+
+  const nextGenerationScope =
+    baseWorkspace.generationScope && typeof baseWorkspace.generationScope === "object"
+      ? { ...baseWorkspace.generationScope }
+      : {};
+
+  if ("generatedSessions" in nextGenerationScope) {
+    delete nextGenerationScope.generatedSessions;
+  }
+
+  return {
+    ...baseWorkspace,
+    generationScope: nextGenerationScope,
+  };
+}
+
+async function serializeWorkspaceForView(
+  workspace: any,
+  view: "planning" | "full" = "planning"
+) {
+  if (view === "full") {
+    return hydrateWorkspacePptMaterials(workspace);
+  }
+  return stripWorkspaceGeneratedSessions(workspace);
+}
+
+async function serializeGeneratedSessionForSections(
+  sessionPlan: any,
+  selectedSections: SessionSectionKey[],
+  defaults: {
+    subject?: string;
+    gradeLevel?: string;
+  }
+) {
+  if (!sessionPlan || typeof sessionPlan !== "object") {
+    return null;
+  }
+
+  const partialSessionPlan = {
+    id: sessionPlan.id || "",
+    sessionNumber: Number(sessionPlan.sessionNumber || 0),
+    title: String(sessionPlan.title || ""),
+    duration: Number(sessionPlan.duration || 0),
+    ...pickSessionSections(sessionPlan, selectedSections),
+  };
+
+  if (selectedSections.includes("materials")) {
+    return normalizeGeneratedSessionPlanPpt(partialSessionPlan, defaults);
+  }
+
+  return partialSessionPlan;
+}
+
 function extractJsonText(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) {
@@ -2935,12 +3562,17 @@ function buildSlimStructurePayload(classes: any[] = []) {
       units: (cls?.units || []).map((unit: any, unitIndex: number) => ({
         unit_id: unit?.unit_id || `U${unitIndex + 1}`,
         unit_name: unit?.unit_name || "",
+        part_or_section: unit?.part_or_section || "",
         topics: uniqueStrings(unit?.topics || []),
         subtopics: uniqueStrings(unit?.subtopics || []),
         key_concepts: uniqueStrings(unit?.key_concepts || []),
         chapters: (unit?.chapters || []).map((chapter: any, chapterIndex: number) => ({
           chapter_id: chapter?.chapter_id || `C${chapterIndex + 1}`,
           chapter_name: chapter?.chapter_name || chapter?.source_chapter_name || "",
+          part_or_section: chapter?.part_or_section || unit?.part_or_section || "",
+          exam_section_name: chapter?.exam_section_name || "",
+          book_name: chapter?.book_name || "",
+          category_name: chapter?.category_name || "",
           topics: uniqueStrings(chapter?.topics || []),
           subtopics: uniqueStrings(chapter?.subtopics || []),
           key_concepts: uniqueStrings(chapter?.key_concepts || []),
@@ -2957,9 +3589,11 @@ function buildFaithfulStructureFromRawExtraction(rawExtraction: any) {
       class_name: canonicalizeClassName(cls?.class_name || ""),
       subject: canonicalizeSubjectName(cls?.subject || ""),
       part_or_section: cls?.part_or_section || "",
-      units: (cls?.units || []).map((unit: any, unitIndex: number) => ({
+      units: normalizeUnitIdsForClass((cls?.units || []).map((unit: any, unitIndex: number) => ({
         unit_id: unit?.unit_id || `U${unitIndex + 1}`,
+        source_unit_id: unit?.source_unit_id || unit?.unit_id || "",
         unit_name: unit?.unit_name || "",
+        part_or_section: unit?.part_or_section || "",
         marks: unit?.marks ?? null,
         explicit_chapters: uniqueStrings(unit?.explicit_chapters || []),
         topics: uniqueStrings(unit?.topics || []),
@@ -2973,12 +3607,20 @@ function buildFaithfulStructureFromRawExtraction(rawExtraction: any) {
             chapter_id: matchingChapter?.chapter_id || `C${chapterIndex + 1}`,
             chapter_name: chapterName,
             source_chapter_name: matchingChapter?.source_chapter_name || chapterName,
+            part_or_section: matchingChapter?.part_or_section || unit?.part_or_section || "",
+            exam_section_name: matchingChapter?.exam_section_name || "",
+            book_name: matchingChapter?.book_name || "",
+            category_name: matchingChapter?.category_name || "",
+            structure_role: matchingChapter?.structure_role || "chapter",
+            content_path: matchingChapter?.content_path || "",
             topics: uniqueStrings(matchingChapter?.topics || []),
             subtopics: uniqueStrings(matchingChapter?.subtopics || []),
             key_concepts: uniqueStrings(matchingChapter?.key_concepts || []),
           };
         }),
-      })),
+      })), {
+        forceSequential: isEnglishSubject(cls?.subject || rawExtraction?.document_metadata?.subject || ""),
+      }),
     })),
     practicals: rawExtraction?.practicals || [],
     activities: rawExtraction?.activities || [],
@@ -3622,6 +4264,16 @@ function normalizeMathSetupWording(value: string) {
   return text.replace(/^Leg\s+([a-z])\s*=/i, "Let $1 =");
 }
 
+function combineMathRichTextPartsAsString(text: string, latex: string, displayLatex: string) {
+  const prose = sanitizeMathText(text, 500).trim();
+  const mathCandidate = sanitizeMathText(displayLatex || latex, 500).trim();
+  if (!mathCandidate) return prose;
+  if (!prose) return mathCandidate;
+  const normalizedMathCandidate = mathCandidate.replace(/\s+/g, " ").trim();
+  if (prose.includes(normalizedMathCandidate)) return prose;
+  return `${prose} ${mathCandidate}`.trim();
+}
+
 function upgradeMathExpressionValue(value: any) {
   const sanitized = sanitizeMathRichText(value);
   if (!sanitized) return sanitized;
@@ -3644,6 +4296,10 @@ function upgradeMathExpressionValue(value: any) {
     latex: sanitizeMathText(sanitized.latex || "", 500),
     displayLatex: sanitizeMathText(sanitized.displayLatex || "", 500),
   };
+  const rawMathCandidate = next.displayLatex || next.latex;
+  if (rawMathCandidate && !looksLikeStandaloneMathText(unwrapLatexMathDelimiters(rawMathCandidate))) {
+    return combineMathRichTextPartsAsString(next.text, next.latex, next.displayLatex);
+  }
   const letAssignmentMatch = next.text.match(/^Let\s+([a-z])\s*=/i);
   if (letAssignmentMatch && (new RegExp(`^${letAssignmentMatch[1]}\\s*=`, "i").test(next.latex) || new RegExp(`^${letAssignmentMatch[1]}\\s*=`, "i").test(next.displayLatex))) {
     return next.text;
@@ -4334,16 +4990,42 @@ function normalizeMathGeneratedNotes(session: any, context: { subject?: string; 
 
 function isLanguageSubject(subject: string): boolean {
   const normalized = normalizeSourceText(subject || "");
+  if (isEnglishSubject(subject)) {
+    return true;
+  }
   return [
-    "english",
-    "first language english",
-    "english language",
-    "communicative english",
     "language",
   ].some((candidate) => normalized.includes(candidate));
 }
 
-function buildLanguageFallbackStage1Facts(sourceText: string, existingFacts: any) {
+function inferIndicFallbackSubject(sourceText: string, fileName = ""): "" | "Hindi" | "Tamil" {
+  const normalizedFileName = normalizeIndicSubjectHint(fileName);
+  const normalizedSourceSample = normalizeSourceText(String(sourceText || "").slice(0, 12000));
+  const combinedSample = [normalizedFileName, normalizedSourceSample].filter(Boolean).join(" ");
+
+  if (/(^|\s)(tamil|tamil language|தமிழ்)(\s|$)/.test(combinedSample)) {
+    return "Tamil";
+  }
+  if (/(^|\s)(hindi|hindi language|हिंदी|हिन्दी)(\s|$)/.test(combinedSample)) {
+    return "Hindi";
+  }
+  return "";
+}
+
+function buildLanguageFallbackStage1Facts(
+  sourceText: string,
+  existingFacts: any,
+  options: { fileName?: string } = {}
+) {
+  const inferredSubject =
+    canonicalizeSubjectName(existingFacts?.document_metadata?.subject || existingFacts?.classes?.[0]?.subject || "") ||
+    (shouldUseEnglishIntelligence({ sourceText, fileName: options.fileName }) ? "English" : "") ||
+    inferIndicFallbackSubject(sourceText, options.fileName || "");
+  const inferredClassName =
+    existingFacts?.classes?.[0]?.class_name ||
+    existingFacts?.document_metadata?.class ||
+    detectCurriculumClassSegmentsFromSource(sourceText)?.[0]?.className ||
+    "";
   const lines = sourceText
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -4361,6 +5043,27 @@ function buildLanguageFallbackStage1Facts(sourceText: string, existingFacts: any
     "listening",
     "speaking",
     "skill",
+    "पठन",
+    "लेखन",
+    "व्याकरण",
+    "साहित्य",
+    "गद्य",
+    "पद्य",
+    "कविता",
+    "पूरक पठन",
+    "श्रवण",
+    "वाचन",
+    "भाषा",
+    "வாசிப்பு",
+    "எழுத்து",
+    "இலக்கணம்",
+    "இலக்கியம்",
+    "உரைநடை",
+    "கவிதை",
+    "துணைப்பாடம்",
+    "கேட்பு",
+    "பேச்சு",
+    "மொழி",
   ];
 
   const matches = uniqueStrings(
@@ -4371,8 +5074,8 @@ function buildLanguageFallbackStage1Facts(sourceText: string, existingFacts: any
   );
 
   const units = matches.map((heading, index) => ({
-    class_name: existingFacts?.classes?.[0]?.class_name || existingFacts?.document_metadata?.class || "",
-    subject: existingFacts?.document_metadata?.subject || existingFacts?.classes?.[0]?.subject || "",
+    class_name: inferredClassName,
+    subject: inferredSubject,
     part_or_section: "",
     unit_id: `U${index + 1}`,
     unit_name: heading,
@@ -4380,8 +5083,8 @@ function buildLanguageFallbackStage1Facts(sourceText: string, existingFacts: any
   }));
 
   const chapters = matches.map((heading, index) => ({
-    class_name: existingFacts?.classes?.[0]?.class_name || existingFacts?.document_metadata?.class || "",
-    subject: existingFacts?.document_metadata?.subject || existingFacts?.classes?.[0]?.subject || "",
+    class_name: inferredClassName,
+    subject: inferredSubject,
     part_or_section: "",
     unit_id: `U${index + 1}`,
     unit_name: heading,
@@ -4390,12 +5093,16 @@ function buildLanguageFallbackStage1Facts(sourceText: string, existingFacts: any
   }));
 
   return {
-    document_metadata: existingFacts?.document_metadata || {},
-    classes: existingFacts?.classes || (units.length ? [{
-      class_name: existingFacts?.document_metadata?.class || "",
-      subject: existingFacts?.document_metadata?.subject || "",
+    document_metadata: {
+      ...(existingFacts?.document_metadata || {}),
+      ...(inferredSubject ? { subject: inferredSubject } : {}),
+      ...(inferredClassName ? { class: inferredClassName } : {}),
+    },
+    classes: (existingFacts?.classes?.length ? existingFacts.classes : (units.length ? [{
+      class_name: inferredClassName,
+      subject: inferredSubject,
       part_or_section: "",
-    }] : []),
+    }] : [])),
     units,
     chapters,
     fallbackApplied: units.length > 0,
@@ -4539,6 +5246,95 @@ function buildStableUnitId(className: string, subject: string, baseUnitId: strin
   return `${classSlug}-${subjectSlug}-${unitSlug}`;
 }
 
+function getUnitSummaryKey(cls: any, unit: any, classIndex: number, unitIndex: number) {
+  return [
+    buildCanonicalClassKey(cls?.class_name || `class_${classIndex + 1}`),
+    normalizeSourceText(unit?.part_or_section || ""),
+    canonicalUnitNameKey(unit?.unit_name || unit?.unit_id || `unit_${unitIndex + 1}`),
+  ].join("::");
+}
+
+function collectUnitSummaryChapterNames(unit: any) {
+  const unitNameKey = canonicalUnitNameKey(unit?.unit_name || "");
+  return uniqueStrings([
+    ...(unit?.explicit_chapters || []),
+    ...((unit?.chapters || []).map((chapter: any) => stripInternalParserLabel(chapter?.chapter_name || chapter?.source_chapter_name || ""))),
+  ]).filter((chapterName) => canonicalUnitNameKey(chapterName) !== unitNameKey);
+}
+
+function collectUnitSummaryTopics(unit: any) {
+  const chapterNames = collectUnitSummaryChapterNames(unit);
+  return uniqueStrings([
+    ...chapterNames,
+    ...(unit?.topics || []),
+    ...(unit?.subtopics || []),
+    ...(unit?.key_concepts || []),
+    ...((unit?.chapters || []).flatMap((chapter: any) => [
+      ...(chapter?.topics || []),
+      ...(chapter?.subtopics || []),
+      ...(chapter?.key_concepts || []),
+    ])),
+  ]);
+}
+
+function buildCurriculumUnitsSummary(structures: any[] = []) {
+  const unitsByKey = new Map<string, any>();
+
+  structures.forEach((structure: any) => {
+    const classes = Array.isArray(structure?.classes) ? structure.classes : [];
+    classes.forEach((cls: any, classIndex: number) => {
+      const className = canonicalizeClassName(cls?.class_name || "") || String(cls?.class_name || "").trim();
+      const subject = canonicalizeSubjectName(cls?.subject || structure?.document_metadata?.subject || "");
+      const units = Array.isArray(cls?.units) ? cls.units : [];
+      units.forEach((unit: any, unitIndex: number) => {
+        const unitKey = getUnitSummaryKey(cls, unit, classIndex, unitIndex);
+        if (!unitKey) return;
+
+        const unitName = String(unit?.unit_name || "").trim();
+        const chapterNames = collectUnitSummaryChapterNames(unit);
+        const topicValues = collectUnitSummaryTopics(unit);
+        const descriptionSegments = chapterNames.length ? chapterNames : topicValues.slice(0, 12);
+
+        if (!unitsByKey.has(unitKey)) {
+          unitsByKey.set(unitKey, {
+            unitId: "",
+            unitName,
+            className,
+            class_name: className,
+            subject,
+            descriptionSegments: [] as string[],
+            topics: [] as string[],
+          });
+        }
+
+        const existingUnit = unitsByKey.get(unitKey) as any;
+        existingUnit.unitId = existingUnit.unitId || String(unit?.unit_id || "").trim();
+        existingUnit.unitName = existingUnit.unitName || unitName;
+        existingUnit.className = existingUnit.className || className;
+        existingUnit.class_name = existingUnit.class_name || className;
+        existingUnit.subject = existingUnit.subject || subject;
+        existingUnit.descriptionSegments = uniqueStrings([
+          ...(existingUnit.descriptionSegments || []),
+          ...descriptionSegments,
+        ]);
+        existingUnit.topics = uniqueStrings([
+          ...(existingUnit.topics || []),
+          ...topicValues,
+        ]);
+      });
+    });
+  });
+
+  return [...unitsByKey.values()].map((unit: any, index: number) => ({
+    unitId: unit.unitId || buildStableUnitId(unit.className || "", unit.subject || "", unit.unitName || `U${index + 1}`, index),
+    unitName: unit.unitName || `Unit ${index + 1}`,
+    className: unit.className || "",
+    class_name: unit.class_name || unit.className || "",
+    description: uniqueStrings(unit.descriptionSegments || []).join(", "),
+    topics: uniqueStrings(unit.topics || []),
+  }));
+}
+
 function canonicalUnitKey(value: string): string {
   return normalizeSourceText(cleanUnitTitle(value || ""));
 }
@@ -4627,8 +5423,6 @@ function isPracticalLikeSection(value: string) {
   return (
     normalized.includes("practical") ||
     normalized.includes("practical syllabus") ||
-    normalized.includes("section a") ||
-    normalized.includes("section b") ||
     normalized.includes("mandatory") ||
     normalized.includes("laboratory") ||
     normalized.includes("lab") ||
@@ -4674,6 +5468,36 @@ function buildClassIdentityKey(entry: { class_name?: string; subject?: string })
     normalizeSourceText(buildCanonicalClassKey(entry?.class_name || "")),
     normalizeSourceText(canonicalizeSubjectName(entry?.subject || "")),
   ].join("::");
+}
+
+function normalizeUnitIdsForClass(units: any[], options: { forceSequential?: boolean } = {}) {
+  const seen = new Set<string>();
+  let nextNumber = 1;
+
+  return (units || []).map((unit: any) => {
+    const currentId = String(unit?.unit_id || "").trim();
+    const normalizedCurrentId = canonicalUnitId(currentId);
+    const canReuseCurrentId =
+      normalizedCurrentId &&
+      /^u\d+$/i.test(normalizedCurrentId) &&
+      !seen.has(normalizedCurrentId) &&
+      !options.forceSequential;
+
+    let nextId = canReuseCurrentId ? normalizedCurrentId.toUpperCase() : "";
+    if (!nextId) {
+      while (seen.has(`u${nextNumber}`)) {
+        nextNumber += 1;
+      }
+      nextId = `U${nextNumber}`;
+    }
+
+    seen.add(canonicalUnitId(nextId));
+    return {
+      ...unit,
+      source_unit_id: unit?.source_unit_id || currentId || "",
+      unit_id: nextId,
+    };
+  });
 }
 
 function buildSectionKey(entry: { class_name?: string; subject?: string; part_or_section?: string }) {
@@ -4802,6 +5626,8 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
   const practicals: any[] = [];
   const formativeContentRefs: any[] = [];
   const ignoredItems: any[] = [];
+  const documentSubject = canonicalizeSubjectName(rawExtraction?.document_metadata?.subject || rawExtraction?.classes?.[0]?.subject || "");
+  const englishMode = isEnglishSubject(documentSubject);
 
   const classes = (rawExtraction?.classes || []).map((rawClass: any, classIndex: number) => {
     const structureClass = (documentHierarchy?.classes || [])[classIndex] || {};
@@ -4870,6 +5696,7 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
       const structureUnit = structureUnitByKey.get(structuralUnitKey) || {};
       approvedUnitMap.set(structuralUnitKey, {
         unit_id: rawUnit?.unit_id || structureUnit?.unit_id || "",
+        source_unit_id: rawUnit?.source_unit_id || rawUnit?.unit_id || "",
         unit_name: String(rawUnit?.unit_name || structureUnit?.unit_name || "").trim(),
         part_or_section: rawUnit?.part_or_section || structureUnit?.part_or_section || "",
         marks: rawUnit?.marks ?? null,
@@ -4907,6 +5734,7 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
         const recoveredUnitName = cleanRecoveredUnitName(rawChapter?.unit_name || structureUnit?.unit_name || "");
         approvedUnitMap.set(structuralUnitKey, {
           unit_id: rawChapter?.unit_id || structureUnit?.unit_id || "",
+          source_unit_id: rawChapter?.source_unit_id || rawChapter?.unit_id || "",
           unit_name: recoveredUnitName,
           part_or_section: rawChapter?.part_or_section || structureUnit?.part_or_section || "",
           marks: rawChapter?.marks ?? null,
@@ -4943,6 +5771,12 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
           chapter_name: cleanChapterName(fallbackChapterName, recoveredUnitName),
           source_chapter_name: cleanChapterName(fallbackChapterName, recoveredUnitName),
           source_heading: cleanChapterName(fallbackChapterName, recoveredUnitName),
+          part_or_section: chapter?.part_or_section || unit?.part_or_section || "",
+          exam_section_name: chapter?.exam_section_name || "",
+          book_name: chapter?.book_name || "",
+          category_name: chapter?.category_name || "",
+          structure_role: chapter?.structure_role || "chapter",
+          content_path: chapter?.content_path || "",
           source_type: "explicit_chapter",
           topics: uniqueStrings(chapter?.topics || []),
           subtopics: uniqueStrings(chapter?.subtopics || []),
@@ -4956,6 +5790,7 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
           chapter_name: cleanChapterName(candidate?.title || "", unit?.unit_name || structureUnit?.unit_name || ""),
           source_chapter_name: cleanChapterName(candidate?.title || "", unit?.unit_name || structureUnit?.unit_name || ""),
           source_heading: cleanChapterName(candidate?.title || "", unit?.unit_name || structureUnit?.unit_name || ""),
+          part_or_section: unit?.part_or_section || "",
           source_type: candidate?.source_type || "explicit_chapter",
           topics: [],
           subtopics: [],
@@ -4972,11 +5807,14 @@ function buildApprovedTheoryHierarchy(rawExtraction: any, documentHierarchy: any
       }
     }
 
-    const approvedUnits = [...approvedUnitMap.values()].sort((left: any, right: any) => {
-      const leftId = canonicalUnitId(left?.unit_id || "");
-      const rightId = canonicalUnitId(right?.unit_id || "");
-      return leftId.localeCompare(rightId, undefined, { numeric: true });
-    });
+    const orderedApprovedUnits = englishMode
+      ? [...approvedUnitMap.values()]
+      : [...approvedUnitMap.values()].sort((left: any, right: any) => {
+          const leftId = canonicalUnitId(left?.unit_id || "");
+          const rightId = canonicalUnitId(right?.unit_id || "");
+          return leftId.localeCompare(rightId, undefined, { numeric: true });
+        });
+    const approvedUnits = normalizeUnitIdsForClass(orderedApprovedUnits, { forceSequential: englishMode });
     console.log(
       `[ApprovedHierarchy] ${canonicalClassName} unit ids after recovery: ${JSON.stringify(approvedUnits.map((unit: any) => unit?.unit_id || "").filter(Boolean))}`
     );
@@ -5206,6 +6044,7 @@ function buildDocumentStructureHierarchy(rawExtraction: any, headingClassificati
       return {
         unit_id: rawUnit?.unit_id || makeNodeId("U", unitIndex),
         unit_name: sourceUnitName,
+        part_or_section: rawUnit?.part_or_section || rawClass?.part_or_section || "",
         marks: rawUnit?.marks ?? null,
         explicit_chapters: explicitChapters,
         possible_chapters: uniqueStrings(rawUnit?.possible_chapters || []),
@@ -5618,6 +6457,309 @@ function getNormalizedStructureFromCurriculum(curriculum: any) {
   return null;
 }
 
+function detectCurriculumClassSegmentsFromSource(sourceText: string) {
+  const content = String(sourceText || "");
+  const headingRegex = /^(?:\s*#+\s*)?(?:[^\n]{0,80}?)\bclass\s*[-–—:]?\s*(ix|x|xi|xii|9|10|11|12)\b[^\n]*$/gim;
+  const rawMatches: Array<{
+    className: string;
+    classKey: string;
+    startIndex: number;
+    headingText: string;
+  }> = [];
+
+  for (const match of content.matchAll(headingRegex)) {
+    const matchedText = String(match[0] || "").trim();
+    const className = canonicalizeClassName(`Class ${match[1] || ""}`) || canonicalizeClassName(matchedText);
+    const classKey = buildCanonicalClassKey(className);
+    if (!className || !classKey) continue;
+    rawMatches.push({
+      className,
+      classKey,
+      startIndex: match.index || 0,
+      headingText: matchedText,
+    });
+  }
+
+  if (rawMatches.length === 0) {
+    return [];
+  }
+
+  const uniqueSegments = rawMatches.reduce((acc: Array<{
+    className: string;
+    classKey: string;
+    startIndex: number;
+    headingText: string;
+  }>, match) => {
+    if (acc.some((entry) => entry.classKey === match.classKey)) {
+      return acc;
+    }
+    acc.push(match);
+    return acc;
+  }, []).sort((a, b) => a.startIndex - b.startIndex);
+
+  const pageMarkers = Array.from(content.matchAll(/(?:^|\n)\s*#*\s*page\s+(\d+)\b/gi)).map((match) => ({
+    index: match.index || 0,
+    page: Number(match[1] || 0),
+  }));
+  const pageForIndex = (targetIndex: number) => {
+    let resolved = 0;
+    for (const marker of pageMarkers) {
+      if (marker.index <= targetIndex && marker.page > 0) {
+        resolved = marker.page;
+      } else if (marker.index > targetIndex) {
+        break;
+      }
+    }
+    return resolved;
+  };
+
+  return uniqueSegments.map((segment, index) => {
+    const nextSegment = uniqueSegments[index + 1];
+    const endIndex = nextSegment ? nextSegment.startIndex : content.length;
+    const startPage = pageForIndex(segment.startIndex);
+    const endPage = Math.max(startPage, pageForIndex(Math.max(segment.startIndex, endIndex - 1)));
+    return {
+      ...segment,
+      endIndex,
+      startPage,
+      endPage,
+      sourceText: content.slice(segment.startIndex, endIndex).trim(),
+    };
+  });
+}
+
+function buildDetectedClassSummariesFromSource(sourceText: string) {
+  return detectCurriculumClassSegmentsFromSource(sourceText).map((segment) => ({
+    className: segment.className,
+    subject: "",
+    unitCount: 0,
+    chapterCount: 0,
+    topicCount: 0,
+    pageRangeLabel:
+      segment.startPage && segment.endPage
+        ? segment.startPage === segment.endPage
+          ? `Page ${segment.startPage}`
+          : `Pages ${segment.startPage}-${segment.endPage}`
+        : "",
+    detectionSource: segment.headingText,
+  }));
+}
+
+function filterSourceTextToSelectedClasses(sourceText: string, selectedClasses: string[] = []) {
+  const segments = detectCurriculumClassSegmentsFromSource(sourceText);
+  const selectedClassKeys = new Set<string>(
+    (selectedClasses || [])
+      .map((className) => buildCanonicalClassKey(className || ""))
+      .filter(Boolean)
+  );
+
+  if (!segments.length || !selectedClassKeys.size) {
+    return {
+      sourceText,
+      filtered: false,
+      selectedClassNames: [],
+      availableClassNames: segments.map((segment) => segment.className),
+    };
+  }
+
+  const selectedSegments = segments.filter((segment) => selectedClassKeys.has(segment.classKey));
+  if (!selectedSegments.length) {
+    return {
+      sourceText,
+      filtered: false,
+      selectedClassNames: [],
+      availableClassNames: segments.map((segment) => segment.className),
+    };
+  }
+
+  return {
+    sourceText: selectedSegments.map((segment) => segment.sourceText).filter(Boolean).join("\n\n"),
+    filtered: selectedSegments.length !== segments.length,
+    selectedClassNames: selectedSegments.map((segment) => segment.className),
+    availableClassNames: segments.map((segment) => segment.className),
+  };
+}
+
+function summarizeCurriculumClasses(curriculum: any) {
+  const normalizedStructure = getNormalizedStructureFromCurriculum(curriculum);
+  const classes = Array.isArray(normalizedStructure?.classes) ? normalizedStructure.classes : [];
+  return classes.map((cls: any) => {
+    const units = Array.isArray(cls?.units) ? cls.units : [];
+    const chapterCount = units.reduce((sum: number, unit: any) => sum + ((unit?.chapters || []).length), 0);
+    const topicCount = units.reduce((sum: number, unit: any) => {
+      const unitTopics = uniqueStrings([
+        ...(unit?.topics || []),
+        ...(unit?.subtopics || []),
+        ...(unit?.key_concepts || []),
+      ]).length;
+      const chapterTopics = (unit?.chapters || []).reduce((chapterSum: number, chapter: any) => {
+        return chapterSum + uniqueStrings([
+          ...(chapter?.topics || []),
+          ...(chapter?.subtopics || []),
+          ...(chapter?.key_concepts || []),
+        ]).length;
+      }, 0);
+      return sum + unitTopics + chapterTopics;
+    }, 0);
+
+    return {
+      className: canonicalizeClassName(cls?.class_name || "") || String(cls?.class_name || "").trim() || "Unlabeled Class",
+      subject: canonicalizeSubjectName(cls?.subject || curriculum?.subject || ""),
+      unitCount: units.length,
+      chapterCount,
+      topicCount,
+    };
+  });
+}
+
+function filterClassesArrayBySelection(classes: any[], selectedClassKeys: Set<string>) {
+  return (classes || []).filter((cls: any) => selectedClassKeys.has(buildCanonicalClassKey(cls?.class_name || "")));
+}
+
+function withResolvedDocumentMetadata(structure: any, filteredClasses: any[]) {
+  if (!structure || typeof structure !== "object") {
+    return structure;
+  }
+  const classNames = uniqueStrings(
+    (filteredClasses || []).map((cls: any) => canonicalizeClassName(cls?.class_name || "") || String(cls?.class_name || "").trim()).filter(Boolean)
+  );
+  return {
+    ...structure,
+    document_metadata: {
+      ...(structure?.document_metadata || {}),
+      class: classNames.join(", "),
+      grade: classNames.length === 1 ? classNames[0] : "",
+    },
+  };
+}
+
+function filterStructureToSelectedClasses(structure: any, selectedClassKeys: Set<string>) {
+  if (!structure || typeof structure !== "object" || !Array.isArray(structure?.classes)) {
+    return structure;
+  }
+  const filteredClasses = filterClassesArrayBySelection(structure.classes || [], selectedClassKeys);
+  return withResolvedDocumentMetadata({
+    ...structure,
+    classes: filteredClasses,
+  }, filteredClasses);
+}
+
+function buildCurriculumClassSelection(curriculum: any, selectedClasses: string[] = []) {
+  const availableClasses = summarizeCurriculumClasses(curriculum);
+  const availableKeys = new Set<string>(availableClasses.map((item) => buildCanonicalClassKey(item.className)).filter(Boolean));
+  const requestedClassKeys = new Set<string>(
+    (selectedClasses || [])
+      .map((className) => buildCanonicalClassKey(className || ""))
+      .filter(Boolean)
+  );
+
+  if (!requestedClassKeys.size) {
+    return {
+      availableClasses,
+      selectedClassKeys: availableKeys,
+      selectedClassNames: availableClasses.map((item) => item.className),
+    };
+  }
+
+  const selectedClassNames = availableClasses
+    .filter((item) => requestedClassKeys.has(buildCanonicalClassKey(item.className)))
+    .map((item) => item.className);
+
+  return {
+    availableClasses,
+    selectedClassKeys: requestedClassKeys,
+    selectedClassNames,
+  };
+}
+
+function filterCurriculumToSelectedClasses(curriculum: any, selectedClasses: string[] = []) {
+  const { availableClasses, selectedClassKeys, selectedClassNames } = buildCurriculumClassSelection(curriculum, selectedClasses);
+  if (!availableClasses.length || selectedClassKeys.size === 0 || selectedClassNames.length === availableClasses.length) {
+    return {
+      curriculum,
+      selectedClassNames: availableClasses.map((item) => item.className),
+      availableClasses,
+    };
+  }
+
+  const filteredPlanningStructure = filterStructureToSelectedClasses(
+    curriculum?.planning_structure || curriculum?.normalizedStructure,
+    selectedClassKeys
+  );
+  const filteredFaithfulStructure = filterStructureToSelectedClasses(curriculum?.faithful_structure, selectedClassKeys);
+  const filteredNormalizedStructure = filterStructureToSelectedClasses(curriculum?.normalizedStructure, selectedClassKeys);
+  const filteredClasses = filterClassesArrayBySelection(curriculum?.classes || filteredNormalizedStructure?.classes || [], selectedClassKeys);
+  const filteredDocumentMetadata = {
+    ...(curriculum?.document_metadata || filteredNormalizedStructure?.document_metadata || {}),
+    class: selectedClassNames.join(", "),
+    grade: selectedClassNames.length === 1 ? selectedClassNames[0] : "",
+  };
+  const filteredUnits = (curriculum?.units || []).filter((unit: any) =>
+    selectedClassKeys.has(buildCanonicalClassKey(unit?.className || unit?.class_name || ""))
+  );
+  const statistics = filteredNormalizedStructure ? computeCurriculumStatistics(filteredNormalizedStructure) : null;
+  const overallDescription = statistics
+    ? `${statistics.total_units} units, ${statistics.total_chapters} chapters, and ${statistics.total_topics} topics extracted through raw extraction, document-structure hierarchy building, node enrichment, normalized teaching blocks, validation, and statistics generation.`
+    : curriculum?.overallDescription || "";
+
+  return {
+    curriculum: {
+      ...curriculum,
+      gradeLevel: selectedClassNames.join(" / "),
+      overallDescription,
+      units: filteredUnits,
+      classes: filteredClasses,
+      document_metadata: filteredDocumentMetadata,
+      planning_structure: filteredPlanningStructure,
+      faithful_structure: filteredFaithfulStructure,
+      normalizedStructure: filteredNormalizedStructure,
+      stagedExtraction: curriculum?.stagedExtraction
+        ? {
+            ...curriculum.stagedExtraction,
+            rawExtraction: filterStructureToSelectedClasses(curriculum.stagedExtraction?.rawExtraction, selectedClassKeys),
+            faithfulStructure: filterStructureToSelectedClasses(curriculum.stagedExtraction?.faithfulStructure, selectedClassKeys),
+            documentHierarchy: filterStructureToSelectedClasses(curriculum.stagedExtraction?.documentHierarchy, selectedClassKeys),
+            nodeEnrichment: filterStructureToSelectedClasses(curriculum.stagedExtraction?.nodeEnrichment, selectedClassKeys),
+            normalizedStructure: filterStructureToSelectedClasses(curriculum.stagedExtraction?.normalizedStructure, selectedClassKeys),
+          }
+        : curriculum?.stagedExtraction,
+    },
+    selectedClassNames,
+    availableClasses,
+  };
+}
+
+async function persistCurriculumRecord({
+  fileName,
+  sourceText,
+  extractedCurriculum,
+  extractionMetadata = {},
+}: {
+  fileName: string;
+  sourceText: string;
+  extractedCurriculum: any;
+  extractionMetadata?: Record<string, unknown>;
+}) {
+  await connectToMongo();
+  const curriculum = await CurriculumModel.create({
+    fileName,
+    subject: extractedCurriculum?.subject || "",
+    gradeLevel: extractedCurriculum?.gradeLevel || "",
+    sourceText,
+    extractedCurriculum,
+    extractionMetadata,
+  });
+  const planningWorkspace = await ensurePlanningWorkspaceForCurriculum(
+    String(curriculum._id),
+    extractedCurriculum
+  );
+
+  return {
+    curriculum,
+    planningWorkspace,
+  };
+}
+
 function buildCurriculumSnapshot(curriculum: any) {
   return {
     subject: curriculum?.subject || "",
@@ -5788,7 +6930,28 @@ function detectTeachingBlocks(normalizedStructure: any) {
     ].join("::") || "class-scope";
     const units = cls?.units || [];
     const classTeachingBlocks = units.flatMap((unit: any) => {
+      const unitSubject = cls?.subject || normalizedStructure?.document_metadata?.subject || "";
+      const normalizedUnitName = normalizeSourceText(unit?.unit_name || "");
+      const unitTopics = uniqueStrings([
+        ...(unit?.topics || []),
+        ...(unit?.subtopics || []),
+        ...(unit?.key_concepts || []),
+      ]);
       const chapters = Array.isArray(unit?.chapters) ? unit.chapters : [];
+      const isEnglishAssessmentPatternUnit =
+        isEnglishSubject(unitSubject) &&
+        (
+          normalizedUnitName.includes("language through literature") ||
+          (
+            chapters.length > 0 &&
+            chapters.every((chapter: any) => isEnglishAssessmentOnlyChapterLabel(chapter?.chapter_name || chapter?.source_chapter_name || ""))
+          )
+        );
+
+      if (isEnglishAssessmentPatternUnit) {
+        return [];
+      }
+
       if (chapters.length) {
         const numericUnitMarks = unit?.marks == null ? null : Number(unit.marks);
         const validUnitMarks = Number.isFinite(numericUnitMarks) ? numericUnitMarks : null;
@@ -5813,6 +6976,7 @@ function detectTeachingBlocks(normalizedStructure: any) {
                 ...(chapter?.key_concepts || []),
               ]).length / 3)),
             marks: chapter?.marks ?? perChapterFallbackMarks,
+            source_marks: chapter?.marks ?? perChapterFallbackMarks,
             difficulty: chapter?.difficulty ?? null,
           })),
         }];
@@ -5830,6 +6994,7 @@ function detectTeachingBlocks(normalizedStructure: any) {
             topics: uniqueStrings(block?.topics || []),
             estimated_sessions: toNumberOrZero(block?.estimated_sessions),
             marks: block?.marks ?? perBlockFallbackMarks,
+            source_marks: block?.marks ?? perBlockFallbackMarks,
             difficulty: block?.difficulty ?? null,
           });
         })
@@ -5845,26 +7010,19 @@ function detectTeachingBlocks(normalizedStructure: any) {
 
       return [{
         unit_id: unit?.unit_id || "",
-        unit_name: unit?.unit_name || "",
-        teaching_blocks: [{
-          block_id: `${classScope}::${unit?.unit_id || "U"}`,
-          block_name: unit?.unit_name || "Unit",
-          block_type: "unit",
-          topics: uniqueStrings([
-            ...(unit?.topics || []),
-            ...(unit?.subtopics || []),
-            ...(unit?.key_concepts || []),
-          ]),
-          estimated_sessions:
-            toNumberOrZero(unit?.estimated_sessions) ||
-            Math.max(1, Math.ceil(uniqueStrings([
-              ...(unit?.topics || []),
-              ...(unit?.subtopics || []),
-              ...(unit?.key_concepts || []),
-            ]).length / 3)),
-          marks: unit?.marks ?? null,
-          difficulty: unit?.difficulty ?? null,
-        }],
+          unit_name: unit?.unit_name || "",
+          teaching_blocks: [{
+            block_id: `${classScope}::${unit?.unit_id || "U"}`,
+            block_name: unit?.unit_name || "Unit",
+            block_type: "unit",
+            topics: unitTopics,
+            estimated_sessions:
+              toNumberOrZero(unit?.estimated_sessions) ||
+            Math.max(1, Math.ceil(unitTopics.length / 3)),
+            marks: unit?.marks ?? null,
+            source_marks: unit?.marks ?? null,
+            difficulty: unit?.difficulty ?? null,
+          }],
       }];
     });
 
@@ -5904,6 +7062,24 @@ function determineTermCount(totalTeachingBlocks: number, preferredTermCount?: nu
   return { termCount: 4, method: "automatic" as const };
 }
 
+function getPlanningMarksWeight(marks: unknown) {
+  const numericMarks = Number(marks);
+  if (!Number.isFinite(numericMarks) || numericMarks <= 0) {
+    return 0;
+  }
+  return Math.min(6, Math.max(1, numericMarks / 5));
+}
+
+function getPlanningBlockWeight(block: any) {
+  return Math.max(
+    1,
+    (block?.topics?.length || 0) +
+    toNumberOrZero(block?.estimated_sessions) +
+    getPlanningMarksWeight(block?.marks) +
+    (block?.difficulty === "high" ? 3 : block?.difficulty === "medium" ? 2 : block?.difficulty === "low" ? 1 : 0)
+  );
+}
+
 function buildTermDivision(normalizedStructure: any, preferredTermCount?: number) {
   const detected = detectTeachingBlocks(normalizedStructure);
   const flatBlocks = detected.flatBlocks.map((block: any, index: number) => ({ ...block, sequence: index }));
@@ -5926,14 +7102,12 @@ function buildTermDivision(normalizedStructure: any, preferredTermCount?: number
   }, 0);
   const determination = determineTermCount(totalBlocks, preferredTermCount);
   const termCount = determination.termCount;
+  const minimumBlocksPerTerm = termCount > 1 ? Math.max(1, Math.floor(totalBlocks / termCount)) : 1;
+  const maximumBlocksPerTerm = termCount > 1 ? Math.max(1, Math.ceil(totalBlocks / termCount)) : totalBlocks;
   const targetWeight = Math.max(
     1,
     flatBlocks.reduce((sum: number, block: any) => {
-      const marksWeight = block.marks == null ? 0 : Math.max(0, Number(block.marks) || 0);
-      const topicWeight = block.topics?.length || 0;
-      const sessionWeight = toNumberOrZero(block.estimated_sessions);
-      const difficultyWeight = block.difficulty === "high" ? 3 : block.difficulty === "medium" ? 2 : block.difficulty === "low" ? 1 : 0;
-      return sum + Math.max(1, topicWeight + sessionWeight + marksWeight + difficultyWeight);
+      return sum + getPlanningBlockWeight(block);
     }, 0) / termCount
   );
 
@@ -5944,23 +7118,26 @@ function buildTermDivision(normalizedStructure: any, preferredTermCount?: number
   flatBlocks.forEach((block: any, index: number) => {
     const remainingBlocks = flatBlocks.length - index;
     const remainingTerms = termCount - terms.length;
-    const blockWeight = Math.max(
-      1,
-      (block.topics?.length || 0) +
-      toNumberOrZero(block.estimated_sessions) +
-      (block.marks == null ? 0 : Number(block.marks) || 0) +
-      (block.difficulty === "high" ? 3 : block.difficulty === "medium" ? 2 : block.difficulty === "low" ? 1 : 0)
-    );
+    const blockWeight = getPlanningBlockWeight(block);
     const mustReserveBlocksForRemainingTerms =
       terms.length < termCount - 1 &&
       currentBlocks.length > 0 &&
       remainingBlocks === remainingTerms;
+    const currentTermHasMinimumBlockCoverage =
+      currentBlocks.length >= minimumBlocksPerTerm ||
+      remainingBlocks <= remainingTerms + minimumBlocksPerTerm;
     const mustStartNewTerm =
       mustReserveBlocksForRemainingTerms ||
       terms.length < termCount - 1 &&
       currentBlocks.length > 0 &&
-      currentWeight + blockWeight > targetWeight &&
-      remainingBlocks >= remainingTerms;
+      remainingBlocks >= remainingTerms &&
+      (
+        currentBlocks.length >= maximumBlocksPerTerm ||
+        (
+          currentTermHasMinimumBlockCoverage &&
+          currentWeight + blockWeight > targetWeight
+        )
+      );
 
     if (mustStartNewTerm) {
       terms.push(currentBlocks);
@@ -6022,6 +7199,23 @@ function buildTermDivision(normalizedStructure: any, preferredTermCount?: number
       coverage_percentage: totalBlocks ? (termBlocks / totalBlocks) * 100 : 0,
     };
   });
+
+  if (totalSourceMarks > 0 && flatBlocks.length > 0) {
+    const distributedBlocks = normalizedTerms.flatMap((term: any) =>
+      (term.items || []).flatMap((item: any) => item.teaching_blocks || [])
+    );
+    const totalPlanningWeight = distributedBlocks.reduce((sum: number, block: any) => sum + getPlanningBlockWeight(block), 0);
+    let allocatedMarksSoFar = 0;
+    distributedBlocks.forEach((block: any, blockIndex: number) => {
+      const rawAllocatedMarks = blockIndex === distributedBlocks.length - 1
+        ? Number((totalSourceMarks - allocatedMarksSoFar).toFixed(2))
+        : Number(((totalSourceMarks * getPlanningBlockWeight(block)) / Math.max(1, totalPlanningWeight)).toFixed(2));
+      block.source_marks = block.source_marks ?? block.marks ?? null;
+      block.allocated_marks = rawAllocatedMarks;
+      block.marks = rawAllocatedMarks;
+      allocatedMarksSoFar = Number((allocatedMarksSoFar + rawAllocatedMarks).toFixed(2));
+    });
+  }
 
   if (normalizedTerms.length && totalBlocks > 0) {
     const priorCoverage = normalizedTerms
@@ -6542,11 +7736,14 @@ function buildNormalizedTeachingBlocks(
     const normalizationSourceUnits = recoveredFromStage3Fallback
       ? enrichedUnits.map((unit: any, unitIndex: number) => ({
           unit_id: unit?.unit_id || `U${unitIndex + 1}`,
+          source_unit_id: unit?.source_unit_id || unit?.unit_id || "",
           unit_name: unit?.unit_name || unit?.chapters?.[0]?.chapter_name || `Unit ${unitIndex + 1}`,
+          part_or_section: unit?.part_or_section || rawClass?.part_or_section || "",
           marks: unit?.marks ?? null,
           chapters: (unit?.chapters || []).map((chapter: any) => ({
             chapter_name: chapter?.source_chapter_name || chapter?.chapter_name || unit?.unit_name || "",
             source_chapter_name: chapter?.source_chapter_name || chapter?.chapter_name || unit?.unit_name || "",
+            part_or_section: chapter?.part_or_section || unit?.part_or_section || rawClass?.part_or_section || "",
             source_type: chapter?.source_type || "explicit_chapter",
           })),
         }))
@@ -6565,6 +7762,7 @@ function buildNormalizedTeachingBlocks(
       const chapterSources: Array<{
         name: string;
         sourceType: "explicit_chapter" | "chapter_heading" | "unit_fallback";
+        part_or_section?: string;
         topics: string[];
         subtopics: string[];
         key_concepts: string[];
@@ -6572,6 +7770,7 @@ function buildNormalizedTeachingBlocks(
         (approvedUnit?.chapters || []).map((chapter: any) => ({
           name: chapter?.chapter_name || chapter?.source_chapter_name || "",
           sourceType: chapter?.source_type || "explicit_chapter",
+          part_or_section: chapter?.part_or_section || approvedUnit?.part_or_section || rawClass?.part_or_section || "",
           topics: uniqueStrings(chapter?.topics || []),
           subtopics: uniqueStrings(chapter?.subtopics || []),
           key_concepts: uniqueStrings(chapter?.key_concepts || []),
@@ -6633,6 +7832,12 @@ function buildNormalizedTeachingBlocks(
           chapter_name: stripInternalParserLabel(chapterName),
           source_chapter_name: stripInternalParserLabel(chapterName),
           source_heading: stripInternalParserLabel(chapterName),
+          part_or_section: normalizedChapter?.part_or_section || chapterSource?.part_or_section || approvedUnit?.part_or_section || rawClass?.part_or_section || "",
+          exam_section_name: normalizedChapter?.exam_section_name || "",
+          book_name: normalizedChapter?.book_name || "",
+          category_name: normalizedChapter?.category_name || "",
+          structure_role: normalizedChapter?.structure_role || (isUnitFallback ? "fallback_chapter" : "chapter"),
+          content_path: normalizedChapter?.content_path || "",
           source_type: chapterSource.sourceType,
           is_normalized: isUnitFallback,
           confidence: normalizedChapter?.confidence ?? (isUnitFallback ? 0.75 : 0.95),
@@ -6650,7 +7855,9 @@ function buildNormalizedTeachingBlocks(
           approvedUnit?.unit_id || enrichedUnit?.unit_id || `U${unitIndex + 1}`,
           unitIndex
         ),
+        source_unit_id: approvedUnit?.source_unit_id || approvedUnit?.unit_id || enrichedUnit?.source_unit_id || enrichedUnit?.unit_id || "",
         unit_name: stripInternalParserLabel(approvedUnit?.unit_name || ""),
+        part_or_section: approvedUnit?.part_or_section || enrichedUnit?.part_or_section || rawClass?.part_or_section || "",
         marks: approvedUnit?.marks ?? enrichedUnit?.marks ?? null,
         explicit_chapters: (approvedUnit?.chapters || []).map((chapter: any) => stripInternalParserLabel(chapter?.chapter_name || chapter?.source_chapter_name || "")),
         headings: structureUnit?.headings || [],
@@ -6738,7 +7945,9 @@ async function normalizeClassTheory(
   debugDir: string,
   classIndex: number,
   approvedClass: any,
-  sourceText: string
+  sourceText: string,
+  englishMode = false,
+  options?: Partial<OllamaRequestOptions>
 ) {
   const theoryRawClass = approvedClass;
   const theoryStructureClass = approvedClass;
@@ -6781,11 +7990,14 @@ async function normalizeClassTheory(
     },
   };
 
-  const prompt = renderPrompt("node-enrichment.md", {
+  const prompt = renderPromptWithEnglishIntelligence("node-enrichment.md", {
     STAGE_NAME: stageName,
     RAW_CLASS_JSON: JSON.stringify(theoryRawClass, null, 2),
     STRUCTURE_CLASS_JSON: JSON.stringify(theoryStructureClass, null, 2),
     SOURCE_TEXT: relevantSourceText,
+  }, {
+    englishMode,
+    stageLabel: stageName,
   });
   if (prompt.length > 20000) {
     console.warn(`[Pipeline][${requestId}] ${stageName} prompt length ${prompt.length} exceeds target. Continuing with theory-only reduced payload.`);
@@ -6793,7 +8005,7 @@ async function normalizeClassTheory(
 
   let firstResult: any = null;
   try {
-    const result = await runStage(requestId, debugDir, stageName, prompt, schema);
+    const result = await runStage(requestId, debugDir, stageName, prompt, schema, options);
     const normalizedResult = sanitizeStage3EnrichmentToSource({
       ...result,
       units: (result?.units || []).filter((unit: any) => String(unit?.unit_id || "").trim()),
@@ -6846,13 +8058,16 @@ async function normalizeClassTheory(
     }
 
     const fallbackSourceText = extractRelevantClassSourceText(sourceText, theoryRawClass, 5000);
-    const fallbackPrompt = renderPrompt("node-enrichment.md", {
+    const fallbackPrompt = renderPromptWithEnglishIntelligence("node-enrichment.md", {
       STAGE_NAME: `${stageName} - Retry`,
       RAW_CLASS_JSON: JSON.stringify(theoryRawClass, null, 2),
       STRUCTURE_CLASS_JSON: JSON.stringify(theoryStructureClass, null, 2),
       SOURCE_TEXT: fallbackSourceText,
+    }, {
+      englishMode,
+      stageLabel: `${stageName} - Retry`,
     });
-    const retryResult = await runStage(requestId, debugDir, `${stageName} - Retry`, fallbackPrompt, schema);
+    const retryResult = await runStage(requestId, debugDir, `${stageName} - Retry`, fallbackPrompt, schema, options);
     const normalizedRetryResult = sanitizeStage3EnrichmentToSource({
       ...retryResult,
       units: (retryResult?.units || []).filter((unit: any) => String(unit?.unit_id || "").trim()),
@@ -6909,7 +8124,8 @@ async function classifyUnitHeadings(
   classIndex: number,
   unitIndex: number,
   className: string,
-  unit: any
+  unit: any,
+  englishMode = false
 ) {
   const stageName = `${STAGE_ORDER[1]} - ${className || `Item ${classIndex + 1}`} - Unit ${unitIndex + 1}`;
   const schema = {
@@ -6923,10 +8139,13 @@ async function classifyUnitHeadings(
     }],
   };
 
-  const prompt = renderPrompt("heading-classification-unit.md", {
+  const prompt = renderPromptWithEnglishIntelligence("heading-classification-unit.md", {
     STAGE_NAME: stageName,
     CLASS_NAME: className,
     UNIT_JSON: JSON.stringify(unit, null, 2),
+  }, {
+    englishMode,
+    stageLabel: stageName,
   });
 
   return runStage(requestId, debugDir, stageName, prompt, schema);
@@ -6936,7 +8155,8 @@ async function classifyHeadingsForClass(
   requestId: string,
   debugDir: string,
   classIndex: number,
-  rawClass: any
+  rawClass: any,
+  englishMode = false
 ) {
   const classLabel = [rawClass?.class_name, rawClass?.subject].filter(Boolean).join(" - ") || `Item ${classIndex + 1}`;
   const stageName = `${STAGE_ORDER[1]} - ${classLabel}`;
@@ -6953,9 +8173,12 @@ async function classifyHeadingsForClass(
     }],
   };
 
-  const prompt = renderPrompt("heading-classification-class.md", {
+  const prompt = renderPromptWithEnglishIntelligence("heading-classification-class.md", {
     STAGE_NAME: stageName,
     RAW_CLASS_JSON: JSON.stringify(rawClass, null, 2),
+  }, {
+    englishMode,
+    stageLabel: stageName,
   });
 
   try {
@@ -6975,7 +8198,8 @@ async function classifyHeadingsForClass(
         classIndex,
         unitIndex,
         rawClass?.class_name || "",
-        units[unitIndex]
+        units[unitIndex],
+        englishMode
       );
       classifiedUnits.push(classifiedUnit);
     }
@@ -7156,7 +8380,7 @@ function normalizeSessionPptGenerationOptions(input: any): SessionPptGenerationO
 
 function getOllamaConfig(kind: OllamaGenerationKind): { baseUrl: string; model: string } {
   refreshRuntimeEnv();
-  const defaultBaseUrl = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11434";
+  const defaultBaseUrl = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11435";
   const defaultModel = process.env.OLLAMA_MODEL || "qwen3.5:35b";
   const sessionContentBaseUrl = process.env.OLLAMA_SESSION_CONTENT_BASE_URL || defaultBaseUrl;
   const sessionContentModel = process.env.OLLAMA_SESSION_CONTENT_MODEL || defaultModel;
@@ -7264,6 +8488,13 @@ function getStageRequestOptions(stageName: string): OllamaRequestOptions {
       retries: 2,
     };
   }
+  if (stageName === "generate-content-session-assessment") {
+    return {
+      numPredict: Math.max(12288, OLLAMA_NUM_PREDICT),
+      timeoutMs: OLLAMA_ASSESSMENT_TIMEOUT_MS,
+      retries: 4,
+    };
+  }
   return {
     numPredict: OLLAMA_NUM_PREDICT,
     timeoutMs: OLLAMA_TIMEOUT_MS,
@@ -7276,11 +8507,9 @@ function isRetryableOllamaError(error: any) {
   const message = String(error?.message || "");
   if (
     code === "UND_ERR_HEADERS_TIMEOUT" ||
-    code === "ABORT_ERR" ||
-    message.includes("Headers Timeout Error") ||
-    message.includes("Request timed out")
+    message.includes("Headers Timeout Error")
   ) {
-    return false;
+    return true;
   }
 
   return (
@@ -7288,8 +8517,11 @@ function isRetryableOllamaError(error: any) {
     message.includes("503") ||
     message.includes("504") ||
     message.includes("429") ||
+    message.includes("fetch failed") ||
+    message.includes("Request timed out") ||
     code === "ECONNRESET" ||
     code === "ETIMEDOUT" ||
+    code === "ABORT_ERR" ||
     code === "UND_ERR_CONNECT_TIMEOUT"
   );
 }
@@ -7437,12 +8669,14 @@ function mergeStage1FactExtractions(extractions: any[]) {
   const unitKey = (entry: any) => [
     buildCanonicalClassKey(entry?.class_name || "", documentContext),
     canonicalUnitId(entry?.unit_id || entry?.unit_name || ""),
+    normalizeSourceText(entry?.part_or_section || ""),
     canonicalUnitNameKey(entry?.unit_name || ""),
   ].join("::");
 
   const chapterKey = (entry: any) => [
     buildCanonicalClassKey(entry?.class_name || "", documentContext),
     canonicalUnitId(entry?.unit_id || entry?.unit_name || ""),
+    normalizeSourceText(entry?.part_or_section || ""),
     canonicalUnitNameKey(entry?.unit_name || ""),
     canonicalChapterKey(entry?.chapter_name || ""),
   ].join("::");
@@ -7461,8 +8695,11 @@ function mergeStage1FactExtractions(extractions: any[]) {
         mergedClasses.set(key, {
           class_name: resolveClassName(rawClass, documentContext),
           subject: canonicalizeSubjectName(rawClass?.subject || ""),
-          part_or_section: "",
+          part_or_section: String(rawClass?.part_or_section || "").trim(),
         });
+      } else if (rawClass?.part_or_section) {
+        const existingClass = mergedClasses.get(key) as any;
+        existingClass.part_or_section = existingClass.part_or_section || String(rawClass?.part_or_section || "").trim();
       }
     }
 
@@ -7472,7 +8709,7 @@ function mergeStage1FactExtractions(extractions: any[]) {
         mergedUnits.set(currentUnitKey, {
           class_name: resolveClassName(rawUnit, documentContext),
           subject: canonicalizeSubjectName(rawUnit?.subject || ""),
-          part_or_section: "",
+          part_or_section: String(rawUnit?.part_or_section || "").trim(),
           unit_id: rawUnit?.unit_id || "",
           unit_name: String(rawUnit?.unit_name || "").trim(),
           marks: rawUnit?.marks ?? null,
@@ -7484,6 +8721,7 @@ function mergeStage1FactExtractions(extractions: any[]) {
       }
 
       const existingUnit = mergedUnits.get(currentUnitKey) as any;
+      existingUnit.part_or_section = existingUnit.part_or_section || String(rawUnit?.part_or_section || "").trim();
       existingUnit.unit_id = existingUnit.unit_id || rawUnit?.unit_id || "";
       existingUnit.unit_name = existingUnit.unit_name || String(rawUnit?.unit_name || "").trim();
       existingUnit.marks = existingUnit.marks ?? rawUnit?.marks ?? null;
@@ -7498,7 +8736,7 @@ function mergeStage1FactExtractions(extractions: any[]) {
         mergedChapters.set(currentChapterKey, {
           class_name: resolveClassName(rawChapter, documentContext),
           subject: canonicalizeSubjectName(rawChapter?.subject || ""),
-          part_or_section: "",
+          part_or_section: String(rawChapter?.part_or_section || "").trim(),
           unit_id: rawChapter?.unit_id || "",
           unit_name: String(rawChapter?.unit_name || "").trim(),
           chapter_name: cleanChapterName(rawChapter?.chapter_name || "", rawChapter?.unit_name || ""),
@@ -7511,6 +8749,7 @@ function mergeStage1FactExtractions(extractions: any[]) {
       }
 
       const existingChapter = mergedChapters.get(currentChapterKey) as any;
+      existingChapter.part_or_section = existingChapter.part_or_section || String(rawChapter?.part_or_section || "").trim();
       existingChapter.unit_id = existingChapter.unit_id || rawChapter?.unit_id || "";
       existingChapter.unit_name = existingChapter.unit_name || String(rawChapter?.unit_name || "").trim();
       existingChapter.chapter_name = existingChapter.chapter_name || cleanChapterName(rawChapter?.chapter_name || "", rawChapter?.unit_name || "");
@@ -7534,6 +8773,8 @@ function mergeStage1FactExtractions(extractions: any[]) {
 }
 
 function expandStage1FactsToRawExtraction(stage1Facts: any) {
+  const detectedSubject = canonicalizeSubjectName(stage1Facts?.document_metadata?.subject || stage1Facts?.classes?.[0]?.subject || "");
+  const englishMode = isEnglishSubject(detectedSubject);
   const documentContext = buildDocumentClassContext([
     ...(stage1Facts?.classes || []),
     ...(stage1Facts?.units || []),
@@ -7551,7 +8792,7 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
     ].join("::"), {
       class_name: resolvedClassName,
       subject: canonicalizeSubjectName(rawClass?.subject || ""),
-      part_or_section: "",
+      part_or_section: String(rawClass?.part_or_section || "").trim(),
     });
   }
   for (const entry of [...(stage1Facts?.units || []), ...(stage1Facts?.chapters || [])]) {
@@ -7568,7 +8809,7 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
       classMap.set(key, {
         class_name: resolvedClassName,
         subject: canonicalizeSubjectName(entry?.subject || ""),
-        part_or_section: "",
+        part_or_section: String(entry?.part_or_section || "").trim(),
       });
     }
   }
@@ -7608,16 +8849,27 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
             chapter_id: chapter?.chapter_id || `C${chapterIndex + 1}`,
             chapter_name: cleanChapterName(chapter?.chapter_name || "", chapter?.unit_name || unit?.unit_name || ""),
             source_chapter_name: cleanChapterName(chapter?.chapter_name || "", chapter?.unit_name || unit?.unit_name || ""),
+            part_or_section: String(chapter?.part_or_section || unit?.part_or_section || "").trim(),
             topics: uniqueStrings(chapter?.topics || []),
             subtopics: uniqueStrings(chapter?.subtopics || []),
             key_concepts: uniqueStrings(chapter?.key_concepts || []),
           }))
           .filter((chapter: any) => Boolean(chapter?.chapter_name));
-        const explicitChapters = matchingChapters.map((chapter: any) => chapter.chapter_name);
+        const normalizedChapterDetails = englishMode
+          ? normalizeEnglishChapterDetailsForUnit({
+              unitName: String(unit?.unit_name || "").trim(),
+              partOrSection: String(unit?.part_or_section || "").trim(),
+              unitTopics: uniqueStrings(unit?.topics || []),
+              unitSubtopics: uniqueStrings(unit?.subtopics || []),
+              chapterDetails: matchingChapters,
+            })
+          : matchingChapters;
+        const explicitChapters = normalizedChapterDetails.map((chapter: any) => chapter.chapter_name);
 
         return {
           unit_id: unit?.unit_id || "",
           unit_name: String(unit?.unit_name || "").trim(),
+          part_or_section: String(unit?.part_or_section || "").trim(),
           marks: unit?.marks ?? null,
           explicit_chapters: uniqueStrings(explicitChapters),
           headings: [],
@@ -7625,16 +8877,17 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
           topics: uniqueStrings(unit?.topics || []),
           subtopics: uniqueStrings(unit?.subtopics || []),
           key_concepts: uniqueStrings(unit?.key_concepts || []),
-          chapter_details: matchingChapters,
+          chapter_details: normalizedChapterDetails,
         };
       });
+    const normalizedClassUnits = normalizeUnitIdsForClass(classUnits, { forceSequential: englishMode });
 
     return {
       class_name: rawClass?.class_name || "",
       subject: rawClass?.subject || "",
       part_or_section: rawClass?.part_or_section || "",
       raw_nodes: [],
-      units: classUnits,
+      units: normalizedClassUnits,
     };
   });
 
@@ -7682,13 +8935,15 @@ async function runStage1ChunkWithAdaptiveRetry(
   schema: any,
   chunkText: string,
   chunkLabel: string,
-  depth: number = 0
+  depth: number = 0,
+  options?: Partial<OllamaRequestOptions>
 ): Promise<any> {
   try {
     const stageOptions = {
       numPredict: OLLAMA_STAGE1_NUM_PREDICT,
       timeoutMs: OLLAMA_TIMEOUT_MS,
       retries: 2,
+      ...(options || {}),
     };
     return await runStage(
       requestId,
@@ -7723,6 +8978,7 @@ async function runStage1ChunkWithAdaptiveRetry(
             numPredict: Math.min(2048, OLLAMA_STAGE1_NUM_PREDICT),
             timeoutMs: OLLAMA_TIMEOUT_MS,
             retries: 2,
+            ...(options || {}),
           }
         );
       }
@@ -7743,7 +8999,8 @@ async function runStage1ChunkWithAdaptiveRetry(
               schema,
               smallerChunks[index],
               `${chunkLabel} retry ${depth + 1}.${index + 1}/${smallerChunks.length}`,
-              depth + 1
+              depth + 1,
+              options
             )
           );
         }
@@ -7768,6 +9025,7 @@ async function runStage1ChunkWithAdaptiveRetry(
           numPredict: 4096,
           timeoutMs: OLLAMA_TIMEOUT_MS,
           retries: 1,
+          ...(options || {}),
         }
       );
     }
@@ -7784,6 +9042,7 @@ async function runStage1ChunkWithAdaptiveRetry(
           numPredict: 4096,
           timeoutMs: OLLAMA_TIMEOUT_MS,
           retries: 1,
+          ...(options || {}),
         }
       );
     }
@@ -7800,6 +9059,7 @@ async function runStage1ChunkWithAdaptiveRetry(
           numPredict: 4096,
           timeoutMs: OLLAMA_TIMEOUT_MS,
           retries: 1,
+          ...(options || {}),
         }
       );
     }
@@ -7815,7 +9075,8 @@ async function runStage1ChunkWithAdaptiveRetry(
         schema,
         smallerChunks[index],
         `${chunkLabel}.${index + 1}`,
-        depth + 1
+        depth + 1,
+        options
       ));
     }
     return mergeStage1FactExtractions(results);
@@ -7828,20 +9089,25 @@ async function runStage6CompetencyExtractionWithFallback(
   extractionRules: string,
   structurePayload: any,
   sourceText: string,
-  competencySchema: any
+  competencySchema: any,
+  englishMode = false,
+  options?: Partial<OllamaRequestOptions>
 ) {
   const buildStage6Prompt = (stageName: string, payload: any, stageSourceText: string) =>
-    renderPrompt("competency-extraction.md", {
+    renderPromptWithEnglishIntelligence("competency-extraction.md", {
       EXTRACTION_RULES: extractionRules,
       STAGE_NAME: stageName,
       STAGE_PAYLOAD_JSON: serializeJson(payload),
       SOURCE_TEXT: stageSourceText,
+    }, {
+      englishMode,
+      stageLabel: stageName,
     });
 
   const fullPrompt = buildStage6Prompt(STAGE_ORDER[5], structurePayload, sourceText);
 
   try {
-    return await runStage(requestId, debugDir, STAGE_ORDER[5], fullPrompt, competencySchema);
+    return await runStage(requestId, debugDir, STAGE_ORDER[5], fullPrompt, competencySchema, options);
   } catch (error: any) {
     const isTruncated =
       String(error?.code || "") === "OLLAMA_OUTPUT_TRUNCATED" ||
@@ -7876,6 +9142,7 @@ async function runStage6CompetencyExtractionWithFallback(
           numPredict: Math.min(4096, OLLAMA_NUM_PREDICT),
           timeoutMs: OLLAMA_TIMEOUT_MS,
           retries: 1,
+          ...(options || {}),
         }
       );
       competencyGroups.push(...(classResult?.competency_groups || []));
@@ -8021,7 +9288,8 @@ async function generateWithOllama(
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(requestBody),
           signal: controller.signal,
-        });
+          dispatcher: OLLAMA_FETCH_DISPATCHER,
+        } as any);
       } catch (error: any) {
         if (controller.signal.aborted) {
           throw new OllamaRequestError(
@@ -8150,6 +9418,7 @@ app.get("/api/curriculums", async (_req, res) => {
   try {
     await connectToMongo();
     const curriculums = await CurriculumModel.find()
+      .select("_id fileName subject gradeLevel createdAt updatedAt")
       .sort({ updatedAt: -1 })
       .lean();
     res.json({ success: true, curriculums });
@@ -8230,11 +9499,12 @@ app.patch("/api/curriculums/:id", async (req, res) => {
 
 app.get("/api/planning-workspaces/:id", async (req, res) => {
   try {
+    const view = req.query.view === "full" ? "full" : "planning";
     const workspace = await loadPlanningWorkspaceById(req.params.id);
     if (!workspace) {
       return res.status(404).json({ error: "Planning workspace not found." });
     }
-    res.json({ success: true, workspace: await hydrateWorkspacePptMaterials(workspace) });
+    res.json({ success: true, workspace: await serializeWorkspaceForView(workspace, view) });
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Fetch failed:", error);
     res.status(500).json({ error: error?.message || "Failed to fetch planning workspace." });
@@ -8243,6 +9513,7 @@ app.get("/api/planning-workspaces/:id", async (req, res) => {
 
 app.get("/api/planning-workspaces/by-curriculum/:curriculumId", async (req, res) => {
   try {
+    const view = req.query.view === "full" ? "full" : "planning";
     await connectToMongo();
     const workspace = await PlanningWorkspaceModel.findOne({ curriculumId: req.params.curriculumId })
       .sort({ updatedAt: -1 })
@@ -8250,10 +9521,54 @@ app.get("/api/planning-workspaces/by-curriculum/:curriculumId", async (req, res)
     if (!workspace) {
       return res.status(404).json({ error: "Planning workspace not found for this curriculum." });
     }
-    res.json({ success: true, workspace: await hydrateWorkspacePptMaterials(workspace) });
+    res.json({ success: true, workspace: await serializeWorkspaceForView(workspace, view) });
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Fetch by curriculum failed:", error);
     res.status(500).json({ error: error?.message || "Failed to fetch planning workspace." });
+  }
+});
+
+app.get("/api/planning-workspaces/:id/generated-sessions/:sessionKey", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    const rawSections =
+      typeof req.query.sections === "string"
+        ? req.query.sections.split(",")
+        : Array.isArray(req.query.sections)
+          ? req.query.sections.flatMap((item) => String(item || "").split(","))
+          : undefined;
+    const selectedSections = normalizeSessionSections(rawSections);
+    const generatedSessions =
+      workspace.generationScope &&
+      typeof workspace.generationScope === "object" &&
+      workspace.generationScope.generatedSessions &&
+      typeof workspace.generationScope.generatedSessions === "object"
+        ? workspace.generationScope.generatedSessions
+        : {};
+    const sessionPlan = generatedSessions[String(req.params.sessionKey)];
+
+    if (!sessionPlan) {
+      return res.status(404).json({ error: "Saved generated session not found." });
+    }
+
+    const serializedSession = await serializeGeneratedSessionForSections(sessionPlan, selectedSections, {
+      subject: String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
+      gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || ""),
+    });
+
+    res.json({
+      success: true,
+      sessionKey: String(req.params.sessionKey),
+      selectedSections,
+      sessionPlan: serializedSession,
+    });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Generated session fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to fetch generated session content." });
   }
 });
 
@@ -8818,7 +10133,7 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     workspace.status = "in_progress";
     await workspace.save();
 
-    const responseWorkspace = await hydrateWorkspacePptMaterials(workspace);
+    const responseWorkspace = await serializeWorkspaceForView(workspace, "planning");
 
     res.json({
       success: true,
@@ -8877,6 +10192,66 @@ app.post("/api/curriculums", async (req, res) => {
   }
 });
 
+app.post("/api/curriculums/from-analysis", async (req, res) => {
+  const { extractedCurriculum, fileName = "", sourceText = "", selectedClasses = [] } = req.body || {};
+  if (!extractedCurriculum) {
+    return res.status(400).json({ error: "extractedCurriculum is required." });
+  }
+
+  try {
+    const selection = buildCurriculumClassSelection(extractedCurriculum, selectedClasses);
+    if (Array.isArray(selectedClasses) && selectedClasses.length > 0 && selection.selectedClassNames.length === 0) {
+      return res.status(400).json({ error: "None of the selected classes were found in the analyzed curriculum." });
+    }
+
+    const { curriculum: filteredCurriculum, selectedClassNames } = filterCurriculumToSelectedClasses(
+      extractedCurriculum,
+      selectedClasses
+    );
+    const { curriculum, planningWorkspace } = await persistCurriculumRecord({
+      fileName: String(fileName || ""),
+      sourceText: String(sourceText || ""),
+      extractedCurriculum: filteredCurriculum,
+      extractionMetadata: {
+        persistedFromAnalyzedPayload: true,
+        selectedClassNames,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      curriculumId: String(curriculum._id),
+      curriculum,
+      workspaceId: String(planningWorkspace._id),
+      workspace: planningWorkspace,
+      selectedClassNames,
+    });
+  } catch (error: any) {
+    console.error("[Curriculums] Create from analysis failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to save analyzed curriculum." });
+  }
+});
+
+app.post("/api/curriculum-class-options", async (req, res) => {
+  const { text, fileName = "" } = req.body || {};
+  if (!text || String(text).trim().length === 0) {
+    return res.status(400).json({ error: "No curriculum text provided." });
+  }
+
+  try {
+    const classSummaries = buildDetectedClassSummariesFromSource(String(text));
+    res.json({
+      success: true,
+      fileName: String(fileName || ""),
+      detectedClasses: classSummaries,
+      requiresClassSelection: classSummaries.length > 1,
+    });
+  } catch (error: any) {
+    console.error("[Curriculum Class Options] Detection failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to detect class options." });
+  }
+});
+
 app.delete("/api/curriculums/:id", async (req, res) => {
   try {
     await connectToMongo();
@@ -8893,7 +10268,13 @@ app.delete("/api/curriculums/:id", async (req, res) => {
 });
 
 app.post("/api/analyze-curriculum", async (req, res) => {
-  const { text, fileName = "", schemaVersion: requestedSchemaVersion } = req.body;
+  const {
+    text,
+    fileName = "",
+    schemaVersion: requestedSchemaVersion,
+    selectedClasses = [],
+    persist = false,
+  } = req.body;
   if (!text || text.trim().length === 0) {
     return res.status(400).json({ error: "No curriculum text provided." });
   }
@@ -8902,10 +10283,22 @@ app.post("/api/analyze-curriculum", async (req, res) => {
     ? requestIdHeader
     : makeRequestId("analyze-curriculum");
   const debugDir = await ensureDebugDir(requestId);
-  const sourceText = String(text);
+  const requestedSelectedClasses = Array.isArray(selectedClasses)
+    ? selectedClasses.map((item) => String(item || "").trim()).filter(Boolean)
+    : [];
+  const sourceFilter = filterSourceTextToSelectedClasses(String(text), requestedSelectedClasses);
+  if (requestedSelectedClasses.length > 0 && sourceFilter.selectedClassNames.length === 0) {
+    return res.status(400).json({ error: "Selected classes were not found in the uploaded curriculum text." });
+  }
+  const sourceText = String(sourceFilter.sourceText || text);
   const schemaVersion = normalizeSchemaVersion(requestedSchemaVersion);
   const detectedProfile = detectCurriculumProfile(sourceText, fileName);
   const profileConfig = getCurriculumProfileConfig(detectedProfile.profile);
+  const earlyEnglishMode = shouldUseEnglishIntelligence({ sourceText, fileName });
+  const earlyCurriculumExtractionOllamaOverrides = getCurriculumExtractionOllamaOverrides({
+    sourceText,
+    fileName,
+  });
   const isPdfUpload = String(fileName).toLowerCase().endsWith(".pdf");
   const looksLikeMarkdown =
     /^\s*#\s+Page\s+\d+/m.test(sourceText) ||
@@ -8914,8 +10307,11 @@ app.post("/api/analyze-curriculum", async (req, res) => {
   console.log(`[Request][${requestId}] /api/analyze-curriculum started`);
   console.log(`[Request][${requestId}] File name: ${fileName || "(none)"}`);
   console.log(`[Request][${requestId}] Source text length: ${sourceText.length}`);
+  console.log(`[Request][${requestId}] Selected classes: ${requestedSelectedClasses.join(", ") || "(all detected classes)"}`);
+  console.log(`[Request][${requestId}] Source text filtered to selected classes: ${sourceFilter.filtered ? "yes" : "no"}`);
   console.log(`[Request][${requestId}] Schema version: ${schemaVersion}`);
   console.log(`[Request][${requestId}] Curriculum profile: ${detectedProfile.profile} (${detectedProfile.confidence})`);
+  console.log(`[Request][${requestId}] Indic curriculum extraction model active: ${earlyCurriculumExtractionOllamaOverrides.model ? "yes" : "no"}`);
   console.log(`[Request][${requestId}] PDF upload detected: ${isPdfUpload ? "yes" : "no"}`);
   console.log(`[Request][${requestId}] Source text looks like markdown: ${looksLikeMarkdown ? "yes" : "no"}`);
   if (isPdfUpload && looksLikeMarkdown) {
@@ -8923,6 +10319,7 @@ app.post("/api/analyze-curriculum", async (req, res) => {
   }
   console.log(`[Request][${requestId}] Source text preview (first 2000 chars):\n${sourceText.slice(0, 2000)}`);
   await writeDebugFile(debugDir, "request-body.json", req.body);
+  await writeDebugFile(debugDir, "class-selection.json", sourceFilter);
   await writeDebugFile(debugDir, "source-text.txt", sourceText);
   await writeDebugFile(debugDir, "detected-profile.json", {
     schema_version: schemaVersion,
@@ -8991,18 +10388,21 @@ Rules:
       `- Expected structure type: ${profileConfig.expectedStructureType}`,
       ...profileConfig.extraRules,
     ].join("\n");
-    const buildStage1Prompt = (sourceText: string, chunkLabel?: string) => renderPrompt("curriculum-extraction.md", {
+    const buildStage1Prompt = (sourceText: string, chunkLabel?: string) => renderPromptWithEnglishIntelligence("curriculum-extraction.md", {
       STAGE_NAME: STAGE_ORDER[0],
       EXTRACTION_RULES: `${extractionRules}\n${profileSpecificRules}`,
       CHUNK_RULE: chunkLabel ? `- This is partial curriculum input for ${chunkLabel}; extract only what is present in this chunk` : "",
       SOURCE_TEXT: sourceText,
+    }, {
+      englishMode: earlyEnglishMode,
+      stageLabel: STAGE_ORDER[0],
     });
 
-    const initialStage1ChunkCount = text.length > 15000 ? getAdaptiveStage1ChunkCount(text.length) : 1;
+    const initialStage1ChunkCount = sourceText.length > 15000 ? getAdaptiveStage1ChunkCount(sourceText.length) : 1;
     let stage1Facts: any;
     if (initialStage1ChunkCount === 1) {
       try {
-        const stage1Prompt = buildStage1Prompt(text);
+      const stage1Prompt = buildStage1Prompt(sourceText);
         stage1Facts = await runStage(
           requestId,
           debugDir,
@@ -9013,15 +10413,16 @@ Rules:
             numPredict: OLLAMA_STAGE1_NUM_PREDICT,
             timeoutMs: OLLAMA_TIMEOUT_MS,
             retries: 1,
+            ...earlyCurriculumExtractionOllamaOverrides,
           }
         );
       } catch (error: any) {
-        if (!shouldUseChunkedStage1Fallback(error, text)) {
+        if (!shouldUseChunkedStage1Fallback(error, sourceText)) {
           throw error;
         }
 
         console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} switching to chunked fallback after timeout/header failure.`);
-        const chunks = buildAdaptiveStage1Chunks(text, 2);
+        const chunks = buildAdaptiveStage1Chunks(sourceText, 2);
         console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} chunk count: ${chunks.length}`);
         await writeDebugFile(debugDir, "stage-1-chunks.json", {
           chunkCount: chunks.length,
@@ -9038,7 +10439,9 @@ Rules:
             buildStage1Prompt,
             stage1FactsSchema,
             chunks[chunkIndex],
-            `chunk ${chunkIndex + 1} of ${chunks.length}`
+            `chunk ${chunkIndex + 1} of ${chunks.length}`,
+            0,
+            earlyCurriculumExtractionOllamaOverrides
           );
           chunkExtractions.push(chunkExtraction);
         }
@@ -9047,7 +10450,7 @@ Rules:
         await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.chunked-merged.parsed.json`, stage1Facts);
       }
     } else {
-      const chunks = buildAdaptiveStage1Chunks(text, initialStage1ChunkCount);
+      const chunks = buildAdaptiveStage1Chunks(sourceText, initialStage1ChunkCount);
       console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} chunk count: ${chunks.length}`);
       await writeDebugFile(debugDir, "stage-1-chunks.json", {
         chunkCount: chunks.length,
@@ -9064,7 +10467,9 @@ Rules:
           buildStage1Prompt,
           stage1FactsSchema,
           chunks[chunkIndex],
-          `chunk ${chunkIndex + 1} of ${chunks.length}`
+          `chunk ${chunkIndex + 1} of ${chunks.length}`,
+          0,
+          earlyCurriculumExtractionOllamaOverrides
         );
         chunkExtractions.push(chunkExtraction);
       }
@@ -9077,13 +10482,23 @@ Rules:
     const mergedStage1ChapterCount = (stage1Facts?.chapters || []).length;
     const mergedStage1ClassCount = (stage1Facts?.classes || []).length;
     const detectedSubject = canonicalizeSubjectName(stage1Facts?.document_metadata?.subject || stage1Facts?.classes?.[0]?.subject || "");
+    const englishCurriculumMode = shouldUseEnglishIntelligence({
+      subject: detectedSubject,
+      sourceText,
+      fileName,
+    });
+    const curriculumExtractionOllamaOverrides = getCurriculumExtractionOllamaOverrides({
+      subject: detectedSubject,
+      sourceText,
+      fileName,
+    });
     const initialChunkCount = initialStage1ChunkCount;
     if (mergedStage1UnitCount === 0 && mergedStage1ChapterCount === 0) {
       console.warn(
-        `[Pipeline][${requestId}] Stage 1 merge returned empty extraction | subject="${detectedSubject}" | class="${stage1Facts?.document_metadata?.class || ""}" | sourceLength=${text.length} | chunkCount=${initialChunkCount}`
+        `[Pipeline][${requestId}] Stage 1 merge returned empty extraction | subject="${detectedSubject}" | class="${stage1Facts?.document_metadata?.class || ""}" | sourceLength=${sourceText.length} | chunkCount=${initialChunkCount}`
       );
       if (isLanguageSubject(detectedSubject)) {
-        const languageFallback = buildLanguageFallbackStage1Facts(text, stage1Facts);
+        const languageFallback = buildLanguageFallbackStage1Facts(sourceText, stage1Facts);
         if (languageFallback.fallbackApplied) {
           console.warn(
             `[Pipeline][${requestId}] Language fallback applied | subject="${detectedSubject}" | recoveredUnits=${languageFallback.fallbackUnitsCount}`
@@ -9096,12 +10511,12 @@ Rules:
           };
         } else {
           throw new Error(
-            `Stage 1 extraction returned no units or chapters, and language fallback could not recover structure. Subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${text.length} chunkCount=${initialChunkCount}.`
+            `Stage 1 extraction returned no units or chapters, and language fallback could not recover structure. Subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${sourceText.length} chunkCount=${initialChunkCount}.`
           );
         }
       } else {
         throw new Error(
-          `Stage 1 extraction returned no units or chapters. Empty LLM extraction for subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${text.length} chunkCount=${initialChunkCount}.`
+          `Stage 1 extraction returned no units or chapters. Empty LLM extraction for subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${sourceText.length} chunkCount=${initialChunkCount}.`
         );
       }
     }
@@ -9139,7 +10554,9 @@ Rules:
         debugDir,
         classIndex,
         hierarchyClasses[classIndex] || {},
-        text
+        sourceText,
+        englishCurriculumMode,
+        curriculumExtractionOllamaOverrides
       );
       const rawClass = (hierarchyClasses[classIndex] || {}) as any;
       const classKey = buildCanonicalClassKey(rawClass?.class_name || "");
@@ -9195,7 +10612,7 @@ Rules:
     const hierarchyComparison = buildHierarchyComparisonReport(faithfulStructure, normalizedStructure);
     await writeDebugFile(debugDir, "hierarchy-comparison.parsed.json", hierarchyComparison);
     console.log(`[Pipeline][${requestId}] Faithful/planning hierarchy comparison: ${JSON.stringify(hierarchyComparison.totals)}`);
-    const validationReport = await validateNormalizedStructure(requestId, debugDir, text, normalizedStructure, rawExtraction);
+    const validationReport = await validateNormalizedStructure(requestId, debugDir, sourceText, normalizedStructure, rawExtraction);
     const profileWarnings = [...faithfulWarnings];
     if (detectedProfile.profile === "cbse_unit_topic") {
       const suspiciousFallbacks = (normalizedStructure.classes || []).flatMap((cls: any) =>
@@ -9248,7 +10665,7 @@ Rules:
     console.log(`[Pipeline][${requestId}] Normalized chapter count: ${stage1ChapterCount}`);
     if (stage1UnitCount === 0 || stage1ChapterCount === 0) {
       throw new Error(
-        `Normalized structure is insufficient. Units: ${stage1UnitCount}, Chapters: ${stage1ChapterCount}, Subject: "${detectedSubject}", Class: "${stage1Facts?.document_metadata?.class || ""}", SourceLength: ${text.length}, ChunkCount: ${initialChunkCount}.`
+          `Normalized structure is insufficient. Units: ${stage1UnitCount}, Chapters: ${stage1ChapterCount}, Subject: "${detectedSubject}", Class: "${stage1Facts?.document_metadata?.class || ""}", SourceLength: ${sourceText.length}, ChunkCount: ${initialChunkCount}.`
       );
     }
 
@@ -9270,8 +10687,10 @@ Rules:
       debugDir,
       extractionRules,
       structurePayload,
-      text,
-      competencySchema
+      sourceText,
+      competencySchema,
+      englishCurriculumMode,
+      curriculumExtractionOllamaOverrides
     );
 
     const assessmentSchema = {
@@ -9286,14 +10705,17 @@ Rules:
       },
     };
 
-    const stage7Prompt = renderPrompt("assessment-extraction.md", {
+    const stage7Prompt = renderPromptWithEnglishIntelligence("assessment-extraction.md", {
       EXTRACTION_RULES: extractionRules,
       STAGE_NAME: STAGE_ORDER[6],
       STAGE_PAYLOAD_JSON: serializeJson(structurePayload),
-      SOURCE_TEXT: text,
+      SOURCE_TEXT: sourceText,
+    }, {
+      englishMode: englishCurriculumMode,
+      stageLabel: STAGE_ORDER[6],
     });
 
-    const assessment = await runStage(requestId, debugDir, STAGE_ORDER[6], stage7Prompt, assessmentSchema);
+    const assessment = await runStage(requestId, debugDir, STAGE_ORDER[6], stage7Prompt, assessmentSchema, curriculumExtractionOllamaOverrides);
     normalizedStructure.assessment_information = assessment.assessment_framework || {};
 
     const outcomesSchema = {
@@ -9322,12 +10744,15 @@ Rules:
       console.log(`[Pipeline][${requestId}] ${entry.stageName} chapters count: ${chaptersCount}`);
       console.log(`[Pipeline][${requestId}] ${entry.stageName} competencies count: ${competenciesCount}`);
 
-      const stage8Prompt = renderPrompt("learning-outcomes-extraction.md", {
+      const stage8Prompt = renderPromptWithEnglishIntelligence("learning-outcomes-extraction.md", {
         EXTRACTION_RULES: extractionRules,
         STAGE_NAME: entry.stageName,
         STAGE_PAYLOAD_JSON: payloadText,
+      }, {
+        englishMode: englishCurriculumMode,
+        stageLabel: entry.stageName,
       });
-      stage8Results.push(await runStage(requestId, debugDir, entry.stageName, stage8Prompt, outcomesSchema));
+      stage8Results.push(await runStage(requestId, debugDir, entry.stageName, stage8Prompt, outcomesSchema, curriculumExtractionOllamaOverrides));
     }
 
     const outcomes = {
@@ -9357,14 +10782,17 @@ Rules:
       }],
     };
 
-    const stage9Prompt = renderPrompt("activities-extraction.md", {
+    const stage9Prompt = renderPromptWithEnglishIntelligence("activities-extraction.md", {
       EXTRACTION_RULES: extractionRules,
       STAGE_NAME: STAGE_ORDER[8],
       STAGE_PAYLOAD_JSON: serializeJson(structurePayload),
-      SOURCE_TEXT: text,
+      SOURCE_TEXT: sourceText,
+    }, {
+      englishMode: englishCurriculumMode,
+      stageLabel: STAGE_ORDER[8],
     });
 
-    const activities = await runStage(requestId, debugDir, STAGE_ORDER[8], stage9Prompt, activitySchema);
+    const activities = await runStage(requestId, debugDir, STAGE_ORDER[8], stage9Prompt, activitySchema, curriculumExtractionOllamaOverrides);
     normalizedStructure.activities = activities.activities || [];
     normalizedStructure.projects = activities.projects || [];
     normalizedStructure.practicals = activities.practicals || [];
@@ -9392,7 +10820,7 @@ Rules:
       },
     };
 
-    const stage10Prompt = renderPrompt("curriculum-intelligence.md", {
+    const stage10Prompt = renderPromptWithEnglishIntelligence("curriculum-intelligence.md", {
       EXTRACTION_RULES: extractionRules,
       STAGE_NAME: STAGE_ORDER[9],
       NORMALIZED_STRUCTURE_JSON: serializeJson(structurePayload),
@@ -9400,9 +10828,12 @@ Rules:
       ASSESSMENT_JSON: serializeJson(assessment),
       OUTCOMES_JSON: serializeJson(outcomes),
       ACTIVITIES_JSON: serializeJson(activities),
+    }, {
+      englishMode: englishCurriculumMode,
+      stageLabel: STAGE_ORDER[9],
     });
 
-    const intelligence = await runStage(requestId, debugDir, STAGE_ORDER[9], stage10Prompt, intelligenceSchema);
+    const intelligence = await runStage(requestId, debugDir, STAGE_ORDER[9], stage10Prompt, intelligenceSchema, curriculumExtractionOllamaOverrides);
 
     const flattenedOutcomes = uniqueStrings(
       (outcomes.learning_outcomes || []).flatMap((item: any) => item.outcomes || [])
@@ -9411,32 +10842,28 @@ Rules:
     const classNames = uniqueStrings(
       mergedNormalizedClasses.map((cls: any) => canonicalizeClassName(cls?.class_name || "")).filter(Boolean)
     );
-    const units = mergedNormalizedClasses.flatMap((cls: any, classIndex: number) =>
-      (cls.units || []).map((unit: any, unitIndex: number) => ({
-        unitId: unit.unit_id || buildStableUnitId(cls?.class_name || "", cls?.subject || "", `U${classIndex + 1}-${unitIndex + 1}`, unitIndex),
-        unitName: unit.unit_name,
-        className: cls.class_name || "",
-        description: uniqueStrings((unit.chapters || []).map((chapter: any) => chapter.chapter_name)).join(", "),
-        topics: uniqueStrings(
-          (unit.chapters || []).flatMap((chapter: any) => [
-            ...(chapter.topics || []),
-            ...(chapter.subtopics || []),
-          ])
-        ),
-      }))
-    );
 
     const normalizedMetadata = (normalizedStructure.document_metadata || {}) as Record<string, any>;
     const rawMetadata = (rawExtraction.document_metadata || {}) as Record<string, any>;
     const subject = normalizedMetadata.subject || rawMetadata.subject || "";
+    const derivedPageCount = deriveDocumentPageCount(sourceText);
     const resolvedDocumentMetadata = {
       ...normalizedStructure.document_metadata,
       class: classNames.length > 1
         ? classNames.join(", ")
         : classNames[0] || normalizedMetadata.class || rawMetadata.class || "",
       grade: classNames.length > 1 ? "" : (normalizedMetadata.grade || rawMetadata.grade || ""),
+      total_pages: String(
+        Math.max(
+          Number(normalizedMetadata.total_pages || rawMetadata.total_pages || 0),
+          Number(derivedPageCount || 0)
+        ) || normalizedMetadata.total_pages || rawMetadata.total_pages || derivedPageCount || ""
+      ),
     };
     normalizedStructure.document_metadata = resolvedDocumentMetadata;
+    faithfulStructure.document_metadata = resolvedDocumentMetadata;
+    rawExtraction.document_metadata = resolvedDocumentMetadata;
+    const units = buildCurriculumUnitsSummary([faithfulStructure, normalizedStructure]);
     const gradeLevel = [
       classNames.length > 1 ? classNames.join(" / ") : classNames[0],
       normalizedMetadata.grade,
@@ -9482,31 +10909,31 @@ Rules:
       terms: (stage1Facts as any)?.terms || [],
       competenciesCatalog: (stage1Facts as any)?.competencies || [],
     });
-    await connectToMongo();
-    const savedCurriculum = await CurriculumModel.create({
-      fileName,
-      subject,
-      gradeLevel,
-      sourceText: text,
-      extractedCurriculum: finalPayload,
-      extractionMetadata: {
-        requestId,
-        sourceTextLength: text.length,
-        stage1UnitCount,
-        stage1ChapterCount,
-      },
-    });
-    const planningWorkspace = await ensurePlanningWorkspaceForCurriculum(
-      String(savedCurriculum._id),
-      finalPayload
-    );
-    const responsePayload = {
+    const detectedClasses = summarizeCurriculumClasses(finalPayload);
+    const responsePayload: any = {
       success: true,
-      curriculumId: String(savedCurriculum._id),
       curriculum: finalPayload,
-      workspaceId: String(planningWorkspace._id),
-      workspace: planningWorkspace,
+      detectedClasses,
+      requiresClassSelection: detectedClasses.length > 1,
+      requestId,
     };
+    if (persist) {
+      const { curriculum: savedCurriculum, planningWorkspace } = await persistCurriculumRecord({
+        fileName,
+        sourceText,
+        extractedCurriculum: finalPayload,
+        extractionMetadata: {
+          requestId,
+          sourceTextLength: sourceText.length,
+          stage1UnitCount,
+          stage1ChapterCount,
+          selectedClassNames: sourceFilter.selectedClassNames,
+        },
+      });
+      responsePayload.curriculumId = String(savedCurriculum._id);
+      responsePayload.workspaceId = String(planningWorkspace._id);
+      responsePayload.workspace = planningWorkspace;
+    }
     await writeDebugFile(debugDir, "final-response.json", responsePayload);
     console.log(`[Request][${requestId}] Final response JSON length: ${JSON.stringify(responsePayload).length}`);
     res.json(responsePayload);
@@ -9591,7 +11018,7 @@ app.post("/api/generate-session-details", async (req, res) => {
   const debugDir = await ensureDebugDir(requestId);
   await writeDebugFile(debugDir, "request-body.json", req.body);
   try {
-    const prompt = renderPrompt("session-generation.md", {
+    const prompt = renderPromptWithEnglishIntelligence("session-generation.md", {
       SESSION_NUMBER: String(sessionNumber),
       TOTAL_SESSIONS: String(totalSessions),
       DURATION_MINUTES: String(durationMinutes),
@@ -9605,6 +11032,9 @@ app.post("/api/generate-session-details", async (req, res) => {
       INCLUDE_ASSIGNMENTS: config.includeAssignments ? "YES" : "NO",
       INCLUDE_NOTES: config.includeNotes ? "YES" : "NO",
       SELECTED_SECTIONS_JSON: JSON.stringify(ALL_SESSION_SECTIONS),
+    }, {
+      englishMode: shouldUseEnglishIntelligence({ subject }),
+      stageLabel: "Session detail generation",
     });
 
     const schema = {
@@ -10285,6 +11715,7 @@ async function generateSessionDetailsArtifact({
   const materialsOnly = selectedSections.length === 1 && selectedSections[0] === "materials";
   const homeworkOnly = selectedSections.length === 1 && selectedSections[0] === "homework";
   const assessmentOnly = selectedSections.length === 1 && selectedSections[0] === "assessment";
+  const englishGenerationMode = shouldUseEnglishIntelligence({ subject });
   if (assessmentOnly && !hasAssessmentSourceContent(sourceSessionPlan)) {
     throw new Error("Generate session teaching content first before creating the assessment.");
   }
@@ -10331,7 +11762,7 @@ async function generateSessionDetailsArtifact({
     : [];
   const requestedTotalMarks = Math.max(1, Number(assessmentCustomization?.totalMarks || requestedMarksFromQuestionTypes || derivedAssessmentMarks));
   const requestedTotalQuestions = Math.max(0, Number(assessmentCustomization?.totalQuestions || requestedQuestionsFromQuestionTypes || 0));
-  const assessmentInstructionsPrompt = renderPrompt("assessment-generation.md", {
+  const assessmentInstructionsPrompt = renderPromptWithEnglishIntelligence("assessment-generation.md", {
     SUBJECT: String(subject || ""),
     GRADE_LEVEL: String(gradeLevel || ""),
     SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
@@ -10355,6 +11786,9 @@ async function generateSessionDetailsArtifact({
     TEACHER_ASSESSMENT_REQUEST_JSON: JSON.stringify(assessmentCustomization || {}, null, 2),
     SESSION_JSON: JSON.stringify(assessmentSourcePayload, null, 2),
     ASSESSMENT_SCHEMA_JSON: JSON.stringify({ assessment: baseSchema.assessment }, null, 2),
+  }, {
+    englishMode: englishGenerationMode,
+    stageLabel: "Assessment generation",
   });
   const embeddedAssessmentInstructions = [
     "Assessment block rules:",
@@ -10379,7 +11813,7 @@ async function generateSessionDetailsArtifact({
   const teacherNotesPromptName = getNotesPromptName("teacher", subject);
   const studentNotesPromptName = getNotesPromptName("student", subject);
   const prompt = teacherNotesOnly
-    ? renderPrompt(teacherNotesPromptName, {
+    ? renderPromptWithEnglishIntelligence(teacherNotesPromptName, {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
@@ -10400,9 +11834,12 @@ async function generateSessionDetailsArtifact({
         READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
         RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
         CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
+      }, {
+        englishMode: englishGenerationMode,
+        stageLabel: "Teacher notes generation",
       })
     : studentNotesOnly
-    ? renderPrompt(studentNotesPromptName, {
+    ? renderPromptWithEnglishIntelligence(studentNotesPromptName, {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
@@ -10418,9 +11855,12 @@ async function generateSessionDetailsArtifact({
         READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
         RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
         CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
+      }, {
+        englishMode: englishGenerationMode,
+        stageLabel: "Student notes generation",
       })
     : materialsOnly
-    ? renderPrompt("session-ppt-prompt.md", {
+    ? renderPromptWithEnglishIntelligence("session-ppt-prompt.md", {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
@@ -10486,9 +11926,12 @@ async function generateSessionDetailsArtifact({
             ],
           },
         }, null, 2),
+      }, {
+        englishMode: englishGenerationMode,
+        stageLabel: "PPT and materials generation",
       })
     : homeworkOnly
-    ? renderPrompt("homework-generation.md", {
+    ? renderPromptWithEnglishIntelligence("homework-generation.md", {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
@@ -10507,10 +11950,13 @@ async function generateSessionDetailsArtifact({
         OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
         READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
         SESSION_JSON: JSON.stringify(sessionContextPayload, null, 2),
+      }, {
+        englishMode: englishGenerationMode,
+        stageLabel: "Homework generation",
       })
     : assessmentOnly
     ? assessmentInstructionsPrompt
-    : renderPrompt("session-generation.md", {
+    : renderPromptWithEnglishIntelligence("session-generation.md", {
         SESSION_NUMBER: String(sessionNumber),
         TOTAL_SESSIONS: String(totalSessions),
         DURATION_MINUTES: String(durationMinutes),
@@ -10525,6 +11971,9 @@ async function generateSessionDetailsArtifact({
         INCLUDE_NOTES: config.includeNotes ? "YES" : "NO",
         SELECTED_SECTIONS_JSON: JSON.stringify(selectedSections),
         ASSESSMENT_ENGINE_INSTRUCTIONS: embeddedAssessmentInstructions,
+      }, {
+        englishMode: englishGenerationMode,
+        stageLabel: "Session content generation",
       });
 
   const schema = teacherNotesOnly
@@ -10629,6 +12078,14 @@ async function generateSessionDetailsArtifact({
       throw new Error("Model output truncated during session content generation. Reduce session scope or increase num_predict.");
     }
   }
+  if (assessmentOnly || selectedSections.includes("assessment")) {
+    const repairedAssessmentText = repairDuplicateAssessmentArrayKeys(responseText);
+    if (repairedAssessmentText !== responseText) {
+      responseText = repairedAssessmentText;
+      await writeDebugFile(debugDir, "assessment-duplicate-key-recovery.json", responseText);
+      console.warn(`[Ollama][${requestId}] Repaired duplicate assessment array keys before JSON parsing.`);
+    }
+  }
   const parsedSession = normalizeMathGeneratedNotes(JSON.parse(sanitizeJsonText(responseText).text || "{}"), {
     subject,
     selectedChapters,
@@ -10680,13 +12137,16 @@ app.post("/api/generate-sessions-outline", async (req, res) => {
   const debugDir = await ensureDebugDir(requestId);
   await writeDebugFile(debugDir, "request-body.json", req.body);
   try {
-    const prompt = renderPrompt("term-division.md", {
+    const prompt = renderPromptWithEnglishIntelligence("term-division.md", {
       SESSION_COUNT: String(config.sessionCount),
       DURATION_MINUTES: String(config.durationMinutes),
       SUBJECT: String(subject || ""),
       GRADE_LEVEL: String(gradeLevel || ""),
       TERM_NAME: String(termName || ""),
       SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
+    }, {
+      englishMode: shouldUseEnglishIntelligence({ subject }),
+      stageLabel: "Session outline generation",
     });
 
     const schema = [{
@@ -10713,21 +12173,34 @@ app.post("/api/generate-sessions-outline", async (req, res) => {
 export {
   buildApprovedTheoryHierarchy,
   buildFaithfulStructureFromRawExtraction,
+  buildCurriculumUnitsSummary,
+  buildTermDivision,
   buildVersionedCurriculumPayload,
   cleanupCbseStructure,
   detectCurriculumProfile,
+  detectCurriculumClassSegmentsFromSource,
+  filterCurriculumToSelectedClasses,
+  filterSourceTextToSelectedClasses,
   getCurriculumProfileConfig,
   buildNormalizedTeachingBlocks,
   buildLanguageFallbackStage1Facts,
+  detectIndicCurriculumModeFromInput,
+  detectEnglishModeFromCurriculumInput,
   expandStage1FactsToRawExtraction,
+  getCurriculumExtractionOllamaOverrides,
+  isEnglishSubject,
+  isIndicCurriculumSubject,
   isLanguageSubject,
   isMathSubject,
   getNotesPromptName,
   normalizeMathGeneratedNotes,
+  renderPromptWithEnglishIntelligence,
   sanitizeMathDiagramSpec,
   mergeStage1FactExtractions,
   sanitizeStage3EnrichmentToSource,
   sanitizeJsonText,
+  shouldUseEnglishIntelligence,
+  summarizeCurriculumClasses,
 };
 
 // ======== START SERVER ========

@@ -10,12 +10,39 @@ export interface CurriculumExtraction {
   units: {
     unitId: string;
     unitName: string;
+    className?: string;
     description: string;
     topics: string[];
   }[];
+  classes?: Array<{
+    class_name: string;
+    subject?: string;
+    part_or_section?: string;
+    units?: Array<{
+      unit_id?: string;
+      unit_name?: string;
+      topics?: string[];
+      chapters?: Array<{
+        chapter_id?: string;
+        chapter_name?: string;
+        topics?: string[];
+        subtopics?: string[];
+      }>;
+    }>;
+  }>;
   stagedExtraction?: Record<string, unknown>;
   document_metadata?: Record<string, unknown>;
   normalizedStructure?: Record<string, unknown>;
+}
+
+export interface CurriculumClassSummary {
+  className: string;
+  subject: string;
+  unitCount: number;
+  chapterCount: number;
+  topicCount: number;
+  pageRangeLabel?: string;
+  detectionSource?: string;
 }
 
 export interface SavedCurriculumRecord {
@@ -26,6 +53,15 @@ export interface SavedCurriculumRecord {
   sourceText: string;
   extractedCurriculum: CurriculumExtraction;
   extractionMetadata: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SavedCurriculumSummary {
+  _id: string;
+  fileName: string;
+  subject: string;
+  gradeLevel: string;
   createdAt: string;
   updatedAt: string;
 }

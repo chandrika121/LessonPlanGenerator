@@ -1,0 +1,407 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 15,
+      "totalQuestions": 9,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 1,
+          "marksEach": 5
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Ensure exponents are non-negative integers for polynomials.",
+        "Identify degree as the highest power of the variable."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will define a polynomial in one variable and distinguish valid expressions from invalid ones (negative/fractional exponents).",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Students will identify the degree of any given polynomial expression.",
+          "questionRefs": [
+            "q3",
+            "q4",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Students will classify polynomials as monomials, binomials, or trinomials based on term count.",
+          "questionRefs": [
+            "q6",
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 45,
+        "medium": 30,
+        "hard": 25
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 35,
+        "application": 30,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 3,
+        "shortAnswer": 2,
+        "longAnswer": 1
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answer",
+          "minutes": 3
+        },
+        {
+          "section": "Short Answer",
+          "minutes": 5
+        },
+        {
+          "section": "Long Answer",
+          "minutes": 3
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "Which of the following expressions is a valid polynomial in one variable?",
+        "options": [
+          "A. $x^2 + \\frac{1}{x}$",
+          "B. $\\sqrt{x} - 5$",
+          "C. $3x^4 - x + 7$",
+          "D. $x^{-2} + 3$"
+        ],
+        "answer": "C. $3x^4 - x + 7$",
+        "explanation": "Option C contains only non-negative integer exponents (4, 1). Options A and D involve negative exponents ($\\frac{1}{x}=x^{-1}$), and Option B involves a fractional exponent ($\\sqrt{x}=x^{1/2}$), making them invalid polynomials.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition",
+          "Valid vs Invalid Expressions"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "What is the degree of the polynomial $P(x) = 5x^3 - x + \\sqrt{2}$?",
+        "options": [
+          "A. 1",
+          "B. 2",
+          "C. 3",
+          "D. $\\sqrt{2}$"
+        ],
+        "answer": "C. 3",
+        "explanation": "The degree is the highest power of the variable in the polynomial. Here, the powers are 3 and 1 (and a constant term). The highest exponent is 3.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Degree of Polynomial"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "The expression $Q(y) = 4y^2 - y + 1$ is classified as a:",
+        "options": [
+          "A. Monomial",
+          "B. Binomial",
+          "C. Trinomial",
+          "D. Quadratic (but not trinomial)"
+        ],
+        "answer": "C. Trinomial",
+        "explanation": "The expression has three distinct terms ($4y^2$, $-y$, and $+1$). Polynomials with exactly three terms are called trinomials.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Classification by Terms"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Is the expression $\\frac{x}{\\pi} + 5$ a polynomial? Justify your answer in one sentence.",
+        "answer": "Yes, it is a polynomial because dividing by a constant ($\\pi$) does not affect the exponents of the variable; all powers are non-negative integers.",
+        "expectedLength": "1-2 clear points",
+        "marks": 1,
+        "rubric": [
+          "Correctly identifies it as a polynomial (0.5 marks)",
+          "Justifies that constants in denominators do not disqualify an expression (0.5 marks)"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition",
+          "Constants vs Variables"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "What is the degree of the constant polynomial $P(x) = -7$?",
+        "answer": "0",
+        "expectedLength": "Single number or short phrase",
+        "marks": 1,
+        "rubric": [
+          "Correctly states the degree as 0 (1 mark)"
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Degree of Constant Polynomials"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Classify the expression $R(z) = z^{-2} + 3z$ as a polynomial or non-polynomial.",
+        "answer": "Non-polynomial (due to negative exponent)",
+        "expectedLength": "1-2 clear points",
+        "marks": 1,
+        "rubric": [
+          "Correctly identifies it as not a polynomial (0.5 marks)",
+          "Identifies the reason: presence of negative exponent $z^{-2}$ (0.5 marks)"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Valid vs Invalid Expressions",
+          "Negative Exponents"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "longAnswer": [],
+    "shortAnswer": [
+      {
+        "id": "q7",
+        "questionSubtype": "shortAnswer",
+        "question": "Identify the degree and classify as monomial, binomial, or trinomial for $P(x) = 2x^3 - x + \\sqrt{5}$.",
+        "answer": "Degree: 3. Classification: Trinomial.\nExplanation:\nThe highest power of $x$ is 3, so the degree is 3.\nThe expression has three terms ($2x^3$, $-x$, and constant term $\sqrt{5}$), making it a trinomial.",
+        "expectedLength": "4-6 well-structured points with explanation",
+        "marks": 2,
+        "rubric": [
+          "Correctly identifies the degree as 3 (1 mark)",
+          "Correctly classifies as Trinomial and counts terms correctly (1 mark)"
+        ],
+        "learningOutcomeIds": [
+          "LO2",
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Degree Identification",
+          "Classification by Terms"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q8",
+        "questionSubtype": "shortAnswer",
+        "question": "Find the coefficient of $x$ in the polynomial $5 - 3x + x^2$. Explain why a student might incorrectly identify it as positive.",
+        "answer": "Coefficient: -3.\nExplanation:\nThe term containing $x$ is written as $-3x$, which means the numerical factor is negative. A common misconception or sign error occurs when students see the plus signs separating terms ($5 + (-3x) + x^2$) and focus only on the variable, forgetting that the minus sign belongs to the coefficient.",
+        "expectedLength": "4-6 well-structured points with explanation",
+        "marks": 2,
+        "rubric": [
+          "Correctly identifies -3 as the coefficient (1 mark)",
+          "Explains the common error regarding signs or term separation correctly (1 mark)"
+        ],
+        "learningOutcomeIds": [
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Coefficients",
+          "Common Misconceptions"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q9",
+        "questionSubtype": "longAnswer",
+        "question": "Consider the following expressions: $A = x^2 + \\frac{1}{x}$, $B = 3y^{0.5} - 4$, and $C = z^{-2} + z$. \n\na) Determine which of these are valid polynomials in one variable.\nb) For any invalid expressions, explain specifically why they fail the definition based on exponent rules taught in this session.\nc) If expression C were modified to remove its non-polynomial part and become a polynomial $P(z)$, what would be the degree of the resulting simplified polynomial?",
+        "answer": "a) None of A, B, or C are valid polynomials as written. \nb) Explanation for invalidity:\n- Expression A ($x^2 + \\frac{1}{x}$): This is not a polynomial because $\\frac{1}{x} = x^{-1}$. The exponent -1 is negative.\n- Expression B ($3y^{0.5} - 4$): This is not a polynomial because the exponent 0.5 (or $1/2$) is fractional, not an integer.\n- Expression C ($z^{-2} + z$): This is not a polynomial because of the term $z^{-2}$ which has a negative exponent.\nc) If we remove the non-polynomial part ($z^{-2}$), the remaining expression is just $P(z) = z$. The highest power of $z$ in this simplified form is 1. Therefore, the degree would be 1.",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "Correctly identifies all three expressions as non-polynomials (2 marks)",
+          "Provides correct reasoning for A regarding negative exponents ($x^{-1}$) (1 mark)",
+          "Provides correct reasoning for B regarding fractional exponents ($0.5$ or $1/2$) (1 mark)",
+          "Correctly determines the degree of the hypothetical simplified polynomial C as 1 (1 mark)"
+        ],
+        "learningOutcomeIds": [
+          "LO1",
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition Constraints",
+          "Negative and Fractional Exponents",
+          "Degree Determination"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "q1",
+          "answer": "C. $3x^4 - x + 7$",
+          "explanation": "Only option C has non-negative integer exponents.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q2",
+          "answer": "C. 3",
+          "explanation": "The highest power of x is 3.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q3",
+          "answer": "C. Trinomial",
+          "explanation": "It has three terms: $4y^2$, $-y$, and $+1$.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q4",
+          "answer": "Yes. Dividing by a constant ($\\pi$) does not change the exponents; they remain non-negative integers.",
+          "rubric": [
+            "Correctly identifies as polynomial (0.5)",
+            "Justifies with correct reasoning about constants vs variables (0.5)"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q5",
+          "answer": "0",
+          "rubric": [
+            "Correct degree for constant (1.0)"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q6",
+          "answer": "Non-polynomial because of the negative exponent $z^{-2}$.",
+          "rubric": [
+            "Correct classification (0.5)",
+            "Identifies specific reason: negative exponent (0.5)"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q7",
+          "answer": "Degree: 3; Type: Trinomial.",
+          "rubric": [
+            "Correct degree (1.0)",
+            "Correct classification and term count (1.0)"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q8",
+          "answer": "-3; Students often miss the negative sign attached to the coefficient.",
+          "rubric": [
+            "Correct coefficient (-3) (1.0)",
+            "Explanation of common error regarding signs (1.0)"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "q9",
+          "answer": "a) None are polynomials.\nb) A fails due to $x^{-1}$ (negative). B fails due to $y^{0.5}$ (fractional). C fails due to $z^{-2}$ (negative).\nc) Degree is 1.",
+          "rubric": [
+            "Identify all as non-polynomials (2 marks)",
+            "Explain A's failure correctly (1 mark)",
+            "Explain B's failure correctly (1 mark)",
+            "Determine degree of simplified C as 1 (1 mark)"
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'fractional power' vs 'non-integer exponent').",
+        "For long answers, reward structure and clear distinction between negative and fractional exponents as disqualifiers."
+      ]
+    }
+  }
+}

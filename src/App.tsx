@@ -47,10 +47,12 @@ import {
   AssessmentQuestionType,
   AssessmentQuestionTypeRequest,
   ChapterSessionPlan,
+  CurriculumClassSummary,
   CurriculumExtraction,
   TermAllocation,
   PlanningWorkspace,
   SavedCurriculumRecord,
+  SavedCurriculumSummary,
   SessionAllocation,
   SessionAssessmentCustomization,
   SessionConfig,
@@ -219,7 +221,11 @@ export default function App() {
   const [editingJsonText, setEditingJsonText] = useState<string>("");
   const [isEditingJson, setIsEditingJson] = useState<boolean>(false);
   const [isJsonCollapsed, setIsJsonCollapsed] = useState<boolean>(false);
-  const [savedCurriculums, setSavedCurriculums] = useState<SavedCurriculumRecord[]>([]);
+  const [savedCurriculums, setSavedCurriculums] = useState<SavedCurriculumSummary[]>([]);
+  const [pendingCurriculumSelection, setPendingCurriculumSelection] = useState<{
+    classSummaries: CurriculumClassSummary[];
+  } | null>(null);
+  const [selectedClassNamesToStore, setSelectedClassNamesToStore] = useState<string[]>([]);
   const [academicConfigDraft, setAcademicConfigDraft] = useState<AcademicConfig>({});
   const [preferredTermCount, setPreferredTermCount] = useState<number>(3);
   const [coursePlanDraft, setCoursePlanDraft] = useState<TermAllocation[]>([]);
@@ -316,6 +322,7 @@ export default function App() {
     setCurrentCurriculumId("");
     setCurrentWorkspaceId("");
     setActiveWorkspace(null);
+    setGeneratedSessions({});
     setFileName("");
     setFileSizeStr("");
     setInputText("");
@@ -337,15 +344,97 @@ export default function App() {
     return text || fallback;
   };
 
+  const detectCurriculumClassOptions = async () => {
+    const res = await fetch("/api/curriculum-class-options", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: inputText,
+        fileName,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(await readErrorFromResponse(res, "Failed to detect class options."));
+    }
+
+    return res.json();
+  };
+
+  const runCurriculumExtraction = async (
+    requestId: string,
+    selectedClasses: string[]
+  ) => {
+    const res = await fetch("/api/analyze-curriculum", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Request-Id": requestId,
+      },
+      body: JSON.stringify({
+        text: inputText,
+        fileName,
+        selectedClasses,
+        persist: true,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error(await readErrorFromResponse(res, "Failed to extract the selected curriculum."));
+    }
+
+    return res.json();
+  };
+
+  const closePendingCurriculumSelection = () => {
+    setPendingCurriculumSelection(null);
+    setSelectedClassNamesToStore([]);
+  };
+
   const fetchSavedCurriculums = async () => {
     const res = await fetch("/api/curriculums");
     if (!res.ok) {
       throw new Error(await readErrorFromResponse(res, "Failed to load saved curriculums."));
     }
     const data = await res.json();
-    setSavedCurriculums(data.curriculums || []);
-    return data.curriculums || [];
+    const curriculums = (data.curriculums || []) as SavedCurriculumSummary[];
+    setSavedCurriculums(curriculums);
+    return curriculums;
   };
+
+  const syncWorkspaceState = (workspace: PlanningWorkspace) => {
+    if (currentWorkspaceId && currentWorkspaceId !== workspace._id) {
+      setGeneratedSessions({});
+    }
+    setCurrentWorkspaceId(workspace._id);
+    setActiveWorkspace(workspace);
+    localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+  };
+
+  const hasRenderableSessionSection = (value: unknown): boolean => {
+    if (value == null) return false;
+    if (typeof value === "string") return value.trim().length > 0;
+    if (typeof value === "number" || typeof value === "boolean") return true;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "object") return Object.keys(value as Record<string, unknown>).length > 0;
+    return false;
+  };
+
+  const hasRequiredSessionSections = (
+    sessionPlan: Partial<SessionPlan> | undefined,
+    requiredSections: SessionSectionKey[]
+  ) =>
+    requiredSections.every((section) =>
+      hasRenderableSessionSection((sessionPlan as Record<string, unknown> | undefined)?.[section])
+    );
+
+  const getGeneratedSessionArtifactKeys = (workspace?: PlanningWorkspace | null) =>
+    new Set(
+      (workspace?.generatedArtifacts || [])
+        .filter((artifact) => artifact.scope === "session" && artifact.artifactType === "session_bundle")
+        .map((artifact) => artifact.id.match(/^session-(.+)$/)?.[1] || "")
+        .filter(Boolean)
+    );
 
   const mapAllocationsToTermRows = (allocations: TermAllocation[] = []) =>
     allocations.map((row, index) => ({
@@ -688,6 +777,11 @@ export default function App() {
     const rawText = typeof value.text === "string" ? normalizeMathSetupWording(value.text) : "";
     const rawLatex = typeof value.latex === "string" ? value.latex.trim() : "";
     const rawDisplayLatex = typeof value.displayLatex === "string" ? value.displayLatex.trim() : "";
+    const rawMathCandidate = rawDisplayLatex || rawLatex;
+    if (rawMathCandidate && !looksLikeStandaloneLatexMath(unwrapLatexMathDelimiters(rawMathCandidate))) {
+      const combinedText = [rawText, rawMathCandidate].filter(Boolean).join(" ").trim();
+      return combinedText ? { text: combinedText } : null;
+    }
     const splitTextMath = rawText ? splitStudentNoteLeadingLabelAndMath(rawText) : null;
     const splitLatexMath = rawLatex ? splitStudentNoteLeadingLabelAndMath(rawLatex) : null;
     const splitDisplayMath = rawDisplayLatex ? splitStudentNoteLeadingLabelAndMath(rawDisplayLatex) : null;
@@ -746,26 +840,45 @@ export default function App() {
     return looksLikeStandaloneLatexMath(text);
   };
 
+  const getBalancedSpanEnd = (value: string, startIndex: number, openChar: string, closeChar: string) => {
+    const source = String(value || "");
+    if (source[startIndex] !== openChar) return -1;
+    let index = startIndex;
+    let depth = 0;
+    while (index < source.length) {
+      const char = source[index];
+      if (char === openChar) depth += 1;
+      if (char === closeChar) {
+        depth -= 1;
+        if (depth === 0) {
+          return index + 1;
+        }
+      }
+      index += 1;
+    }
+    return -1;
+  };
+
+  const shouldConsumeInlineGroupedSpan = (value: string, startIndex: number, openChar: string, closeChar: string) => {
+    const endIndex = getBalancedSpanEnd(value, startIndex, openChar, closeChar);
+    if (endIndex === -1) return false;
+    const inner = String(value || "").slice(startIndex + 1, endIndex - 1).trim();
+    if (!inner) return false;
+    if (openChar === "{") return true;
+    if (looksLikeStandaloneLatexMath(inner)) return true;
+    return countNaturalLanguageWordsOutsideLatex(inner) === 0
+      && /\\[a-zA-Z]+|[_^=+\-*/×÷√]/.test(normalizeInlineMathText(inner));
+  };
+
   const consumeInlineMathSpan = (value: string, startIndex: number) => {
     const source = String(value || "");
     const length = source.length;
     let index = startIndex;
     const consumeBalanced = (openChar: string, closeChar: string) => {
-      if (source[index] !== openChar) return false;
-      let depth = 0;
-      while (index < length) {
-        const char = source[index];
-        if (char === openChar) depth += 1;
-        if (char === closeChar) {
-          depth -= 1;
-          if (depth === 0) {
-            index += 1;
-            return true;
-          }
-        }
-        index += 1;
-      }
-      return false;
+      const endIndex = getBalancedSpanEnd(source, index, openChar, closeChar);
+      if (endIndex === -1) return false;
+      index = endIndex;
+      return true;
     };
 
     const consumeInlineAtom = () => {
@@ -804,10 +917,12 @@ export default function App() {
           while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
         }
       } else if (source[index] === "(") {
+        if (!shouldConsumeInlineGroupedSpan(source, index, "(", ")")) return;
         consumeBalanced("(", ")");
       } else if (source[index] === "{") {
         consumeBalanced("{", "}");
       } else if (source[index] === "[") {
+        if (!shouldConsumeInlineGroupedSpan(source, index, "[", "]")) return;
         consumeBalanced("[", "]");
       } else {
         while (index < length && /[A-Za-z0-9.]/.test(source[index])) index += 1;
@@ -845,6 +960,14 @@ export default function App() {
         continue;
       }
       if (source[index] === "(" || source[index] === "{" || source[index] === "[") {
+        if (source[index] !== "{" && !shouldConsumeInlineGroupedSpan(
+          source,
+          index,
+          source[index],
+          source[index] === "(" ? ")" : "]"
+        )) {
+          break;
+        }
         consumeInlineAtom();
         continue;
       }
@@ -1030,7 +1153,7 @@ export default function App() {
       }
       if (plan.segments.length > 0) {
         return (
-          <span className={`whitespace-pre-wrap font-mono ${displayMode ? "block space-y-1" : "inline-flex flex-wrap items-center gap-2"}`}>
+          <span className={`min-w-0 max-w-full whitespace-pre-wrap font-mono ${displayMode ? "block space-y-1" : "inline-flex flex-wrap items-baseline gap-x-2 gap-y-1 align-middle"}`}>
             {plan.segments.map((segment, index) => segment.type === "math"
               ? <span key={`${segment.value}-${index}`}>{renderMathLatex(segment.value, displayMode || segment.displayMode, segment.value)}</span>
               : <span key={`${segment.value}-${index}`}>{segment.value}</span>)}
@@ -1046,7 +1169,7 @@ export default function App() {
       }
       if (plan.classification === "mixed_inline_math") {
         return (
-          <span className={`whitespace-pre-wrap font-mono ${displayMode ? "block" : "inline-flex flex-wrap items-center gap-2"}`}>
+          <span className={`min-w-0 max-w-full whitespace-pre-wrap font-mono ${displayMode ? "block space-y-1" : "inline-flex flex-wrap items-baseline gap-x-2 gap-y-1 align-middle"}`}>
             {plan.segments.map((segment, index) => segment.type === "math"
               ? <span key={`${segment.value}-${index}`}>{renderMathLatex(segment.value, false, segment.value)}</span>
               : <span key={`${segment.value}-${index}`}>{segment.value}</span>)}
@@ -1172,9 +1295,9 @@ export default function App() {
     }
 
     return (
-      <span className={`font-mono ${displayMode ? "block space-y-1" : "inline-flex flex-wrap items-center gap-2 whitespace-pre-wrap"}`}>
+      <span className={`max-w-full font-mono ${displayMode ? "block space-y-1" : "inline-flex flex-wrap items-baseline gap-x-2 gap-y-1 whitespace-pre-wrap align-middle"}`}>
         {line.map((item, index) => (
-          <span key={`${formatRenderableText(item)}-${index}`} className={displayMode ? "block" : "inline-flex items-center"}>
+          <span key={`${formatRenderableText(item)}-${index}`} className={displayMode ? "block" : "inline-flex max-w-full items-baseline"}>
             {renderMixedMathLine(item, displayMode)}
           </span>
         ))}
@@ -1865,6 +1988,94 @@ export default function App() {
     );
   };
 
+  type TeacherTemplateAccent = keyof typeof noteAccentStyles;
+  type TeacherTemplateListCard = {
+    title: string;
+    items: StudentNoteRichLine[];
+    accent: TeacherTemplateAccent;
+    ordered?: boolean;
+    description?: string;
+  };
+
+  type TeacherNotesTemplate = {
+    overview?: NonNullable<SessionPlan["teacherLessonNotes"]>["sessionOverview"];
+    stats: Array<{ label: string; value: string | number; accent: "teal" | "amber" | "sky" | "emerald" }>;
+    preparationCards: TeacherTemplateListCard[];
+    interactionCards: TeacherTemplateListCard[];
+    supportCards: TeacherTemplateListCard[];
+    teachingPlan: NonNullable<SessionPlan["teacherLessonNotes"]>["teachingPlan"];
+    lessonBlocks: NonNullable<SessionPlan["teacherLessonNotes"]>["lessonBlocks"];
+    conceptFlow: NonNullable<SessionPlan["teacherLessonNotes"]>["conceptFlow"];
+    classroomQuestions: NonNullable<SessionPlan["teacherLessonNotes"]>["classroomQuestions"];
+    timePlan: NonNullable<SessionPlan["teacherLessonNotes"]>["timePlan"];
+    misconceptions: NonNullable<SessionPlan["teacherLessonNotes"]>["commonMisconceptionsDetailed"];
+    endOfClassRecap: NonNullable<SessionPlan["teacherLessonNotes"]>["endOfClassRecap"];
+  };
+
+  const buildTeacherNotesTemplate = (teacherNotes: NonNullable<SessionPlan["teacherLessonNotes"]>): TeacherNotesTemplate => {
+    const learningOutcomes = normalizeStudentNoteRichLines(teacherNotes.learningOutcomes);
+    const prerequisiteKnowledge = normalizeStudentNoteRichLines(teacherNotes.prerequisiteKnowledge);
+    const previousSessionRecap = normalizeStudentNoteRichLines(teacherNotes.previousSessionRecap);
+    const teachingSequence = normalizeStudentNoteRichLines(teacherNotes.teachingSequence);
+    const guidedPractice = normalizeStudentNoteRichLines(teacherNotes.guidedPractice);
+    const lessonPurpose = normalizeStudentNoteRichLines(teacherNotes.lessonPurpose);
+    const formativeChecks = normalizeStudentNoteRichLines(teacherNotes.formativeChecks);
+    const assessmentQuestions = normalizeStudentNoteRichLines(teacherNotes.assessmentQuestions);
+    const teacherTips = normalizeStudentNoteRichLines(teacherNotes.teacherTips);
+    const blackboardSummary = normalizeStudentNoteRichLines(teacherNotes.blackboardSummary);
+    const sessionSummary = normalizeStudentNoteRichLines(teacherNotes.sessionSummary);
+    const nextSessionBridge = normalizeStudentNoteRichLines(teacherNotes.nextSessionBridge);
+    const lessonBlocks = Array.isArray(teacherNotes.lessonBlocks) ? teacherNotes.lessonBlocks : [];
+    const classroomQuestions = Array.isArray(teacherNotes.classroomQuestions) ? teacherNotes.classroomQuestions : [];
+    const conceptFlow = Array.isArray(teacherNotes.conceptFlow) ? teacherNotes.conceptFlow : [];
+    const timePlan = Array.isArray(teacherNotes.timePlan) ? teacherNotes.timePlan : [];
+    const misconceptions = Array.isArray(teacherNotes.commonMisconceptionsDetailed) ? teacherNotes.commonMisconceptionsDetailed : [];
+    const endOfClassRecap = Array.isArray(teacherNotes.endOfClassRecap) ? teacherNotes.endOfClassRecap : [];
+
+    return {
+      overview: teacherNotes.sessionOverview,
+      stats: [
+        { label: "Outcomes", value: learningOutcomes.length || "-", accent: "teal" },
+        { label: "Lesson Blocks", value: lessonBlocks.length || "-", accent: "amber" },
+        { label: "Question Prompts", value: classroomQuestions.length || "-", accent: "sky" },
+        { label: "Checks", value: formativeChecks.length || "-", accent: "emerald" },
+      ],
+      preparationCards: [
+        { title: "Teacher-Facing Learning Outcomes", items: learningOutcomes, accent: "teal" as const },
+        { title: "Prerequisite Knowledge", items: prerequisiteKnowledge, accent: "amber" as const },
+        { title: "Previous Session Recap", items: previousSessionRecap, accent: "slate" as const },
+        {
+          title: "Lesson Purpose",
+          items: lessonPurpose,
+          accent: "amber" as const,
+          description: "What this lesson is trying to unlock for the teacher and class.",
+        },
+      ].filter((card) => card.items.length > 0),
+      interactionCards: [
+        { title: "Teaching Sequence", items: teachingSequence, accent: "slate" as const, ordered: true },
+        { title: "Guided Practice", items: guidedPractice, accent: "emerald" as const },
+        { title: "Formative Checks", items: formativeChecks, accent: "emerald" as const },
+        { title: "Assessment Questions", items: assessmentQuestions, accent: "sky" as const, ordered: true },
+      ].filter((card) => card.items.length > 0),
+      supportCards: [
+        { title: "Teacher Tips", items: teacherTips, accent: "amber" as const },
+        { title: "Blackboard Summary", items: blackboardSummary, accent: "slate" as const },
+        { title: "Session Summary", items: sessionSummary, accent: "teal" as const },
+        { title: "Next Session Bridge", items: nextSessionBridge, accent: "sky" as const },
+        { title: "Slow Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.slowLearners), accent: "amber" as const },
+        { title: "Average Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.averageLearners), accent: "slate" as const },
+        { title: "Advanced Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.advancedLearners), accent: "emerald" as const },
+      ].filter((card) => card.items.length > 0),
+      teachingPlan: Array.isArray(teacherNotes.teachingPlan) ? teacherNotes.teachingPlan : [],
+      lessonBlocks,
+      conceptFlow,
+      classroomQuestions,
+      timePlan,
+      misconceptions,
+      endOfClassRecap,
+    };
+  };
+
   const renderInlineChipList = ({
     title,
     items,
@@ -1982,22 +2193,11 @@ export default function App() {
   };
 
   const renderTeacherNotesPanel = (teacherNotes: NonNullable<SessionPlan["teacherLessonNotes"]>) => {
-    const learningOutcomes = normalizeStudentNoteRichLines(teacherNotes.learningOutcomes);
-    const prerequisiteKnowledge = normalizeStudentNoteRichLines(teacherNotes.prerequisiteKnowledge);
-    const previousSessionRecap = normalizeStudentNoteRichLines(teacherNotes.previousSessionRecap);
-    const teachingSequence = normalizeStudentNoteRichLines(teacherNotes.teachingSequence);
-    const guidedPractice = normalizeStudentNoteRichLines(teacherNotes.guidedPractice);
-    const lessonPurpose = normalizeStudentNoteRichLines(teacherNotes.lessonPurpose);
-    const formativeChecks = normalizeStudentNoteRichLines(teacherNotes.formativeChecks);
-    const assessmentQuestions = normalizeStudentNoteRichLines(teacherNotes.assessmentQuestions);
-    const teacherTips = normalizeStudentNoteRichLines(teacherNotes.teacherTips);
-    const blackboardSummary = normalizeStudentNoteRichLines(teacherNotes.blackboardSummary);
-    const sessionSummary = normalizeStudentNoteRichLines(teacherNotes.sessionSummary);
-    const nextSessionBridge = normalizeStudentNoteRichLines(teacherNotes.nextSessionBridge);
-    const lessonBlocks = Array.isArray(teacherNotes.lessonBlocks) ? teacherNotes.lessonBlocks : [];
-    const classroomQuestions = Array.isArray(teacherNotes.classroomQuestions) ? teacherNotes.classroomQuestions : [];
-    const conceptFlow = Array.isArray(teacherNotes.conceptFlow) ? teacherNotes.conceptFlow : [];
-    const timePlan = Array.isArray(teacherNotes.timePlan) ? teacherNotes.timePlan : [];
+    const template = buildTeacherNotesTemplate(teacherNotes);
+    const lessonBlocks = template.lessonBlocks;
+    const classroomQuestions = template.classroomQuestions;
+    const conceptFlow = template.conceptFlow;
+    const timePlan = template.timePlan;
 
     return (
       <div className="overflow-hidden rounded-[30px] border border-[#D8E5E8] bg-[linear-gradient(180deg,rgba(250,252,252,1),rgba(243,247,247,1))] shadow-[0_18px_60px_rgba(15,23,42,0.06)]">
@@ -2013,62 +2213,68 @@ export default function App() {
                   <h4 className="font-display text-lg font-black tracking-tight text-slate-900">Instruction-ready classroom guide</h4>
                 </div>
               </div>
-              {teacherNotes.sessionOverview ? (
-                <p className="max-w-3xl text-sm leading-relaxed text-slate-700">{renderMixedMathLine(teacherNotes.sessionOverview)}</p>
+              {template.overview ? (
+                <p className="max-w-3xl text-sm leading-relaxed text-slate-700">{renderMixedMathLine(template.overview)}</p>
               ) : null}
             </div>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4 xl:min-w-[420px]">
-              {renderNoteSummaryStat("Outcomes", learningOutcomes.length || "-", "teal")}
-              {renderNoteSummaryStat("Lesson Blocks", lessonBlocks.length || "-", "amber")}
-              {renderNoteSummaryStat("Question Prompts", classroomQuestions.length || "-", "sky")}
-              {renderNoteSummaryStat("Checks", formativeChecks.length || "-", "emerald")}
+              {template.stats.map((stat) => (
+                <div key={stat.label}>
+                  {renderNoteSummaryStat(stat.label, stat.value, stat.accent)}
+                </div>
+              ))}
             </div>
           </div>
 
-          {(teacherNotes.sessionOverview || lessonPurpose.length > 0) && (
-            <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)]">
-              {teacherNotes.sessionOverview ? (
+          {(template.overview || template.preparationCards.length > 0) && (
+            <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(300px,0.65fr)] items-start">
+              {template.overview ? (
                 <div className="rounded-[24px] border border-white/80 bg-white/85 p-4 backdrop-blur-sm">
                   <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Session Overview</div>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{renderMixedMathLine(teacherNotes.sessionOverview)}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-700">{renderMixedMathLine(template.overview)}</p>
                 </div>
               ) : null}
-              {lessonPurpose.length > 0 ? renderRichNoteListSection({
-                title: "Lesson Purpose",
-                items: lessonPurpose,
-                accent: "amber",
-                description: "What this lesson is trying to unlock for the teacher and class.",
-              }) : null}
+              {template.preparationCards.find((card) => card.title === "Lesson Purpose")
+                ? renderRichNoteListSection(template.preparationCards.find((card) => card.title === "Lesson Purpose")!)
+                : null}
             </div>
           )}
         </div>
 
         <div className="space-y-5 p-5 md:p-6">
-          <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
-            {renderRichNoteListSection({ title: "Teacher-Facing Learning Outcomes", items: learningOutcomes, accent: "teal" })}
-            {renderRichNoteListSection({ title: "Prerequisite Knowledge", items: prerequisiteKnowledge, accent: "amber" })}
-            {renderRichNoteListSection({ title: "Previous Session Recap", items: previousSessionRecap, accent: "slate" })}
-            {renderRichNoteListSection({ title: "Teaching Sequence", items: teachingSequence, accent: "slate", ordered: true })}
-            {renderRichNoteListSection({ title: "Guided Practice", items: guidedPractice, accent: "emerald" })}
-            {renderRichNoteListSection({ title: "Formative Checks", items: formativeChecks, accent: "emerald" })}
-            {renderRichNoteListSection({ title: "Assessment Questions", items: assessmentQuestions, accent: "sky", ordered: true })}
-            {renderRichNoteListSection({ title: "Teacher Tips", items: teacherTips, accent: "amber" })}
-            {renderRichNoteListSection({ title: "Blackboard Summary", items: blackboardSummary, accent: "slate" })}
-            {renderRichNoteListSection({ title: "Session Summary", items: sessionSummary, accent: "teal" })}
-            {renderRichNoteListSection({ title: "Next Session Bridge", items: nextSessionBridge, accent: "sky" })}
-          </div>
+          {template.preparationCards.filter((card) => card.title !== "Lesson Purpose").length > 0 ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Core Preparation</div>
+              <h5 className="mt-1 text-base font-black text-slate-900">What the teacher should walk in holding</h5>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
+                {template.preparationCards.filter((card) => card.title !== "Lesson Purpose").map((card) => (
+                  <div key={card.title}>{renderRichNoteListSection(card)}</div>
+                ))}
+              </div>
+            </div>
+          ) : null}
 
-          {Array.isArray(teacherNotes.teachingPlan) && teacherNotes.teachingPlan.length > 0 ? (
+          {template.interactionCards.length > 0 ? (
+            <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Interaction & Checks</div>
+              <h5 className="mt-1 text-base font-black text-slate-900">Prompts, practice, and quick understanding checks</h5>
+              <div className="mt-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-2">
+                {template.interactionCards.map((card) => <div key={card.title}>{renderRichNoteListSection(card)}</div>)}
+              </div>
+            </div>
+          ) : null}
+
+          {Array.isArray(template.teachingPlan) && template.teachingPlan.length > 0 ? (
             <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Teaching Plan</div>
+                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Delivery Flow</div>
                   <h5 className="mt-1 text-base font-black text-slate-900">Topic pacing snapshot</h5>
                 </div>
-                <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-600">{teacherNotes.teachingPlan.length} segments</span>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-600">{template.teachingPlan.length} segments</span>
               </div>
               <div className="mt-4 grid gap-3 md:grid-cols-2">
-                {teacherNotes.teachingPlan.map((item, idx) => (
+                {template.teachingPlan.map((item, idx) => (
                   <div key={idx} className="rounded-[22px] border border-slate-200 bg-[linear-gradient(180deg,#ffffff,#f8fafc)] p-4">
                     <div className="flex items-center justify-between gap-3">
                       <div className="text-sm font-bold text-slate-900">{renderMixedMathLine(item.topic)}</div>
@@ -2226,11 +2432,11 @@ export default function App() {
             </div>
           ) : null}
 
-          {Array.isArray(teacherNotes.commonMisconceptionsDetailed) && teacherNotes.commonMisconceptionsDetailed.length > 0 ? (
+          {template.misconceptions.length > 0 ? (
             <div className="rounded-[28px] border border-rose-200 bg-rose-50/70 p-5">
               <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-rose-700">Misconceptions and Corrections</div>
               <div className="mt-4 grid gap-3 xl:grid-cols-2">
-                {teacherNotes.commonMisconceptionsDetailed.map((item, idx) => (
+                {template.misconceptions.map((item, idx) => (
                   <div key={idx} className="rounded-[22px] border border-rose-200 bg-white/90 p-4 text-xs">
                     <div className="font-semibold text-rose-900">{renderMixedMathLine(item.misconception)}</div>
                     <div className="mt-2 leading-relaxed text-rose-800"><span className="font-bold">Correction:</span> {renderMixedMathLine(item.correction)}</div>
@@ -2240,22 +2446,20 @@ export default function App() {
             </div>
           ) : null}
 
-          {(teacherNotes.differentiation?.slowLearners?.length || teacherNotes.differentiation?.averageLearners?.length || teacherNotes.differentiation?.advancedLearners?.length) ? (
+          {template.supportCards.length > 0 ? (
             <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
-              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Differentiation</div>
+              <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">Support & Closure</div>
               <div className="mt-4 grid gap-3 xl:grid-cols-3">
-                {renderRichNoteListSection({ title: "Slow Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.slowLearners), accent: "amber" })}
-                {renderRichNoteListSection({ title: "Average Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.averageLearners), accent: "slate" })}
-                {renderRichNoteListSection({ title: "Advanced Learners", items: normalizeStudentNoteRichLines(teacherNotes.differentiation?.advancedLearners), accent: "emerald" })}
+                {template.supportCards.map((card) => <div key={card.title}>{renderRichNoteListSection(card)}</div>)}
               </div>
             </div>
           ) : null}
 
-          {Array.isArray(teacherNotes.endOfClassRecap) && teacherNotes.endOfClassRecap.length > 0 ? (
+          {template.endOfClassRecap.length > 0 ? (
             <div className="rounded-[28px] border border-slate-200 bg-white/90 p-5">
               <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#586A71]">End-of-Class Recap</div>
               <div className="mt-4 grid gap-3 xl:grid-cols-2">
-                {teacherNotes.endOfClassRecap.map((item, idx) => (
+                {template.endOfClassRecap.map((item, idx) => (
                   <div key={idx} className="rounded-[24px] border border-slate-200 bg-white p-4 text-xs text-slate-700">
                     <div className="font-semibold text-slate-900">{renderMixedMathLine(item.prompt)}</div>
                     {item.expectedAnswer ? <div className="mt-2 leading-relaxed text-slate-600"><span className="font-semibold text-slate-800">Expected answer:</span> {renderMixedMathLine(item.expectedAnswer)}</div> : null}
@@ -3948,35 +4152,241 @@ export default function App() {
       });
     };
 
+    const teacherPdfSnippetCache = new Map<string, Promise<{ image: HTMLImageElement; height: number }>>();
+    const escapeTeacherPdfHtml = (value: string) =>
+      stripImplicitUnitFromContextLabel(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;")
+        .replaceAll("'", "&#39;");
+
+    const renderTeacherPdfMathHtml = (latex: string, displayMode = false, fallback = "") => {
+      const normalizedLatex = normalizeInlineMathText(latex);
+      try {
+        return katex.renderToString(normalizedLatex, {
+          displayMode,
+          throwOnError: false,
+          strict: false,
+        });
+      } catch {
+        return `<span class="teacher-pdf-text">${escapeTeacherPdfHtml(fallback || latexToReadableText(normalizedLatex) || latex)}</span>`;
+      }
+    };
+
+    const renderTeacherRichValueToHtml = (value: StudentNoteRichValue, displayMode = false) => {
+      const renderPlan = getStudentNoteRenderPlan(value);
+      if (renderPlan.segments.length === 0) return "";
+      return renderPlan.segments.map((segment) => {
+        if (segment.type === "math") {
+          const shouldDisplay = displayMode || segment.displayMode || renderPlan.classification === "full_latex_line";
+          return `<span class="${shouldDisplay ? "teacher-pdf-math teacher-pdf-math-display" : "teacher-pdf-math"}">${renderTeacherPdfMathHtml(segment.value, shouldDisplay, segment.value)}</span>`;
+        }
+        return `<span class="teacher-pdf-text">${escapeTeacherPdfHtml(segment.value)}</span>`;
+      }).join("");
+    };
+
+    const renderTeacherRichLineToHtml = (line: StudentNoteRichLine, options?: { displayMode?: boolean; className?: string }) => {
+      const isFullLatexLine = line.length === 1 && getStudentNoteRenderPlan(line[0]).classification === "full_latex_line";
+      const content = line
+        .map((item) => renderTeacherRichValueToHtml(item, Boolean(options?.displayMode)))
+        .filter(Boolean)
+        .join("");
+      if (!content) return "";
+      const className = ["teacher-pdf-line", options?.displayMode || isFullLatexLine ? "teacher-pdf-line-display" : "", options?.className || ""]
+        .filter(Boolean)
+        .join(" ");
+      return `<div class="${className}">${content}</div>`;
+    };
+
+    const getTeacherPdfCss = () => `
+      ${katexStyles}
+      * { box-sizing: border-box; }
+      body { margin: 0; padding: 0; background: transparent; }
+      .teacher-pdf-root {
+        width: 100%;
+        color: #2b3437;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .teacher-pdf-line { white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; }
+      .teacher-pdf-line-display { display: block; }
+      .teacher-pdf-block + .teacher-pdf-block { margin-top: 10px; }
+      .teacher-pdf-list-label {
+        margin-bottom: 8px;
+        font: 700 12px Helvetica, Arial, sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #4c6a7b;
+      }
+      .teacher-pdf-list {
+        margin: 0;
+        padding-left: 22px;
+      }
+      .teacher-pdf-list li + li { margin-top: 8px; }
+      .teacher-pdf-list-line { font-size: 15px; line-height: 1.5; }
+      .teacher-pdf-math { display: inline-block; max-width: 100%; vertical-align: middle; }
+      .teacher-pdf-math-display { display: block; margin: 6px 0; }
+      .teacher-pdf-text { white-space: pre-wrap; }
+      .teacher-pdf-root .katex .katex-mathml,
+      .teacher-pdf-root .katex annotation { display: none !important; }
+      .teacher-pdf-root .katex-display { margin: 0.35em 0; }
+    `;
+
+    const createTeacherPdfSnippet = async (html: string, width: number) => {
+      const normalizedHtml = html.trim();
+      if (!normalizedHtml) {
+        return { image: await loadImageElement("data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA="), height: 1 };
+      }
+      const cacheKey = `${width}:${normalizedHtml}`;
+      if (!teacherPdfSnippetCache.has(cacheKey)) {
+        teacherPdfSnippetCache.set(cacheKey, (async () => {
+          const measureHost = document.createElement("div");
+          measureHost.style.position = "fixed";
+          measureHost.style.left = "-100000px";
+          measureHost.style.top = "0";
+          measureHost.style.width = `${width}px`;
+          measureHost.style.visibility = "hidden";
+          measureHost.style.pointerEvents = "none";
+          measureHost.innerHTML = `<style>${getTeacherPdfCss()}</style><div class="teacher-pdf-root">${normalizedHtml}</div>`;
+          document.body.appendChild(measureHost);
+          const measuredRoot = measureHost.querySelector(".teacher-pdf-root") as HTMLElement | null;
+          const height = Math.max(1, Math.ceil(measuredRoot?.getBoundingClientRect().height || 1));
+          measureHost.remove();
+
+          const scale = 2;
+          const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="${width * scale}" height="${height * scale}" viewBox="0 0 ${width} ${height}">
+              <foreignObject x="0" y="0" width="${width}" height="${height}">
+                <div xmlns="http://www.w3.org/1999/xhtml">
+                  <style>${getTeacherPdfCss()}</style>
+                  <div class="teacher-pdf-root">${normalizedHtml}</div>
+                </div>
+              </foreignObject>
+            </svg>
+          `;
+          const image = await loadImageElement(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`);
+          return { image, height };
+        })());
+      }
+      return teacherPdfSnippetCache.get(cacheKey)!;
+    };
+
+    const drawTeacherRenderedSnippet = async (html: string, width = contentWidth) => {
+      if (!html.trim()) return;
+      try {
+        const snippet = await createTeacherPdfSnippet(html, width);
+        ensureSpace(snippet.height + 12);
+        ctx.drawImage(snippet.image, marginX, y, width, snippet.height);
+        y += snippet.height + 12;
+      } catch {
+        const fallbackText = (() => {
+          const text = html
+            .replace(/<style[\s\S]*?<\/style>/gi, " ")
+            .replace(/<\/(div|p|li|ol|ul|br|h1|h2|h3|h4|h5|h6)>/gi, "\n")
+            .replace(/<li[^>]*>/gi, "• ")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&nbsp;/g, " ")
+            .replace(/&amp;/g, "&")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&quot;/g, "\"")
+            .replace(/&#39;/g, "'")
+            .replace(/\n\s*\n\s*\n+/g, "\n\n")
+            .replace(/[ \t]+\n/g, "\n")
+            .replace(/\n[ \t]+/g, "\n")
+            .replace(/[ \t]{2,}/g, " ")
+            .trim();
+          return text;
+        })();
+        if (!fallbackText) return;
+        drawBodyParagraph(fallbackText, {
+          font: "400 15px Georgia, Times New Roman, serif",
+          lineHeight: 22,
+          spacingAfter: 10,
+        });
+      }
+    };
+
+    const toTeacherRenderableList = (items: StudentNoteRichLine[]) =>
+      items.map((item) => renderTeacherRichLineToHtml(item, { className: "teacher-pdf-list-line" })).filter(Boolean);
+
+    const drawTeacherTemplateCard = async (card: TeacherTemplateListCard) => {
+      const listItems = toTeacherRenderableList(card.items).map((item) => `<li>${item}</li>`).join("");
+      if (!listItems) return;
+      const description = card.description ? `<div class="teacher-pdf-text" style="margin-bottom:8px;color:#7c7a76;">${escapeTeacherPdfHtml(card.description)}</div>` : "";
+      await drawTeacherRenderedSnippet(`
+        <div class="teacher-pdf-block">
+          <div class="teacher-pdf-list-label">${escapeTeacherPdfHtml(card.title)}</div>
+          ${description}
+          <${card.ordered ? "ol" : "ul"} class="teacher-pdf-list">${listItems}</${card.ordered ? "ol" : "ul"}>
+        </div>
+      `);
+    };
+
+    const drawTeacherLabeledLines = async (entries: Array<{ label: string; items: StudentNoteRichLine[]; ordered?: boolean }>) => {
+      for (const entry of entries) {
+        const values = toTeacherRenderableList(entry.items);
+        if (values.length === 0) continue;
+        await drawTeacherRenderedSnippet(`
+          <div class="teacher-pdf-block">
+            <div class="teacher-pdf-list-label">${escapeTeacherPdfHtml(entry.label)}</div>
+            <${entry.ordered ? "ol" : "ul"} class="teacher-pdf-list">${values.map((value) => `<li>${value}</li>`).join("")}</${entry.ordered ? "ol" : "ul"}>
+          </div>
+        `);
+      }
+    };
+
     drawTitleBlock();
 
     if (noteType === "teacher" && session.teacherLessonNotes) {
-      const teacherNotes = session.teacherLessonNotes;
-      drawPlainParagraph("Session Overview", formatRenderableText(teacherNotes.sessionOverview));
-      drawListSection("Learning Outcomes", getRenderableList(teacherNotes.learningOutcomes));
-      drawListSection("Prerequisite Knowledge", getRenderableList(teacherNotes.prerequisiteKnowledge));
-      drawListSection("Previous Session Recap", getRenderableList(teacherNotes.previousSessionRecap));
-      drawListSection("Lesson Purpose", getRenderableList(teacherNotes.lessonPurpose));
-      drawListSection("Teaching Sequence", getRenderableList(teacherNotes.teachingSequence), { ordered: true });
-      drawListSection("Guided Practice", getRenderableList(teacherNotes.guidedPractice));
-      drawListSection("Formative Checks", getRenderableList(teacherNotes.formativeChecks));
+      const template = buildTeacherNotesTemplate(session.teacherLessonNotes);
+      if (template.overview) {
+        drawSectionHeading("Session Overview");
+        await drawTeacherRenderedSnippet(renderTeacherRichLineToHtml(normalizeStudentNoteRichLine(template.overview), { className: "teacher-pdf-paragraph" }));
+      }
 
-      if (Array.isArray(teacherNotes.lessonBlocks) && teacherNotes.lessonBlocks.length > 0) {
+      if (template.preparationCards.length > 0) {
+        drawSectionHeading("Core Preparation");
+        for (const card of template.preparationCards) {
+          await drawTeacherTemplateCard(card);
+        }
+      }
+
+      if (template.teachingPlan.length > 0) {
+        drawSectionHeading("Delivery Flow", "Topic pacing snapshot");
+        for (const item of template.teachingPlan) {
+          drawSubheading(`${formatRenderableText(item.topic)}${item.minutes ? ` (${formatRenderableText(item.minutes)} min)` : ""}`);
+          if (item.teachingStrategy) {
+            await drawTeacherRenderedSnippet(renderTeacherRichLineToHtml(normalizeStudentNoteRichLine(item.teachingStrategy), { className: "teacher-pdf-paragraph" }));
+          }
+        }
+      }
+
+      if (template.interactionCards.length > 0) {
+        drawSectionHeading("Interaction and Checks");
+        for (const card of template.interactionCards) {
+          await drawTeacherTemplateCard(card);
+        }
+      }
+
+      if (template.lessonBlocks.length > 0) {
         drawSectionHeading("Detailed Lesson Blocks", "Stage-wise flow for instruction");
-        for (const [index, block] of teacherNotes.lessonBlocks.entries()) {
+        for (const [index, block] of template.lessonBlocks.entries()) {
           const title = `Block ${index + 1}${block.title ? `: ${formatRenderableText(block.title)}` : ""}${block.durationMinutes != null ? ` (${formatRenderableText(block.durationMinutes)} min)` : ""}`;
           drawSubheading(title);
-          drawLabelValueLines([
-            { label: "Teacher prompt", values: getRenderableList(block.teacherPrompt) },
-            { label: "Explanation", values: getRenderableList(block.explanation) },
-            { label: "Check understanding", values: getRenderableList(block.checkUnderstanding) },
-            { label: "Expected answer", values: getRenderableList(block.expectedAnswers) },
-            { label: "Activity", values: getRenderableList(block.activity) },
-            { label: "Board work", values: getRenderableList(block.boardWork) },
-            { label: "Board step", values: getRenderableMathLines(block.boardSteps) },
-            { label: "Solution flow", values: getRenderableMathLines(block.solutionFlow) },
-            { label: "Proof step", values: getRenderableMathLines(block.proofSteps) },
-            { label: "Example", values: getRenderableList(block.examples) },
+          await drawTeacherLabeledLines([
+            { label: "Teacher Prompt", items: normalizeStudentNoteRichLines(block.teacherPrompt) },
+            { label: "Explanation", items: normalizeStudentNoteRichLines(block.explanation) },
+            { label: "Check Understanding", items: normalizeStudentNoteRichLines(block.checkUnderstanding) },
+            { label: "Expected Answers", items: normalizeStudentNoteRichLines(block.expectedAnswers) },
+            { label: "Activity", items: normalizeStudentNoteRichLines(block.activity) },
+            { label: "Board Work", items: normalizeStudentNoteRichLines(block.boardWork) },
+            { label: "Board Steps", items: normalizeStudentNoteRichLines(block.boardSteps), ordered: true },
+            { label: "Solution Flow", items: normalizeStudentNoteRichLines(block.solutionFlow), ordered: true },
+            { label: "Proof Steps", items: normalizeStudentNoteRichLines(block.proofSteps), ordered: true },
+            { label: "Examples", items: normalizeStudentNoteRichLines(block.examples) },
           ]);
           for (const diagram of getMathDiagramList(block.geometryDiagrams)) {
             await drawMathDiagramFigure(diagram);
@@ -3985,24 +4395,24 @@ export default function App() {
         }
       }
 
-      if (Array.isArray(teacherNotes.conceptFlow) && teacherNotes.conceptFlow.length > 0) {
+      if (template.conceptFlow.length > 0) {
         drawSectionHeading("Concept Flow");
-        for (const [index, concept] of teacherNotes.conceptFlow.entries()) {
+        for (const [index, concept] of template.conceptFlow.entries()) {
           drawSubheading(`Concept ${index + 1}: ${formatRenderableText(concept.conceptName)}`);
-          drawLabelValueLines([
-            { label: "Definition", values: getRenderableList(concept.definition) },
-            { label: "Core explanation", values: getRenderableList(concept.coreExplanation) },
-            { label: "Importance", values: getRenderableList(concept.importance) },
-            { label: "Observed in", values: getRenderableList(concept.observedIn) },
-            { label: "Why study it", values: getRenderableList(concept.whyStudyIt) },
-            { label: "Relationship with previous", values: getRenderableList(concept.relationshipWithPrevious) },
-            { label: "Relationship with future", values: getRenderableList(concept.relationshipWithFuture) },
-            { label: "Keywords", values: getRenderableList(concept.keywords) },
-            { label: "Teacher moves", values: getRenderableList(concept.teacherMoves) },
-            { label: "Examples", values: getRenderableList(concept.examples) },
-            { label: "Visuals", values: getRenderableList(concept.visuals) },
-            { label: "Solution flow", values: getRenderableMathLines(concept.solutionFlow) },
-            { label: "Proof step", values: getRenderableMathLines(concept.proofSteps) },
+          await drawTeacherLabeledLines([
+            { label: "Definition", items: normalizeStudentNoteRichLines(concept.definition) },
+            { label: "Core Explanation", items: normalizeStudentNoteRichLines(concept.coreExplanation) },
+            { label: "Importance", items: normalizeStudentNoteRichLines(concept.importance) },
+            { label: "Observed In", items: normalizeStudentNoteRichLines(concept.observedIn) },
+            { label: "Why Study It", items: normalizeStudentNoteRichLines(concept.whyStudyIt) },
+            { label: "Relationship With Previous", items: normalizeStudentNoteRichLines(concept.relationshipWithPrevious) },
+            { label: "Relationship With Future", items: normalizeStudentNoteRichLines(concept.relationshipWithFuture) },
+            { label: "Keywords", items: normalizeStudentNoteRichLines(concept.keywords) },
+            { label: "Teacher Moves", items: normalizeStudentNoteRichLines(concept.teacherMoves) },
+            { label: "Examples", items: normalizeStudentNoteRichLines(concept.examples) },
+            { label: "Visual Cues", items: normalizeStudentNoteRichLines(concept.visuals) },
+            { label: "Solution Flow", items: normalizeStudentNoteRichLines(concept.solutionFlow), ordered: true },
+            { label: "Proof Steps", items: normalizeStudentNoteRichLines(concept.proofSteps), ordered: true },
           ]);
           for (const diagram of getMathDiagramList(concept.geometryDiagrams)) {
             await drawMathDiagramFigure(diagram);
@@ -4011,32 +4421,62 @@ export default function App() {
         }
       }
 
-      if (Array.isArray(teacherNotes.classroomQuestions) && teacherNotes.classroomQuestions.length > 0) {
+      if (template.classroomQuestions.length > 0) {
         drawSectionHeading("Classroom Questions");
-        teacherNotes.classroomQuestions.forEach((question, index) => {
+        for (const [index, question] of template.classroomQuestions.entries()) {
           drawSubheading(`Prompt ${index + 1}`);
-          drawBulletList([
-            `Question: ${formatRenderableText(question.question)}`,
-            ...(question.level ? [`Level: ${formatRenderableText(question.level)}`] : []),
-            ...(question.expectedResponse ? [`Expected response: ${formatRenderableText(question.expectedResponse)}`] : []),
-            ...getRenderableList(question.answerPoints).map((item) => `Answer point: ${item}`),
+          await drawTeacherLabeledLines([
+            { label: "Question", items: normalizeStudentNoteRichLines(question.question) },
+            { label: "Expected Response", items: normalizeStudentNoteRichLines(question.expectedResponse) },
+            { label: "Answer Points", items: normalizeStudentNoteRichLines(question.answerPoints) },
           ]);
-        });
+          if (question.level) {
+            drawBodyParagraph(`Level: ${formatRenderableText(question.level)}`, {
+              font: "700 12px Helvetica, Arial, sans-serif",
+              lineHeight: 18,
+              color: theme.muted,
+              spacingAfter: 8,
+            });
+          }
+        }
       }
 
-      if (Array.isArray(teacherNotes.timePlan) && teacherNotes.timePlan.length > 0) {
+      if (template.timePlan.length > 0) {
         drawSectionHeading("Session Time Plan");
-        teacherNotes.timePlan.forEach((block) => {
+        for (const block of template.timePlan) {
           drawSubheading(`${formatRenderableText(block.segment)}${block.minutes ? ` (${formatRenderableText(block.minutes)} min)` : ""}`);
-          drawBulletList(getRenderableList(block.purpose));
-        });
+          await drawTeacherLabeledLines([
+            { label: "Purpose", items: normalizeStudentNoteRichLines(block.purpose) },
+          ]);
+        }
       }
 
-      drawListSection("Assessment Questions", getRenderableList(teacherNotes.assessmentQuestions), { ordered: true });
-      drawListSection("Teacher Tips", getRenderableList(teacherNotes.teacherTips));
-      drawListSection("Blackboard Summary", getRenderableList(teacherNotes.blackboardSummary));
-      drawListSection("Session Summary", getRenderableList(teacherNotes.sessionSummary));
-      drawListSection("Next Session Bridge", getRenderableList(teacherNotes.nextSessionBridge));
+      if (template.misconceptions.length > 0) {
+        drawSectionHeading("Misconceptions and Corrections");
+        for (const item of template.misconceptions) {
+          await drawTeacherLabeledLines([
+            { label: "Misconception", items: normalizeStudentNoteRichLines(item.misconception) },
+            { label: "Correction", items: normalizeStudentNoteRichLines(item.correction) },
+          ]);
+        }
+      }
+
+      if (template.supportCards.length > 0) {
+        drawSectionHeading("Support and Closure");
+        for (const card of template.supportCards) {
+          await drawTeacherTemplateCard(card);
+        }
+      }
+
+      if (template.endOfClassRecap.length > 0) {
+        drawSectionHeading("End-of-Class Recap");
+        for (const item of template.endOfClassRecap) {
+          await drawTeacherLabeledLines([
+            { label: "Prompt", items: normalizeStudentNoteRichLines(item.prompt) },
+            { label: "Expected Answer", items: normalizeStudentNoteRichLines(item.expectedAnswer) },
+          ]);
+        }
+      }
     }
 
     if (noteType === "student" && session.studentLessonNotes) {
@@ -5304,7 +5744,11 @@ export default function App() {
   ];
 
   const sessionTabDefinitions = [
-    { id: "teacherNotes", label: "Teacher Notes", sections: ["teacherLessonNotes"] as SessionSectionKey[] },
+    {
+      id: "teacherNotes",
+      label: "Teacher Notes",
+      sections: ["teacherLessonNotes", "learningOutcomes", "introduction", "theory", "activities"] as SessionSectionKey[],
+    },
     { id: "studentNotes", label: "Student Notes", sections: ["studentLessonNotes"] as SessionSectionKey[] },
     { id: "materials", label: "Materials (PPT/PDF/DOC)", sections: ["materials"] as SessionSectionKey[] },
     { id: "homework", label: "Homework Draft", sections: ["homework"] as SessionSectionKey[] },
@@ -5328,6 +5772,41 @@ export default function App() {
 
   const getSectionsForTab = (tab: typeof activeSubTab): SessionSectionKey[] =>
     sessionTabDefinitions.find((item) => item.id === tab)?.sections || allSessionSections;
+
+  const fetchStoredSessionSections = async (
+    sessionNum: number,
+    selectedSections: SessionSectionKey[],
+    outlineItem?: {
+      id?: string;
+      title?: string;
+      duration?: number;
+    }
+  ) => {
+    if (!currentWorkspaceId) return null;
+    const query = new URLSearchParams({ sections: selectedSections.join(",") });
+    const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/generated-sessions/${sessionNum}?${query.toString()}`);
+    if (res.status === 404) {
+      return null;
+    }
+    if (!res.ok) {
+      throw new Error(await readErrorFromResponse(res, "Failed to load saved session content."));
+    }
+    const data = await res.json();
+    const sessionPlan = data.sessionPlan as SessionPlan;
+    setGeneratedSessions((prev) => ({
+      ...prev,
+      [sessionNum]: {
+        ...prev[sessionNum],
+        ...(outlineItem || {}),
+        ...sessionPlan,
+        id: sessionPlan.id || outlineItem?.id || prev[sessionNum]?.id || `session-${sessionNum}`,
+        title: sessionPlan.title || outlineItem?.title || prev[sessionNum]?.title || `Session ${sessionNum}`,
+        duration: sessionPlan.duration || outlineItem?.duration || prev[sessionNum]?.duration || 45,
+        sessionNumber: Number(sessionPlan.sessionNumber || sessionNum),
+      },
+    }));
+    return sessionPlan;
+  };
 
   const getAssessmentCustomization = (sessionNum: number): SessionAssessmentCustomization => {
     const stored = assessmentCustomizationBySession[sessionNum];
@@ -5788,31 +6267,33 @@ export default function App() {
     syncTermRowsFromAllocations(sourceAllocations);
   };
 
-  const loadPlanningWorkspaceById = async (workspaceId: string) => {
+  const loadPlanningWorkspaceById = async (
+    workspaceId: string,
+    options?: { view?: "planning" | "full" }
+  ) => {
     if (!workspaceId) return null;
-    const res = await fetch(`/api/planning-workspaces/${workspaceId}`);
+    const view = options?.view || "planning";
+    const res = await fetch(`/api/planning-workspaces/${workspaceId}?view=${view}`);
     if (!res.ok) {
       throw new Error(await readErrorFromResponse(res, "Failed to load planning workspace."));
     }
     const data = await res.json();
     const workspace = data.workspace as PlanningWorkspace;
-    setCurrentWorkspaceId(workspace._id);
-    setActiveWorkspace(workspace);
-    localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+    syncWorkspaceState(workspace);
     return workspace;
   };
 
-  const ensurePlanningWorkspaceForCurriculum = async (curriculumId: string) => {
+  const ensurePlanningWorkspaceForCurriculum = async (
+    curriculumId: string,
+    options?: { view?: "planning" | "full" }
+  ) => {
     if (!curriculumId) return null;
+    const view = options?.view || "planning";
 
-    const existingRes = await fetch(`/api/planning-workspaces/by-curriculum/${curriculumId}`);
+    const existingRes = await fetch(`/api/planning-workspaces/by-curriculum/${curriculumId}?view=${view}`);
     if (existingRes.ok) {
       const existingData = await existingRes.json();
-      const workspace = existingData.workspace as PlanningWorkspace;
-      setCurrentWorkspaceId(workspace._id);
-      setActiveWorkspace(workspace);
-      localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
-      return workspace;
+      return existingData.workspace as PlanningWorkspace;
     }
 
     const createRes = await fetch("/api/planning-workspaces", {
@@ -5825,11 +6306,7 @@ export default function App() {
     }
 
     const createData = await createRes.json();
-    const workspace = createData.workspace as PlanningWorkspace;
-    setCurrentWorkspaceId(workspace._id);
-    setActiveWorkspace(workspace);
-    localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
-    return workspace;
+    return createData.workspace as PlanningWorkspace;
   };
 
   const restoreCurriculumById = async (curriculumId: string, options?: { silent?: boolean }) => {
@@ -5842,7 +6319,10 @@ export default function App() {
     }
 
     try {
-      const res = await fetch(`/api/curriculums/${curriculumId}`);
+      const [res, workspace] = await Promise.all([
+        fetch(`/api/curriculums/${curriculumId}`),
+        ensurePlanningWorkspaceForCurriculum(curriculumId, { view: "planning" }),
+      ]);
       if (!res.ok) {
         throw new Error(await readErrorFromResponse(res, "Failed to restore curriculum."));
       }
@@ -5853,11 +6333,12 @@ export default function App() {
       setFileName(curriculumRecord.fileName || "");
       setInputText(curriculumRecord.sourceText || "");
       setExtractedData(curriculumRecord.extractedCurriculum);
-      setEditingJsonText(JSON.stringify(curriculumRecord.extractedCurriculum, null, 2));
+      setEditingJsonText("");
       localStorage.setItem(LAST_CURRICULUM_ID_KEY, curriculumRecord._id);
-      await ensurePlanningWorkspaceForCurriculum(curriculumRecord._id);
+      if (workspace) {
+        syncWorkspaceState(workspace);
+      }
       setErrorHeader(null);
-      await fetchSavedCurriculums();
     } catch (error: any) {
       console.error("[Frontend] Restore curriculum failed", error);
       localStorage.removeItem(LAST_CURRICULUM_ID_KEY);
@@ -5898,17 +6379,19 @@ export default function App() {
 
   useEffect(() => {
     void (async () => {
+      const savedCurriculumsPromise = fetchSavedCurriculums();
       try {
-        await fetchSavedCurriculums();
         const lastCurriculumId = localStorage.getItem(LAST_CURRICULUM_ID_KEY);
         if (lastCurriculumId) {
           await restoreCurriculumById(lastCurriculumId, { silent: true });
+          await savedCurriculumsPromise;
           return;
         }
 
+        await savedCurriculumsPromise;
         const lastWorkspaceId = localStorage.getItem(LAST_WORKSPACE_ID_KEY);
         if (lastWorkspaceId) {
-          await loadPlanningWorkspaceById(lastWorkspaceId);
+          await loadPlanningWorkspaceById(lastWorkspaceId, { view: "planning" });
         }
       } catch (error: any) {
         console.error("[Frontend] Initial restore failed", error);
@@ -5937,8 +6420,39 @@ export default function App() {
             ])
           )
         : {};
-    setGeneratedSessions(generatedFromWorkspace || {});
+    if (Object.keys(generatedFromWorkspace || {}).length > 0) {
+      setGeneratedSessions(generatedFromWorkspace || {});
+    }
   }, [activeWorkspace]);
+
+  useEffect(() => {
+    if (activeStep !== 4 || !currentWorkspaceId) {
+      return;
+    }
+
+    const targetOutline = sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber);
+    if (!targetOutline) {
+      return;
+    }
+    const requiredSections = getSectionsForTab(activeSubTab);
+    const currentSession = generatedSessions[activeSessionNumber];
+    if (hasRequiredSessionSections(currentSession, requiredSections)) {
+      return;
+    }
+
+    void (async () => {
+      try {
+        await fetchStoredSessionSections(activeSessionNumber, requiredSections, {
+          id: targetOutline.id,
+          title: targetOutline.title,
+          duration: targetOutline.duration,
+        });
+      } catch (error: any) {
+        console.error("[Frontend] Session tab content load failed", error);
+        setErrorHeader(error?.message || "Unable to load the saved session content.");
+      }
+    })();
+  }, [activeStep, activeSubTab, activeSessionNumber, currentWorkspaceId, sessionsOutline, generatedSessions]);
 
   useEffect(() => {
     const duration = Number(sessionPlanningDefaultsDraft.sessionDurationMinutes || academicConfigDraft.periodDurationMinutes || 45);
@@ -6150,42 +6664,81 @@ export default function App() {
     console.log(`[Frontend][${requestId}] Input text length: ${inputText.length}`);
     setErrorHeader(null);
     setCurrentCurriculumId("");
+    setCurrentWorkspaceId("");
+    setActiveWorkspace(null);
     setExtractedData(null);
     setEditingJsonText("");
+    closePendingCurriculumSelection();
     setLoading(true);
-    setLoadingMessage("Parsing and mapping modules with high-quality AI instructional design...");
+    setLoadingMessage("Checking the uploaded curriculum for class-specific sections...");
 
     try {
-      const res = await fetch("/api/analyze-curriculum", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Request-Id": requestId,
-        },
-        body: JSON.stringify({ text: inputText, fileName }),
-      });
+      const classOptions = await detectCurriculumClassOptions();
+      const classSummaries = Array.isArray(classOptions.detectedClasses)
+        ? classOptions.detectedClasses as CurriculumClassSummary[]
+        : [];
 
-      if (!res.ok) {
-        throw new Error(await readErrorFromResponse(res, "Internal Server Error analyzing file"));
+      if (classOptions.requiresClassSelection && classSummaries.length > 1) {
+        setPendingCurriculumSelection({
+          classSummaries,
+        });
+        setSelectedClassNamesToStore(classSummaries.map((item) => item.className));
+        return;
       }
 
-      const data = (await res.json()) as any;
-      console.log(`[Frontend][${requestId}] Analyze curriculum completed`);
-      setCurrentCurriculumId(data.curriculumId || "");
-      setExtractedData(data.curriculum);
-      setEditingJsonText(JSON.stringify(data.curriculum, null, 2));
-      if (data.curriculumId) {
-        localStorage.setItem(LAST_CURRICULUM_ID_KEY, data.curriculumId);
+      setLoadingMessage("Parsing only the selected class curriculum and building the planning workspace...");
+      const saveData = await runCurriculumExtraction(
+        requestId,
+        classSummaries.length ? classSummaries.map((item) => item.className) : []
+      );
+      setCurrentCurriculumId(saveData.curriculumId || "");
+      setExtractedData(saveData.curriculum?.extractedCurriculum || saveData.curriculum || null);
+      setEditingJsonText("");
+      if (saveData.curriculumId) {
+        localStorage.setItem(LAST_CURRICULUM_ID_KEY, saveData.curriculumId);
       }
-      if (data.workspaceId && data.workspace) {
-        setCurrentWorkspaceId(data.workspaceId);
-        setActiveWorkspace(data.workspace as PlanningWorkspace);
-        localStorage.setItem(LAST_WORKSPACE_ID_KEY, data.workspaceId);
+      if (saveData.workspaceId && saveData.workspace) {
+        syncWorkspaceState(saveData.workspace as PlanningWorkspace);
       }
       await fetchSavedCurriculums();
     } catch (err: any) {
       console.error(`[Frontend][${requestId}] Analyze curriculum failed`, err);
       setErrorHeader(err.message || "An exception occurred while building the curriculum framework.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStoreSelectedCurriculumClasses = async () => {
+    if (!pendingCurriculumSelection) return;
+    if (selectedClassNamesToStore.length === 0) {
+      setErrorHeader("Select at least one class before storing the curriculum.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Parsing only the selected class curriculum and preparing the planning workspace...");
+    try {
+      const requestId = `frontend-analyze-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      const data = await runCurriculumExtraction(
+        requestId,
+        selectedClassNamesToStore
+      );
+      setCurrentCurriculumId(data.curriculumId || "");
+      setExtractedData(data.curriculum?.extractedCurriculum || data.curriculum || null);
+      setEditingJsonText("");
+      if (data.curriculumId) {
+        localStorage.setItem(LAST_CURRICULUM_ID_KEY, data.curriculumId);
+      }
+      if (data.workspaceId && data.workspace) {
+        syncWorkspaceState(data.workspace as PlanningWorkspace);
+      }
+      closePendingCurriculumSelection();
+      await fetchSavedCurriculums();
+    } catch (err: any) {
+      console.error("[Frontend] Save selected classes failed", err);
+      setErrorHeader(err.message || "Unable to save the selected classes.");
     } finally {
       setLoading(false);
     }
@@ -6226,9 +6779,7 @@ export default function App() {
       setIsEditingJson(false);
       setErrorHeader(null);
       if (data.workspaceId && data.workspace) {
-        setCurrentWorkspaceId(data.workspaceId);
-        setActiveWorkspace(data.workspace as PlanningWorkspace);
-        localStorage.setItem(LAST_WORKSPACE_ID_KEY, data.workspaceId);
+        syncWorkspaceState(data.workspace as PlanningWorkspace);
       }
       await fetchSavedCurriculums();
     } catch (e) {
@@ -6935,6 +7486,11 @@ export default function App() {
       complete: Boolean(currentWorkspaceId),
     },
   ];
+  const generatedSessionArtifactKeys = getGeneratedSessionArtifactKeys(activeWorkspace);
+  const readySessionCount = new Set([
+    ...Array.from(generatedSessionArtifactKeys),
+    ...Object.keys(generatedSessions).map((key) => String(key)),
+  ]).size;
 
   /**
    * Term level verification - Proceeding to session specifications
@@ -7075,11 +7631,13 @@ export default function App() {
    */
   const triggerGenerateAllSessions = async () => {
     if (sessionsOutline.length === 0) return;
-    
     // Process top-down
     for (let i = 0; i < sessionsOutline.length; i++) {
       const item = sessionsOutline[i];
-      if (!generatedSessions[item.sessionNumber]) {
+      const isAlreadyGenerated =
+        generatedSessionArtifactKeys.has(String(item.sessionNumber)) ||
+        Boolean(generatedSessions[item.sessionNumber]);
+      if (!isAlreadyGenerated) {
         await handleGenerateFullSessionPack(item.sessionNumber, item);
       }
     }
@@ -7265,6 +7823,93 @@ export default function App() {
               </h3>
               <p className="text-sm text-[#586A71] leading-relaxed font-medium">{loadingMessage}</p>
               <div className="mt-4 text-[10px] text-slate-400 italic">LMS curriculum engine runs automatically in real-time...</div>
+            </div>
+          </div>
+        )}
+
+        {pendingCurriculumSelection && !loading && (
+          <div className="fixed inset-0 z-40 bg-[#2B3437]/45 backdrop-blur-xs flex items-center justify-center p-4 no-print">
+            <div className="w-full max-w-3xl rounded-[28px] border-2 border-slate-200 bg-white shadow-2xl overflow-hidden">
+              <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#36ADAA]">Multi-Class Curriculum</div>
+                  <h3 className="mt-1 text-xl font-display font-black text-slate-900">Choose Which Classes To Extract</h3>
+                  <p className="mt-2 text-sm text-slate-600 max-w-2xl">
+                    This syllabus contains multiple classes. Choose the class blocks we should extract, and the unselected class content will be skipped entirely.
+                  </p>
+                </div>
+                <button
+                  onClick={closePendingCurriculumSelection}
+                  className="shrink-0 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                  aria-label="Close class selection"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                {pendingCurriculumSelection.classSummaries.map((summary) => {
+                  const checked = selectedClassNamesToStore.includes(summary.className);
+                  return (
+                    <label
+                      key={summary.className}
+                      className={`flex items-start gap-4 rounded-3xl border p-4 transition-all cursor-pointer ${
+                        checked
+                          ? "border-[#36ADAA] bg-[#36ADAA]/5 shadow-sm"
+                          : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => {
+                          setSelectedClassNamesToStore((current) =>
+                            e.target.checked
+                              ? Array.from(new Set([...current, summary.className]))
+                              : current.filter((item) => item !== summary.className)
+                          );
+                        }}
+                        className="mt-1 h-4 w-4 rounded border-slate-300 text-[#36ADAA] focus:ring-[#36ADAA]"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-base font-display font-black text-slate-900">{summary.className}</span>
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                            {summary.pageRangeLabel || summary.subject || "Detected in source"}
+                          </span>
+                        </div>
+                        {summary.detectionSource && (
+                          <p className="mt-3 rounded-2xl bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600">
+                            Source match: <span className="font-bold text-slate-700">{summary.detectionSource}</span>
+                          </p>
+                        )}
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50">
+                <p className="text-xs text-slate-500">
+                  Selected: <span className="font-bold text-slate-700">{selectedClassNamesToStore.length}</span> of{" "}
+                  <span className="font-bold text-slate-700">{pendingCurriculumSelection.classSummaries.length}</span> classes
+                </p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={closePendingCurriculumSelection}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => void handleStoreSelectedCurriculumClasses()}
+                    className="rounded-2xl bg-[#36ADAA] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#2f9895] disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={selectedClassNamesToStore.length === 0}
+                  >
+                    Extract Selected Classes
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -9581,74 +10226,68 @@ export default function App() {
               </div>
             </div>
 
-            {/* Split Screen Dashboard Area */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-              
-              {/* Left Column: List of sessions roadmaps */}
-              <div className="space-y-3 lg:col-span-1 no-print">
-                <div className="bg-[#36ADAA] text-white p-4 rounded-2xl flex items-center justify-between shadow-xs">
-                  <span className="text-xs font-bold uppercase tracking-wider">Approved Session Roadmap</span>
-                  <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full font-mono font-bold">
-                    {Object.keys(generatedSessions).length} / {sessionsOutline.length} Ready
-                  </span>
-                </div>
-
-                <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
-                  {sessionsOutline.map((item) => {
-                    const isSelected = activeSessionNumber === item.sessionNumber;
-                    const hasDeepData = !!generatedSessions[item.sessionNumber];
-
-                    return (
-                      <div
-                        key={item.id}
-                        onClick={() => {
-                          setActiveSessionNumber(item.sessionNumber);
-                        }}
-                        className={`p-3.5 rounded-2xl border-2 cursor-pointer transition text-left space-y-1.5 relative overflow-hidden ${
-                          isSelected
-                            ? "border-[#36ADAA] bg-[#36ADAA]/5 shadow-xs"
-                            : "border-slate-100 bg-white hover:border-slate-200"
-                        }`}
+            {/* Expanded Dashboard Area */}
+            <div className="space-y-4">
+              <div className="no-print rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-xs">
+                <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+                  <div className="space-y-1">
+                    <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Session Navigator</div>
+                    <div className="text-xs text-slate-500">
+                      {readySessionCount} of {sessionsOutline.length} sessions ready
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentIndex = sessionsOutline.findIndex((item) => item.sessionNumber === activeSessionNumber);
+                        if (currentIndex > 0) {
+                          setActiveSessionNumber(sessionsOutline[currentIndex - 1].sessionNumber);
+                        }
+                      }}
+                      disabled={sessionsOutline.findIndex((item) => item.sessionNumber === activeSessionNumber) <= 0}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5" />
+                      Previous
+                    </button>
+                    <div className="min-w-0">
+                      <select
+                        value={activeSessionNumber}
+                        onChange={(event) => setActiveSessionNumber(Number(event.target.value))}
+                        className="w-full min-w-[280px] max-w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 outline-none transition focus:border-[#36ADAA] focus:bg-white"
                       >
-                        {/* Decorative side accent */}
-                        <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${
-                          isSelected ? "bg-[#36ADAA]" : hasDeepData ? "bg-[#3CC583]" : "bg-slate-200"
-                        }`} />
-
-                        <div className="flex justify-between items-center gap-1">
-                          <span className="text-[10px] font-bold text-[#586A71] uppercase tracking-wide">
-                            Session {item.sessionNumber}
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-mono">
-                            {item.duration} mins
-                          </span>
-                        </div>
-
-                        <h4 className="font-bold text-[#2B3437] text-xs leading-normal line-clamp-1">
-                          {item.title}
-                        </h4>
-
-                        <div className="flex items-center justify-between pt-1">
-                          {hasDeepData ? (
-                            <span className="text-[10px] text-[#3CC583] font-bold flex items-center gap-0.5">
-                              <CheckCircle2 className="w-3 h-3" /> Fully Prepared
-                            </span>
-                          ) : (
-                              <span className="text-[10px] text-orange-500 font-bold flex items-center gap-1">
-                              <RotateCcw className="w-3 h-3 animate-spin" /> Ready to generate
-                            </span>
-                          )}
-
-                          <ChevronRight className="w-3 h-3 text-slate-400" />
-                        </div>
-                      </div>
-                    );
-                  })}
+                        {sessionsOutline.map((item) => {
+                          const hasDeepData =
+                            generatedSessionArtifactKeys.has(String(item.sessionNumber)) ||
+                            Boolean(generatedSessions[item.sessionNumber]);
+                          return (
+                            <option key={item.id} value={item.sessionNumber}>
+                              {`Session ${item.sessionNumber} • ${item.title} • ${hasDeepData ? "Ready" : "Pending"}`}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const currentIndex = sessionsOutline.findIndex((item) => item.sessionNumber === activeSessionNumber);
+                        if (currentIndex !== -1 && currentIndex < sessionsOutline.length - 1) {
+                          setActiveSessionNumber(sessionsOutline[currentIndex + 1].sessionNumber);
+                        }
+                      }}
+                      disabled={sessionsOutline.findIndex((item) => item.sessionNumber === activeSessionNumber) >= sessionsOutline.length - 1}
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-xs font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Next
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              {/* Right Column: Deep Deliverables Sheet Area (The Output Document) */}
-              <div className="lg:col-span-3 space-y-4 print-card">
+              <div className="min-w-0 space-y-4 print-card">
                 
                 {sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber) ? (
                   (() => {
@@ -9665,7 +10304,7 @@ export default function App() {
                     const assessmentMcqCount = Array.isArray(session.assessment?.mcq) ? session.assessment!.mcq!.length : 0;
                     const assessmentShortAnswerCount = Array.isArray(session.assessment?.shortAnswer) ? session.assessment!.shortAnswer!.length : 0;
                     return (
-                      <div className="bg-white border-2 border-slate-100 rounded-3xl overflow-hidden shadow-xs space-y-6">
+                      <div className="min-w-0 bg-white border-2 border-slate-100 rounded-3xl overflow-hidden shadow-xs space-y-6">
                         
                         {/* Session Main Title Header Banner Block */}
                         <div className="p-6 md:p-8 bg-[#586A71] text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
@@ -9720,7 +10359,7 @@ export default function App() {
                         </div>
 
                         {/* DELIVERABLE TAB PANELS */}
-                        <div className="p-6 md:p-8 space-y-6">
+                        <div className="min-w-0 p-5 md:p-6 xl:p-8 space-y-6 overflow-x-hidden">
 
                           {/* SUB TAB: Teacher Notes */}
                           {activeSubTab === "teacherNotes" && (
@@ -11000,18 +11639,18 @@ export default function App() {
                                     )}
 
                                     {!!session.assessment.longAnswer?.length && (
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                                        <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                      <div className="grid grid-cols-1 gap-6 items-start md:grid-cols-2">
+                                        <div className="min-w-0 space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 overflow-hidden">
                                           <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">Long Answer Questions</span>
                                           <div className="space-y-3">
                                             {session.assessment.longAnswer.map((q, idx) => (
-                                              <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
+                                              <div key={idx} className="min-w-0 overflow-hidden p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
                                                 <p className="font-extrabold pb-1">{`Q${assessmentMcqCount + assessmentShortAnswerCount + idx + 1}`}. ({q.marks || 5} marks)</p>
                                                 {q.questionSubtype && (
                                                   <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
                                                 )}
-                                                <p className="leading-relaxed">{renderMixedMathLine(q.question)}</p>
-                                                {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {renderMixedMathLine(q.expectedLength)}</p>}
+                                                <div className="min-w-0 overflow-x-auto leading-relaxed">{renderMixedMathLine(q.question)}</div>
+                                                {q.expectedLength && <div className="mt-1 min-w-0 overflow-x-auto text-slate-500">Expected depth: {renderMixedMathLine(q.expectedLength)}</div>}
                                                 {(q.difficulty || q.bloomsLevel) && (
                                                   <p className="mt-1 text-slate-500">
                                                     {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
@@ -11021,16 +11660,16 @@ export default function App() {
                                             ))}
                                           </div>
                                         </div>
-                                        <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
+                                        <div className="min-w-0 space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20 overflow-hidden">
                                           <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">Long Answer Key & Rubric</span>
                                           <div className="space-y-3">
                                             {(Array.isArray(session.assessment.answerKey?.longAnswer) ? session.assessment.answerKey.longAnswer : []).map((ans, idx) => (
-                                              <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
+                                              <div key={idx} className="min-w-0 overflow-hidden p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
                                                 <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{assessmentMcqCount + assessmentShortAnswerCount + idx + 1}</p>
                                                 {ans.questionSubtype && (
                                                   <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(ans.questionSubtype)}</p>
                                                 )}
-                                                <p className="leading-relaxed whitespace-pre-wrap">{renderMixedMathLine(ans.answer)}</p>
+                                                <div className="min-w-0 overflow-x-auto leading-relaxed whitespace-pre-wrap">{renderMixedMathLine(ans.answer)}</div>
                                                 {!!ans.rubric?.length && (
                                                   renderRichList(ans.rubric, { className: "mt-2 list-disc list-inside space-y-1 text-slate-600" })
                                                 )}

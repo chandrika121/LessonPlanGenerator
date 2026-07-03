@@ -17,6 +17,7 @@ async function main() {
       units: (cls.units || []).map((unit: any) => ({
         unit_id: unit.unit_id,
         unit_name: unit.unit_name,
+        part_or_section: unit.part_or_section || "",
         chapter_candidates: (unit.explicit_chapters || []).map((chapterName: string) => ({
           title: chapterName,
           source_type: "explicit_chapter",
@@ -198,6 +199,68 @@ async function main() {
     duplicateNormalized[0].units[0].unit_id,
     duplicateNormalized[1].units[0].unit_id,
     "Normalized unit ids must be globally unique even when source unit ids are reused across classes"
+  );
+
+  const englishSectionsStage1 = mergeStage1FactExtractions([{
+    document_metadata: {
+      subject: "English",
+      class: "Class X",
+    },
+    classes: [
+      { class_name: "Class X", subject: "English" },
+    ],
+    units: [
+      { class_name: "Class X", subject: "English", part_or_section: "Section A - Reading Skills", unit_id: "U1", unit_name: "Reading Comprehension", topics: ["Discursive passage"] },
+      { class_name: "Class X", subject: "English", part_or_section: "Section B - Writing and Grammar", unit_id: "U1", unit_name: "Writing Skills", topics: ["Analytical Paragraph"] },
+      { class_name: "Class X", subject: "English", part_or_section: "Section C - Literature", unit_id: "U1", unit_name: "First Flight" },
+    ],
+    chapters: [
+      { class_name: "Class X", subject: "English", part_or_section: "Section C - Literature", unit_id: "U1", unit_name: "First Flight", chapter_name: "Prose", topics: ["A Letter to God", "Nelson Mandela"] },
+    ],
+  }]);
+  const englishSectionsRaw = expandStage1FactsToRawExtraction(englishSectionsStage1);
+  const englishSectionsApproved = buildApprovedTheoryHierarchy(englishSectionsRaw, buildHierarchyFromRaw(englishSectionsRaw));
+  assert.equal(englishSectionsApproved.classes.length, 1, "English single-class syllabus should stay in one class");
+  assert.equal(englishSectionsApproved.classes[0].units.length, 3, "English exam sections A/B/C should not be dropped as practical content");
+  assert.deepEqual(
+    englishSectionsApproved.classes[0].units.map((unit: any) => unit.part_or_section),
+    [
+      "Section A - Reading Skills",
+      "Section B - Writing and Grammar",
+      "Section C - Literature",
+    ],
+    "English approved hierarchy should preserve exam section labels"
+  );
+  const englishStage3Map = new Map<string, any>([
+    ["class_10", {
+      class_name: "Class X",
+      subject: "English",
+      units: englishSectionsApproved.classes[0].units.map((unit: any) => ({
+        unit_id: unit.unit_id,
+        source_unit_id: unit.source_unit_id || unit.unit_id,
+        unit_name: unit.unit_name,
+        part_or_section: unit.part_or_section,
+        chapters: unit.chapters,
+      })),
+      formative_content_refs: [],
+      validation_report: {},
+    }],
+  ]);
+  const normalizedEnglishSections = buildNormalizedTeachingBlocks(
+    englishSectionsApproved.classes,
+    englishSectionsApproved.classes,
+    englishStage3Map
+  );
+  assert.equal(
+    new Set(normalizedEnglishSections[0].units.map((unit: any) => unit.unit_id)).size,
+    3,
+    "English normalized structure should keep unit ids unique within the same class even when the source reused U1"
+  );
+  const literatureUnit = normalizedEnglishSections[0].units.find((unit: any) => unit.part_or_section === "Section C - Literature");
+  assert.deepEqual(
+    (literatureUnit?.chapters || []).map((chapter: any) => chapter.chapter_name),
+    ["A Letter to God", "Nelson Mandela"],
+    "English literature sections should preserve promoted lesson chapters after normalization"
   );
 
   const theoryAndPracticalCollision = {
