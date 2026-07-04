@@ -10,7 +10,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "tsc --noEmit",
-    "test:backend": "tsx backend/approvedHierarchy.test.ts"
+    "test:backend": "tsx backend/approvedHierarchy.test.ts && tsx backend/curriculumProfiles.test.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",

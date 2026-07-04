@@ -1,0 +1,453 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 20,
+      "totalQuestions": 10,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":20,\"totalQuestions\":10,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2},{\"type\":\"longAnswer\",\"label\":\"Long Answer\",\"questionCount\":2,\"marksEach\":5}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 2,
+          "marksEach": 5
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Ensure all exponents are non-negative integers for polynomial expressions.",
+        "Show necessary steps for classification and evaluation."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will define a polynomial in one variable.",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Students will identify the degree of any given polynomial expression.",
+          "questionRefs": [
+            {
+              "text": "",
+              "latex": "q^2",
+              "displayLatex": ""
+            },
+            "q5",
+            "q8"
+          ]
+        },
+        {
+          "outcome": "Students will classify polynomials as monomials, binomials, or trinomials based on term count.",
+          "questionRefs": [
+            {
+              "text": "",
+              "latex": "q^3",
+              "displayLatex": ""
+            },
+            "q6"
+          ]
+        },
+        {
+          "outcome": "Students will distinguish between valid polynomials and non-polynomial expressions (e.g., negative exponents).",
+          "questionRefs": [
+            "q7",
+            "q9",
+            "q10"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 30,
+        "medium": 40,
+        "hard": 30
+      },
+      "bloomsDistribution": {
+        "recall": 20,
+        "understanding": 30,
+        "application": 30,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 3,
+        "shortAnswer": 5,
+        "longAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQ",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answer",
+          "minutes": 5
+        },
+        {
+          "section": "Short Answer",
+          "minutes": 6
+        },
+        {
+          "section": "Long Answer",
+          "minutes": 10
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "Which of the following expressions is a valid polynomial in one variable?",
+        "options": [
+          {
+            "text": "",
+            "latex": "A. $x^2 + \\frac{1}{x}$",
+            "displayLatex": "A. $x^2 + \\frac{1}{x}$"
+          },
+          {
+            "text": "",
+            "latex": "B. $3x^{\\sqrt{2}} - 5$",
+            "displayLatex": ""
+          },
+          "C. $4x^3 - 7x + 9$",
+          "D. $x^{-2} + 3$"
+        ],
+        "answer": "C. $4x^3 - 7x + 9$",
+        "explanation": "Option C contains only non-negative integer exponents (3, 1, 0). Options A, B, and D contain negative or fractional exponents, which disqualify them as polynomials.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "What is the degree of the polynomial $P(x) = 5x^4 - x + \\sqrt{3}$?",
+        "options": [
+          "A. 1",
+          "B. 3",
+          "C. 4",
+          "D. 0"
+        ],
+        "answer": "C. 4",
+        "explanation": "The degree is the highest power of the variable $x$. In this expression, the powers are 4, 1, and 0 (for the constant). The highest is 4.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Degree Identification"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "The polynomial $Q(y) = 2y^5 - y^2 + 4$ is classified as a:",
+        "options": [
+          "A. Monomial",
+          "B. Binomial",
+          "C. Trinomial",
+          "D. Quadrinomial"
+        ],
+        "answer": "C. Trinomial",
+        "explanation": "The expression has three distinct terms separated by addition or subtraction: $2y^5$, $-y^2$, and $+4$. Therefore, it is a trinomial.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Classification by Terms"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Is $\\frac{x}{\\pi} + 1$ a polynomial? Explain briefly.",
+        "answer": "Yes, it is a polynomial because dividing by a constant ($\\pi$) does not change the exponent of $x$, which remains 1 (a non-negative integer).",
+        "expectedLength": "1-2 clear points",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application",
+        "rubric": []
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "What is the degree of the constant polynomial $P(x) = 7$?",
+        "answer": "0",
+        "expectedLength": "Single number or short phrase",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Degree Identification"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall",
+        "rubric": []
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Classify $R(z) = z^{-2} + 3z$ as a polynomial or non-polynomial.",
+        "answer": "Non-polynomial",
+        "expectedLength": "Single word or short phrase",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Valid vs Invalid Polynomials"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis",
+        "rubric": []
+      },
+      {
+        "id": "q7",
+        "questionSubtype": "shortAnswer",
+        "question": "Identify the degree and classify as monomial, binomial, or trinomial: $P(x) = 2x^3 - x + \\sqrt{5}$.",
+        "answer": "Degree: 3. Classification: Trinomial.",
+        "expectedLength": "Degree and classification type",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly identifying the degree as 3",
+          "1 mark for correctly classifying it as a trinomial (3 terms)"
+        ],
+        "learningOutcomeIds": [
+          "LO2",
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Degree and Classification"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q8",
+        "questionSubtype": "shortAnswer",
+        "question": "Is $\\sqrt{x} + 5$ a polynomial? Justify your answer using exponent rules.",
+        "answer": "No, it is not a polynomial. $\\sqrt{x}$ is equivalent to $x^{1/2}$. Since the exponent $1/2$ is fractional (not a non-negative integer), the expression fails the definition of a polynomial.",
+        "expectedLength": "Justification mentioning fractional exponents",
+        "marks": 2,
+        "rubric": [
+          "1 mark for stating it is not a polynomial",
+          "1 mark for correctly explaining that $\\sqrt{x}$ implies a fractional exponent ($1/2$)"
+        ],
+        "learningOutcomeIds": [
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Valid vs Invalid Polynomials"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q9",
+        "questionSubtype": "longAnswer",
+        "question": "Analyze the expression $E(x) = 4x^2 - \\frac{1}{x} + x^{-3}$. Determine if it is a polynomial. If not, identify exactly which terms violate the definition and explain why.",
+        "answer": "The expression $E(x)$ is NOT a polynomial. While the term $4x^2$ is valid (exponent 2), the term $-\\frac{1}{x}$ violates the rule because it equals $-x^{-1}$ (negative exponent). Similarly, $x^{-3}$ has a negative exponent. A polynomial requires all variable exponents to be non-negative integers.",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "1 mark for concluding it is not a polynomial",
+          "1 mark for identifying $\\frac{1}{x}$ as $x^{-1}$ and explaining the violation",
+          "1 mark for identifying $x^{-3}$ and explaining the violation",
+          "1 mark for correctly stating the rule regarding non-negative integer exponents",
+          "1 mark for clear structure and logical flow"
+        ],
+        "learningOutcomeIds": [
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Valid vs Invalid Polynomials"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q10",
+        "questionSubtype": "longAnswer",
+        "question": "Consider the polynomial $P(y) = 3y^4 - 2y + 7$. (a) Identify the degree and classify it by the number of terms. (b) Evaluate $P(y)$ for $y = -1$. (c) Explain how the sign of the coefficient affects the value in step (b).",
+        "answer": "(a) Degree: 4. Classification: Trinomial (3 terms). (b) Substitution: $P(-1) = 3(-1)^4 - 2(-1) + 7 = 3(1) + 2 + 7 = 3 + 2 + 7 = 12$. (c) The coefficient of the linear term is -2. When substituting $y=-1$, we get $-2 \\times (-1)$. The negative sign of the coefficient and the negative value of the variable cancel out to produce a positive contribution (+2) to the total sum.",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "1 mark for correctly identifying degree as 4",
+          "1 mark for correctly classifying as trinomial",
+          "2 marks for correct evaluation ($3 + 2 + 7 = 12$)",
+          "1 mark for clear explanation of how the negative coefficient and negative variable interact"
+        ],
+        "learningOutcomeIds": [
+          "LO2",
+          "LO3",
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Degree, Classification, and Evaluation"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "application"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "answer": "C. $4x^3 - 7x + 9$",
+          "explanation": "Only Option C has non-negative integer exponents.",
+          "marks": 1,
+          "questionSubtype": "mcq",
+          "id": "q1"
+        },
+        {
+          "answer": "C. 4",
+          "explanation": "The highest power of $x$ is 4.",
+          "marks": 1,
+          "questionSubtype": "mcq",
+          "id": "q2"
+        },
+        {
+          "answer": "C. Trinomial",
+          "explanation": {
+            "text": "There are three terms:",
+            "latex": "$2y^5$, $-y^2$, and $+4$.",
+            "displayLatex": ""
+          },
+          "marks": 1,
+          "questionSubtype": "mcq",
+          "id": "q3"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "answer": "Yes. Dividing by a constant ($\\pi$) does not change the exponent of $x$, which remains 1.",
+          "rubric": [
+            "Yes/No correct",
+            "Explanation regarding constant divisor"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer",
+          "id": "q4"
+        },
+        {
+          "answer": "0",
+          "rubric": [
+            "Correct degree value"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer",
+          "id": "q5"
+        },
+        {
+          "answer": "Non-polynomial",
+          "rubric": [
+            "Correct classification"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer",
+          "id": "q6"
+        },
+        {
+          "answer": "Degree: 3. Classification: Trinomial.",
+          "rubric": [
+            "1 mark for degree 3",
+            "1 mark for trinomial classification"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer",
+          "id": "q7"
+        },
+        {
+          "answer": "No. $\\sqrt{x} = x^{1/2}$ (fractional exponent). Polynomials require non-negative integer exponents.",
+          "rubric": [
+            "Correct 'No' answer",
+            "Explanation of fractional exponent rule"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer",
+          "id": "q8"
+        }
+      ],
+      "longAnswer": [
+        {
+          "answer": "Not a polynomial. $\\frac{1}{x} = x^{-1}$ and $x^{-3}$ have negative exponents. Polynomials must have non-negative integer exponents.",
+          "rubric": [
+            "Conclusion: Not a polynomial",
+            "Identification of $x^{-1}$ violation",
+            "Identification of $x^{-3}$ violation",
+            "Statement of the rule",
+            "Clarity"
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer",
+          "id": "q9"
+        },
+        {
+          "answer": "(a) Degree 4, Trinomial. (b) $P(-1) = 3(1) - 2(-1) + 7 = 3+2+7=12$. (c) The negative coefficient and negative variable cancel to add a positive value.",
+          "rubric": [
+            "Degree 4 correct",
+            "Trinomial correct",
+            "Evaluation steps and result (12)",
+            "Explanation of sign interaction"
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer",
+          "id": "q10"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct.",
+        "For long answers, reward structure, explanation, and relevant examples."
+      ]
+    }
+  }
+}

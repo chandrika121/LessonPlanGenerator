@@ -1,0 +1,509 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 20,
+      "totalQuestions": 10,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 2,
+          "marksEach": 5
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Identify valid polynomials and determine their degree and classification."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define a polynomial and identify valid vs. invalid expressions.",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Determine the degree of any given polynomial.",
+          "questionRefs": [
+            "q3",
+            "q4",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Classify polynomials as monomial, binomial, or trinomial.",
+          "questionRefs": [
+            "q6",
+            "q7"
+          ]
+        },
+        {
+          "outcome": "Classify polynomials as linear, quadratic, or cubic based on degree.",
+          "questionRefs": [
+            "q8",
+            "q9",
+            "q10"
+          ]
+        }
+      ],
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-ii-algebra",
+          "title": "Unit II: Algebra",
+          "marks": 20,
+          "questionCount": 10,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10"
+          ],
+          "focus": "Introduction to Polynomials: Definition, Degree, and Classification"
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 30,
+        "application": 35,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 3,
+        "shortAnswer": 2,
+        "longAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQ",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answer",
+          "minutes": 5
+        },
+        {
+          "section": "Short Answer",
+          "minutes": 4
+        },
+        {
+          "section": "Long Answer",
+          "minutes": 6
+        }
+      ]
+    },
+    "sections": [
+      {
+        "id": "section-unit-ii-algebra",
+        "title": "Unit II: Algebra",
+        "marks": 20,
+        "questionCount": 10,
+        "questionRefs": [
+          "q1",
+          "q2",
+          "q3",
+          "q4",
+          "q5",
+          "q6",
+          "q7",
+          "q8",
+          "q9",
+          "q10"
+        ],
+        "source": "assessment_framework"
+      }
+    ],
+    "mcq": [
+      {
+        "id": "q1",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "mcq",
+        "question": "Which of the following expressions is a valid polynomial?",
+        "options": [
+          "A. 3x^2 + 4x - 1",
+          "B. 5x^(-2) + 2",
+          "C. sqrt(x) + 3",
+          "D. 2/x + 1"
+        ],
+        "answer": "A. 3x^2 + 4x - 1",
+        "explanation": "Option A is the only expression where all variables have non-negative integer exponents (2, 1, 0). Options B, C, and D contain negative or fractional exponents.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q2",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "mcq",
+        "question": "What is the degree of the polynomial P(x) = 7x^3 - 2x + 9?",
+        "options": [
+          "A. 2",
+          "B. 3",
+          "C. 4",
+          "D. 1"
+        ],
+        "answer": "B. 3",
+        "explanation": "The degree is the highest power of the variable. In 7x^3 - 2x + 9, the highest exponent is 3.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Degree of a Polynomial"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q3",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "mcq",
+        "question": "The polynomial x^2 + 5x + 6 is classified as:",
+        "options": [
+          "A. Linear Binomial",
+          "B. Quadratic Trinomial",
+          "C. Cubic Monomial",
+          "D. Quadratic Binomial"
+        ],
+        "answer": "B. Quadratic Trinomial",
+        "explanation": "It has a degree of 2 (Quadratic) and contains three terms (Trinomial).",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3",
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Classification of Polynomials"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Is the expression 4x^(-1) + 3 a polynomial? Answer Yes or No.",
+        "answer": "No",
+        "expectedLength": "One word (Yes/No)",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q5",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "veryShortAnswer",
+        "question": "What is the degree of the constant polynomial 8?",
+        "answer": "0",
+        "expectedLength": "One number",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Degree of a Polynomial"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q6",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Classify the polynomial 5x^3 as Monomial, Binomial, or Trinomial.",
+        "answer": "Monomial",
+        "expectedLength": "One word",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Classification of Polynomials"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q7",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "shortAnswer",
+        "question": "Find the degree and classify by terms for the polynomial P(x) = 2x^2 - 3.",
+        "answer": "Degree: 2; Classification: Binomial (Quadratic)",
+        "expectedLength": "2 clear points",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly identifying the degree as 2",
+          "1 mark for correctly classifying it as a Binomial"
+        ],
+        "learningOutcomeIds": [
+          "LO2",
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Degree and Classification"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q8",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "shortAnswer",
+        "question": "Classify the polynomial x^3 + 4x - 1 based on its degree.",
+        "answer": "Cubic",
+        "expectedLength": "One word (Linear/Quadratic/Cubic)",
+        "marks": 2,
+        "rubric": [
+          "2 marks for correctly identifying it as Cubic"
+        ],
+        "learningOutcomeIds": [
+          "LO4"
+        ],
+        "topicCoverage": [
+          "Classification by Degree"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q9",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "longAnswer",
+        "question": "Analyze the expression 3x^4 - x^2 + 5. Determine its degree, classify it by the number of terms, and explain why it is a polynomial.",
+        "answer": "Degree: 4 (Quartic). Classification: Trinomial. Explanation: It is a polynomial because all variable exponents (4, 2, 0) are non-negative integers.",
+        "expectedLength": "3-4 well-structured points",
+        "marks": 5,
+        "rubric": [
+          "1 mark for identifying the degree as 4",
+          "1 mark for classifying it as a Trinomial (3 terms)",
+          "3 marks for correctly explaining that non-negative integer exponents make it a polynomial"
+        ],
+        "learningOutcomeIds": [
+          "LO2",
+          "LO3",
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Polynomial Definition, Degree, and Classification"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q10",
+        "sectionId": "section-unit-ii-algebra",
+        "sectionTitle": "Unit II: Algebra",
+        "questionSubtype": "longAnswer",
+        "question": "Create two examples of polynomials: one that is a Linear Binomial and another that is a Cubic Trinomial. For each, state the degree and explain how you determined it.",
+        "answer": "Example 1 (Linear Binomial): 2x + 5. Degree is 1 because the highest power is 1. Example 2 (Cubic Trinomial): x^3 - 2x + 7. Degree is 3 because the highest power is 3.",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "1 mark for providing a correct Linear Binomial example",
+          "1 mark for correctly stating its degree (1)",
+          "1 mark for providing a correct Cubic Trinomial example",
+          "1 mark for correctly stating its degree (3)",
+          "1 mark for clear explanation of how the degree was determined"
+        ],
+        "learningOutcomeIds": [
+          "LO3",
+          "LO4",
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Classification and Degree Application"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "q1",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "A. 3x^2 + 4x - 1",
+          "explanation": "Only Option A has non-negative integer exponents.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q2",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "B. 3",
+          "explanation": "The highest exponent in the polynomial is 3.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q3",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "B. Quadratic Trinomial",
+          "explanation": "Degree is 2 (Quadratic) and it has 3 terms (Trinomial).",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q4",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "No",
+          "rubric": [
+            "1 mark for 'No'"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q5",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "0",
+          "rubric": [
+            "1 mark for '0'"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q6",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "Monomial",
+          "rubric": [
+            "1 mark for 'Monomial'"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q7",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "Degree: 2; Classification: Binomial (Quadratic)",
+          "rubric": [
+            "1 mark for Degree: 2",
+            "1 mark for Classification: Binomial"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q8",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "Cubic",
+          "rubric": [
+            "2 marks for 'Cubic'"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "q9",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "Degree: 4; Classification: Trinomial. It is a polynomial because exponents are non-negative integers.",
+          "rubric": [
+            "1 mark for Degree: 4",
+            "1 mark for Classification: Trinomial",
+            "3 marks for explanation regarding non-negative integer exponents"
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer"
+        },
+        {
+          "id": "q10",
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "answer": "Linear Binomial (e.g., 2x+5, Degree 1); Cubic Trinomial (e.g., x^3-2x+7, Degree 3). Explanation based on highest power.",
+          "rubric": [
+            "1 mark for correct Linear Binomial example",
+            "1 mark for correct degree identification (1)",
+            "1 mark for correct Cubic Trinomial example",
+            "1 mark for correct degree identification (3)",
+            "1 mark for clear explanation"
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent wording if the meaning is correct.",
+        "For long answers, reward structure, explanation, and relevant examples."
+      ]
+    }
+  }
+}

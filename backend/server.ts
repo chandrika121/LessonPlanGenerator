@@ -25,10 +25,12 @@ const FRONTEND_PORT = Number(process.env.FRONTEND_PORT) || 4173;
 const OLLAMA_NUM_PREDICT = Number(process.env.OLLAMA_NUM_PREDICT) || 8192;
 const OLLAMA_STAGE1_NUM_PREDICT = Number(process.env.OLLAMA_STAGE1_NUM_PREDICT) || 4096;
 const OLLAMA_TIMEOUT_MS = Number(process.env.OLLAMA_TIMEOUT_MS) || 600000;
+const STAGE1_PROMPT_SAFE_BUDGET = Number(process.env.STAGE1_PROMPT_SAFE_BUDGET) || 14000;
 const OLLAMA_IMAGE_TIMEOUT_MS = Number(process.env.OLLAMA_IMAGE_TIMEOUT_MS) || 180000;
 const OLLAMA_ASSESSMENT_TIMEOUT_MS = Number(process.env.OLLAMA_ASSESSMENT_TIMEOUT_MS) || Math.max(900000, OLLAMA_TIMEOUT_MS);
 const MAX_STUDENT_NOTE_VISUALS = Number(process.env.MAX_STUDENT_NOTE_VISUALS) || 3;
 const MAX_CHUNK_SPLIT_DEPTH = 2;
+const MIN_STAGE1_SPLIT_TEXT_LENGTH = 200;
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/kamalaniketan-lms";
 const DEBUG_OUTPUT_DIR = path.resolve(__dirname, "debug-output");
 const PROMPTS_DIR = path.resolve(__dirname, "prompts");
@@ -149,6 +151,8 @@ function renderPrompt(promptName: string, replacements: Record<string, string>):
 }
 
 const ENGLISH_INTELLIGENCE_PROMPT_NAME = "english-subject-intelligence-layer.md";
+const ENGLISH_DOWNSTREAM_INTELLIGENCE_PROMPT_NAME = "english-downstream-subject-intelligence-layer.md";
+const TAMIL_CURRICULUM_INTELLIGENCE_PROMPT_NAME = "tamil-curriculum-intelligence-layer.md";
 const ENGLISH_SUBJECT_ALIASES = [
   "english",
   "english language",
@@ -158,7 +162,7 @@ const ENGLISH_SUBJECT_ALIASES = [
   "elective english",
   "english literature",
 ];
-const INDIC_CURRICULUM_EXTRACTION_MODEL = "qwen3.5:35b";
+const INDIC_CURRICULUM_EXTRACTION_MODEL = "gemma4:31b";
 const INDIC_CURRICULUM_SUBJECT_ALIASES = [
   "hindi",
   "hindi language",
@@ -170,6 +174,8 @@ const INDIC_CURRICULUM_SUBJECT_ALIASES = [
 ];
 
 let cachedEnglishIntelligenceLayer: string | null = null;
+let cachedEnglishDownstreamIntelligenceLayer: string | null = null;
+let cachedTamilCurriculumIntelligenceLayer: string | null = null;
 const ENGLISH_EXAM_SECTION_LABELS = [
   "section a",
   "section b",
@@ -216,6 +222,168 @@ const ENGLISH_ASSESSMENT_ONLY_CHAPTER_LABELS = [
   "short and long answer questions",
   "short answer questions",
   "long answer questions",
+];
+const ENGLISH_RECURRING_STRAND_DEFINITIONS = [
+  {
+    title: "Reading Skills",
+    aliases: [
+      "reading skills",
+      "reading skill",
+      "reading comprehension",
+      "reading",
+      "unseen passage",
+      "comprehension",
+    ],
+  },
+  {
+    title: "Writing Skills",
+    aliases: [
+      "writing skills",
+      "writing skill",
+      "creative writing",
+      "writing",
+      "composition",
+      "letter writing",
+      "essay writing",
+    ],
+  },
+  {
+    title: "Grammar",
+    aliases: [
+      "grammar",
+      "language conventions",
+      "editing",
+      "sentence transformation",
+    ],
+  },
+  {
+    title: "Vocabulary",
+    aliases: [
+      "vocabulary",
+      "word power",
+      "word bank",
+      "word meaning",
+    ],
+  },
+  {
+    title: "Listening",
+    aliases: [
+      "listening",
+      "listening skills",
+      "listening skill",
+    ],
+  },
+  {
+    title: "Speaking",
+    aliases: [
+      "speaking",
+      "speaking skills",
+      "speaking skill",
+      "oral",
+      "conversation",
+    ],
+  },
+] as const;
+const TAMIL_CBSE_SECTION_LABELS = [
+  { key: "a", title: "Reading", aliases: ["reading unseen passage", "reading", "unseen passage"] },
+  { key: "b", title: "Grammar", aliases: ["grammar"] },
+  { key: "c", title: "Main Course Book", aliases: ["main course book", "course book"] },
+  { key: "d", title: "Non-detail", aliases: ["non detail", "nondetail", "non-detail"] },
+  { key: "e", title: "Creative Writing", aliases: ["creative writing"] },
+];
+const TAMIL_IX_UNIT_THEME_MAP = new Map<number, string>([
+  [1, "மொழி"],
+  [2, "இயற்கை"],
+  [3, "பண்பாடு"],
+  [4, "கல்வி"],
+  [5, "கலை"],
+  [6, "நாடு"],
+  [7, "அறம்"],
+]);
+const TAMIL_IX_TEXTBOOK_INDEX_PATTERNS: Array<{
+  unitNumber: number;
+  theme: string;
+  chapters: Array<{ title: string; patterns: string[] }>;
+}> = [
+  {
+    unitNumber: 1,
+    theme: "மொழி",
+    chapters: [
+      { title: "தமிழ்விடு தூது", patterns: ["தமிழ்விடுதூது", "தமகாழியேமிழ்விடுதூது"] },
+      { title: "திராவிட மொழிக்குடும்பம்", patterns: ["திராவிடமொழிக்குடும்பம்", "திகாவிடதமகாழிக்குடும்பம்"] },
+      { title: "அமுதென்று பேர் தமிழ் காவியம்", patterns: ["அமுதென்றுபேர்தமிழ்காவியம்", "அமுதொேன்றுதபர்தமிதைகாவியம்"] },
+      { title: "ஆறாம் திணை", patterns: ["ஆறாம்திணை", "ஆறகாம்திறண"] },
+      { title: "எழுத்து - அளபெடை", patterns: ["எழுத்துஅளபெடை", "எழுத்துஅளதொபரட"] },
+    ],
+  },
+  {
+    unitNumber: 2,
+    theme: "இயற்கை",
+    chapters: [
+      { title: "நீரின்றி அமையாது உலகு", patterns: ["நீரின்றிஅமையாதுஉலகு", "நீரின்றிஅரமயகாதுஉலகு"] },
+      { title: "பெரியபுராணம்", patterns: ["பெரியபுராணம்", "தொபரியபுகாணம்"] },
+      { title: "புறநானூறு", patterns: ["புறநானூறு", "புறகானூறு"] },
+      { title: "தண்ணீர்", patterns: ["தண்ணீர்", "ேண்ணீர்", "தண்ணீர"] },
+      { title: "பகுபத உறுப்பிலக்கணம்", patterns: ["பகுபதஉறுப்பிலக்கணம்", "பகுபஉறுப்பிலக்கணம்"] },
+    ],
+  },
+  {
+    unitNumber: 3,
+    theme: "பண்பாடு",
+    chapters: [
+      { title: "ஏறு தழுவுதல்", patterns: ["ஏறுதழுவுதல்", "ஏறுதேழுவுதேல்"] },
+      { title: "மணிமேகலை", patterns: ["மணிமேகலை", "மணிதமகர்ல", "மணிதமகலை"] },
+      { title: "மார்கழிப் பெருவிழா", patterns: ["மார்கழிப்பெருவிழா", "மகார்கழிப்தொபருவிகாகா"] },
+      { title: "தாய்மைக்கு வறட்சி இல்லை!", patterns: ["தாய்மைக்குவறட்சிஇல்லை", "ேகாய்ரமக்குவறட்சிஇல்ர்ல"] },
+      { title: "தொடர் இலக்கணம்", patterns: ["தொடர்இலக்கணம்", "தொதேகாடர்இலக்கணம்"] },
+      { title: "ஆகுபெயர்", patterns: ["ஆகுபெயர்", "ஆகுதொபயர்"] },
+      { title: "திருக்குறள்", patterns: ["திருக்குறள்", "திருக்குறள"] },
+    ],
+  },
+  {
+    unitNumber: 4,
+    theme: "கல்வி",
+    chapters: [
+      { title: "கல்வியில் சிறந்த பெண்கள்", patterns: ["கல்வியில்சிறந்தபெண்கள்", "கல்வியில்சிறந்ததொபண்கள"] },
+      { title: "குடும்ப விளக்கு", patterns: ["குடும்பவிளக்கு", "குடும்பவிளக்கு"] },
+      { title: "உயிர்வகை", patterns: ["உயிர்வகை", "உயிர்வரக"] },
+      { title: "வீட்டிற்கோர் புத்தகசாலை", patterns: ["வீட்டிற்கோர்புத்தகசாலை", "வீட்டிற்தககார்புத்தகசகார்ல"] },
+      { title: "துணை வினைகள்", patterns: ["துணைவினைகள்", "துரணவிரனகள"] },
+    ],
+  },
+  {
+    unitNumber: 5,
+    theme: "கலை",
+    chapters: [
+      { title: "சிற்பக்கலை", patterns: ["சிற்பக்கலை", "சிற்பக்கர்ல"] },
+      { title: "காவணக் காவியம்", patterns: ["காவணக்காவியம்", "இகாவணககாவியம்"] },
+      { title: "செய்தி", patterns: ["செய்தி", "தொசய்தி"] },
+      { title: "வல்லினம் மிகும் இடங்கள்", patterns: ["வல்லினம்மிகும்இடங்கள்", "வல்லினம்மிகும்இடங்ககள"] },
+      { title: "திருக்குறள்", patterns: ["திருக்குறள்", "திருக்குறள"] },
+    ],
+  },
+  {
+    unitNumber: 6,
+    theme: "நாடு",
+    chapters: [
+      { title: "இந்திய தேசிய இராணுவத்தில் தமிழர் பங்கு", patterns: ["இந்தியதேசியஇராணுவத்தில்தமிழர்பங்கு", "தமிழர்பங்கு"] },
+      { title: "சீவக சிந்தாமணி", patterns: ["சீவகசிந்தாமணி", "சீவகசிந்தகாமணி"] },
+      { title: "விண்ணையும் சாடுவோம்", patterns: ["விண்ணையும்சாடுவோம்", "விண்ரணயும்சகாடுதவகாம"] },
+      { title: "வல்லினம் மிகா இடங்கள்", patterns: ["வல்லினம்மிகாஇடங்கள்", "வல்லினம்மிககாஇடங்ககள"] },
+    ],
+  },
+  {
+    unitNumber: 7,
+    theme: "அறம்",
+    chapters: [
+      { title: "பெரியாரின் சிந்தனைகள்", patterns: ["பெரியாரின்சிந்தனைகள்", "தொபரியகாரின்சிந்தரனகள"] },
+      { title: "ஓ, என் சமகாலத் தோழர்களே!", patterns: ["ஓஎன்சமகாலத்தோழர்களே", "ஓஎன்சமககாலத்ததேகார்கதள"] },
+      { title: "யசோதர காவியம்", patterns: ["யசோதராகாவியம்", "யதசகாதைககாவியம்"] },
+      { title: "மகனுக்கு எழுதிய கடிதம்", patterns: ["மகனுக்குஎழுதியகடிதம்", "மகனுக்குஎழுதியகடிதம்"] },
+      { title: "யாப்பிலக்கணம்", patterns: ["யாப்பிலக்கணம்", "யகாப்பிலக்கணம்"] },
+      { title: "திருக்குறள்", patterns: ["திருக்குறள்", "திருக்குறள"] },
+    ],
+  },
 ];
 
 function normalizeEnglishSubjectHint(value: string): string {
@@ -274,6 +442,11 @@ function normalizeIndicSubjectHint(value: string): string {
   return normalizeSourceText(canonicalizeSubjectName(value || ""));
 }
 
+function isTamilCurriculumSubject(subject: string): boolean {
+  const normalized = normalizeIndicSubjectHint(subject);
+  return normalized === "tamil" || normalized.includes("tamil language") || normalized.includes("தமிழ்");
+}
+
 function isIndicCurriculumSubject(subject: string): boolean {
   const normalized = normalizeIndicSubjectHint(subject);
   if (!normalized) return false;
@@ -326,6 +499,333 @@ function getEnglishIntelligenceLayerText(): string {
   return cachedEnglishIntelligenceLayer;
 }
 
+function getEnglishDownstreamIntelligenceLayerText(): string {
+  if (cachedEnglishDownstreamIntelligenceLayer == null) {
+    cachedEnglishDownstreamIntelligenceLayer = loadPrompt(ENGLISH_DOWNSTREAM_INTELLIGENCE_PROMPT_NAME).trim();
+  }
+  return cachedEnglishDownstreamIntelligenceLayer;
+}
+
+function getTamilCurriculumIntelligenceLayerText(): string {
+  if (cachedTamilCurriculumIntelligenceLayer == null) {
+    cachedTamilCurriculumIntelligenceLayer = loadPrompt(TAMIL_CURRICULUM_INTELLIGENCE_PROMPT_NAME).trim();
+  }
+  return cachedTamilCurriculumIntelligenceLayer;
+}
+
+function normalizeTamilOcrLookup(value: string): string {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]/gu, "")
+    .trim();
+}
+
+function dedupeTamilTitles(values: string[] = []) {
+  const seen = new Set<string>();
+  return values.filter((value) => {
+    const key = normalizeTamilOcrLookup(value || "");
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function parseTamilAssessmentSectionsFromSource(sourceText: string) {
+  const matches = Array.from(String(sourceText || "").matchAll(/section\s*[-–—]?\s*([a-e])\s*[-–—:]?\s*([^\n]+?)\s*(?:[-–—:]\s*)?(\d+)\s*marks/giu));
+  const sections = matches.map((match, index) => {
+    const rawTitle = String(match[2] || "").trim();
+    const normalizedLabel = normalizeSourceText(rawTitle);
+    const mapped = TAMIL_CBSE_SECTION_LABELS.find((candidate) =>
+      candidate.aliases.some((alias) => normalizedLabel.includes(normalizeSourceText(alias)))
+    );
+    return {
+      id: buildAssessmentSectionId(mapped?.title || rawTitle, index),
+      title: mapped?.title || rawTitle,
+      marks: Number(match[3] || 0),
+      source: "assessment_framework" as const,
+    };
+  });
+  return dedupeAssessmentSections(sections);
+}
+
+function isTamilIndexNoiseLine(line: string) {
+  const normalized = normalizeSourceText(line || "");
+  if (!normalized) return true;
+  return (
+    normalized === "viii" ||
+    normalized === "ix" ||
+    normalized.startsWith("page ") ||
+    normalized.includes("மாதம்") ||
+    normalized.includes("month") ||
+    normalized.includes("june") ||
+    normalized.includes("july") ||
+    normalized.includes("august") ||
+    normalized.includes("october") ||
+    normalized.includes("january") ||
+    normalized.includes("february")
+  );
+}
+
+function parseTamilIndexUnitBlocks(indexText: string) {
+  const lines = String(indexText || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  const blocks: Array<{ unitNumber: number; lines: string[] }> = [];
+  let current: { unitNumber: number; lines: string[] } | null = null;
+
+  for (const line of lines) {
+    if (isTamilIndexNoiseLine(line)) {
+      continue;
+    }
+    const unitMatch = line.match(/^([1-7])\s+/);
+    if (unitMatch) {
+      if (current) blocks.push(current);
+      current = {
+        unitNumber: Number(unitMatch[1]),
+        lines: [line],
+      };
+      continue;
+    }
+    if (current) {
+      current.lines.push(line);
+    }
+  }
+
+  if (current) blocks.push(current);
+  return blocks;
+}
+
+function parseTamilIndexChaptersFromBlock(unitNumber: number, blockText: string) {
+  const normalizedBlock = normalizeTamilOcrLookup(blockText);
+  const template = TAMIL_IX_TEXTBOOK_INDEX_PATTERNS.find((item) => item.unitNumber === unitNumber);
+  if (!template) return [];
+  return template.chapters
+    .filter((chapter) => chapter.patterns.some((pattern) => normalizedBlock.includes(normalizeTamilOcrLookup(pattern))))
+    .map((chapter) => chapter.title);
+}
+
+function parseTamilTextbookIndexUnits(indexText: string, resolvedClassName: string) {
+  const blocks = parseTamilIndexUnitBlocks(indexText);
+  return blocks.map((block) => {
+    const blockText = block.lines.join(" ");
+    const mappedTheme =
+      resolvedClassName === "Class IX"
+        ? (TAMIL_IX_UNIT_THEME_MAP.get(block.unitNumber) || "")
+        : "";
+    const chapters = dedupeTamilTitles(parseTamilIndexChaptersFromBlock(block.unitNumber, blockText));
+    const fallbackThemeCandidate = block.lines[0]
+      .replace(/^([1-7])\s+/, "")
+      .replace(/\d+.*$/, "")
+      .trim();
+    const theme = mappedTheme || fallbackThemeCandidate || `Iyal ${block.unitNumber}`;
+    return {
+      unitNumber: block.unitNumber,
+      theme,
+      chapters,
+      rawBlockText: blockText,
+    };
+  }).filter((unit) => unit.unitNumber >= 1 && unit.unitNumber <= 7);
+}
+
+function extractAcademicYearFromCurriculumText(sourceText: string, fileName: string = "") {
+  const sample = `${String(sourceText || "").slice(0, 4000)}\n${String(fileName || "")}`;
+  const yearMatch = sample.match(/\b(20\d{2}\s*[-–]\s*(?:20)?\d{2,4})\b/);
+  if (yearMatch?.[1]) {
+    return yearMatch[1].replace(/\s+/g, " ").trim();
+  }
+
+  const singleYearMatch = sample.match(/\b(20\d{2})\b/);
+  return singleYearMatch?.[1] || "";
+}
+
+function extractTamilBoardFromSource(sourceText: string) {
+  const match = String(sourceText || "").match(/State Council of Educational Research and Training[^\n]*/i);
+  if (match?.[0]) {
+    return match[0].replace(/\s+/g, " ").trim();
+  }
+
+  if (/Tamilnadu Arasu|Tamil Nadu Arasu/i.test(sourceText || "")) {
+    return "Tamil Nadu Arasu";
+  }
+
+  return "";
+}
+
+function buildTamilFastStage1Facts(
+  primarySourceText: string,
+  fileName: string,
+  options: {
+    selectedClassNames?: string[];
+    supportingDocuments?: Array<{ role: "textbook_index"; fileName: string; text: string }>;
+  } = {}
+) {
+  const selectedClassName = canonicalizeClassName((options.selectedClassNames || [])[0] || "");
+  const detectedPrimaryClasses = detectCurriculumClassSegmentsFromSource(primarySourceText || "")
+    .map((segment) => canonicalizeClassName(segment.className || ""))
+    .filter(Boolean);
+  const resolvedClassName =
+    selectedClassName ||
+    detectedPrimaryClasses[0] ||
+    "Class IX";
+  const textbookIndexText = (options.supportingDocuments || [])
+    .filter((document) => document.role === "textbook_index")
+    .map((document) => document.text || "")
+    .join("\n\n");
+  const textbookUnits = parseTamilTextbookIndexUnits(textbookIndexText, resolvedClassName);
+  const assessmentSections = parseTamilAssessmentSectionsFromSource(primarySourceText || "");
+
+  if (!textbookUnits.length && !assessmentSections.length) {
+    return null;
+  }
+
+  const marksDistribution = assessmentSections.map((section) => `${section.title} - ${section.marks} Marks`);
+  const units = textbookUnits.map((unit) => ({
+    class_name: resolvedClassName,
+    subject: "Tamil",
+    part_or_section: unit.theme,
+    unit_id: `U${unit.unitNumber}`,
+    unit_name: `Iyal ${unit.unitNumber} - ${unit.theme}`,
+    marks: null,
+    topics: [],
+    subtopics: [],
+    key_concepts: [],
+  }));
+  const chapters = textbookUnits.flatMap((unit) =>
+    unit.chapters.map((chapterName) => ({
+      class_name: resolvedClassName,
+      subject: "Tamil",
+      part_or_section: unit.theme,
+      unit_id: `U${unit.unitNumber}`,
+      unit_name: `Iyal ${unit.unitNumber} - ${unit.theme}`,
+      chapter_name: chapterName,
+      marks: null,
+      topics: [],
+      subtopics: [],
+      key_concepts: [],
+    }))
+  );
+
+  return {
+    document_metadata: {
+      board: extractTamilBoardFromSource(primarySourceText),
+      subject: "Tamil",
+      class: resolvedClassName,
+      grade: resolvedClassName,
+      stream: "",
+      academic_year: extractAcademicYearFromCurriculumText(primarySourceText, fileName),
+      total_pages: deriveDocumentPageCount(primarySourceText),
+    },
+    classes: [{
+      class_name: resolvedClassName,
+      subject: "Tamil",
+      part_or_section: "",
+    }],
+    units,
+    chapters,
+    assessment_information: {
+      marks_distribution: marksDistribution,
+      excluded_or_non_assessed_content: [],
+      teacher_notes: [],
+    },
+  };
+}
+
+function hardenTamilStage1Facts(
+  stage1Facts: any,
+  options: {
+    primarySourceText: string;
+    selectedClassNames?: string[];
+    supportingDocuments?: Array<{ role: "textbook_index"; fileName: string; text: string }>;
+  }
+) {
+  const selectedClassName = canonicalizeClassName((options.selectedClassNames || [])[0] || "");
+  const detectedPrimaryClasses = detectCurriculumClassSegmentsFromSource(options.primarySourceText || "")
+    .map((segment) => canonicalizeClassName(segment.className || ""))
+    .filter(Boolean);
+  const resolvedClassName =
+    selectedClassName ||
+    detectedPrimaryClasses[0] ||
+    canonicalizeClassName(stage1Facts?.document_metadata?.class || "") ||
+    canonicalizeClassName(stage1Facts?.classes?.[0]?.class_name || "") ||
+    "Class IX";
+  const textbookIndexText = (options.supportingDocuments || [])
+    .filter((document) => document.role === "textbook_index")
+    .map((document) => document.text || "")
+    .join("\n\n");
+  const textbookUnits = parseTamilTextbookIndexUnits(textbookIndexText, resolvedClassName);
+  const assessmentSections = parseTamilAssessmentSectionsFromSource(options.primarySourceText || "");
+
+  if (!textbookUnits.length && !assessmentSections.length) {
+    return {
+      stage1Facts,
+      metadata: {
+        tamilNormalizationApplied: false,
+        resolvedClassName,
+        recoveredTextbookUnitCount: 0,
+        dedupedAssessmentSectionCount: 0,
+      },
+    };
+  }
+
+  const units = textbookUnits.map((unit) => ({
+    class_name: resolvedClassName,
+    subject: "Tamil",
+    part_or_section: unit.theme,
+    unit_id: `U${unit.unitNumber}`,
+    unit_name: `Iyal ${unit.unitNumber} - ${unit.theme}`,
+    marks: null,
+    topics: [],
+    subtopics: [],
+    key_concepts: [],
+  }));
+  const chapters = textbookUnits.flatMap((unit) =>
+    unit.chapters.map((chapterName) => ({
+      class_name: resolvedClassName,
+      subject: "Tamil",
+      part_or_section: unit.theme,
+      unit_id: `U${unit.unitNumber}`,
+      unit_name: `Iyal ${unit.unitNumber} - ${unit.theme}`,
+      chapter_name: chapterName,
+      marks: null,
+      topics: [],
+      subtopics: [],
+      key_concepts: [],
+    }))
+  );
+
+  const nextStage1Facts = {
+    ...stage1Facts,
+    document_metadata: {
+      ...(stage1Facts?.document_metadata || {}),
+      subject: "Tamil",
+      class: resolvedClassName,
+      grade: resolvedClassName,
+    },
+    classes: [{
+      class_name: resolvedClassName,
+      subject: "Tamil",
+      part_or_section: "",
+    }],
+    units,
+    chapters,
+    assessment_information: {
+      ...(stage1Facts?.assessment_information || {}),
+      marks_distribution: assessmentSections.map((section) => `${section.title} - ${section.marks} Marks`),
+    },
+  };
+
+  return {
+    stage1Facts: nextStage1Facts,
+    metadata: {
+      tamilNormalizationApplied: true,
+      resolvedClassName,
+      recoveredTextbookUnitCount: textbookUnits.length,
+      dedupedAssessmentSectionCount: assessmentSections.length,
+    },
+  };
+}
+
 function renderPromptWithEnglishIntelligence(
   promptName: string,
   replacements: Record<string, string>,
@@ -352,6 +852,109 @@ function renderPromptWithEnglishIntelligence(
   }
 
   return rendered;
+}
+
+function renderPromptWithEnglishDownstreamIntelligence(
+  promptName: string,
+  replacements: Record<string, string>,
+  options: { englishMode?: boolean; stageLabel?: string } = {}
+): string {
+  const englishLayer = options.englishMode
+    ? [
+        "# English Subject Intelligence Layer (Active)",
+        options.stageLabel
+          ? `Apply this English subject intelligence while completing: ${options.stageLabel}.`
+          : "Apply this English subject intelligence while completing the task below.",
+        "",
+        getEnglishDownstreamIntelligenceLayerText(),
+      ].join("\n")
+    : "";
+
+  const rendered = renderPrompt(promptName, {
+    ...replacements,
+    ENGLISH_INTELLIGENCE_LAYER: englishLayer,
+  });
+
+  if (englishLayer && !rendered.includes(englishLayer)) {
+    return `${englishLayer}\n\n${rendered}`;
+  }
+
+  return rendered;
+}
+
+function renderStage1PromptWithCurriculumIntelligence(
+  promptName: string,
+  replacements: Record<string, string>,
+  options: { englishMode?: boolean; tamilMode?: boolean; stageLabel?: string } = {}
+): string {
+  const rendered = renderPromptWithEnglishIntelligence(promptName, replacements, {
+    englishMode: options.englishMode,
+    stageLabel: options.stageLabel,
+  });
+
+  if (!options.tamilMode) {
+    return rendered;
+  }
+
+  const tamilLayer = [
+    "# Tamil Curriculum Multi-Source Intelligence Layer (Active)",
+    options.stageLabel
+      ? `Apply this Tamil curriculum intelligence while completing: ${options.stageLabel}.`
+      : "Apply this Tamil curriculum intelligence while completing the task below.",
+    "",
+    getTamilCurriculumIntelligenceLayerText(),
+  ].join("\n");
+
+  return rendered.includes(tamilLayer)
+    ? rendered
+    : `${tamilLayer}\n\n${rendered}`;
+}
+
+function detectCurriculumSubjectFromInput(sourceText: string, fileName = ""): string {
+  const sampleText = String(sourceText || "").slice(0, 12000);
+  const sampleFileName = String(fileName || "");
+  const explicitSubjectLine = sampleText.match(/^\s*subject\s*[:\-]\s*(.+)$/im)?.[1] || "";
+  const normalizedSample = normalizeSourceText([sampleFileName, sampleText].join("\n"));
+  const normalizedSubjectLine = normalizeSourceText(canonicalizeSubjectName(explicitSubjectLine));
+
+  const aliasGroups: Array<{ subject: string; aliases: string[] }> = [
+    { subject: "Mathematics", aliases: ["mathematics", "maths", "math", "applied mathematics", "applied math"] },
+    { subject: "Physics", aliases: ["physics"] },
+    { subject: "Chemistry", aliases: ["chemistry"] },
+    { subject: "Biology", aliases: ["biology"] },
+    { subject: "Science", aliases: ["science", "general science"] },
+    { subject: "Computer Science", aliases: ["computer science", "informatics practices", "informatics"] },
+    { subject: "Social Science", aliases: ["social science", "social studies"] },
+  ];
+
+  if (normalizedSubjectLine) {
+    if (isEnglishSubject(normalizedSubjectLine)) return "English";
+    const inferredIndicSubject = inferIndicFallbackSubject(normalizedSubjectLine, sampleFileName);
+    if (inferredIndicSubject) return inferredIndicSubject;
+    const matchedAliasGroup = aliasGroups.find(({ aliases }) =>
+      aliases.some((alias) => normalizedSubjectLine === alias || normalizedSubjectLine.includes(alias))
+    );
+    if (matchedAliasGroup) return matchedAliasGroup.subject;
+    return canonicalizeSubjectName(explicitSubjectLine);
+  }
+
+  if (shouldUseEnglishIntelligence({ sourceText: sampleText, fileName: sampleFileName })) {
+    return "English";
+  }
+
+  const inferredIndicSubject = inferIndicFallbackSubject(sampleText, sampleFileName);
+  if (inferredIndicSubject) {
+    return inferredIndicSubject;
+  }
+
+  const matchedAliasGroup = aliasGroups.find(({ aliases }) =>
+    aliases.some((alias) => normalizedSample.includes(alias))
+  );
+  return matchedAliasGroup?.subject || "";
+}
+
+function requiresTamilTextbookIndexFromInput(sourceText: string, fileName = ""): boolean {
+  return isTamilCurriculumSubject(detectCurriculumSubjectFromInput(sourceText, fileName));
 }
 
 function isEnglishExamSectionLabel(value: string): boolean {
@@ -500,6 +1103,31 @@ function deriveDocumentPageCount(sourceText: string): string {
   ].filter((value) => Number.isFinite(value) && value > 0);
   if (!pageNumbers.length) return "";
   return String(Math.max(...pageNumbers));
+}
+
+function getChunkSignalText(text: string) {
+  return String(text || "")
+    .replace(/[^\p{L}\p{N}]+/gu, "")
+    .trim();
+}
+
+function sanitizeCurriculumChunkText(text: string) {
+  return String(text || "")
+    .replace(/^(?:\s*[-=_*|]{3,}\s*$\n?)+/gim, "")
+    .replace(/(?:\n?\s*[-=_*|]{3,}\s*$)+$/gim, "")
+    .trim();
+}
+
+function isTrivialCurriculumChunk(text: string) {
+  const normalized = sanitizeCurriculumChunkText(text);
+  if (!normalized) return true;
+  if (/^(?:---+\s*)?page\s+\d+(?:\s*(?:of|\/)\s*\d+)?(?:\s*---+)?$/i.test(normalized)) {
+    return true;
+  }
+  if (/^[#=\-–—_*|.:;()[\]\s]+$/u.test(normalized)) {
+    return true;
+  }
+  return getChunkSignalText(normalized).length < 3;
 }
 
 function looksLikeBase64Image(value: string) {
@@ -1085,6 +1713,185 @@ function buildAssessmentSourceSessionPayload(sessionPlan: any, fallback: Record<
   };
 }
 
+function buildAssessmentSectionId(title: string, index = 0) {
+  const normalized = normalizeSourceText(title || "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return normalized ? `section-${normalized}` : `section-${index + 1}`;
+}
+
+function normalizeAssessmentSectionTitle(value: any) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function dedupeAssessmentSections(sections: any[] = []) {
+  const seen = new Set<string>();
+  return sections.filter((section: any, index: number) => {
+    const title = normalizeAssessmentSectionTitle(section?.title || "");
+    if (!title) return false;
+    const id = String(section?.id || buildAssessmentSectionId(title, index)).trim();
+    const key = `${id}::${normalizeSourceText(title)}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    section.id = id;
+    section.title = title;
+    return true;
+  });
+}
+
+function parseAssessmentSectionFromMarksLine(line: any, index: number, source: "assessment_framework") {
+  const cleaned = String(line || "").replace(/^[•\-\u2022]\s*/, "").replace(/\s+/g, " ").trim();
+  if (!cleaned) return null;
+  const marksMatch = cleaned.match(/\(?\b(\d+(?:\.\d+)?)\s*marks?\b\)?/i);
+  const title = normalizeAssessmentSectionTitle(
+    cleaned
+      .replace(/\(\s*\d+(?:\.\d+)?\s*marks?\s*\)/i, "")
+      .replace(/\b\d+(?:\.\d+)?\s*marks?\b/i, "")
+      .replace(/\s*[-–—:]\s*$/u, "")
+  );
+  if (!title) return null;
+  return {
+    id: buildAssessmentSectionId(title, index),
+    title,
+    marks: marksMatch ? Number(marksMatch[1]) : undefined,
+    source,
+  };
+}
+
+function doesAssessmentCandidateMatchSelectedChapters(candidates: any[], selectedKeys: Set<string>) {
+  if (!selectedKeys.size) return false;
+  const normalizedCandidates = uniqueStrings((candidates || []).map((value) => String(value || "")))
+    .map((value) => normalizeSourceText(String(value || "")))
+    .filter(Boolean);
+  return normalizedCandidates.some((candidate) =>
+    [...selectedKeys].some((selected) =>
+      candidate === selected || candidate.includes(selected) || selected.includes(candidate)
+    )
+  );
+}
+
+function deriveAssessmentSectionsFromCurriculumStructure(
+  curriculumStructure: any,
+  selectedChapters: string[] = [],
+  gradeLevel = ""
+) {
+  const normalizedStructure = getNormalizedStructureFromCurriculum(curriculumStructure);
+  const selectedKeys = new Set(
+    uniqueStrings(selectedChapters || [])
+      .map((value) => normalizeSourceText(String(value || "")))
+      .filter(Boolean)
+  );
+  if (!normalizedStructure?.classes?.length || !selectedKeys.size) {
+    return [];
+  }
+
+  const targetGrade = canonicalizeClassName(gradeLevel || "");
+  const classes = (normalizedStructure.classes || []).filter((cls: any) => {
+    if (!targetGrade) return true;
+    const className = canonicalizeClassName(cls?.class_name || "");
+    return !className || className === targetGrade;
+  });
+
+  const matchedSections: any[] = [];
+  classes.forEach((cls: any) => {
+    (cls?.units || []).forEach((unit: any) => {
+      const unitSectionTitle = normalizeAssessmentSectionTitle(unit?.part_or_section || "");
+      const unitMatches = doesAssessmentCandidateMatchSelectedChapters([
+        unit?.unit_name,
+        ...(unit?.topics || []),
+        ...(unit?.subtopics || []),
+        ...(unit?.key_concepts || []),
+      ], selectedKeys);
+      if (unitMatches && unitSectionTitle) {
+        matchedSections.push({
+          id: buildAssessmentSectionId(unitSectionTitle, matchedSections.length),
+          title: unitSectionTitle,
+          source: "curriculum" as const,
+        });
+      }
+
+      (unit?.chapters || []).forEach((chapter: any) => {
+        const chapterSectionTitle = normalizeAssessmentSectionTitle(
+          chapter?.part_or_section || chapter?.exam_section_name || unit?.part_or_section || ""
+        );
+        const chapterMatches = doesAssessmentCandidateMatchSelectedChapters([
+          chapter?.chapter_name,
+          chapter?.source_chapter_name,
+          chapter?.content_path,
+          ...(chapter?.topics || []),
+          ...(chapter?.subtopics || []),
+          ...(chapter?.key_concepts || []),
+        ], selectedKeys);
+        if (chapterMatches && chapterSectionTitle) {
+          matchedSections.push({
+            id: buildAssessmentSectionId(chapterSectionTitle, matchedSections.length),
+            title: chapterSectionTitle,
+            source: "curriculum" as const,
+          });
+        }
+      });
+    });
+  });
+
+  return dedupeAssessmentSections(matchedSections);
+}
+
+function deriveAssessmentSectionsFromFramework(curriculumStructure: any, gradeLevel = "") {
+  const normalizedStructure = getNormalizedStructureFromCurriculum(curriculumStructure);
+  if (!normalizedStructure) return [];
+
+  const targetGrade = canonicalizeClassName(gradeLevel || "");
+  const matchingClass = (normalizedStructure?.classes || []).find((cls: any) => {
+    if (!targetGrade) return true;
+    const className = canonicalizeClassName(cls?.class_name || "");
+    return !className || className === targetGrade;
+  });
+
+  const assessmentInformation =
+    normalizedStructure?.assessment_information ||
+    matchingClass?.assessment_information ||
+    matchingClass?.assessment_framework ||
+    normalizedStructure?.assessment_framework ||
+    {};
+  const marksDistribution = Array.isArray(assessmentInformation?.marks_distribution)
+    ? assessmentInformation.marks_distribution
+    : [];
+
+  return dedupeAssessmentSections(
+    marksDistribution
+      .map((line: any, index: number) => parseAssessmentSectionFromMarksLine(line, index, "assessment_framework"))
+      .filter(Boolean)
+  );
+}
+
+function deriveAssessmentSectionsForSession({
+  curriculumStructure,
+  selectedChapters = [],
+  gradeLevel = "",
+}: {
+  curriculumStructure: any;
+  selectedChapters?: string[];
+  gradeLevel?: string;
+}) {
+  const matchedCurriculumSections = deriveAssessmentSectionsFromCurriculumStructure(
+    curriculumStructure,
+    selectedChapters,
+    gradeLevel
+  );
+  if (matchedCurriculumSections.length) {
+    return matchedCurriculumSections;
+  }
+
+  const assessmentFrameworkSections = deriveAssessmentSectionsFromFramework(curriculumStructure, gradeLevel);
+  if (assessmentFrameworkSections.length) {
+    return assessmentFrameworkSections;
+  }
+
+  return [{
+    id: buildAssessmentSectionId("Assessment", 0),
+    title: "Assessment",
+    source: "fallback" as const,
+  }];
+}
+
 function buildRequestedSubtypeSequence(
   customization: SessionAssessmentCustomization | null | undefined,
   target: "shortAnswer" | "longAnswer"
@@ -1309,6 +2116,204 @@ function repairDuplicateAssessmentArrayKeys(rawJsonText: string) {
   return repaired;
 }
 
+function buildExpectedAssessmentQuestionSpecs(customization: SessionAssessmentCustomization) {
+  const requestedQuestionTypes = Array.isArray(customization.questionTypes) ? customization.questionTypes : [];
+  return requestedQuestionTypes.flatMap((item) =>
+    Array.from({ length: Math.max(0, Number(item.questionCount || 0)) }, (_, index) => ({
+      requestIndex: index,
+      type: item.type === "mcq" ? "mcq" : item.type === "veryShortAnswer" || item.type === "shortAnswer" ? "shortAnswer" : "longAnswer",
+      subtype: item.type as AssessmentRenderedSubtype,
+      label: String(item.label || ""),
+      marksEach: Number(item.marksEach || 0),
+    }))
+  );
+}
+
+function coerceLegacyAssessmentToCanonicalShape(assessment: any) {
+  if (!assessment || typeof assessment !== "object") return {};
+  if (assessment.paper && Array.isArray(assessment.paper.questions)) {
+    return assessment;
+  }
+
+  const legacyMcq = Array.isArray(assessment.mcq) ? assessment.mcq : [];
+  const legacyShortAnswer = Array.isArray(assessment.shortAnswer) ? assessment.shortAnswer : [];
+  const legacyLongAnswer = Array.isArray(assessment.longAnswer) ? assessment.longAnswer : [];
+  const legacySections = Array.isArray(assessment.sections) ? assessment.sections : [];
+  const legacyAnswerKey = assessment.answerKey && typeof assessment.answerKey === "object" ? assessment.answerKey : {};
+
+  const questions = [
+    ...legacyMcq.map((item: any) => ({
+      id: item?.id,
+      questionNumber: undefined,
+      sectionId: item?.sectionId,
+      sectionTitle: item?.sectionTitle,
+      type: "mcq" as const,
+      subtype: "mcq" as const,
+      prompt: item?.question || "",
+      options: Array.isArray(item?.options) ? item.options : [],
+      marks: Number(item?.marks || 0),
+      expectedLength: undefined,
+      learningOutcomeRefs: Array.isArray(item?.learningOutcomeIds) ? item.learningOutcomeIds : [],
+      conceptRefs: [],
+      topicCoverage: Array.isArray(item?.topicCoverage) ? item.topicCoverage : [],
+      subtopicCoverage: [],
+      bloomsLevel: item?.bloomsLevel || "",
+      competencyTag: "",
+      difficulty: item?.difficulty || "",
+      sourceEvidence: [],
+    })),
+    ...legacyShortAnswer.map((item: any) => ({
+      id: item?.id,
+      questionNumber: undefined,
+      sectionId: item?.sectionId,
+      sectionTitle: item?.sectionTitle,
+      type: "shortAnswer" as const,
+      subtype: item?.questionSubtype || "shortAnswer",
+      prompt: item?.question || "",
+      options: [],
+      marks: Number(item?.marks || 0),
+      expectedLength: item?.expectedLength || "",
+      learningOutcomeRefs: Array.isArray(item?.learningOutcomeIds) ? item.learningOutcomeIds : [],
+      conceptRefs: [],
+      topicCoverage: Array.isArray(item?.topicCoverage) ? item.topicCoverage : [],
+      subtopicCoverage: [],
+      bloomsLevel: item?.bloomsLevel || "",
+      competencyTag: "",
+      difficulty: item?.difficulty || "",
+      sourceEvidence: [],
+    })),
+    ...legacyLongAnswer.map((item: any) => ({
+      id: item?.id,
+      questionNumber: undefined,
+      sectionId: item?.sectionId,
+      sectionTitle: item?.sectionTitle,
+      type: "longAnswer" as const,
+      subtype: item?.questionSubtype || "longAnswer",
+      prompt: item?.question || "",
+      options: [],
+      marks: Number(item?.marks || 0),
+      expectedLength: item?.expectedLength || "",
+      learningOutcomeRefs: Array.isArray(item?.learningOutcomeIds) ? item.learningOutcomeIds : [],
+      conceptRefs: [],
+      topicCoverage: Array.isArray(item?.topicCoverage) ? item.topicCoverage : [],
+      subtopicCoverage: [],
+      bloomsLevel: item?.bloomsLevel || "",
+      competencyTag: "",
+      difficulty: item?.difficulty || "",
+      sourceEvidence: [],
+    })),
+  ];
+
+  const answerKeyItems = [
+    ...(Array.isArray(legacyAnswerKey?.mcq) ? legacyAnswerKey.mcq : []).map((item: any) => ({
+      questionId: item?.id,
+      sectionId: item?.sectionId,
+      sectionTitle: item?.sectionTitle,
+      answer: item?.answer || "",
+      explanation: item?.explanation || "",
+      marks: Number(item?.marks || 0),
+      subtype: item?.questionSubtype || "mcq",
+    })),
+    ...(Array.isArray(legacyAnswerKey?.shortAnswer) ? legacyAnswerKey.shortAnswer : []).map((item: any) => ({
+      questionId: item?.id,
+      sectionId: item?.sectionId,
+      sectionTitle: item?.sectionTitle,
+      answer: item?.answer || "",
+      explanation: "",
+      marks: Number(item?.marks || 0),
+      subtype: item?.questionSubtype || "shortAnswer",
+    })),
+    ...(Array.isArray(legacyAnswerKey?.longAnswer) ? legacyAnswerKey.longAnswer : []).map((item: any) => ({
+      questionId: item?.id,
+      sectionId: item?.sectionId,
+      sectionTitle: item?.sectionTitle,
+      answer: item?.answer || "",
+      explanation: "",
+      marks: Number(item?.marks || 0),
+      subtype: item?.questionSubtype || "longAnswer",
+    })),
+  ];
+
+  const rubricsItems = [
+    ...(Array.isArray(legacyAnswerKey?.shortAnswer) ? legacyAnswerKey.shortAnswer : []).map((item: any) => ({
+      questionId: item?.id,
+      totalMarks: Number(item?.marks || 0),
+      criteria: uniqueStrings(item?.rubric || []).map((criterion: string) => ({ criterion, marks: undefined })),
+      sampleAnswer: item?.answer || "",
+    })),
+    ...(Array.isArray(legacyAnswerKey?.longAnswer) ? legacyAnswerKey.longAnswer : []).map((item: any) => ({
+      questionId: item?.id,
+      totalMarks: Number(item?.marks || 0),
+      criteria: uniqueStrings(item?.rubric || []).map((criterion: string) => ({ criterion, marks: undefined })),
+      sampleAnswer: item?.answer || "",
+    })),
+  ];
+
+  return {
+    meta: {
+      ...(assessment.assessmentMeta && typeof assessment.assessmentMeta === "object" ? assessment.assessmentMeta : {}),
+    },
+    sessionAnalysis: {
+      assessedLearningOutcomes: [],
+      assessedConcepts: [],
+      conceptCoveragePriorities: [],
+      misconceptionTargets: [],
+      competencyFocus: [],
+    },
+    blueprint: {
+      ...(assessment.blueprint && typeof assessment.blueprint === "object" ? assessment.blueprint : {}),
+    },
+    paper: {
+      instructions: Array.isArray(assessment.assessmentMeta?.instructions) ? assessment.assessmentMeta.instructions : [],
+      sections: legacySections,
+      questions,
+    },
+    evaluation: {
+      answerKey: { items: answerKeyItems },
+      markingScheme: { items: [] },
+      rubrics: { items: rubricsItems },
+      generalInstructions: Array.isArray(legacyAnswerKey?.generalMarkingGuidance) ? legacyAnswerKey.generalMarkingGuidance : [],
+      evaluatorInstructions: [],
+      moderationNotes: [],
+    },
+    summary: assessment.summary && typeof assessment.summary === "object" ? assessment.summary : {},
+    validation: assessment.validation && typeof assessment.validation === "object" ? assessment.validation : {},
+  };
+}
+
+function deriveAssessmentMarkBreakdown(criteriaItems: any[] = [], totalMarks = 0) {
+  const normalizedCriteria = uniqueStrings(criteriaItems || []).map((criterion) => String(criterion || "").trim()).filter(Boolean);
+  if (!normalizedCriteria.length) {
+    return totalMarks > 0
+      ? [{ criterion: "Award marks for a complete correct response.", marks: totalMarks }]
+      : [];
+  }
+
+  let remainingMarks = Math.max(0, Number(totalMarks || 0));
+  const breakdown = normalizedCriteria.map((criterion, index) => {
+    const explicitMatch = criterion.match(/(\d+(?:\.\d+)?)\s*marks?/i);
+    const explicitMarks = explicitMatch ? Number(explicitMatch[1]) : undefined;
+    const autoMarks =
+      explicitMarks != null
+        ? explicitMarks
+        : remainingMarks > 0
+        ? Math.max(1, Math.floor(remainingMarks / Math.max(1, normalizedCriteria.length - index)))
+        : undefined;
+    if (autoMarks != null) {
+      remainingMarks = Math.max(0, remainingMarks - autoMarks);
+    }
+    return {
+      criterion,
+      marks: autoMarks,
+    };
+  });
+
+  if (remainingMarks > 0 && breakdown.length) {
+    breakdown[breakdown.length - 1].marks = Number(breakdown[breakdown.length - 1].marks || 0) + remainingMarks;
+  }
+  return breakdown;
+}
+
 function normalizeAssessmentResponseToCustomization(
   generatedAssessment: any,
   customization: SessionAssessmentCustomization,
@@ -1316,145 +2321,217 @@ function normalizeAssessmentResponseToCustomization(
     durationMinutes: number;
     language: string;
     preferredDifficulty: string;
-  }
+  },
+  expectedSectionsInput: any[] = []
 ) {
-  const assessment = generatedAssessment && typeof generatedAssessment === "object" ? { ...generatedAssessment } : {};
-  const requestedQuestionTypes = Array.isArray(customization.questionTypes) ? customization.questionTypes : [];
-  const expectedMcqCount = requestedQuestionTypes.reduce(
-    (sum, item) => sum + (item.type === "mcq" ? Number(item.questionCount || 0) : 0),
-    0
+  const assessment = coerceLegacyAssessmentToCanonicalShape(
+    generatedAssessment && typeof generatedAssessment === "object" ? { ...generatedAssessment } : {}
   );
-  const shortSubtypeSequence = buildRequestedSubtypeSequence(customization, "shortAnswer");
-  const longSubtypeSequence = buildRequestedSubtypeSequence(customization, "longAnswer");
-
-  const mcq = Array.isArray(assessment.mcq) ? assessment.mcq : [];
-  const shortAnswer = Array.isArray(assessment.shortAnswer) ? assessment.shortAnswer : [];
-  const longAnswer = Array.isArray(assessment.longAnswer) ? assessment.longAnswer : [];
-
-  if (mcq.length !== expectedMcqCount) {
-    throw new Error(`Assessment generation did not match the requested MCQ count (${expectedMcqCount}).`);
-  }
-  if (shortAnswer.length !== shortSubtypeSequence.length) {
-    throw new Error(`Assessment generation did not match the requested short-answer count (${shortSubtypeSequence.length}).`);
-  }
-  if (longAnswer.length !== longSubtypeSequence.length) {
-    throw new Error(`Assessment generation did not match the requested long-answer count (${longSubtypeSequence.length}).`);
+  const expectedSections = dedupeAssessmentSections(
+    (Array.isArray(expectedSectionsInput) && expectedSectionsInput.length ? expectedSectionsInput : [{
+      id: buildAssessmentSectionId("Assessment", 0),
+      title: "Assessment",
+      source: "fallback",
+    }]).map((section: any, index: number) => ({
+      id: String(section?.id || buildAssessmentSectionId(section?.title || "Assessment", index)).trim(),
+      title: normalizeAssessmentSectionTitle(section?.title || "Assessment"),
+      marks: section?.marks != null ? Number(section.marks) : undefined,
+      source: section?.source || "fallback",
+    }))
+  );
+  const expectedSectionsById = new Map(expectedSections.map((section: any) => [String(section.id || "").trim(), section]));
+  const expectedSectionsByTitle = new Map(
+    expectedSections.map((section: any) => [normalizeSourceText(section.title || ""), section])
+  );
+  const requestedQuestionTypes = Array.isArray(customization.questionTypes) ? customization.questionTypes : [];
+  const expectedQuestionSpecs = buildExpectedAssessmentQuestionSpecs(customization);
+  const rawQuestions = Array.isArray(assessment?.paper?.questions) ? assessment.paper.questions : [];
+  if (rawQuestions.length !== expectedQuestionSpecs.length) {
+    throw new Error(`Assessment generation did not match the requested total question count (${expectedQuestionSpecs.length}).`);
   }
 
   const legacyToNormalizedId = new Map<string, string>();
   const makeContinuousQuestionId = (questionNumber: number) => `q${questionNumber}`;
-
-  const normalizedMcq = mcq.map((item: any, index: number) => {
-    const requestedType = requestedQuestionTypes.find((entry) => entry.type === "mcq");
-    const normalizedId = makeContinuousQuestionId(index + 1);
-    if (typeof item?.id === "string" && item.id.trim()) {
-      legacyToNormalizedId.set(item.id.trim(), normalizedId);
+  const resolveQuestionSection = (item: any, label: string) => {
+    const requestedId = String(item?.sectionId || "").trim();
+    const requestedTitle = normalizeAssessmentSectionTitle(item?.sectionTitle || "");
+    const matchedSection =
+      expectedSectionsById.get(requestedId) ||
+      expectedSectionsByTitle.get(normalizeSourceText(requestedTitle || "")) ||
+      (expectedSections.length === 1 ? expectedSections[0] : null);
+    if (!matchedSection) {
+      throw new Error(`Assessment generation did not assign a valid section for ${label}.`);
     }
     return {
-      ...item,
-      id: normalizedId,
-      questionSubtype: "mcq" as const,
-      marks: Number(requestedType?.marksEach || item?.marks || 1),
+      sectionId: matchedSection.id,
+      sectionTitle: matchedSection.title,
     };
-  });
-
-  const normalizedShortAnswer = shortAnswer.map((item: any, index: number) => {
-    const normalizedId = makeContinuousQuestionId(normalizedMcq.length + index + 1);
-    if (typeof item?.id === "string" && item.id.trim()) {
-      legacyToNormalizedId.set(item.id.trim(), normalizedId);
-    }
-    return {
-      ...item,
-      id: normalizedId,
-      questionSubtype: shortSubtypeSequence[index]?.questionSubtype,
-      marks: Number(shortSubtypeSequence[index]?.marksEach || item?.marks || 0),
-    };
-  });
-
-  const normalizedLongAnswer = longAnswer.map((item: any, index: number) => {
-    const normalizedId = makeContinuousQuestionId(normalizedMcq.length + normalizedShortAnswer.length + index + 1);
-    if (typeof item?.id === "string" && item.id.trim()) {
-      legacyToNormalizedId.set(item.id.trim(), normalizedId);
-    }
-    return {
-      ...item,
-      id: normalizedId,
-      questionSubtype: longSubtypeSequence[index]?.questionSubtype,
-      marks: Number(longSubtypeSequence[index]?.marksEach || item?.marks || 0),
-    };
-  });
-
-  const derivedMcqAnswerKey = normalizedMcq.map((item: any) => ({
-    id: item.id,
-    answer: item.answer || "Answer not provided",
-    explanation: item.explanation,
-    marks: Number(item.marks || 0),
-    questionSubtype: "mcq" as const,
-  }));
-  const derivedShortAnswerKey = normalizedShortAnswer.map((item: any) => ({
-    id: item.id,
-    answer: item.answer || "Answer not provided",
-    rubric: Array.isArray(item.rubric) ? item.rubric : [],
-    marks: Number(item.marks || 0),
-    questionSubtype: item.questionSubtype,
-  }));
-  const derivedLongAnswerKey = normalizedLongAnswer.map((item: any) => ({
-    id: item.id,
-    answer: item.answer || "Answer not provided",
-    rubric: Array.isArray(item.rubric) ? item.rubric : [],
-    marks: Number(item.marks || 0),
-    questionSubtype: item.questionSubtype,
-  }));
-
-  const answerKey = {
-    ...(assessment.answerKey && typeof assessment.answerKey === "object" ? assessment.answerKey : {}),
-    mcq:
-      Array.isArray(assessment.answerKey?.mcq) && assessment.answerKey.mcq.length === normalizedMcq.length
-        ? assessment.answerKey.mcq.map((item: any, index: number) => ({
-            ...item,
-            id: normalizedMcq[index]?.id,
-            marks: Number(normalizedMcq[index]?.marks || item?.marks || 0),
-            questionSubtype: "mcq" as const,
-          }))
-        : derivedMcqAnswerKey,
-    shortAnswer:
-      Array.isArray(assessment.answerKey?.shortAnswer) && assessment.answerKey.shortAnswer.length === normalizedShortAnswer.length
-        ? assessment.answerKey.shortAnswer.map((item: any, index: number) => ({
-            ...item,
-            id: normalizedShortAnswer[index]?.id,
-            marks: Number(normalizedShortAnswer[index]?.marks || item?.marks || 0),
-            questionSubtype: normalizedShortAnswer[index]?.questionSubtype,
-          }))
-        : derivedShortAnswerKey,
-    longAnswer:
-      Array.isArray(assessment.answerKey?.longAnswer) && assessment.answerKey.longAnswer.length === normalizedLongAnswer.length
-        ? assessment.answerKey.longAnswer.map((item: any, index: number) => ({
-            ...item,
-            id: normalizedLongAnswer[index]?.id,
-            marks: Number(normalizedLongAnswer[index]?.marks || item?.marks || 0),
-            questionSubtype: normalizedLongAnswer[index]?.questionSubtype,
-          }))
-        : derivedLongAnswerKey,
-    generalMarkingGuidance: Array.isArray(assessment.answerKey?.generalMarkingGuidance)
-      ? assessment.answerKey.generalMarkingGuidance
-      : [
-          "Award marks exactly according to the requested question pattern.",
-          "Accept equivalent correct wording when the concept taught in the session is preserved.",
-          "Use the rubric point-wise for short and long answers.",
-        ],
   };
+
+  const normalizedQuestions = rawQuestions.map((item: any, index: number) => {
+    const expectedSpec = expectedQuestionSpecs[index];
+    const normalizedId = makeContinuousQuestionId(index + 1);
+    const sectionRef = resolveQuestionSection(item, `${expectedSpec.type} question ${index + 1}`);
+    if (typeof item?.id === "string" && item.id.trim()) {
+      legacyToNormalizedId.set(item.id.trim(), normalizedId);
+    }
+    return {
+      id: normalizedId,
+      questionNumber: index + 1,
+      sectionId: sectionRef.sectionId,
+      sectionTitle: sectionRef.sectionTitle,
+      type: expectedSpec.type,
+      subtype: expectedSpec.subtype,
+      prompt: item?.prompt || item?.question || "",
+      options: expectedSpec.type === "mcq" ? (Array.isArray(item?.options) ? item.options : []) : [],
+      marks: Number(expectedSpec.marksEach || item?.marks || 0),
+      expectedLength: item?.expectedLength || "",
+      learningOutcomeRefs:
+        Array.isArray(item?.learningOutcomeRefs) ? item.learningOutcomeRefs :
+        Array.isArray(item?.learningOutcomeIds) ? item.learningOutcomeIds : [],
+      conceptRefs: Array.isArray(item?.conceptRefs) ? item.conceptRefs : [],
+      topicCoverage: Array.isArray(item?.topicCoverage) ? item.topicCoverage : [],
+      subtopicCoverage: Array.isArray(item?.subtopicCoverage) ? item.subtopicCoverage : [],
+      bloomsLevel: item?.bloomsLevel || "",
+      competencyTag: item?.competencyTag || "",
+      difficulty: item?.difficulty || "",
+      sourceEvidence: Array.isArray(item?.sourceEvidence) ? item.sourceEvidence : [],
+    };
+  });
+
+  const normalizedQuestionIds = new Set(normalizedQuestions.map((item: any) => item.id));
+  const evaluationAnswerKeyItems = Array.isArray(assessment?.evaluation?.answerKey?.items) ? assessment.evaluation.answerKey.items : [];
+  const evaluationRubricsItems = Array.isArray(assessment?.evaluation?.rubrics?.items) ? assessment.evaluation.rubrics.items : [];
+  const evaluationMarkingItems = Array.isArray(assessment?.evaluation?.markingScheme?.items) ? assessment.evaluation.markingScheme.items : [];
+
+  const answerKeyItems = normalizedQuestions.map((question: any, index: number) => {
+    const explicitItem = evaluationAnswerKeyItems.find((item: any) =>
+      item?.questionId === question.id ||
+      legacyToNormalizedId.get(String(item?.questionId || "").trim()) === question.id
+    ) || evaluationAnswerKeyItems[index];
+    return {
+      questionId: question.id,
+      sectionId: question.sectionId,
+      sectionTitle: question.sectionTitle,
+      answer: explicitItem?.answer || "Answer not provided",
+      explanation: explicitItem?.explanation || "",
+      marks: Number(question.marks || explicitItem?.marks || 0),
+      subtype: question.subtype,
+    };
+  });
+
+  const rubricItems = normalizedQuestions
+    .filter((question: any) => question.type !== "mcq")
+    .map((question: any, index: number) => {
+      const explicitItem = evaluationRubricsItems.find((item: any) =>
+        item?.questionId === question.id ||
+        legacyToNormalizedId.get(String(item?.questionId || "").trim()) === question.id
+      ) || evaluationRubricsItems[index];
+      const derivedCriteria = Array.isArray(explicitItem?.criteria)
+        ? explicitItem.criteria.map((item: any) => ({
+            criterion: item?.criterion || item?.text || "",
+            marks: item?.marks != null ? Number(item.marks) : undefined,
+          }))
+        : deriveAssessmentMarkBreakdown([], Number(question.marks || 0));
+      return {
+        questionId: question.id,
+        totalMarks: Number(question.marks || explicitItem?.totalMarks || 0),
+        criteria: derivedCriteria,
+        sampleAnswer: explicitItem?.sampleAnswer || answerKeyItems.find((item: any) => item.questionId === question.id)?.answer || "",
+      };
+    });
+
+  const markingSchemeItems = normalizedQuestions.map((question: any, index: number) => {
+    const explicitItem = evaluationMarkingItems.find((item: any) =>
+      item?.questionId === question.id ||
+      legacyToNormalizedId.get(String(item?.questionId || "").trim()) === question.id
+    ) || evaluationMarkingItems[index];
+    const matchingRubric = rubricItems.find((item: any) => item.questionId === question.id);
+    const derivedBreakdown = Array.isArray(explicitItem?.markBreakdown) && explicitItem.markBreakdown.length > 0
+      ? explicitItem.markBreakdown.map((item: any) => ({
+          criterion: item?.criterion || item?.text || "",
+          marks: item?.marks != null ? Number(item.marks) : undefined,
+        }))
+      : deriveAssessmentMarkBreakdown(
+          Array.isArray(matchingRubric?.criteria) ? matchingRubric.criteria.map((item: any) => item?.criterion || "") : [],
+          Number(question.marks || 0)
+        );
+    return {
+      questionId: question.id,
+      totalMarks: Number(question.marks || explicitItem?.totalMarks || 0),
+      markBreakdown: derivedBreakdown,
+      awardGuidance: Array.isArray(explicitItem?.awardGuidance) ? explicitItem.awardGuidance : [],
+    };
+  });
 
   const totalMarks = requestedQuestionTypes.reduce(
     (sum, item) => sum + Number(item.questionCount || 0) * Number(item.marksEach || 0),
     0
   );
   const totalQuestions = requestedQuestionTypes.reduce((sum, item) => sum + Number(item.questionCount || 0), 0);
+  const allQuestions = normalizedQuestions;
+  const providedSectionPlan = Array.isArray(assessment?.blueprint?.sectionPlan) ? assessment.blueprint.sectionPlan : [];
+  const providedSectionFocus = new Map<string, any>();
+  providedSectionPlan.forEach((item: any) => {
+    const rawId = String(item?.sectionId || "").trim();
+    const rawTitle = normalizeAssessmentSectionTitle(item?.title || "");
+    if (rawId) {
+      providedSectionFocus.set(rawId, item?.focus);
+    }
+    if (rawTitle) {
+      providedSectionFocus.set(normalizeSourceText(rawTitle), item?.focus);
+    }
+  });
+  const rebuiltSections = dedupeAssessmentSections(expectedSections
+    .map((section: any) => {
+      const questionRefs = allQuestions
+        .filter((item: any) => item?.sectionId === section.id)
+        .map((item: any) => item?.id)
+        .filter(Boolean);
+      if (!questionRefs.length) return null;
+      const sectionMarks = allQuestions
+        .filter((item: any) => item?.sectionId === section.id)
+        .reduce((sum: number, item: any) => sum + Number(item?.marks || 0), 0);
+      return {
+        id: section.id,
+        title: section.title,
+        marks: sectionMarks,
+        questionCount: questionRefs.length,
+        questionRefs,
+        source: section.source || "fallback",
+      };
+    })
+    .filter(Boolean));
+  const rebuiltSectionPlan = rebuiltSections.map((section: any) => ({
+    sectionId: section.id,
+    title: section.title,
+    marks: section.marks,
+    questionCount: section.questionCount,
+    questionRefs: section.questionRefs,
+    focus:
+      providedSectionFocus.get(section.id) ||
+      providedSectionFocus.get(normalizeSourceText(section.title || "")) ||
+      undefined,
+  }));
+
+  const actualMarks = allQuestions.reduce((sum: number, item: any) => sum + Number(item?.marks || 0), 0);
+  const actualQuestions = allQuestions.length;
+  const questionDistribution = allQuestions.reduce((acc: Record<string, number>, question: any) => {
+    const key = String(question?.subtype || question?.type || "question");
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+  const alignmentPassed =
+    answerKeyItems.length === actualQuestions &&
+    markingSchemeItems.length === actualQuestions &&
+    answerKeyItems.every((item: any) => normalizedQuestionIds.has(item.questionId)) &&
+    markingSchemeItems.every((item: any) => normalizedQuestionIds.has(item.questionId));
+  const rubricLinkedQuestionIds = new Set(rubricItems.map((item: any) => item.questionId).filter(Boolean));
 
   return {
-    ...assessment,
-    assessmentMeta: {
-      ...(assessment.assessmentMeta && typeof assessment.assessmentMeta === "object" ? assessment.assessmentMeta : {}),
-      assessmentType: customization.assessmentType || assessment.assessmentMeta?.assessmentType || "Session assessment",
+    meta: {
+      ...(assessment?.meta && typeof assessment.meta === "object" ? assessment.meta : {}),
+      assessmentType: customization.assessmentType || assessment?.meta?.assessmentType || "Session assessment",
       totalMarks,
       totalQuestions,
       durationMinutes: defaults.durationMinutes,
@@ -1464,9 +2541,24 @@ function normalizeAssessmentResponseToCustomization(
       requestSignature: buildAssessmentCustomizationSignature(customization),
       requestedQuestionTypes,
     },
+    sessionAnalysis: {
+      assessedLearningOutcomes: uniqueStrings(
+        Array.isArray(assessment?.sessionAnalysis?.assessedLearningOutcomes)
+          ? assessment.sessionAnalysis.assessedLearningOutcomes
+          : allQuestions.flatMap((question: any) => question.learningOutcomeRefs || [])
+      ),
+      assessedConcepts: uniqueStrings(
+        Array.isArray(assessment?.sessionAnalysis?.assessedConcepts)
+          ? assessment.sessionAnalysis.assessedConcepts
+          : allQuestions.flatMap((question: any) => [...(question.conceptRefs || []), ...(question.topicCoverage || [])])
+      ),
+      conceptCoveragePriorities: uniqueStrings(assessment?.sessionAnalysis?.conceptCoveragePriorities || []),
+      misconceptionTargets: uniqueStrings(assessment?.sessionAnalysis?.misconceptionTargets || []),
+      competencyFocus: uniqueStrings(assessment?.sessionAnalysis?.competencyFocus || []),
+    },
     blueprint: {
-      ...(assessment.blueprint && typeof assessment.blueprint === "object" ? assessment.blueprint : {}),
-      learningOutcomeCoverage: Array.isArray(assessment.blueprint?.learningOutcomeCoverage)
+      ...(assessment?.blueprint && typeof assessment.blueprint === "object" ? assessment.blueprint : {}),
+      learningOutcomeCoverage: Array.isArray(assessment?.blueprint?.learningOutcomeCoverage)
         ? assessment.blueprint.learningOutcomeCoverage.map((item: any) => ({
             ...item,
             questionRefs: Array.isArray(item?.questionRefs)
@@ -1477,19 +2569,113 @@ function normalizeAssessmentResponseToCustomization(
               : [],
           }))
         : [],
+      conceptDistribution: Array.isArray(assessment?.blueprint?.conceptDistribution)
+        ? assessment.blueprint.conceptDistribution.map((item: any) => ({
+            ...item,
+            questionRefs: Array.isArray(item?.questionRefs)
+              ? item.questionRefs.map((ref: any) => legacyToNormalizedId.get(String(ref || "").trim()) || ref)
+              : [],
+          }))
+        : uniqueStrings(allQuestions.flatMap((question: any) => question.conceptRefs || question.topicCoverage || [])).map((concept: string) => ({
+            concept,
+            questionRefs: allQuestions
+              .filter((question: any) =>
+                [...(question.conceptRefs || []), ...(question.topicCoverage || [])].some((item: any) => normalizeSourceText(String(item || "")) === normalizeSourceText(concept))
+              )
+              .map((question: any) => question.id),
+          })),
+      sectionPlan: rebuiltSectionPlan,
       questionDistribution: {
-        ...(assessment.blueprint?.questionDistribution && typeof assessment.blueprint.questionDistribution === "object"
+        ...(assessment?.blueprint?.questionDistribution && typeof assessment.blueprint.questionDistribution === "object"
           ? assessment.blueprint.questionDistribution
           : {}),
-        mcq: normalizedMcq.length,
-        shortAnswer: normalizedShortAnswer.length,
-        longAnswer: normalizedLongAnswer.length,
+        ...questionDistribution,
       },
     },
-    mcq: normalizedMcq,
-    shortAnswer: normalizedShortAnswer,
-    longAnswer: normalizedLongAnswer,
-    answerKey,
+    paper: {
+      instructions: Array.isArray(assessment?.paper?.instructions)
+        ? assessment.paper.instructions
+        : [
+            "Answer all questions using only the concepts taught in this session.",
+            "Follow the mark allocation shown for each question.",
+          ],
+      sections: rebuiltSections,
+      questions: normalizedQuestions,
+    },
+    evaluation: {
+      answerKey: {
+        items: answerKeyItems,
+      },
+      markingScheme: {
+        items: markingSchemeItems,
+      },
+      rubrics: {
+        items: rubricItems,
+      },
+      generalInstructions: Array.isArray(assessment?.evaluation?.generalInstructions)
+        ? assessment.evaluation.generalInstructions
+        : [
+            "Award marks exactly according to the requested question pattern.",
+            "Accept equivalent correct wording when the concept taught in the session is preserved.",
+            "Use the marking scheme and rubric point-wise for non-MCQ answers.",
+          ],
+      evaluatorInstructions: Array.isArray(assessment?.evaluation?.evaluatorInstructions)
+        ? assessment.evaluation.evaluatorInstructions
+        : [
+            "Evaluate only the knowledge demonstrated from the taught session scope.",
+            "Do not award extra credit for off-syllabus or future-session content.",
+          ],
+      moderationNotes: Array.isArray(assessment?.evaluation?.moderationNotes) ? assessment.evaluation.moderationNotes : [],
+    },
+    summary: {
+      coverageSummary: Array.isArray(assessment?.summary?.coverageSummary)
+        ? assessment.summary.coverageSummary
+        : [
+            `${actualQuestions} questions aligned to ${uniqueStrings(allQuestions.flatMap((question: any) => question.learningOutcomeRefs || [])).length} learning outcome reference(s).`,
+            `${rebuiltSections.length} assessment section(s) included in the final paper.`,
+          ],
+      omittedContent: Array.isArray(assessment?.summary?.omittedContent) ? assessment.summary.omittedContent : [],
+      balanceNotes: Array.isArray(assessment?.summary?.balanceNotes)
+        ? assessment.summary.balanceNotes
+        : [
+            "Question order follows the requested paper pattern and section structure.",
+            "Answer key, marking scheme, and rubrics are aligned one-to-one with the final ordered question list.",
+          ],
+    },
+    validation: {
+      exactPatternChecks: {
+        passed: actualQuestions === totalQuestions,
+        details: [
+          `Requested questions: ${totalQuestions}`,
+          `Generated questions: ${actualQuestions}`,
+        ],
+      },
+      marksChecks: {
+        passed: actualMarks === totalMarks,
+        details: [
+          `Requested marks: ${totalMarks}`,
+          `Generated marks: ${actualMarks}`,
+        ],
+      },
+      sectionChecks: {
+        passed: rebuiltSections.length > 0 && allQuestions.every((question: any) => Boolean(question.sectionId)),
+        details: rebuiltSections.map((section: any) => `${section.title}: ${section.questionCount} question(s), ${section.marks} mark(s)`),
+      },
+      alignmentChecks: {
+        passed: alignmentPassed,
+        details: [
+          `Answer key items: ${answerKeyItems.length}`,
+          `Marking scheme items: ${markingSchemeItems.length}`,
+          `Rubric-linked questions: ${rubricLinkedQuestionIds.size}`,
+        ],
+      },
+      scopeBoundaryChecks: {
+        passed: assessment?.validation?.scopeBoundaryChecks?.passed ?? true,
+        details: Array.isArray(assessment?.validation?.scopeBoundaryChecks?.details)
+          ? assessment.validation.scopeBoundaryChecks.details
+          : ["Assessment generation was constrained to the supplied session JSON and requested session scope."],
+      },
+    },
   };
 }
 
@@ -1524,10 +2710,10 @@ function latexToExportPlainText(value: string) {
     .trim();
 }
 
-function renderableToExportPlainText(value: any) {
+function renderableToExportPlainText(value: any): string {
   if (value == null) return "";
   if (Array.isArray(value)) {
-    return value.map((item) => renderableToExportPlainText(item)).filter(Boolean).join("; ");
+    return value.map((item: any) => renderableToExportPlainText(item)).filter(Boolean).join("; ");
   }
   if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
     return String(value);
@@ -3014,6 +4200,130 @@ function sanitizeJsonText(raw: string): { text: string; changed: boolean; fixes:
   return { text: output, changed, fixes: uniqueStrings(fixes) };
 }
 
+function removeDanglingJsonCommas(raw: string): { text: string; changed: boolean } {
+  const repaired = String(raw || "").replace(/,\s*([}\]])/g, "$1");
+  return {
+    text: repaired,
+    changed: repaired !== raw,
+  };
+}
+
+function findLastBalancedJsonBoundary(raw: string): number {
+  let inString = false;
+  let escaped = false;
+  let depth = 0;
+  let started = false;
+  let lastBalancedIndex = -1;
+
+  for (let index = 0; index < raw.length; index += 1) {
+    const char = raw[index];
+
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (char === "\\") {
+        escaped = true;
+      } else if (char === "\"") {
+        inString = false;
+      }
+      continue;
+    }
+
+    if (char === "\"") {
+      inString = true;
+      continue;
+    }
+
+    if (char === "{" || char === "[") {
+      depth += 1;
+      started = true;
+    } else if (char === "}" || char === "]") {
+      depth = Math.max(0, depth - 1);
+      if (started && depth === 0) {
+        lastBalancedIndex = index;
+      }
+    }
+  }
+
+  return lastBalancedIndex;
+}
+
+function isUsableSessionPayload(payload: any) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return false;
+  }
+
+  const usableKeys = [
+    "id",
+    "sessionNumber",
+    "title",
+    "duration",
+    "teacherLessonNotes",
+    "studentLessonNotes",
+    "learningOutcomes",
+    "introduction",
+    "theory",
+    "activities",
+    "materials",
+    "homework",
+    "assessment",
+    "assignment",
+  ];
+
+  return usableKeys.some((key) => {
+    const value = payload?.[key];
+    if (Array.isArray(value)) return value.length > 0;
+    if (value && typeof value === "object") return Object.keys(value).length > 0;
+    return value != null && String(value).trim().length > 0;
+  });
+}
+
+function tryRepairSessionJson(raw: string): string | null {
+  const candidates = [String(raw || "")];
+  const sanitized = sanitizeJsonText(raw);
+  if (sanitized.text !== raw) {
+    candidates.push(sanitized.text);
+  }
+
+  for (const candidate of candidates) {
+    const withoutDanglingCommas = removeDanglingJsonCommas(candidate);
+    const variants = uniqueStrings([
+      candidate,
+      withoutDanglingCommas.text,
+    ]);
+
+    for (const variant of variants) {
+      try {
+        const parsed = JSON.parse(variant);
+        if (isUsableSessionPayload(parsed)) {
+          return variant;
+        }
+      } catch {
+        // Keep trying recovery variants below.
+      }
+
+      const balancedIndex = findLastBalancedJsonBoundary(variant);
+      if (balancedIndex < 0) {
+        continue;
+      }
+      const trimmed = variant.slice(0, balancedIndex + 1);
+      const trimmedWithoutDanglingCommas = removeDanglingJsonCommas(trimmed).text;
+      for (const trimmedVariant of uniqueStrings([trimmed, trimmedWithoutDanglingCommas])) {
+        try {
+          const parsed = JSON.parse(trimmedVariant);
+          if (isUsableSessionPayload(parsed)) {
+            return trimmedVariant;
+          }
+        } catch {
+          // Continue scanning variants.
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
 function tryRepairTruncatedPptJson(raw: string): string | null {
   const matches = Array.from(raw.matchAll(/(\n\s*}),\n\s*{/g));
   if (matches.length === 0) {
@@ -3036,6 +4346,83 @@ function tryRepairTruncatedPptJson(raw: string): string | null {
   }
 
   return null;
+}
+
+async function parseSessionJsonWithRecovery(
+  requestId: string,
+  debugDir: string,
+  rawResponseText: string,
+  options: {
+    stageName: string;
+    subject?: string;
+    selectedChapters?: string[];
+    sessionTitle?: string;
+  }
+) {
+  const extracted = extractJsonText(rawResponseText);
+  await writeDebugFile(debugDir, `${safeStageName(options.stageName)}.extracted-session-json.txt`, extracted);
+
+  const sanitized = sanitizeJsonText(extracted);
+  if (sanitized.changed) {
+    await writeDebugFile(debugDir, `${safeStageName(options.stageName)}.sanitized-session-json.txt`, {
+      fixes: sanitized.fixes,
+      text: sanitized.text,
+    });
+  }
+
+  let parsed: any;
+  try {
+    parsed = JSON.parse(sanitized.text || "{}");
+  } catch (error: any) {
+    const repaired = tryRepairSessionJson(sanitized.text || extracted);
+    if (!repaired) {
+      await writeDebugFile(debugDir, `${safeStageName(options.stageName)}.session-json-parse-failure.json`, {
+        error: error?.message || "Session JSON parse failed.",
+        extractedLength: extracted.length,
+        sanitizedLength: sanitized.text.length,
+        sanitizedFixes: sanitized.fixes,
+      });
+      throw new OllamaRequestError(
+        `Session content JSON was invalid after recovery attempts during ${options.stageName}.`,
+        {
+          code: "SESSION_JSON_INVALID",
+          retryable: false,
+          stageName: options.stageName,
+          promptLength: rawResponseText.length,
+          timeoutMs: OLLAMA_TIMEOUT_MS,
+        }
+      );
+    }
+    await writeDebugFile(debugDir, `${safeStageName(options.stageName)}.repaired-session-json.txt`, repaired);
+    try {
+      parsed = JSON.parse(repaired);
+    } catch (repairError: any) {
+      await writeDebugFile(debugDir, `${safeStageName(options.stageName)}.session-json-parse-failure.json`, {
+        error: repairError?.message || "Session JSON repair parse failed.",
+        extractedLength: extracted.length,
+        sanitizedLength: sanitized.text.length,
+        sanitizedFixes: sanitized.fixes,
+        repairedLength: repaired.length,
+      });
+      throw new OllamaRequestError(
+        `Session content JSON was invalid after recovery attempts during ${options.stageName}.`,
+        {
+          code: "SESSION_JSON_INVALID",
+          retryable: false,
+          stageName: options.stageName,
+          promptLength: rawResponseText.length,
+          timeoutMs: OLLAMA_TIMEOUT_MS,
+        }
+      );
+    }
+    console.warn(`[Ollama][${requestId}] Recovered malformed session JSON for ${options.stageName}.`);
+  }
+
+  return normalizeMathGeneratedNotes(parsed, {
+    subject: options.subject,
+    selectedChapters: options.selectedChapters,
+    sessionTitle: options.sessionTitle,
+  });
 }
 
 function validateTermAllocations(allocations: any[] = []) {
@@ -4889,11 +6276,20 @@ function normalizeMathAssessment(assessment: any) {
   const nextAssessment = structuredClone(assessment);
   const upgradeList = (value: any, maxItems = 10) => upgradeMathRichTextList(value, maxItems);
   const upgradeValue = (value: any) => upgradeMathExpressionValue(value);
-  if (nextAssessment.assessmentMeta && typeof nextAssessment.assessmentMeta === "object") {
-    nextAssessment.assessmentMeta = {
-      ...nextAssessment.assessmentMeta,
-      paperObjective: upgradeValue(nextAssessment.assessmentMeta.paperObjective || ""),
-      instructions: upgradeList(nextAssessment.assessmentMeta.instructions || [], 10),
+  if (nextAssessment.meta && typeof nextAssessment.meta === "object") {
+    nextAssessment.meta = {
+      ...nextAssessment.meta,
+      paperObjective: upgradeValue(nextAssessment.meta.paperObjective || ""),
+    };
+  }
+  if (nextAssessment.sessionAnalysis && typeof nextAssessment.sessionAnalysis === "object") {
+    nextAssessment.sessionAnalysis = {
+      ...nextAssessment.sessionAnalysis,
+      assessedLearningOutcomes: upgradeList(nextAssessment.sessionAnalysis.assessedLearningOutcomes || [], 12),
+      assessedConcepts: upgradeList(nextAssessment.sessionAnalysis.assessedConcepts || [], 16),
+      conceptCoveragePriorities: upgradeList(nextAssessment.sessionAnalysis.conceptCoveragePriorities || [], 16),
+      misconceptionTargets: upgradeList(nextAssessment.sessionAnalysis.misconceptionTargets || [], 12),
+      competencyFocus: upgradeList(nextAssessment.sessionAnalysis.competencyFocus || [], 12),
     };
   }
   if (nextAssessment.blueprint && typeof nextAssessment.blueprint === "object") {
@@ -4904,53 +6300,95 @@ function normalizeMathAssessment(assessment: any) {
         outcome: upgradeValue(item?.outcome || ""),
         questionRefs: upgradeList(item?.questionRefs || [], 10),
       })),
+      conceptDistribution: (Array.isArray(nextAssessment.blueprint.conceptDistribution) ? nextAssessment.blueprint.conceptDistribution : []).map((item: any) => ({
+        ...item,
+        concept: upgradeValue(item?.concept || ""),
+        questionRefs: upgradeList(item?.questionRefs || [], 10),
+        competency: upgradeValue(item?.competency || ""),
+        importance: upgradeValue(item?.importance || ""),
+      })),
       timeAllocation: (Array.isArray(nextAssessment.blueprint.timeAllocation) ? nextAssessment.blueprint.timeAllocation : []).map((item: any) => ({
         ...item,
         section: upgradeValue(item?.section || ""),
       })),
     };
   }
-  nextAssessment.mcq = (Array.isArray(nextAssessment.mcq) ? nextAssessment.mcq : []).map((item: any) => ({
-    ...item,
-    question: upgradeValue(item?.question || ""),
-    options: upgradeList(item?.options || [], 8),
-    answer: upgradeValue(item?.answer || ""),
-    explanation: upgradeValue(item?.explanation || ""),
-  }));
-  nextAssessment.shortAnswer = (Array.isArray(nextAssessment.shortAnswer) ? nextAssessment.shortAnswer : []).map((item: any) => ({
-    ...item,
-    question: upgradeValue(item?.question || ""),
-    answer: upgradeValue(item?.answer || ""),
-    expectedLength: upgradeValue(item?.expectedLength || ""),
-    rubric: upgradeList(item?.rubric || [], 8),
-  }));
-  nextAssessment.longAnswer = (Array.isArray(nextAssessment.longAnswer) ? nextAssessment.longAnswer : []).map((item: any) => ({
-    ...item,
-    question: upgradeValue(item?.question || ""),
-    answer: upgradeValue(item?.answer || ""),
-    expectedLength: upgradeValue(item?.expectedLength || ""),
-    rubric: upgradeList(item?.rubric || [], 10),
-  }));
-  if (nextAssessment.answerKey && typeof nextAssessment.answerKey === "object") {
-    nextAssessment.answerKey = {
-      ...nextAssessment.answerKey,
-      mcq: (Array.isArray(nextAssessment.answerKey.mcq) ? nextAssessment.answerKey.mcq : []).map((item: any) => ({
+  if (nextAssessment.paper && typeof nextAssessment.paper === "object") {
+    nextAssessment.paper = {
+      ...nextAssessment.paper,
+      instructions: upgradeList(nextAssessment.paper.instructions || [], 12),
+      questions: (Array.isArray(nextAssessment.paper.questions) ? nextAssessment.paper.questions : []).map((item: any) => ({
         ...item,
-        answer: upgradeValue(item?.answer || ""),
-        explanation: upgradeValue(item?.explanation || ""),
+        prompt: upgradeValue(item?.prompt || ""),
+        options: upgradeList(item?.options || [], 8),
+        expectedLength: upgradeValue(item?.expectedLength || ""),
+        learningOutcomeRefs: upgradeList(item?.learningOutcomeRefs || [], 12),
+        conceptRefs: upgradeList(item?.conceptRefs || [], 16),
+        topicCoverage: upgradeList(item?.topicCoverage || [], 12),
+        subtopicCoverage: upgradeList(item?.subtopicCoverage || [], 12),
+        competencyTag: upgradeValue(item?.competencyTag || ""),
+        sourceEvidence: upgradeList(item?.sourceEvidence || [], 12),
       })),
-      shortAnswer: (Array.isArray(nextAssessment.answerKey.shortAnswer) ? nextAssessment.answerKey.shortAnswer : []).map((item: any) => ({
-        ...item,
-        answer: upgradeValue(item?.answer || ""),
-        rubric: upgradeList(item?.rubric || [], 8),
-      })),
-      longAnswer: (Array.isArray(nextAssessment.answerKey.longAnswer) ? nextAssessment.answerKey.longAnswer : []).map((item: any) => ({
-        ...item,
-        answer: upgradeValue(item?.answer || ""),
-        rubric: upgradeList(item?.rubric || [], 10),
-      })),
-      generalMarkingGuidance: upgradeList(nextAssessment.answerKey.generalMarkingGuidance || [], 10),
     };
+  }
+  if (nextAssessment.evaluation && typeof nextAssessment.evaluation === "object") {
+    nextAssessment.evaluation = {
+      ...nextAssessment.evaluation,
+      answerKey: {
+        ...(nextAssessment.evaluation.answerKey && typeof nextAssessment.evaluation.answerKey === "object" ? nextAssessment.evaluation.answerKey : {}),
+        items: (Array.isArray(nextAssessment.evaluation.answerKey?.items) ? nextAssessment.evaluation.answerKey.items : []).map((item: any) => ({
+          ...item,
+          answer: upgradeValue(item?.answer || ""),
+          explanation: upgradeValue(item?.explanation || ""),
+        })),
+      },
+      markingScheme: {
+        ...(nextAssessment.evaluation.markingScheme && typeof nextAssessment.evaluation.markingScheme === "object" ? nextAssessment.evaluation.markingScheme : {}),
+        items: (Array.isArray(nextAssessment.evaluation.markingScheme?.items) ? nextAssessment.evaluation.markingScheme.items : []).map((item: any) => ({
+          ...item,
+          markBreakdown: (Array.isArray(item?.markBreakdown) ? item.markBreakdown : []).map((criteria: any) => ({
+            ...criteria,
+            criterion: upgradeValue(criteria?.criterion || ""),
+          })),
+          awardGuidance: upgradeList(item?.awardGuidance || [], 10),
+        })),
+      },
+      rubrics: {
+        ...(nextAssessment.evaluation.rubrics && typeof nextAssessment.evaluation.rubrics === "object" ? nextAssessment.evaluation.rubrics : {}),
+        items: (Array.isArray(nextAssessment.evaluation.rubrics?.items) ? nextAssessment.evaluation.rubrics.items : []).map((item: any) => ({
+          ...item,
+          criteria: (Array.isArray(item?.criteria) ? item.criteria : []).map((criteria: any) => ({
+            ...criteria,
+            criterion: upgradeValue(criteria?.criterion || ""),
+          })),
+          sampleAnswer: upgradeValue(item?.sampleAnswer || ""),
+        })),
+      },
+      generalInstructions: upgradeList(nextAssessment.evaluation.generalInstructions || [], 10),
+      evaluatorInstructions: upgradeList(nextAssessment.evaluation.evaluatorInstructions || [], 10),
+      moderationNotes: upgradeList(nextAssessment.evaluation.moderationNotes || [], 10),
+    };
+  }
+  if (nextAssessment.summary && typeof nextAssessment.summary === "object") {
+    nextAssessment.summary = {
+      ...nextAssessment.summary,
+      coverageSummary: upgradeList(nextAssessment.summary.coverageSummary || [], 12),
+      omittedContent: upgradeList(nextAssessment.summary.omittedContent || [], 12),
+      balanceNotes: upgradeList(nextAssessment.summary.balanceNotes || [], 12),
+    };
+  }
+  if (nextAssessment.validation && typeof nextAssessment.validation === "object") {
+    nextAssessment.validation = Object.fromEntries(
+      Object.entries(nextAssessment.validation).map(([key, value]: [string, any]) => [
+        key,
+        value && typeof value === "object"
+          ? {
+              ...value,
+              details: upgradeList(value.details || [], 12),
+            }
+          : value,
+      ])
+    );
   }
   return nextAssessment;
 }
@@ -4962,6 +6400,187 @@ function normalizeMathAssignment(assignment: any) {
   nextAssignment.rubric = upgradeMathRichTextList(nextAssignment.rubric || [], 10);
   nextAssignment.answerKey = upgradeMathExpressionValue(nextAssignment.answerKey || "");
   return nextAssignment;
+}
+
+function buildAssessmentSchemaExample() {
+  return {
+    meta: {
+      assessmentType: "Session assessment",
+      totalMarks: 15,
+      totalQuestions: 7,
+      durationMinutes: 15,
+      language: "English",
+      preferredDifficulty: "Balanced",
+      paperObjective: "Assess only the taught session content with the requested paper pattern.",
+      requestSignature: "stable-customization-signature",
+      requestedQuestionTypes: [{
+        type: "mcq",
+        label: "MCQs",
+        questionCount: 4,
+        marksEach: 1,
+      }],
+    },
+    sessionAnalysis: {
+      assessedLearningOutcomes: ["Learning outcome text"],
+      assessedConcepts: ["Concept from the session"],
+      conceptCoveragePriorities: ["High-emphasis taught concept"],
+      misconceptionTargets: ["Likely misconception to check"],
+      competencyFocus: ["Application"],
+    },
+    blueprint: {
+      sectionPlan: [{
+        sectionId: "section-assessment",
+        title: "Assessment",
+        marks: 15,
+        questionCount: 7,
+        questionRefs: ["q1", "q2", "q3", "q4", "q5", "q6", "q7"],
+        focus: "Session-aligned assessment focus",
+      }],
+      conceptDistribution: [{
+        concept: "Concept from the session",
+        questionRefs: ["q1", "q5"],
+        competency: "Understanding",
+        importance: "core",
+      }],
+      learningOutcomeCoverage: [{
+        outcome: "Learning outcome text",
+        questionRefs: ["q1", "q5"],
+      }],
+      difficultyDistribution: {
+        easy: 40,
+        medium: 40,
+        hard: 20,
+      },
+      bloomsDistribution: {
+        recall: 20,
+        understanding: 30,
+        application: 25,
+        analysis: 15,
+        evaluation: 10,
+      },
+      competencyDistribution: {
+        understanding: 2,
+        application: 3,
+        analysis: 2,
+      },
+      questionDistribution: {
+        mcq: 4,
+        shortAnswer: 2,
+        longAnswer: 1,
+      },
+      timeAllocation: [{
+        section: "Assessment",
+        minutes: 15,
+      }],
+    },
+    paper: {
+      instructions: [
+        "Answer all questions using only the concepts taught in this session.",
+      ],
+      sections: [{
+        id: "section-assessment",
+        title: "Assessment",
+        marks: 15,
+        questionCount: 7,
+        questionRefs: ["q1", "q2", "q3", "q4", "q5", "q6", "q7"],
+        source: "fallback",
+      }],
+      questions: [{
+        id: "q1",
+        questionNumber: 1,
+        sectionId: "section-assessment",
+        sectionTitle: "Assessment",
+        type: "mcq",
+        subtype: "mcq",
+        prompt: "MCQ question",
+        options: ["A. option", "B. option", "C. option", "D. option"],
+        marks: 1,
+        expectedLength: "",
+        learningOutcomeRefs: ["LO1"],
+        conceptRefs: ["Concept"],
+        topicCoverage: ["Topic"],
+        subtopicCoverage: ["Subtopic"],
+        bloomsLevel: "understanding",
+        competencyTag: "Conceptual clarity",
+        difficulty: "easy",
+        sourceEvidence: ["Teacher notes concept reference"],
+      }],
+    },
+    evaluation: {
+      answerKey: {
+        items: [{
+          questionId: "q1",
+          sectionId: "section-assessment",
+          sectionTitle: "Assessment",
+          answer: "Correct option",
+          explanation: "Brief explanation",
+          marks: 1,
+          subtype: "mcq",
+        }],
+      },
+      markingScheme: {
+        items: [{
+          questionId: "q1",
+          totalMarks: 1,
+          markBreakdown: [{
+            criterion: "Correct answer selected",
+            marks: 1,
+          }],
+          awardGuidance: ["Award full marks only for the correct option."],
+        }],
+      },
+      rubrics: {
+        items: [{
+          questionId: "q5",
+          totalMarks: 2,
+          criteria: [{
+            criterion: "First valid point",
+            marks: 1,
+          }, {
+            criterion: "Second valid point",
+            marks: 1,
+          }],
+          sampleAnswer: "Point-wise short answer",
+        }],
+      },
+      generalInstructions: [
+        "Award marks point-wise for each valid idea.",
+      ],
+      evaluatorInstructions: [
+        "Use only the taught session content when evaluating student responses.",
+      ],
+      moderationNotes: [
+        "Maintain consistency across equivalent answers.",
+      ],
+    },
+    summary: {
+      coverageSummary: ["Balanced coverage of the taught session concepts."],
+      omittedContent: [],
+      balanceNotes: ["Paper progresses from easier to more demanding questions."],
+    },
+    validation: {
+      exactPatternChecks: {
+        passed: true,
+        details: ["Question pattern matches the requested blueprint."],
+      },
+      marksChecks: {
+        passed: true,
+        details: ["Marks match the requested total."],
+      },
+      sectionChecks: {
+        passed: true,
+        details: ["Each question is assigned to a valid section."],
+      },
+      alignmentChecks: {
+        passed: true,
+        details: ["Question paper, answer key, and marking scheme are aligned."],
+      },
+      scopeBoundaryChecks: {
+        passed: true,
+        details: ["No untaught or future-session content included."],
+      },
+    },
+  };
 }
 
 function normalizeMathGeneratedNotes(session: any, context: { subject?: string; selectedChapters?: string[]; sessionTitle?: string }) {
@@ -4990,7 +6609,7 @@ function normalizeMathGeneratedNotes(session: any, context: { subject?: string; 
 
 function isLanguageSubject(subject: string): boolean {
   const normalized = normalizeSourceText(subject || "");
-  if (isEnglishSubject(subject)) {
+  if (isEnglishSubject(subject) || isIndicCurriculumSubject(subject)) {
     return true;
   }
   return [
@@ -6545,6 +8164,45 @@ function buildDetectedClassSummariesFromSource(sourceText: string) {
   }));
 }
 
+function normalizeSupportingCurriculumDocuments(value: any): Array<{ role: "textbook_index"; fileName: string; text: string }> {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => ({
+      role: String(item?.role || "").trim() as "textbook_index",
+      fileName: String(item?.fileName || "").trim(),
+      text: String(item?.text || ""),
+    }))
+    .filter((item) => item.role === "textbook_index" && item.text.trim().length > 0);
+}
+
+function buildCombinedCurriculumSourceText(
+  primaryText: string,
+  primaryFileName: string,
+  supportingDocuments: Array<{ role: "textbook_index"; fileName: string; text: string }> = []
+) {
+  const sections = [
+    [
+      "=== DOCUMENT 1 ===",
+      "Role: primary_curriculum",
+      `File Name: ${primaryFileName || "primary-curriculum"}`,
+      "Content:",
+      primaryText,
+    ].join("\n"),
+  ];
+
+  supportingDocuments.forEach((document, index) => {
+    sections.push([
+      `=== DOCUMENT ${index + 2} ===`,
+      `Role: ${document.role}`,
+      `File Name: ${document.fileName || `${document.role}-${index + 1}`}`,
+      "Content:",
+      document.text,
+    ].join("\n"));
+  });
+
+  return sections.filter(Boolean).join("\n\n");
+}
+
 function filterSourceTextToSelectedClasses(sourceText: string, selectedClasses: string[] = []) {
   const segments = detectCurriculumClassSegmentsFromSource(sourceText);
   const selectedClassKeys = new Set<string>(
@@ -6646,7 +8304,7 @@ function filterStructureToSelectedClasses(structure: any, selectedClassKeys: Set
 
 function buildCurriculumClassSelection(curriculum: any, selectedClasses: string[] = []) {
   const availableClasses = summarizeCurriculumClasses(curriculum);
-  const availableKeys = new Set<string>(availableClasses.map((item) => buildCanonicalClassKey(item.className)).filter(Boolean));
+  const availableKeys = new Set<string>(availableClasses.map((item: any) => buildCanonicalClassKey(item.className)).filter(Boolean));
   const requestedClassKeys = new Set<string>(
     (selectedClasses || [])
       .map((className) => buildCanonicalClassKey(className || ""))
@@ -6657,13 +8315,13 @@ function buildCurriculumClassSelection(curriculum: any, selectedClasses: string[
     return {
       availableClasses,
       selectedClassKeys: availableKeys,
-      selectedClassNames: availableClasses.map((item) => item.className),
+      selectedClassNames: availableClasses.map((item: any) => item.className),
     };
   }
 
   const selectedClassNames = availableClasses
-    .filter((item) => requestedClassKeys.has(buildCanonicalClassKey(item.className)))
-    .map((item) => item.className);
+    .filter((item: any) => requestedClassKeys.has(buildCanonicalClassKey(item.className)))
+    .map((item: any) => item.className);
 
   return {
     availableClasses,
@@ -6677,7 +8335,7 @@ function filterCurriculumToSelectedClasses(curriculum: any, selectedClasses: str
   if (!availableClasses.length || selectedClassKeys.size === 0 || selectedClassNames.length === availableClasses.length) {
     return {
       curriculum,
-      selectedClassNames: availableClasses.map((item) => item.className),
+      selectedClassNames: availableClasses.map((item: any) => item.className),
       availableClasses,
     };
   }
@@ -6929,6 +8587,9 @@ function detectTeachingBlocks(normalizedStructure: any) {
       normalizeSourceText(cls?.part_or_section || ""),
     ].join("::") || "class-scope";
     const units = cls?.units || [];
+    const recurringStrands = isEnglishSubject(cls?.subject || normalizedStructure?.document_metadata?.subject || "")
+      ? buildEnglishRecurringStrandsForClass(cls, normalizedStructure)
+      : [];
     const classTeachingBlocks = units.flatMap((unit: any) => {
       const unitSubject = cls?.subject || normalizedStructure?.document_metadata?.subject || "";
       const normalizedUnitName = normalizeSourceText(unit?.unit_name || "");
@@ -6949,6 +8610,10 @@ function detectTeachingBlocks(normalizedStructure: any) {
         );
 
       if (isEnglishAssessmentPatternUnit) {
+        return [];
+      }
+
+      if (isEnglishContinuousStrandUnit(unit, unitSubject)) {
         return [];
       }
 
@@ -7030,6 +8695,7 @@ function detectTeachingBlocks(normalizedStructure: any) {
       class_name: cls?.class_name || "",
       subject: cls?.subject || "",
       units: classTeachingBlocks,
+      recurring_strands: recurringStrands,
     };
   });
 
@@ -7080,8 +8746,232 @@ function getPlanningBlockWeight(block: any) {
   );
 }
 
+function detectEnglishRecurringStrandsFromText(value: string) {
+  const normalized = normalizeSourceText(value || "");
+  if (!normalized) return [];
+
+  return ENGLISH_RECURRING_STRAND_DEFINITIONS
+    .filter((definition) => definition.aliases.some((alias) => normalized.includes(alias)))
+    .map((definition) => definition.title);
+}
+
+function buildEnglishRecurringStrandsForClass(cls: any, normalizedStructure?: any) {
+  const subject = cls?.subject || normalizedStructure?.document_metadata?.subject || "";
+  if (!isEnglishSubject(subject)) {
+    return [];
+  }
+
+  const strandMap = new Map<string, {
+    title: string;
+    annual_marks: number;
+    annual_estimated_sessions: number;
+    source_units: Set<string>;
+  }>();
+  const units = Array.isArray(cls?.units) ? cls.units : [];
+
+  const addStrand = (title: string, sourceUnitName: string, annualMarks: number, annualEstimatedSessions: number) => {
+    const existing = strandMap.get(title) || {
+      title,
+      annual_marks: 0,
+      annual_estimated_sessions: 0,
+      source_units: new Set<string>(),
+    };
+    existing.annual_marks = Number((existing.annual_marks + Math.max(0, annualMarks)).toFixed(2));
+    existing.annual_estimated_sessions = Math.max(existing.annual_estimated_sessions, Math.max(1, annualEstimatedSessions));
+    if (sourceUnitName) {
+      existing.source_units.add(sourceUnitName);
+    }
+    strandMap.set(title, existing);
+  };
+
+  units.forEach((unit: any) => {
+    const strands = detectEnglishRecurringStrandsFromText([
+      unit?.unit_name || "",
+      unit?.part_or_section || "",
+    ].join(" "));
+    if (strands.length === 0) {
+      return;
+    }
+
+    const hasDiscreteLiteratureContainer = ENGLISH_CONTAINER_LABELS.some((label) =>
+      normalizeSourceText([unit?.unit_name || "", unit?.part_or_section || ""].join(" ")).includes(label)
+    ) && !strands.every((strand) => normalizeSourceText(strand).includes("reading") || normalizeSourceText(strand).includes("writing") || normalizeSourceText(strand).includes("grammar") || normalizeSourceText(strand).includes("vocabulary") || normalizeSourceText(strand).includes("listening") || normalizeSourceText(strand).includes("speaking"));
+    if (hasDiscreteLiteratureContainer && !isEnglishContinuousStrandUnit(unit, subject)) {
+      return;
+    }
+
+    const sourceTopicCount = uniqueStrings([
+      ...(unit?.topics || []),
+      ...(unit?.subtopics || []),
+      ...(unit?.key_concepts || []),
+      ...((unit?.chapters || []).flatMap((chapter: any) => [
+        ...(chapter?.topics || []),
+        ...(chapter?.subtopics || []),
+        ...(chapter?.key_concepts || []),
+      ])),
+    ]).length;
+    const numericMarks = Number(unit?.marks);
+    const totalMarks = Number.isFinite(numericMarks) && numericMarks > 0
+      ? numericMarks
+      : strands.length * 5;
+    const rawEstimatedSessions =
+      Math.max(
+        toNumberOrZero(unit?.estimated_sessions),
+        Math.ceil(sourceTopicCount / 2),
+        Math.round(totalMarks / 5),
+      ) || strands.length;
+    const marksPerStrand = totalMarks / Math.max(1, strands.length);
+    const sessionsPerStrand = Math.max(1, Math.ceil(rawEstimatedSessions / Math.max(1, strands.length)));
+
+    strands.forEach((strand) => {
+      addStrand(strand, String(unit?.unit_name || ""), marksPerStrand, sessionsPerStrand);
+    });
+  });
+
+  const serializedClass = normalizeSourceText(JSON.stringify({
+    class_name: cls?.class_name || "",
+    subject: cls?.subject || "",
+    units: units.map((unit: any) => ({
+      unit_name: unit?.unit_name || "",
+      part_or_section: unit?.part_or_section || "",
+      topics: unit?.topics || [],
+      subtopics: unit?.subtopics || [],
+      key_concepts: unit?.key_concepts || [],
+    })),
+    assessment_information: normalizedStructure?.assessment_information || {},
+  }));
+  ENGLISH_RECURRING_STRAND_DEFINITIONS.forEach((definition) => {
+    if (!strandMap.has(definition.title) && definition.aliases.some((alias) => serializedClass.includes(alias))) {
+      addStrand(definition.title, "", 0, 1);
+    }
+  });
+
+  return [...strandMap.values()].map((strand) => ({
+    title: strand.title,
+    annual_marks: Number(strand.annual_marks.toFixed(2)),
+    annual_estimated_sessions: strand.annual_estimated_sessions,
+    source_units: [...strand.source_units],
+  }));
+}
+
+function isEnglishContinuousStrandUnit(unit: any, subject: string) {
+  if (!isEnglishSubject(subject)) {
+    return false;
+  }
+
+  const normalizedIdentity = normalizeSourceText([
+    unit?.unit_name || "",
+    unit?.part_or_section || "",
+  ].join(" "));
+  if (!normalizedIdentity) {
+    return false;
+  }
+
+  const matchedStrands = detectEnglishRecurringStrandsFromText(normalizedIdentity);
+  if (matchedStrands.length === 0) {
+    return false;
+  }
+
+  const discreteEnglishContainers = [
+    "literature",
+    "language through literature",
+    "poem",
+    "poetry",
+    "prose",
+    "supplementary",
+    "reader",
+    "beehive",
+    "moments",
+    "first flight",
+    "footprints without feet",
+    "honeydew",
+    "it so happened",
+  ];
+  if (discreteEnglishContainers.some((token) => normalizedIdentity.includes(token))) {
+    return false;
+  }
+
+  const chapters = Array.isArray(unit?.chapters) ? unit.chapters : [];
+  if (chapters.length === 0) {
+    return true;
+  }
+
+  return chapters.every((chapter: any) => {
+    const chapterIdentity = normalizeSourceText([
+      chapter?.chapter_name || "",
+      chapter?.source_chapter_name || "",
+      chapter?.part_or_section || "",
+    ].join(" "));
+    return detectEnglishRecurringStrandsFromText(chapterIdentity).length > 0 ||
+      isEnglishAssessmentOnlyChapterLabel(chapter?.chapter_name || chapter?.source_chapter_name || "");
+  });
+}
+
+function distributeWeightedDecimalShares(total: number, weights: number[]) {
+  if (weights.length === 0) return [];
+  const safeTotal = Number(total || 0);
+  if (safeTotal <= 0) {
+    return weights.map(() => 0);
+  }
+  const totalWeight = Math.max(1, weights.reduce((sum, weight) => sum + Math.max(0, weight), 0));
+  const exactShares = weights.map((weight) =>
+    Number(((safeTotal * Math.max(0, weight)) / totalWeight).toFixed(2))
+  );
+  const shares = exactShares.slice();
+  const allocated = Number(shares.reduce((sum, value) => sum + value, 0).toFixed(2));
+  const delta = Number((safeTotal - allocated).toFixed(2));
+  if (Math.abs(delta) >= 0.01) {
+    const targetIndex = delta > 0
+      ? shares.findIndex((value) => value === Math.max(...shares))
+      : shares.findIndex((value) => value === Math.min(...shares.filter((item) => item > 0)));
+    if (targetIndex >= 0) {
+      shares[targetIndex] = Number((shares[targetIndex] + delta).toFixed(2));
+    }
+  }
+  return shares;
+}
+
+function applyEnglishRecurringStrandsToTerms(terms: any[], recurringStrands: any[]) {
+  if (terms.length === 0 || recurringStrands.length === 0) {
+    return terms.map((term) => ({ ...term, recurring_strands: [] }));
+  }
+
+  const termWeights = terms.map((term) =>
+    Math.max(1, toNumberOrZero(term?.estimated_sessions) + toNumberOrZero(term?.total_teaching_blocks))
+  );
+
+  return terms.map((term) => ({ ...term, recurring_strands: [] })).map((term, termIndex, allTerms) => {
+    const termRecurringStrands = recurringStrands.map((strand: any) => {
+      const annualSessions = Math.max(allTerms.length, toNumberOrZero(strand?.annual_estimated_sessions) || allTerms.length);
+      const distributedSessions = distributeIntegerSessions(annualSessions, termWeights);
+      const annualMarks = Number(strand?.annual_marks || 0);
+      const distributedMarks = distributeWeightedDecimalShares(annualMarks, termWeights);
+      return {
+        title: strand.title,
+        source_units: strand.source_units || [],
+        annual_marks: annualMarks,
+        annual_estimated_sessions: annualSessions,
+        estimated_sessions: distributedSessions[termIndex] || 0,
+        allocated_marks: distributedMarks[termIndex] || 0,
+      };
+    }).filter((strand) => strand.estimated_sessions > 0 || strand.allocated_marks > 0);
+
+    return {
+      ...term,
+      recurring_strands: termRecurringStrands,
+      total_recurring_strands: termRecurringStrands.length,
+      recurring_marks: Number(termRecurringStrands.reduce((sum: number, strand: any) => sum + toNumberOrZero(strand?.allocated_marks), 0).toFixed(2)),
+      recurring_estimated_sessions: termRecurringStrands.reduce((sum: number, strand: any) => sum + toNumberOrZero(strand?.estimated_sessions), 0),
+    };
+  });
+}
+
 function buildTermDivision(normalizedStructure: any, preferredTermCount?: number) {
   const detected = detectTeachingBlocks(normalizedStructure);
+  const recurringStrands = detected.classes.flatMap((cls: any) => cls?.recurring_strands || []);
+  const totalRecurringStrandMarks = Number(
+    recurringStrands.reduce((sum: number, strand: any) => sum + toNumberOrZero(strand?.annual_marks), 0).toFixed(2)
+  );
   const flatBlocks = detected.flatBlocks.map((block: any, index: number) => ({ ...block, sequence: index }));
   const totalBlocks = flatBlocks.length;
   const totalTopics = flatBlocks.reduce((sum: number, block: any) => sum + (block.topics?.length || 0), 0);
@@ -7157,7 +9047,7 @@ function buildTermDivision(normalizedStructure: any, preferredTermCount?: number
     terms.push([]);
   }
 
-  const normalizedTerms = terms.map((blocks: any[], termIndex: number) => {
+  let normalizedTerms = terms.map((blocks: any[], termIndex: number) => {
     const groupedUnits = new Map<string, any>();
     blocks.forEach((block) => {
       const key = `${block.class_name}::${block.subject}::${block.unit_id}`;
@@ -7200,7 +9090,12 @@ function buildTermDivision(normalizedStructure: any, preferredTermCount?: number
     };
   });
 
-  if (totalSourceMarks > 0 && flatBlocks.length > 0) {
+  if (recurringStrands.length > 0) {
+    normalizedTerms = applyEnglishRecurringStrandsToTerms(normalizedTerms, recurringStrands);
+  }
+
+  const totalDiscreteSourceMarks = Math.max(0, Number((totalSourceMarks - totalRecurringStrandMarks).toFixed(2)));
+  if (totalDiscreteSourceMarks > 0 && flatBlocks.length > 0) {
     const distributedBlocks = normalizedTerms.flatMap((term: any) =>
       (term.items || []).flatMap((item: any) => item.teaching_blocks || [])
     );
@@ -7208,8 +9103,8 @@ function buildTermDivision(normalizedStructure: any, preferredTermCount?: number
     let allocatedMarksSoFar = 0;
     distributedBlocks.forEach((block: any, blockIndex: number) => {
       const rawAllocatedMarks = blockIndex === distributedBlocks.length - 1
-        ? Number((totalSourceMarks - allocatedMarksSoFar).toFixed(2))
-        : Number(((totalSourceMarks * getPlanningBlockWeight(block)) / Math.max(1, totalPlanningWeight)).toFixed(2));
+        ? Number((totalDiscreteSourceMarks - allocatedMarksSoFar).toFixed(2))
+        : Number(((totalDiscreteSourceMarks * getPlanningBlockWeight(block)) / Math.max(1, totalPlanningWeight)).toFixed(2));
       block.source_marks = block.source_marks ?? block.marks ?? null;
       block.allocated_marks = rawAllocatedMarks;
       block.marks = rawAllocatedMarks;
@@ -7247,6 +9142,12 @@ function buildTermDivision(normalizedStructure: any, preferredTermCount?: number
 
   normalizedTerms.forEach((term: any) => {
     term.coverage_percentage = Number(term.coverage_percentage.toFixed(2));
+    term.total_marks = Number((
+      (term.items || []).reduce(
+        (sum: number, item: any) => sum + (item.teaching_blocks || []).reduce((inner: number, block: any) => inner + toNumberOrZero(block.marks), 0),
+        0
+      ) + toNumberOrZero(term.recurring_marks)
+    ).toFixed(2));
   });
 
   return {
@@ -7273,8 +9174,23 @@ function buildTermDivision(normalizedStructure: any, preferredTermCount?: number
 }
 
 function flattenTermDivisionToRows(termDivision: any) {
-  return (termDivision?.terms || []).flatMap((term: any) =>
-    (term.items || []).map((item: any) => ({
+  return (termDivision?.terms || []).flatMap((term: any) => {
+    const termItems = Array.isArray(term?.items) ? term.items : [];
+    const recurringStrandDetails = Array.isArray(term?.recurring_strands)
+      ? term.recurring_strands.map((strand: any) => ({
+          title: String(strand?.title || "").trim(),
+          marks: Number(toNumberOrZero(strand?.allocated_marks).toFixed(2)),
+          estimatedSessions: toNumberOrZero(strand?.estimated_sessions),
+        })).filter((strand: any) => strand.title)
+      : [];
+    const recurringStrandMarks = Number(
+      recurringStrandDetails.reduce((sum: number, strand: any) => sum + toNumberOrZero(strand?.marks), 0).toFixed(2)
+    );
+    const recurringMarksPerRow = termItems.length > 0
+      ? recurringStrandMarks / termItems.length
+      : 0;
+
+    return termItems.map((item: any, itemIndex: number) => ({
       id: `${term.term_number}-${item.unit_id}`,
       className: termDivision?.class_name || "",
       termNumber: term.term_number,
@@ -7282,7 +9198,9 @@ function flattenTermDivisionToRows(termDivision: any) {
       unitId: item.unit_id,
       unitName: item.unit_name,
       chapters: (item.teaching_blocks || []).map((block: any) => block.block_name),
-      marks: Number((item.teaching_blocks || []).reduce((sum: number, block: any) => sum + toNumberOrZero(block.marks), 0).toFixed(2)),
+      recurringStrands: recurringStrandDetails.map((strand: any) => strand.title),
+      recurringStrandDetails,
+      marks: Number(((item.teaching_blocks || []).reduce((sum: number, block: any) => sum + toNumberOrZero(block.marks), 0) + recurringMarksPerRow + (itemIndex === termItems.length - 1 ? Number((recurringStrandMarks - (recurringMarksPerRow * termItems.length)).toFixed(2)) : 0)).toFixed(2)),
       sourceEstimatedSessions: (item.teaching_blocks || []).reduce(
         (sum: number, block: any) => sum + toNumberOrZero(block.estimated_sessions),
         0
@@ -7292,8 +9210,8 @@ function flattenTermDivisionToRows(termDivision: any) {
         0
       ),
       termEstimatedSessions: toNumberOrZero(term.estimated_sessions),
-    }))
-  );
+    }));
+  });
 }
 
 function estimateSessionBudgetFromAcademicConfig(academicConfig: any, termCount: number) {
@@ -7405,6 +9323,239 @@ function findNormalizedChapterInsight(normalizedStructure: any, chapterName: str
   return {
     topicCount: 0,
     estimatedSessions: 0,
+  };
+}
+
+function buildSessionAllocationRecommendationsForTerm(options: {
+  normalizedStructure: any;
+  selectedRows: any[];
+  selectedTermKey: string;
+  subject?: string;
+  termCapacity: number;
+  durationMinutes: number;
+}) {
+  const {
+    normalizedStructure,
+    selectedRows,
+    selectedTermKey,
+    subject,
+    termCapacity,
+    durationMinutes,
+  } = options;
+  const chapterNames = Array.from(
+    new Set(
+      selectedRows.flatMap((row: any) =>
+        (Array.isArray(row?.chapters) ? row.chapters : [])
+          .map((chapter: string) => String(chapter || "").trim())
+          .filter(Boolean)
+      )
+    )
+  );
+  const recurringStrandDetails = Array.from(
+    new Map(
+      selectedRows.flatMap((row: any) =>
+        (Array.isArray(row?.recurringStrandDetails) ? row.recurringStrandDetails : [])
+          .map((strand: any) => [
+            String(strand?.title || "").trim(),
+            {
+              title: String(strand?.title || "").trim(),
+              marks: toNumberOrZero(strand?.marks),
+              estimatedSessions: toNumberOrZero(strand?.estimatedSessions),
+            },
+          ] as const)
+          .filter((entry: readonly [string, { title: string; marks: number; estimatedSessions: number }]) => Boolean(entry[0]))
+      )
+    ).values()
+  );
+  const recurringStrandNames = recurringStrandDetails.map((strand: any) => strand.title);
+
+  const getEnglishStrandPracticeLabel = (title: string) => {
+    const normalizedTitle = normalizeSourceText(title || "");
+    if (normalizedTitle.includes("reading")) return "Reading Skills Practice";
+    if (normalizedTitle.includes("writing")) return "Writing Skills Practice";
+    if (normalizedTitle.includes("grammar")) return "Grammar Practice";
+    if (normalizedTitle.includes("vocabulary")) return "Vocabulary Development";
+    if (normalizedTitle.includes("listening")) return "Listening Practice";
+    if (normalizedTitle.includes("speaking")) return "Speaking Practice";
+    return `${title} Practice`;
+  };
+
+  if (chapterNames.length === 0) {
+    return {
+      recommendations: [],
+      chapterNames,
+      recurringStrandNames,
+    };
+  }
+
+  const chapterRecommendations = chapterNames.map((chapterName, index) => {
+    const insight = findNormalizedChapterInsight(normalizedStructure, chapterName);
+    const sourceRow = selectedRows.find((row: any) => (row?.chapters || []).includes(chapterName));
+    const marksShare = sourceRow?.chapters?.length
+      ? toNumberOrZero(sourceRow?.marks) / sourceRow.chapters.length
+      : 0;
+    return {
+      id: `${selectedTermKey}::${index + 1}`,
+      className: selectedRows[0]?.className || "",
+      termName: selectedRows[0]?.termName || selectedRows[0]?.term || "",
+      termNumber: selectedRows[0]?.termNumber ?? null,
+      chapterName,
+      unitName: sourceRow?.unitName || "Whole Term",
+      sequence: index + 1,
+      sourceTopicCount: insight.topicCount,
+      sourceEstimatedSessions: insight.estimatedSessions,
+      marksShare,
+    };
+  });
+
+  const shouldInterleaveEnglishStrands = isEnglishSubject(subject || selectedRows[0]?.className || "");
+  const strandRecommendations = shouldInterleaveEnglishStrands
+    ? recurringStrandDetails.map((strand: any, index: number) => ({
+        id: `${selectedTermKey}::strand::${index + 1}`,
+        className: selectedRows[0]?.className || "",
+        termName: selectedRows[0]?.termName || selectedRows[0]?.term || "",
+        termNumber: selectedRows[0]?.termNumber ?? null,
+        chapterName: getEnglishStrandPracticeLabel(strand.title),
+        unitName: "English Language Strand",
+        sequence: index + 1,
+        sourceTopicCount: 1,
+        sourceEstimatedSessions: Math.max(1, toNumberOrZero(strand?.estimatedSessions)),
+        marksShare: toNumberOrZero(strand?.marks),
+        sourceStrandTitle: strand.title,
+        sessionKind: "strand_practice",
+        isRecurringStrand: true,
+      }))
+    : [];
+
+  const recommendationBase: any[] = [
+    ...chapterRecommendations.map((item) => ({ ...item, sessionKind: "lesson" })),
+    ...strandRecommendations,
+  ];
+  const weights = recommendationBase.map((item: any) =>
+    item.isRecurringStrand
+      ? Math.max(1, toNumberOrZero(item.sourceEstimatedSessions) + Math.max(1, toNumberOrZero(item.marksShare)))
+      : Math.max(
+          1,
+          toNumberOrZero(item.sourceEstimatedSessions) +
+          Math.max(1, toNumberOrZero(item.sourceTopicCount)) +
+          Math.max(0, item.marksShare)
+        )
+  );
+  const estimatedSessions = distributeIntegerSessions(termCapacity, weights);
+  const chapterSessionCounts = estimatedSessions.slice(0, chapterRecommendations.length);
+  const strandSessionCounts = estimatedSessions.slice(chapterRecommendations.length);
+  const orderedRecommendations: any[] = [];
+  const chapterCursor = chapterRecommendations.map(() => 0);
+  const strandCursor = strandRecommendations.map(() => 0);
+  const chapterTotalSessions = chapterSessionCounts.reduce((sum, value) => sum + value, 0);
+  const strandTotalSessions = strandSessionCounts.reduce((sum, value) => sum + value, 0);
+  const lessonChunkTarget = strandTotalSessions > 0
+    ? Math.min(3, Math.max(2, Math.round(chapterTotalSessions / Math.max(1, strandTotalSessions))))
+    : Number.POSITIVE_INFINITY;
+  const openingLessonSlots = strandTotalSessions > 0
+    ? Math.min(chapterTotalSessions, chapterTotalSessions >= 2 ? 2 : 1)
+    : chapterTotalSessions;
+
+  const takeNextChapterSession = () => {
+    const chapterIndex = chapterCursor.findIndex((used, index) => used < chapterSessionCounts[index]);
+    if (chapterIndex < 0) return null;
+    const chapter = recommendationBase[chapterIndex];
+    chapterCursor[chapterIndex] += 1;
+    return chapter;
+  };
+
+  const takeNextStrandSession = () => {
+    const strandIndex = strandCursor.findIndex((used, index) => used < strandSessionCounts[index]);
+    if (strandIndex < 0) return null;
+    const strand = strandRecommendations[strandIndex];
+    strandCursor[strandIndex] += 1;
+    return strand;
+  };
+
+  let sequence = 1;
+  let totalUsedChapterSessions = 0;
+  let totalUsedStrandSessions = 0;
+
+  for (let index = 0; index < openingLessonSlots; index += 1) {
+    const chapter = takeNextChapterSession();
+    if (!chapter) break;
+    totalUsedChapterSessions += 1;
+    orderedRecommendations.push({
+      ...chapter,
+      sequence,
+    });
+    sequence += 1;
+  }
+
+  while (totalUsedChapterSessions < chapterTotalSessions || totalUsedStrandSessions < strandTotalSessions) {
+    if (totalUsedStrandSessions < strandTotalSessions) {
+      let lessonChunkPlaced = 0;
+      while (
+        lessonChunkPlaced < lessonChunkTarget &&
+        totalUsedChapterSessions < chapterTotalSessions
+      ) {
+        const chapter = takeNextChapterSession();
+        if (!chapter) break;
+        totalUsedChapterSessions += 1;
+        lessonChunkPlaced += 1;
+        orderedRecommendations.push({
+          ...chapter,
+          sequence,
+        });
+        sequence += 1;
+      }
+
+      const strand = takeNextStrandSession();
+      if (strand) {
+        totalUsedStrandSessions += 1;
+        orderedRecommendations.push({
+          ...strand,
+          sequence,
+        });
+        sequence += 1;
+        continue;
+      }
+    }
+
+    const chapter = takeNextChapterSession();
+    if (chapter) {
+      totalUsedChapterSessions += 1;
+      orderedRecommendations.push({
+        ...chapter,
+        sequence,
+      });
+      sequence += 1;
+      continue;
+    }
+
+    const strand = takeNextStrandSession();
+    if (strand) {
+      totalUsedStrandSessions += 1;
+      orderedRecommendations.push({
+        ...strand,
+        sequence,
+      });
+      sequence += 1;
+    }
+  }
+
+  return {
+    recommendations: orderedRecommendations.map((item, index) => ({
+      ...item,
+      id: `${item.id}::slot-${index + 1}`,
+      recommendedSessions: 1,
+      adjustedSessions: null,
+      estimatedSessions: 1,
+      estimatedMinutes: durationMinutes,
+      rationale: item.isRecurringStrand
+        ? "Recurring English language strand interleaved with lesson sessions for balanced year-round practice."
+        : "Allocated using the selected term's capacity, chapter topic density, source pacing, and marks balance.",
+      reasoning: item.isRecurringStrand
+        ? "Recurring English language strand interleaved with lesson sessions for balanced year-round practice."
+        : "Allocated using the selected term's capacity, chapter topic density, source pacing, and marks balance.",
+    })),
+    chapterNames,
+    recurringStrandNames,
   };
 }
 
@@ -7542,6 +9693,7 @@ function estimateRecommendedAllocationSessions(recommendations: any[], academicC
       toNumberOrZero(row.sourceEstimatedSessions) +
       toNumberOrZero(row.sourceTopicCount) +
       ((row.chapters || []).length * 2) +
+      ((row.recurringStrands || []).length * 1.5) +
       (toNumberOrZero(row.marks) / 2)
     );
     const termWeight = Math.max(
@@ -7552,6 +9704,7 @@ function estimateRecommendedAllocationSessions(recommendations: any[], academicC
           toNumberOrZero(termRow.sourceEstimatedSessions) +
           toNumberOrZero(termRow.sourceTopicCount) +
           ((termRow.chapters || []).length * 2) +
+          ((termRow.recurringStrands || []).length * 1.5) +
           (toNumberOrZero(termRow.marks) / 2)
         );
       }, 0)
@@ -7940,6 +10093,49 @@ function sanitizeStage3EnrichmentToSource(
   };
 }
 
+function buildDeterministicStage3FallbackFromApprovedClass(
+  rawClass: any,
+  options?: {
+    reason?: string;
+    stageName?: string;
+  }
+) {
+  const approvedUnits = Array.isArray(rawClass?.units) ? rawClass.units : [];
+  const units = approvedUnits.map((unit: any, unitIndex: number) => ({
+    unit_id: unit?.unit_id || `U${unitIndex + 1}`,
+    unit_name: unit?.unit_name || "",
+    part_or_section: unit?.part_or_section || rawClass?.part_or_section || "",
+    chapters: (Array.isArray(unit?.chapters) ? unit.chapters : []).map((chapter: any, chapterIndex: number) => ({
+      source_chapter_name:
+        stripInternalParserLabel(chapter?.source_chapter_name || chapter?.chapter_name || "") ||
+        stripInternalParserLabel(unit?.unit_name || "") ||
+        `Chapter ${chapterIndex + 1}`,
+      source_type: chapter?.source_type || "explicit_chapter",
+      node_type: "chapter",
+      part_or_section: chapter?.part_or_section || unit?.part_or_section || rawClass?.part_or_section || "",
+      topics: uniqueStrings(chapter?.topics || []),
+      subtopics: uniqueStrings(chapter?.subtopics || []),
+      key_concepts: uniqueStrings(chapter?.key_concepts || []),
+      assessment_status: chapter?.assessment_status || "summative",
+    })),
+  }));
+  const chapterCount = units.reduce((sum: number, unit: any) => sum + ((unit?.chapters || []).length || 0), 0);
+
+  return {
+    units,
+    formative_content_refs: [],
+    validation_report: {
+      suspicious_chapter_names: [],
+      long_chapter_names_reclassified: [],
+      unit_count: units.length,
+      chapter_count: chapterCount,
+      deterministic_fallback_applied: true,
+      fallback_reason: String(options?.reason || "stage3_empty_response"),
+      fallback_stage: String(options?.stageName || STAGE_ORDER[2]),
+    },
+  };
+}
+
 async function normalizeClassTheory(
   requestId: string,
   debugDir: string,
@@ -7963,6 +10159,30 @@ async function normalizeClassTheory(
   const stageName = `${STAGE_ORDER[2]} - ${classLabel}`;
   const relevantSourceText = extractRelevantClassSourceText(sourceText, theoryRawClass, 8000);
   console.log(`[Pipeline][${requestId}] ${stageName} relevant source length: ${relevantSourceText.length}`);
+  const tamilSubject = isTamilCurriculumSubject(theoryRawClass?.subject || "");
+  const maybeUseDeterministicTamilFallback = async (error: any, context: string) => {
+    const errorCode = String(error?.code || "");
+    const errorMessage = String(error?.message || "");
+    const isEmptyResponse =
+      errorCode === "OLLAMA_EMPTY_RESPONSE" ||
+      errorMessage.includes("empty chat response body");
+    if (!tamilSubject || !isEmptyResponse) {
+      return null;
+    }
+    const fallbackResult = buildDeterministicStage3FallbackFromApprovedClass(theoryRawClass, {
+      reason: `${context}:ollama_empty_response`,
+      stageName,
+    });
+    await writeDebugFile(
+      debugDir,
+      `${safeStageName(stageName)}.${context}.deterministic-fallback.parsed.json`,
+      fallbackResult
+    );
+    console.warn(
+      `[Pipeline][${requestId}] ${stageName} ${context} returned empty Ollama content. Using deterministic Tamil Stage 3 fallback with ${fallbackResult.units.length} units.`
+    );
+    return fallbackResult;
+  };
   const schema = {
     units: [{
       unit_id: "",
@@ -8047,6 +10267,10 @@ async function normalizeClassTheory(
       }
     );
   } catch (error: any) {
+    const deterministicFallback = await maybeUseDeterministicTamilFallback(error, "initial");
+    if (deterministicFallback) {
+      return deterministicFallback;
+    }
     const needsRetry =
       String(error?.code || "") === "OLLAMA_OUTPUT_TRUNCATED" ||
       String(error?.code || "") === "STAGE3_NON_THEORY_RESULT" ||
@@ -8067,7 +10291,16 @@ async function normalizeClassTheory(
       englishMode,
       stageLabel: `${stageName} - Retry`,
     });
-    const retryResult = await runStage(requestId, debugDir, `${stageName} - Retry`, fallbackPrompt, schema, options);
+    let retryResult: any;
+    try {
+      retryResult = await runStage(requestId, debugDir, `${stageName} - Retry`, fallbackPrompt, schema, options);
+    } catch (error: any) {
+      const deterministicFallback = await maybeUseDeterministicTamilFallback(error, "retry");
+      if (deterministicFallback) {
+        return deterministicFallback;
+      }
+      throw error;
+    }
     const normalizedRetryResult = sanitizeStage3EnrichmentToSource({
       ...retryResult,
       units: (retryResult?.units || []).filter((unit: any) => String(unit?.unit_id || "").trim()),
@@ -8381,7 +10614,7 @@ function normalizeSessionPptGenerationOptions(input: any): SessionPptGenerationO
 function getOllamaConfig(kind: OllamaGenerationKind): { baseUrl: string; model: string } {
   refreshRuntimeEnv();
   const defaultBaseUrl = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11435";
-  const defaultModel = process.env.OLLAMA_MODEL || "qwen3.5:35b";
+  const defaultModel = process.env.OLLAMA_MODEL || "gemma4:31b";
   const sessionContentBaseUrl = process.env.OLLAMA_SESSION_CONTENT_BASE_URL || defaultBaseUrl;
   const sessionContentModel = process.env.OLLAMA_SESSION_CONTENT_MODEL || defaultModel;
   const imageBaseUrl = process.env.OLLAMA_IMAGE_BASE_URL || defaultBaseUrl;
@@ -8513,12 +10746,15 @@ function isRetryableOllamaError(error: any) {
   }
 
   return (
+    code === "OLLAMA_EMPTY_RESPONSE" ||
     message.includes("502") ||
     message.includes("503") ||
     message.includes("504") ||
     message.includes("429") ||
     message.includes("fetch failed") ||
     message.includes("Request timed out") ||
+    message.includes("empty chat response body") ||
+    message.includes("Empty /api/chat") ||
     code === "ECONNRESET" ||
     code === "ETIMEDOUT" ||
     code === "ABORT_ERR" ||
@@ -8529,8 +10765,8 @@ function isRetryableOllamaError(error: any) {
 function splitCurriculumTextIntoChunks(text: string, maxChunkLength: number = 12000): string[] {
   const pageBreakChunks = text
     .split(/\f|(?:\r?\n){3,}/)
-    .map((chunk) => chunk.trim())
-    .filter(Boolean);
+    .map((chunk) => sanitizeCurriculumChunkText(chunk))
+    .filter((chunk) => chunk && !isTrivialCurriculumChunk(chunk));
 
   if (pageBreakChunks.length <= 1 && text.length <= maxChunkLength) {
     return [text];
@@ -8555,7 +10791,7 @@ function splitCurriculumTextIntoChunks(text: string, maxChunkLength: number = 12
       continue;
     }
     for (let index = 0; index < part.length; index += maxChunkLength) {
-      chunks.push(part.slice(index, index + maxChunkLength).trim());
+      chunks.push(sanitizeCurriculumChunkText(part.slice(index, index + maxChunkLength)));
     }
   }
 
@@ -8563,48 +10799,183 @@ function splitCurriculumTextIntoChunks(text: string, maxChunkLength: number = 12
     chunks.push(currentChunk);
   }
 
-  return chunks.filter(Boolean);
+  return chunks.filter((chunk) => chunk && !isTrivialCurriculumChunk(chunk));
 }
 
-function splitTextIntoPageSegments(text: string): string[] {
-  const pagePattern = /--- Page \d+ ---/g;
+function extractExplicitPageSegments(text: string): string[] {
+  const pagePattern = /^\s*(?:---\s*Page\s+\d+\s*---|#\s*Page\s+\d+)\s*$/gim;
   const matches = [...text.matchAll(pagePattern)];
   if (!matches.length) {
-    return splitCurriculumTextIntoChunks(text, 8000);
+    return [];
   }
 
   const segments: string[] = [];
   for (let index = 0; index < matches.length; index += 1) {
     const start = matches[index].index ?? 0;
     const end = index + 1 < matches.length ? (matches[index + 1].index ?? text.length) : text.length;
-    const segment = text.slice(start, end).trim();
-    if (segment) {
+    const segment = sanitizeCurriculumChunkText(text.slice(start, end));
+    if (segment && !isTrivialCurriculumChunk(segment)) {
       segments.push(segment);
     }
   }
-  return segments.length ? segments : splitCurriculumTextIntoChunks(text, 8000);
+  return segments;
 }
 
-function getAdaptiveStage1ChunkCount(textLength: number) {
-  if (textLength < 10000) return 1;
-  if (textLength <= 20000) return 2;
-  if (textLength <= 35000) return 4;
-  return Math.max(6, Math.ceil(textLength / 8000));
+function splitTextIntoPageSegments(text: string): string[] {
+  const explicitPageSegments = extractExplicitPageSegments(text);
+  if (explicitPageSegments.length > 0) {
+    return explicitPageSegments;
+  }
+  return splitCurriculumTextIntoChunks(text, 8000);
 }
 
-function buildAdaptiveStage1Chunks(text: string, requestedChunkCount?: number): string[] {
+function getAdaptiveStage1ChunkCount(
+  textLength: number,
+  options: {
+    estimatedPromptLength?: number;
+    promptBudget?: number;
+  } = {}
+) {
+  const promptBudget = Number(options.promptBudget || STAGE1_PROMPT_SAFE_BUDGET);
+  const textBasedChunkCount =
+    textLength < 10000 ? 1 :
+      textLength <= 20000 ? 2 :
+        textLength <= 35000 ? 4 :
+          Math.max(6, Math.ceil(textLength / 8000));
+  const promptBasedChunkCount =
+    options.estimatedPromptLength && promptBudget > 0
+      ? Math.max(1, Math.ceil(options.estimatedPromptLength / promptBudget))
+      : 1;
+  return Math.max(textBasedChunkCount, promptBasedChunkCount);
+}
+
+function splitTextIntoParagraphSegments(text: string): string[] {
+  return text
+    .split(/\n{2,}/)
+    .map((part) => sanitizeCurriculumChunkText(part))
+    .filter((part) => part && !isTrivialCurriculumChunk(part));
+}
+
+function splitTextIntoCharacterWindows(text: string, maxWindowLength = 900): string[] {
+  const normalizedText = String(text || "").trim();
+  if (!normalizedText) return [];
+
+  const chunks: string[] = [];
+  let cursor = 0;
+  while (cursor < normalizedText.length) {
+    let end = Math.min(normalizedText.length, cursor + maxWindowLength);
+    if (end < normalizedText.length) {
+      const nextBoundaryCandidates = [
+        normalizedText.lastIndexOf("\n\n", end),
+        normalizedText.lastIndexOf("\n", end),
+        normalizedText.lastIndexOf(". ", end),
+        normalizedText.lastIndexOf(" ", end),
+      ].filter((boundary) => boundary > cursor + Math.floor(maxWindowLength * 0.5));
+      if (nextBoundaryCandidates.length > 0) {
+        end = Math.max(...nextBoundaryCandidates);
+      }
+    }
+
+    const segment = sanitizeCurriculumChunkText(normalizedText.slice(cursor, end));
+    if (segment && !isTrivialCurriculumChunk(segment)) {
+      chunks.push(segment);
+    }
+    cursor = Math.max(end, cursor + 1);
+  }
+
+  return chunks;
+}
+
+function splitChunkToPromptBudget(
+  text: string,
+  options: {
+    estimatePromptLength?: (chunkText: string) => number;
+    promptBudget?: number;
+  } = {},
+  depth: number = 0
+): string[] {
+  const normalizedText = String(text || "").trim();
+  if (!normalizedText) return [];
+
+  const promptBudget = Number(options.promptBudget || STAGE1_PROMPT_SAFE_BUDGET);
+  const estimatedPromptLength = options.estimatePromptLength?.(normalizedText) || 0;
+  const emptyPromptLength = options.estimatePromptLength?.("") || 0;
+  if (!options.estimatePromptLength || promptBudget <= 0 || estimatedPromptLength <= promptBudget) {
+    return [normalizedText];
+  }
+
+  if (depth >= MAX_CHUNK_SPLIT_DEPTH || normalizedText.length <= MIN_STAGE1_SPLIT_TEXT_LENGTH) {
+    return [normalizedText];
+  }
+
+  const fallbackSegmentGroups = [
+    extractExplicitPageSegments(normalizedText),
+    splitTextIntoParagraphSegments(normalizedText),
+    splitTextIntoCharacterWindows(
+      normalizedText,
+      Math.max(
+        400,
+        Math.min(
+          Math.max(600, Math.floor(MIN_STAGE1_SPLIT_TEXT_LENGTH * 0.8)),
+          promptBudget - emptyPromptLength - 200
+        )
+      )
+    ),
+  ];
+
+  for (const segments of fallbackSegmentGroups) {
+    if (segments.length <= 1) {
+      continue;
+    }
+
+    const refinedChunks = segments.flatMap((segment) => splitChunkToPromptBudget(segment, options, depth + 1));
+    if (refinedChunks.length > 1) {
+      return refinedChunks;
+    }
+  }
+
+  return [normalizedText];
+}
+
+function buildAdaptiveStage1Chunks(
+  text: string,
+  options: {
+    requestedChunkCount?: number;
+    estimatePromptLength?: (chunkText: string) => number;
+    promptBudget?: number;
+  } = {}
+): string[] {
   const pages = splitTextIntoPageSegments(text);
-  const chunkCount = Math.max(1, requestedChunkCount || getAdaptiveStage1ChunkCount(text.length));
+  const promptBudget = Number(options.promptBudget || STAGE1_PROMPT_SAFE_BUDGET);
+  const estimatedPromptLength = options.estimatePromptLength?.(text) || 0;
+  const chunkCount = Math.max(
+    1,
+    options.requestedChunkCount || getAdaptiveStage1ChunkCount(text.length, {
+      estimatedPromptLength,
+      promptBudget,
+    })
+  );
   if (pages.length <= 1 && chunkCount === 1) {
-    return [text];
+    return splitChunkToPromptBudget(text, {
+      estimatePromptLength: options.estimatePromptLength,
+      promptBudget,
+    });
   }
 
   const targetChunkSize = Math.ceil(pages.length / chunkCount);
   const chunks: string[] = [];
   for (let index = 0; index < pages.length; index += targetChunkSize) {
-    chunks.push(pages.slice(index, index + targetChunkSize).join("\n\n").trim());
+    const chunk = sanitizeCurriculumChunkText(pages.slice(index, index + targetChunkSize).join("\n\n"));
+    if (chunk && !isTrivialCurriculumChunk(chunk)) {
+      chunks.push(chunk);
+    }
   }
-  return chunks.filter(Boolean);
+  return chunks
+    .filter((chunk) => chunk && !isTrivialCurriculumChunk(chunk))
+    .flatMap((chunk) => splitChunkToPromptBudget(chunk, {
+      estimatePromptLength: options.estimatePromptLength,
+      promptBudget,
+    }));
 }
 
 function splitChunkForRetry(text: string): string[] {
@@ -8614,7 +10985,8 @@ function splitChunkForRetry(text: string): string[] {
     return [
       pages.slice(0, midpoint).join("\n\n").trim(),
       pages.slice(midpoint).join("\n\n").trim(),
-    ].filter(Boolean);
+    ].map((chunk) => sanitizeCurriculumChunkText(chunk))
+      .filter((chunk) => chunk && !isTrivialCurriculumChunk(chunk));
   }
 
   const paragraphs = text
@@ -8626,11 +10998,43 @@ function splitChunkForRetry(text: string): string[] {
     return [
       paragraphs.slice(0, midpoint).join("\n\n").trim(),
       paragraphs.slice(midpoint).join("\n\n").trim(),
-    ].filter(Boolean);
+    ].map((chunk) => sanitizeCurriculumChunkText(chunk))
+      .filter((chunk) => chunk && !isTrivialCurriculumChunk(chunk));
   }
 
   const midpoint = Math.ceil(text.length / 2);
-  return [text.slice(0, midpoint).trim(), text.slice(midpoint).trim()].filter(Boolean);
+  return [text.slice(0, midpoint).trim(), text.slice(midpoint).trim()]
+    .map((chunk) => sanitizeCurriculumChunkText(chunk))
+    .filter((chunk) => chunk && !isTrivialCurriculumChunk(chunk));
+}
+
+function buildEmptyStage1FactExtraction() {
+  return {
+    document_metadata: {},
+    classes: [],
+    units: [],
+    chapters: [],
+  };
+}
+
+function buildStage1TransportRecoveryChunks(
+  chunkText: string,
+  options: {
+    estimatePromptLength?: (chunkText: string) => number;
+    promptBudget?: number;
+  } = {}
+) {
+  const adaptiveChunks = buildAdaptiveStage1Chunks(chunkText, {
+    requestedChunkCount: 2,
+    estimatePromptLength: options.estimatePromptLength,
+    promptBudget: options.promptBudget,
+  });
+
+  if (adaptiveChunks.length > 1) {
+    return adaptiveChunks;
+  }
+
+  return splitChunkForRetry(chunkText);
 }
 
 function mergeStage1FactExtractions(extractions: any[]) {
@@ -8900,9 +11304,15 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
     activities: [],
     projects: [],
     assessment_information: {
-      marks_distribution: [],
-      excluded_or_non_assessed_content: [],
-      teacher_notes: [],
+      marks_distribution: Array.isArray(stage1Facts?.assessment_information?.marks_distribution)
+        ? stage1Facts.assessment_information.marks_distribution
+        : [],
+      excluded_or_non_assessed_content: Array.isArray(stage1Facts?.assessment_information?.excluded_or_non_assessed_content)
+        ? stage1Facts.assessment_information.excluded_or_non_assessed_content
+        : [],
+      teacher_notes: Array.isArray(stage1Facts?.assessment_information?.teacher_notes)
+        ? stage1Facts.assessment_information.teacher_notes
+        : [],
     },
   };
 }
@@ -8910,16 +11320,20 @@ function expandStage1FactsToRawExtraction(stage1Facts: any) {
 function shouldUseChunkedStage1Fallback(error: any, sourceText: string) {
   const code = String(error?.code || "");
   const message = String(error?.message || "");
+  const promptLength = Number(error?.promptLength || 0);
+  const sourceOrPromptLarge = sourceText.length > 12000 || promptLength > 12000;
   return (
-    sourceText.length > 12000 &&
+    sourceOrPromptLarge &&
     (
       code === "UND_ERR_HEADERS_TIMEOUT" ||
       code === "ABORT_ERR" ||
+      code === "OLLAMA_EMPTY_RESPONSE" ||
       code === "OLLAMA_OUTPUT_TRUNCATED" ||
       code === "ECONNRESET" ||
       code === "ETIMEDOUT" ||
       code === "UND_ERR_CONNECT_TIMEOUT" ||
       message.includes("Headers Timeout Error") ||
+      message.includes("empty chat response body") ||
       message.includes("timed out") ||
       message.includes("fetch failed") ||
       message.includes("Model output truncated")
@@ -8936,7 +11350,11 @@ async function runStage1ChunkWithAdaptiveRetry(
   chunkText: string,
   chunkLabel: string,
   depth: number = 0,
-  options?: Partial<OllamaRequestOptions>
+  options?: Partial<OllamaRequestOptions>,
+  retryConfig: {
+    estimatePromptLength?: (chunkText: string, chunkLabel?: string) => number;
+    promptBudget?: number;
+  } = {}
 ): Promise<any> {
   try {
     const stageOptions = {
@@ -8956,6 +11374,7 @@ async function runStage1ChunkWithAdaptiveRetry(
   } catch (error: any) {
     const errorCode = String(error?.code || "");
     const errorMessage = String(error?.message || "");
+    const estimatePromptLength = retryConfig.estimatePromptLength;
     const isTruncated = String(error?.code || "") === "OLLAMA_OUTPUT_TRUNCATED" || String(error?.message || "").includes("Model output truncated");
     const isRetryableTransportFailure =
       Boolean(error?.retryable) ||
@@ -8963,30 +11382,113 @@ async function runStage1ChunkWithAdaptiveRetry(
       errorCode === "ETIMEDOUT" ||
       errorCode === "UND_ERR_CONNECT_TIMEOUT" ||
       errorMessage.includes("fetch failed");
+    const promptBudget = Number(retryConfig.promptBudget || STAGE1_PROMPT_SAFE_BUDGET);
+    const estimatedPromptLength = estimatePromptLength?.(chunkText, chunkLabel) || 0;
+    const isPromptOverBudget = Boolean(estimatePromptLength) && estimatedPromptLength > promptBudget;
+    const canSplitFurther = depth < MAX_CHUNK_SPLIT_DEPTH && chunkText.length > MIN_STAGE1_SPLIT_TEXT_LENGTH;
     if (isRetryableTransportFailure && !isTruncated) {
-      if (depth >= MAX_CHUNK_SPLIT_DEPTH || chunkText.length < 5000) {
+      if (isPromptOverBudget && canSplitFurther) {
+        console.warn(
+          `[Pipeline][${requestId}] ${stageName} chunk "${chunkLabel}" failed with retryable transport error (${errorCode || errorMessage}) and rendered prompt length ${estimatedPromptLength} exceeds budget ${promptBudget}. Splitting chunk for recovery.`
+        );
+        const smallerChunks = buildStage1TransportRecoveryChunks(chunkText, {
+          estimatePromptLength: estimatePromptLength
+            ? (candidateChunkText) => estimatePromptLength(candidateChunkText, chunkLabel)
+            : undefined,
+          promptBudget,
+        });
+        if (smallerChunks.length > 1) {
+          const chunkResults: any[] = [];
+          for (let index = 0; index < smallerChunks.length; index += 1) {
+            chunkResults.push(
+              await runStage1ChunkWithAdaptiveRetry(
+                requestId,
+                debugDir,
+                stageName,
+                buildPrompt,
+                schema,
+                smallerChunks[index],
+                `${chunkLabel} retry ${depth + 1}.${index + 1}/${smallerChunks.length}`,
+                depth + 1,
+                options,
+                retryConfig
+              )
+            );
+          }
+          return mergeStage1FactExtractions(chunkResults);
+        }
+      }
+
+      if (!canSplitFurther) {
         console.warn(
           `[Pipeline][${requestId}] ${stageName} chunk "${chunkLabel}" hit retryable transport failure (${errorCode || errorMessage}). Retrying same chunk once with a smaller output target.`
         );
-        return await runStage(
-          requestId,
-          debugDir,
-          `${stageName} - Transport Retry`,
-          buildPrompt(chunkText, chunkLabel),
-          schema,
-          {
-            numPredict: Math.min(2048, OLLAMA_STAGE1_NUM_PREDICT),
-            timeoutMs: OLLAMA_TIMEOUT_MS,
-            retries: 2,
-            ...(options || {}),
+        try {
+          return await runStage(
+            requestId,
+            debugDir,
+            `${stageName} - Transport Retry`,
+            buildPrompt(chunkText, chunkLabel),
+            schema,
+            {
+              numPredict: Math.min(2048, OLLAMA_STAGE1_NUM_PREDICT),
+              timeoutMs: OLLAMA_TIMEOUT_MS,
+              retries: 2,
+              ...(options || {}),
+            }
+          );
+        } catch (retryError: any) {
+          const retryableRetryError = Boolean(retryError?.retryable) || isRetryableOllamaError(retryError);
+          if (retryableRetryError && isPromptOverBudget && canSplitFurther) {
+            console.warn(
+              `[Pipeline][${requestId}] ${stageName} chunk "${chunkLabel}" still failed after transport retry and rendered prompt length ${estimatedPromptLength} exceeds budget ${promptBudget}. Splitting chunk for deeper recovery.`
+            );
+            const smallerChunks = buildStage1TransportRecoveryChunks(chunkText, {
+              estimatePromptLength: estimatePromptLength
+                ? (candidateChunkText) => estimatePromptLength(candidateChunkText, chunkLabel)
+                : undefined,
+              promptBudget,
+            });
+            if (smallerChunks.length > 1) {
+              const chunkResults: any[] = [];
+              for (let index = 0; index < smallerChunks.length; index += 1) {
+                chunkResults.push(
+                  await runStage1ChunkWithAdaptiveRetry(
+                    requestId,
+                    debugDir,
+                    stageName,
+                    buildPrompt,
+                    schema,
+                    smallerChunks[index],
+                    `${chunkLabel} retry ${depth + 1}.${index + 1}/${smallerChunks.length}`,
+                    depth + 1,
+                    options,
+                    retryConfig
+                  )
+                );
+              }
+              return mergeStage1FactExtractions(chunkResults);
+            }
           }
-        );
+          if (retryableRetryError) {
+            console.warn(
+              `[Pipeline][${requestId}] ${stageName} chunk "${chunkLabel}" still failed after transport retry with retryable error (${String(retryError?.code || retryError?.message || "unknown")}). Skipping this chunk and continuing Stage 1 merge.`
+            );
+            return buildEmptyStage1FactExtraction();
+          }
+          throw retryError;
+        }
       }
 
       console.warn(
         `[Pipeline][${requestId}] ${stageName} chunk "${chunkLabel}" failed with retryable transport error (${errorCode || errorMessage}). Splitting chunk for recovery.`
       );
-      const smallerChunks = splitChunkForRetry(chunkText);
+      const smallerChunks = buildStage1TransportRecoveryChunks(chunkText, {
+        estimatePromptLength: estimatePromptLength
+          ? (candidateChunkText) => estimatePromptLength(candidateChunkText, chunkLabel)
+          : undefined,
+        promptBudget,
+      });
       if (smallerChunks.length > 1) {
         const chunkResults: any[] = [];
         for (let index = 0; index < smallerChunks.length; index += 1) {
@@ -9000,12 +11502,18 @@ async function runStage1ChunkWithAdaptiveRetry(
               smallerChunks[index],
               `${chunkLabel} retry ${depth + 1}.${index + 1}/${smallerChunks.length}`,
               depth + 1,
-              options
+              options,
+              retryConfig
             )
           );
         }
         return mergeStage1FactExtractions(chunkResults);
       }
+
+      console.warn(
+        `[Pipeline][${requestId}] ${stageName} chunk "${chunkLabel}" could not be split further after retryable transport failure (${errorCode || errorMessage}). Skipping this chunk and continuing Stage 1 merge.`
+      );
+      return buildEmptyStage1FactExtraction();
     }
 
     if (!isTruncated) {
@@ -9076,7 +11584,8 @@ async function runStage1ChunkWithAdaptiveRetry(
         smallerChunks[index],
         `${chunkLabel}.${index + 1}`,
         depth + 1,
-        options
+        options,
+        retryConfig
       ));
     }
     return mergeStage1FactExtractions(results);
@@ -9112,40 +11621,56 @@ async function runStage6CompetencyExtractionWithFallback(
     const isTruncated =
       String(error?.code || "") === "OLLAMA_OUTPUT_TRUNCATED" ||
       String(error?.message || "").includes("Model output truncated");
-    if (!isTruncated) {
+    const isEmptyResponse =
+      String(error?.code || "") === "OLLAMA_EMPTY_RESPONSE" ||
+      String(error?.message || "").includes("empty chat response body");
+    if (!isTruncated && !isEmptyResponse) {
       throw error;
     }
 
     const classes = structurePayload?.classes || [];
-    if (classes.length <= 1) {
-      throw error;
-    }
-
+    const fallbackClasses = classes.length ? classes : [{ class_name: "Curriculum", units: [] }];
     console.warn(
-      `[Pipeline][${requestId}] ${STAGE_ORDER[5]} truncated. Retrying with ${classes.length} class-scoped competency prompts.`
+      `[Pipeline][${requestId}] ${STAGE_ORDER[5]} ${isTruncated ? "truncated" : "returned empty content"}. Retrying with ${fallbackClasses.length} class-scoped competency prompt(s).`
     );
 
     const competencyGroups: any[] = [];
-    for (let classIndex = 0; classIndex < classes.length; classIndex += 1) {
-      const cls = classes[classIndex];
+    for (let classIndex = 0; classIndex < fallbackClasses.length; classIndex += 1) {
+      const cls = fallbackClasses[classIndex];
       const classStageName = `${STAGE_ORDER[5]} - ${cls?.class_name || `Class ${classIndex + 1}`}`;
       const classPayload = buildSlimStructurePayload([cls]);
       const classSourceText = extractRelevantClassSourceText(sourceText, cls, 8000);
       const classPrompt = buildStage6Prompt(classStageName, classPayload, classSourceText);
-      const classResult = await runStage(
-        requestId,
-        debugDir,
-        classStageName,
-        classPrompt,
-        competencySchema,
-        {
-          numPredict: Math.min(4096, OLLAMA_NUM_PREDICT),
-          timeoutMs: OLLAMA_TIMEOUT_MS,
-          retries: 1,
-          ...(options || {}),
+      try {
+        const classResult = await runStage(
+          requestId,
+          debugDir,
+          classStageName,
+          classPrompt,
+          competencySchema,
+          {
+            numPredict: Math.min(4096, OLLAMA_NUM_PREDICT),
+            timeoutMs: OLLAMA_TIMEOUT_MS,
+            retries: 2,
+            ...(options || {}),
+          }
+        );
+        competencyGroups.push(...(classResult?.competency_groups || []));
+      } catch (classError: any) {
+        const classIsEmptyResponse =
+          String(classError?.code || "") === "OLLAMA_EMPTY_RESPONSE" ||
+          String(classError?.message || "").includes("empty chat response body");
+        if (!classIsEmptyResponse) {
+          throw classError;
         }
-      );
-      competencyGroups.push(...(classResult?.competency_groups || []));
+        console.warn(
+          `[Pipeline][${requestId}] ${classStageName} still returned empty content after fallback retry. Continuing without competency groups for this class.`
+        );
+      }
+    }
+
+    if (!competencyGroups.length && isEmptyResponse) {
+      await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[5])}.fallback-warning.txt`, "Competency extraction returned empty Ollama content. Proceeded with empty competency groups.");
     }
 
     return {
@@ -9340,6 +11865,7 @@ async function generateWithOllama(
       const messageContentLength = data?.message?.content?.length || 0;
       const thinkingLength = thinkingText.length || 0;
       const reasoningLength = data?.message?.reasoning?.length || data?.reasoning?.length || 0;
+      const done = data?.done;
       console.log(`[Ollama][${requestId}][${stageName}] Full /api/chat response: ${JSON.stringify(data)}`);
       console.log(`[Ollama][${requestId}][${stageName}] Response keys: ${Object.keys(data || {}).join(", ")}`);
       console.log(`[Ollama][${requestId}][${stageName}] Field lengths -> response: ${responseLength}, message.content: ${messageContentLength}, message.thinking: ${thinkingLength}, reasoning: ${reasoningLength}`);
@@ -9348,15 +11874,48 @@ async function generateWithOllama(
       console.log(`[Ollama][${requestId}][${stageName}] ${stageName} raw content length: ${responseText.length}`);
 
       const doneReason = data?.done_reason || "";
+      console.log(`[Ollama][${requestId}][${stageName}] done: ${String(done)}`);
       console.log(`[Ollama][${requestId}][${stageName}] done_reason: ${doneReason}`);
+
+      if (done === false) {
+        console.error(`[Ollama][${requestId}][${stageName}] Incomplete /api/chat payload received with done=false.`);
+        throw new OllamaRequestError(
+          "Ollama returned an incomplete chat response before generation finished.",
+          {
+            code: "OLLAMA_INCOMPLETE_RESPONSE",
+            retryable: true,
+            stageName,
+            promptLength: fullPrompt.length,
+            timeoutMs,
+          }
+        );
+      }
 
       if (!responseText.trim()) {
         if (thinkingText.trim()) {
           console.error(`[Ollama][${requestId}][${stageName}] Output contained reasoning but no JSON content.`);
-          throw new Error("Ollama returned reasoning in message.thinking but no final JSON in message.content.");
+          throw new OllamaRequestError(
+            "Ollama returned reasoning in message.thinking but no final JSON in message.content.",
+            {
+              code: "OLLAMA_EMPTY_RESPONSE",
+              retryable: true,
+              stageName,
+              promptLength: fullPrompt.length,
+              timeoutMs,
+            }
+          );
         }
         console.error(`[Ollama][${requestId}][${stageName}] Empty /api/chat message.content payload.`);
-        throw new Error("Ollama returned an empty chat response body.");
+        throw new OllamaRequestError(
+          "Ollama returned an empty chat response body.",
+          {
+            code: "OLLAMA_EMPTY_RESPONSE",
+            retryable: true,
+            stageName,
+            promptLength: fullPrompt.length,
+            timeoutMs,
+          }
+        );
       }
 
       if (doneReason === "length") {
@@ -9369,7 +11928,29 @@ async function generateWithOllama(
         };
       }
 
-      const extracted = extractJsonText(responseText);
+      let extracted = "";
+      try {
+        extracted = extractJsonText(responseText);
+      } catch (error: any) {
+        const balancedIndex = findLastBalancedJsonBoundary(responseText);
+        const looksStructurallyIncomplete =
+          !doneReason &&
+          balancedIndex < 0;
+        if (looksStructurallyIncomplete) {
+          console.error(`[Ollama][${requestId}][${stageName}] Structurally incomplete JSON payload received without completion signal.`);
+          throw new OllamaRequestError(
+            "Ollama returned structurally incomplete JSON before generation finished.",
+            {
+              code: "OLLAMA_INCOMPLETE_RESPONSE",
+              retryable: true,
+              stageName,
+              promptLength: fullPrompt.length,
+              timeoutMs,
+            }
+          );
+        }
+        throw error;
+      }
       await writeDebugFile(debugDir, `${safeStageName(stageName)}.attempt-${attempt + 1}.chat.extracted.json.txt`, extracted);
       console.log(`[Ollama][${requestId}][${stageName}] Parsed response length: ${extracted.length}`);
       return {
@@ -9694,6 +12275,8 @@ app.post("/api/planning-workspaces/:id/recommend-course-plan", async (req, res) 
         termName: row.term,
         termNumber: row.termNumber ?? null,
         chapters: row.chapters || [],
+        recurringStrands: row.recurringStrands || [],
+        recurringStrandDetails: row.recurringStrandDetails || [],
         marks: row.marks || 0,
         reasoning: row.marks > 0
           ? "Balanced using curriculum structure, unit coverage, and marks distribution."
@@ -9853,20 +12436,6 @@ app.post("/api/planning-workspaces/:id/recommend-session-allocation", async (req
       return res.status(400).json({ error: "No approved term allocation was found for session planning." });
     }
 
-    const chapterNames = Array.from(
-      new Set(
-        selectedRows.flatMap((row: any) =>
-          (Array.isArray(row?.chapters) ? row.chapters : [])
-            .map((chapter: string) => String(chapter || "").trim())
-            .filter(Boolean)
-        )
-      )
-    );
-
-    if (chapterNames.length === 0) {
-      return res.status(400).json({ error: "The selected term does not contain any chapters to allocate." });
-    }
-
     const annualCapacity = estimateAnnualSubjectSessionCapacity(workspace.academicConfig || {});
     const totalPlanMarks = savedAllocations.reduce((sum: number, row: any) => sum + toNumberOrZero(row?.marks), 0);
     const selectedTermMarks = selectedRows.reduce((sum: number, row: any) => sum + toNumberOrZero(row?.marks), 0);
@@ -9875,65 +12444,38 @@ app.post("/api/planning-workspaces/:id/recommend-session-allocation", async (req
       ? Math.max(1, Math.round(annualCapacity.annualSubjectSessions * (selectedTermMarks / totalPlanMarks)))
       : evenTermCapacity;
     const termCapacity = Math.min(annualCapacity.annualSubjectSessions, weightedTermCapacity);
-
-    const recommendationsBase = chapterNames.map((chapterName, index) => {
-      const insight = findNormalizedChapterInsight(workspace.curriculumSnapshot?.normalizedStructure, chapterName);
-      const sourceRow = selectedRows.find((row: any) => (row?.chapters || []).includes(chapterName));
-      const marksShare = sourceRow?.chapters?.length
-        ? toNumberOrZero(sourceRow?.marks) / sourceRow.chapters.length
-        : 0;
-      return {
-        id: `${selectedTermKey}::${index + 1}`,
-        className: selectedRows[0]?.className || "",
-        termName: selectedRows[0]?.termName || selectedRows[0]?.term || "",
-        termNumber: selectedRows[0]?.termNumber ?? null,
-        chapterName,
-        unitName: sourceRow?.unitName || "Whole Term",
-        sequence: index + 1,
-        sourceTopicCount: insight.topicCount,
-        sourceEstimatedSessions: insight.estimatedSessions,
-        marksShare,
-      };
-    });
-
-    const weights = recommendationsBase.map((item) =>
-      Math.max(
-        1,
-        toNumberOrZero(item.sourceEstimatedSessions) +
-        Math.max(1, toNumberOrZero(item.sourceTopicCount)) +
-        Math.max(0, item.marksShare)
-      )
-    );
     const durationMinutes = Math.max(
       30,
       toNumberOrZero(workspace.sessionPlanningDefaults?.sessionDurationMinutes) ||
       toNumberOrZero(workspace.academicConfig?.periodDurationMinutes) ||
       45
     );
-    const recommendations = distributeIntegerSessions(termCapacity, weights).map((estimatedSessions, index) => {
-      const base = recommendationsBase[index];
-      return {
-        ...base,
-        recommendedSessions: estimatedSessions,
-        adjustedSessions: null,
-        estimatedSessions,
-        estimatedMinutes: estimatedSessions * durationMinutes,
-        rationale: `Allocated ${estimatedSessions} sessions using the selected term's capacity, chapter topic density, source pacing, and marks balance.`,
-        reasoning: `Allocated ${estimatedSessions} sessions using the selected term's capacity, chapter topic density, source pacing, and marks balance.`,
-      };
+    const subject = String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || "");
+    const recommendationPlan = buildSessionAllocationRecommendationsForTerm({
+      normalizedStructure: workspace.curriculumSnapshot?.normalizedStructure,
+      selectedRows,
+      selectedTermKey,
+      subject,
+      termCapacity,
+      durationMinutes,
     });
+
+    if (recommendationPlan.chapterNames.length === 0) {
+      return res.status(400).json({ error: "The selected term does not contain any chapters to allocate." });
+    }
 
     const selectedTermSummary = {
       className: selectedRows[0]?.className || "",
       termName: selectedRows[0]?.termName || selectedRows[0]?.term || "",
       termNumber: selectedRows[0]?.termNumber ?? null,
-      chapterCount: chapterNames.length,
+      chapterCount: recommendationPlan.chapterNames.length,
       marks: selectedTermMarks,
       totalRows: selectedRows.length,
+      recurringStrands: recommendationPlan.recurringStrandNames,
     };
     const validation = validateSessionAllocationState(workspace, {
       selectedTermSummary,
-      allocations: recommendations,
+      allocations: recommendationPlan.recommendations,
     });
 
     workspace.phase = "session_planning";
@@ -9943,7 +12485,7 @@ app.post("/api/planning-workspaces/:id/recommend-session-allocation", async (req
       approvedAt: null,
       selectedTermKey,
       selectedTermSummary,
-      recommendations,
+      recommendations: recommendationPlan.recommendations,
       allocations: [],
       validation,
     };
@@ -9955,7 +12497,7 @@ app.post("/api/planning-workspaces/:id/recommend-session-allocation", async (req
       annualCapacity: annualCapacity.annualSubjectSessions,
       termCapacity,
       selectedTermKey,
-      recommendations,
+      recommendations: recommendationPlan.recommendations,
     });
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Session allocation recommendation failed:", error);
@@ -10086,6 +12628,7 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     const sessionPlan = await generateSessionDetailsArtifact({
       subject: String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
       gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || ""),
+      curriculumStructure: workspace.curriculumSnapshot?.normalizedStructure || workspace.curriculumSnapshot,
       selectedChapters: [chapterName],
       sessionNumber,
       totalSessions,
@@ -10239,12 +12782,16 @@ app.post("/api/curriculum-class-options", async (req, res) => {
   }
 
   try {
-    const classSummaries = buildDetectedClassSummariesFromSource(String(text));
+    const sourceText = String(text);
+    const classSummaries = buildDetectedClassSummariesFromSource(sourceText);
+    const detectedSubject = detectCurriculumSubjectFromInput(sourceText, String(fileName || ""));
     res.json({
       success: true,
       fileName: String(fileName || ""),
       detectedClasses: classSummaries,
       requiresClassSelection: classSummaries.length > 1,
+      detectedSubject,
+      requiresTamilIndex: isTamilCurriculumSubject(detectedSubject),
     });
   } catch (error: any) {
     console.error("[Curriculum Class Options] Detection failed:", error);
@@ -10274,6 +12821,7 @@ app.post("/api/analyze-curriculum", async (req, res) => {
     schemaVersion: requestedSchemaVersion,
     selectedClasses = [],
     persist = false,
+    supportingDocuments = [],
   } = req.body;
   if (!text || text.trim().length === 0) {
     return res.status(400).json({ error: "No curriculum text provided." });
@@ -10286,27 +12834,52 @@ app.post("/api/analyze-curriculum", async (req, res) => {
   const requestedSelectedClasses = Array.isArray(selectedClasses)
     ? selectedClasses.map((item) => String(item || "").trim()).filter(Boolean)
     : [];
-  const sourceFilter = filterSourceTextToSelectedClasses(String(text), requestedSelectedClasses);
+  const primarySourceText = String(text);
+  const primaryDetectedSubject = detectCurriculumSubjectFromInput(primarySourceText, String(fileName || ""));
+  const normalizedSupportingDocuments = normalizeSupportingCurriculumDocuments(supportingDocuments);
+  const activeSupportingDocuments = isTamilCurriculumSubject(primaryDetectedSubject)
+    ? normalizedSupportingDocuments
+    : [];
+  if (isTamilCurriculumSubject(primaryDetectedSubject) && activeSupportingDocuments.length === 0) {
+    return res.status(400).json({ error: "Tamil curriculum parsing requires a Textbook Index upload before analysis." });
+  }
+  const sourceFilter = filterSourceTextToSelectedClasses(primarySourceText, requestedSelectedClasses);
   if (requestedSelectedClasses.length > 0 && sourceFilter.selectedClassNames.length === 0) {
     return res.status(400).json({ error: "Selected classes were not found in the uploaded curriculum text." });
   }
-  const sourceText = String(sourceFilter.sourceText || text);
+  const filteredPrimarySourceText = String(sourceFilter.sourceText || primarySourceText);
+  const primaryStageSourceText = filteredPrimarySourceText;
+  const combinedSourceText = buildCombinedCurriculumSourceText(
+    filteredPrimarySourceText,
+    String(fileName || ""),
+    activeSupportingDocuments
+  );
   const schemaVersion = normalizeSchemaVersion(requestedSchemaVersion);
+  const sourceText = primaryStageSourceText;
   const detectedProfile = detectCurriculumProfile(sourceText, fileName);
   const profileConfig = getCurriculumProfileConfig(detectedProfile.profile);
-  const earlyEnglishMode = shouldUseEnglishIntelligence({ sourceText, fileName });
+  const earlyEnglishMode = shouldUseEnglishIntelligence({
+    subject: primaryDetectedSubject,
+    sourceText: filteredPrimarySourceText,
+    fileName,
+  });
+  const earlyTamilMode = isTamilCurriculumSubject(primaryDetectedSubject);
   const earlyCurriculumExtractionOllamaOverrides = getCurriculumExtractionOllamaOverrides({
-    sourceText,
+    subject: primaryDetectedSubject,
+    sourceText: filteredPrimarySourceText,
     fileName,
   });
   const isPdfUpload = String(fileName).toLowerCase().endsWith(".pdf");
   const looksLikeMarkdown =
-    /^\s*#\s+Page\s+\d+/m.test(sourceText) ||
-    /^\s*##\s+/m.test(sourceText) ||
-    /^\s*-\s+/m.test(sourceText);
+    /^\s*#\s+Page\s+\d+/m.test(filteredPrimarySourceText) ||
+    /^\s*##\s+/m.test(filteredPrimarySourceText) ||
+    /^\s*-\s+/m.test(filteredPrimarySourceText);
   console.log(`[Request][${requestId}] /api/analyze-curriculum started`);
   console.log(`[Request][${requestId}] File name: ${fileName || "(none)"}`);
+  console.log(`[Request][${requestId}] Detected subject: ${primaryDetectedSubject || "(unknown)"}`);
   console.log(`[Request][${requestId}] Source text length: ${sourceText.length}`);
+  console.log(`[Request][${requestId}] Combined source text length: ${combinedSourceText.length}`);
+  console.log(`[Request][${requestId}] Supporting documents: ${activeSupportingDocuments.length}`);
   console.log(`[Request][${requestId}] Selected classes: ${requestedSelectedClasses.join(", ") || "(all detected classes)"}`);
   console.log(`[Request][${requestId}] Source text filtered to selected classes: ${sourceFilter.filtered ? "yes" : "no"}`);
   console.log(`[Request][${requestId}] Schema version: ${schemaVersion}`);
@@ -10319,17 +12892,22 @@ app.post("/api/analyze-curriculum", async (req, res) => {
   }
   console.log(`[Request][${requestId}] Source text preview (first 2000 chars):\n${sourceText.slice(0, 2000)}`);
   await writeDebugFile(debugDir, "request-body.json", req.body);
+  await writeDebugFile(debugDir, "supporting-documents.json", activeSupportingDocuments);
   await writeDebugFile(debugDir, "class-selection.json", sourceFilter);
-  await writeDebugFile(debugDir, "source-text.txt", sourceText);
+  await writeDebugFile(debugDir, "primary-source-text.txt", filteredPrimarySourceText);
+  await writeDebugFile(debugDir, "source-text.txt", combinedSourceText);
+  await writeDebugFile(debugDir, "stage-source-text.txt", sourceText);
   await writeDebugFile(debugDir, "detected-profile.json", {
     schema_version: schemaVersion,
     curriculum_profile: detectedProfile.profile,
     profile_confidence: detectedProfile.confidence,
     profile_reasons: detectedProfile.reasons,
     expected_structure_type: profileConfig.expectedStructureType,
+    detected_subject: primaryDetectedSubject,
+    requires_tamil_index: earlyTamilMode,
   });
   if (isPdfUpload && looksLikeMarkdown) {
-    await writeDebugFile(debugDir, "source-text.md", sourceText);
+    await writeDebugFile(debugDir, "source-text.md", filteredPrimarySourceText);
   }
   try {
     const stage1FactsSchema = {
@@ -10388,60 +12966,165 @@ Rules:
       `- Expected structure type: ${profileConfig.expectedStructureType}`,
       ...profileConfig.extraRules,
     ].join("\n");
-    const buildStage1Prompt = (sourceText: string, chunkLabel?: string) => renderPromptWithEnglishIntelligence("curriculum-extraction.md", {
+    const buildStage1Prompt = (sourceText: string, chunkLabel?: string) => renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
       STAGE_NAME: STAGE_ORDER[0],
       EXTRACTION_RULES: `${extractionRules}\n${profileSpecificRules}`,
       CHUNK_RULE: chunkLabel ? `- This is partial curriculum input for ${chunkLabel}; extract only what is present in this chunk` : "",
       SOURCE_TEXT: sourceText,
     }, {
       englishMode: earlyEnglishMode,
+      tamilMode: earlyTamilMode,
       stageLabel: STAGE_ORDER[0],
     });
-
-    const initialStage1ChunkCount = sourceText.length > 15000 ? getAdaptiveStage1ChunkCount(sourceText.length) : 1;
+    const estimateStage1PromptLength = (inputSourceText: string, chunkLabel?: string) =>
+      buildStage1Prompt(inputSourceText, chunkLabel).length;
     let stage1Facts: any;
-    if (initialStage1ChunkCount === 1) {
-      try {
-      const stage1Prompt = buildStage1Prompt(sourceText);
-        stage1Facts = await runStage(
-          requestId,
-          debugDir,
-          STAGE_ORDER[0],
-          stage1Prompt,
-          stage1FactsSchema,
-          {
-            numPredict: OLLAMA_STAGE1_NUM_PREDICT,
-            timeoutMs: OLLAMA_TIMEOUT_MS,
-            retries: 1,
-            ...earlyCurriculumExtractionOllamaOverrides,
-          }
-        );
-      } catch (error: any) {
-        if (!shouldUseChunkedStage1Fallback(error, sourceText)) {
-          throw error;
-        }
+    let initialStage1ChunkCount = 1;
+    const tamilFastStage1Facts = earlyTamilMode
+      ? buildTamilFastStage1Facts(sourceText, String(fileName || ""), {
+          selectedClassNames: sourceFilter.selectedClassNames,
+          supportingDocuments: activeSupportingDocuments,
+        })
+      : null;
+    const canUseTamilFastPath = Boolean(
+      tamilFastStage1Facts &&
+      (((tamilFastStage1Facts?.units || []).length > 0) || ((tamilFastStage1Facts?.chapters || []).length > 0))
+    );
 
-        console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} switching to chunked fallback after timeout/header failure.`);
-        const chunks = buildAdaptiveStage1Chunks(sourceText, 2);
-        console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} chunk count: ${chunks.length}`);
-        await writeDebugFile(debugDir, "stage-1-chunks.json", {
-          chunkCount: chunks.length,
-          chunkLengths: chunks.map((chunk, index) => ({ index: index + 1, length: chunk.length })),
-        });
+    if (canUseTamilFastPath) {
+      stage1Facts = tamilFastStage1Facts;
+      console.log(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} using Tamil fast path without Ollama chunking.`);
+      await writeDebugFile(debugDir, "stage-1-plan.json", {
+        sourceLength: sourceText.length,
+        renderedPromptLength: 0,
+        promptBudget: STAGE1_PROMPT_SAFE_BUDGET,
+        initialRequestedChunkCount: 1,
+        chunkCount: 0,
+        fastPath: "tamil_deterministic_stage1",
+      });
+      await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.facts.parsed.json`, stage1Facts);
+    } else {
+      const fullStage1PromptLength = estimateStage1PromptLength(sourceText);
+      initialStage1ChunkCount = getAdaptiveStage1ChunkCount(sourceText.length, {
+        estimatedPromptLength: fullStage1PromptLength,
+        promptBudget: STAGE1_PROMPT_SAFE_BUDGET,
+      });
+      const plannedStage1Chunks = buildAdaptiveStage1Chunks(sourceText, {
+        requestedChunkCount: initialStage1ChunkCount,
+        estimatePromptLength: (chunkText) => estimateStage1PromptLength(chunkText),
+        promptBudget: STAGE1_PROMPT_SAFE_BUDGET,
+      });
+      console.log(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} source length=${sourceText.length} rendered prompt length=${fullStage1PromptLength} prompt budget=${STAGE1_PROMPT_SAFE_BUDGET}`);
+      console.log(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} planned chunk count: ${plannedStage1Chunks.length}`);
+      await writeDebugFile(debugDir, "stage-1-chunks.json", {
+        chunkCount: plannedStage1Chunks.length,
+        chunkLengths: plannedStage1Chunks.map((chunk, index) => ({
+          index: index + 1,
+          length: chunk.length,
+          renderedPromptLength: estimateStage1PromptLength(chunk, `chunk ${index + 1} of ${plannedStage1Chunks.length}`),
+        })),
+      });
+      await writeDebugFile(debugDir, "stage-1-plan.json", {
+        sourceLength: sourceText.length,
+        renderedPromptLength: fullStage1PromptLength,
+        promptBudget: STAGE1_PROMPT_SAFE_BUDGET,
+        initialRequestedChunkCount: initialStage1ChunkCount,
+        chunkCount: plannedStage1Chunks.length,
+        chunks: plannedStage1Chunks.map((chunk, index) => ({
+          index: index + 1,
+          length: chunk.length,
+          renderedPromptLength: estimateStage1PromptLength(chunk, `chunk ${index + 1} of ${plannedStage1Chunks.length}`),
+        })),
+      });
+
+      if (plannedStage1Chunks.length === 1) {
+        try {
+          const stage1Prompt = buildStage1Prompt(sourceText);
+          stage1Facts = await runStage(
+            requestId,
+            debugDir,
+            STAGE_ORDER[0],
+            stage1Prompt,
+            stage1FactsSchema,
+            {
+              numPredict: OLLAMA_STAGE1_NUM_PREDICT,
+              timeoutMs: OLLAMA_TIMEOUT_MS,
+              retries: 2,
+              ...earlyCurriculumExtractionOllamaOverrides,
+            }
+          );
+        } catch (error: any) {
+          if (!shouldUseChunkedStage1Fallback(error, sourceText)) {
+            throw error;
+          }
+
+          const fallbackReason =
+            String(error?.code || "") === "OLLAMA_EMPTY_RESPONSE"
+              ? "empty response"
+              : String(error?.code || "") === "OLLAMA_OUTPUT_TRUNCATED"
+                ? "output truncation"
+                : "retryable transport or timeout failure";
+          console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} switching to chunked fallback after ${fallbackReason}.`);
+          const chunks = buildAdaptiveStage1Chunks(sourceText, {
+            requestedChunkCount: Math.max(2, initialStage1ChunkCount),
+            estimatePromptLength: (chunkText) => estimateStage1PromptLength(chunkText),
+            promptBudget: STAGE1_PROMPT_SAFE_BUDGET,
+          });
+          console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} chunk count: ${chunks.length}`);
+          await writeDebugFile(debugDir, "stage-1-chunks.json", {
+            chunkCount: chunks.length,
+            chunkLengths: chunks.map((chunk, index) => ({
+              index: index + 1,
+              length: chunk.length,
+              renderedPromptLength: estimateStage1PromptLength(chunk, `chunk ${index + 1} of ${chunks.length}`),
+            })),
+          });
+
+          const chunkExtractions: any[] = [];
+          for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex += 1) {
+            const chunkStageName = `${STAGE_ORDER[0]} - Chunk ${chunkIndex + 1}/${chunks.length}`;
+            const chunkExtraction = await runStage1ChunkWithAdaptiveRetry(
+              requestId,
+              debugDir,
+              chunkStageName,
+              buildStage1Prompt,
+              stage1FactsSchema,
+              chunks[chunkIndex],
+              `chunk ${chunkIndex + 1} of ${chunks.length}`,
+              0,
+              earlyCurriculumExtractionOllamaOverrides,
+              {
+                estimatePromptLength: estimateStage1PromptLength,
+                promptBudget: STAGE1_PROMPT_SAFE_BUDGET,
+              }
+            );
+            chunkExtractions.push(chunkExtraction);
+          }
+
+          stage1Facts = mergeStage1FactExtractions(chunkExtractions);
+          await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.chunked-merged.parsed.json`, stage1Facts);
+        }
+      } else {
+        console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} pre-chunking due to rendered prompt budget.`);
+        console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} chunk count: ${plannedStage1Chunks.length}`);
 
         const chunkExtractions: any[] = [];
-        for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex += 1) {
-          const chunkStageName = `${STAGE_ORDER[0]} - Chunk ${chunkIndex + 1}/${chunks.length}`;
+        for (let chunkIndex = 0; chunkIndex < plannedStage1Chunks.length; chunkIndex += 1) {
+          const chunkStageName = `${STAGE_ORDER[0]} - Chunk ${chunkIndex + 1}/${plannedStage1Chunks.length}`;
           const chunkExtraction = await runStage1ChunkWithAdaptiveRetry(
             requestId,
             debugDir,
             chunkStageName,
             buildStage1Prompt,
             stage1FactsSchema,
-            chunks[chunkIndex],
-            `chunk ${chunkIndex + 1} of ${chunks.length}`,
+            plannedStage1Chunks[chunkIndex],
+            `chunk ${chunkIndex + 1} of ${plannedStage1Chunks.length}`,
             0,
-            earlyCurriculumExtractionOllamaOverrides
+            earlyCurriculumExtractionOllamaOverrides,
+            {
+              estimatePromptLength: estimateStage1PromptLength,
+              promptBudget: STAGE1_PROMPT_SAFE_BUDGET,
+            }
           );
           chunkExtractions.push(chunkExtraction);
         }
@@ -10449,33 +13132,6 @@ Rules:
         stage1Facts = mergeStage1FactExtractions(chunkExtractions);
         await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.chunked-merged.parsed.json`, stage1Facts);
       }
-    } else {
-      const chunks = buildAdaptiveStage1Chunks(sourceText, initialStage1ChunkCount);
-      console.warn(`[Pipeline][${requestId}] ${STAGE_ORDER[0]} chunk count: ${chunks.length}`);
-      await writeDebugFile(debugDir, "stage-1-chunks.json", {
-        chunkCount: chunks.length,
-        chunkLengths: chunks.map((chunk, index) => ({ index: index + 1, length: chunk.length })),
-      });
-
-      const chunkExtractions: any[] = [];
-      for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex += 1) {
-        const chunkStageName = `${STAGE_ORDER[0]} - Chunk ${chunkIndex + 1}/${chunks.length}`;
-        const chunkExtraction = await runStage1ChunkWithAdaptiveRetry(
-          requestId,
-          debugDir,
-          chunkStageName,
-          buildStage1Prompt,
-          stage1FactsSchema,
-          chunks[chunkIndex],
-          `chunk ${chunkIndex + 1} of ${chunks.length}`,
-          0,
-          earlyCurriculumExtractionOllamaOverrides
-        );
-        chunkExtractions.push(chunkExtraction);
-      }
-
-      stage1Facts = mergeStage1FactExtractions(chunkExtractions);
-      await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.chunked-merged.parsed.json`, stage1Facts);
     }
 
     const mergedStage1UnitCount = (stage1Facts?.units || []).length;
@@ -10498,7 +13154,7 @@ Rules:
         `[Pipeline][${requestId}] Stage 1 merge returned empty extraction | subject="${detectedSubject}" | class="${stage1Facts?.document_metadata?.class || ""}" | sourceLength=${sourceText.length} | chunkCount=${initialChunkCount}`
       );
       if (isLanguageSubject(detectedSubject)) {
-        const languageFallback = buildLanguageFallbackStage1Facts(sourceText, stage1Facts);
+        const languageFallback = buildLanguageFallbackStage1Facts(sourceText, stage1Facts, { fileName });
         if (languageFallback.fallbackApplied) {
           console.warn(
             `[Pipeline][${requestId}] Language fallback applied | subject="${detectedSubject}" | recoveredUnits=${languageFallback.fallbackUnitsCount}`
@@ -10519,6 +13175,18 @@ Rules:
           `Stage 1 extraction returned no units or chapters. Empty LLM extraction for subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${sourceText.length} chunkCount=${initialChunkCount}.`
         );
       }
+    }
+
+    let tamilNormalizationMetadata: Record<string, any> | null = null;
+    if (isTamilCurriculumSubject(detectedSubject)) {
+      const hardenedTamilFacts = hardenTamilStage1Facts(stage1Facts, {
+        primarySourceText: filteredPrimarySourceText,
+        selectedClassNames: sourceFilter.selectedClassNames,
+        supportingDocuments: activeSupportingDocuments,
+      });
+      stage1Facts = hardenedTamilFacts.stage1Facts;
+      tamilNormalizationMetadata = hardenedTamilFacts.metadata;
+      await writeDebugFile(debugDir, "tamil-stage1-hardening.json", tamilNormalizationMetadata);
     }
 
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.facts.parsed.json`, stage1Facts);
@@ -10915,6 +13583,8 @@ Rules:
       curriculum: finalPayload,
       detectedClasses,
       requiresClassSelection: detectedClasses.length > 1,
+      detectedSubject: primaryDetectedSubject,
+      requiresTamilIndex: earlyTamilMode,
       requestId,
     };
     if (persist) {
@@ -10928,6 +13598,19 @@ Rules:
           stage1UnitCount,
           stage1ChapterCount,
           selectedClassNames: sourceFilter.selectedClassNames,
+          detectedSubject: primaryDetectedSubject,
+          tamilNormalizationMetadata,
+          sourceDocuments: [
+            {
+              role: "primary_curriculum",
+              fileName: String(fileName || ""),
+              filteredBySelectedClasses: sourceFilter.filtered,
+            },
+            ...activeSupportingDocuments.map((document) => ({
+              role: document.role,
+              fileName: document.fileName,
+            })),
+          ],
         },
       });
       responsePayload.curriculumId = String(savedCurriculum._id);
@@ -11018,7 +13701,7 @@ app.post("/api/generate-session-details", async (req, res) => {
   const debugDir = await ensureDebugDir(requestId);
   await writeDebugFile(debugDir, "request-body.json", req.body);
   try {
-    const prompt = renderPromptWithEnglishIntelligence("session-generation.md", {
+    const prompt = renderPromptWithEnglishDownstreamIntelligence("session-generation.md", {
       SESSION_NUMBER: String(sessionNumber),
       TOTAL_SESSIONS: String(totalSessions),
       DURATION_MINUTES: String(durationMinutes),
@@ -11203,42 +13886,7 @@ app.post("/api/generate-session-details", async (req, res) => {
         docx: { outlineTitle: "Teacher lesson note outline title", sections: ["Teacher-facing section content"] }
       },
       homework: { task: "Interactive or practical homework task", estimatedTimeMinutes: 30 },
-      assessment: {
-        mcq: [{
-          questionSubtype: "mcq",
-          question: "MCQ question",
-          options: ["A. option", "B. option", "C. option", "D. option"],
-          answer: "Correct option",
-          explanation: "Why this option is correct",
-          marks: 1
-        }],
-        shortAnswer: [{
-          questionSubtype: "shortAnswer",
-          question: "Short-answer question",
-          answer: "Model short answer",
-          expectedLength: "1-2 clear points",
-          marks: 2,
-          rubric: ["1 mark for first correct point", "1 mark for second correct point"]
-        }],
-        longAnswer: [{
-          questionSubtype: "longAnswer",
-          question: "Long-answer question",
-          answer: "Model long answer",
-          expectedLength: "4-5 well-structured points with explanation",
-          marks: 5,
-          rubric: ["Marks awarded point-wise", "Credit explanation quality", "Credit labelled example or diagram if relevant"]
-        }],
-        answerKey: {
-          mcq: [{ answer: "Correct option", explanation: "Brief explanation", marks: 1, questionSubtype: "mcq" }],
-          shortAnswer: [{ answer: "Point-wise short answer", rubric: ["Point 1", "Point 2"], marks: 2, questionSubtype: "shortAnswer" }],
-          longAnswer: [{ answer: "Structured long answer", rubric: ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"], marks: 5, questionSubtype: "longAnswer" }],
-          generalMarkingGuidance: [
-            "Award marks point-wise for each valid idea.",
-            "Accept equivalent scientific wording if the meaning is correct.",
-            "For long answers, reward structure, explanation, and relevant examples."
-          ]
-        }
-      },
+      assessment: buildAssessmentSchemaExample(),
       assignment: { taskDescription: "Written assignment or project task", rubric: ["Evaluation points/criteria"], answerKey: "Sample answer or response key for teacher reference" }
     };
 
@@ -11248,7 +13896,17 @@ app.post("/api/generate-session-details", async (req, res) => {
     if (response.doneReason === "length") {
       throw new Error("Model output truncated during generate-session-details. Reduce stage scope or increase num_predict.");
     }
-    const parsedSession = JSON.parse(response.text || "{}");
+    const parsedSession = await parseSessionJsonWithRecovery(
+      requestId,
+      debugDir,
+      response.text || "{}",
+      {
+        stageName: "generate-session-details",
+        subject: String(subject || ""),
+        selectedChapters,
+        sessionTitle: `Session ${sessionNumber}`,
+      }
+    );
     await writeDebugFile(debugDir, "final-response.json", parsedSession);
     res.json(parsedSession);
   } catch (error: any) {
@@ -11260,6 +13918,7 @@ app.post("/api/generate-session-details", async (req, res) => {
 async function generateSessionDetailsArtifact({
   subject,
   gradeLevel,
+  curriculumStructure = null,
   selectedChapters,
   sessionNumber,
   totalSessions,
@@ -11277,6 +13936,7 @@ async function generateSessionDetailsArtifact({
 }: {
   subject: string;
   gradeLevel: string;
+  curriculumStructure?: any;
   selectedChapters: string[];
   sessionNumber: number;
   totalSessions: number;
@@ -11297,6 +13957,7 @@ async function generateSessionDetailsArtifact({
   await writeDebugFile(debugDir, "request-body.json", {
     subject,
     gradeLevel,
+    curriculumStructure,
     selectedChapters,
     sessionNumber,
     totalSessions,
@@ -11612,101 +14273,7 @@ async function generateSessionDetailsArtifact({
       docx: { outlineTitle: "Teacher lesson note outline title", sections: ["Teacher-facing section content"] }
     },
     homework: { task: "Interactive or practical homework task", estimatedTimeMinutes: 30 },
-    assessment: {
-      assessmentMeta: {
-        assessmentType: "Mixed formative checks",
-        totalMarks: 15,
-        totalQuestions: 7,
-        durationMinutes: 15,
-        preferredDifficulty: "Balanced",
-        language: "English",
-        paperObjective: "Assess only the taught session content with the requested paper pattern.",
-        requestSignature: "stable-customization-signature",
-        requestedQuestionTypes: [{
-          type: "mcq",
-          label: "MCQs",
-          questionCount: 4,
-          marksEach: 1
-        }],
-        instructions: ["Answer all questions based only on the concepts taught in this session."]
-      },
-      blueprint: {
-        learningOutcomeCoverage: [{
-          outcome: "Learning outcome text",
-          questionRefs: ["q1", "q5"]
-        }],
-        difficultyDistribution: {
-          easy: 40,
-          medium: 40,
-          hard: 20
-        },
-        bloomsDistribution: {
-          recall: 20,
-          understanding: 30,
-          application: 25,
-          analysis: 15,
-          evaluation: 10
-        },
-        questionDistribution: {
-          mcq: 4,
-          shortAnswer: 2,
-          longAnswer: 1
-        },
-        timeAllocation: [{
-          section: "MCQ",
-          minutes: 5
-        }]
-      },
-      mcq: [{
-        id: "q1",
-        questionSubtype: "mcq",
-        question: "MCQ question",
-        options: ["A. option", "B. option", "C. option", "D. option"],
-        answer: "Correct option",
-        explanation: "Why this option is correct",
-        marks: 1,
-        learningOutcomeIds: ["LO1"],
-        topicCoverage: ["Topic"],
-        difficulty: "easy",
-        bloomsLevel: "understanding"
-      }],
-      shortAnswer: [{
-        id: "q5",
-        questionSubtype: "shortAnswer",
-        question: "Short-answer question",
-        answer: "Model short answer",
-        expectedLength: "1-2 clear points",
-        marks: 2,
-        rubric: ["1 mark for first correct point", "1 mark for second correct point"],
-        learningOutcomeIds: ["LO1"],
-        topicCoverage: ["Topic"],
-        difficulty: "medium",
-        bloomsLevel: "application"
-      }],
-      longAnswer: [{
-        id: "q7",
-        questionSubtype: "longAnswer",
-        question: "Long-answer question",
-        answer: "Model long answer",
-        expectedLength: "4-5 well-structured points with explanation",
-        marks: 5,
-        rubric: ["Marks awarded point-wise", "Credit explanation quality", "Credit labelled example or diagram if relevant"],
-        learningOutcomeIds: ["LO1"],
-        topicCoverage: ["Topic"],
-        difficulty: "hard",
-        bloomsLevel: "analysis"
-      }],
-      answerKey: {
-        mcq: [{ answer: "Correct option", explanation: "Brief explanation", marks: 1, questionSubtype: "mcq" }],
-        shortAnswer: [{ answer: "Point-wise short answer", rubric: ["Point 1", "Point 2"], marks: 2, questionSubtype: "shortAnswer" }],
-        longAnswer: [{ answer: "Structured long answer", rubric: ["Point 1", "Point 2", "Point 3", "Point 4", "Point 5"], marks: 5, questionSubtype: "longAnswer" }],
-        generalMarkingGuidance: [
-          "Award marks point-wise for each valid idea.",
-          "Accept equivalent scientific wording if the meaning is correct.",
-          "For long answers, reward structure, explanation, and relevant examples."
-        ]
-      }
-    },
+    assessment: buildAssessmentSchemaExample(),
     assignment: { taskDescription: "Written assignment or project task", rubric: ["Evaluation points/criteria"], answerKey: "Sample answer or response key for teacher reference" }
   };
 
@@ -11716,6 +14283,27 @@ async function generateSessionDetailsArtifact({
   const homeworkOnly = selectedSections.length === 1 && selectedSections[0] === "homework";
   const assessmentOnly = selectedSections.length === 1 && selectedSections[0] === "assessment";
   const englishGenerationMode = shouldUseEnglishIntelligence({ subject });
+  const requestedTeacherNotes = selectedSections.includes("teacherLessonNotes");
+  const requestedStudentNotes = selectedSections.includes("studentLessonNotes");
+  const requestedLearningOutcomes = selectedSections.includes("learningOutcomes");
+  const requestedIntroduction = selectedSections.includes("introduction");
+  const requestedTheory = selectedSections.includes("theory");
+  const requestedAssessment = selectedSections.includes("assessment");
+  const requestedAssignment = selectedSections.includes("assignment");
+  const requestedMaterials = selectedSections.includes("materials");
+  const effectiveSessionConfig = {
+    includeLearningOutcomes: config?.includeLearningOutcomes !== false && requestedLearningOutcomes,
+    includeIntroduction: config?.includeIntroduction !== false && requestedIntroduction,
+    includeTheory: config?.includeTheory !== false && requestedTheory,
+    includeAssessments: config?.includeAssessments !== false && requestedAssessment,
+    includeAssignments: config?.includeAssignments !== false && requestedAssignment,
+    includeNotes: config?.includeNotes !== false && (requestedTeacherNotes || requestedStudentNotes || requestedMaterials),
+  };
+  const expectedAssessmentSections = deriveAssessmentSectionsForSession({
+    curriculumStructure,
+    selectedChapters,
+    gradeLevel,
+  });
   if (assessmentOnly && !hasAssessmentSourceContent(sourceSessionPlan)) {
     throw new Error("Generate session teaching content first before creating the assessment.");
   }
@@ -11732,7 +14320,7 @@ async function generateSessionDetailsArtifact({
     teachingStrategy,
     sessionPlanningDefaults,
     assessmentCustomization,
-    config,
+    config: effectiveSessionConfig,
   };
   const assessmentSourcePayload = assessmentOnly
     ? buildAssessmentSourceSessionPayload(sourceSessionPlan, {
@@ -11762,7 +14350,7 @@ async function generateSessionDetailsArtifact({
     : [];
   const requestedTotalMarks = Math.max(1, Number(assessmentCustomization?.totalMarks || requestedMarksFromQuestionTypes || derivedAssessmentMarks));
   const requestedTotalQuestions = Math.max(0, Number(assessmentCustomization?.totalQuestions || requestedQuestionsFromQuestionTypes || 0));
-  const assessmentInstructionsPrompt = renderPromptWithEnglishIntelligence("assessment-generation.md", {
+  const assessmentInstructionsPrompt = renderPromptWithEnglishDownstreamIntelligence("assessment-generation.md", {
     SUBJECT: String(subject || ""),
     GRADE_LEVEL: String(gradeLevel || ""),
     SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
@@ -11782,6 +14370,7 @@ async function generateSessionDetailsArtifact({
     BLOOMS_DISTRIBUTION_JSON: JSON.stringify(targetBlooms),
     REQUESTED_TOTAL_QUESTIONS: String(requestedTotalQuestions),
     REQUESTED_QUESTION_TYPES_JSON: JSON.stringify(requestedQuestionTypes),
+    ASSESSMENT_SECTION_CONTEXT_JSON: JSON.stringify(expectedAssessmentSections, null, 2),
     QUESTION_PAPER_OBJECTIVE: String(assessmentCustomization?.paperObjective || "Not specified."),
     TEACHER_ASSESSMENT_REQUEST_JSON: JSON.stringify(assessmentCustomization || {}, null, 2),
     SESSION_JSON: JSON.stringify(assessmentSourcePayload, null, 2),
@@ -11790,30 +14379,33 @@ async function generateSessionDetailsArtifact({
     englishMode: englishGenerationMode,
     stageLabel: "Assessment generation",
   });
-  const embeddedAssessmentInstructions = [
-    "Assessment block rules:",
-    "- Use only taught session content.",
-    "- Assess each learning outcome intentionally.",
-    `- Assessment type: ${assessmentType}.`,
-    `- Total marks: ${requestedTotalMarks}.`,
-    `- Duration: ${derivedAssessmentDuration} minutes.`,
-    `- Preferred difficulty: ${preferredDifficulty}.`,
-    `- Language: ${assessmentLanguage}.`,
-    `- Requested total questions: ${requestedTotalQuestions}.`,
-    `- Requested question type mix: ${JSON.stringify(requestedQuestionTypes)}.`,
-    `- Paper objective: ${String(assessmentCustomization?.paperObjective || "Not specified.")}.`,
-    "- Match the requested question counts and marks exactly.",
-    "- Keep answer-key sections aligned one-to-one with the generated questions.",
-    "- Return the assessment block with assessmentMeta, blueprint, mcq, shortAnswer, longAnswer, and answerKey.",
-    "- Keep marks and duration exact.",
-    "- Progress from easier to harder questions.",
-    "- Add learningOutcomeCoverage, difficultyDistribution, bloomsDistribution, questionDistribution, and timeAllocation in blueprint.",
-    "- Keep answer keys and rubrics aligned with the generated questions.",
-  ].join("\n");
+  const embeddedAssessmentInstructions = effectiveSessionConfig.includeAssessments
+    ? [
+        "Assessment block rules:",
+        "- Use only taught session content.",
+        "- Assess each learning outcome intentionally.",
+        `- Assessment type: ${assessmentType}.`,
+        `- Total marks: ${requestedTotalMarks}.`,
+        `- Duration: ${derivedAssessmentDuration} minutes.`,
+        `- Preferred difficulty: ${preferredDifficulty}.`,
+        `- Language: ${assessmentLanguage}.`,
+        `- Requested total questions: ${requestedTotalQuestions}.`,
+        `- Requested question type mix: ${JSON.stringify(requestedQuestionTypes)}.`,
+        `- Allowed assessment sections: ${JSON.stringify(expectedAssessmentSections)}.`,
+        `- Paper objective: ${String(assessmentCustomization?.paperObjective || "Not specified.")}.`,
+        "- Match the requested question counts and marks exactly.",
+        "- Keep answer-key sections aligned one-to-one with the generated questions.",
+        "- Return the assessment block as the canonical package with meta, sessionAnalysis, blueprint, paper, evaluation, summary, and validation.",
+        "- Keep marks and duration exact.",
+        "- Progress from easier to harder questions.",
+        "- Add learningOutcomeCoverage, difficultyDistribution, bloomsDistribution, questionDistribution, and timeAllocation in blueprint.",
+        "- Keep answer key items, rubrics, and marking-scheme items aligned one-to-one with the generated questions.",
+      ].join("\n")
+    : "Assessment block is not requested in this run. Omit it.";
   const teacherNotesPromptName = getNotesPromptName("teacher", subject);
   const studentNotesPromptName = getNotesPromptName("student", subject);
   const prompt = teacherNotesOnly
-    ? renderPromptWithEnglishIntelligence(teacherNotesPromptName, {
+    ? renderPromptWithEnglishDownstreamIntelligence(teacherNotesPromptName, {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
@@ -11839,7 +14431,7 @@ async function generateSessionDetailsArtifact({
         stageLabel: "Teacher notes generation",
       })
     : studentNotesOnly
-    ? renderPromptWithEnglishIntelligence(studentNotesPromptName, {
+    ? renderPromptWithEnglishDownstreamIntelligence(studentNotesPromptName, {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
@@ -11860,7 +14452,7 @@ async function generateSessionDetailsArtifact({
         stageLabel: "Student notes generation",
       })
     : materialsOnly
-    ? renderPromptWithEnglishIntelligence("session-ppt-prompt.md", {
+    ? renderPromptWithEnglishDownstreamIntelligence("session-ppt-prompt.md", {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
@@ -11931,7 +14523,7 @@ async function generateSessionDetailsArtifact({
         stageLabel: "PPT and materials generation",
       })
     : homeworkOnly
-    ? renderPromptWithEnglishIntelligence("homework-generation.md", {
+    ? renderPromptWithEnglishDownstreamIntelligence("homework-generation.md", {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
@@ -11956,19 +14548,19 @@ async function generateSessionDetailsArtifact({
       })
     : assessmentOnly
     ? assessmentInstructionsPrompt
-    : renderPromptWithEnglishIntelligence("session-generation.md", {
+    : renderPromptWithEnglishDownstreamIntelligence("session-generation.md", {
         SESSION_NUMBER: String(sessionNumber),
         TOTAL_SESSIONS: String(totalSessions),
         DURATION_MINUTES: String(durationMinutes),
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
-        INCLUDE_LEARNING_OUTCOMES: config.includeLearningOutcomes ? "YES" : "NO",
-        INCLUDE_INTRODUCTION: config.includeIntroduction ? "YES" : "NO",
-        INCLUDE_THEORY: config.includeTheory ? "YES" : "NO",
-        INCLUDE_ASSESSMENTS: config.includeAssessments ? "YES" : "NO",
-        INCLUDE_ASSIGNMENTS: config.includeAssignments ? "YES" : "NO",
-        INCLUDE_NOTES: config.includeNotes ? "YES" : "NO",
+        INCLUDE_LEARNING_OUTCOMES: effectiveSessionConfig.includeLearningOutcomes ? "YES" : "NO",
+        INCLUDE_INTRODUCTION: effectiveSessionConfig.includeIntroduction ? "YES" : "NO",
+        INCLUDE_THEORY: effectiveSessionConfig.includeTheory ? "YES" : "NO",
+        INCLUDE_ASSESSMENTS: effectiveSessionConfig.includeAssessments ? "YES" : "NO",
+        INCLUDE_ASSIGNMENTS: effectiveSessionConfig.includeAssignments ? "YES" : "NO",
+        INCLUDE_NOTES: effectiveSessionConfig.includeNotes ? "YES" : "NO",
         SELECTED_SECTIONS_JSON: JSON.stringify(selectedSections),
         ASSESSMENT_ENGINE_INSTRUCTIONS: embeddedAssessmentInstructions,
       }, {
@@ -12027,7 +14619,15 @@ async function generateSessionDetailsArtifact({
     ? {
         assessment: baseSchema.assessment
       }
-    : baseSchema;
+    : selectedSections.length === ALL_SESSION_SECTIONS.length
+    ? baseSchema
+    : {
+        id: baseSchema.id,
+        sessionNumber: baseSchema.sessionNumber,
+        title: baseSchema.title,
+        duration: baseSchema.duration,
+        ...pickSessionSections(baseSchema, selectedSections),
+      };
 
   const generationKind: OllamaGenerationKind = teacherNotesOnly
     ? "teacherNotes"
@@ -12062,7 +14662,7 @@ async function generateSessionDetailsArtifact({
       numPredict:
         assessmentOnly
           ? Math.max(12288, OLLAMA_NUM_PREDICT)
-          : selectedSections.includes("assessment")
+          : effectiveSessionConfig.includeAssessments
           ? Math.max(10240, OLLAMA_NUM_PREDICT)
           : OLLAMA_NUM_PREDICT,
     }
@@ -12086,11 +14686,27 @@ async function generateSessionDetailsArtifact({
       console.warn(`[Ollama][${requestId}] Repaired duplicate assessment array keys before JSON parsing.`);
     }
   }
-  const parsedSession = normalizeMathGeneratedNotes(JSON.parse(sanitizeJsonText(responseText).text || "{}"), {
-    subject,
-    selectedChapters,
-    sessionTitle: sessionTitle || `Session ${sessionNumber}`,
-  });
+  const parsedSession = await parseSessionJsonWithRecovery(
+    requestId,
+    debugDir,
+    responseText,
+    {
+      stageName: teacherNotesOnly
+        ? "generate-content-session-teacher-notes"
+        : studentNotesOnly
+        ? "generate-content-session-student-notes"
+        : materialsOnly
+        ? "generate-content-session-ppt-materials"
+        : homeworkOnly
+        ? "generate-content-session-homework"
+        : assessmentOnly
+        ? "generate-content-session-assessment"
+        : "generate-content-session",
+      subject,
+      selectedChapters,
+      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+    }
+  );
   if (parsedSession?.studentLessonNotes && !isMathSubject(subject)) {
     const enrichedStudentNotesSession = await enrichStudentLessonNotesWithVisuals(requestId, debugDir, parsedSession, {
       subject,
@@ -12116,7 +14732,7 @@ async function generateSessionDetailsArtifact({
       durationMinutes: derivedAssessmentDuration,
       language: assessmentLanguage,
       preferredDifficulty,
-    });
+    }, expectedAssessmentSections);
   }
   const normalizedSession = teacherNotesOnly || studentNotesOnly || assessmentOnly
     ? pickSessionSections(parsedSession, selectedSections)
@@ -12137,7 +14753,7 @@ app.post("/api/generate-sessions-outline", async (req, res) => {
   const debugDir = await ensureDebugDir(requestId);
   await writeDebugFile(debugDir, "request-body.json", req.body);
   try {
-    const prompt = renderPromptWithEnglishIntelligence("term-division.md", {
+    const prompt = renderPromptWithEnglishDownstreamIntelligence("term-division.md", {
       SESSION_COUNT: String(config.sessionCount),
       DURATION_MINUTES: String(config.durationMinutes),
       SUBJECT: String(subject || ""),
@@ -12172,7 +14788,12 @@ app.post("/api/generate-sessions-outline", async (req, res) => {
 
 export {
   buildApprovedTheoryHierarchy,
+  buildAdaptiveStage1Chunks,
+  buildEmptyStage1FactExtraction,
   buildFaithfulStructureFromRawExtraction,
+  buildSessionAllocationRecommendationsForTerm,
+  buildStage1TransportRecoveryChunks,
+  buildDeterministicStage3FallbackFromApprovedClass,
   buildCurriculumUnitsSummary,
   buildTermDivision,
   buildVersionedCurriculumPayload,
@@ -12181,24 +14802,44 @@ export {
   detectCurriculumClassSegmentsFromSource,
   filterCurriculumToSelectedClasses,
   filterSourceTextToSelectedClasses,
+  getAdaptiveStage1ChunkCount,
   getCurriculumProfileConfig,
+  deriveAssessmentSectionsForSession,
   buildNormalizedTeachingBlocks,
   buildLanguageFallbackStage1Facts,
+  buildCombinedCurriculumSourceText,
+  buildTamilFastStage1Facts,
+  hardenTamilStage1Facts,
+  detectCurriculumSubjectFromInput,
   detectIndicCurriculumModeFromInput,
   detectEnglishModeFromCurriculumInput,
   expandStage1FactsToRawExtraction,
   getCurriculumExtractionOllamaOverrides,
+  generateWithOllama,
   isEnglishSubject,
   isIndicCurriculumSubject,
+  isTamilCurriculumSubject,
   isLanguageSubject,
+  isRetryableOllamaError,
   isMathSubject,
   getNotesPromptName,
+  normalizeSupportingCurriculumDocuments,
   normalizeMathGeneratedNotes,
   renderPromptWithEnglishIntelligence,
+  renderPromptWithEnglishDownstreamIntelligence,
+  renderStage1PromptWithCurriculumIntelligence,
+  requiresTamilTextbookIndexFromInput,
   sanitizeMathDiagramSpec,
+  splitChunkToPromptBudget,
   mergeStage1FactExtractions,
+  parseTamilAssessmentSectionsFromSource,
+  parseTamilTextbookIndexUnits,
+  normalizeAssessmentResponseToCustomization,
   sanitizeStage3EnrichmentToSource,
   sanitizeJsonText,
+  tryRepairSessionJson,
+  STAGE1_PROMPT_SAFE_BUDGET,
+  shouldUseChunkedStage1Fallback,
   shouldUseEnglishIntelligence,
   summarizeCurriculumClasses,
 };

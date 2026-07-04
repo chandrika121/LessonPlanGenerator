@@ -1,0 +1,428 @@
+{
+  "teacherLessonNotes": {
+    "sessionOverview": "This session introduces Class IX students to the fundamental concepts of polynomials. It defines algebraic expressions, distinguishes between variables and constants, explains terms, coefficients, and degrees, and categorizes polynomials by their degree (linear, quadratic, cubic) and number of terms (monomial, binomial, trinomial).",
+    "prerequisiteKnowledge": [
+      "Basic arithmetic operations (addition, subtraction, multiplication)",
+      "Understanding of integers and rational numbers",
+      "Concept of variables (letters representing unknown numbers)"
+    ],
+    "previousSessionRecap": [
+      "Review of real number system properties",
+      "Simplification of basic algebraic expressions from Class VIII"
+    ],
+    "learningOutcomes": [
+      "Define a polynomial and distinguish it from non-polynomial expressions.",
+      "Identify the degree, coefficient, and variable in a given polynomial.",
+      "Classify polynomials based on the number of terms (monomial, binomial, trinomial).",
+      "Classify polynomials based on their degree (linear, quadratic, cubic)."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Real-life analogy using a 'Math Recipe' to explain variables and constants."
+      },
+      {
+        "minutes": 10,
+        "topic": "Definitions & Terminology",
+        "teachingStrategy": "Direct instruction with board examples distinguishing terms, coefficients, and degrees."
+      },
+      {
+        "minutes": 15,
+        "topic": "Classification of Polynomials",
+        "teachingStrategy": "Guided practice where students categorize expressions on the board."
+      },
+      {
+        "minutes": 10,
+        "topic": "Application & Check",
+        "teachingStrategy": "Oral questioning and quick whiteboard checks."
+      }
+    ],
+    "lessonPurpose": [
+      "To provide a rigorous foundation for algebraic manipulation in higher classes.",
+      "To bridge the gap between arithmetic numbers and abstract algebraic thinking.",
+      "To introduce the concept of 'degree' which is crucial for graphing later."
+    ],
+    "teachingSequence": [
+      "Start with the 'Math Recipe' hook to engage students.",
+      "Write the formal definition of a polynomial on the board.",
+      "Break down the components: Variables, Constants, Coefficients, Exponents.",
+      "Demonstrate how to find the degree using examples.",
+      "Introduce classification by terms (Mono/Bi/Tri) and degree (Linear/Quadratic/Cubic).",
+      "Conduct guided practice with student participation."
+    ],
+    "guidedPractice": [
+      "Ask students to identify the coefficient of x in 5x^2 - 3x + 1.",
+      "Have students write one linear and one quadratic polynomial on their mini-whiteboards.",
+      "Correct common errors regarding negative coefficients and fractional exponents."
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction to Algebraic Expressions",
+        "durationMinutes": 5,
+        "teacherPrompt": [
+          "If I say 'I have some apples', how do we write that mathematically?",
+          "What happens if the number of apples changes every day?"
+        ],
+        "explanation": [
+          "Explain that letters like x, y, z represent numbers that can change (variables).",
+          "Numbers that stay fixed are constants.",
+          "An algebraic expression combines variables and constants using operations."
+        ],
+        "examples": [
+          "Cost of 1 pen = ₹5. Cost of 'p' pens = 5p."
+        ],
+        "boardWork": [
+          "Variables: x, y, z",
+          "Constants: 2, -5, 0.5",
+          "Expression: 3x + 4"
+        ],
+        "boardSteps": [
+          "Write 'Variable' and list examples.",
+          "Write 'Constant' and list examples."
+        ],
+        "solutionFlow": [
+          "Identify the variable part.",
+          "Identify the constant part.",
+          "Combine with operations."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": [],
+        "checkUnderstanding": [
+          "Is '5' a variable or a constant?",
+          "Is 'x' a variable or a constant?"
+        ],
+        "expectedAnswers": [
+          "5 is a constant.",
+          "x is a variable."
+        ],
+        "activity": []
+      },
+      {
+        "title": "Polynomials: Definition and Degree",
+        "durationMinutes": 15,
+        "teacherPrompt": [
+          "Can we have x raised to the power of 0.5 in a polynomial?",
+          "What is the highest power in 2x^3 + x - 7?"
+        ],
+        "explanation": [
+          "Define Polynomial: An expression where variables have non-negative integer exponents.",
+          "Explain that negative or fractional powers make it NOT a polynomial.",
+          "Define Degree: The highest power of the variable in the polynomial.",
+          "Demonstrate finding the degree step-by-step."
+        ],
+        "examples": [
+          "2x^3 + x - 7 (Degree is 3)",
+          "5x^2 + 1 (Degree is 2)",
+          "4x + 9 (Degree is 1)"
+        ],
+        "boardWork": [
+          {
+            "text": "Definition:",
+            "latex": "P(x) = a_n x^n + ... + a_0",
+            "displayLatex": "P(x) = a_n x^n + ... + a_0"
+          },
+          "Condition: n must be whole number (0, 1, 2...)",
+          "Degree = Highest exponent"
+        ],
+        "boardSteps": [
+          "Write the general form of a polynomial.",
+          "Highlight the condition for exponents.",
+          "Circle the highest power in examples."
+        ],
+        "solutionFlow": [
+          "Look at all terms.",
+          "Identify the exponent of the variable in each term.",
+          "Select the largest exponent."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": [],
+        "checkUnderstanding": [
+          "What is the degree of 7x^0?",
+          "Is x^-2 a polynomial?"
+        ],
+        "expectedAnswers": [
+          "Degree is 0 (since x^0 = 1).",
+          "No, because exponent is negative."
+        ],
+        "activity": []
+      },
+      {
+        "title": "Classification of Polynomials",
+        "durationMinutes": 15,
+        "teacherPrompt": [
+          "How many terms are in 3x^2 + 4?",
+          "If the highest power is 1, what do we call it?"
+        ],
+        "explanation": [
+          "Classify by number of terms: Monomial (1), Binomial (2), Trinomial (3).",
+          "Classify by degree: Linear (degree 1), Quadratic (degree 2), Cubic (degree 3).",
+          "Emphasize that a polynomial can be both linear and a binomial."
+        ],
+        "examples": [
+          "5x (Monomial, Linear)",
+          "x^2 + 2 (Binomial, Quadratic)",
+          "x^3 - x + 1 (Trinomial, Cubic)"
+        ],
+        "boardWork": [
+          "By Terms: Mono, Bi, Tri",
+          "By Degree: Linear, Quadratic, Cubic"
+        ],
+        "boardSteps": [
+          "Create a two-column table on the board.",
+          "Fill in examples for each category."
+        ],
+        "solutionFlow": [
+          "Count terms -> Assign name.",
+          "Check highest power -> Assign degree name."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": [],
+        "checkUnderstanding": [
+          "Classify 4x^3 + 5.",
+          "Classify x^2 - 3x + 2."
+        ],
+        "expectedAnswers": [
+          "Binomial, Cubic.",
+          "Trinomial, Quadratic."
+        ],
+        "activity": []
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Polynomial Definition",
+        "definition": "An algebraic expression consisting of variables and coefficients involving only non-negative integer powers.",
+        "coreExplanation": "Students must understand that 'polynomial' implies a specific structure. If any variable has a negative exponent (like 1/x) or a fractional exponent (like sqrt(x)), it is not a polynomial.",
+        "importance": "This definition is the gatekeeper for all future algebra, calculus, and graphing topics.",
+        "observedIn": [
+          "Algebraic equations",
+          "Graphing functions"
+        ],
+        "whyStudyIt": "To simplify complex mathematical relationships and solve real-world problems involving rates of change.",
+        "relationshipWithPrevious": "Builds on Class VIII algebraic expressions.",
+        "relationshipWithFuture": "Leads to finding zeroes, factorization, and graphing in Session 2-5.",
+        "keywords": [
+          "Variable",
+          "Coefficient",
+          "Exponent",
+          "Degree"
+        ],
+        "teacherMoves": [
+          "Write the general form P(x) = a_n x^n + ... on the board immediately.",
+          "Use red chalk to highlight non-integer exponents as 'forbidden'."
+        ],
+        "examples": [
+          "3x^2 + 2x - 1 (Valid)",
+          "x^2 + 1/x (Invalid)"
+        ],
+        "visuals": [
+          "A flowchart: Expression -> Check Exponents -> Valid/Invalid"
+        ],
+        "solutionFlow": [
+          "Identify all exponents.",
+          "Check if all are whole numbers."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": [],
+        "teacherPrompt": [],
+        "explanation": [],
+        "boardWork": [],
+        "boardSteps": [],
+        "checkUnderstanding": [],
+        "expectedAnswers": [],
+        "activity": []
+      },
+      {
+        "conceptName": "Degree of a Polynomial",
+        "definition": "The highest power of the variable in a polynomial expression.",
+        "coreExplanation": "The degree determines the 'shape' and complexity of the polynomial. It is the most critical property for classification.",
+        "importance": "It dictates the maximum number of zeroes a polynomial can have.",
+        "observedIn": [
+          "Naming polynomials (Linear, Quadratic)",
+          "Graphing curves"
+        ],
+        "whyStudyIt": "To quickly identify the type of equation and predict its behavior.",
+        "relationshipWithPrevious": "Uses knowledge of exponents from Class VIII.",
+        "relationshipWithFuture": "Directly links to finding zeroes and factorization.",
+        "keywords": [
+          "Highest Power",
+          "Linear",
+          "Quadratic",
+          "Cubic"
+        ],
+        "teacherMoves": [
+          "Ask students to circle the highest power in 5x^3 + x^2 - 10."
+        ],
+        "examples": [
+          "4x + 5 (Degree 1)",
+          "x^2 - 9 (Degree 2)"
+        ],
+        "visuals": [
+          "A ladder diagram showing powers increasing upwards."
+        ],
+        "solutionFlow": [
+          "Scan all terms.",
+          "Pick the largest number in the exponent position."
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": [],
+        "teacherPrompt": [],
+        "explanation": [],
+        "boardWork": [],
+        "boardSteps": [],
+        "checkUnderstanding": [],
+        "expectedAnswers": [],
+        "activity": []
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "Is 2x^0.5 + 3 a polynomial? Why or why not?",
+        "level": "Understanding",
+        "expectedResponse": "No, because the exponent 0.5 is not a whole number.",
+        "answerPoints": [
+          "Identify exponent as non-integer.",
+          "State definition requires whole numbers."
+        ]
+      },
+      {
+        "question": "What is the degree of the polynomial 7?",
+        "level": "Application",
+        "expectedResponse": "0, because 7 = 7x^0.",
+        "answerPoints": [
+          "Recognize constant as x^0.",
+          "State degree is 0."
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Students think the coefficient of x in 'x' is 0.",
+        "correction": "Remind students that 'x' means '1x'. The coefficient is 1."
+      },
+      {
+        "misconception": "Confusing the number of terms with the degree (e.g., thinking 3 terms means degree 3).",
+        "correction": {
+          "text": "Use a comparison table:",
+          "latex": "Terms count = Monomial/Bi/Tri; Degree = Linear/Quad/Cubic.",
+          "displayLatex": "Terms count = Monomial/Bi/Tri; Degree = Linear/Quad/Cubic."
+        }
+      },
+      {
+        "misconception": "Thinking constants have no degree.",
+        "correction": "Explain that a constant is x^0, so its degree is 0."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Provide a printed cheat sheet with definitions of Linear/Quadratic/Cubic.",
+        "Use color-coding for variables vs. constants on the board."
+      ],
+      "averageLearners": [
+        "Focus on identifying degree in standard form.",
+        "Practice converting non-standard forms (e.g., x(x+1)) to standard form."
+      ],
+      "advancedLearners": [
+        "Ask them to create a polynomial of degree 3 with specific coefficients.",
+        {
+          "text": "Challenge:",
+          "latex": "Is (x^2 + 1)/(x) a polynomial? Explain.",
+          "displayLatex": ""
+        }
+      ]
+    },
+    "teacherTips": [
+      "Always write polynomials in standard form (descending powers) before asking for the degree.",
+      "Use the term 'Zero Polynomial' carefully; it has no defined degree."
+    ],
+    "misconceptions": [
+      "Confusing variables with constants",
+      "Ignoring negative exponents as non-polynomial"
+    ],
+    "formativeChecks": [
+      "Thumbs up/down for identifying valid polynomials.",
+      "Mini-whiteboard response for finding the degree."
+    ],
+    "assessmentQuestions": [
+      "Identify the degree of 5x^3 - 2x + 1.",
+      "Classify x^2 + 4 as linear, quadratic, or cubic."
+    ],
+    "blackboardSummary": [
+      "Polynomial: Variables with non-negative integer powers.",
+      "Degree: Highest power of the variable.",
+      "Types by Degree: Linear (1), Quadratic (2), Cubic (3)."
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap",
+        "minutes": 5,
+        "purpose": "Refresh prerequisite ideas on variables and exponents"
+      },
+      {
+        "segment": "Core Concept",
+        "minutes": 20,
+        "purpose": "Define polynomials and degree"
+      },
+      {
+        "segment": "Classification",
+        "minutes": 15,
+        "purpose": "Categorize by terms and degree"
+      },
+      {
+        "segment": "Wrap Up",
+        "minutes": 5,
+        "purpose": "Recap and bridge to next session"
+      }
+    ],
+    "sessionSummary": [
+      "Polynomials are expressions with non-negative integer exponents.",
+      "Degree is the highest power of the variable."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "A polynomial with degree 1 is called a ________ polynomial.",
+        "expectedAnswer": "linear"
+      },
+      {
+        "prompt": "The highest power in 3x^2 + 5x - 1 is ________.",
+        "expectedAnswer": "2"
+      }
+    ],
+    "nextSessionBridge": [
+      "Now that we know what polynomials are, next session we will learn how to find their 'Zeroes' (roots)."
+    ]
+  },
+  "learningOutcomes": [
+    "Define a polynomial and identify valid vs. invalid expressions.",
+    "Determine the degree of any given polynomial.",
+    "Classify polynomials as monomial, binomial, or trinomial.",
+    "Classify polynomials as linear, quadratic, or cubic based on degree."
+  ],
+  "introduction": "Imagine you are a chef. You have a recipe for a cake: '2 cups of flour + 1 egg'. If the number of eggs changes (variable), but the amount of flour stays fixed (constant), how do we write this? Today, we move from simple numbers to 'Algebraic Recipes' called Polynomials. We will learn how to name them, measure their complexity (degree), and sort them into families.",
+  "theory": {
+    "overview": "A polynomial is an algebraic expression where variables are raised only to non-negative integer powers. It consists of terms separated by addition or subtraction. The 'degree' is the highest power of the variable, which determines the polynomial's classification (Linear, Quadratic, Cubic).",
+    "keyPoints": [
+      "Variables must have whole number exponents (0, 1, 2...).",
+      "Degree is the highest exponent of the variable.",
+      "Polynomials are classified by terms (Mono/Bi/Tri) and degree (Linear/Quad/Cubic)."
+    ],
+    "detailedContent": "Consider the expression P(x) = a_n x^n + ... + a_0. Here, 'x' is the variable, 'a_n' are coefficients, and 'n' must be a whole number. If we see x^(-2) or sqrt(x), it is NOT a polynomial. The degree is the most important feature; for example, 5x^3 + 2x - 1 has a degree of 3 (Cubic). A polynomial with one term is a Monomial (e.g., 4x^2), two terms is a Binomial (e.g., x+1), and three terms is a Trinomial (e.g., x^2+x+1)."
+  },
+  "activities": [
+    {
+      "name": "Polynomial Sorting Race",
+      "instructions": [
+        "Teacher writes 5 expressions on the board (mix of valid polynomials and non-polynomials).",
+        "Students work in pairs to identify which are polynomials.",
+        "For those that are polynomials, students must write the degree and classification (e.g., Quadratic Binomial).",
+        "First pair to correctly sort all 5 wins a point."
+      ],
+      "durationMinutes": 10
+    }
+  ],
+  "id": "math-ix-s01-polynomials-intro",
+  "sessionNumber": 1,
+  "title": "The World of Polynomials: Variables and Expressions",
+  "duration": 45
+}

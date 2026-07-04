@@ -1,0 +1,774 @@
+Stage 3: Node Enrichment - Class IX - Tamil
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class IX",
+  "subject": "Tamil",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Iyal 1 - மொழி",
+      "part_or_section": "மொழி",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "திராவிட மொழிக்குடும்பம்",
+          "source_chapter_name": "திராவிட மொழிக்குடும்பம்",
+          "source_heading": "திராவிட மொழிக்குடும்பம்",
+          "part_or_section": "மொழி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "எழுத்து - அளபெடை",
+          "source_chapter_name": "எழுத்து - அளபெடை",
+          "source_heading": "எழுத்து - அளபெடை",
+          "part_or_section": "மொழி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Iyal 2 - இயற்கை",
+      "part_or_section": "இயற்கை",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "நீரின்றி அமையாது உலகு",
+          "source_chapter_name": "நீரின்றி அமையாது உலகு",
+          "source_heading": "நீரின்றி அமையாது உலகு",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "பெரியபுராணம்",
+          "source_chapter_name": "பெரியபுராணம்",
+          "source_heading": "பெரியபுராணம்",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "புறநானூறு",
+          "source_chapter_name": "புறநானூறு",
+          "source_heading": "புறநானூறு",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "தண்ணீர்",
+          "source_chapter_name": "தண்ணீர்",
+          "source_heading": "தண்ணீர்",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C5",
+          "chapter_name": "பகுபத உறுப்பிலக்கணம்",
+          "source_chapter_name": "பகுபத உறுப்பிலக்கணம்",
+          "source_heading": "பகுபத உறுப்பிலக்கணம்",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Iyal 3 - பண்பாடு",
+      "part_or_section": "பண்பாடு",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "மணிமேகலை",
+          "source_chapter_name": "மணிமேகலை",
+          "source_heading": "மணிமேகலை",
+          "part_or_section": "பண்பாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "தாய்மைக்கு வறட்சி இல்லை!",
+          "source_chapter_name": "தாய்மைக்கு வறட்சி இல்லை!",
+          "source_heading": "தாய்மைக்கு வறட்சி இல்லை!",
+          "part_or_section": "பண்பாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "ஆகுபெயர்",
+          "source_chapter_name": "ஆகுபெயர்",
+          "source_heading": "ஆகுபெயர்",
+          "part_or_section": "பண்பாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "திருக்குறள்",
+          "source_chapter_name": "திருக்குறள்",
+          "source_heading": "திருக்குறள்",
+          "part_or_section": "பண்பாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Iyal 4 - கல்வி",
+      "part_or_section": "கல்வி",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "கல்வியில் சிறந்த பெண்கள்",
+          "source_chapter_name": "கல்வியில் சிறந்த பெண்கள்",
+          "source_heading": "கல்வியில் சிறந்த பெண்கள்",
+          "part_or_section": "கல்வி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "குடும்ப விளக்கு",
+          "source_chapter_name": "குடும்ப விளக்கு",
+          "source_heading": "குடும்ப விளக்கு",
+          "part_or_section": "கல்வி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "உயிர்வகை",
+          "source_chapter_name": "உயிர்வகை",
+          "source_heading": "உயிர்வகை",
+          "part_or_section": "கல்வி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "துணை வினைகள்",
+          "source_chapter_name": "துணை வினைகள்",
+          "source_heading": "துணை வினைகள்",
+          "part_or_section": "கல்வி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U5",
+      "unit_name": "Iyal 5 - கலை",
+      "part_or_section": "கலை",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "சிற்பக்கலை",
+          "source_chapter_name": "சிற்பக்கலை",
+          "source_heading": "சிற்பக்கலை",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "காவணக் காவியம்",
+          "source_chapter_name": "காவணக் காவியம்",
+          "source_heading": "காவணக் காவியம்",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "செய்தி",
+          "source_chapter_name": "செய்தி",
+          "source_heading": "செய்தி",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "வல்லினம் மிகும் இடங்கள்",
+          "source_chapter_name": "வல்லினம் மிகும் இடங்கள்",
+          "source_heading": "வல்லினம் மிகும் இடங்கள்",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C5",
+          "chapter_name": "திருக்குறள்",
+          "source_chapter_name": "திருக்குறள்",
+          "source_heading": "திருக்குறள்",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Iyal 6 - நாடு",
+      "part_or_section": "நாடு",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "விண்ணையும் சாடுவோம்",
+          "source_chapter_name": "விண்ணையும் சாடுவோம்",
+          "source_heading": "விண்ணையும் சாடுவோம்",
+          "part_or_section": "நாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U7",
+      "unit_name": "Iyal 7 - அறம்",
+      "part_or_section": "அறம்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "யாப்பிலக்கணம்",
+          "source_chapter_name": "யாப்பிலக்கணம்",
+          "source_heading": "யாப்பிலக்கணம்",
+          "part_or_section": "அறம்",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "திருக்குறள்",
+          "source_chapter_name": "திருக்குறள்",
+          "source_heading": "திருக்குறள்",
+          "part_or_section": "அறம்",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class IX",
+  "subject": "Tamil",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Iyal 1 - மொழி",
+      "part_or_section": "மொழி",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "திராவிட மொழிக்குடும்பம்",
+          "source_chapter_name": "திராவிட மொழிக்குடும்பம்",
+          "source_heading": "திராவிட மொழிக்குடும்பம்",
+          "part_or_section": "மொழி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "எழுத்து - அளபெடை",
+          "source_chapter_name": "எழுத்து - அளபெடை",
+          "source_heading": "எழுத்து - அளபெடை",
+          "part_or_section": "மொழி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Iyal 2 - இயற்கை",
+      "part_or_section": "இயற்கை",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "நீரின்றி அமையாது உலகு",
+          "source_chapter_name": "நீரின்றி அமையாது உலகு",
+          "source_heading": "நீரின்றி அமையாது உலகு",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "பெரியபுராணம்",
+          "source_chapter_name": "பெரியபுராணம்",
+          "source_heading": "பெரியபுராணம்",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "புறநானூறு",
+          "source_chapter_name": "புறநானூறு",
+          "source_heading": "புறநானூறு",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "தண்ணீர்",
+          "source_chapter_name": "தண்ணீர்",
+          "source_heading": "தண்ணீர்",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C5",
+          "chapter_name": "பகுபத உறுப்பிலக்கணம்",
+          "source_chapter_name": "பகுபத உறுப்பிலக்கணம்",
+          "source_heading": "பகுபத உறுப்பிலக்கணம்",
+          "part_or_section": "இயற்கை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Iyal 3 - பண்பாடு",
+      "part_or_section": "பண்பாடு",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "மணிமேகலை",
+          "source_chapter_name": "மணிமேகலை",
+          "source_heading": "மணிமேகலை",
+          "part_or_section": "பண்பாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "தாய்மைக்கு வறட்சி இல்லை!",
+          "source_chapter_name": "தாய்மைக்கு வறட்சி இல்லை!",
+          "source_heading": "தாய்மைக்கு வறட்சி இல்லை!",
+          "part_or_section": "பண்பாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "ஆகுபெயர்",
+          "source_chapter_name": "ஆகுபெயர்",
+          "source_heading": "ஆகுபெயர்",
+          "part_or_section": "பண்பாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "திருக்குறள்",
+          "source_chapter_name": "திருக்குறள்",
+          "source_heading": "திருக்குறள்",
+          "part_or_section": "பண்பாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Iyal 4 - கல்வி",
+      "part_or_section": "கல்வி",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "கல்வியில் சிறந்த பெண்கள்",
+          "source_chapter_name": "கல்வியில் சிறந்த பெண்கள்",
+          "source_heading": "கல்வியில் சிறந்த பெண்கள்",
+          "part_or_section": "கல்வி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "குடும்ப விளக்கு",
+          "source_chapter_name": "குடும்ப விளக்கு",
+          "source_heading": "குடும்ப விளக்கு",
+          "part_or_section": "கல்வி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "உயிர்வகை",
+          "source_chapter_name": "உயிர்வகை",
+          "source_heading": "உயிர்வகை",
+          "part_or_section": "கல்வி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "துணை வினைகள்",
+          "source_chapter_name": "துணை வினைகள்",
+          "source_heading": "துணை வினைகள்",
+          "part_or_section": "கல்வி",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U5",
+      "unit_name": "Iyal 5 - கலை",
+      "part_or_section": "கலை",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "சிற்பக்கலை",
+          "source_chapter_name": "சிற்பக்கலை",
+          "source_heading": "சிற்பக்கலை",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "காவணக் காவியம்",
+          "source_chapter_name": "காவணக் காவியம்",
+          "source_heading": "காவணக் காவியம்",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C3",
+          "chapter_name": "செய்தி",
+          "source_chapter_name": "செய்தி",
+          "source_heading": "செய்தி",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C4",
+          "chapter_name": "வல்லினம் மிகும் இடங்கள்",
+          "source_chapter_name": "வல்லினம் மிகும் இடங்கள்",
+          "source_heading": "வல்லினம் மிகும் இடங்கள்",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C5",
+          "chapter_name": "திருக்குறள்",
+          "source_chapter_name": "திருக்குறள்",
+          "source_heading": "திருக்குறள்",
+          "part_or_section": "கலை",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Iyal 6 - நாடு",
+      "part_or_section": "நாடு",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "விண்ணையும் சாடுவோம்",
+          "source_chapter_name": "விண்ணையும் சாடுவோம்",
+          "source_heading": "விண்ணையும் சாடுவோம்",
+          "part_or_section": "நாடு",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U7",
+      "unit_name": "Iyal 7 - அறம்",
+      "part_or_section": "அறம்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "யாப்பிலக்கணம்",
+          "source_chapter_name": "யாப்பிலக்கணம்",
+          "source_heading": "யாப்பிலக்கணம்",
+          "part_or_section": "அறம்",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "திருக்குறள்",
+          "source_chapter_name": "திருக்குறள்",
+          "source_heading": "திருக்குறள்",
+          "part_or_section": "அறம்",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+## CLASS –IX (2026- 2027)
+## IYAL 1 - 7
+Time: 3 hrs Total: 80 Marks
+## Section – A - Reading Unseen Passage - 10 marks
+- 1. Unseen passage- MCQ - (5 marks)
+( Mozhi, Ilakkiyam, Varalaru, Ariviyal)
+- 2. Unseen Passage - Short Answer - (5 marks)
+( Mozhi, Ilakkiyam, Varalaru, Ariviyal)
+## Section -B Grammar - 12 marks (MCQ)
+- 1. Ezhutthu, Alabedai
+- 2. Pagubatha Uruppilakkanam
+- 3. Thodar Ilakkanam, Aagupeyar
+- 4. Thunai vinaigal
+- 5. Vallinam migum idangal
+- 6. Vallinam migaa idangal
+- 1. Official / Informal Letter (8 marks)
+- 2. Essay Writing (6 marks)
+- 3. Picture Description (3 marks)
+Textbook Prescribed:
+Tamil Textbook –Class IX, Revised Edition-2025.
+Content Creation by State Council of Educational Research and Training -
+Tamilnadu Arasu
+Printing & publishing by Tamil nadu Textbook and Educational Services
+Corporation.
+Page 4 of 14
+
+---
+
+# Page 5
+
+Design of Question Paper- (2026-2027) Class IX - TAMIL (006)
+Type of No. of
+S.no. Topic Marks Total
+Questions Questions
+## Section – A Reading Unseen Passage
+1 Unseen Passage (1) MCQ 5 5x1 5
+2 Unseen Passage (2) SA 5 5x1 5
+## Section -B Grammar
+3 Give Example MCQ 3 3x1 3
+4 Fill up MCQ 3 3x1 3
+5 Illakkana kurippu MCQ 3 3x1 3
+6 Do as Directed MCQ 3 3x1 3
+## Section -C Main Course Book
+7 Thirukkural Fill ups MCQ 3 3x1 3
+8 Poetry Comprehension MCQ 5 5x1 5

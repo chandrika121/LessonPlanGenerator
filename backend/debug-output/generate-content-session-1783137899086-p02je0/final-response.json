@@ -1,0 +1,447 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 19,
+      "totalQuestions": 9,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":19,\"totalQuestions\":9,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2},{\"type\":\"longAnswer\",\"label\":\"Long Answer\",\"questionCount\":2,\"marksEach\":5}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 2,
+          "marksEach": 5
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Classify numbers as Rational or Irrational based on their decimal expansions.",
+        "Show clear reasoning for your answers."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will define the set of Real Numbers.",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Students will differentiate between Rational and Irrational numbers based on decimal expansions.",
+          "questionRefs": [
+            {
+              "text": "",
+              "latex": "q^2",
+              "displayLatex": ""
+            },
+            {
+              "text": "",
+              "latex": "q^3",
+              "displayLatex": ""
+            },
+            "q5",
+            "q6"
+          ]
+        },
+        {
+          "outcome": "Students will identify examples of both types in real-life contexts.",
+          "questionRefs": [
+            "q7",
+            "q8",
+            "q9"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 33,
+        "medium": 44,
+        "hard": 23
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 25,
+        "application": 35,
+        "analysis": 20,
+        "evaluation": 5
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 4,
+        "longAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQ",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answer",
+          "minutes": 3
+        },
+        {
+          "section": "Short Answer",
+          "minutes": 5
+        },
+        {
+          "section": "Long Answer",
+          "minutes": 3
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "Which of the following best defines a Rational Number?",
+        "options": [
+          "A. A number with a non-terminating, non-repeating decimal expansion",
+          "B. A number that can be expressed in the form p/q where p and q are integers and q ≠ 0",
+          "C. A number that cannot be written as a fraction",
+          "D. A number that is always positive"
+        ],
+        "answer": "B. A number that can be expressed in the form p/q where p and q are integers and q ≠ 0",
+        "explanation": "Rational numbers are defined by their ability to be written as a ratio of two integers (p/q) with a non-zero denominator.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Real Numbers",
+          "Rational Numbers"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "Identify the irrational number among the following options:",
+        "options": [
+          {
+            "text": "",
+            "latex": "A. \\sqrt{9}",
+            "displayLatex": ""
+          },
+          "B. 0.75",
+          {
+            "text": "",
+            "latex": "C. -\\frac{4}{5}",
+            "displayLatex": "C. -\\frac{4}{5}"
+          },
+          {
+            "text": "",
+            "latex": "D. \\sqrt{2}",
+            "displayLatex": ""
+          }
+        ],
+        "answer": {
+          "text": "",
+          "latex": "D. \\sqrt{2}",
+          "displayLatex": ""
+        },
+        "explanation": "√9 simplifies to 3 (rational), 0.75 is a terminating decimal (rational), and -4/5 is a fraction (rational). √2 has a non-terminating, non-repeating decimal expansion.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Irrational Numbers",
+          "Classification"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "The set of Real Numbers (R) is the union of which two sets?",
+        "options": [
+          "A. Natural Numbers and Whole Numbers",
+          "B. Integers and Fractions",
+          "C. Rational Numbers and Irrational Numbers",
+          "D. Positive and Negative Numbers"
+        ],
+        "answer": "C. Rational Numbers and Irrational Numbers",
+        "explanation": "Real numbers encompass all rational numbers (terminating or repeating decimals) and irrational numbers (non-terminating, non-repeating decimals).",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Real Numbers"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Is 0 a rational number? Justify your answer in one sentence.",
+        "answer": "Yes, because it can be written as 0/1 where the denominator is not zero.",
+        "expectedLength": "1 clear point",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Rational Numbers"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding",
+        "rubric": []
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Give one example of an irrational number.",
+        "answer": {
+          "text": "",
+          "latex": "\\sqrt{2} or π",
+          "displayLatex": ""
+        },
+        "expectedLength": "1 clear point",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Irrational Numbers"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall",
+        "rubric": []
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "shortAnswer",
+        "question": "Classify the following numbers as Rational or Irrational and give one reason for each: √7, 0.123456...",
+        "answer": "√7 is Irrational because it is the root of a non-perfect square (non-terminating, non-repeating). 0.123456... is Rational if the pattern repeats or terminates; however, without a repeating bar shown, it is often treated as irrational in this context unless specified as terminating. Assuming the prompt implies a non-repeating expansion: Irrational.",
+        "expectedLength": "Classification and one reason per number",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly classifying √7 as Irrational with valid reason",
+          "1 mark for correctly classifying 0.123456... (assuming non-repeating) as Irrational or Rational with valid reason"
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Classification",
+          "Decimal Expansions"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q7",
+        "questionSubtype": "shortAnswer",
+        "question": "Is the statement 'All real numbers are rational' true? Justify your answer.",
+        "answer": "No, the statement is false. Real numbers include both Rational and Irrational numbers. Since irrational numbers (like √2) exist and are not rational, not all real numbers are rational.",
+        "expectedLength": "Statement of truth/falsity and justification",
+        "marks": 2,
+        "rubric": [
+          "1 mark for stating the statement is false",
+          "1 mark for explaining that Real Numbers include Irrational numbers"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Real Numbers",
+          "Rational vs Irrational"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "longAnswer": [
+      {
+        "id": "q8",
+        "questionSubtype": "longAnswer",
+        "question": "Explain the difference between Rational and Irrational numbers based on their decimal expansions. Provide one example of each and explain why they fit their respective categories.",
+        "answer": "Rational numbers have decimal expansions that either terminate (end) or repeat a pattern (e.g., 0.5 or 0.333...). They can be written as p/q. Example: 1/2 = 0.5 (terminating). Irrational numbers have non-terminating and non-repeating decimal expansions (e.g., 1.414...) and cannot be written as p/q. Example: √2 ≈ 1.414... (never repeats).",
+        "expectedLength": "Clear distinction, examples for both, and reasoning for each",
+        "marks": 5,
+        "rubric": [
+          "1 mark for defining Rational numbers via decimal expansion",
+          "1 mark for providing a valid Rational example with explanation",
+          "1 mark for defining Irrational numbers via decimal expansion",
+          "1 mark for providing a valid Irrational example with explanation",
+          "1 mark for clear structure and logical flow"
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Decimal Expansions",
+          "Rational vs Irrational"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q9",
+        "questionSubtype": "longAnswer",
+        "question": "The diagonal of a square with side 1 cm is √2 cm. Explain why this length cannot be represented exactly as a fraction and how it fits into the Real Number system.",
+        "answer": "√2 is an irrational number because its decimal expansion (approx 1.414...) is non-terminating and non-repeating, meaning no two integers p and q exist such that p/q equals √2 exactly. It cannot be written as a simple fraction. However, it fits into the Real Number system because Real Numbers include all Irrational numbers. On the number line, every point corresponds to a Real Number, so √2 occupies a specific point between 1 and 2.",
+        "expectedLength": "Explanation of non-fractional nature, connection to Real Numbers, and number line context",
+        "marks": 5,
+        "rubric": [
+          "1 mark for stating √2 is irrational due to non-terminating/non-repeating decimals",
+          "1 mark for explaining it cannot be written as p/q",
+          "1 mark for identifying Real Numbers include Irrational numbers",
+          "1 mark for mentioning the number line representation",
+          "1 mark for coherent explanation connecting geometry to algebra"
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Real Numbers",
+          "Irrational Numbers",
+          "Number Line"
+        ],
+        "difficulty": "hard",
+        "bloomsLevel": "analysis"
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "answer": "B. A number that can be expressed in the form p/q where p and q are integers and q ≠ 0",
+          "explanation": "Definition of Rational Numbers.",
+          "marks": 1,
+          "questionSubtype": "mcq",
+          "id": "q1"
+        },
+        {
+          "answer": {
+            "text": "",
+            "latex": "D. \\sqrt{2}",
+            "displayLatex": ""
+          },
+          "explanation": "√2 is non-terminating and non-repeating; others are rational.",
+          "marks": 1,
+          "questionSubtype": "mcq",
+          "id": "q2"
+        },
+        {
+          "answer": "C. Rational Numbers and Irrational Numbers",
+          "explanation": "Real numbers = Rational ∪ Irrational.",
+          "marks": 1,
+          "questionSubtype": "mcq",
+          "id": "q3"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "answer": "Yes, because it can be written as 0/1 where the denominator is not zero.",
+          "rubric": [
+            "Correct classification (Yes)",
+            "Valid justification (0/1)"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer",
+          "id": "q4"
+        },
+        {
+          "answer": {
+            "text": "",
+            "latex": "\\sqrt{2} or π",
+            "displayLatex": ""
+          },
+          "rubric": [
+            "Correct example of an irrational number"
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer",
+          "id": "q5"
+        },
+        {
+          "answer": "√7 is Irrational (non-perfect square root). 0.123456... is Irrational (if non-repeating) or Rational (if repeating pattern exists).",
+          "rubric": [
+            "Correct classification of √7 with reason",
+            "Correct classification of 0.123456... with reason"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer",
+          "id": "q6"
+        },
+        {
+          "answer": "False. Real numbers include Irrational numbers which are not rational.",
+          "rubric": [
+            "Correct statement (False)",
+            "Explanation regarding inclusion of Irrational numbers"
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer",
+          "id": "q7"
+        }
+      ],
+      "longAnswer": [
+        {
+          "answer": {
+            "text": "Rational:",
+            "latex": "Terminating or repeating decimals (e.g., \\frac{1}{2=0.5).}Irrational: Non-terminating, non-repeating decimals (e.g., \\sqrt{2}≈1.414...).",
+            "displayLatex": "Terminating or repeating decimals (e.g., \\frac{1}{2=0.5).}Irrational: Non-terminating, non-repeating decimals (e.g., \\sqrt{2}≈1.414...)."
+          },
+          "rubric": [
+            "Definition of Rational via decimals",
+            "Example of Rational with explanation",
+            "Definition of Irrational via decimals",
+            "Example of Irrational with explanation",
+            "Structure and clarity"
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer",
+          "id": "q8"
+        },
+        {
+          "answer": "√2 is irrational (non-terminating/non-repeating), cannot be p/q. It fits in Real Numbers as every point on the number line is a Real Number.",
+          "rubric": [
+            "Explanation of non-fractional nature",
+            "Connection to Real Numbers set",
+            "Number line context",
+            "Logical flow",
+            "Completeness"
+          ],
+          "marks": 5,
+          "questionSubtype": "longAnswer",
+          "id": "q9"
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct.",
+        "For long answers, reward structure, explanation, and relevant examples."
+      ]
+    }
+  }
+}

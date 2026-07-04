@@ -45,6 +45,21 @@ export interface CurriculumClassSummary {
   detectionSource?: string;
 }
 
+export interface CurriculumSupportingDocument {
+  role: "textbook_index";
+  fileName: string;
+  text: string;
+}
+
+export interface CurriculumClassOptionsResponse {
+  success: boolean;
+  fileName: string;
+  detectedClasses: CurriculumClassSummary[];
+  requiresClassSelection: boolean;
+  detectedSubject: string;
+  requiresTamilIndex: boolean;
+}
+
 export interface SavedCurriculumRecord {
   _id: string;
   fileName: string;
@@ -74,7 +89,15 @@ export interface TermRow {
   unitId?: string;
   unitName: string;
   chapters: string[];
+  recurringStrands?: string[];
+  recurringStrandDetails?: RecurringStrandAllocation[];
   marks: number;
+}
+
+export interface RecurringStrandAllocation {
+  title: string;
+  marks?: number;
+  estimatedSessions?: number | null;
 }
 
 export interface SessionConfig {
@@ -248,6 +271,163 @@ export interface MathFormulaCard {
   formula?: string | MathRichText;
   meaning?: string;
   whenToUse?: string;
+}
+
+export interface AssessmentSectionSummary {
+  id?: string;
+  title: RenderableMathText;
+  marks?: number;
+  questionCount?: number;
+  questionRefs?: RenderableMathText[];
+  source?: "curriculum" | "assessment_framework" | "fallback";
+}
+
+export interface AssessmentSectionPlanItem {
+  sectionId?: string;
+  title: RenderableMathText;
+  marks?: number;
+  questionCount?: number;
+  questionRefs?: RenderableMathText[];
+  focus?: RenderableMathText;
+}
+
+export interface CanonicalAssessmentQuestion {
+  id?: string;
+  questionNumber?: number;
+  sectionId?: string;
+  sectionTitle?: RenderableMathText;
+  type?: "mcq" | "shortAnswer" | "longAnswer";
+  subtype?: AssessmentRenderedSubtype;
+  prompt: RenderableMathText;
+  options?: RenderableMathText[];
+  marks?: number;
+  expectedLength?: RenderableMathText;
+  learningOutcomeRefs?: string[];
+  conceptRefs?: RenderableMathText[];
+  topicCoverage?: string[];
+  subtopicCoverage?: string[];
+  bloomsLevel?: string;
+  competencyTag?: RenderableMathText;
+  difficulty?: string;
+  sourceEvidence?: RenderableMathText[];
+}
+
+export interface CanonicalAssessmentAnswerKeyItem {
+  questionId?: string;
+  sectionId?: string;
+  sectionTitle?: RenderableMathText;
+  answer: RenderableMathText;
+  explanation?: RenderableMathText;
+  marks?: number;
+  subtype?: AssessmentRenderedSubtype;
+}
+
+export interface CanonicalAssessmentMarkBreakdownItem {
+  criterion: RenderableMathText;
+  marks?: number;
+}
+
+export interface CanonicalAssessmentMarkingSchemeItem {
+  questionId?: string;
+  totalMarks?: number;
+  markBreakdown?: CanonicalAssessmentMarkBreakdownItem[];
+  awardGuidance?: RenderableMathText[];
+}
+
+export interface CanonicalAssessmentRubricItem {
+  questionId?: string;
+  totalMarks?: number;
+  criteria?: CanonicalAssessmentMarkBreakdownItem[];
+  sampleAnswer?: RenderableMathText;
+}
+
+export interface CanonicalAssessmentValidationCheck {
+  passed?: boolean;
+  details?: RenderableMathText[];
+}
+
+export interface CanonicalAssessmentPackage {
+  meta?: {
+    assessmentType?: string;
+    totalMarks?: number;
+    totalQuestions?: number;
+    durationMinutes?: number;
+    language?: string;
+    preferredDifficulty?: string;
+    paperObjective?: RenderableMathText;
+    requestSignature?: string;
+    requestedQuestionTypes?: AssessmentQuestionTypeRequest[];
+  };
+  sessionAnalysis?: {
+    assessedLearningOutcomes?: RenderableMathText[];
+    assessedConcepts?: RenderableMathText[];
+    conceptCoveragePriorities?: RenderableMathText[];
+    misconceptionTargets?: RenderableMathText[];
+    competencyFocus?: RenderableMathText[];
+  };
+  blueprint?: {
+    sectionPlan?: AssessmentSectionPlanItem[];
+    conceptDistribution?: {
+      concept: RenderableMathText;
+      questionRefs?: RenderableMathText[];
+      competency?: RenderableMathText;
+      importance?: RenderableMathText;
+    }[];
+    learningOutcomeCoverage?: {
+      outcome: RenderableMathText;
+      questionRefs: RenderableMathText[];
+    }[];
+    bloomsDistribution?: {
+      recall?: number;
+      understanding?: number;
+      application?: number;
+      analysis?: number;
+      evaluation?: number;
+      creation?: number;
+    };
+    competencyDistribution?: Record<string, number>;
+    difficultyDistribution?: {
+      easy?: number;
+      medium?: number;
+      hard?: number;
+    };
+    questionDistribution?: Record<string, number>;
+    timeAllocation?: {
+      section: RenderableMathText;
+      minutes: number;
+    }[];
+  };
+  paper?: {
+    instructions?: RenderableMathText[];
+    sections?: AssessmentSectionSummary[];
+    questions?: CanonicalAssessmentQuestion[];
+  };
+  evaluation?: {
+    answerKey?: {
+      items?: CanonicalAssessmentAnswerKeyItem[];
+    };
+    markingScheme?: {
+      items?: CanonicalAssessmentMarkingSchemeItem[];
+    };
+    rubrics?: {
+      items?: CanonicalAssessmentRubricItem[];
+    };
+    generalInstructions?: RenderableMathText[];
+    evaluatorInstructions?: RenderableMathText[];
+    moderationNotes?: RenderableMathText[];
+  };
+  summary?: {
+    coverageSummary?: RenderableMathText[];
+    omittedContent?: RenderableMathText[];
+    balanceNotes?: RenderableMathText[];
+  };
+  validation?: {
+    exactPatternChecks?: CanonicalAssessmentValidationCheck;
+    marksChecks?: CanonicalAssessmentValidationCheck;
+    sectionChecks?: CanonicalAssessmentValidationCheck;
+    alignmentChecks?: CanonicalAssessmentValidationCheck;
+    scopeBoundaryChecks?: CanonicalAssessmentValidationCheck;
+  };
 }
 
 export interface SessionPlan {
@@ -560,93 +740,7 @@ export interface SessionPlan {
       parentEngagementIncluded?: boolean;
     };
   };
-  assessment?: {
-    assessmentMeta?: {
-      assessmentType?: string;
-      totalMarks?: number;
-      totalQuestions?: number;
-      durationMinutes?: number;
-      preferredDifficulty?: string;
-      language?: string;
-      paperObjective?: RenderableMathText;
-      requestSignature?: string;
-      requestedQuestionTypes?: AssessmentQuestionTypeRequest[];
-      instructions?: RenderableMathText[];
-    };
-    blueprint?: {
-      learningOutcomeCoverage?: {
-        outcome: RenderableMathText;
-        questionRefs: RenderableMathText[];
-      }[];
-      difficultyDistribution?: {
-        easy?: number;
-        medium?: number;
-        hard?: number;
-      };
-      bloomsDistribution?: {
-        recall?: number;
-        understanding?: number;
-        application?: number;
-        analysis?: number;
-        evaluation?: number;
-        creation?: number;
-      };
-      questionDistribution?: {
-        mcq?: number;
-        shortAnswer?: number;
-        longAnswer?: number;
-      };
-      timeAllocation?: {
-        section: RenderableMathText;
-        minutes: number;
-      }[];
-    };
-    mcq?: {
-      id?: string;
-      questionSubtype?: "mcq";
-      question: RenderableMathText;
-      options: RenderableMathText[];
-      answer: RenderableMathText;
-      explanation?: RenderableMathText;
-      marks?: number;
-      learningOutcomeIds?: string[];
-      topicCoverage?: string[];
-      difficulty?: string;
-      bloomsLevel?: string;
-    }[];
-    shortAnswer?: {
-      id?: string;
-      questionSubtype?: "veryShortAnswer" | "shortAnswer";
-      question: RenderableMathText;
-      answer: RenderableMathText;
-      expectedLength?: RenderableMathText;
-      marks?: number;
-      rubric?: RenderableMathText[];
-      learningOutcomeIds?: string[];
-      topicCoverage?: string[];
-      difficulty?: string;
-      bloomsLevel?: string;
-    }[];
-    longAnswer?: {
-      id?: string;
-      questionSubtype?: "longAnswer" | "caseStudy";
-      question: RenderableMathText;
-      answer: RenderableMathText;
-      expectedLength?: RenderableMathText;
-      marks?: number;
-      rubric?: RenderableMathText[];
-      learningOutcomeIds?: string[];
-      topicCoverage?: string[];
-      difficulty?: string;
-      bloomsLevel?: string;
-    }[];
-    answerKey?: {
-      mcq?: { answer: RenderableMathText; explanation?: RenderableMathText; marks?: number; questionSubtype?: "mcq" }[];
-      shortAnswer?: { answer: RenderableMathText; rubric?: RenderableMathText[]; marks?: number; questionSubtype?: "veryShortAnswer" | "shortAnswer" }[];
-      longAnswer?: { answer: RenderableMathText; rubric?: RenderableMathText[]; marks?: number; questionSubtype?: "longAnswer" | "caseStudy" }[];
-      generalMarkingGuidance?: RenderableMathText[];
-    };
-  };
+  assessment?: CanonicalAssessmentPackage;
   assignment?: {
     taskDescription: RenderableMathText;
     rubric: RenderableMathText[];
@@ -699,6 +793,8 @@ export interface TermAllocation {
   termName: string;
   termNumber?: number | null;
   chapters: string[];
+  recurringStrands?: string[];
+  recurringStrandDetails?: RecurringStrandAllocation[];
   marks: number;
   reasoning?: string;
   estimatedSessions?: number | null;
@@ -742,6 +838,7 @@ export interface ChapterSessionPlan {
   termNumber?: number | null;
   unitName?: string;
   chapterName: string;
+  sessionKind?: "lesson" | "strand_practice";
   sequence?: number | null;
   recommendedSessions?: number | null;
   adjustedSessions?: number | null;
@@ -764,6 +861,7 @@ export interface SessionAllocation {
     chapterCount?: number;
     marks?: number;
     totalRows?: number;
+    recurringStrands?: string[];
   };
   recommendations: ChapterSessionPlan[];
   allocations: ChapterSessionPlan[];

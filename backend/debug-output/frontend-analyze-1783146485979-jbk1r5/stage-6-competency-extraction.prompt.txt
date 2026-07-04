@@ -1,0 +1,1495 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 6: Competency Extraction
+- Extract competencies only.
+- No analysis or lesson-planning inference.
+- Use only the provided class/unit/chapter payload as structural context.
+- Do not invent new units or chapters.
+
+Stage payload:
+{
+  "classes": [
+    {
+      "class_name": "Class IX",
+      "subject": "Tamil",
+      "units": [
+        {
+          "unit_id": "class-9-tamil-u1",
+          "unit_name": "Unit 1",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – A Reading Unseen Passage",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Mozhi",
+                "Ilakkiyam",
+                "Varalaru",
+                "Ariviyal"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u2",
+          "unit_name": "Unit 2",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section -B Grammar",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Ezhutthu, Alabedai",
+                "Pagubatha Uruppilakkanam",
+                "Thodar Ilakkanam, Aagupeyar",
+                "Thunai vinaigal"
+              ],
+              "key_concepts": [
+                "Vallinam migum idangal"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u3",
+          "unit_name": "Unit 3",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section -C Main Course Book",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Thirukkural Fill ups MCQ",
+                "Poetry Comprehension MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u4",
+          "unit_name": "Unit 4",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – D Non-detail",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u5",
+          "unit_name": "Unit 5",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – E Creative Writing",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter",
+                "Essay Writing",
+                "Picture Description"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u6",
+          "unit_name": "Unit 6",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "MCQ",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Give Example MCQ",
+                "Fill up MCQ",
+                "Illakkana kurippu MCQ",
+                "Do as Directed MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u7",
+          "unit_name": "Unit 7",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Descriptive",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter (8 marks)",
+                "Essay Writing (6 marks)",
+                "Picture Description (3 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u8",
+          "unit_name": "Unit 8",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Unseen Passage",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Unseen passage- MCQ (5 marks)",
+                "Unseen Passage - Short Answer (5 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u9",
+          "unit_name": "Unit 9",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Grammar",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Ezhutthu, Alabedai",
+                "Pagubatha Uruppilakkanam"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u10",
+          "unit_name": "Unit 10",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Main course book",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Thirukkural Fill ups MCQ",
+                "Poetry Comprehension MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u11",
+          "unit_name": "Unit 11",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Non-detail",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u12",
+          "unit_name": "Unit 12",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Creative Writing",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter (8 marks)",
+                "Essay Writing (6 marks)",
+                "Picture Description (3 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u13",
+          "unit_name": "Unit 13",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "திருக்குறள்",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u14",
+          "unit_name": "Unit 14",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "இயற்கை, சுற்றுச்சூழல் (Nature and Environment)",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u15",
+          "unit_name": "Unit 15",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "பண்பாடு, மனிதம் ஏறுழவு (Culture and Human Relations)",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-tamil-u16",
+          "unit_name": "Unit 16",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "திருக்குறள்",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class IX",
+      "subject": "தமிழ்",
+      "units": [
+        {
+          "unit_id": "class-9-general-u1",
+          "unit_name": "Section – A Reading Unseen Passage",
+          "part_or_section": "",
+          "topics": [
+            "Unseen Passage (1) MCQ",
+            "Unseen Passage (2) SA"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – A Reading Unseen Passage",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Mozhi",
+                "Ilakkiyam",
+                "Varalaru",
+                "Ariviyal"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u2",
+          "unit_name": "Section -B Grammar",
+          "part_or_section": "",
+          "topics": [
+            "Give Example MCQ",
+            "Fill up MCQ",
+            "Illakkana kurippu MCQ",
+            "Do as Directed MCQ"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section -B Grammar",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Ezhutthu, Alabedai",
+                "Pagubatha Uruppilakkanam",
+                "Thodar Ilakkanam, Aagupeyar",
+                "Thunai vinaigal"
+              ],
+              "key_concepts": [
+                "Vallinam migum idangal"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u3",
+          "unit_name": "Section -C Main Course Book",
+          "part_or_section": "",
+          "topics": [
+            "Thirukkural Fill ups MCQ",
+            "Poetry Comprehension MCQ",
+            "Poetry SA",
+            "Prose LA"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section -C Main Course Book",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Thirukkural Fill ups MCQ",
+                "Poetry Comprehension MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u4",
+          "unit_name": "Section – D Non-detail",
+          "part_or_section": "",
+          "topics": [
+            "Non-detail LA"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – D Non-detail",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u5",
+          "unit_name": "Section – E Creative Writing",
+          "part_or_section": "",
+          "topics": [
+            "Picture Description SA",
+            "Letter Writing LA",
+            "Essay Writing LA"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – E Creative Writing",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter",
+                "Essay Writing",
+                "Picture Description"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u6",
+          "unit_name": "MCQ",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "MCQ",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Give Example MCQ",
+                "Fill up MCQ",
+                "Illakkana kurippu MCQ",
+                "Do as Directed MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u7",
+          "unit_name": "Descriptive",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Descriptive",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter (8 marks)",
+                "Essay Writing (6 marks)",
+                "Picture Description (3 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u8",
+          "unit_name": "Unseen Passage",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Unseen Passage",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Unseen passage- MCQ (5 marks)",
+                "Unseen Passage - Short Answer (5 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u9",
+          "unit_name": "Grammar",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Grammar",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Ezhutthu, Alabedai",
+                "Pagubatha Uruppilakkanam"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u10",
+          "unit_name": "Main course book",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Main course book",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Thirukkural Fill ups MCQ",
+                "Poetry Comprehension MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u11",
+          "unit_name": "Non-detail",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Non-detail",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u12",
+          "unit_name": "Creative Writing",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Creative Writing",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter (8 marks)",
+                "Essay Writing (6 marks)",
+                "Picture Description (3 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u13",
+          "unit_name": "பொது அறிவுரைகள் (General Instructions)",
+          "part_or_section": "",
+          "topics": [
+            "தொடக்கம் தமிழிடு தூது",
+            "திசைகாவி தொழில் குடும்பம்",
+            "அமுத் தொன்று தபர் மெத்தை கா வியம்",
+            "ஆறாம் திரண"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "திருக்குறள்",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u14",
+          "unit_name": "இயற்கை, சுற்றுச்சூழல் (Nature and Environment)",
+          "part_or_section": "",
+          "topics": [
+            "எழுத்து - அள தொபரட",
+            "உயிருக்கு தவர் தொரியபு ல்காணம்",
+            "புறகானூறு",
+            "ேண்ணீர்"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "இயற்கை, சுற்றுச்சூழல் (Nature and Environment)",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u15",
+          "unit_name": "பண்பாடு, மனிதம் ஏறுழவு (Culture and Human Relations)",
+          "part_or_section": "",
+          "topics": [
+            "மணி தம கர்ல",
+            "உள்ளத்தின் சீர் மார்கழிப் தொருவி ல்காணம்",
+            "ோய் ரமக்கு வறட்சி இல்லை!",
+            "தொடக்கர் இல்லக் கணம், ஆகு தபயர்"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "பண்பாடு, மனிதம் ஏறுழவு (Culture and Human Relations)",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u16",
+          "unit_name": "கல்வி கல்வியில் சிறந்த தொபண்கள் (Education)",
+          "part_or_section": "",
+          "topics": [
+            "திருக்குறள்",
+            "குடும்ப விளக்கு",
+            "கசடறை தமிழி ல் உயிர் வரக",
+            "வீட்டில் தகார் புத் க சகாலை"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "திருக்குறள்",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class IX",
+      "subject": "தமிழ்",
+      "units": [
+        {
+          "unit_id": "class-9-general-u1",
+          "unit_name": "Section – A Reading Unseen Passage",
+          "part_or_section": "",
+          "topics": [
+            "Unseen Passage (1) MCQ",
+            "Unseen Passage (2) SA"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – A Reading Unseen Passage",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Mozhi",
+                "Ilakkiyam",
+                "Varalaru",
+                "Ariviyal"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u2",
+          "unit_name": "Section -B Grammar",
+          "part_or_section": "",
+          "topics": [
+            "Give Example MCQ",
+            "Fill up MCQ",
+            "Illakkana kurippu MCQ",
+            "Do as Directed MCQ"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section -B Grammar",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Ezhutthu, Alabedai",
+                "Pagubatha Uruppilakkanam",
+                "Thodar Ilakkanam, Aagupeyar",
+                "Thunai vinaigal"
+              ],
+              "key_concepts": [
+                "Vallinam migum idangal"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u3",
+          "unit_name": "Section -C Main Course Book",
+          "part_or_section": "",
+          "topics": [
+            "Thirukkural Fill ups MCQ",
+            "Poetry Comprehension MCQ",
+            "Poetry SA",
+            "Prose LA"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section -C Main Course Book",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Thirukkural Fill ups MCQ",
+                "Poetry Comprehension MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u4",
+          "unit_name": "Section – D Non-detail",
+          "part_or_section": "",
+          "topics": [
+            "Non-detail LA"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – D Non-detail",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u5",
+          "unit_name": "Section – E Creative Writing",
+          "part_or_section": "",
+          "topics": [
+            "Picture Description SA",
+            "Letter Writing LA",
+            "Essay Writing LA"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Section – E Creative Writing",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter",
+                "Essay Writing",
+                "Picture Description"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u6",
+          "unit_name": "MCQ",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "MCQ",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Give Example MCQ",
+                "Fill up MCQ",
+                "Illakkana kurippu MCQ",
+                "Do as Directed MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u7",
+          "unit_name": "Descriptive",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Descriptive",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter (8 marks)",
+                "Essay Writing (6 marks)",
+                "Picture Description (3 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u8",
+          "unit_name": "Unseen Passage",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Unseen Passage",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Unseen passage- MCQ (5 marks)",
+                "Unseen Passage - Short Answer (5 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u9",
+          "unit_name": "Grammar",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Grammar",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Ezhutthu, Alabedai",
+                "Pagubatha Uruppilakkanam"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u10",
+          "unit_name": "Main course book",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Main course book",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Thirukkural Fill ups MCQ",
+                "Poetry Comprehension MCQ"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u11",
+          "unit_name": "Non-detail",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Non-detail",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u12",
+          "unit_name": "Creative Writing",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Creative Writing",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [
+                "Official / Informal Letter (8 marks)",
+                "Essay Writing (6 marks)",
+                "Picture Description (3 marks)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u13",
+          "unit_name": "பொது அறிவுரைகள் (General Instructions)",
+          "part_or_section": "",
+          "topics": [
+            "தொடக்கம் தமிழிடு தூது",
+            "திசைகாவி தொழில் குடும்பம்",
+            "அமுத் தொன்று தபர் மெத்தை கா வியம்",
+            "ஆறாம் திரண"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "திருக்குறள்",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u14",
+          "unit_name": "இயற்கை, சுற்றுச்சூழல் (Nature and Environment)",
+          "part_or_section": "",
+          "topics": [
+            "எழுத்து - அள தொபரட",
+            "உயிருக்கு தவர் தொரியபு ல்காணம்",
+            "புறகானூறு",
+            "ேண்ணீர்"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "இயற்கை, சுற்றுச்சூழல் (Nature and Environment)",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u15",
+          "unit_name": "பண்பாடு, மனிதம் ஏறுழவு (Culture and Human Relations)",
+          "part_or_section": "",
+          "topics": [
+            "மணி தம கர்ல",
+            "உள்ளத்தின் சீர் மார்கழிப் தொருவி ல்காணம்",
+            "ோய் ரமக்கு வறட்சி இல்லை!",
+            "தொடக்கர் இல்லக் கணம், ஆகு தபயர்"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "பண்பாடு, மனிதம் ஏறுழவு (Culture and Human Relations)",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-general-u16",
+          "unit_name": "கல்வி கல்வியில் சிறந்த தொபண்கள் (Education)",
+          "part_or_section": "",
+          "topics": [
+            "திருக்குறள்",
+            "குடும்ப விளக்கு",
+            "கசடறை தமிழி ல் உயிர் வரக",
+            "வீட்டில் தகார் புத் க சகாலை"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "திருக்குறள்",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+=== DOCUMENT 1 ===
+Role: primary_curriculum
+File Name: Tamil_SecP1_2026-27.pdf
+Content:
+## CLASS –IX (2026- 2027)
+## IYAL 1 - 7
+Time: 3 hrs Total: 80 Marks
+## Section – A - Reading Unseen Passage - 10 marks
+- 1. Unseen passage- MCQ - (5 marks)
+( Mozhi, Ilakkiyam, Varalaru, Ariviyal)
+- 2. Unseen Passage - Short Answer - (5 marks)
+( Mozhi, Ilakkiyam, Varalaru, Ariviyal)
+## Section -B Grammar - 12 marks (MCQ)
+- 1. Ezhutthu, Alabedai
+- 2. Pagubatha Uruppilakkanam
+- 3. Thodar Ilakkanam, Aagupeyar
+- 4. Thunai vinaigal
+- 5. Vallinam migum idangal
+- 6. Vallinam migaa idangal
+- 7. Yappilakkanam
+## Section -C Main Course Book - 31 Marks
+( MCQ , Short Answer & Long Answer)
+## Part -1: Prose
+- 1. Dravida Mozhi Kudumbam
+- 2. Neerindri Amaiyaathu Ulagu
+- 3. Eru Thazhuvuthal
+- 4. Kalviyil Sirantha Pengal
+Page 2 of 14
+
+---
+
+# Page 3
+
+- 5. Sirpakalai
+- 6. Inthiya Dhesiya Ranuvaththil Thamizhar Pangu
+- 7. Periyarin Sinthanaigal
+## Part-II: Poetry
+- 1. Tamizh vidu Thoothu
+- 2. Tamil Oviyam
+- 3. Periya Puraanam
+- 4. Puranaanooru
+- 5. Manimegalai
+- 6. Markazhi Peruvizha
+- 7. Thirukkural ( iyal 3)
+- 8. Kudumba Vilakku
+- 9. Uyir vagai
+- 10. Raavana Kaaviyam
+- 11. Thirukkural ( iyal 5)
+- 12. Seevaga Sinthamani
+- 13. O En Samakaala Thoazharkale
+- 14. Yasodhara kaaviyam
+## Section – D Non-detail 10 Marks
+- 1. Aaraam Thinai
+- 2. Thanneer
+- 3. Thaaimaikku Varatchi Ellai
+- 4. Veetirkoar Puththaga saalai
+- 5. Seithi
+- 6. Vinnaiyum Saaduvoam
+- 7. Maganukku Ezhuthiya Kaditham
+Page 3 of 14
+
+---
+
+# Page 4
+
+## Section – E Creative Writing - 17 Marks
+- 1. Official / Informal Letter (8 marks)
+- 2. Essay Writing (6 marks)
+- 3. Picture Description (3 marks)
+Textbook Prescribed:
+Tamil Textbook –Class IX, Revised Edition-2025.
+Content Creation by State Council of Educational Research and Training -
+Tamilnadu Arasu
+Printing & publishing by Tamil nadu Textbook and Educational Services
+Corporation.
+Page 4 of 14
+
+---
+
+# Page 5
+
+Design of Question Paper- (2026-2027) Class IX - TAMIL (006)
+Type of No. of
+S.no. Topic Marks Total
+Questions Questions
+## Section – A Reading Unseen Passage
+1 Unseen Passage (1) MCQ 5 5x1 5
+2 Unseen Passage (2) SA 5 5x1 5
+## Section -B Grammar
+3 Give Example MCQ 3 3x1 3
+4 Fill up MCQ 3 3x1 3
+5 Illakkana kurippu MCQ 3 3x1 3
+6 Do as Directed MCQ 3 3x1 3
+## Section -C Main Course Book
+7 Thirukkural Fill ups MCQ 3 3x1 3
+8 Poetry Comprehension MCQ 5 5x1 5
+9 Poetry SA 4 2x4 8
+10 Prose LA 5 3x5 15
+## Section – D Non-detail
+11 Non-detail LA 3 1x10 10
+## Section – E Creative Writing
+12 Picture Description SA 1 1x3 3
+13 Letter Writing LA 2 1x8 8
+14 Essay Writing LA 3 1x6 6
+80
+Page 5 of 14
+
+---
+
+# Page 6
+
+MCQ 25 Marks
+Descriptive 55 Marks
+Unseen Passage 10 Marks
+Grammar 12 Marks
+Main course book 31 Marks
+Non-detail 10 Marks
+Creative Writing 17 Marks
+80 Marks
+Page 6 of 14
+
+---
+
+# Page 7
+
+Marks Distribution and No. of Periods ,TAMIL ( 006) IX (2026– 2027)
+No. of
+Marks Distribution Marks Weightage Periods
+Topics
+- 1. Comprehension (Unseen
+10 10 Periods
+Passage)
+Sec A
+- 2. Grammar 12
+Sec B
+Course book
+30 Periods
+Thirukkural Fill ups 3
+80
+Poetry comprehension
+Sec C 5
+Poetry Short Answer
+8 40 Periods
+Prose Long Answer 15
+15 Periods
+Sec D Non-detail long Answer 10
+Creative Writing
+Picture Description 3
+Sec E
+Letter Writing 8
+10 Periods
+Composition (General
+6
+Essay)
+Internal Assessment 20% 20
+Total % 100% 105Periods
+100
+Page 7 of 14
+
+---
+
+# Page 8
+
+## TAMIL SYLLABUS
+2026 - 2027
+## X TAMIL (CODE:006)
+## IYAL 1 - 7
+Page 8 of 14
+
+---
+
+# Page 9
+
+## TAMIL SYLLABUS (CODE: 006)
+
+=== DOCUMENT 2 ===
+Role: textbook_index
+File Name: 9th Tamil Textbook 2025_removed.pdf
+Content:
+# Page 1
+
+பொ ்பா ரு ைை க்்கம்
+ை .எண் பொ ா ்ப ருண் ளம , இயல் ்ப ா ை த்த ள்ல ப்பு ்க ள் ்ப . எண் ம ாதம்
+1 தொமகா ழி ே மிழ்விடு தூது * 2
+தி ைகா விட தொமகா ழிக்குடும்பம் 4
+அமு தொே ன்று தப ர் ே மி தைகா வியம் 10 ஜூூன்
+ஆ றகா ம் தி ரண 12
+எழுத்து - அள தொபரட 16
+2 இயற் ரக , சுற்றுச் ை ல் நீ ரின்றி அ ரமயகா து உ ்ல கு 24
+உயிருக்கு தவ ர் தொப ரியபு ைகா ணம் * 29
+புற �கா னூறு * 32
+ஜூூன்
+ஜூூ ர்ல
+ே ண்ணீர் 35
+பகுப ே உறுப்பி ்ல க்கணம் 39
+3 பண் பகா டு, மனி ே ம் ஏறு ே ழுவு ே ல் 50
+மணி தம க ர்ல 54
+உ ள ளத்தின் சீர் மகா ர்கழிப் தொப ருவி ைகா 57
+ேகா ய் ரம க்கு வறட்சி இல் ர்ல ! 59 ஆகஸ்டு
+தொ ேகா டர் இ ்ல க்கணம், ஆகு தொப யர் 64
+திருக்குற ள * 73
+4 கல்வி கல்வியில் சிறந் ே தொப ண்க ள 82
+குடும்ப விளக்கு 87
+கசடற தொமகா ழி ே ல் உயிர்வ ரக * 90 அக் தடகா பர்
+வீட் டிற் தககா ர் புத் ே க சகார்ல 92
+து ரண வி ரன க ள 96
+## VIII
+
+---
+
+# Page 2
+
+ை .எண் பொ ா ்ப ருண் ளம , இயல் ்ப ா ை த்த ள்ல ப்பு ்க ள் ்ப . எண் ம ாதம்
+5 க ர்ல , அ ை கியல், புது ரம சிற்பக்க ர்ல 106
+இ ைகா வண ககா வியம் * 111
+க ர்ல ப ்ல வளர்த் ே ல் தொச ய்தி 114
+வல்லினம் மிகும் இடங்க ள 118
+திருக்குற ள * 125
+இந்திய த ேசிய இ ைகா ணுவத்தில்
+6 �கா டு, சமூகம், அ ை சு, நிரு வகா கம் 130
+ே மி ை ர் பங்கு
+சீ வக சிந் ேகா மணி * 134
+ஜூ னவரி
+வகா ழிய நி ்லதன விண் ரண யும் சகா டு தவகா ம் 137
+வல்லினம் மி ககா இடங்க ள 143
+7 அறம், ே த்துவம், சிந் ேரன தொப ரி யகா ரின் சிந் ேரன க ள 154
+ஓ, என் சம ககா்ல த் தேகாை ர்க தள ! * 158
+என் ேர்ல க் கட தன ய தசகாேை ககா வியம் * 160
+பிப் ை வரி
+மகனுக்கு எழுதிய கடி ே ம் 161
+யகா ப்பி ்ல க்கணம் 164
+திருக்குற ள 174
+( * ) இக்குறியிட்்ட ்ப நா்ட ல் க ள் ை னப்்ப நா்ட ப்்பகுதி
+மின் நூல் மதிப்பீடு
+## IX

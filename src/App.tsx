@@ -44,11 +44,13 @@ import {
 } from "lucide-react";
 import {
   AcademicConfig,
+  CurriculumClassOptionsResponse,
   AssessmentQuestionType,
   AssessmentQuestionTypeRequest,
   ChapterSessionPlan,
   CurriculumClassSummary,
   CurriculumExtraction,
+  CurriculumSupportingDocument,
   TermAllocation,
   PlanningWorkspace,
   SavedCurriculumRecord,
@@ -222,6 +224,16 @@ export default function App() {
   const [isEditingJson, setIsEditingJson] = useState<boolean>(false);
   const [isJsonCollapsed, setIsJsonCollapsed] = useState<boolean>(false);
   const [savedCurriculums, setSavedCurriculums] = useState<SavedCurriculumSummary[]>([]);
+  const [detectedCurriculumSubject, setDetectedCurriculumSubject] = useState<string>("");
+  const [requiresTamilIndex, setRequiresTamilIndex] = useState<boolean>(false);
+  const [tamilIndexText, setTamilIndexText] = useState<string>("");
+  const [tamilIndexFileName, setTamilIndexFileName] = useState<string>("");
+  const [tamilIndexFileSizeStr, setTamilIndexFileSizeStr] = useState<string>("");
+  const [showTamilIndexModal, setShowTamilIndexModal] = useState<boolean>(false);
+  const [pendingTamilIndexPreflight, setPendingTamilIndexPreflight] = useState<{
+    requestId: string;
+    result: CurriculumClassOptionsResponse;
+  } | null>(null);
   const [pendingCurriculumSelection, setPendingCurriculumSelection] = useState<{
     classSummaries: CurriculumClassSummary[];
   } | null>(null);
@@ -269,6 +281,7 @@ export default function App() {
     duration: number;
     learningOutcomes: string[];
     chapterName?: string;
+    sessionKind?: "lesson" | "strand_practice";
     chapterSessionNumber?: number;
     chapterTotalSessions?: number;
   }[]>([]);
@@ -284,6 +297,7 @@ export default function App() {
   // File drag state
   const [dragActive, setDragActive] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const tamilIndexFileInputRef = useRef<HTMLInputElement>(null);
   const groupedTerms = termsList.reduce<Record<string, Record<string, TermRow[]>>>((acc, row) => {
     const classKey = row.className || "Curriculum";
     if (!acc[classKey]) {
@@ -307,6 +321,12 @@ export default function App() {
         term: termName,
         unitName: "Whole Term",
         chapters: allChapters,
+        recurringStrands: Array.from(new Set<string>(rows.flatMap((row) => row.recurringStrands || []))),
+        recurringStrandDetails: Array.from(
+          new Map(
+            rows.flatMap((row) => (row.recurringStrandDetails || []).map((strand) => [strand.title, strand] as const))
+          ).values()
+        ),
         marks: totalMarks,
       };
       return {
@@ -317,6 +337,16 @@ export default function App() {
       };
     }),
   }));
+
+  const resetTamilIndexState = () => {
+    setDetectedCurriculumSubject("");
+    setRequiresTamilIndex(false);
+    setTamilIndexText("");
+    setTamilIndexFileName("");
+    setTamilIndexFileSizeStr("");
+    setShowTamilIndexModal(false);
+    setPendingTamilIndexPreflight(null);
+  };
 
   const clearCurriculumWorkspace = () => {
     setCurrentCurriculumId("");
@@ -330,6 +360,7 @@ export default function App() {
     setEditingJsonText("");
     setIsEditingJson(false);
     setIsJsonCollapsed(false);
+    resetTamilIndexState();
     localStorage.removeItem(LAST_CURRICULUM_ID_KEY);
     localStorage.removeItem(LAST_WORKSPACE_ID_KEY);
   };
@@ -344,7 +375,7 @@ export default function App() {
     return text || fallback;
   };
 
-  const detectCurriculumClassOptions = async () => {
+  const detectCurriculumClassOptions = async (): Promise<CurriculumClassOptionsResponse> => {
     const res = await fetch("/api/curriculum-class-options", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -365,6 +396,14 @@ export default function App() {
     requestId: string,
     selectedClasses: string[]
   ) => {
+    const supportingDocuments: CurriculumSupportingDocument[] =
+      detectedCurriculumSubject === "Tamil" && tamilIndexText.trim()
+        ? [{
+            role: "textbook_index",
+            fileName: tamilIndexFileName,
+            text: tamilIndexText,
+          }]
+        : [];
     const res = await fetch("/api/analyze-curriculum", {
       method: "POST",
       headers: {
@@ -376,6 +415,7 @@ export default function App() {
         fileName,
         selectedClasses,
         persist: true,
+        supportingDocuments,
       }),
     });
 
@@ -389,6 +429,11 @@ export default function App() {
   const closePendingCurriculumSelection = () => {
     setPendingCurriculumSelection(null);
     setSelectedClassNamesToStore([]);
+  };
+
+  const closeTamilIndexModal = () => {
+    setShowTamilIndexModal(false);
+    setPendingTamilIndexPreflight(null);
   };
 
   const fetchSavedCurriculums = async () => {
@@ -409,6 +454,43 @@ export default function App() {
     setCurrentWorkspaceId(workspace._id);
     setActiveWorkspace(workspace);
     localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
+  };
+
+  const applyAnalyzedCurriculum = (data: any) => {
+    setCurrentCurriculumId(data.curriculumId || "");
+    setExtractedData(data.curriculum?.extractedCurriculum || data.curriculum || null);
+    setEditingJsonText("");
+    if (data.curriculumId) {
+      localStorage.setItem(LAST_CURRICULUM_ID_KEY, data.curriculumId);
+    }
+    if (data.workspaceId && data.workspace) {
+      syncWorkspaceState(data.workspace as PlanningWorkspace);
+    }
+  };
+
+  const continueCurriculumAnalysisAfterPreflight = async (
+    requestId: string,
+    classOptions: CurriculumClassOptionsResponse
+  ) => {
+    const classSummaries = Array.isArray(classOptions.detectedClasses)
+      ? classOptions.detectedClasses as CurriculumClassSummary[]
+      : [];
+
+    if (classOptions.requiresClassSelection && classSummaries.length > 1) {
+      setPendingCurriculumSelection({
+        classSummaries,
+      });
+      setSelectedClassNamesToStore(classSummaries.map((item) => item.className));
+      return;
+    }
+
+    setLoadingMessage("Parsing only the selected class curriculum and building the planning workspace...");
+    const saveData = await runCurriculumExtraction(
+      requestId,
+      classSummaries.length ? classSummaries.map((item) => item.className) : []
+    );
+    applyAnalyzedCurriculum(saveData);
+    await fetchSavedCurriculums();
   };
 
   const hasRenderableSessionSection = (value: unknown): boolean => {
@@ -444,6 +526,8 @@ export default function App() {
       term: row.termName,
       unitName: "Whole Term",
       chapters: row.chapters || [],
+      recurringStrands: row.recurringStrands || [],
+      recurringStrandDetails: row.recurringStrandDetails || [],
       marks: Number(row.marks || 0),
     })) as TermRow[];
 
@@ -463,6 +547,12 @@ export default function App() {
       term: firstTermName,
       unitName: "Whole Term",
       chapters: Array.from(new Set<string>(firstTermRows.flatMap((row) => row.chapters as string[]))),
+      recurringStrands: Array.from(new Set<string>(firstTermRows.flatMap((row) => row.recurringStrands || []))),
+      recurringStrandDetails: Array.from(
+        new Map(
+          firstTermRows.flatMap((row) => (row.recurringStrandDetails || []).map((strand) => [strand.title, strand] as const))
+        ).values()
+      ),
       marks: Number(firstTermRows.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
     });
   };
@@ -2132,6 +2222,242 @@ export default function App() {
     );
   };
 
+  const parseAssessmentNumberedItems = (value: string) => {
+    const text = String(value || "").replace(/\s+/g, " ").trim();
+    if (!text) return null;
+
+    const pattern = /(^|\s)(\d+)\.\s+/g;
+    const markers: Array<{ number: number; index: number; contentStart: number }> = [];
+    let match: RegExpExecArray | null = null;
+
+    while ((match = pattern.exec(text)) !== null) {
+      const number = Number(match[2]);
+      const markerIndex = match.index + match[1].length;
+      markers.push({
+        number,
+        index: markerIndex,
+        contentStart: pattern.lastIndex,
+      });
+    }
+
+    if (markers.length < 2 || markers[0]?.number !== 1) return null;
+    for (let index = 1; index < markers.length; index += 1) {
+      if (markers[index].number !== markers[index - 1].number + 1) {
+        return null;
+      }
+    }
+
+    const prefix = text.slice(0, markers[0].index).trim().replace(/[:\-–]\s*$/, "").trim();
+    const items = markers
+      .map((marker, index) => {
+        const endIndex = index + 1 < markers.length ? markers[index + 1].index : text.length;
+        return text.slice(marker.contentStart, endIndex).trim().replace(/\s+/g, " ");
+      })
+      .filter(Boolean);
+
+    if (items.length < 2) return null;
+
+    return { prefix, items };
+  };
+
+  const parseAssessmentLeadingExpression = (value: string) => {
+    const text = String(value || "").replace(/\s+/g, " ").trim();
+    if (!text || !isPotentialInlineMathStart(text, 0)) return null;
+
+    const expressionEnd = consumeInlineMathSpan(text, 0);
+    const expression = text.slice(0, expressionEnd).trim().replace(/[.,;:]+$/, "").trim();
+    const meta = text.slice(expressionEnd).trim().replace(/^[,.;:]\s*/, "").trim();
+    if (!expression || !shouldRenderStringAsLatex(expression)) return null;
+    if (!meta) {
+      return { expression, meta: "" };
+    }
+
+    const looksLikeMeta =
+      meta.startsWith("(")
+      || /^(degree|term|terms|coefficient|factor|root|roots|solution|solutions|value|values)\b/i.test(meta)
+      || /^\([^)]+\)\.?$/.test(meta)
+      || meta.length <= 48;
+
+    return looksLikeMeta ? { expression, meta } : null;
+  };
+
+  const renderAssessmentMathLine = (value: unknown, displayMode = false) => {
+    const line = normalizeStudentNoteRichLine(value);
+    if (line.length === 0) return null;
+
+    const baseTextClassName = displayMode
+      ? "block text-[14.5px] leading-8 tracking-[0.01em] text-slate-800"
+      : "inline text-[14.5px] leading-8 tracking-[0.01em] text-slate-800";
+    const textSegmentClassName = "whitespace-pre-wrap";
+    const mathChipClassName = displayMode
+      ? "my-1 block max-w-full overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-50 px-3 py-2 shadow-sm"
+      : "inline-flex max-w-full overflow-x-auto rounded-md border border-slate-200/80 bg-slate-50/85 px-1.5 py-0.5 align-middle shadow-[inset_0_0_0_1px_rgba(255,255,255,0.4)]";
+
+    const renderSegments = (segments: Array<{ type: "text" | "math"; value: string; displayMode: boolean }>) => (
+      <span className={`${baseTextClassName} ${displayMode ? "space-y-2" : "inline-flex flex-wrap items-baseline gap-x-1.5 gap-y-1.5"}`}>
+        {segments.map((segment, index) => {
+          if (segment.type === "math") {
+            const shouldDisplay = displayMode || segment.displayMode;
+            return (
+              <span key={`${segment.value}-${index}`} className={shouldDisplay ? "block" : mathChipClassName}>
+                {renderMathLatex(segment.value, shouldDisplay, segment.value)}
+              </span>
+            );
+          }
+          return <span key={`${segment.value}-${index}`} className={textSegmentClassName}>{segment.value}</span>;
+        })}
+      </span>
+    );
+
+    if (line.length === 1) {
+      const item = line[0];
+      if (item && typeof item === "object" && !Array.isArray(item)) {
+        const plan = getStudentNoteRenderPlan(item as StudentNoteRichValue);
+        const plainObjectText =
+          "text" in (item as Record<string, unknown>)
+            ? formatRenderableText((item as Record<string, unknown>).text || "").trim()
+            : "";
+
+        if (plainObjectText) {
+          const numberedItems = parseAssessmentNumberedItems(plainObjectText);
+          if (numberedItems) {
+            return (
+              <div className="space-y-2">
+                {numberedItems.prefix ? (
+                  <div className="text-[14.5px] leading-7 tracking-[0.01em] text-slate-700">
+                    {numberedItems.prefix}
+                  </div>
+                ) : null}
+                <ol className="list-decimal space-y-2 pl-5 text-slate-800 marker:font-semibold marker:text-slate-500">
+                  {numberedItems.items.map((listItem, index) => (
+                    <li key={`${listItem}-${index}`} className="pl-1">
+                      {renderAssessmentMathLine(listItem)}
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            );
+          }
+
+          const leadingExpression = parseAssessmentLeadingExpression(plainObjectText);
+          if (leadingExpression) {
+            return (
+              <div className="space-y-2">
+                <div className="my-1 rounded-xl bg-slate-50 px-3 py-3 text-center shadow-sm ring-1 ring-slate-200/80">
+                  {renderMathLatex(leadingExpression.expression, true, leadingExpression.expression)}
+                </div>
+                {leadingExpression.meta ? (
+                  <div className="text-[13px] leading-6 tracking-[0.01em] text-slate-500">
+                    {renderAssessmentMathLine(leadingExpression.meta)}
+                  </div>
+                ) : null}
+              </div>
+            );
+          }
+        }
+
+        if (plan.classification === "full_latex_line" && plan.segments[0]?.type === "math") {
+          return (
+            <div className="my-1 max-w-full overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-50 px-3 py-2 shadow-sm">
+              {renderMathLatex(plan.segments[0].value, true, plan.segments[0].value)}
+            </div>
+          );
+        }
+        if (plan.segments.length > 0) {
+          return renderSegments(plan.segments);
+        }
+      }
+
+      if (typeof item === "string") {
+        const numberedItems = parseAssessmentNumberedItems(item);
+        if (numberedItems) {
+          return (
+            <div className="space-y-2">
+              {numberedItems.prefix ? (
+                <div className="text-[14.5px] leading-7 tracking-[0.01em] text-slate-700">
+                  {numberedItems.prefix}
+                </div>
+              ) : null}
+              <ol className="list-decimal space-y-2 pl-5 text-slate-800 marker:font-semibold marker:text-slate-500">
+                {numberedItems.items.map((listItem, index) => (
+                  <li key={`${listItem}-${index}`} className="pl-1">
+                    {renderAssessmentMathLine(listItem)}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          );
+        }
+
+        const leadingExpression = parseAssessmentLeadingExpression(item);
+        if (leadingExpression) {
+          return (
+            <div className="space-y-2">
+              <div className="my-1 rounded-xl bg-slate-50 px-3 py-3 text-center shadow-sm ring-1 ring-slate-200/80">
+                {renderMathLatex(leadingExpression.expression, true, leadingExpression.expression)}
+              </div>
+              {leadingExpression.meta ? (
+                <div className="text-[13px] leading-6 tracking-[0.01em] text-slate-500">
+                  {renderAssessmentMathLine(leadingExpression.meta)}
+                </div>
+              ) : null}
+            </div>
+          );
+        }
+
+        const plan = getStudentNoteRenderPlan(item);
+        if (plan.classification === "full_latex_line" && plan.segments[0]?.type === "math") {
+          return (
+            <div className="my-1 max-w-full overflow-x-auto rounded-xl border border-slate-200/80 bg-slate-50 px-3 py-2 shadow-sm">
+              {renderMathLatex(plan.segments[0].value, true, plan.segments[0].value)}
+            </div>
+          );
+        }
+        if (plan.classification === "mixed_inline_math") {
+          return renderSegments(plan.segments);
+        }
+      }
+
+      return (
+        <span className={`${baseTextClassName} ${textSegmentClassName}`}>
+          {renderMixedMathLine(item, displayMode)}
+        </span>
+      );
+    }
+
+    return (
+      <div className="space-y-2">
+        {line.map((item, index) => (
+          <div key={`${formatRenderableText(item)}-${index}`} className={baseTextClassName}>
+            {renderAssessmentMathLine(item, displayMode)}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderAssessmentRichList = (
+    value: unknown,
+    options?: {
+      ordered?: boolean;
+      className?: string;
+      itemClassName?: string;
+    },
+  ) => {
+    const items = normalizeStudentNoteRichLines(value);
+    if (items.length === 0) return null;
+    const ListTag = options?.ordered ? "ol" : "ul";
+    return (
+      <ListTag className={options?.className || `${options?.ordered ? "list-decimal" : "list-disc"} list-inside space-y-2 text-sm text-slate-700`}>
+        {items.map((item, index) => (
+          <li key={`${formatStudentNoteRichLine(item)}-${index}`} className={options?.itemClassName}>
+            {renderAssessmentMathLine(item)}
+          </li>
+        ))}
+      </ListTag>
+    );
+  };
+
   const renderStudentVisualFigure = (
     asset: any,
     assetIdx: number,
@@ -2873,7 +3199,10 @@ export default function App() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    URL.revokeObjectURL(objectUrl);
+    // Delay revocation so larger browser-managed downloads can start reliably.
+    window.setTimeout(() => {
+      URL.revokeObjectURL(objectUrl);
+    }, 1000);
   };
 
   const stripImplicitUnitFromContextLabel = (value: string) =>
@@ -4666,7 +4995,7 @@ export default function App() {
     return buildImagePdfBlob(renderedPages);
   };
 
-  const buildCurriculumPdfBlob = (curriculum: CurriculumExtraction) => {
+  const buildCurriculumPdfBlob = async (curriculum: CurriculumExtraction) => {
     type ExportChapter = {
       chapterName: string;
       topics: string[];
@@ -4715,7 +5044,13 @@ export default function App() {
       const unitName = cleanValue(unit.unit_name || unit.unitName || unit.unit_id || unit.unitId || "");
       const unitTopics = uniqueMeaningfulList(unit.topics);
       const unitSubtopics = uniqueMeaningfulList(unit.subtopics);
-      const rawChapters = Array.isArray(unit.chapters) ? unit.chapters as Array<Record<string, unknown>> : [];
+      const rawChapters = Array.isArray(unit.chapters)
+        ? unit.chapters as Array<Record<string, unknown>>
+        : Array.isArray(unit.chapter_details)
+          ? unit.chapter_details as Array<Record<string, unknown>>
+          : Array.isArray(unit.chapterDetails)
+            ? unit.chapterDetails as Array<Record<string, unknown>>
+            : [];
       const chapters = rawChapters
         .map((chapter) => ({
           chapterName: cleanValue(chapter.chapter_name || chapter.source_chapter_name || chapter.title || ""),
@@ -4723,6 +5058,14 @@ export default function App() {
           subtopics: uniqueMeaningfulList(chapter.subtopics),
         }))
         .filter((chapter) => hasDeepChapterContent(chapter, unitName));
+      const explicitChapterNames = uniqueMeaningfulList(unit.explicit_chapters || unit.explicitChapters);
+      const fallbackChapters = chapters.length > 0
+        ? chapters
+        : explicitChapterNames.map((chapterName) => ({
+            chapterName,
+            topics: [],
+            subtopics: [],
+          })).filter((chapter) => hasDeepChapterContent(chapter, unitName));
 
       return {
         unitId: cleanValue(unit.unit_id || unit.unitId || ""),
@@ -4730,7 +5073,7 @@ export default function App() {
         description: cleanValue(unit.description || ""),
         topics: unitTopics,
         subtopics: unitSubtopics,
-        chapters,
+        chapters: fallbackChapters,
       };
     };
 
@@ -4745,10 +5088,11 @@ export default function App() {
 
     const extractCurriculumHierarchy = (): ExportClass[] => {
       const curriculumRecord = curriculum as unknown as Record<string, unknown>;
+      const planningStructure = curriculumRecord.planning_structure as Record<string, unknown> | undefined;
       const faithfulStructure = curriculumRecord.faithful_structure as Record<string, unknown> | undefined;
       const normalizedStructure = curriculum.normalizedStructure as Record<string, unknown> | undefined;
       const stagedStructure = (curriculum.stagedExtraction as Record<string, unknown> | undefined)?.normalizedStructure as Record<string, unknown> | undefined;
-      const prioritizedStructure = faithfulStructure || normalizedStructure || stagedStructure;
+      const prioritizedStructure = planningStructure || faithfulStructure || normalizedStructure || stagedStructure;
 
       if (prioritizedStructure && Array.isArray(prioritizedStructure.classes)) {
         return (prioritizedStructure.classes as Array<Record<string, unknown>>)
@@ -4783,6 +5127,283 @@ export default function App() {
       (sum, unit) => sum + unit.subtopics.length + unit.chapters.reduce((chapterSum, chapter) => chapterSum + chapter.subtopics.length, 0),
       0
     );
+
+    const exportTextCorpus = [
+      curriculum.subject || "",
+      curriculum.gradeLevel || "",
+      curriculum.overallDescription || "",
+      ...(Array.isArray(curriculum.coreObjectives) ? curriculum.coreObjectives : []),
+      ...exportClasses.flatMap((cls) => [
+        cls.className,
+        cls.subject,
+        ...cls.units.flatMap((unit) => [
+          unit.unitId,
+          unit.unitName,
+          unit.description,
+          ...unit.topics,
+          ...unit.subtopics,
+          ...unit.chapters.flatMap((chapter) => [chapter.chapterName, ...chapter.topics, ...chapter.subtopics]),
+        ]),
+      ]),
+    ].map((item) => formatRenderableText(item));
+    const requiresUnicodeCanvasExport = exportTextCorpus.some((item) => /[^\u0000-\u00ff]/.test(item));
+
+    if (requiresUnicodeCanvasExport) {
+      const canvasWidth = 1240;
+      const canvasHeight = 1754;
+      const marginX = 84;
+      const topMargin = 96;
+      const bottomMargin = 92;
+      const contentWidth = canvasWidth - marginX * 2;
+      const maxY = canvasHeight - bottomMargin;
+      const pages: HTMLCanvasElement[] = [];
+      const fontStack = "\"Noto Sans Tamil\", \"Nirmala UI\", \"Latha\", \"Arial Unicode MS\", Arial, sans-serif";
+      const theme = {
+        paper: "#fcfbf7",
+        ink: "#1f2933",
+        muted: "#5f6c7b",
+        accent: "#1f8a8a",
+        accentSoft: "#e9f7f6",
+        border: "#d8e0e4",
+      };
+
+      let canvas = document.createElement("canvas");
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      let ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Unable to prepare curriculum export canvas.");
+      }
+      let y = topMargin;
+      let pageNumber = 1;
+
+      const wrapCanvasText = (text: string, maxWidth: number, font: string) => {
+        const normalized = formatRenderableText(text).replace(/\s+/g, " ").trim();
+        if (!normalized) return [];
+        ctx.font = font;
+        const words = normalized.split(/\s+/).filter(Boolean);
+        const lines: string[] = [];
+        let current = "";
+        words.forEach((word) => {
+          const candidate = current ? `${current} ${word}` : word;
+          if (!current || ctx.measureText(candidate).width <= maxWidth) {
+            current = candidate;
+            return;
+          }
+          lines.push(current);
+          current = word;
+        });
+        if (current) lines.push(current);
+        return lines;
+      };
+
+      const measureCanvasBlock = (text: string, maxWidth: number, lineHeight: number, font: string) => {
+        const lines = wrapCanvasText(text, maxWidth, font);
+        return lines.length === 0 ? 0 : lines.length * lineHeight;
+      };
+
+      const drawCanvasBlock = (text: string, x: number, startY: number, maxWidth: number, lineHeight: number, font: string, color: string) => {
+        const lines = wrapCanvasText(text, maxWidth, font);
+        ctx.font = font;
+        ctx.fillStyle = color;
+        lines.forEach((line, index) => {
+          ctx.fillText(line, x, startY + index * lineHeight);
+        });
+        return lines.length * lineHeight;
+      };
+
+      const startPage = () => {
+        ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("Unable to prepare curriculum export canvas.");
+        ctx.fillStyle = theme.paper;
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        ctx.fillStyle = theme.accent;
+        ctx.fillRect(0, 0, canvasWidth, 76);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = `700 24px ${fontStack}`;
+        ctx.fillText(formatRenderableText(curriculum.subject || "Curriculum Export"), marginX, 46);
+        ctx.font = `500 12px ${fontStack}`;
+        ctx.textAlign = "right";
+        ctx.fillText(`Page ${pageNumber}`, canvasWidth - marginX, 46);
+        ctx.textAlign = "left";
+        y = topMargin;
+      };
+
+      const newPage = () => {
+        pages.push(canvas);
+        canvas = document.createElement("canvas");
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        pageNumber += 1;
+        startPage();
+      };
+
+      const ensureSpace = (height: number) => {
+        if (y + height <= maxY) return;
+        newPage();
+      };
+
+      const drawHeading = (title: string, level: "title" | "section" | "unit" | "chapter" = "section") => {
+        const styles = {
+          title: { font: `700 30px ${fontStack}`, color: theme.ink, gap: 24 },
+          section: { font: `700 18px ${fontStack}`, color: theme.accent, gap: 18 },
+          unit: { font: `700 16px ${fontStack}`, color: theme.ink, gap: 14 },
+          chapter: { font: `600 14px ${fontStack}`, color: theme.ink, gap: 12 },
+        };
+        const style = styles[level];
+        const height = measureCanvasBlock(title, contentWidth, level === "title" ? 38 : 24, style.font) + style.gap;
+        ensureSpace(height + 10);
+        y += drawCanvasBlock(title, marginX, y, contentWidth, level === "title" ? 38 : 24, style.font, style.color);
+        y += 6;
+        if (level !== "title") {
+          ctx.strokeStyle = theme.border;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(marginX, y);
+          ctx.lineTo(canvasWidth - marginX, y);
+          ctx.stroke();
+        }
+        y += style.gap;
+      };
+
+      const drawParagraph = (text: string, options?: { color?: string; font?: string; lineHeight?: number; spacingAfter?: number }) => {
+        const normalized = formatRenderableText(text).trim();
+        if (!normalized) return;
+        const font = options?.font || `400 14px ${fontStack}`;
+        const lineHeight = options?.lineHeight || 22;
+        const spacingAfter = options?.spacingAfter ?? 10;
+        ensureSpace(measureCanvasBlock(normalized, contentWidth, lineHeight, font) + spacingAfter);
+        y += drawCanvasBlock(normalized, marginX, y, contentWidth, lineHeight, font, options?.color || theme.ink);
+        y += spacingAfter;
+      };
+
+      const drawBulletList = (items: string[], indent = 0) => {
+        const bulletX = marginX + indent;
+        const textX = bulletX + 18;
+        const maxWidth = contentWidth - indent - 18;
+        items.map((item) => formatRenderableText(item).trim()).filter(Boolean).forEach((item) => {
+          const height = measureCanvasBlock(item, maxWidth, 21, `400 14px ${fontStack}`);
+          ensureSpace(height + 8);
+          ctx.fillStyle = theme.accent;
+          ctx.font = `700 12px ${fontStack}`;
+          ctx.fillText("•", bulletX, y);
+          y += drawCanvasBlock(item, textX, y, maxWidth, 21, `400 14px ${fontStack}`, theme.ink);
+          y += 8;
+        });
+      };
+
+      const drawMetricCards = (items: Array<{ label: string; value: string }>) => {
+        const gap = 12;
+        const cardWidth = (contentWidth - gap * (items.length - 1)) / items.length;
+        const cardHeight = 74;
+        ensureSpace(cardHeight + 18);
+        items.forEach((item, index) => {
+          const x = marginX + index * (cardWidth + gap);
+          ctx.fillStyle = theme.accentSoft;
+          ctx.strokeStyle = theme.border;
+          ctx.lineWidth = 1;
+          ctx.fillRect(x, y, cardWidth, cardHeight);
+          ctx.strokeRect(x, y, cardWidth, cardHeight);
+          ctx.fillStyle = theme.muted;
+          ctx.font = `700 11px ${fontStack}`;
+          ctx.fillText(item.label.toUpperCase(), x + 12, y + 22);
+          ctx.fillStyle = theme.ink;
+          ctx.font = `700 18px ${fontStack}`;
+          const valueLines = wrapCanvasText(item.value, cardWidth - 24, ctx.font);
+          valueLines.slice(0, 2).forEach((line, lineIndex) => {
+            ctx.fillText(line, x + 12, y + 48 + lineIndex * 18);
+          });
+        });
+        y += cardHeight + 18;
+      };
+
+      startPage();
+      drawHeading(`${formatRenderableText(curriculum.subject || "Curriculum")} • ${formatRenderableText(curriculum.gradeLevel || "Grade")}`, "title");
+      drawMetricCards([
+        { label: "Subject", value: formatRenderableText(curriculum.subject || "N/A") },
+        { label: "Grade", value: formatRenderableText(curriculum.gradeLevel || "N/A") },
+        { label: "Units", value: String(allUnits.length) },
+        { label: "Chapters", value: String(totalChapterCount) },
+      ]);
+
+      if (curriculum.overallDescription) {
+        drawHeading("Overview", "section");
+        drawParagraph(curriculum.overallDescription, { color: theme.muted });
+      }
+
+      if (Array.isArray(curriculum.coreObjectives) && curriculum.coreObjectives.length > 0) {
+        drawHeading("Core Objectives", "section");
+        drawBulletList(curriculum.coreObjectives);
+      }
+
+      exportClasses.forEach((cls, classIndex) => {
+        drawHeading(exportClasses.length > 1 ? `Class ${classIndex + 1}: ${cls.className || curriculum.gradeLevel}` : `${cls.className || curriculum.gradeLevel}`, "section");
+        if (cls.subject) {
+          drawParagraph(`Subject: ${cls.subject}`, {
+            font: `600 13px ${fontStack}`,
+            color: theme.muted,
+            lineHeight: 20,
+            spacingAfter: 12,
+          });
+        }
+        cls.units.forEach((unit) => {
+          const unitTitle = [unit.unitId, unit.unitName].filter(Boolean).join(" • ") || "Unit";
+          drawHeading(unitTitle, "unit");
+          if (unit.description) {
+            drawParagraph(unit.description, { color: theme.muted, spacingAfter: 8 });
+          }
+          if (unit.topics.length > 0) {
+            drawParagraph("Topics", {
+              font: `700 13px ${fontStack}`,
+              lineHeight: 20,
+              spacingAfter: 6,
+            });
+            drawBulletList(unit.topics, 8);
+          }
+          if (unit.subtopics.length > 0) {
+            drawParagraph("Subtopics", {
+              font: `700 13px ${fontStack}`,
+              lineHeight: 20,
+              spacingAfter: 6,
+            });
+            drawBulletList(unit.subtopics, 8);
+          }
+          if (unit.chapters.length > 0) {
+            drawParagraph("Chapters", {
+              font: `700 13px ${fontStack}`,
+              lineHeight: 20,
+              spacingAfter: 6,
+            });
+            unit.chapters.forEach((chapter) => {
+              drawHeading(chapter.chapterName || "Chapter", "chapter");
+              if (chapter.topics.length > 0) {
+                drawBulletList(chapter.topics, 18);
+              }
+              if (chapter.subtopics.length > 0) {
+                drawBulletList(chapter.subtopics, 36);
+              }
+            });
+          }
+          y += 10;
+        });
+      });
+
+      if (allUnits.length === 0) {
+        drawHeading("No Structured Data Available", "section");
+        drawParagraph("The extracted curriculum does not currently include enough structured unit, chapter, topic, or subtopic data to render the export.");
+      }
+
+      pages.push(canvas);
+      const renderedPages = pages.map((pageCanvas) => {
+        const dataUrl = pageCanvas.toDataURL("image/jpeg", 0.92);
+        return {
+          bytes: imageDataUrlToJpegBytes(dataUrl),
+          width: pageCanvas.width,
+          height: pageCanvas.height,
+        };
+      });
+      return buildImagePdfBlob(renderedPages);
+    }
 
     const pageWidth = 612;
     const pageHeight = 792;
@@ -5165,7 +5786,7 @@ export default function App() {
     return new Blob([pdf], { type: "application/pdf" });
   };
 
-  const handleDownloadCurriculumPdf = () => {
+  const handleDownloadCurriculumPdf = async () => {
     if (!extractedData) {
       setErrorHeader("Extract a curriculum first before downloading the curriculum PDF.");
       return;
@@ -5174,66 +5795,123 @@ export default function App() {
     const subjectLabel = extractedData.subject || "curriculum";
     const gradeLabel = extractedData.gradeLevel || "grade";
     const fileNameBase = [slugifyFileNamePart(subjectLabel), slugifyFileNamePart(gradeLabel), "extracted-curriculum-table"].join("-");
-    triggerBlobDownload(buildCurriculumPdfBlob(extractedData), `${fileNameBase}.pdf`);
+    const pdfBlob = await buildCurriculumPdfBlob(extractedData);
+    triggerBlobDownload(pdfBlob, `${fileNameBase}.pdf`);
+  };
+
+  const buildAssessmentSectionGroups = (assessment: SessionPlan["assessment"] | undefined) => {
+    if (!assessment) return [];
+
+    const rawSections = Array.isArray(assessment.paper?.sections) ? assessment.paper.sections : [];
+    const rawQuestions = Array.isArray(assessment.paper?.questions) ? assessment.paper.questions : [];
+    const answerKeyItems = Array.isArray(assessment.evaluation?.answerKey?.items) ? assessment.evaluation.answerKey.items : [];
+    const rubricItems = Array.isArray(assessment.evaluation?.rubrics?.items) ? assessment.evaluation.rubrics.items : [];
+    const markingSchemeItems = Array.isArray(assessment.evaluation?.markingScheme?.items) ? assessment.evaluation.markingScheme.items : [];
+    const groupsById = new Map<string, any>();
+    const orderedGroups: any[] = [];
+
+    const ensureGroup = (sectionId?: string, sectionTitle?: any) => {
+      const rawTitle = formatRenderableText(sectionTitle || rawSections[0]?.title || "Assessment") || "Assessment";
+      const rawId = String(sectionId || "").trim() || `section-${orderedGroups.length + 1}`;
+      if (!groupsById.has(rawId)) {
+        const matchingRawSection = rawSections.find((section: any) =>
+          String(section?.id || "").trim() === rawId ||
+          formatRenderableText(section?.title || "") === rawTitle
+        );
+        const group = {
+          id: rawId,
+          title: rawTitle,
+          source: matchingRawSection?.source,
+          marks: matchingRawSection?.marks,
+          questionCount: matchingRawSection?.questionCount,
+          questionRefs: Array.isArray(matchingRawSection?.questionRefs) ? matchingRawSection.questionRefs : [],
+          entries: [] as any[],
+        };
+        groupsById.set(rawId, group);
+        orderedGroups.push(group);
+      }
+      return groupsById.get(rawId);
+    };
+
+    rawSections.forEach((section: any, index: number) => {
+      ensureGroup(String(section?.id || "").trim() || `section-${index + 1}`, section?.title || `Section ${index + 1}`);
+    });
+
+    rawQuestions.forEach((item: any, index: number) => {
+      const answerItem = item?.id
+        ? answerKeyItems.find((candidate: any) => candidate?.questionId === item.id)
+        : answerKeyItems[index];
+      const rubricItem = item?.id
+        ? rubricItems.find((candidate: any) => candidate?.questionId === item.id)
+        : rubricItems[index];
+      const markingSchemeItem = item?.id
+        ? markingSchemeItems.find((candidate: any) => candidate?.questionId === item.id)
+        : markingSchemeItems[index];
+        const group = ensureGroup(
+          item?.sectionId || answerItem?.sectionId,
+          item?.sectionTitle || answerItem?.sectionTitle
+        );
+      group.entries.push({
+        kind: item?.type || "question",
+        question: item,
+        answerKey: answerItem,
+        rubric: rubricItem,
+        markingScheme: markingSchemeItem,
+        questionNumber: Number(item?.questionNumber || index + 1),
+      });
+    });
+
+    return orderedGroups
+      .filter((group) => group.entries.length > 0)
+      .map((group) => ({
+        ...group,
+        marks: group.entries.reduce((sum: number, entry: any) => sum + Number(entry.question?.marks || 0), 0) || group.marks || 0,
+        questionCount: group.entries.length,
+        questionRefs: group.entries.map((entry: any) => entry.question?.id || `q${entry.questionNumber}`),
+      }));
   };
 
   const buildAssessmentQuestionPaperText = (session: SessionPlan) => {
     const assessment = session.assessment;
     if (!assessment) return "";
-    const mcqCount = Array.isArray(assessment.mcq) ? assessment.mcq.length : 0;
-    const shortAnswerCount = Array.isArray(assessment.shortAnswer) ? assessment.shortAnswer.length : 0;
+    const sectionGroups = buildAssessmentSectionGroups(assessment);
 
     const lines: string[] = [
       `${formatRenderableText(session.title)}`,
       `Session ${session.sessionNumber} Assessment`,
-      `Duration: ${formatRenderableText(assessment.assessmentMeta?.durationMinutes ?? session.duration)} minutes`,
-      `Total Marks: ${formatRenderableText(assessment.assessmentMeta?.totalMarks ?? "")}`,
+      `Duration: ${formatRenderableText(assessment.meta?.durationMinutes ?? session.duration)} minutes`,
+      `Total Marks: ${formatRenderableText(assessment.meta?.totalMarks ?? "")}`,
       "",
     ];
 
-    if (Array.isArray(assessment.assessmentMeta?.instructions) && assessment.assessmentMeta!.instructions!.length > 0) {
+    if (Array.isArray(assessment.paper?.instructions) && assessment.paper.instructions.length > 0) {
       lines.push("Instructions:");
-      assessment.assessmentMeta!.instructions!.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
+      assessment.paper.instructions.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
       lines.push("");
     }
 
-    if (Array.isArray(assessment.mcq) && assessment.mcq.length > 0) {
-      lines.push("MCQ");
-      assessment.mcq.forEach((q, idx) => {
-        lines.push(`Question ${idx + 1} (Q${idx + 1}). ${formatRenderableText(q.question)} (${q.marks || 1} mark)`);
-        q.options.forEach((option) => lines.push(`- ${formatRenderableText(option)}`));
+    sectionGroups.forEach((group: any) => {
+      lines.push(`${group.title} (${group.marks} marks)`);
+      lines.push("");
+      group.entries.forEach((entry: any) => {
+        const subtype = formatAssessmentSubtypeLabel(entry.question?.subtype);
+        lines.push(
+          `Question ${entry.questionNumber} (Q${entry.questionNumber}). ${formatRenderableText(entry.question?.prompt)} (${entry.question?.marks || 0} marks)${subtype ? ` [${subtype}]` : ""}`
+        );
+        if (entry.question?.type === "mcq") {
+          (entry.question?.options || []).forEach((option: any) => lines.push(`- ${formatRenderableText(option)}`));
+        }
         lines.push("");
       });
-    }
-
-    if (Array.isArray(assessment.shortAnswer) && assessment.shortAnswer.length > 0) {
-      lines.push("Short Answer Questions");
-      assessment.shortAnswer.forEach((q, idx) => {
-        const questionNumber = mcqCount + idx + 1;
-        const subtype = formatAssessmentSubtypeLabel(q.questionSubtype);
-        lines.push(`Question ${questionNumber} (Q${questionNumber}). ${formatRenderableText(q.question)} (${q.marks || 0} marks)${subtype ? ` [${subtype}]` : ""}`);
-        lines.push("");
-      });
-    }
-
-    if (Array.isArray(assessment.longAnswer) && assessment.longAnswer.length > 0) {
-      lines.push("Long Answer Questions");
-      assessment.longAnswer.forEach((q, idx) => {
-        const questionNumber = mcqCount + shortAnswerCount + idx + 1;
-        const subtype = formatAssessmentSubtypeLabel(q.questionSubtype);
-        lines.push(`Question ${questionNumber} (Q${questionNumber}). ${formatRenderableText(q.question)} (${q.marks || 0} marks)${subtype ? ` [${subtype}]` : ""}`);
-        lines.push("");
-      });
-    }
+    });
 
     return lines.join("\n");
   };
 
   const buildAssessmentAnswerKeyText = (session: SessionPlan) => {
     const assessment = session.assessment;
-    if (!assessment?.answerKey) return "";
-    const mcqCount = Array.isArray(assessment.answerKey.mcq) ? assessment.answerKey.mcq.length : 0;
-    const shortAnswerCount = Array.isArray(assessment.answerKey.shortAnswer) ? assessment.answerKey.shortAnswer.length : 0;
+    if (!assessment?.evaluation?.answerKey?.items?.length) return "";
+    const sectionGroups = buildAssessmentSectionGroups(assessment);
 
     const lines: string[] = [
       `${formatRenderableText(session.title)}`,
@@ -5241,49 +5919,28 @@ export default function App() {
       "",
     ];
 
-    const mcq = Array.isArray(assessment.answerKey.mcq) ? assessment.answerKey.mcq : [];
-    if (mcq.length > 0) {
-      lines.push("MCQ Answer Key");
-      mcq.forEach((item, idx) => {
-        lines.push(`Question ${idx + 1} (Q${idx + 1}): ${formatRenderableText(item.answer)}`);
-        if (item.explanation) lines.push(`Explanation: ${formatRenderableText(item.explanation)}`);
-        if (item.marks != null) lines.push(`Marks: ${formatRenderableText(item.marks)}`);
+    sectionGroups.forEach((group: any) => {
+      lines.push(group.title);
+      lines.push("");
+      group.entries.forEach((entry: any) => {
+        const answerItem = entry.answerKey;
+        const subtype = formatAssessmentSubtypeLabel(answerItem?.subtype || entry.question?.subtype);
+        lines.push(
+          `Question ${entry.questionNumber} (Q${entry.questionNumber})${subtype ? ` [${subtype}]` : ""}: ${formatRenderableText(answerItem?.answer || "Answer not provided")}`
+        );
+        if (answerItem?.explanation) lines.push(`Explanation: ${formatRenderableText(answerItem.explanation)}`);
+        if (answerItem?.marks != null) lines.push(`Marks: ${formatRenderableText(answerItem.marks)}`);
         lines.push("");
       });
-    }
-
-    const shortAnswer = Array.isArray(assessment.answerKey.shortAnswer) ? assessment.answerKey.shortAnswer : [];
-    if (shortAnswer.length > 0) {
-      lines.push("Short Answer Key");
-      shortAnswer.forEach((item, idx) => {
-        const questionNumber = mcqCount + idx + 1;
-        const subtype = formatAssessmentSubtypeLabel(item.questionSubtype);
-        lines.push(`Question ${questionNumber} (Q${questionNumber})${subtype ? ` [${subtype}]` : ""}: ${formatRenderableText(item.answer)}`);
-        if (item.marks != null) lines.push(`Marks: ${formatRenderableText(item.marks)}`);
-        lines.push("");
-      });
-    }
-
-    const longAnswer = Array.isArray(assessment.answerKey.longAnswer) ? assessment.answerKey.longAnswer : [];
-    if (longAnswer.length > 0) {
-      lines.push("Long Answer Key");
-      longAnswer.forEach((item, idx) => {
-        const questionNumber = mcqCount + shortAnswerCount + idx + 1;
-        const subtype = formatAssessmentSubtypeLabel(item.questionSubtype);
-        lines.push(`Question ${questionNumber} (Q${questionNumber})${subtype ? ` [${subtype}]` : ""}: ${formatRenderableText(item.answer)}`);
-        if (item.marks != null) lines.push(`Marks: ${formatRenderableText(item.marks)}`);
-        lines.push("");
-      });
-    }
+    });
 
     return lines.join("\n");
   };
 
   const buildAssessmentRubricsText = (session: SessionPlan) => {
     const assessment = session.assessment;
-    if (!assessment?.answerKey) return "";
-    const mcqCount = Array.isArray(assessment.answerKey.mcq) ? assessment.answerKey.mcq.length : 0;
-    const shortAnswerCount = Array.isArray(assessment.answerKey.shortAnswer) ? assessment.answerKey.shortAnswer.length : 0;
+    if (!assessment?.evaluation) return "";
+    const sectionGroups = buildAssessmentSectionGroups(assessment);
 
     const lines: string[] = [
       `${formatRenderableText(session.title)}`,
@@ -5291,35 +5948,43 @@ export default function App() {
       "",
     ];
 
-    const shortAnswer = Array.isArray(assessment.answerKey.shortAnswer) ? assessment.answerKey.shortAnswer : [];
-    shortAnswer.forEach((item, idx) => {
-      const questionNumber = mcqCount + idx + 1;
-      const subtype = formatAssessmentSubtypeLabel(item.questionSubtype);
-      lines.push(`Question ${questionNumber} (Q${questionNumber})${subtype ? ` [${subtype}]` : ""}`);
-      if (Array.isArray(item.rubric) && item.rubric.length > 0) {
-        item.rubric.forEach((rubricItem, rubricIdx) => lines.push(`${rubricIdx + 1}. ${formatRenderableText(rubricItem)}`));
-      } else {
-        lines.push("No rubric provided.");
-      }
+    sectionGroups.forEach((group: any) => {
+      const rubricEntries = group.entries.filter((entry: any) => entry.question?.type !== "mcq");
+      if (!rubricEntries.length) return;
+      lines.push(group.title);
       lines.push("");
+      rubricEntries.forEach((entry: any) => {
+        const rubricItem = entry.rubric;
+        const markingSchemeItem = entry.markingScheme;
+        const subtype = formatAssessmentSubtypeLabel(entry.question?.subtype);
+        lines.push(`Question ${entry.questionNumber} (Q${entry.questionNumber})${subtype ? ` [${subtype}]` : ""}`);
+        if (Array.isArray(rubricItem?.criteria) && rubricItem.criteria.length > 0) {
+          rubricItem.criteria.forEach((criterion: any, rubricIdx: number) => {
+            const marksLabel = criterion?.marks != null ? ` (${formatRenderableText(criterion.marks)} marks)` : "";
+            lines.push(`${rubricIdx + 1}. ${formatRenderableText(criterion?.criterion || "")}${marksLabel}`);
+          });
+        } else {
+          lines.push("No rubric provided.");
+        }
+        if (Array.isArray(markingSchemeItem?.awardGuidance) && markingSchemeItem.awardGuidance.length > 0) {
+          lines.push("Award Guidance:");
+          markingSchemeItem.awardGuidance.forEach((guidance: any, guidanceIdx: number) => {
+            lines.push(`${guidanceIdx + 1}. ${formatRenderableText(guidance)}`);
+          });
+        }
+        lines.push("");
+      });
     });
 
-    const longAnswer = Array.isArray(assessment.answerKey.longAnswer) ? assessment.answerKey.longAnswer : [];
-    longAnswer.forEach((item, idx) => {
-      const questionNumber = mcqCount + shortAnswerCount + idx + 1;
-      const subtype = formatAssessmentSubtypeLabel(item.questionSubtype);
-      lines.push(`Question ${questionNumber} (Q${questionNumber})${subtype ? ` [${subtype}]` : ""}`);
-      if (Array.isArray(item.rubric) && item.rubric.length > 0) {
-        item.rubric.forEach((rubricItem, rubricIdx) => lines.push(`${rubricIdx + 1}. ${formatRenderableText(rubricItem)}`));
-      } else {
-        lines.push("No rubric provided.");
-      }
-      lines.push("");
-    });
-
-    if (Array.isArray(assessment.answerKey.generalMarkingGuidance) && assessment.answerKey.generalMarkingGuidance.length > 0) {
+    if (Array.isArray(assessment.evaluation.generalInstructions) && assessment.evaluation.generalInstructions.length > 0) {
       lines.push("General Marking Guidance");
-      assessment.answerKey.generalMarkingGuidance.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
+      assessment.evaluation.generalInstructions.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
+      lines.push("");
+    }
+
+    if (Array.isArray(assessment.evaluation.evaluatorInstructions) && assessment.evaluation.evaluatorInstructions.length > 0) {
+      lines.push("Evaluator Instructions");
+      assessment.evaluation.evaluatorInstructions.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
       lines.push("");
     }
 
@@ -5336,7 +6001,7 @@ export default function App() {
   };
 
   const handleDownloadAssessmentAnswerKey = (session: SessionPlan) => {
-    if (!session.assessment?.answerKey) {
+    if (!session.assessment?.evaluation?.answerKey?.items?.length) {
       setErrorHeader("Generate the assessment first before downloading the answer key.");
       return;
     }
@@ -5345,7 +6010,7 @@ export default function App() {
   };
 
   const handleDownloadAssessmentRubrics = (session: SessionPlan) => {
-    if (!session.assessment?.answerKey) {
+    if (!session.assessment?.evaluation) {
       setErrorHeader("Generate the assessment first before downloading the rubrics.");
       return;
     }
@@ -5918,7 +6583,7 @@ export default function App() {
   const isAssessmentCustomizationDirty = (sessionNum: number, session: SessionPlan | undefined | null) => {
     const customization = getAssessmentCustomization(sessionNum);
     const currentSignature = buildAssessmentCustomizationSignature(customization);
-    const savedSignature = session?.assessment?.assessmentMeta?.requestSignature;
+    const savedSignature = session?.assessment?.meta?.requestSignature;
     if (!session?.assessment) {
       return hasAssessmentSourceContent(session);
     }
@@ -5998,6 +6663,7 @@ export default function App() {
       duration: number;
       learningOutcomes: string[];
       chapterName?: string;
+      sessionKind?: "lesson" | "strand_practice";
       chapterSessionNumber?: number;
       chapterTotalSessions?: number;
     }[] = [];
@@ -6010,7 +6676,7 @@ export default function App() {
         const chapterTotalSessions = Math.max(1, Number(allocation.estimatedSessions || 0));
         for (let chapterSessionNumber = 1; chapterSessionNumber <= chapterTotalSessions; chapterSessionNumber += 1) {
           outline.push({
-            id: `${allocation.chapterName}-${chapterSessionNumber}`,
+            id: allocation.id || `${allocation.chapterName}-${allocation.sequence || globalSessionNumber}-${chapterSessionNumber}`,
             sessionNumber: globalSessionNumber,
             title:
               chapterTotalSessions === 1
@@ -6019,6 +6685,7 @@ export default function App() {
             duration: durationMinutes,
             learningOutcomes: [],
             chapterName: allocation.chapterName,
+            sessionKind: allocation.sessionKind,
             chapterSessionNumber,
             chapterTotalSessions,
           });
@@ -6034,6 +6701,7 @@ export default function App() {
     termName: (allocation.termName || "").trim(),
     termNumber: allocation.termNumber ?? null,
     chapters: (allocation.chapters || []).map((chapter) => chapter.trim()).filter(Boolean),
+    recurringStrands: (allocation.recurringStrands || []).map((strand) => strand.trim()).filter(Boolean),
     marks: Number(allocation.marks || 0),
     reasoning: (allocation.reasoning || "").trim(),
     estimatedSessions: allocation.estimatedSessions ?? null,
@@ -6141,6 +6809,7 @@ export default function App() {
   const normalizeChapterSessionPlanForComparison = (allocation: ChapterSessionPlan) => ({
     id: allocation.id || "",
     chapterName: (allocation.chapterName || "").trim(),
+    sessionKind: allocation.sessionKind || "lesson",
     sequence: allocation.sequence ?? null,
     estimatedSessions: Number(allocation.estimatedSessions || 0),
     estimatedMinutes: Number(allocation.estimatedMinutes || 0),
@@ -6490,6 +7159,12 @@ export default function App() {
       term: matchingRows[0].term,
       unitName: "Whole Term",
       chapters: Array.from(new Set<string>(matchingRows.flatMap((row) => row.chapters as string[]))),
+      recurringStrands: Array.from(new Set<string>(matchingRows.flatMap((row) => row.recurringStrands || []))),
+      recurringStrandDetails: Array.from(
+        new Map(
+          matchingRows.flatMap((row) => (row.recurringStrandDetails || []).map((strand) => [strand.title, strand] as const))
+        ).values()
+      ),
       marks: Number(matchingRows.reduce((sum, row) => sum + row.marks, 0).toFixed(2)),
     });
   }, [activeWorkspace?.sessionAllocation?.selectedTermKey, termsList]);
@@ -6590,35 +7265,55 @@ export default function App() {
       reader.readAsText(file);
     });
 
-  const loadCurriculumFile = async (file: File) => {
+  const extractCurriculumFileText = async (file: File) => {
     const lowerName = file.name.toLowerCase();
+    if (lowerName.endsWith(".pdf")) {
+      console.log(`[Frontend] PDF upload detected for "${file.name}". Converting to markdown before extraction.`);
+      const markdownText = await extractPdfText(file);
+      if (!markdownText.trim()) {
+        throw new Error("No readable text was extracted from the PDF.");
+      }
+      console.log(`[Frontend] PDF "${file.name}" converted to markdown and loaded into curriculum input.`);
+      return markdownText;
+    }
+
+    if (lowerName.endsWith(".txt")) {
+      return readTextFile(file);
+    }
+
+    throw new Error("Only .txt and .pdf curriculum files are supported for extraction right now.");
+  };
+
+  const loadCurriculumFile = async (file: File) => {
+    setErrorHeader(null);
+    resetTamilIndexState();
     setFileName(file.name);
     setFileSizeStr((file.size / 1024).toFixed(1) + " KB");
-    setErrorHeader(null);
 
     try {
-      if (lowerName.endsWith(".pdf")) {
-        console.log(`[Frontend] PDF upload detected for "${file.name}". Converting to markdown before extraction.`);
-        const markdownText = await extractPdfText(file);
-        if (!markdownText.trim()) {
-          throw new Error("No readable text was extracted from the PDF.");
-        }
-        console.log(`[Frontend] PDF "${file.name}" converted to markdown and loaded into curriculum input.`);
-        setInputText(markdownText);
-        return;
-      }
-
-      if (lowerName.endsWith(".txt")) {
-        const text = await readTextFile(file);
-        setInputText(text);
-        return;
-      }
-
-      throw new Error("Only .txt and .pdf curriculum files are supported for extraction right now.");
+      const text = await extractCurriculumFileText(file);
+      setInputText(text);
     } catch (error: any) {
       console.error("[Frontend] File extraction failed", error);
       setInputText("");
       setErrorHeader(error.message || "Unable to extract readable text from the selected file.");
+    }
+  };
+
+  const loadTamilIndexFile = async (file: File) => {
+    setErrorHeader(null);
+
+    try {
+      const text = await extractCurriculumFileText(file);
+      setTamilIndexFileName(file.name);
+      setTamilIndexFileSizeStr((file.size / 1024).toFixed(1) + " KB");
+      setTamilIndexText(text);
+    } catch (error: any) {
+      console.error("[Frontend] Tamil index extraction failed", error);
+      setTamilIndexFileName("");
+      setTamilIndexFileSizeStr("");
+      setTamilIndexText("");
+      setErrorHeader(error.message || "Unable to extract readable text from the Tamil textbook index file.");
     }
   };
 
@@ -6651,6 +7346,12 @@ export default function App() {
     }
   };
 
+  const handleTamilIndexFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      void loadTamilIndexFile(e.target.files[0]);
+    }
+  };
+
   /**
    * Extract / Analyze text via backend API
    */
@@ -6674,33 +7375,19 @@ export default function App() {
 
     try {
       const classOptions = await detectCurriculumClassOptions();
-      const classSummaries = Array.isArray(classOptions.detectedClasses)
-        ? classOptions.detectedClasses as CurriculumClassSummary[]
-        : [];
+      setDetectedCurriculumSubject(classOptions.detectedSubject || "");
+      setRequiresTamilIndex(Boolean(classOptions.requiresTamilIndex));
 
-      if (classOptions.requiresClassSelection && classSummaries.length > 1) {
-        setPendingCurriculumSelection({
-          classSummaries,
+      if (classOptions.requiresTamilIndex && !tamilIndexText.trim()) {
+        setPendingTamilIndexPreflight({
+          requestId,
+          result: classOptions,
         });
-        setSelectedClassNamesToStore(classSummaries.map((item) => item.className));
+        setShowTamilIndexModal(true);
         return;
       }
 
-      setLoadingMessage("Parsing only the selected class curriculum and building the planning workspace...");
-      const saveData = await runCurriculumExtraction(
-        requestId,
-        classSummaries.length ? classSummaries.map((item) => item.className) : []
-      );
-      setCurrentCurriculumId(saveData.curriculumId || "");
-      setExtractedData(saveData.curriculum?.extractedCurriculum || saveData.curriculum || null);
-      setEditingJsonText("");
-      if (saveData.curriculumId) {
-        localStorage.setItem(LAST_CURRICULUM_ID_KEY, saveData.curriculumId);
-      }
-      if (saveData.workspaceId && saveData.workspace) {
-        syncWorkspaceState(saveData.workspace as PlanningWorkspace);
-      }
-      await fetchSavedCurriculums();
+      await continueCurriculumAnalysisAfterPreflight(requestId, classOptions);
     } catch (err: any) {
       console.error(`[Frontend][${requestId}] Analyze curriculum failed`, err);
       setErrorHeader(err.message || "An exception occurred while building the curriculum framework.");
@@ -6721,24 +7408,38 @@ export default function App() {
     setLoadingMessage("Parsing only the selected class curriculum and preparing the planning workspace...");
     try {
       const requestId = `frontend-analyze-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-      const data = await runCurriculumExtraction(
-        requestId,
-        selectedClassNamesToStore
-      );
-      setCurrentCurriculumId(data.curriculumId || "");
-      setExtractedData(data.curriculum?.extractedCurriculum || data.curriculum || null);
-      setEditingJsonText("");
-      if (data.curriculumId) {
-        localStorage.setItem(LAST_CURRICULUM_ID_KEY, data.curriculumId);
-      }
-      if (data.workspaceId && data.workspace) {
-        syncWorkspaceState(data.workspace as PlanningWorkspace);
-      }
+      const data = await runCurriculumExtraction(requestId, selectedClassNamesToStore);
+      applyAnalyzedCurriculum(data);
       closePendingCurriculumSelection();
       await fetchSavedCurriculums();
     } catch (err: any) {
       console.error("[Frontend] Save selected classes failed", err);
       setErrorHeader(err.message || "Unable to save the selected classes.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResumeTamilCurriculumAnalysis = async () => {
+    if (!pendingTamilIndexPreflight) return;
+    if (!tamilIndexText.trim()) {
+      setErrorHeader("Upload the Tamil textbook index before continuing.");
+      return;
+    }
+
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Resuming Tamil curriculum analysis with the textbook index...");
+    try {
+      const { requestId, result } = pendingTamilIndexPreflight;
+      setShowTamilIndexModal(false);
+      setPendingTamilIndexPreflight(null);
+      setDetectedCurriculumSubject(result.detectedSubject || "");
+      setRequiresTamilIndex(Boolean(result.requiresTamilIndex));
+      await continueCurriculumAnalysisAfterPreflight(requestId, result);
+    } catch (error: any) {
+      console.error("[Frontend] Resume Tamil curriculum analysis failed", error);
+      setErrorHeader(error.message || "Unable to continue Tamil curriculum analysis.");
     } finally {
       setLoading(false);
     }
@@ -7296,6 +7997,7 @@ export default function App() {
             chapterCount: selectedTermRow.chapters.length,
             marks: selectedTermRow.marks,
             totalRows: (savedTermAllocations || []).filter((allocation) => getAllocationTermKey(allocation) === getSelectedTermKey(selectedTermRow)).length,
+            recurringStrands: selectedTermRow.recurringStrands || [],
           },
           allocations: sessionAllocationDraft.map((allocation, index) => ({
             ...allocation,
@@ -7823,6 +8525,82 @@ export default function App() {
               </h3>
               <p className="text-sm text-[#586A71] leading-relaxed font-medium">{loadingMessage}</p>
               <div className="mt-4 text-[10px] text-slate-400 italic">LMS curriculum engine runs automatically in real-time...</div>
+            </div>
+          </div>
+        )}
+
+        {showTamilIndexModal && !loading && (
+          <div className="fixed inset-0 z-40 bg-[#2B3437]/45 backdrop-blur-xs flex items-center justify-center p-4 no-print">
+            <div className="w-full max-w-2xl rounded-[28px] border-2 border-slate-200 bg-white shadow-2xl overflow-hidden">
+              <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#36ADAA]">Tamil Curriculum</div>
+                  <h3 className="mt-1 text-xl font-display font-black text-slate-900">Upload The Textbook Index</h3>
+                  <p className="mt-2 text-sm text-slate-600 max-w-xl">
+                    Tamil curriculum parsing needs the textbook index as a second source document so the extraction can preserve the official instructional sequence.
+                  </p>
+                </div>
+                <button
+                  onClick={closeTamilIndexModal}
+                  className="shrink-0 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                  aria-label="Close Tamil index upload"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="px-6 py-5 space-y-4">
+                <input
+                  ref={tamilIndexFileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept=".txt,.pdf"
+                  onChange={handleTamilIndexFileSelect}
+                />
+
+                <button
+                  onClick={() => tamilIndexFileInputRef.current?.click()}
+                  className="w-full rounded-3xl border-2 border-dashed border-slate-200 px-6 py-8 text-center transition hover:border-[#36ADAA] hover:bg-slate-50"
+                >
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#9FCDD2]/25">
+                    <BookOpen className="h-6 w-6 text-[#36ADAA]" />
+                  </div>
+                  <div className="text-sm font-semibold text-slate-700">Choose Tamil textbook index file</div>
+                  <div className="mt-1 text-xs text-slate-400">Supports `.txt` and `.pdf` files converted into extraction text.</div>
+                </button>
+
+                {tamilIndexFileName && (
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    <div className="font-bold text-slate-800">{tamilIndexFileName}</div>
+                    <div className="mt-1 text-xs text-slate-500">{tamilIndexFileSizeStr || "Ready for parsing"}</div>
+                  </div>
+                )}
+
+                <div className="rounded-2xl bg-amber-50 px-4 py-3 text-xs font-medium text-amber-800">
+                  We’ll continue the same analysis flow after this upload. Class selection, if needed, still appears after the index is accepted.
+                </div>
+              </div>
+
+              <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50">
+                <p className="text-xs text-slate-500">
+                  Required because the detected subject is <span className="font-bold text-slate-700">{detectedCurriculumSubject || (requiresTamilIndex ? "Tamil" : "curriculum")}</span>.
+                </p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={closeTamilIndexModal}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => void handleResumeTamilCurriculumAnalysis()}
+                    disabled={!tamilIndexText.trim()}
+                    className="rounded-2xl bg-[#36ADAA] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#2f9895] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Continue Analysis
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -9599,7 +10377,7 @@ export default function App() {
                     <div>
                       <div className="text-xs font-bold text-[#586A71]">Manual Planning Layer</div>
                       <h3 className="text-xl font-display font-extrabold text-slate-800">Editable Term Allocations</h3>
-                      <p className="text-xs text-slate-500">Adjust allocation rows inside each term before you save the course plan.</p>
+                      <p className="text-xs text-slate-500">Adjust lesson allocations and recurring strand summaries inside each term before you save the course plan.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <button onClick={handleAddManualTermAllocation} className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"><Layers className="w-3.5 h-3.5" />Add Term</button>
@@ -9629,6 +10407,7 @@ export default function App() {
                             <label className="space-y-1 xl:col-span-1"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Estimated Sessions</span><input type="number" min={0} value={allocation.estimatedSessions ?? ""} onChange={(e) => updateCoursePlanDraft(index, "estimatedSessions", e.target.value ? Number(e.target.value) : null)} className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" /></label>
                           </div>
                           <label className="space-y-1 block"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Chapters</span><textarea value={stringifyMultilineList(allocation.chapters)} onChange={(e) => updateCoursePlanDraft(index, "chapters", parseMultilineList(e.target.value))} className="min-h-24 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder={"One chapter per line\nNumber Systems\nPolynomials"} /></label>
+                          <label className="space-y-1 block"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Recurring Strands</span><textarea value={stringifyMultilineList(allocation.recurringStrands)} onChange={(e) => updateCoursePlanDraft(index, "recurringStrands", parseMultilineList(e.target.value))} className="min-h-16 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder={"One recurring strand per line\nReading Skills\nGrammar"} /></label>
                           <label className="space-y-1 block"><span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Reasoning</span><textarea value={allocation.reasoning || ""} onChange={(e) => updateCoursePlanDraft(index, "reasoning", e.target.value)} className="min-h-20 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" placeholder="Why this term grouping works for teaching flow, assessments, and calendar constraints." /></label>
                         </div>
                       ))}
@@ -9641,7 +10420,7 @@ export default function App() {
                     <div>
                       <div className="text-xs font-bold text-[#586A71]">Term Selection</div>
                       <h3 className="text-xl font-display font-extrabold text-slate-800">Choose The Active Term For Session Planning</h3>
-                      <p className="text-xs text-slate-500">Select one term from the current allocation plan to carry into Session Planning.</p>
+                      <p className="text-xs text-slate-500">Select one term from the current allocation plan to carry into Session Planning, including any recurring English strands assigned to that term.</p>
                     </div>
                     <div className="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Marks</div><div className="mt-1 text-lg font-display font-black text-slate-800">{termDivisionStats.totalMarks}</div></div>
                   </div>
@@ -9675,6 +10454,16 @@ export default function App() {
                                             <span key={`${summaryRow.id}-${chapterIndex}`} className="rounded bg-[#9FCDD2]/20 px-2 py-0.5 text-[10px] text-[#2B3437]">{chapter}</span>
                                           ))}
                                         </div>
+                                        {Boolean(summaryRow.recurringStrands?.length) && (
+                                          <div className="space-y-1">
+                                            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Recurring Strands</div>
+                                            <div className="flex flex-wrap gap-1">
+                                              {(summaryRow.recurringStrands || []).map((strand, strandIndex) => (
+                                                <span key={`${summaryRow.id}-strand-${strandIndex}`} className="rounded-full border border-[#36ADAA]/20 bg-[#36ADAA]/8 px-2 py-0.5 text-[10px] font-semibold text-[#2B3437]">{strand}</span>
+                                              ))}
+                                            </div>
+                                          </div>
+                                        )}
                                       </div>
                                       <div className="text-xs font-bold text-[#DE8431]">{totalMarks} marks</div>
                                     </div>
@@ -9697,6 +10486,16 @@ export default function App() {
                           <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${coursePlanApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{coursePlanApproved ? "Phase 3 Unlocked" : "Waiting For Phase 2 Approval"}</span>
                               </div>
                               <p className="text-xs font-semibold text-slate-500">{selectedTermRow.chapters.length} chapter{selectedTermRow.chapters.length === 1 ? "" : "s"} selected with {selectedTermRow.marks} marks across this term.</p>
+                              {Boolean(selectedTermRow.recurringStrands?.length) && (
+                                <div className="space-y-1">
+                                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Recurring English Strands</div>
+                                  <div className="flex flex-wrap gap-1">
+                                    {(selectedTermRow.recurringStrands || []).map((strand, strandIndex) => (
+                                      <span key={`selected-term-strand-${strandIndex}`} className="rounded-full border border-[#36ADAA]/20 bg-white px-2 py-0.5 text-[10px] font-semibold text-[#2B3437]">{strand}</span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                           <p className="text-xs text-slate-400">{coursePlanApproved ? "Open Phase 3 to save teaching strategy, generate chapter session allocations, and approve the session plan." : "Approve the course plan using the single Phase 2 approval action above, then continue into Session Planning."}</p>
                         </div>
                       </div>
@@ -9934,7 +10733,7 @@ export default function App() {
                       </button>
                       <button onClick={handleRecommendSessionAllocation} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#36ADAA] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#36ADAA]/90">
                         <Sparkles className="w-3.5 h-3.5" />
-                        Generate Chapter Allocation
+                        Generate Session Allocation
                       </button>
                     </div>
                   </div>
@@ -9985,7 +10784,7 @@ export default function App() {
                     {(sessionStrategyDirty || sessionAllocationDraftDirty || !sessionAllocationValidation.valid) && (
                       <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800 space-y-1">
                         {sessionStrategyDirty && <div className="font-semibold">Session setup has unsaved changes.</div>}
-                        {sessionAllocationDraftDirty && <div className="font-semibold">Chapter allocations have unsaved edits.</div>}
+                        {sessionAllocationDraftDirty && <div className="font-semibold">Session allocations have unsaved edits.</div>}
                         {!sessionAllocationValidation.valid && <div>{sessionAllocationValidation.issues[0]}</div>}
                       </div>
                     )}
@@ -10012,7 +10811,7 @@ export default function App() {
                     <div className="flex flex-wrap gap-2">
                       <button onClick={handleSaveSessionAllocation} disabled={sessionAllocationDraft.length === 0 || !sessionAllocationValidation.valid} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${sessionAllocationDraft.length === 0 || !sessionAllocationValidation.valid ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"}`}>
                         <CheckSquare className="w-3.5 h-3.5" />
-                        Save Chapter Allocation
+                        Save Session Allocation
                       </button>
                       <button onClick={handleApproveSessionAllocation} disabled={savedSessionAllocations.length === 0 || sessionStrategyDirty || sessionAllocationDraftDirty || !sessionAllocationValidation.valid || sessionPlanApproved} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${savedSessionAllocations.length === 0 || sessionStrategyDirty || sessionAllocationDraftDirty || !sessionAllocationValidation.valid || sessionPlanApproved ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"}`}>
                         <CheckCircle2 className="w-3.5 h-3.5" />
@@ -10034,8 +10833,8 @@ export default function App() {
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <div className="text-xs font-bold text-[#586A71]">Band B</div>
-                      <h3 className="text-xl font-display font-extrabold text-slate-800">Chapter Session Allocation</h3>
-                      <p className="text-xs text-slate-500">Generate or edit integer session counts for each chapter in the approved term.</p>
+                      <h3 className="text-xl font-display font-extrabold text-slate-800">Session Allocation</h3>
+                      <p className="text-xs text-slate-500">Generate or edit ordered lesson and practice sessions for the approved term.</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <button onClick={handleResetSessionAllocationToRecommendations} disabled={recommendedSessionAllocations.length === 0} className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${recommendedSessionAllocations.length === 0 ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400" : "border border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]"}`}>
@@ -10047,7 +10846,7 @@ export default function App() {
 
                   {sessionAllocationDraft.length === 0 ? (
                     <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500">
-                      Save the Phase 3 setup, then generate chapter-level session recommendations for the selected term.
+                      Save the Phase 3 setup, then generate session recommendations for the selected term.
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -10058,7 +10857,12 @@ export default function App() {
                           <div key={allocation.id || `${allocation.chapterName}-${index}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-3">
                             <div className="flex flex-wrap items-center justify-between gap-3">
                               <div>
-                                <div className="text-sm font-display font-black text-slate-800">{allocation.chapterName}</div>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <div className="text-sm font-display font-black text-slate-800">{allocation.chapterName}</div>
+                                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${allocation.sessionKind === "strand_practice" ? "border border-[#36ADAA]/20 bg-[#36ADAA]/10 text-[#2B3437]" : "border border-slate-200 bg-white text-slate-500"}`}>
+                                    {allocation.sessionKind === "strand_practice" ? "Practice" : "Lesson"}
+                                  </span>
+                                </div>
                                 <div className="text-[11px] font-semibold text-slate-500">Sequence {allocation.sequence || index + 1}</div>
                               </div>
                               <div className="text-xs font-semibold text-slate-500">{allocation.estimatedMinutes || 0} minutes</div>
@@ -10066,7 +10870,7 @@ export default function App() {
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                               <label className="space-y-1">
-                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Chapter</span>
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{allocation.sessionKind === "strand_practice" ? "Practice Session" : "Lesson / Chapter"}</span>
                                 <input value={allocation.chapterName || ""} onChange={(e) => updateSessionAllocationDraft(index, "chapterName", e.target.value)} className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none" />
                               </label>
                               <label className="space-y-1">
@@ -10263,7 +11067,7 @@ export default function App() {
                             Boolean(generatedSessions[item.sessionNumber]);
                           return (
                             <option key={item.id} value={item.sessionNumber}>
-                              {`Session ${item.sessionNumber} • ${item.title} • ${hasDeepData ? "Ready" : "Pending"}`}
+                              {`Session ${item.sessionNumber} • ${item.title} • ${item.sessionKind === "strand_practice" ? "Practice" : "Lesson"} • ${hasDeepData ? "Ready" : "Pending"}`}
                             </option>
                           );
                         })}
@@ -10301,8 +11105,7 @@ export default function App() {
                       chapterTotalSessions?: number;
                     };
                     const activeAssessmentCustomization = getAssessmentCustomization(activeSessionNumber);
-                    const assessmentMcqCount = Array.isArray(session.assessment?.mcq) ? session.assessment!.mcq!.length : 0;
-                    const assessmentShortAnswerCount = Array.isArray(session.assessment?.shortAnswer) ? session.assessment!.shortAnswer!.length : 0;
+                    const assessmentSectionGroups = buildAssessmentSectionGroups(session.assessment);
                     return (
                       <div className="min-w-0 bg-white border-2 border-slate-100 rounded-3xl overflow-hidden shadow-xs space-y-6">
                         
@@ -11413,70 +12216,70 @@ export default function App() {
                                     </div>
                                   </div>
 
-                                  {(session.assessment.assessmentMeta || session.assessment.blueprint) && (
+                                  {(session.assessment.meta || session.assessment.blueprint || session.assessment.paper) && (
                                     <div className="space-y-4">
-                                      {session.assessment.assessmentMeta && (
+                                      {session.assessment.meta && (
                                         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-3">
-                                          {session.assessment.assessmentMeta.assessmentType && (
+                                          {session.assessment.meta.assessmentType && (
                                             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
                                               <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Assessment Type</div>
-                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.assessmentType)}</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.meta.assessmentType)}</div>
                                             </div>
                                           )}
-                                          {session.assessment.assessmentMeta.totalMarks != null && (
+                                          {session.assessment.meta.totalMarks != null && (
                                             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
                                               <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total Marks</div>
-                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.totalMarks)}</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.meta.totalMarks)}</div>
                                             </div>
                                           )}
-                                          {session.assessment.assessmentMeta.totalQuestions != null && (
+                                          {session.assessment.meta.totalQuestions != null && (
                                             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
                                               <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Total Questions</div>
-                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.totalQuestions)}</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.meta.totalQuestions)}</div>
                                             </div>
                                           )}
-                                          {session.assessment.assessmentMeta.durationMinutes != null && (
+                                          {session.assessment.meta.durationMinutes != null && (
                                             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
                                               <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Duration</div>
-                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.durationMinutes)} min</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.meta.durationMinutes)} min</div>
                                             </div>
                                           )}
-                                          {session.assessment.assessmentMeta.preferredDifficulty && (
+                                          {session.assessment.meta.preferredDifficulty && (
                                             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
                                               <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Difficulty</div>
-                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.preferredDifficulty)}</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.meta.preferredDifficulty)}</div>
                                             </div>
                                           )}
-                                          {session.assessment.assessmentMeta.language && (
+                                          {session.assessment.meta.language && (
                                             <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
                                               <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Language</div>
-                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.assessmentMeta.language)}</div>
+                                              <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(session.assessment.meta.language)}</div>
                                             </div>
                                           )}
                                         </div>
                                       )}
 
-                                      {!!session.assessment.assessmentMeta?.instructions?.length && (
+                                      {!!session.assessment.paper?.instructions?.length && (
                                           <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                                            <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Assessment Instructions</div>
-                                          {renderRichList(session.assessment.assessmentMeta.instructions, { className: "text-xs text-slate-700 list-disc list-inside space-y-1" })}
+                                            <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Student Instructions</div>
+                                          {renderAssessmentRichList(session.assessment.paper.instructions, { className: "text-sm text-slate-700 list-disc list-inside space-y-2" })}
                                         </div>
                                       )}
 
-                                      {session.assessment.assessmentMeta?.paperObjective && (
+                                      {session.assessment.meta?.paperObjective && (
                                         <div className="rounded-2xl border border-slate-200 bg-white p-4">
                                           <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Paper Objective</div>
                                           <p className="text-xs text-slate-700 leading-relaxed">
-                                            {renderMixedMathLine(session.assessment.assessmentMeta.paperObjective)}
+                                            {renderMixedMathLine(session.assessment.meta.paperObjective)}
                                           </p>
                                         </div>
                                       )}
 
-                                      {!!session.assessment.assessmentMeta?.requestedQuestionTypes?.length && (
+                                      {!!session.assessment.meta?.requestedQuestionTypes?.length && (
                                         <div className="rounded-2xl border border-slate-200 bg-white p-4">
                                           <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Requested Paper Pattern</div>
                                           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
-                                            {session.assessment.assessmentMeta.requestedQuestionTypes.map((item, idx) => (
+                                            {session.assessment.meta.requestedQuestionTypes.map((item, idx) => (
                                               <div key={idx} className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
                                                 <span className="font-semibold text-slate-800">{formatRenderableText(item.label || formatAssessmentSubtypeLabel(item.type))}</span>
                                                 {" • "}
@@ -11486,6 +12289,25 @@ export default function App() {
                                               </div>
                                             ))}
                                           </div>
+                                        </div>
+                                      )}
+
+                                      {!!session.assessment.sessionAnalysis?.assessedConcepts?.length && (
+                                        <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+                                          <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Session Analysis</div>
+                                          <div className="flex flex-wrap gap-2">
+                                            {session.assessment.sessionAnalysis.assessedConcepts.map((item, idx) => (
+                                              <span key={idx} className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                                                {formatRenderableText(item)}
+                                              </span>
+                                            ))}
+                                          </div>
+                                          {!!session.assessment.sessionAnalysis.misconceptionTargets?.length && (
+                                            <div className="text-xs text-slate-600">
+                                              <span className="font-bold text-slate-800">Misconception Targets:</span>{" "}
+                                              {session.assessment.sessionAnalysis.misconceptionTargets.map((item) => formatRenderableText(item)).join(" • ")}
+                                            </div>
+                                          )}
                                         </div>
                                       )}
 
@@ -11506,7 +12328,48 @@ export default function App() {
                                           )}
 
                                           <div className="grid grid-cols-1 gap-4">
-                                            {(session.assessment.blueprint.difficultyDistribution || session.assessment.blueprint.bloomsDistribution || session.assessment.blueprint.questionDistribution) && (
+                                            {!!session.assessment.blueprint.conceptDistribution?.length && (
+                                              <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                                <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Concept Distribution</div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                  {session.assessment.blueprint.conceptDistribution.map((item, idx) => (
+                                                    <div key={idx} className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700 space-y-1">
+                                                      <div className="font-semibold text-slate-800">{renderMixedMathLine(item.concept)}</div>
+                                                      {!!item.questionRefs?.length && (
+                                                        <div className="text-slate-500">Questions: {item.questionRefs.map((ref) => formatRenderableText(ref)).join(", ")}</div>
+                                                      )}
+                                                      {item.competency && <div className="text-slate-500">Competency: {renderMixedMathLine(item.competency)}</div>}
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            )}
+
+                                            {!!session.assessment.blueprint.sectionPlan?.length && (
+                                              <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
+                                                <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Section Plan</div>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                  {session.assessment.blueprint.sectionPlan.map((item, idx) => (
+                                                    <div key={idx} className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700 space-y-1">
+                                                      <div className="font-semibold text-slate-800">{renderMixedMathLine(item.title)}</div>
+                                                      <div>
+                                                        {formatRenderableText(item.questionCount || 0)} questions
+                                                        {" • "}
+                                                        {formatRenderableText(item.marks || 0)} marks
+                                                      </div>
+                                                      {!!item.questionRefs?.length && (
+                                                        <div className="text-slate-500">Questions: {item.questionRefs.map((ref) => formatRenderableText(ref)).join(", ")}</div>
+                                                      )}
+                                                      {item.focus && (
+                                                        <div className="text-slate-500">{renderMixedMathLine(item.focus)}</div>
+                                                      )}
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            )}
+
+                                            {(session.assessment.blueprint.difficultyDistribution || session.assessment.blueprint.bloomsDistribution || session.assessment.blueprint.questionDistribution || session.assessment.blueprint.competencyDistribution) && (
                                               <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
                                                 <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Blueprint Summary</div>
                                                 {session.assessment.blueprint.difficultyDistribution && (
@@ -11524,6 +12387,15 @@ export default function App() {
                                                     {Object.entries(session.assessment.blueprint.bloomsDistribution)
                                                       .filter(([, value]) => value != null)
                                                       .map(([key, value]) => `${key} ${formatRenderableText(value)}%`)
+                                                      .join(" • ")}
+                                                  </div>
+                                                )}
+                                                {session.assessment.blueprint.competencyDistribution && (
+                                                  <div className="text-xs text-slate-700">
+                                                    <span className="font-bold text-slate-800">Competencies:</span>{" "}
+                                                    {Object.entries(session.assessment.blueprint.competencyDistribution)
+                                                      .filter(([, value]) => value != null)
+                                                      .map(([key, value]) => `${key} ${formatRenderableText(value)}`)
                                                       .join(" • ")}
                                                   </div>
                                                 )}
@@ -11559,131 +12431,139 @@ export default function App() {
                                   )}
 
                                   <div className="space-y-6">
-                                    {!!session.assessment.mcq?.length && (
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                                        <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                                          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">MCQ</span>
-                                          <div className="space-y-3">
-                                            {session.assessment.mcq.map((q, idx) => (
-                                              <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
-                                                <p className="font-extrabold pb-1">{`Q${idx + 1}`}. ({q.marks || 1} mark)</p>
-                                                <p className="leading-relaxed">{renderMixedMathLine(q.question)}</p>
-                                                {q.questionSubtype && (
-                                                  <p className="mt-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
-                                                )}
-                                                {(q.difficulty || q.bloomsLevel) && (
-                                                  <p className="mt-1 text-slate-500">
-                                                    {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
-                                                  </p>
-                                                )}
-                                                {renderRichList(q.options, { className: "mt-2 list-disc list-inside space-y-1 text-slate-600" })}
-                                              </div>
-                                            ))}
+                                    {assessmentSectionGroups.map((group) => (
+                                      <div key={group.id} className="space-y-4 rounded-3xl border border-slate-200 bg-white p-4">
+                                        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                                          <div>
+                                            <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Assessment Section</div>
+                                            <div className="mt-1 text-lg font-display font-black text-slate-800">{group.title}</div>
+                                          </div>
+                                          <div className="flex flex-wrap gap-2 text-xs">
+                                            <span className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">{group.questionCount} questions</span>
+                                            <span className="rounded-full bg-sky-50 px-3 py-1 font-semibold text-sky-700">{group.marks} marks</span>
                                           </div>
                                         </div>
-                                        <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
-                                          <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">MCQ Answer Key</span>
-                                          <div className="space-y-3">
-                                            {(Array.isArray(session.assessment.answerKey?.mcq) ? session.assessment.answerKey.mcq : []).map((ans, idx) => (
-                                              <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
-                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{idx + 1}</p>
-                                                <p className="leading-relaxed font-mono">{renderMixedMathLine(ans.answer)}</p>
-                                                {ans.explanation && <p className="leading-relaxed mt-1">{renderMixedMathLine(ans.explanation)}</p>}
-                                              </div>
-                                            ))}
+
+                                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 items-start">
+                                          <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                                            <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">Questions</span>
+                                            <div className="space-y-3">
+                                              {group.entries.map((entry: any) => (
+                                                <div key={`${group.id}-question-${entry.questionNumber}`} className="min-w-0 overflow-hidden p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
+                                                  <p className="font-extrabold pb-1">{`Q${entry.questionNumber}`}. ({entry.question?.marks || 0} marks)</p>
+                                                  {entry.question?.subtype && (
+                                                    <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(entry.question.subtype)}</p>
+                                                  )}
+                                                  <div className="min-w-0 overflow-x-auto">{renderAssessmentMathLine(entry.question?.prompt)}</div>
+                                                  {entry.question?.expectedLength && (
+                                                    <div className="mt-2 min-w-0 overflow-x-auto text-slate-500">
+                                                      <div className="font-semibold text-slate-600">Expected depth</div>
+                                                      <div className="mt-1">{renderAssessmentMathLine(entry.question.expectedLength)}</div>
+                                                    </div>
+                                                  )}
+                                                  {(entry.question?.difficulty || entry.question?.bloomsLevel) && (
+                                                    <p className="mt-1 text-slate-500">
+                                                      {[
+                                                        entry.question?.difficulty ? `Difficulty: ${formatRenderableText(entry.question.difficulty)}` : "",
+                                                        entry.question?.bloomsLevel ? `Bloom's: ${formatRenderableText(entry.question.bloomsLevel)}` : "",
+                                                      ].filter(Boolean).join(" • ")}
+                                                    </p>
+                                                  )}
+                                                  {!!entry.question?.learningOutcomeRefs?.length && (
+                                                    <div className="mt-2 text-slate-500">
+                                                      <span className="font-semibold text-slate-600">Outcomes:</span> {entry.question.learningOutcomeRefs.map((item: any) => formatRenderableText(item)).join(", ")}
+                                                    </div>
+                                                  )}
+                                                  {!!entry.question?.conceptRefs?.length && (
+                                                    <div className="mt-1 text-slate-500">
+                                                      <span className="font-semibold text-slate-600">Concepts:</span> {entry.question.conceptRefs.map((item: any) => formatRenderableText(item)).join(", ")}
+                                                    </div>
+                                                  )}
+                                                  {entry.question?.type === "mcq" && renderAssessmentRichList(entry.question?.options || [], { className: "mt-3 list-disc list-inside space-y-2 text-slate-700" })}
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </div>
+
+                                          <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
+                                            <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">Evaluation Package</span>
+                                            <div className="space-y-3">
+                                              {group.entries.map((entry: any) => (
+                                                <div key={`${group.id}-answer-${entry.questionNumber}`} className="min-w-0 overflow-hidden p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
+                                                  <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{entry.questionNumber}</p>
+                                                  {entry.answerKey?.subtype && (
+                                                    <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(entry.answerKey.subtype)}</p>
+                                                  )}
+                                                  <div className="min-w-0 overflow-x-auto">{renderAssessmentMathLine(entry.answerKey?.answer || "Answer not provided")}</div>
+                                                  {entry.answerKey?.explanation && (
+                                                    <div className="mt-2 min-w-0 overflow-x-auto">
+                                                      <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Explanation</div>
+                                                      <div className="mt-1">{renderAssessmentMathLine(entry.answerKey.explanation)}</div>
+                                                    </div>
+                                                  )}
+                                                  {!!entry.markingScheme?.markBreakdown?.length && (
+                                                    <div className="mt-3 space-y-2">
+                                                      <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Marking Scheme</div>
+                                                      {entry.markingScheme.markBreakdown.map((item: any, idx: number) => (
+                                                        <div key={idx} className="rounded-lg bg-slate-50/70 px-2.5 py-2 text-slate-600">
+                                                          <div className="flex items-start justify-between gap-3">
+                                                            <span className="font-medium text-slate-500">{idx + 1}.</span>
+                                                            {item?.marks != null && <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-500">{formatRenderableText(item.marks)} marks</span>}
+                                                          </div>
+                                                          <div className="mt-1">{renderAssessmentMathLine(item?.criterion || "")}</div>
+                                                        </div>
+                                                      ))}
+                                                    </div>
+                                                  )}
+                                                  {!!entry.rubric?.criteria?.length && (
+                                                    <div className="mt-3 space-y-2">
+                                                      <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Rubric</div>
+                                                      {entry.rubric.criteria.map((item: any, idx: number) => (
+                                                        <div key={idx} className="rounded-lg bg-slate-50/70 px-2.5 py-2 text-slate-600">
+                                                          <div className="flex items-start justify-between gap-3">
+                                                            <span className="font-medium text-slate-500">{idx + 1}.</span>
+                                                            {item?.marks != null && <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-500">{formatRenderableText(item.marks)} marks</span>}
+                                                          </div>
+                                                          <div className="mt-1">{renderAssessmentMathLine(item?.criterion || "")}</div>
+                                                        </div>
+                                                      ))}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              ))}
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    )}
+                                    ))}
 
-                                    {!!session.assessment.shortAnswer?.length && (
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                                        <div className="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                                          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">Short Answer Questions</span>
-                                          <div className="space-y-3">
-                                            {session.assessment.shortAnswer.map((q, idx) => (
-                                              <div key={idx} className="p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
-                                                <p className="font-extrabold pb-1">{`Q${assessmentMcqCount + idx + 1}`}. ({q.marks || 2} marks)</p>
-                                                {q.questionSubtype && (
-                                                  <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
-                                                )}
-                                                <p className="leading-relaxed">{renderMixedMathLine(q.question)}</p>
-                                                {q.expectedLength && <p className="mt-1 text-slate-500">Expected depth: {renderMixedMathLine(q.expectedLength)}</p>}
-                                                {(q.difficulty || q.bloomsLevel) && (
-                                                  <p className="mt-1 text-slate-500">
-                                                    {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
-                                                  </p>
-                                                )}
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                        <div className="space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20">
-                                          <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">Short Answer Key & Rubric</span>
-                                          <div className="space-y-3">
-                                            {(Array.isArray(session.assessment.answerKey?.shortAnswer) ? session.assessment.answerKey.shortAnswer : []).map((ans, idx) => (
-                                              <div key={idx} className="p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
-                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{assessmentMcqCount + idx + 1}</p>
-                                                {ans.questionSubtype && (
-                                                  <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(ans.questionSubtype)}</p>
-                                                )}
-                                                <p className="leading-relaxed">{renderMixedMathLine(ans.answer)}</p>
-                                                {!!ans.rubric?.length && (
-                                                  renderRichList(ans.rubric, { className: "mt-2 list-disc list-inside space-y-1 text-slate-600" })
-                                                )}
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {!!session.assessment.longAnswer?.length && (
-                                      <div className="grid grid-cols-1 gap-6 items-start md:grid-cols-2">
-                                        <div className="min-w-0 space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200 overflow-hidden">
-                                          <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block pb-1 border-b border-slate-200">Long Answer Questions</span>
-                                          <div className="space-y-3">
-                                            {session.assessment.longAnswer.map((q, idx) => (
-                                              <div key={idx} className="min-w-0 overflow-hidden p-3 bg-white rounded-xl border border-slate-100 text-xs text-slate-700">
-                                                <p className="font-extrabold pb-1">{`Q${assessmentMcqCount + assessmentShortAnswerCount + idx + 1}`}. ({q.marks || 5} marks)</p>
-                                                {q.questionSubtype && (
-                                                  <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(q.questionSubtype)}</p>
-                                                )}
-                                                <div className="min-w-0 overflow-x-auto leading-relaxed">{renderMixedMathLine(q.question)}</div>
-                                                {q.expectedLength && <div className="mt-1 min-w-0 overflow-x-auto text-slate-500">Expected depth: {renderMixedMathLine(q.expectedLength)}</div>}
-                                                {(q.difficulty || q.bloomsLevel) && (
-                                                  <p className="mt-1 text-slate-500">
-                                                    {[q.difficulty ? `Difficulty: ${formatRenderableText(q.difficulty)}` : "", q.bloomsLevel ? `Bloom's: ${formatRenderableText(q.bloomsLevel)}` : ""].filter(Boolean).join(" • ")}
-                                                  </p>
-                                                )}
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                        <div className="min-w-0 space-y-3 bg-[#3CC583]/5 p-4 rounded-2xl border border-[#3CC583]/20 overflow-hidden">
-                                          <span className="text-[10px] font-extrabold text-[#3CC583] uppercase tracking-widest block pb-1 border-b border-[#3CC583]/20">Long Answer Key & Rubric</span>
-                                          <div className="space-y-3">
-                                            {(Array.isArray(session.assessment.answerKey?.longAnswer) ? session.assessment.answerKey.longAnswer : []).map((ans, idx) => (
-                                              <div key={idx} className="min-w-0 overflow-hidden p-3 bg-white rounded-xl border border-[#3CC583]/30 text-xs text-slate-700">
-                                                <p className="font-extrabold text-[#3CC583] pb-1">Answer Q{assessmentMcqCount + assessmentShortAnswerCount + idx + 1}</p>
-                                                {ans.questionSubtype && (
-                                                  <p className="pb-1 text-slate-500">{formatAssessmentSubtypeLabel(ans.questionSubtype)}</p>
-                                                )}
-                                                <div className="min-w-0 overflow-x-auto leading-relaxed whitespace-pre-wrap">{renderMixedMathLine(ans.answer)}</div>
-                                                {!!ans.rubric?.length && (
-                                                  renderRichList(ans.rubric, { className: "mt-2 list-disc list-inside space-y-1 text-slate-600" })
-                                                )}
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {!!session.assessment.answerKey?.generalMarkingGuidance?.length && (
+                                    {(!!session.assessment.evaluation?.generalInstructions?.length || !!session.assessment.evaluation?.evaluatorInstructions?.length || !!session.assessment.evaluation?.moderationNotes?.length) && (
                                         <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl">
-                                          <div className="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest mb-2">CBSE-style Marking Guidance</div>
-                                        {renderRichList(session.assessment.answerKey.generalMarkingGuidance, { className: "text-xs text-amber-900 list-disc list-inside space-y-1" })}
+                                          <div className="text-[10px] font-extrabold text-amber-700 uppercase tracking-widest mb-2">Evaluator Guidance</div>
+                                          {!!session.assessment.evaluation?.generalInstructions?.length && (
+                                            renderAssessmentRichList(session.assessment.evaluation.generalInstructions, { className: "text-sm text-amber-900 list-disc list-inside space-y-2" })
+                                          )}
+                                          {!!session.assessment.evaluation?.evaluatorInstructions?.length && (
+                                            renderAssessmentRichList(session.assessment.evaluation.evaluatorInstructions, { className: "mt-3 text-sm text-amber-900 list-disc list-inside space-y-2" })
+                                          )}
+                                          {!!session.assessment.evaluation?.moderationNotes?.length && (
+                                            renderAssessmentRichList(session.assessment.evaluation.moderationNotes, { className: "mt-3 text-sm text-amber-900 list-disc list-inside space-y-2" })
+                                          )}
+                                      </div>
+                                    )}
+
+                                    {session.assessment.validation && (
+                                      <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
+                                        <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Validation Summary</div>
+                                        {Object.entries(session.assessment.validation).map(([key, value]) => (
+                                          <div key={key} className="rounded-xl bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                                            <div className="font-semibold text-slate-800">{formatRenderableText(key)}</div>
+                                            <div className="mt-1">{value?.passed ? "Passed" : "Needs review"}</div>
+                                            {!!value?.details?.length && (
+                                              <div className="mt-1 text-slate-500">{value.details.map((item: any) => formatRenderableText(item)).join(" • ")}</div>
+                                            )}
+                                          </div>
+                                        ))}
                                       </div>
                                     )}
                                   </div>

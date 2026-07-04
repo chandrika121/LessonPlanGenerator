@@ -1,0 +1,787 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 20,
+      "totalQuestions": 10,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 2,
+          "marksEach": 5
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Define a polynomial and identify valid vs. invalid expressions.",
+        "Determine the degree of any given polynomial.",
+        "Classify polynomials as monomial, binomial, or trinomial.",
+        "Classify polynomials as linear, quadratic, or cubic based on degree."
+      ],
+      "assessedConcepts": [
+        "Polynomial Definition",
+        "Degree of a Polynomial",
+        "Classification by Terms",
+        "Classification by Degree"
+      ],
+      "conceptCoveragePriorities": [
+        "Identifying non-polynomials (negative/fractional exponents)",
+        "Determining degree for classification"
+      ],
+      "misconceptionTargets": [
+        "Confusing variables with constants",
+        "Assuming any algebraic expression is a polynomial regardless of exponent"
+      ],
+      "competencyFocus": [
+        "Apply",
+        "Analyze"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-ii-algebra",
+          "title": "Unit II: Algebra",
+          "marks": 20,
+          "questionCount": 10,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10"
+          ],
+          "focus": "Introduction to Polynomials - Session 1"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Polynomial Definition",
+          "questionRefs": [
+            "q1",
+            "q4",
+            "q9"
+          ],
+          "competency": "Analysis",
+          "importance": "core"
+        },
+        {
+          "concept": "Degree of a Polynomial",
+          "questionRefs": [
+            "q2",
+            "q5",
+            "q10"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        },
+        {
+          "concept": "Classification (Terms/Degree)",
+          "questionRefs": [
+            "q3",
+            "q6",
+            "q7",
+            "q8"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define a polynomial and identify valid vs. invalid expressions.",
+          "questionRefs": [
+            "q1",
+            "q4",
+            "q9"
+          ]
+        },
+        {
+          "outcome": "Determine the degree of any given polynomial.",
+          "questionRefs": [
+            "q2",
+            "q5",
+            "q10"
+          ]
+        },
+        {
+          "outcome": "Classify polynomials as monomial, binomial, or trinomial.",
+          "questionRefs": [
+            "q3",
+            "q6",
+            "q7"
+          ]
+        },
+        {
+          "outcome": "Classify polynomials as linear, quadratic, or cubic based on degree.",
+          "questionRefs": [
+            "q8",
+            "q10"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 30,
+        "medium": 40,
+        "hard": 30
+      },
+      "bloomsDistribution": {
+        "recall": 20,
+        "understanding": 30,
+        "application": 30,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 4,
+        "analysis": 2
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 3,
+        "shortAnswer": 2,
+        "longAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Unit II: Algebra",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "All questions are compulsory.",
+        "Answer all questions using only the concepts taught in this session."
+      ],
+      "sections": [
+        {
+          "id": "section-unit-ii-algebra",
+          "title": "Unit II: Algebra",
+          "marks": 20,
+          "questionCount": 10,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following expressions is NOT a polynomial?",
+          "options": [
+            "A. 3x^2 + 5x - 2",
+            "B. x + 1/x",
+            "C. 7",
+            "D. x^3 - 1"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Polynomial Definition"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Valid vs Invalid Expressions"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Detailed content: If we see x^(-2) or sqrt(x), it is NOT a polynomial."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "What is the degree of the polynomial P(x) = 5x^3 - 2x + 1?",
+          "options": [
+            "A. 1",
+            "B. 2",
+            "C. 3",
+            "D. 0"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Degree of a Polynomial"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Determining Degree"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Identify the degree of 5x^3 - 2x + 1."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "A polynomial containing exactly three terms is called a:",
+          "options": [
+            "A. Monomial",
+            "B. Binomial",
+            "C. Trinomial",
+            "D. Linear Polynomial"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Classification by Terms"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Naming Polynomials"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Detailed content: A polynomial with three terms is a Trinomial."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Is the expression sqrt(x) + 5 a polynomial? Give one reason for your answer.",
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Polynomial Definition"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Valid vs Invalid Expressions"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Detailed content: If we see sqrt(x), it is NOT a polynomial."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "What is the degree of a non-zero constant polynomial (e.g., P(x) = 7)?",
+          "marks": 1,
+          "expectedLength": "One word/number",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Degree of a Polynomial"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Determining Degree"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Lesson Block: What is the degree of 7x^0? Expected answer: Degree is 0."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Classify the polynomial '4x^2' based on the number of terms.",
+          "marks": 1,
+          "expectedLength": "One word",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Classification by Terms"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Naming Polynomials"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Detailed content: A polynomial with one term is a Monomial (e.g., 4x^2)."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Identify the coefficient of x and the constant term in the expression 3x^2 - 5x + 8.",
+          "marks": 2,
+          "expectedLength": "Two points",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Polynomial Definition"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Components of a Polynomial"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Guided Practice: Ask students to identify the coefficient of x in 5x^2 - 3x + 1."
+          ]
+        },
+        {
+          "id": "q8",
+          "questionNumber": 8,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Classify the polynomial x^2 + 4 in terms of both its degree and number of terms.",
+          "marks": 2,
+          "expectedLength": "Two points",
+          "learningOutcomeRefs": [
+            "LO3",
+            "LO4"
+          ],
+          "conceptRefs": [
+            "Classification by Terms",
+            "Classification by Degree"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Naming Polynomials"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Classify x^2 + 4 as linear, quadratic, or cubic."
+          ]
+        },
+        {
+          "id": "q9",
+          "questionNumber": 9,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "longAnswer",
+          "subtype": "longAnswer",
+          "prompt": "Consider the following expressions: (i) 2x^3 + x - 5, (ii) 4x^2 - 1/x, (iii) y^2 + 2y + 1. \n\na) Identify which of these are polynomials and why.\n\nb) For those that are polynomials, state their degree.",
+          "marks": 5,
+          "expectedLength": "Detailed explanation",
+          "learningOutcomeRefs": [
+            "LO1",
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Polynomial Definition",
+            "Degree of a Polynomial"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Valid vs Invalid Expressions",
+            "Determining Degree"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Detailed content: Variables must have whole number exponents. If we see 1/x, it is NOT a polynomial."
+          ]
+        },
+        {
+          "id": "q10",
+          "questionNumber": 10,
+          "sectionId": "section-unit-ii-algebra",
+          "sectionTitle": "Unit II: Algebra",
+          "type": "longAnswer",
+          "subtype": "longAnswer",
+          "prompt": "Create three different polynomials that satisfy the following conditions:\n1. A Quadratic Binomial\n2. A Cubic Trinomial\n3. A Linear Monomial\nFor each, explain how it meets both the degree and term requirements.",
+          "marks": 5,
+          "expectedLength": "Detailed explanation",
+          "learningOutcomeRefs": [
+            "LO3",
+            "LO4"
+          ],
+          "conceptRefs": [
+            "Classification by Terms",
+            "Classification by Degree"
+          ],
+          "topicCoverage": [
+            "Introduction to Polynomials"
+          ],
+          "subtopicCoverage": [
+            "Naming Polynomials"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Guided Practice: Have students write one linear and one quadratic polynomial."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "B. x + 1/x",
+            "explanation": "A polynomial cannot have a variable in the denominator (which implies a negative exponent, x^-1).",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "C. 3",
+            "explanation": "The highest power of the variable x is 3.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "C. Trinomial",
+            "explanation": "By definition, a polynomial with three terms is a trinomial.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "No. Because the variable x is under a square root, which means it has a fractional exponent (1/2), and polynomials must have non-negative integer exponents.",
+            "explanation": "Polynomials require whole number exponents.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "0",
+            "explanation": "A constant can be written as 7x^0, so the degree is 0.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "Monomial",
+            "explanation": "It consists of only one term.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "Coefficient of x: -5; Constant term: 8",
+            "explanation": "The number multiplying the variable x is -5, and the fixed number is 8.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q8",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "Degree: Quadratic (degree 2); Terms: Binomial (2 terms)",
+            "explanation": "Highest power is 2, and there are two distinct terms.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q9",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "(i) Polynomial; Degree 3. (ii) Not a polynomial because of the term 1/x (negative exponent). (iii) Polynomial; Degree 2.",
+            "explanation": "Check for whole number exponents and identify highest power.",
+            "marks": 5,
+            "subtype": "longAnswer"
+          },
+          {
+            "questionId": "q10",
+            "sectionId": "section-unit-ii-algebra",
+            "sectionTitle": "Unit II: Algebra",
+            "answer": "Example answers: 1. x^2 + 5 (Degree 2, 2 terms). 2. x^3 + x^2 + 1 (Degree 3, 3 terms). 3. 4x (Degree 1, 1 term).",
+            "explanation": "Student must provide valid expressions and correctly justify the degree and number of terms.",
+            "marks": 5,
+            "subtype": "longAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for Option B."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct 'No' answer",
+                "marks": 0.5
+              },
+              {
+                "criterion": "Valid reason regarding exponents/sqrt",
+                "marks": 0.5
+              }
+            ],
+            "awardGuidance": [
+              "Must mention that sqrt(x) is not a whole number exponent."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct coefficient of x (-5)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct constant term (8)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Ensure the negative sign is included for the coefficient."
+            ]
+          },
+          {
+            "questionId": "q9",
+            "totalMarks": 5,
+            "markBreakdown": [
+              {
+                "criterion": "Correct identification of (i) and its degree",
+                "marks": 2
+              },
+              {
+                "criterion": "Correct identification of (ii) as non-polynomial with reason",
+                "marks": 2
+              },
+              {
+                "criterion": "Correct identification of (iii) and its degree",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Deduct marks if the reason for (ii) is missing."
+            ]
+          },
+          {
+            "questionId": "q10",
+            "totalMarks": 5,
+            "markBreakdown": [
+              {
+                "criterion": "Correct Quadratic Binomial + Explanation",
+                "marks": 2
+              },
+              {
+                "criterion": "Correct Cubic Trinomial + Explanation",
+                "marks": 2
+              },
+              {
+                "criterion": "Correct Linear Monomial + Explanation",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if the expression matches the name and explanation is logically sound."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q10",
+            "totalMarks": 5,
+            "criteria": [
+              {
+                "criterion": "Accuracy of expression (matches degree and term count)",
+                "marks": 3
+              },
+              {
+                "criterion": "Clarity of explanation/justification",
+                "marks": 2
+              }
+            ],
+            "sampleAnswer": "1. x^2 + 1: Degree is 2 (Quadratic) and it has 2 terms (Binomial). 2. x^3 + x + 1: Degree is 3 (Cubic) and it has 3 terms (Trinomial). 3. 5x: Degree is 1 (Linear) and it has 1 term (Monomial)."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea.",
+        "Be strict about the definition of polynomials regarding exponents."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses. Do not penalize for lack of advanced notation if the concept is correct."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers in q10 as students will create different polynomials."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "The paper covers all four learning outcomes: definition, degree identification, term-based classification, and degree-based classification."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "The paper starts with basic recall (MCQs), moves to application (Short Answer), and ends with synthesis/analysis (Long Answer)."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches: 3 MCQ, 3 VSA, 2 SA, 2 LA."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Total marks = (3*1) + (3*1) + (2*2) + (2*5) = 20. Matches requested total."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "All questions assigned to 'section-unit-ii-algebra'."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned via IDs q1-q10."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No content from future sessions or other chapters included. Only session 1 material used."
+        ]
+      }
+    }
+  }
+}

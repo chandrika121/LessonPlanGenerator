@@ -1,0 +1,287 @@
+{
+  "model": "gemma4:31b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "meta": {
+        "assessmentType": "Session assessment",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "language": "English",
+        "preferredDifficulty": "Balanced",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ]
+      },
+      "sessionAnalysis": {
+        "assessedLearningOutcomes": [
+          "Learning outcome text"
+        ],
+        "assessedConcepts": [
+          "Concept from the session"
+        ],
+        "conceptCoveragePriorities": [
+          "High-emphasis taught concept"
+        ],
+        "misconceptionTargets": [
+          "Likely misconception to check"
+        ],
+        "competencyFocus": [
+          "Application"
+        ]
+      },
+      "blueprint": {
+        "sectionPlan": [
+          {
+            "sectionId": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "focus": "Session-aligned assessment focus"
+          }
+        ],
+        "conceptDistribution": [
+          {
+            "concept": "Concept from the session",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ],
+            "competency": "Understanding",
+            "importance": "core"
+          }
+        ],
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "competencyDistribution": {
+          "understanding": 2,
+          "application": 3,
+          "analysis": 2
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "Assessment",
+            "minutes": 15
+          }
+        ]
+      },
+      "paper": {
+        "instructions": [
+          "Answer all questions using only the concepts taught in this session."
+        ],
+        "sections": [
+          {
+            "id": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "source": "fallback"
+          }
+        ],
+        "questions": [
+          {
+            "id": "q1",
+            "questionNumber": 1,
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "type": "mcq",
+            "subtype": "mcq",
+            "prompt": "MCQ question",
+            "options": [
+              "A. option",
+              "B. option",
+              "C. option",
+              "D. option"
+            ],
+            "marks": 1,
+            "expectedLength": "",
+            "learningOutcomeRefs": [
+              "LO1"
+            ],
+            "conceptRefs": [
+              "Concept"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "subtopicCoverage": [
+              "Subtopic"
+            ],
+            "bloomsLevel": "understanding",
+            "competencyTag": "Conceptual clarity",
+            "difficulty": "easy",
+            "sourceEvidence": [
+              "Teacher notes concept reference"
+            ]
+          }
+        ]
+      },
+      "evaluation": {
+        "answerKey": {
+          "items": [
+            {
+              "questionId": "q1",
+              "sectionId": "section-assessment",
+              "sectionTitle": "Assessment",
+              "answer": "Correct option",
+              "explanation": "Brief explanation",
+              "marks": 1,
+              "subtype": "mcq"
+            }
+          ]
+        },
+        "markingScheme": {
+          "items": [
+            {
+              "questionId": "q1",
+              "totalMarks": 1,
+              "markBreakdown": [
+                {
+                  "criterion": "Correct answer selected",
+                  "marks": 1
+                }
+              ],
+              "awardGuidance": [
+                "Award full marks only for the correct option."
+              ]
+            }
+          ]
+        },
+        "rubrics": {
+          "items": [
+            {
+              "questionId": "q5",
+              "totalMarks": 2,
+              "criteria": [
+                {
+                  "criterion": "First valid point",
+                  "marks": 1
+                },
+                {
+                  "criterion": "Second valid point",
+                  "marks": 1
+                }
+              ],
+              "sampleAnswer": "Point-wise short answer"
+            }
+          ]
+        },
+        "generalInstructions": [
+          "Award marks point-wise for each valid idea."
+        ],
+        "evaluatorInstructions": [
+          "Use only the taught session content when evaluating student responses."
+        ],
+        "moderationNotes": [
+          "Maintain consistency across equivalent answers."
+        ]
+      },
+      "summary": {
+        "coverageSummary": [
+          "Balanced coverage of the taught session concepts."
+        ],
+        "omittedContent": [],
+        "balanceNotes": [
+          "Paper progresses from easier to more demanding questions."
+        ]
+      },
+      "validation": {
+        "exactPatternChecks": {
+          "passed": true,
+          "details": [
+            "Question pattern matches the requested blueprint."
+          ]
+        },
+        "marksChecks": {
+          "passed": true,
+          "details": [
+            "Marks match the requested total."
+          ]
+        },
+        "sectionChecks": {
+          "passed": true,
+          "details": [
+            "Each question is assigned to a valid section."
+          ]
+        },
+        "alignmentChecks": {
+          "passed": true,
+          "details": [
+            "Question paper, answer key, and marking scheme are aligned."
+          ]
+        },
+        "scopeBoundaryChecks": {
+          "passed": true,
+          "details": [
+            "No untaught or future-session content included."
+          ]
+        }
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL ASSESSMENT & EVALUATION INTELLIGENCE ENGINE\n\nROLE\nYou are an Enterprise Assessment & Evaluation Intelligence Engine.\nYou function like a professional examination committee made up of a curriculum assessment specialist, paper setter, head examiner, subject expert, psychometric reviewer, and marking-scheme designer.\n\nYou are not a simple question generator.\nYou are responsible for designing a complete, session-bounded examination package that is immediately usable by a teacher or school.\n\nPRIMARY OBJECTIVE\nGenerate a complete assessment package for one classroom session only.\n\nSession context:\n- Subject: Mathematics\n- Grade/Level: Class IX\n- Session title: Introduction to Polynomials - Session 1\n- Session number: 1 of 15\n- Session duration: 45 minutes\n- Chapter scope: [\"Introduction to Polynomials\"]\n- Learning outcomes: []\n- Previous session context: Geometry (Implicit Unit from Context) - Session 15\n- Learning pace: Balanced\n- Preferred difficulty: Balanced\n- Output language: English\n\nAssessment preferences:\n- Assessment type: Session assessment\n- Requested total marks: 20\n- Requested total questions: 10\n- Requested duration: 15 minutes\n- Assessment preference inputs: []\n- Target blooms emphasis: [\"Apply + Analyze\"]\n- Requested question type mix: [{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2},{\"type\":\"longAnswer\",\"label\":\"Long Answer\",\"questionCount\":2,\"marksEach\":5}]\n- Allowed assessment sections: [\n  {\n    \"id\": \"section-unit-i-number-system\",\n    \"title\": \"Unit I: Number System\",\n    \"marks\": 7,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-ii-algebra\",\n    \"title\": \"Unit II: Algebra\",\n    \"marks\": 20,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-iii-coordinate-geometry\",\n    \"title\": \"Unit III: Coordinate Geometry\",\n    \"marks\": 4,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-iv-geometry\",\n    \"title\": \"Unit IV: Geometry\",\n    \"marks\": 25,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-v-mensuration\",\n    \"title\": \"Unit V: Mensuration\",\n    \"marks\": 14,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-vi-statistics-and-probability\",\n    \"title\": \"Unit VI: Statistics and Probability\",\n    \"marks\": 10,\n    \"source\": \"assessment_framework\"\n  }\n]\n- Question paper objective: Not specified.\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 20,\n  \"totalQuestions\": 10,\n  \"questionTypes\": [\n    {\n      \"type\": \"mcq\",\n      \"label\": \"MCQs\",\n      \"questionCount\": 3,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 3,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    },\n    {\n      \"type\": \"longAnswer\",\n      \"label\": \"Long Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 5\n    }\n  ]\n}\n\nSession JSON source of truth:\n{\n  \"id\": \"math-ix-s01-polynomials-intro\",\n  \"sessionNumber\": 1,\n  \"title\": \"The World of Polynomials: Variables and Expressions\",\n  \"duration\": 45,\n  \"learningOutcomes\": [\n    \"Define a polynomial and identify valid vs. invalid expressions.\",\n    \"Determine the degree of any given polynomial.\",\n    \"Classify polynomials as monomial, binomial, or trinomial.\",\n    \"Classify polynomials as linear, quadratic, or cubic based on degree.\"\n  ],\n  \"introduction\": \"Imagine you are a chef. You have a recipe for a cake: '2 cups of flour + 1 egg'. If the number of eggs changes (variable), but the amount of flour stays fixed (constant), how do we write this? Today, we move from simple numbers to 'Algebraic Recipes' called Polynomials. We will learn how to name them, measure their complexity (degree), and sort them into families.\",\n  \"theory\": {\n    \"overview\": \"A polynomial is an algebraic expression where variables are raised only to non-negative integer powers. It consists of terms separated by addition or subtraction. The 'degree' is the highest power of the variable, which determines the polynomial's classification (Linear, Quadratic, Cubic).\",\n    \"keyPoints\": [\n      \"Variables must have whole number exponents (0, 1, 2...).\",\n      \"Degree is the highest exponent of the variable.\",\n      \"Polynomials are classified by terms (Mono/Bi/Tri) and degree (Linear/Quad/Cubic).\"\n    ],\n    \"detailedContent\": \"Consider the expression P(x) = a_n x^n + ... + a_0. Here, 'x' is the variable, 'a_n' are coefficients, and 'n' must be a whole number. If we see x^(-2) or sqrt(x), it is NOT a polynomial. The degree is the most important feature; for example, 5x^3 + 2x - 1 has a degree of 3 (Cubic). A polynomial with one term is a Monomial (e.g., 4x^2), two terms is a Binomial (e.g., x+1), and three terms is a Trinomial (e.g., x^2+x+1).\"\n  },\n  \"activities\": [\n    {\n      \"name\": \"Polynomial Sorting Race\",\n      \"instructions\": [\n        \"Teacher writes 5 expressions on the board (mix of valid polynomials and non-polynomials).\",\n        \"Students work in pairs to identify which are polynomials.\",\n        \"For those that are polynomials, students must write the degree and classification (e.g., Quadratic Binomial).\",\n        \"First pair to correctly sort all 5 wins a point.\"\n      ],\n      \"durationMinutes\": 10\n    }\n  ],\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"This session introduces Class IX students to the fundamental concepts of polynomials. It defines algebraic expressions, distinguishes between variables and constants, explains terms, coefficients, and degrees, and categorizes polynomials by their degree (linear, quadratic, cubic) and number of terms (monomial, binomial, trinomial).\",\n    \"prerequisiteKnowledge\": [\n      \"Basic arithmetic operations (addition, subtraction, multiplication)\",\n      \"Understanding of integers and rational numbers\",\n      \"Concept of variables (letters representing unknown numbers)\"\n    ],\n    \"learningOutcomes\": [\n      \"Define a polynomial and distinguish it from non-polynomial expressions.\",\n      \"Identify the degree, coefficient, and variable in a given polynomial.\",\n      \"Classify polynomials based on the number of terms (monomial, binomial, trinomial).\",\n      \"Classify polynomials based on their degree (linear, quadratic, cubic).\"\n    ],\n    \"lessonPurpose\": [\n      \"To provide a rigorous foundation for algebraic manipulation in higher classes.\",\n      \"To bridge the gap between arithmetic numbers and abstract algebraic thinking.\",\n      \"To introduce the concept of 'degree' which is crucial for graphing later.\"\n    ],\n    \"teachingSequence\": [\n      \"Start with the 'Math Recipe' hook to engage students.\",\n      \"Write the formal definition of a polynomial on the board.\",\n      \"Break down the components: Variables, Constants, Coefficients, Exponents.\",\n      \"Demonstrate how to find the degree using examples.\",\n      \"Introduce classification by terms (Mono/Bi/Tri) and degree (Linear/Quadratic/Cubic).\",\n      \"Conduct guided practice with student participation.\"\n    ],\n    \"guidedPractice\": [\n      \"Ask students to identify the coefficient of x in 5x^2 - 3x + 1.\",\n      \"Have students write one linear and one quadratic polynomial on their mini-whiteboards.\",\n      \"Correct common errors regarding negative coefficients and fractional exponents.\"\n    ],\n    \"misconceptions\": [\n      \"Confusing variables with constants\",\n      \"Ignoring negative exponents as non-polynomial\"\n    ],\n    \"formativeChecks\": [\n      \"Thumbs up/down for identifying valid polynomials.\",\n      \"Mini-whiteboard response for finding the degree.\"\n    ],\n    \"assessmentQuestions\": [\n      \"Identify the degree of 5x^3 - 2x + 1.\",\n      \"Classify x^2 + 4 as linear, quadratic, or cubic.\"\n    ],\n    \"sessionSummary\": [\n      \"Polynomials are expressions with non-negative integer exponents.\",\n      \"Degree is the highest power of the variable.\"\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Polynomial Definition\",\n        \"definition\": \"An algebraic expression consisting of variables and coefficients involving only non-negative integer powers.\",\n        \"coreExplanation\": \"Students must understand that 'polynomial' implies a specific structure. If any variable has a negative exponent (like 1/x) or a fractional exponent (like sqrt(x)), it is not a polynomial.\",\n        \"importance\": \"This definition is the gatekeeper for all future algebra, calculus, and graphing topics.\",\n        \"keywords\": [\n          \"Variable\",\n          \"Coefficient\",\n          \"Exponent\",\n          \"Degree\"\n        ],\n        \"examples\": [\n          \"3x^2 + 2x - 1 (Valid)\",\n          \"x^2 + 1/x (Invalid)\"\n        ]\n      },\n      {\n        \"conceptName\": \"Degree of a Polynomial\",\n        \"definition\": \"The highest power of the variable in a polynomial expression.\",\n        \"coreExplanation\": \"The degree determines the 'shape' and complexity of the polynomial. It is the most critical property for classification.\",\n        \"importance\": \"It dictates the maximum number of zeroes a polynomial can have.\",\n        \"keywords\": [\n          \"Highest Power\",\n          \"Linear\",\n          \"Quadratic\",\n          \"Cubic\"\n        ],\n        \"examples\": [\n          \"4x + 5 (Degree 1)\",\n          \"x^2 - 9 (Degree 2)\"\n        ]\n      }\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction to Algebraic Expressions\",\n        \"durationMinutes\": 5,\n        \"explanation\": [\n          \"Explain that letters like x, y, z represent numbers that can change (variables).\",\n          \"Numbers that stay fixed are constants.\",\n          \"An algebraic expression combines variables and constants using operations.\"\n        ],\n        \"examples\": [\n          \"Cost of 1 pen = ₹5. Cost of 'p' pens = 5p.\"\n        ],\n        \"checkUnderstanding\": [\n          \"Is '5' a variable or a constant?\",\n          \"Is 'x' a variable or a constant?\"\n        ],\n        \"expectedAnswers\": [\n          \"5 is a constant.\",\n          \"x is a variable.\"\n        ],\n        \"activity\": []\n      },\n      {\n        \"title\": \"Polynomials: Definition and Degree\",\n        \"durationMinutes\": 15,\n        \"explanation\": [\n          \"Define Polynomial: An expression where variables have non-negative integer exponents.\",\n          \"Explain that negative or fractional powers make it NOT a polynomial.\",\n          \"Define Degree: The highest power of the variable in the polynomial.\"\n        ],\n        \"examples\": [\n          \"2x^3 + x - 7 (Degree is 3)\",\n          \"5x^2 + 1 (Degree is 2)\",\n          \"4x + 9 (Degree is 1)\"\n        ],\n        \"checkUnderstanding\": [\n          \"What is the degree of 7x^0?\",\n          \"Is x^-2 a polynomial?\"\n        ],\n        \"expectedAnswers\": [\n          \"Degree is 0 (since x^0 = 1).\",\n          \"No, because exponent is negative.\"\n        ],\n        \"activity\": []\n      },\n      {\n        \"title\": \"Classification of Polynomials\",\n        \"durationMinutes\": 15,\n        \"explanation\": [\n          \"Classify by number of terms: Monomial (1), Binomial (2), Trinomial (3).\",\n          \"Classify by degree: Linear (degree 1), Quadratic (degree 2), Cubic (degree 3).\",\n          \"Emphasize that a polynomial can be both linear and a binomial.\"\n        ],\n        \"examples\": [\n          \"5x (Monomial, Linear)\",\n          \"x^2 + 2 (Binomial, Quadratic)\",\n          \"x^3 - x + 1 (Trinomial, Cubic)\"\n        ],\n        \"checkUnderstanding\": [\n          \"Classify 4x^3 + 5.\",\n          \"Classify x^2 - 3x + 2.\"\n        ],\n        \"expectedAnswers\": [\n          \"Binomial, Cubic.\",\n          \"Trinomial, Quadratic.\"\n        ],\n        \"activity\": []\n      }\n    ]\n  },\n  \"studentLessonNotes\": null,\n  \"topicCoverage\": []\n}\n\nTARGET JSON SHAPE\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}\n\nABSOLUTE RULES\n1. This assessment is for ONE SESSION ONLY.\n2. Use only content that is explicitly present in the supplied session information.\n3. Never introduce future chapters, untaught formulas, external textbook knowledge, or assumed content.\n4. Learning outcomes guide coverage, but questions must originate from taught concepts, not from repetitive learning-outcome wording.\n5. Every question must measure real learning: understanding, application, reasoning, analysis, interpretation, communication, competency, or conceptual clarity.\n6. Match the requested marks, duration, question counts, and section structure exactly.\n7. If allowed assessment sections are supplied, every question must use one valid sectionId and sectionTitle from that list.\n8. Keep the paper professional, board-style, fair, age appropriate, and free from repetitive AI patterns.\n9. Return valid JSON only.\n\nINTERNAL WORKFLOW\nFollow this reasoning process before writing the final JSON:\n\nPHASE 1 - SESSION INTELLIGENCE\n- Identify what students learned in this session.\n- Extract taught concepts, skills, vocabulary, examples, activities, practical work, and likely misconceptions.\n- Distinguish high-emphasis concepts from supporting concepts.\n\nPHASE 2 - CONCEPT INTELLIGENCE\n- Build an internal concept graph from the taught session.\n- Map each learning outcome to the concepts actually taught.\n- Identify concept importance, dependency, applications, likely misconceptions, and assessment opportunities.\n\nPHASE 3 - BLUEPRINT-FIRST DESIGN\n- Design the full paper before writing questions.\n- Decide section allocation, marks per section, question progression, blooms balance, competency balance, and time allocation.\n- Distribute questions across important taught concepts rather than over-testing one idea.\n\nPHASE 4 - PROFESSIONAL QUESTION PAPER\n- Generate a student-facing paper with ordered questions.\n- Use continuous ids: q1, q2, q3, ...\n- Keep wording precise and board-like.\n- Preserve the requested subtype mix such as mcq, veryShortAnswer, shortAnswer, longAnswer, and caseStudy.\n\nPHASE 5 - EVALUATION PACKAGE\n- Generate a complete linked evaluation package:\n  - answer key\n  - marking scheme\n  - rubric package\n  - evaluator instructions\n  - moderation notes\n- Every evaluation item must link to the same question id as the paper.\n- For non-MCQ questions, provide point-wise criteria and mark allocation.\n\nPHASE 6 - VALIDATION\n- Confirm the final output matches requested marks, requested counts, requested duration, and valid sections.\n- Confirm each question has aligned answer-key and marking-scheme coverage.\n- Confirm the paper stays within the session boundary.\n\nOUTPUT REQUIREMENTS\n1. Output the canonical assessment package only.\n2. Put student-facing instructions in `paper.instructions`.\n3. Put the ordered question paper in `paper.questions`.\n4. Put answer keys in `evaluation.answerKey.items`.\n5. Put mark splits in `evaluation.markingScheme.items`.\n6. Put rubric criteria in `evaluation.rubrics.items`.\n7. Put summary notes in `summary`.\n8. Put validation status in `validation`.\n9. Use the exact section ids and titles supplied or derived from the session context.\n10. Keep question metadata, evaluation metadata, and blueprint references aligned to the same continuous ids.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}"
+    }
+  ]
+}
