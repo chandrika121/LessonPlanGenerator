@@ -1,0 +1,171 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Classification of Elements",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Compound Formation",
+        "Periodic Classification"
+      ]
+    },
+    {
+      "topic": "Compound Formation",
+      "prerequisites": [
+        "Classification of Elements"
+      ],
+      "dependent_topics": [
+        "Chemical Reactions",
+        "Valency"
+      ]
+    },
+    {
+      "topic": "Chemical Reactions",
+      "prerequisites": [
+        "Compound Formation"
+      ],
+      "dependent_topics": [
+        "Reaction Classification",
+        "Reactivity Series"
+      ]
+    },
+    {
+      "topic": "Forces and Motion",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Gravitation",
+        "Optics"
+      ]
+    },
+    {
+      "topic": "Gravitation",
+      "prerequisites": [
+        "Forces and Motion"
+      ],
+      "dependent_topics": [
+        "Laws of Motion"
+      ]
+    },
+    {
+      "topic": "Optics",
+      "prerequisites": [
+        "Forces and Motion"
+      ],
+      "dependent_topics": [
+        "Image Formation",
+        "Focal Length"
+      ]
+    },
+    {
+      "topic": "Electricity",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Ohm's Law",
+        "Circuits"
+      ]
+    },
+    {
+      "topic": "Ohm's Law",
+      "prerequisites": [
+        "Electricity"
+      ],
+      "dependent_topics": [
+        "Resistance Determination",
+        "Graph Plotting"
+      ]
+    },
+    {
+      "topic": "Cellular Structure",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Life Processes",
+        "Heredity"
+      ]
+    },
+    {
+      "topic": "Life Processes",
+      "prerequisites": [
+        "Cellular Structure"
+      ],
+      "dependent_topics": [
+        "Nutrition",
+        "Respiration",
+        "Reproduction"
+      ]
+    },
+    {
+      "topic": "Heredity",
+      "prerequisites": [
+        "Cellular Structure"
+      ],
+      "dependent_topics": [
+        "Evolution",
+        "Variation"
+      ]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Unit I: Chemical Substances - Nature and Behaviour",
+      "chapter_name": "Chemical Substances-Nature and Behaviour",
+      "difficulty_level": "High",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "25",
+      "estimated_sessions": "15",
+      "practical_requirement": "Mandatory (pH, Indicators, Reactivity)",
+      "assessment_requirement": "Competency-based (Knowledge 50%, Application 30%)"
+    },
+    {
+      "unit_name": "Unit II: World of Living",
+      "chapter_name": "World of Living",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": "25",
+      "estimated_sessions": "14",
+      "practical_requirement": "Mandatory (Stomata, Respiration, Reproduction)",
+      "assessment_requirement": "Competency-based (Analysis/Evaluation)"
+    },
+    {
+      "unit_name": "Unit III: Natural Phenomena",
+      "chapter_name": "Natural Phenomena",
+      "difficulty_level": "High",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "12",
+      "estimated_sessions": "8",
+      "practical_requirement": "Mandatory (Optics, Focal Length)",
+      "assessment_requirement": "Mathematical Application & Graphical Analysis"
+    },
+    {
+      "unit_name": "Unit IV: Effects of Current",
+      "chapter_name": "Effects of Current",
+      "difficulty_level": "High",
+      "concept_density": "High",
+      "estimated_teaching_hours": "13",
+      "estimated_sessions": "9",
+      "practical_requirement": "Mandatory (Ohm's Law, Resistance)",
+      "assessment_requirement": "Numerical & Practical Skills"
+    },
+    {
+      "unit_name": "Unit V: Natural Resources",
+      "chapter_name": "Natural Resources",
+      "difficulty_level": "Medium",
+      "concept_density": "Low-Medium",
+      "estimated_teaching_hours": "5",
+      "estimated_sessions": "4",
+      "practical_requirement": "Optional (Portfolio)",
+      "assessment_requirement": "Internal Assessment & Portfolio"
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [
+      "Unit IV: Effects of Current",
+      "Unit V: Natural Resources"
+    ],
+    "invalid_chapter_names": [
+      "Unit IV: Effects of Current",
+      "Unit V: Natural Resources",
+      "Unit - I",
+      "Unit-IV"
+    ]
+  }
+}

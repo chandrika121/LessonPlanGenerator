@@ -12,6 +12,7 @@ Previous session context: {{PREVIOUS_SESSION_CONTEXT}}
 Learning pace: {{LEARNING_PACE}}
 Target difficulty: {{TARGET_DIFFICULTY}}
 Output language: {{OUTPUT_LANGUAGE}}
+Language execution rule: {{OUTPUT_LANGUAGE_RULE}}
 Reading level: {{READING_LEVEL}}
 Response length: {{RESPONSE_LENGTH}}
 Creativity: {{CREATIVITY}}

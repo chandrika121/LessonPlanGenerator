@@ -152,6 +152,14 @@ function renderPrompt(promptName: string, replacements: Record<string, string>):
 
 const ENGLISH_INTELLIGENCE_PROMPT_NAME = "english-subject-intelligence-layer.md";
 const ENGLISH_DOWNSTREAM_INTELLIGENCE_PROMPT_NAME = "english-downstream-subject-intelligence-layer.md";
+const SCIENCE_INTELLIGENCE_PROMPT_NAME = "science-subject-intelligence-layer.md";
+const SCIENCE_GENERATION_SHARED_PROMPT_NAME = "science-generation-shared-layer.md";
+const SCIENCE_GENERATION_SESSION_PROMPT_NAME = "science-session-generation-layer.md";
+const SCIENCE_GENERATION_TEACHER_PROMPT_NAME = "science-teacher-notes-generation-layer.md";
+const SCIENCE_GENERATION_STUDENT_PROMPT_NAME = "science-student-notes-generation-layer.md";
+const SCIENCE_GENERATION_PPT_PROMPT_NAME = "science-ppt-generation-layer.md";
+const SCIENCE_GENERATION_HOMEWORK_PROMPT_NAME = "science-homework-generation-layer.md";
+const SCIENCE_GENERATION_ASSESSMENT_PROMPT_NAME = "science-assessment-generation-layer.md";
 const TAMIL_CURRICULUM_INTELLIGENCE_PROMPT_NAME = "tamil-curriculum-intelligence-layer.md";
 const ENGLISH_SUBJECT_ALIASES = [
   "english",
@@ -162,7 +170,32 @@ const ENGLISH_SUBJECT_ALIASES = [
   "elective english",
   "english literature",
 ];
-const INDIC_CURRICULUM_EXTRACTION_MODEL = "gemma4:31b";
+const SCIENCE_SUBJECT_ALIASES = [
+  "science",
+  "general science",
+  "integrated science",
+  "physics",
+  "chemistry",
+  "biology",
+  "life science",
+  "life sciences",
+  "physical science",
+  "physical sciences",
+  "earth science",
+  "earth sciences",
+  "environmental science",
+  "environmental sciences",
+];
+const CURRICULUM_SUBJECT_ALIAS_GROUPS: Array<{ subject: string; aliases: string[] }> = [
+  { subject: "Computer Science", aliases: ["computer science", "informatics practices", "informatics"] },
+  { subject: "Social Science", aliases: ["social science", "social studies"] },
+  { subject: "Physics", aliases: ["physics"] },
+  { subject: "Chemistry", aliases: ["chemistry"] },
+  { subject: "Biology", aliases: ["biology"] },
+  { subject: "Science", aliases: ["science", "general science", "integrated science"] },
+  { subject: "Mathematics", aliases: ["mathematics", "maths", "math", "applied mathematics", "applied math"] },
+];
+const INDIC_CURRICULUM_EXTRACTION_MODEL = "qwen3.5:35b-mlx";
 const INDIC_CURRICULUM_SUBJECT_ALIASES = [
   "hindi",
   "hindi language",
@@ -172,9 +205,66 @@ const INDIC_CURRICULUM_SUBJECT_ALIASES = [
   "tamil language",
   "தமிழ்",
 ];
+type SupportingCurriculumDocumentRole =
+  | "textbook_index"
+  | "textbook_structure"
+  | "sunbird_textbook_structure"
+  | "sunbird_content_manifest";
+type SupportingCurriculumDocument = {
+  role: SupportingCurriculumDocumentRole;
+  fileName: string;
+  text: string;
+  metadata?: Record<string, any>;
+};
+type SunbirdSearchCandidate = {
+  identifier: string;
+  name: string;
+  contentType?: string;
+  mimeType?: string;
+  board?: string;
+  se_boards?: string[];
+  se_gradeLevels?: string[];
+  se_mediums?: string[];
+  se_subjects?: string[];
+  source: "production" | "sandbox";
+};
+type SunbirdContentManifestNode = {
+  identifier: string;
+  name: string;
+  mimeType?: string;
+  primaryCategory?: string;
+  board?: string;
+  medium?: string[];
+  gradeLevel?: string[];
+  subject?: string[];
+  previewUrl?: string;
+  artifactUrl?: string;
+  children?: string[];
+};
+type SunbirdStructureDigest = {
+  class_name: string;
+  subject: string;
+  title: string;
+  unit_candidates: Array<{ unit_name: string; unit_number?: number | null; source_ref?: string }>;
+  chapter_candidates: Array<{ chapter_name: string; unit_number?: number | null; source_ref?: string }>;
+  topic_candidates: Array<{ chapter_name?: string; topic_name: string; unit_number?: number | null; source_ref?: string }>;
+  subtopic_candidates: Array<{ chapter_name?: string; topic_name?: string; subtopic_name: string; unit_number?: number | null; source_ref?: string }>;
+  source_refs: string[];
+};
+
+const SUPPORTING_CURRICULUM_DOCUMENT_ROLES = new Set<SupportingCurriculumDocumentRole>([
+  "textbook_index",
+  "textbook_structure",
+  "sunbird_textbook_structure",
+  "sunbird_content_manifest",
+]);
+const SUNBIRD_PRODUCTION_BASE_URL = "https://diksha.gov.in";
+const SUNBIRD_SANDBOX_BASE_URL = "https://sandbox.sunbirded.org";
 
 let cachedEnglishIntelligenceLayer: string | null = null;
 let cachedEnglishDownstreamIntelligenceLayer: string | null = null;
+let cachedScienceIntelligenceLayer: string | null = null;
+const cachedScienceGenerationLayers = new Map<string, string>();
 let cachedTamilCurriculumIntelligenceLayer: string | null = null;
 const ENGLISH_EXAM_SECTION_LABELS = [
   "section a",
@@ -396,6 +486,29 @@ function isEnglishSubject(subject: string): boolean {
   return ENGLISH_SUBJECT_ALIASES.some((candidate) => normalized === candidate || normalized.includes(candidate));
 }
 
+function normalizeScienceSubjectHint(value: string): string {
+  return normalizeSourceText(canonicalizeSubjectName(value || ""));
+}
+
+function isScienceSubject(subject: string): boolean {
+  const normalized = normalizeScienceSubjectHint(subject);
+  if (!normalized) return false;
+  if ([
+    "social science",
+    "social studies",
+    "computer science",
+    "informatics practices",
+    "informatics",
+    "data science",
+    "political science",
+  ].some((candidate) => normalized.includes(candidate))) {
+    return false;
+  }
+  return SCIENCE_SUBJECT_ALIASES.some((candidate) =>
+    normalized === candidate || (candidate !== "science" && normalized.includes(candidate))
+  );
+}
+
 function detectEnglishModeFromCurriculumInput(sourceText: string, fileName = ""): boolean {
   const normalizedFileName = normalizeEnglishSubjectHint(fileName);
   if (isEnglishSubject(normalizedFileName)) {
@@ -438,6 +551,205 @@ function shouldUseEnglishIntelligence({
   return isEnglishSubject(subject) || detectEnglishModeFromCurriculumInput(sourceText, fileName);
 }
 
+function detectScienceModeFromCurriculumInput(sourceText: string, fileName = ""): boolean {
+  const normalizedFileName = normalizeScienceSubjectHint(fileName);
+  if (isScienceSubject(normalizedFileName)) {
+    return true;
+  }
+
+  const explicitSubjectLine = String(sourceText || "").match(/^\s*subject\s*[:\-]\s*(.+)$/im)?.[1] || "";
+  if (isScienceSubject(explicitSubjectLine)) {
+    return true;
+  }
+
+  const inferredSubject = detectCurriculumSubjectFromInput(sourceText, fileName);
+  if (isScienceSubject(inferredSubject)) {
+    return true;
+  }
+
+  const normalizedSourceSample = normalizeSourceText(String(sourceText || "").slice(0, 12000));
+  if (!normalizedSourceSample) {
+    return false;
+  }
+
+  return [
+    "physics",
+    "chemistry",
+    "biology",
+    "general science",
+    "integrated science",
+    "life science",
+    "physical science",
+    "earth science",
+    "environmental science",
+  ].some((candidate) => normalizedSourceSample.includes(candidate));
+}
+
+function shouldUseScienceIntelligence({
+  subject = "",
+  sourceText = "",
+  fileName = "",
+}: {
+  subject?: string;
+  sourceText?: string;
+  fileName?: string;
+}) {
+  return isScienceSubject(subject) || detectScienceModeFromCurriculumInput(sourceText, fileName);
+}
+
+type ScienceGenerationArtifact =
+  | "session_package"
+  | "teacher_notes"
+  | "student_notes"
+  | "ppt_materials"
+  | "homework"
+  | "assessment";
+
+function extractScienceClassBandNumber(value: string): number | null {
+  const normalized = normalizeSourceText(String(value || ""));
+  if (!normalized) return null;
+
+  const digitMatch = normalized.match(/\b(?:class|grade|std|standard)?\s*(1[0-2]|[1-9])\b/);
+  if (digitMatch?.[1]) return Number(digitMatch[1]);
+
+  const romanMap: Array<[RegExp, number]> = [
+    [/\bxii\b/, 12],
+    [/\bxi\b/, 11],
+    [/\bx\b/, 10],
+    [/\bix\b/, 9],
+    [/\bviii\b/, 8],
+    [/\bvii\b/, 7],
+    [/\bvi\b/, 6],
+    [/\bv\b/, 5],
+    [/\biv\b/, 4],
+    [/\biii\b/, 3],
+    [/\bii\b/, 2],
+    [/\bi\b/, 1],
+  ];
+  for (const [pattern, classNumber] of romanMap) {
+    if (pattern.test(normalized)) {
+      return classNumber;
+    }
+  }
+
+  return null;
+}
+
+function detectScienceGenerationArtifact(promptName: string): ScienceGenerationArtifact | null {
+  const normalized = String(promptName || "").trim().toLowerCase();
+  if (!normalized) return null;
+  if (normalized === "session-generation.md") return "session_package";
+  if (normalized.includes("teacher-notes-generation")) return "teacher_notes";
+  if (normalized.includes("student-notes-generation")) return "student_notes";
+  if (normalized === "session-ppt-prompt.md" || normalized === "ppt-generation.md") return "ppt_materials";
+  if (normalized === "homework-generation.md") return "homework";
+  if (normalized === "assessment-generation.md") return "assessment";
+  return null;
+}
+
+function detectScienceModeLabel(subject: string, gradeLevel: string) {
+  const normalizedSubject = normalizeScienceSubjectHint(subject);
+  const classNumber = extractScienceClassBandNumber(gradeLevel);
+  if (normalizedSubject.includes("physics")) return "Physics";
+  if (normalizedSubject.includes("chemistry")) return "Chemistry";
+  if (normalizedSubject.includes("biology") || normalizedSubject.includes("life science")) return "Biology";
+  if (classNumber != null && classNumber <= 5) return "EVS-style Science";
+  if (classNumber != null && classNumber <= 10) return "Integrated Science";
+  return normalizedSubject.includes("science") ? "Integrated Science" : "Science";
+}
+
+function detectScienceSessionType(subject: string, textSamples: string[]) {
+  const normalized = normalizeSourceText(textSamples.filter(Boolean).join(" "));
+  if (!normalized) return "concept_development";
+  if (/\bassessment\b|\btest\b|\bquiz\b|\brevision\b/.test(normalized)) return "assessment_or_revision";
+  if (/\bproject\b|\bfield\b|\binvestigation\b|\binquiry\b/.test(normalized)) return "project_or_investigation";
+  if (/\bpractical\b|\bexperiment\b|\blaboratory\b|\blab\b|\bdemonstration\b/.test(normalized)) return "experiment_or_practical";
+  if (/\bnumerical\b|\bcalculate\b|\bderivation\b|\bgraph\b|\bvelocity\b|\bacceleration\b|\bohm\b/.test(normalized) && normalizeScienceSubjectHint(subject).includes("physics")) {
+    return "numerical_practice";
+  }
+  if (/\bdiagram\b|\blabel\b|\bray\b|\bstructure\b|\bdraw\b/.test(normalized)) return "diagram_study";
+  if (/\bobserve\b|\bobservation\b|\bphenomen(a|on)\b|\bexample from daily life\b/.test(normalized)) return "observation_and_application";
+  if (/\bintroduction\b|\bintro\b|\bwhat is\b|\bdefine\b/.test(normalized)) return "concept_introduction";
+  return "concept_development";
+}
+
+function detectScienceContentModes(subject: string, textSamples: string[]) {
+  const normalized = normalizeSourceText(textSamples.filter(Boolean).join(" "));
+  const modes = new Set<string>();
+  if (!normalized) {
+    return ["conceptual"];
+  }
+  if (/\bformula\b|\bequation\b|\bsymbol\b|\bchemical\b|\breaction\b|\bbalanc/.test(normalized)) modes.add("formula_equation");
+  if (/\bdiagram\b|\blabel\b|\bray\b|\bgraph\b|\btable\b|\bchart\b/.test(normalized)) modes.add("diagram_data");
+  if (/\bobserve\b|\bobservation\b|\bexperiment\b|\bpractical\b|\bdemonstration\b|\blab\b/.test(normalized)) modes.add("experimental");
+  if (/\bwhy\b|\bexplain\b|\breason\b|\binfer\b|\bconclusion\b/.test(normalized)) modes.add("analytical");
+  if (/\bcalculate\b|\bnumerical\b|\bunit\b|\bvelocity\b|\bacceleration\b|\bresistance\b|\bpower\b/.test(normalized) || normalizeScienceSubjectHint(subject).includes("physics")) modes.add("numerical");
+  if (/\bprocess\b|\bcycle\b|\bmechanism\b|\bfunction\b|\bstructure\b/.test(normalized)) modes.add("process");
+  if (/\bclassify\b|\bcompare\b|\bdifference\b|\bsimilarit/.test(normalized)) modes.add("comparison");
+  modes.add("conceptual");
+  return [...modes];
+}
+
+function getScienceArtifactEmphasis(artifact: ScienceGenerationArtifact) {
+  switch (artifact) {
+    case "teacher_notes":
+      return ["explanation", "evidence", "misconception_correction", "questioning", "diagram_or_demo_guidance"];
+    case "student_notes":
+      return ["concept_clarity", "formula_equation", "diagram_labels", "revision", "exam_readiness"];
+    case "ppt_materials":
+      return ["visual_academic", "diagram", "process_flow", "data_or_graph", "recap"];
+    case "homework":
+      return ["concept_recall", "application", "diagram_or_data", "observation_to_conclusion", "subject_specific_practice"];
+    case "assessment":
+      return ["balanced_science_assessment", "application", "diagram_data", "practical_reasoning", "scientific_communication"];
+    case "session_package":
+    default:
+      return ["science_session_alignment", "explanation", "evidence", "diagram", "exam_readiness"];
+  }
+}
+
+function buildScienceGenerationMetadata(
+  promptName: string,
+  replacements: Record<string, string>
+) {
+  const artifact = detectScienceGenerationArtifact(promptName);
+  if (!artifact) {
+    return null;
+  }
+
+  const subject = String(replacements.SUBJECT || replacements.subject || "").trim();
+  const gradeLevel = String(replacements.GRADE_LEVEL || replacements.gradeLevel || "").trim();
+  const selectedChapters = String(replacements.SELECTED_CHAPTERS_JSON || "");
+  const learningOutcomes = String(replacements.LEARNING_OUTCOMES_JSON || replacements.OUTCOMES_JSON || "");
+  const sessionTitle = String(replacements.SESSION_TITLE || replacements.TERM_NAME || "").trim();
+  const assessmentType = String(replacements.ASSESSMENT_TYPE || "").trim();
+  const sessionJson = String(replacements.SESSION_JSON || "").trim();
+  const textSamples = [
+    sessionTitle,
+    selectedChapters,
+    learningOutcomes,
+    sessionJson,
+    String(replacements.QUESTION_PAPER_OBJECTIVE || ""),
+    assessmentType,
+  ];
+  const scienceMode = detectScienceModeLabel(subject, gradeLevel);
+  const scienceSessionType = detectScienceSessionType(subject, textSamples);
+  const scienceContentModes = detectScienceContentModes(subject, textSamples);
+
+  return {
+    scienceMode,
+    scienceSessionType,
+    scienceContentModes,
+    scienceArtifact: artifact,
+    artifactEmphasis: getScienceArtifactEmphasis(artifact),
+    practicalMode: scienceSessionType.includes("experiment") || scienceSessionType.includes("investigation")
+      ? "elevated_contextual"
+      : "contextual_only",
+    assessmentBias: artifact === "assessment" ? "balanced_science" : "n/a",
+    pptStyle: artifact === "ppt_materials" ? "visual_academic" : "n/a",
+  };
+}
+
 function normalizeIndicSubjectHint(value: string): string {
   return normalizeSourceText(canonicalizeSubjectName(value || ""));
 }
@@ -451,6 +763,29 @@ function isIndicCurriculumSubject(subject: string): boolean {
   const normalized = normalizeIndicSubjectHint(subject);
   if (!normalized) return false;
   return INDIC_CURRICULUM_SUBJECT_ALIASES.some((candidate) => normalized === candidate || normalized.includes(candidate));
+}
+
+function resolveGenerationOutputLanguage(subject: string, requestedLanguage = ""): string {
+  if (isTamilCurriculumSubject(subject)) {
+    return "Tamil";
+  }
+
+  const normalizedSubject = normalizeIndicSubjectHint(subject);
+  if (/(^|\s)(hindi|hindi language|हिंदी|हिन्दी)(\s|$)/.test(normalizedSubject)) {
+    return "Hindi";
+  }
+
+  const normalizedRequestedLanguage = String(requestedLanguage || "").trim();
+  return normalizedRequestedLanguage || "English";
+}
+
+function buildOutputLanguageRule(outputLanguage: string): string {
+  const resolvedLanguage = String(outputLanguage || "").trim() || "English";
+  return [
+    `Write every natural-language value in ${resolvedLanguage}.`,
+    "Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English.",
+    `Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when ${resolvedLanguage} is required.`,
+  ].join(" ");
 }
 
 function detectIndicCurriculumModeFromInput(sourceText: string, fileName = ""): boolean {
@@ -504,6 +839,23 @@ function getEnglishDownstreamIntelligenceLayerText(): string {
     cachedEnglishDownstreamIntelligenceLayer = loadPrompt(ENGLISH_DOWNSTREAM_INTELLIGENCE_PROMPT_NAME).trim();
   }
   return cachedEnglishDownstreamIntelligenceLayer;
+}
+
+function getScienceIntelligenceLayerText(): string {
+  if (cachedScienceIntelligenceLayer == null) {
+    cachedScienceIntelligenceLayer = loadPrompt(SCIENCE_INTELLIGENCE_PROMPT_NAME).trim();
+  }
+  return cachedScienceIntelligenceLayer;
+}
+
+function getScienceGenerationLayerText(promptName: string): string {
+  const cached = cachedScienceGenerationLayers.get(promptName);
+  if (cached != null) {
+    return cached;
+  }
+  const loaded = loadPrompt(promptName).trim();
+  cachedScienceGenerationLayers.set(promptName, loaded);
+  return loaded;
 }
 
 function getTamilCurriculumIntelligenceLayerText(): string {
@@ -652,12 +1004,278 @@ function extractTamilBoardFromSource(sourceText: string) {
   return "";
 }
 
+function getSupportingDocumentText(
+  supportingDocuments: SupportingCurriculumDocument[] = [],
+  roles: SupportingCurriculumDocumentRole[]
+) {
+  const allowed = new Set(roles);
+  return supportingDocuments
+    .filter((document) => allowed.has(document.role))
+    .map((document) => document.text || "")
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+function isLikelyTamilStructureNoiseLine(line: string) {
+  const normalized = normalizeSourceText(line || "");
+  if (!normalized) return true;
+  return (
+    normalized.startsWith("page ") ||
+    normalized.includes("previewurl") ||
+    normalized.includes("artifacturl") ||
+    normalized.includes("mime type") ||
+    normalized.includes("mimeType".toLowerCase()) ||
+    normalized.includes("identifier") ||
+    normalized.includes("content id") ||
+    normalized === "tamil" ||
+    normalized === "cbse"
+  );
+}
+
+function parseTamilIyalNumberFromText(line: string): number | null {
+  const match = String(line || "").match(/(?:^|\b)(?:iyal|இயல்)\s*[-:]?\s*([1-9]\d*)/i);
+  return match?.[1] ? Number(match[1]) : null;
+}
+
+function buildTamilStructureDigest(
+  structureText: string,
+  options: { className: string; subject?: string; title?: string } = { className: "Class IX", subject: "Tamil", title: "Tamil Textbook Structure" }
+): SunbirdStructureDigest | null {
+  const lines = String(structureText || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line && !isLikelyTamilStructureNoiseLine(line));
+  if (!lines.length) return null;
+
+  const unit_candidates: SunbirdStructureDigest["unit_candidates"] = [];
+  const chapter_candidates: SunbirdStructureDigest["chapter_candidates"] = [];
+  const topic_candidates: SunbirdStructureDigest["topic_candidates"] = [];
+  const subtopic_candidates: SunbirdStructureDigest["subtopic_candidates"] = [];
+  const source_refs: string[] = [];
+  let currentUnitNumber: number | null = null;
+  let currentChapterName = "";
+  let currentTopicName = "";
+
+  for (const rawLine of lines) {
+    const line = rawLine.replace(/\s+/g, " ").trim();
+    if (!line) continue;
+    const parsedUnitNumber = parseTamilIyalNumberFromText(line);
+    if (parsedUnitNumber != null) {
+      currentUnitNumber = parsedUnitNumber;
+      currentChapterName = "";
+      currentTopicName = "";
+      unit_candidates.push({
+        unit_name: line,
+        unit_number: parsedUnitNumber,
+        source_ref: line,
+      });
+      source_refs.push(line);
+      continue;
+    }
+
+    if (/^(chapter|lesson|பாடம்|கவிதை|உரைநடை|இலக்கணம்|கட்டுரை)\s*[:\-]/i.test(line)) {
+      const chapterName = line.replace(/^(chapter|lesson|பாடம்|கவிதை|உரைநடை|இலக்கணம்|கட்டுரை)\s*[:\-]\s*/i, "").trim();
+      if (chapterName) {
+        currentChapterName = chapterName;
+        currentTopicName = "";
+        chapter_candidates.push({
+          chapter_name: chapterName,
+          unit_number: currentUnitNumber,
+          source_ref: line,
+        });
+        continue;
+      }
+    }
+
+    if (/^(topic|heading|section|தலைப்பு|பிரிவு)\s*[:\-]/i.test(line)) {
+      const topicName = line.replace(/^(topic|heading|section|தலைப்பு|பிரிவு)\s*[:\-]\s*/i, "").trim();
+      if (topicName) {
+        currentTopicName = topicName;
+        topic_candidates.push({
+          chapter_name: currentChapterName || undefined,
+          topic_name: topicName,
+          unit_number: currentUnitNumber,
+          source_ref: line,
+        });
+        continue;
+      }
+    }
+
+    if (/^(subtopic|sub-topic|sub heading|துணைத்தலைப்பு|உட்தலைப்பு)\s*[:\-]/i.test(line)) {
+      const subtopicName = line.replace(/^(subtopic|sub-topic|sub heading|துணைத்தலைப்பு|உட்தலைப்பு)\s*[:\-]\s*/i, "").trim();
+      if (subtopicName) {
+        subtopic_candidates.push({
+          chapter_name: currentChapterName || undefined,
+          topic_name: currentTopicName || undefined,
+          subtopic_name: subtopicName,
+          unit_number: currentUnitNumber,
+          source_ref: line,
+        });
+        continue;
+      }
+    }
+
+    if (line.length <= 120 && /[அ-ஹ]/.test(line) && !currentChapterName) {
+      currentChapterName = line;
+      chapter_candidates.push({
+        chapter_name: line,
+        unit_number: currentUnitNumber,
+        source_ref: line,
+      });
+      continue;
+    }
+
+    if (line.length <= 140 && currentChapterName && !currentTopicName) {
+      currentTopicName = line;
+      topic_candidates.push({
+        chapter_name: currentChapterName,
+        topic_name: line,
+        unit_number: currentUnitNumber,
+        source_ref: line,
+      });
+      continue;
+    }
+
+    if (line.length <= 160 && currentChapterName) {
+      subtopic_candidates.push({
+        chapter_name: currentChapterName,
+        topic_name: currentTopicName || undefined,
+        subtopic_name: line,
+        unit_number: currentUnitNumber,
+        source_ref: line,
+      });
+    }
+  }
+
+  return {
+    class_name: options.className,
+    subject: options.subject || "Tamil",
+    title: options.title || "Tamil Textbook Structure",
+    unit_candidates,
+    chapter_candidates,
+    topic_candidates,
+    subtopic_candidates,
+    source_refs: uniqueStrings(source_refs),
+  };
+}
+
+function findTamilChapterBestMatch(chapterName: string, sourceCandidates: string[], _allowedUnitNumber?: number | null) {
+  const normalizedTarget = normalizeTamilOcrLookup(chapterName);
+  const exact = sourceCandidates.find((candidate) => normalizeTamilOcrLookup(candidate) === normalizedTarget);
+  if (exact) {
+    return { match: exact, confidence: "exact" as const };
+  }
+
+  const fuzzyCandidates = sourceCandidates.filter((candidate) => {
+    const normalizedCandidate = normalizeTamilOcrLookup(candidate);
+    return normalizedCandidate.includes(normalizedTarget) || normalizedTarget.includes(normalizedCandidate);
+  });
+
+  if (fuzzyCandidates.length === 1) {
+    return { match: fuzzyCandidates[0], confidence: "fuzzy" as const };
+  }
+
+  return { match: "", confidence: "none" as const };
+}
+
+function enrichTamilStage1FactsWithStructure(
+  stage1Facts: any,
+  structureDocuments: SupportingCurriculumDocument[] = [],
+  options: { className: string } = { className: "Class IX" }
+) {
+  const structureText = getSupportingDocumentText(structureDocuments, ["textbook_structure", "sunbird_textbook_structure"]);
+  const digest = buildTamilStructureDigest(structureText, {
+    className: options.className,
+    subject: "Tamil",
+    title: "Tamil Textbook Structure",
+  });
+
+  const metadata = {
+    structureDigestGenerated: Boolean(digest),
+    matchedChapters: 0,
+    unmatchedChapters: [] as string[],
+    topicAdds: 0,
+    subtopicAdds: 0,
+  };
+
+  if (!digest) {
+    return { stage1Facts, metadata, digest: null };
+  }
+
+  const nextStage1Facts = structuredClone(stage1Facts || {});
+  const chapters = Array.isArray(nextStage1Facts?.chapters) ? nextStage1Facts.chapters : [];
+  const chapterNames = chapters.map((chapter: any) => chapter.chapter_name || "").filter(Boolean);
+  const chapterMap = new Map<string, any>();
+  chapters.forEach((chapter: any) => {
+    chapterMap.set(chapter.chapter_name, chapter);
+    if (!Array.isArray(chapter.topics)) chapter.topics = [];
+    if (!Array.isArray(chapter.subtopics)) chapter.subtopics = [];
+    if (!Array.isArray(chapter.key_concepts)) chapter.key_concepts = [];
+  });
+
+  const topicChapterMap = new Map<string, string>();
+  for (const candidate of digest.chapter_candidates) {
+    const matched = findTamilChapterBestMatch(candidate.chapter_name, chapterNames, candidate.unit_number);
+    if (!matched.match) {
+      metadata.unmatchedChapters.push(candidate.chapter_name);
+      continue;
+    }
+    metadata.matchedChapters += 1;
+    topicChapterMap.set(candidate.chapter_name, matched.match);
+  }
+
+  for (const topicCandidate of digest.topic_candidates) {
+    const targetChapterName =
+      (topicCandidate.chapter_name && topicChapterMap.get(topicCandidate.chapter_name)) ||
+      (topicCandidate.chapter_name && findTamilChapterBestMatch(topicCandidate.chapter_name, chapterNames, topicCandidate.unit_number).match) ||
+      "";
+    if (!targetChapterName) continue;
+    const chapter = chapterMap.get(targetChapterName);
+    if (!chapter) continue;
+    chapter.topics = uniqueStrings([...(chapter.topics || []), topicCandidate.topic_name]);
+    chapter.key_concepts = uniqueStrings([...(chapter.key_concepts || []), topicCandidate.topic_name]);
+    metadata.topicAdds += 1;
+  }
+
+  for (const subtopicCandidate of digest.subtopic_candidates) {
+    const targetChapterName =
+      (subtopicCandidate.chapter_name && topicChapterMap.get(subtopicCandidate.chapter_name)) ||
+      (subtopicCandidate.chapter_name && findTamilChapterBestMatch(subtopicCandidate.chapter_name, chapterNames, subtopicCandidate.unit_number).match) ||
+      "";
+    if (!targetChapterName) continue;
+    const chapter = chapterMap.get(targetChapterName);
+    if (!chapter) continue;
+    if (subtopicCandidate.topic_name) {
+      chapter.topics = uniqueStrings([...(chapter.topics || []), subtopicCandidate.topic_name]);
+    }
+    chapter.subtopics = uniqueStrings([...(chapter.subtopics || []), subtopicCandidate.subtopic_name]);
+    metadata.subtopicAdds += 1;
+  }
+
+  const units = Array.isArray(nextStage1Facts?.units) ? nextStage1Facts.units : [];
+  units.forEach((unit: any) => {
+    const relatedChapters = chapters.filter((chapter: any) => chapter.unit_id === unit.unit_id);
+    unit.topics = uniqueStrings(relatedChapters.flatMap((chapter: any) => chapter.topics || []));
+    unit.subtopics = uniqueStrings(relatedChapters.flatMap((chapter: any) => chapter.subtopics || []));
+    unit.key_concepts = uniqueStrings(relatedChapters.flatMap((chapter: any) => chapter.key_concepts || []));
+  });
+
+  return {
+    stage1Facts: nextStage1Facts,
+    metadata: {
+      ...metadata,
+      unmatchedChapters: uniqueStrings(metadata.unmatchedChapters),
+    },
+    digest,
+  };
+}
+
 function buildTamilFastStage1Facts(
   primarySourceText: string,
   fileName: string,
   options: {
     selectedClassNames?: string[];
-    supportingDocuments?: Array<{ role: "textbook_index"; fileName: string; text: string }>;
+    supportingDocuments?: SupportingCurriculumDocument[];
   } = {}
 ) {
   const selectedClassName = canonicalizeClassName((options.selectedClassNames || [])[0] || "");
@@ -668,10 +1286,7 @@ function buildTamilFastStage1Facts(
     selectedClassName ||
     detectedPrimaryClasses[0] ||
     "Class IX";
-  const textbookIndexText = (options.supportingDocuments || [])
-    .filter((document) => document.role === "textbook_index")
-    .map((document) => document.text || "")
-    .join("\n\n");
+  const textbookIndexText = getSupportingDocumentText(options.supportingDocuments || [], ["textbook_index"]);
   const textbookUnits = parseTamilTextbookIndexUnits(textbookIndexText, resolvedClassName);
   const assessmentSections = parseTamilAssessmentSectionsFromSource(primarySourceText || "");
 
@@ -706,7 +1321,7 @@ function buildTamilFastStage1Facts(
     }))
   );
 
-  return {
+  const stage1Facts = {
     document_metadata: {
       board: extractTamilBoardFromSource(primarySourceText),
       subject: "Tamil",
@@ -729,6 +1344,10 @@ function buildTamilFastStage1Facts(
       teacher_notes: [],
     },
   };
+
+  return enrichTamilStage1FactsWithStructure(stage1Facts, options.supportingDocuments || [], {
+    className: resolvedClassName,
+  }).stage1Facts;
 }
 
 function hardenTamilStage1Facts(
@@ -736,7 +1355,7 @@ function hardenTamilStage1Facts(
   options: {
     primarySourceText: string;
     selectedClassNames?: string[];
-    supportingDocuments?: Array<{ role: "textbook_index"; fileName: string; text: string }>;
+    supportingDocuments?: SupportingCurriculumDocument[];
   }
 ) {
   const selectedClassName = canonicalizeClassName((options.selectedClassNames || [])[0] || "");
@@ -749,10 +1368,7 @@ function hardenTamilStage1Facts(
     canonicalizeClassName(stage1Facts?.document_metadata?.class || "") ||
     canonicalizeClassName(stage1Facts?.classes?.[0]?.class_name || "") ||
     "Class IX";
-  const textbookIndexText = (options.supportingDocuments || [])
-    .filter((document) => document.role === "textbook_index")
-    .map((document) => document.text || "")
-    .join("\n\n");
+  const textbookIndexText = getSupportingDocumentText(options.supportingDocuments || [], ["textbook_index"]);
   const textbookUnits = parseTamilTextbookIndexUnits(textbookIndexText, resolvedClassName);
   const assessmentSections = parseTamilAssessmentSectionsFromSource(options.primarySourceText || "");
 
@@ -794,7 +1410,7 @@ function hardenTamilStage1Facts(
     }))
   );
 
-  const nextStage1Facts = {
+  let nextStage1Facts = {
     ...stage1Facts,
     document_metadata: {
       ...(stage1Facts?.document_metadata || {}),
@@ -814,6 +1430,10 @@ function hardenTamilStage1Facts(
       marks_distribution: assessmentSections.map((section) => `${section.title} - ${section.marks} Marks`),
     },
   };
+  const structureEnrichment = enrichTamilStage1FactsWithStructure(nextStage1Facts, options.supportingDocuments || [], {
+    className: resolvedClassName,
+  });
+  nextStage1Facts = structureEnrichment.stage1Facts;
 
   return {
     stage1Facts: nextStage1Facts,
@@ -822,33 +1442,144 @@ function hardenTamilStage1Facts(
       resolvedClassName,
       recoveredTextbookUnitCount: textbookUnits.length,
       dedupedAssessmentSectionCount: assessmentSections.length,
+      structureDigestGenerated: structureEnrichment.metadata.structureDigestGenerated,
+      structureMatchedChapters: structureEnrichment.metadata.matchedChapters,
+      structureTopicAdds: structureEnrichment.metadata.topicAdds,
+      structureSubtopicAdds: structureEnrichment.metadata.subtopicAdds,
+      structureUnmatchedChapters: structureEnrichment.metadata.unmatchedChapters,
     },
   };
+}
+
+function inferSubjectIntelligenceContextFromReplacements(replacements: Record<string, string>) {
+  return {
+    subject: [
+      replacements.SUBJECT,
+      replacements.subject,
+    ].filter(Boolean).join(" "),
+    sourceText: [
+      replacements.SOURCE_TEXT,
+      replacements.SESSION_JSON,
+      replacements.STAGE_PAYLOAD_JSON,
+      replacements.RAW_CLASS_JSON,
+      replacements.STRUCTURE_CLASS_JSON,
+      replacements.NORMALIZED_STRUCTURE_JSON,
+      replacements.COMPETENCIES_JSON,
+      replacements.ASSESSMENT_JSON,
+      replacements.OUTCOMES_JSON,
+      replacements.ACTIVITIES_JSON,
+      replacements.SELECTED_CHAPTERS_JSON,
+      replacements.LEARNING_OUTCOMES_JSON,
+    ].filter(Boolean).join("\n"),
+    fileName: replacements.FILE_NAME || "",
+  };
+}
+
+function buildSubjectIntelligenceLayers(
+  replacements: Record<string, string>,
+  options: {
+    englishMode?: boolean;
+    scienceMode?: boolean;
+    stageLabel?: string;
+    englishLayerText?: string;
+  } = {}
+) {
+  const layers: string[] = [];
+  if (options.englishMode) {
+    layers.push([
+      "# English Subject Intelligence Layer (Active)",
+      options.stageLabel
+        ? `Apply this English subject intelligence while completing: ${options.stageLabel}.`
+        : "Apply this English subject intelligence while completing the task below.",
+      "",
+      options.englishLayerText || getEnglishIntelligenceLayerText(),
+    ].join("\n"));
+  }
+
+  const inferredContext = inferSubjectIntelligenceContextFromReplacements(replacements);
+  const scienceMode = typeof options.scienceMode === "boolean"
+    ? options.scienceMode
+    : shouldUseScienceIntelligence(inferredContext);
+  if (scienceMode) {
+    layers.push([
+      "# Science Subject Intelligence Layer (Active)",
+      options.stageLabel
+        ? `Apply this Science subject intelligence while completing: ${options.stageLabel}.`
+        : "Apply this Science subject intelligence while completing the task below.",
+      "",
+      getScienceIntelligenceLayerText(),
+    ].join("\n"));
+  }
+
+  return layers;
+}
+
+function buildScienceArtifactGenerationLayer(
+  promptName: string,
+  replacements: Record<string, string>,
+  options: {
+    scienceMode?: boolean;
+    stageLabel?: string;
+  } = {}
+) {
+  const inferredContext = inferSubjectIntelligenceContextFromReplacements(replacements);
+  const scienceMode = typeof options.scienceMode === "boolean"
+    ? options.scienceMode
+    : shouldUseScienceIntelligence(inferredContext);
+  if (!scienceMode) {
+    return "";
+  }
+
+  const metadata = buildScienceGenerationMetadata(promptName, replacements);
+  if (!metadata) {
+    return "";
+  }
+
+  const promptNameByArtifact: Record<ScienceGenerationArtifact, string> = {
+    session_package: SCIENCE_GENERATION_SESSION_PROMPT_NAME,
+    teacher_notes: SCIENCE_GENERATION_TEACHER_PROMPT_NAME,
+    student_notes: SCIENCE_GENERATION_STUDENT_PROMPT_NAME,
+    ppt_materials: SCIENCE_GENERATION_PPT_PROMPT_NAME,
+    homework: SCIENCE_GENERATION_HOMEWORK_PROMPT_NAME,
+    assessment: SCIENCE_GENERATION_ASSESSMENT_PROMPT_NAME,
+  };
+
+  return [
+    "# Science Generation Policy Layer (Active)",
+    options.stageLabel
+      ? `Apply this science generation policy while completing: ${options.stageLabel}.`
+      : "Apply this science generation policy while completing the task below.",
+    "",
+    "Science session profile:",
+    JSON.stringify(metadata, null, 2),
+    "",
+    getScienceGenerationLayerText(SCIENCE_GENERATION_SHARED_PROMPT_NAME),
+    "",
+    getScienceGenerationLayerText(promptNameByArtifact[metadata.scienceArtifact]),
+  ].join("\n");
 }
 
 function renderPromptWithEnglishIntelligence(
   promptName: string,
   replacements: Record<string, string>,
-  options: { englishMode?: boolean; stageLabel?: string } = {}
+  options: { englishMode?: boolean; scienceMode?: boolean; stageLabel?: string } = {}
 ): string {
-  const englishLayer = options.englishMode
-    ? [
-        "# English Subject Intelligence Layer (Active)",
-        options.stageLabel
-          ? `Apply this English subject intelligence while completing: ${options.stageLabel}.`
-          : "Apply this English subject intelligence while completing the task below.",
-        "",
-        getEnglishIntelligenceLayerText(),
-      ].join("\n")
-    : "";
+  const subjectIntelligenceLayers = buildSubjectIntelligenceLayers(replacements, {
+    englishMode: options.englishMode,
+    scienceMode: options.scienceMode,
+    stageLabel: options.stageLabel,
+    englishLayerText: getEnglishIntelligenceLayerText(),
+  });
+  const injectedLayerText = subjectIntelligenceLayers.join("\n\n");
 
   const rendered = renderPrompt(promptName, {
     ...replacements,
-    ENGLISH_INTELLIGENCE_LAYER: englishLayer,
+    ENGLISH_INTELLIGENCE_LAYER: injectedLayerText,
+    SCIENCE_INTELLIGENCE_LAYER: injectedLayerText,
   });
 
-  if (englishLayer && !rendered.includes(englishLayer)) {
-    return `${englishLayer}\n\n${rendered}`;
+  if (injectedLayerText && !rendered.includes(injectedLayerText)) {
+    return `${injectedLayerText}\n\n${rendered}`;
   }
 
   return rendered;
@@ -857,26 +1588,28 @@ function renderPromptWithEnglishIntelligence(
 function renderPromptWithEnglishDownstreamIntelligence(
   promptName: string,
   replacements: Record<string, string>,
-  options: { englishMode?: boolean; stageLabel?: string } = {}
+  options: { englishMode?: boolean; scienceMode?: boolean; stageLabel?: string } = {}
 ): string {
-  const englishLayer = options.englishMode
-    ? [
-        "# English Subject Intelligence Layer (Active)",
-        options.stageLabel
-          ? `Apply this English subject intelligence while completing: ${options.stageLabel}.`
-          : "Apply this English subject intelligence while completing the task below.",
-        "",
-        getEnglishDownstreamIntelligenceLayerText(),
-      ].join("\n")
-    : "";
+  const subjectIntelligenceLayers = buildSubjectIntelligenceLayers(replacements, {
+    englishMode: options.englishMode,
+    scienceMode: options.scienceMode,
+    stageLabel: options.stageLabel,
+    englishLayerText: getEnglishDownstreamIntelligenceLayerText(),
+  });
+  const scienceArtifactLayer = buildScienceArtifactGenerationLayer(promptName, replacements, {
+    scienceMode: options.scienceMode,
+    stageLabel: options.stageLabel,
+  });
+  const injectedLayerText = [...subjectIntelligenceLayers, scienceArtifactLayer].filter(Boolean).join("\n\n");
 
   const rendered = renderPrompt(promptName, {
     ...replacements,
-    ENGLISH_INTELLIGENCE_LAYER: englishLayer,
+    ENGLISH_INTELLIGENCE_LAYER: injectedLayerText,
+    SCIENCE_INTELLIGENCE_LAYER: injectedLayerText,
   });
 
-  if (englishLayer && !rendered.includes(englishLayer)) {
-    return `${englishLayer}\n\n${rendered}`;
+  if (injectedLayerText && !rendered.includes(injectedLayerText)) {
+    return `${injectedLayerText}\n\n${rendered}`;
   }
 
   return rendered;
@@ -885,10 +1618,11 @@ function renderPromptWithEnglishDownstreamIntelligence(
 function renderStage1PromptWithCurriculumIntelligence(
   promptName: string,
   replacements: Record<string, string>,
-  options: { englishMode?: boolean; tamilMode?: boolean; stageLabel?: string } = {}
+  options: { englishMode?: boolean; scienceMode?: boolean; tamilMode?: boolean; stageLabel?: string } = {}
 ): string {
   const rendered = renderPromptWithEnglishIntelligence(promptName, replacements, {
     englishMode: options.englishMode,
+    scienceMode: options.scienceMode,
     stageLabel: options.stageLabel,
   });
 
@@ -910,6 +1644,50 @@ function renderStage1PromptWithCurriculumIntelligence(
     : `${tamilLayer}\n\n${rendered}`;
 }
 
+function countWholeWordOccurrences(haystack: string, needle: string) {
+  if (!haystack || !needle) return 0;
+  const escapedNeedle = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const matches = haystack.match(new RegExp(`(^|\\s)${escapedNeedle}(?=\\s|$)`, "g"));
+  return matches?.length || 0;
+}
+
+function detectSubjectFromNormalizedSamples(samples: string[]) {
+  const normalizedSamples = samples
+    .map((sample) => normalizeSourceText(sample || ""))
+    .filter(Boolean);
+  if (!normalizedSamples.length) return "";
+
+  for (const sample of normalizedSamples) {
+    const exactMatch = CURRICULUM_SUBJECT_ALIAS_GROUPS.find(({ aliases }) =>
+      aliases.some((alias) => sample === alias || sample.startsWith(`${alias} `) || sample.includes(` ${alias} `))
+    );
+    if (exactMatch) {
+      return exactMatch.subject;
+    }
+  }
+
+  const combinedSample = normalizedSamples.join(" ");
+  let bestMatch: { subject: string; score: number; aliasLength: number } | null = null;
+  for (const group of CURRICULUM_SUBJECT_ALIAS_GROUPS) {
+    const score = group.aliases.reduce((sum, alias) => sum + countWholeWordOccurrences(combinedSample, alias), 0);
+    if (!score) continue;
+    const aliasLength = Math.max(...group.aliases.map((alias) => alias.length));
+    if (
+      !bestMatch ||
+      score > bestMatch.score ||
+      (score === bestMatch.score && aliasLength > bestMatch.aliasLength)
+    ) {
+      bestMatch = {
+        subject: group.subject,
+        score,
+        aliasLength,
+      };
+    }
+  }
+
+  return bestMatch?.subject || "";
+}
+
 function detectCurriculumSubjectFromInput(sourceText: string, fileName = ""): string {
   const sampleText = String(sourceText || "").slice(0, 12000);
   const sampleFileName = String(fileName || "");
@@ -917,25 +1695,26 @@ function detectCurriculumSubjectFromInput(sourceText: string, fileName = ""): st
   const normalizedSample = normalizeSourceText([sampleFileName, sampleText].join("\n"));
   const normalizedSubjectLine = normalizeSourceText(canonicalizeSubjectName(explicitSubjectLine));
 
-  const aliasGroups: Array<{ subject: string; aliases: string[] }> = [
-    { subject: "Mathematics", aliases: ["mathematics", "maths", "math", "applied mathematics", "applied math"] },
-    { subject: "Physics", aliases: ["physics"] },
-    { subject: "Chemistry", aliases: ["chemistry"] },
-    { subject: "Biology", aliases: ["biology"] },
-    { subject: "Science", aliases: ["science", "general science"] },
-    { subject: "Computer Science", aliases: ["computer science", "informatics practices", "informatics"] },
-    { subject: "Social Science", aliases: ["social science", "social studies"] },
-  ];
-
   if (normalizedSubjectLine) {
     if (isEnglishSubject(normalizedSubjectLine)) return "English";
     const inferredIndicSubject = inferIndicFallbackSubject(normalizedSubjectLine, sampleFileName);
     if (inferredIndicSubject) return inferredIndicSubject;
-    const matchedAliasGroup = aliasGroups.find(({ aliases }) =>
-      aliases.some((alias) => normalizedSubjectLine === alias || normalizedSubjectLine.includes(alias))
-    );
-    if (matchedAliasGroup) return matchedAliasGroup.subject;
+    const subjectLineMatch = detectSubjectFromNormalizedSamples([normalizedSubjectLine]);
+    if (subjectLineMatch) return subjectLineMatch;
     return canonicalizeSubjectName(explicitSubjectLine);
+  }
+
+  const leadingLines = sampleText
+    .split(/\r?\n/)
+    .map((line) => line.replace(/^#+\s*/, "").trim())
+    .filter(Boolean)
+    .slice(0, 20);
+  const headingMatch = detectSubjectFromNormalizedSamples([
+    sampleFileName,
+    ...leadingLines,
+  ]);
+  if (headingMatch) {
+    return headingMatch;
   }
 
   if (shouldUseEnglishIntelligence({ sourceText: sampleText, fileName: sampleFileName })) {
@@ -947,10 +1726,7 @@ function detectCurriculumSubjectFromInput(sourceText: string, fileName = ""): st
     return inferredIndicSubject;
   }
 
-  const matchedAliasGroup = aliasGroups.find(({ aliases }) =>
-    aliases.some((alias) => normalizedSample.includes(alias))
-  );
-  return matchedAliasGroup?.subject || "";
+  return detectSubjectFromNormalizedSamples([normalizedSample]);
 }
 
 function requiresTamilTextbookIndexFromInput(sourceText: string, fileName = ""): boolean {
@@ -6729,6 +7505,351 @@ function buildLanguageFallbackStage1Facts(
   };
 }
 
+function romanToNumber(value: string): number | null {
+  const normalized = String(value || "").trim().toUpperCase();
+  if (!normalized) return null;
+  if (/^\d+$/.test(normalized)) return Number(normalized);
+
+  const romanValues: Record<string, number> = {
+    I: 1,
+    V: 5,
+    X: 10,
+    L: 50,
+    C: 100,
+    D: 500,
+    M: 1000,
+  };
+  let total = 0;
+  let previous = 0;
+  for (let index = normalized.length - 1; index >= 0; index -= 1) {
+    const current = romanValues[normalized[index]];
+    if (!current) return null;
+    if (current < previous) {
+      total -= current;
+    } else {
+      total += current;
+      previous = current;
+    }
+  }
+  return total || null;
+}
+
+function normalizeStage1FallbackLine(line: string) {
+  return String(line || "")
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/^[\-•*]\s*/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function shouldStopUnitChapterFallbackSection(line: string) {
+  const normalized = normalizeSourceText(line || "");
+  if (!normalized) return false;
+  return [
+    "practicals",
+    "list of experiments",
+    "prescribed books",
+    "question paper design",
+    "internal assessment",
+    "suggestive verbs",
+  ].some((candidate) => normalized.startsWith(candidate));
+}
+
+function extractCourseStructureUnitMarksFromSource(sourceText: string) {
+  const byUnitNumber = new Map<number, number>();
+  const byUnitNameKey = new Map<string, number>();
+  const lines = String(sourceText || "")
+    .split(/\r?\n/)
+    .map((line) => normalizeStage1FallbackLine(line))
+    .filter(Boolean);
+
+  for (const line of lines) {
+    const courseStructureRowMatch = line.match(/^([ivxlcdm]+|\d+)\s+(.+?)\s+(\d{1,3})$/i);
+    if (!courseStructureRowMatch) {
+      continue;
+    }
+    const unitNumber = romanToNumber(courseStructureRowMatch[1]);
+    const marks = Number(courseStructureRowMatch[3]);
+    const rawUnitName = stripInternalParserLabel(String(courseStructureRowMatch[2] || "").trim());
+    if (!Number.isFinite(marks) || marks < 0 || !rawUnitName) {
+      continue;
+    }
+    if (unitNumber) {
+      byUnitNumber.set(unitNumber, marks);
+    }
+    byUnitNameKey.set(canonicalUnitKey(rawUnitName), marks);
+    byUnitNameKey.set(canonicalUnitKey(`Unit ${String(courseStructureRowMatch[1]).toUpperCase()}: ${rawUnitName}`), marks);
+  }
+
+  return {
+    byUnitNumber,
+    byUnitNameKey,
+  };
+}
+
+function inferSourceUnitMarksForEntry(entry: any, marksLookup: ReturnType<typeof extractCourseStructureUnitMarksFromSource>) {
+  if (entry?.marks != null && entry?.marks !== "") {
+    const numericExistingMarks = Number(entry.marks);
+    if (Number.isFinite(numericExistingMarks) && numericExistingMarks > 0) {
+      return numericExistingMarks;
+    }
+  }
+
+  const unitName = String(entry?.unit_name || "").trim();
+  if (!unitName) {
+    return null;
+  }
+  if (
+    isPracticalLikeSection([entry?.part_or_section || "", unitName].join(" ")) ||
+    isPracticalLikeUnitContent(entry)
+  ) {
+    return null;
+  }
+
+  const directNameMatch = marksLookup.byUnitNameKey.get(canonicalUnitKey(unitName));
+  if (directNameMatch != null) {
+    return directNameMatch;
+  }
+
+  const unitPrefixMatch = unitName.match(/^unit\s*[\-–—:.]?\s*(\d+|[ivxlcdm]+)\b/i);
+  const unitNumber = unitPrefixMatch?.[1] ? romanToNumber(unitPrefixMatch[1]) : null;
+  if (unitNumber && unitPrefixMatch[0].trim().length < unitName.trim().length) {
+    const numberedMatch = marksLookup.byUnitNumber.get(unitNumber);
+    if (numberedMatch != null) {
+      return numberedMatch;
+    }
+  }
+
+  return null;
+}
+
+function backfillStage1MarksFromSource(stage1Facts: any, sourceText: string) {
+  const marksLookup = extractCourseStructureUnitMarksFromSource(sourceText);
+  if (marksLookup.byUnitNumber.size === 0 && marksLookup.byUnitNameKey.size === 0) {
+    return stage1Facts;
+  }
+
+  const units = Array.isArray(stage1Facts?.units)
+    ? stage1Facts.units.map((unit: any) => {
+        const inferredMarks = inferSourceUnitMarksForEntry(unit, marksLookup);
+        return inferredMarks == null ? unit : { ...unit, marks: inferredMarks };
+      })
+    : [];
+
+  const chapters = Array.isArray(stage1Facts?.chapters)
+    ? stage1Facts.chapters.map((chapter: any) => {
+        const inferredMarks = inferSourceUnitMarksForEntry(chapter, marksLookup);
+        return inferredMarks == null ? chapter : { ...chapter, marks: inferredMarks };
+      })
+    : [];
+
+  return {
+    ...stage1Facts,
+    units,
+    chapters,
+  };
+}
+
+function extractChapterCandidateFromFallbackLine(line: string) {
+  const cleanedLine = normalizeStage1FallbackLine(line);
+  if (!cleanedLine) return "";
+
+  const normalized = normalizeSourceText(cleanedLine);
+  if (!normalized) return "";
+  if (
+    /^(theme|note for teachers|course structure|class\s+[ivxlcdm\d]+|time|marks|total|grand total|internal assessment|competencies|demonstrate knowledge|application of knowledge|formulate analyze|the following topics|relevant ncert textual material|schools can integrate|learners may be assigned|teachers should provide)/i.test(normalized)
+  ) {
+    return "";
+  }
+
+  const colonMatch = cleanedLine.match(/^([A-Z][A-Za-z0-9'(),&/\-+\s]{2,90}?)\s*:\s+/);
+  if (colonMatch?.[1]) {
+    const candidate = stripInternalParserLabel(colonMatch[1].trim());
+    const wordCount = candidate.split(/\s+/).filter(Boolean).length;
+    if (wordCount >= 1 && wordCount <= 12) {
+      return candidate;
+    }
+  }
+
+  if (/^#{1,6}\s*/.test(line) && /^[A-Z][A-Za-z0-9'(),&/\-+\s]{3,100}$/.test(cleanedLine)) {
+    return stripInternalParserLabel(cleanedLine);
+  }
+
+  return "";
+}
+
+function buildUnitChapterFallbackStage1Facts(
+  sourceText: string,
+  existingFacts: any,
+  options: {
+    fileName?: string;
+    detectedProfile?: CurriculumProfile;
+  } = {}
+) {
+  const inferredSubject =
+    canonicalizeSubjectName(existingFacts?.document_metadata?.subject || existingFacts?.classes?.[0]?.subject || "") ||
+    detectCurriculumSubjectFromInput(sourceText, options.fileName || "");
+  const inferredClassName =
+    existingFacts?.classes?.[0]?.class_name ||
+    existingFacts?.document_metadata?.class ||
+    detectCurriculumClassSegmentsFromSource(sourceText)?.[0]?.className ||
+    "";
+  const lines = String(sourceText || "")
+    .split(/\r?\n/)
+    .map((line) => line.replace(/\t/g, " "))
+    .filter((line) => line.trim().length > 0);
+
+  const marksByUnitNumber = new Map<number, number>();
+  const themeByUpcomingUnitNumber = new Map<number, string>();
+
+  let pendingTheme = "";
+  for (const rawLine of lines) {
+    const cleanedLine = normalizeStage1FallbackLine(rawLine);
+    if (!cleanedLine) continue;
+    const themeMatch = cleanedLine.match(/^theme\s*:\s*(.+)$/i);
+    if (themeMatch?.[1]) {
+      pendingTheme = themeMatch[1].trim();
+      continue;
+    }
+
+    const detailedUnitMatch = cleanedLine.match(/^unit\s+([ivxlcdm]+|\d+)\s*[:.-]?\s*(.+)$/i);
+    if (detailedUnitMatch) {
+      const unitNumber = romanToNumber(detailedUnitMatch[1]);
+      if (unitNumber && pendingTheme && !themeByUpcomingUnitNumber.has(unitNumber)) {
+        themeByUpcomingUnitNumber.set(unitNumber, pendingTheme);
+      }
+      pendingTheme = "";
+      continue;
+    }
+
+    const courseStructureRowMatch = cleanedLine.match(/^([ivxlcdm]+|\d+)\s+(.+?)\s+(\d{1,3})$/i);
+    if (courseStructureRowMatch) {
+      const unitNumber = romanToNumber(courseStructureRowMatch[1]);
+      if (unitNumber) {
+        marksByUnitNumber.set(unitNumber, Number(courseStructureRowMatch[3]));
+      }
+    }
+  }
+
+  const recoveredUnits: Array<{
+    unitNumber: number;
+    unitId: string;
+    unitName: string;
+    partOrSection: string;
+    marks: number | null;
+    chapterNames: string[];
+  }> = [];
+
+  let currentUnit: {
+    unitNumber: number;
+    unitId: string;
+    unitName: string;
+    partOrSection: string;
+    marks: number | null;
+    chapterNames: string[];
+  } | null = null;
+
+  for (const rawLine of lines) {
+    const cleanedLine = normalizeStage1FallbackLine(rawLine);
+    if (!cleanedLine) continue;
+
+    const themeMatch = cleanedLine.match(/^theme\s*:\s*(.+)$/i);
+    if (themeMatch?.[1]) {
+      if (currentUnit && !currentUnit.partOrSection) {
+        currentUnit.partOrSection = themeMatch[1].trim();
+      }
+      continue;
+    }
+
+    if (shouldStopUnitChapterFallbackSection(cleanedLine)) {
+      if (currentUnit) {
+        recoveredUnits.push(currentUnit);
+        currentUnit = null;
+        break;
+      }
+      continue;
+    }
+
+    const detailedUnitMatch = cleanedLine.match(/^unit\s+([ivxlcdm]+|\d+)\s*[:.-]?\s*(.+)$/i);
+    if (detailedUnitMatch) {
+      if (currentUnit) {
+        recoveredUnits.push(currentUnit);
+      }
+      const unitNumber = romanToNumber(detailedUnitMatch[1]) || recoveredUnits.length + 1;
+      currentUnit = {
+        unitNumber,
+        unitId: `U${unitNumber}`,
+        unitName: `Unit ${String(detailedUnitMatch[1]).toUpperCase()}: ${detailedUnitMatch[2].trim()}`,
+        partOrSection: themeByUpcomingUnitNumber.get(unitNumber) || "",
+        marks: marksByUnitNumber.get(unitNumber) ?? null,
+        chapterNames: [],
+      };
+      continue;
+    }
+
+    if (!currentUnit) {
+      continue;
+    }
+
+    const chapterCandidate = extractChapterCandidateFromFallbackLine(rawLine);
+    if (chapterCandidate) {
+      currentUnit.chapterNames.push(chapterCandidate);
+    }
+  }
+
+  if (currentUnit) {
+    recoveredUnits.push(currentUnit);
+  }
+
+  const units = recoveredUnits.map((unit) => ({
+    class_name: inferredClassName,
+    subject: inferredSubject,
+    part_or_section: unit.partOrSection,
+    unit_id: unit.unitId,
+    unit_name: stripInternalParserLabel(String(unit.unitName || "").trim()),
+    marks: unit.marks,
+    topics: [],
+    subtopics: [],
+    key_concepts: [],
+  }));
+
+  const chapters = recoveredUnits.flatMap((unit) =>
+    uniqueStrings(unit.chapterNames).map((chapterName) => ({
+      class_name: inferredClassName,
+      subject: inferredSubject,
+      part_or_section: unit.partOrSection,
+      unit_id: unit.unitId,
+      unit_name: stripInternalParserLabel(String(unit.unitName || "").trim()),
+      chapter_name: stripInternalParserLabel(chapterName),
+      marks: unit.marks,
+      topics: [],
+      subtopics: [],
+      key_concepts: [],
+    }))
+  );
+
+  return {
+    document_metadata: {
+      ...(existingFacts?.document_metadata || {}),
+      ...(inferredSubject ? { subject: inferredSubject } : {}),
+      ...(inferredClassName ? { class: inferredClassName } : {}),
+    },
+    classes: units.length
+      ? [{
+          class_name: inferredClassName,
+          subject: inferredSubject,
+          part_or_section: "",
+        }]
+      : [],
+    units,
+    chapters,
+    fallbackApplied: units.length > 0 && chapters.length > 0,
+    fallbackUnitsCount: units.length,
+    fallbackChaptersCount: chapters.length,
+    fallbackReason: options.detectedProfile || "unit_chapter_source_recovery",
+  };
+}
+
 function cleanChapterName(value: string, unitName: string = ""): string {
   const raw = String(value || "").trim();
   if (!raw) return "";
@@ -7542,6 +8663,92 @@ function isStrongExplicitNonTheoryUnit(unit: any) {
   return chapterStatuses.length > 0 && chapterStatuses.every((status: string) => ["formative", "practical", "project"].includes(status));
 }
 
+function isScienceFrameworkUnitName(unitName: string) {
+  const normalized = normalizeSourceText(unitName || "");
+  if (!normalized) {
+    return false;
+  }
+  if (/\bcg\s*\d+\b/.test(normalized) || /\bc\s*\d+(\.\d+)?\b/.test(normalized)) {
+    return true;
+  }
+
+  return [
+    "matter and its interactions",
+    "physical world and scientific principles",
+    "living world at cellular level",
+    "life processes and heredity",
+    "interconnectedness between organisms and environment",
+    "linkages between scientific knowledge and other curricular areas",
+    "contribution of india to science",
+    "current discoveries and frontiers in science",
+    "nature of science by doing science",
+  ].some((phrase) => normalized.includes(phrase));
+}
+
+function isPracticalLikeUnitContent(unit: any) {
+  const content = [
+    ...(unit?.topics || []),
+    ...(unit?.subtopics || []),
+    ...(unit?.key_concepts || []),
+    ...(unit?.chapters || []).flatMap((chapter: any) => [
+      ...(chapter?.topics || []),
+      ...(chapter?.subtopics || []),
+      ...(chapter?.key_concepts || []),
+      chapter?.chapter_name || "",
+      chapter?.source_chapter_name || "",
+    ]),
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const normalized = normalizeSourceText(content);
+  if (!normalized) {
+    return false;
+  }
+
+  return (
+    /\b(study|studying|determine|determination|prepare|preparing|observe|observing|perform|performing|trace|tracing|identify|identification|experimentally|mount|slide|slides|graph plotting)\b/.test(normalized) ||
+    /\b(focal length|equivalent resistance|ph paper|universal indicator|litmus|copper sulphate|barium chloride|leaf peel|stomata|amoeba|hydra|glass prism|rectangular glass slab)\b/.test(normalized)
+  );
+}
+
+function shouldSkipUnmatchedApprovedUnit(rawClass: any, unit: any) {
+  if (isStrongExplicitNonTheoryUnit(unit)) {
+    return true;
+  }
+
+  const unitName = String(unit?.unit_name || "").trim();
+  const normalizedUnitName = normalizeSourceText(unitName);
+  const normalizedPart = normalizeSourceText(unit?.part_or_section || "");
+  const chapterCount = Array.isArray(unit?.chapters) ? unit.chapters.length : 0;
+
+  if (chapterCount > 0) {
+    return false;
+  }
+
+  if (isScienceSubject(rawClass?.subject || "") && isScienceFrameworkUnitName(unitName)) {
+    return true;
+  }
+
+  if (
+    isScienceSubject(rawClass?.subject || "") &&
+    /^unit[\s-]*[ivxlcdm0-9]+$/i.test(unitName) &&
+    isPracticalLikeUnitContent(unit)
+  ) {
+    return true;
+  }
+
+  if (
+    /^unit[\s-]*[ivxlcdm0-9]+$/i.test(unitName) &&
+    normalizedUnitName &&
+    normalizedPart &&
+    (normalizedPart === normalizedUnitName || normalizedPart.includes("additional topics"))
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 function ensureUnitHasFallbackChapter(unit: any) {
   const chapters = Array.isArray(unit?.chapters) ? unit.chapters.filter(Boolean) : [];
   if (chapters.length > 0) {
@@ -7984,19 +9191,32 @@ async function validateNormalizedStructure(
   return report;
 }
 
-function computeCurriculumStatistics(normalized: any) {
+function computeCurriculumStatistics(normalized: any, learningOutcomes: any[] = []) {
   const classes = normalized?.classes || [];
   const perClassCounts = classes.map((cls: any) => {
     const units = cls?.units || [];
     const chapters = units
       .flatMap((unit: any) => unit?.chapters || [])
       .filter((chapter: any) => chapter?.validation_status !== "not_found");
-    const topics = chapters.flatMap((chapter: any) => chapter?.topics || []);
+    const unitTopics = units.flatMap((unit: any) => unit?.topics || []);
+    const chapterTopics = chapters.flatMap((chapter: any) => chapter?.topics || []);
+    const unitSubtopics = units.flatMap((unit: any) => unit?.subtopics || []);
+    const chapterSubtopics = chapters.flatMap((chapter: any) => chapter?.subtopics || []);
+    const classLearningOutcomes = (learningOutcomes || []).flatMap((entry: any) => {
+      const normalizedEntryClass = canonicalizeClassName(entry?.class_name || "");
+      const normalizedClassName = canonicalizeClassName(cls?.class_name || "");
+      if (normalizedEntryClass && normalizedEntryClass !== normalizedClassName) {
+        return [];
+      }
+      return entry?.outcomes || [];
+    });
     return {
       class_name: cls?.class_name || "",
       total_units: units.length,
       total_chapters: chapters.length,
-      total_topics: topics.length,
+      total_topics: unitTopics.length + chapterTopics.length,
+      total_subtopics: unitSubtopics.length + chapterSubtopics.length,
+      total_learning_outcomes: uniqueStrings(classLearningOutcomes).length,
       total_formative_items: (cls?.formative_content_refs || cls?.formative_content || []).length,
       total_excluded_items: (cls?.excluded_content || []).length,
       total_practicals: (cls?.practicals || []).length,
@@ -8011,11 +9231,19 @@ function computeCurriculumStatistics(normalized: any) {
     total_units: perClassCounts.reduce((sum: number, item: any) => sum + item.total_units, 0),
     total_chapters: perClassCounts.reduce((sum: number, item: any) => sum + item.total_chapters, 0),
     total_topics: perClassCounts.reduce((sum: number, item: any) => sum + item.total_topics, 0),
+    total_subtopics: perClassCounts.reduce((sum: number, item: any) => sum + item.total_subtopics, 0),
+    total_learning_outcomes: perClassCounts.reduce((sum: number, item: any) => sum + item.total_learning_outcomes, 0),
     total_formative_items: perClassCounts.reduce((sum: number, item: any) => sum + item.total_formative_items, 0),
     total_excluded_items: perClassCounts.reduce((sum: number, item: any) => sum + item.total_excluded_items, 0),
-    total_practicals: perClassCounts.reduce((sum: number, item: any) => sum + item.total_practicals, 0),
-    total_projects: perClassCounts.reduce((sum: number, item: any) => sum + item.total_projects, 0),
-    total_activities: perClassCounts.reduce((sum: number, item: any) => sum + item.total_activities, 0),
+    total_practicals:
+      perClassCounts.reduce((sum: number, item: any) => sum + item.total_practicals, 0) +
+      ((normalized?.practicals || []).length || 0),
+    total_projects:
+      perClassCounts.reduce((sum: number, item: any) => sum + item.total_projects, 0) +
+      ((normalized?.projects || []).length || 0),
+    total_activities:
+      perClassCounts.reduce((sum: number, item: any) => sum + item.total_activities, 0) +
+      ((normalized?.activities || []).length || 0),
     total_assessment_components: perClassCounts.reduce((sum: number, item: any) => sum + item.total_assessment_components, 0),
     per_class_counts: perClassCounts,
   };
@@ -8164,21 +9392,22 @@ function buildDetectedClassSummariesFromSource(sourceText: string) {
   }));
 }
 
-function normalizeSupportingCurriculumDocuments(value: any): Array<{ role: "textbook_index"; fileName: string; text: string }> {
+function normalizeSupportingCurriculumDocuments(value: any): SupportingCurriculumDocument[] {
   if (!Array.isArray(value)) return [];
   return value
     .map((item) => ({
-      role: String(item?.role || "").trim() as "textbook_index",
+      role: String(item?.role || "").trim() as SupportingCurriculumDocumentRole,
       fileName: String(item?.fileName || "").trim(),
       text: String(item?.text || ""),
+      metadata: item?.metadata && typeof item.metadata === "object" ? item.metadata : undefined,
     }))
-    .filter((item) => item.role === "textbook_index" && item.text.trim().length > 0);
+    .filter((item) => SUPPORTING_CURRICULUM_DOCUMENT_ROLES.has(item.role) && item.text.trim().length > 0);
 }
 
 function buildCombinedCurriculumSourceText(
   primaryText: string,
   primaryFileName: string,
-  supportingDocuments: Array<{ role: "textbook_index"; fileName: string; text: string }> = []
+  supportingDocuments: SupportingCurriculumDocument[] = []
 ) {
   const sections = [
     [
@@ -8195,12 +9424,217 @@ function buildCombinedCurriculumSourceText(
       `=== DOCUMENT ${index + 2} ===`,
       `Role: ${document.role}`,
       `File Name: ${document.fileName || `${document.role}-${index + 1}`}`,
+      document.metadata ? `Metadata: ${JSON.stringify(document.metadata)}` : "",
       "Content:",
       document.text,
     ].join("\n"));
   });
 
   return sections.filter(Boolean).join("\n\n");
+}
+
+async function fetchSunbirdJson(baseUrl: string, endpoint: string, options: RequestInit = {}) {
+  const response = await fetch(`${baseUrl}${endpoint}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+    ...options,
+  });
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    throw new Error(`Sunbird request failed (${response.status}) ${endpoint}: ${errorText || response.statusText}`);
+  }
+  return response.json();
+}
+
+async function searchSunbirdCatalog(params: {
+  query?: string;
+  board?: string;
+  className?: string;
+  subject?: string;
+  medium?: string;
+}) {
+  const filters = {
+    primaryCategory: ["Digital Textbook", "eTextbook", "Collection", "Textbook Unit"],
+    se_boards: [String(params.board || "CBSE")],
+    se_gradeLevels: [String(params.className || "Class IX")],
+    se_mediums: [String(params.medium || "Tamil")],
+    se_subjects: [String(params.subject || "Tamil"), "Tamil Language"],
+  };
+  const body = {
+    request: {
+      filters,
+      query: String(params.query || "").trim(),
+      limit: 10,
+      offset: 0,
+      fields: [
+        "name",
+        "identifier",
+        "mimeType",
+        "contentType",
+        "subject",
+        "gradeLevel",
+        "medium",
+        "board",
+        "se_boards",
+        "se_subjects",
+        "se_mediums",
+        "se_gradeLevels",
+      ],
+      sort_by: { lastPublishedOn: "desc" },
+    },
+  };
+
+  const [production, sandbox] = await Promise.allSettled([
+    fetchSunbirdJson(SUNBIRD_PRODUCTION_BASE_URL, "/api/content/v1/search", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+    fetchSunbirdJson(SUNBIRD_SANDBOX_BASE_URL, "/api/content/v1/search?orgdetails=orgName,email&framework=NCF", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  ]);
+
+  const candidates: SunbirdSearchCandidate[] = [];
+  const pushCandidates = (payload: any, source: "production" | "sandbox") => {
+    const content = payload?.result?.content || [];
+    content.forEach((item: any) => {
+      candidates.push({
+        identifier: String(item?.identifier || ""),
+        name: String(item?.name || ""),
+        contentType: item?.contentType || item?.primaryCategory || "",
+        mimeType: item?.mimeType || "",
+        board: item?.board || item?.se_boards?.[0] || "",
+        se_boards: Array.isArray(item?.se_boards) ? item.se_boards : [],
+        se_gradeLevels: Array.isArray(item?.se_gradeLevels) ? item.se_gradeLevels : [],
+        se_mediums: Array.isArray(item?.se_mediums) ? item.se_mediums : [],
+        se_subjects: Array.isArray(item?.se_subjects) ? item.se_subjects : [],
+        source,
+      });
+    });
+  };
+
+  if (production.status === "fulfilled") pushCandidates(production.value, "production");
+  if (sandbox.status === "fulfilled") pushCandidates(sandbox.value, "sandbox");
+
+  return Array.from(
+    new Map(
+      candidates
+        .filter((item) => item.identifier && item.name)
+        .map((item) => [`${item.source}:${item.identifier}`, item] as const)
+    ).values()
+  );
+}
+
+async function readSunbirdContentTree(contentId: string, source: "production" | "sandbox" = "sandbox") {
+  const baseUrl = source === "sandbox" ? SUNBIRD_SANDBOX_BASE_URL : SUNBIRD_PRODUCTION_BASE_URL;
+  const visited = new Set<string>();
+  const nodes: SunbirdContentManifestNode[] = [];
+
+  const visit = async (identifier: string) => {
+    if (!identifier || visited.has(identifier)) return;
+    visited.add(identifier);
+    const payload = await fetchSunbirdJson(baseUrl, `/api/content/v1/read/${identifier}`);
+    const content = payload?.result?.content;
+    if (!content) return;
+    const children = Array.isArray(content?.leafNodes) ? content.leafNodes.filter(Boolean) : [];
+    nodes.push({
+      identifier: String(content?.identifier || identifier),
+      name: String(content?.name || ""),
+      mimeType: String(content?.mimeType || ""),
+      primaryCategory: String(content?.primaryCategory || ""),
+      board: String(content?.board || content?.se_boards?.[0] || ""),
+      medium: Array.isArray(content?.medium) ? content.medium : Array.isArray(content?.se_mediums) ? content.se_mediums : [],
+      gradeLevel: Array.isArray(content?.gradeLevel) ? content.gradeLevel : Array.isArray(content?.se_gradeLevels) ? content.se_gradeLevels : [],
+      subject: Array.isArray(content?.subject) ? content.subject : Array.isArray(content?.se_subjects) ? content.se_subjects : [],
+      previewUrl: String(content?.previewUrl || ""),
+      artifactUrl: String(content?.artifactUrl || content?.streamingUrl || ""),
+      children,
+    });
+    for (const childId of children) {
+      await visit(String(childId));
+    }
+  };
+
+  await visit(contentId);
+  return nodes;
+}
+
+function reduceSunbirdNodesToTamilStructure(
+  nodes: SunbirdContentManifestNode[],
+  options: { className?: string; title?: string } = {}
+) {
+  const title = String(options.title || nodes[0]?.name || "Sunbird Tamil Textbook");
+  const className =
+    String(options.className || nodes[0]?.gradeLevel?.[0] || "").trim() ||
+    "Class IX";
+  const structureLines: string[] = [];
+
+  nodes.forEach((node) => {
+    const name = String(node.name || "").trim();
+    if (!name) return;
+    const unitNumber = parseTamilIyalNumberFromText(name);
+    if (unitNumber != null) {
+      structureLines.push(`Iyal ${unitNumber}: ${name}`);
+      return;
+    }
+    const segments = name
+      .split(/[-|:>]/)
+      .map((part) => part.trim())
+      .filter(Boolean);
+    if (segments.length >= 3) {
+      structureLines.push(`Chapter: ${segments[0]}`);
+      structureLines.push(`Topic: ${segments[1]}`);
+      structureLines.push(`Subtopic: ${segments.slice(2).join(" - ")}`);
+      return;
+    }
+    if (segments.length === 2) {
+      structureLines.push(`Chapter: ${segments[0]}`);
+      structureLines.push(`Topic: ${segments[1]}`);
+      return;
+    }
+    structureLines.push(`Chapter: ${name}`);
+  });
+
+  const digestText = [
+    `Title: ${title}`,
+    `Class: ${className}`,
+    "Subject: Tamil",
+    "",
+    ...uniqueStrings(structureLines),
+  ].join("\n");
+  const digest = buildTamilStructureDigest(digestText, {
+    className,
+    subject: "Tamil",
+    title,
+  });
+
+  return {
+    digestText,
+    digest,
+    supportingDocuments: [
+      {
+        role: "sunbird_textbook_structure" as const,
+        fileName: `${title}.txt`,
+        text: digestText,
+        metadata: {
+          source: "sunbird",
+          title,
+        },
+      },
+      {
+        role: "sunbird_content_manifest" as const,
+        fileName: `${title}.manifest.json`,
+        text: JSON.stringify({ title, nodes }, null, 2),
+        metadata: {
+          source: "sunbird",
+          title,
+        },
+      },
+    ] as SupportingCurriculumDocument[],
+  };
 }
 
 function filterSourceTextToSelectedClasses(sourceText: string, selectedClasses: string[] = []) {
@@ -8355,9 +9789,17 @@ function filterCurriculumToSelectedClasses(curriculum: any, selectedClasses: str
   const filteredUnits = (curriculum?.units || []).filter((unit: any) =>
     selectedClassKeys.has(buildCanonicalClassKey(unit?.className || unit?.class_name || ""))
   );
-  const statistics = filteredNormalizedStructure ? computeCurriculumStatistics(filteredNormalizedStructure) : null;
+  const filteredLearningOutcomes = Array.isArray(curriculum?.stagedExtraction?.learningOutcomes?.learning_outcomes)
+    ? curriculum.stagedExtraction.learningOutcomes.learning_outcomes.filter((entry: any) => {
+        const normalizedEntryClass = canonicalizeClassName(entry?.class_name || "");
+        return !normalizedEntryClass || selectedClassKeys.has(buildCanonicalClassKey(normalizedEntryClass));
+      })
+    : [];
+  const statistics = filteredNormalizedStructure
+    ? computeCurriculumStatistics(filteredNormalizedStructure, filteredLearningOutcomes)
+    : null;
   const overallDescription = statistics
-    ? `${statistics.total_units} units, ${statistics.total_chapters} chapters, and ${statistics.total_topics} topics extracted through raw extraction, document-structure hierarchy building, node enrichment, normalized teaching blocks, validation, and statistics generation.`
+    ? `${statistics.total_units} units, ${statistics.total_chapters} chapters, ${statistics.total_topics} topics, ${statistics.total_subtopics || 0} subtopics, and ${statistics.total_learning_outcomes || 0} learning outcomes extracted through raw extraction, document-structure hierarchy building, node enrichment, normalized teaching blocks, validation, and statistics generation.`
     : curriculum?.overallDescription || "";
 
   return {
@@ -9776,12 +11218,7 @@ function buildNormalizedTeachingBlocks(
           : [];
     console.log("[Normalization] enrichment keys", Object.keys(enrichedResult || {}));
     console.log("[Normalization] enriched units length", allEnrichedUnits.length);
-    const expectedUnitKeysFromUnits = approvedUnits.map((unit: any) => canonicalUnitKey(unit?.unit_name || "")).filter(Boolean);
-    const expectedUnitKeysFromChapters = approvedUnits
-      .flatMap((unit: any) => (unit?.chapters || []).map((chapter: any) => canonicalUnitKey(chapter?.source_chapter_name || chapter?.chapter_name || "")))
-      .filter(Boolean);
-    const expectedUnitKeys = expectedUnitKeysFromUnits;
-    const expectedUnitIds = approvedUnits.map((unit: any) => canonicalUnitId(unit?.unit_id || "")).filter(Boolean);
+    const approvedUnitIds = approvedUnits.map((unit: any) => canonicalUnitId(unit?.unit_id || "")).filter(Boolean);
     const expectedChapterCount = approvedUnits.reduce((sum: number, unit: any) => sum + ((unit?.chapters || []).length || 0), 0);
     const sourceUnitById = Object.fromEntries(
       approvedUnits
@@ -9793,7 +11230,7 @@ function buildNormalizedTeachingBlocks(
     const stage3TheoryCandidateCount = stage3TheoryCandidates.length;
     const stage3TheoryChapterCount = stage3TheoryCandidates.reduce((sum: number, unit: any) => sum + ((unit?.chapters || []).length || 0), 0);
     const expectedUnitsClearlyIncomplete =
-      expectedUnitIds.length === 0 ||
+      approvedUnitIds.length === 0 ||
       (approvedUnits.length === 0 && stage3TheoryCandidateCount > 0) ||
       (expectedChapterCount === 0 && stage3TheoryChapterCount > 0);
     const recoveredFromStage3Fallback = expectedUnitsClearlyIncomplete && stage3TheoryCandidateCount > 0;
@@ -9843,11 +11280,23 @@ function buildNormalizedTeachingBlocks(
       enrichedUnitMap.set(canonicalUnitId(sourceUnit?.unit_id || ""), unit);
     }
     const divertedUnits = preparedEnrichedUnits.filter((unit: any) => !enrichedUnits.includes(unit));
-    const outputUnitKeys = approvedUnits
+    const retainedApprovedUnits = recoveredFromStage3Fallback
+      ? approvedUnits
+      : approvedUnits.filter((unit: any) => {
+          const approvedUnitId = canonicalUnitId(unit?.unit_id || "");
+          if (enrichedUnitMap.has(approvedUnitId)) {
+            return true;
+          }
+          return !shouldSkipUnmatchedApprovedUnit(rawClass, unit);
+        });
+    const expectedUnitKeys = retainedApprovedUnits.map((unit: any) => canonicalUnitKey(unit?.unit_name || "")).filter(Boolean);
+    const expectedUnitIds = retainedApprovedUnits.map((unit: any) => canonicalUnitId(unit?.unit_id || "")).filter(Boolean);
+    const skippedApprovedUnits = approvedUnits.filter((unit: any) => !retainedApprovedUnits.includes(unit));
+    const outputUnitKeys = retainedApprovedUnits
       .filter((unit: any) => enrichedUnitMap.has(canonicalUnitId(unit?.unit_id || "")))
       .map((unit: any) => canonicalUnitKey(unit?.unit_name || ""))
       .filter(Boolean);
-    const outputUnitIds = approvedUnits
+    const outputUnitIds = retainedApprovedUnits
       .filter((unit: any) => enrichedUnitMap.has(canonicalUnitId(unit?.unit_id || "")))
       .map((unit: any) => canonicalUnitId(unit?.unit_id || ""))
       .filter(Boolean);
@@ -9877,6 +11326,13 @@ function buildNormalizedTeachingBlocks(
         )}`
       );
     }
+    if (skippedApprovedUnits.length) {
+      console.log(
+        `[Normalization] Class "${normalizedClassName}" | skipped low-confidence approved units: ${JSON.stringify(
+          skippedApprovedUnits.map((unit: any) => unit?.unit_name || unit?.unit_id || "")
+        )}`
+      );
+    }
 
     if (!recoveredFromStage3Fallback && enrichedUnits.length > 0 && (extraUnitKeys.length || missingUnitKeys.length)) {
       if (missingUnitKeys.length) {
@@ -9900,7 +11356,7 @@ function buildNormalizedTeachingBlocks(
             source_type: chapter?.source_type || "explicit_chapter",
           })),
         }))
-      : approvedUnits;
+      : retainedApprovedUnits;
 
     const normalizedUnits = normalizationSourceUnits.map((approvedUnit: any, unitIndex: number) => {
       const approvedUnitId = canonicalUnitId(approvedUnit?.unit_id || "");
@@ -10614,7 +12070,7 @@ function normalizeSessionPptGenerationOptions(input: any): SessionPptGenerationO
 function getOllamaConfig(kind: OllamaGenerationKind): { baseUrl: string; model: string } {
   refreshRuntimeEnv();
   const defaultBaseUrl = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11435";
-  const defaultModel = process.env.OLLAMA_MODEL || "gemma4:31b";
+  const defaultModel = process.env.OLLAMA_MODEL || "qwen3.5:35b-mlx";
   const sessionContentBaseUrl = process.env.OLLAMA_SESSION_CONTENT_BASE_URL || defaultBaseUrl;
   const sessionContentModel = process.env.OLLAMA_SESSION_CONTENT_MODEL || defaultModel;
   const imageBaseUrl = process.env.OLLAMA_IMAGE_BASE_URL || defaultBaseUrl;
@@ -10747,10 +12203,17 @@ function isRetryableOllamaError(error: any) {
 
   return (
     code === "OLLAMA_EMPTY_RESPONSE" ||
+    code === "HTTP_429" ||
+    code === "HTTP_500" ||
+    code === "HTTP_502" ||
+    code === "HTTP_503" ||
+    code === "HTTP_504" ||
     message.includes("502") ||
     message.includes("503") ||
     message.includes("504") ||
+    message.includes("500") ||
     message.includes("429") ||
+    message.toLowerCase().includes("unexpected eof") ||
     message.includes("fetch failed") ||
     message.includes("Request timed out") ||
     message.includes("empty chat response body") ||
@@ -10760,6 +12223,25 @@ function isRetryableOllamaError(error: any) {
     code === "ABORT_ERR" ||
     code === "UND_ERR_CONNECT_TIMEOUT"
   );
+}
+
+function isRetryableOllamaHttpStatus(status: number, errorText: string) {
+  const normalizedError = String(errorText || "").toLowerCase();
+  if ([429, 502, 503, 504].includes(status)) {
+    return true;
+  }
+  if (status === 500) {
+    return (
+      normalizedError.includes("unexpected eof") ||
+      normalizedError.includes("timeout") ||
+      normalizedError.includes("temporar") ||
+      normalizedError.includes("overload") ||
+      normalizedError.includes("connection reset") ||
+      normalizedError.includes("broken pipe") ||
+      normalizedError.includes("eof")
+    );
+  }
+  return false;
 }
 
 function splitCurriculumTextIntoChunks(text: string, maxChunkLength: number = 12000): string[] {
@@ -11849,7 +13331,16 @@ async function generateWithOllama(
         const errorText = await ollamaResponse.text();
         await writeDebugFile(debugDir, `${safeStageName(stageName)}.attempt-${attempt + 1}.chat.error.txt`, errorText);
         console.error(`[Ollama][${requestId}][${stageName}] Error response body: ${errorText}`);
-        throw new Error(`Ollama request failed with status ${ollamaResponse.status}: ${errorText}`);
+        throw new OllamaRequestError(
+          `Ollama request failed with status ${ollamaResponse.status}: ${errorText}`,
+          {
+            code: `HTTP_${ollamaResponse.status}`,
+            retryable: isRetryableOllamaHttpStatus(ollamaResponse.status, errorText),
+            stageName,
+            promptLength: fullPrompt.length,
+            timeoutMs,
+          }
+        );
       }
 
       const data = await ollamaResponse.json();
@@ -12799,6 +14290,55 @@ app.post("/api/curriculum-class-options", async (req, res) => {
   }
 });
 
+app.post("/api/tamil/sunbird/search", async (req, res) => {
+  try {
+    const query = String(req.body?.query || "").trim();
+    const className = String(req.body?.className || "Class IX").trim();
+    const board = String(req.body?.board || "CBSE").trim();
+    const medium = String(req.body?.medium || "Tamil").trim();
+    const subject = String(req.body?.subject || "Tamil").trim();
+    const candidates = await searchSunbirdCatalog({ query, className, board, medium, subject });
+    res.json({
+      success: true,
+      candidates,
+    });
+  } catch (error: any) {
+    console.error("[Tamil Sunbird] Search failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to search Sunbird Tamil content." });
+  }
+});
+
+app.post("/api/tamil/sunbird/preview-structure", async (req, res) => {
+  try {
+    const contentId = String(req.body?.contentId || "").trim();
+    if (!contentId) {
+      return res.status(400).json({ error: "contentId is required." });
+    }
+    const source = String(req.body?.source || "sandbox").trim() === "production" ? "production" : "sandbox";
+    const className = String(req.body?.className || "Class IX").trim();
+    const title = String(req.body?.title || "").trim();
+    const nodes = await readSunbirdContentTree(contentId, source);
+    const reduced = reduceSunbirdNodesToTamilStructure(nodes, { className, title });
+    res.json({
+      success: true,
+      source,
+      contentId,
+      title: title || nodes[0]?.name || "Sunbird Tamil Textbook",
+      digestText: reduced.digestText,
+      summary: {
+        totalNodes: nodes.length,
+        chapterCandidates: reduced.digest?.chapter_candidates.length || 0,
+        topicCandidates: reduced.digest?.topic_candidates.length || 0,
+        subtopicCandidates: reduced.digest?.subtopic_candidates.length || 0,
+      },
+      supportingDocuments: reduced.supportingDocuments,
+    });
+  } catch (error: any) {
+    console.error("[Tamil Sunbird] Structure preview failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to preview Sunbird textbook structure." });
+  }
+});
+
 app.delete("/api/curriculums/:id", async (req, res) => {
   try {
     await connectToMongo();
@@ -12840,7 +14380,8 @@ app.post("/api/analyze-curriculum", async (req, res) => {
   const activeSupportingDocuments = isTamilCurriculumSubject(primaryDetectedSubject)
     ? normalizedSupportingDocuments
     : [];
-  if (isTamilCurriculumSubject(primaryDetectedSubject) && activeSupportingDocuments.length === 0) {
+  const hasTamilIndexDocument = activeSupportingDocuments.some((document) => document.role === "textbook_index");
+  if (isTamilCurriculumSubject(primaryDetectedSubject) && !hasTamilIndexDocument) {
     return res.status(400).json({ error: "Tamil curriculum parsing requires a Textbook Index upload before analysis." });
   }
   const sourceFilter = filterSourceTextToSelectedClasses(primarySourceText, requestedSelectedClasses);
@@ -13171,9 +14712,29 @@ Rules:
           );
         }
       } else {
-        throw new Error(
-          `Stage 1 extraction returned no units or chapters. Empty LLM extraction for subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${sourceText.length} chunkCount=${initialChunkCount}.`
-        );
+        const structuredFallback = buildUnitChapterFallbackStage1Facts(sourceText, stage1Facts, {
+          fileName: String(fileName || ""),
+          detectedProfile: detectedProfile.profile,
+        });
+        if (structuredFallback.fallbackApplied) {
+          console.warn(
+            `[Pipeline][${requestId}] Structured Stage 1 fallback applied | subject="${structuredFallback.document_metadata?.subject || detectedSubject}" | recoveredUnits=${structuredFallback.fallbackUnitsCount} | recoveredChapters=${structuredFallback.fallbackChaptersCount}`
+          );
+          stage1Facts = {
+            ...stage1Facts,
+            document_metadata: {
+              ...(stage1Facts?.document_metadata || {}),
+              ...(structuredFallback.document_metadata || {}),
+            },
+            classes: structuredFallback.classes,
+            units: structuredFallback.units,
+            chapters: structuredFallback.chapters,
+          };
+        } else {
+          throw new Error(
+            `Stage 1 extraction returned no units or chapters. Empty LLM extraction for subject="${detectedSubject}" class="${stage1Facts?.document_metadata?.class || ""}" sourceLength=${sourceText.length} chunkCount=${initialChunkCount}.`
+          );
+        }
       }
     }
 
@@ -13188,6 +14749,8 @@ Rules:
       tamilNormalizationMetadata = hardenedTamilFacts.metadata;
       await writeDebugFile(debugDir, "tamil-stage1-hardening.json", tamilNormalizationMetadata);
     }
+
+    stage1Facts = backfillStage1MarksFromSource(stage1Facts, sourceText);
 
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[0])}.facts.parsed.json`, stage1Facts);
     const rawExtraction = expandStage1FactsToRawExtraction(stage1Facts);
@@ -13320,9 +14883,6 @@ Rules:
       warnings: uniqueStrings(profileWarnings.map(buildPublicWarningMessage).filter(Boolean)),
       fallbacks_used: uniqueStrings(fallbacksUsed.map(buildPublicFallbackLabel).filter(Boolean)),
     });
-    const statistics = computeCurriculumStatistics(normalizedStructure);
-    await writeDebugFile(debugDir, "statistics.parsed.json", statistics);
-
     const mergedNormalizedClasses = normalizedStructure.classes || [];
     const stage1UnitCount = mergedNormalizedClasses.reduce((acc: number, cls: any) => acc + (cls.units?.length || 0), 0);
     const stage1ChapterCount = mergedNormalizedClasses.reduce(
@@ -13395,10 +14955,16 @@ Rules:
       }],
     };
 
-    const stage8Payloads = [
-      { stageName: "Stage 8A - Class XI", payload: buildStage8PayloadForClass("Class XI", normalizedStructure.classes || [], competencies.competency_groups || []) },
-      { stageName: "Stage 8B - Class XII", payload: buildStage8PayloadForClass("Class XII", normalizedStructure.classes || [], competencies.competency_groups || []) },
-    ].filter((entry) => Boolean(entry.payload));
+    const stage8Payloads = (normalizedStructure.classes || [])
+      .map((cls: any, index: number) => {
+        const normalizedClassName = canonicalizeClassName(cls?.class_name || "");
+        if (!normalizedClassName) return null;
+        return {
+          stageName: `${STAGE_ORDER[7]} - ${normalizedClassName || `Class ${index + 1}`}`,
+          payload: buildStage8PayloadForClass(normalizedClassName, normalizedStructure.classes || [], competencies.competency_groups || []),
+        };
+      })
+      .filter((entry: any): entry is { stageName: string; payload: any } => Boolean(entry?.payload));
 
     const stage8Results: any[] = [];
     for (const entry of stage8Payloads) {
@@ -13420,13 +14986,25 @@ Rules:
         englishMode: englishCurriculumMode,
         stageLabel: entry.stageName,
       });
-      stage8Results.push(await runStage(requestId, debugDir, entry.stageName, stage8Prompt, outcomesSchema, curriculumExtractionOllamaOverrides));
+      const stage8Result = await runStage(requestId, debugDir, entry.stageName, stage8Prompt, outcomesSchema, curriculumExtractionOllamaOverrides);
+      stage8Results.push({
+        class_name: payload?.class_name || "",
+        learning_outcomes: (stage8Result as any)?.learning_outcomes || [],
+      });
     }
 
     const outcomes = {
-      learning_outcomes: stage8Results.flatMap((result: any) => result?.learning_outcomes || []),
+      learning_outcomes: stage8Results.flatMap((result: any) =>
+        (result?.learning_outcomes || []).map((entry: any) => ({
+          ...entry,
+          class_name: entry?.class_name || result?.class_name || "",
+        }))
+      ),
     };
     await writeDebugFile(debugDir, `${safeStageName(STAGE_ORDER[7])}.parsed.json`, outcomes);
+
+    const statistics = computeCurriculumStatistics(normalizedStructure, outcomes.learning_outcomes || []);
+    await writeDebugFile(debugDir, "statistics.parsed.json", statistics);
 
     const activitySchema = {
       activities: [{
@@ -13538,7 +15116,7 @@ Rules:
       normalizedMetadata.stream,
     ].filter(Boolean).join(" / ") || "";
 
-    const overallDescription = `${statistics.total_units} units, ${statistics.total_chapters} chapters, and ${statistics.total_topics} topics extracted through raw extraction, document-structure hierarchy building, node enrichment, normalized teaching blocks, validation, and statistics generation.`;
+    const overallDescription = `${statistics.total_units} units, ${statistics.total_chapters} chapters, ${statistics.total_topics} topics, ${statistics.total_subtopics || 0} subtopics, and ${statistics.total_learning_outcomes || 0} learning outcomes extracted through raw extraction, document-structure hierarchy building, node enrichment, normalized teaching blocks, validation, and statistics generation.`;
     const basePayload = {
       schema_version: schemaVersion,
       curriculum_profile: detectedProfile.profile,
@@ -14321,6 +15899,7 @@ async function generateSessionDetailsArtifact({
     sessionPlanningDefaults,
     assessmentCustomization,
     config: effectiveSessionConfig,
+    scienceGenerationMetadata: null as ReturnType<typeof buildScienceGenerationMetadata> | null,
   };
   const assessmentSourcePayload = assessmentOnly
     ? buildAssessmentSourceSessionPayload(sourceSessionPlan, {
@@ -14344,7 +15923,9 @@ async function generateSessionDetailsArtifact({
   );
   const assessmentType = String(assessmentCustomization?.assessmentType || "Session assessment");
   const preferredDifficulty = String(assessmentCustomization?.difficulty || teachingStrategy?.targetDifficulty || "Balanced");
-  const assessmentLanguage = String(sessionPlanningDefaults?.language || "English");
+  const outputLanguage = resolveGenerationOutputLanguage(subject, String(sessionPlanningDefaults?.language || ""));
+  const outputLanguageRule = buildOutputLanguageRule(outputLanguage);
+  const assessmentLanguage = outputLanguage;
   const targetBlooms = Array.isArray(teachingStrategy?.bloomsTaxonomyEmphasis)
     ? teachingStrategy.bloomsTaxonomyEmphasis
     : [];
@@ -14363,6 +15944,7 @@ async function generateSessionDetailsArtifact({
     LEARNING_PACE: String(teachingStrategy?.pace || "Balanced"),
     TARGET_DIFFICULTY: preferredDifficulty,
     OUTPUT_LANGUAGE: assessmentLanguage,
+    OUTPUT_LANGUAGE_RULE: outputLanguageRule,
     ASSESSMENT_TYPE: assessmentType,
     REQUESTED_TOTAL_MARKS: String(requestedTotalMarks),
     REQUESTED_DURATION_MINUTES: String(derivedAssessmentDuration),
@@ -14404,6 +15986,30 @@ async function generateSessionDetailsArtifact({
     : "Assessment block is not requested in this run. Omit it.";
   const teacherNotesPromptName = getNotesPromptName("teacher", subject);
   const studentNotesPromptName = getNotesPromptName("student", subject);
+  const scienceGenerationMetadata = buildScienceGenerationMetadata(
+    assessmentOnly
+      ? "assessment-generation.md"
+      : teacherNotesOnly
+      ? teacherNotesPromptName
+      : studentNotesOnly
+      ? studentNotesPromptName
+      : materialsOnly
+      ? "session-ppt-prompt.md"
+      : homeworkOnly
+      ? "homework-generation.md"
+      : "session-generation.md",
+    {
+      SUBJECT: String(subject || ""),
+      GRADE_LEVEL: String(gradeLevel || ""),
+      SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
+      SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
+      LEARNING_OUTCOMES_JSON: JSON.stringify(learningOutcomes),
+      SESSION_JSON: JSON.stringify(sessionContextPayload, null, 2),
+      ASSESSMENT_TYPE: assessmentType,
+      QUESTION_PAPER_OBJECTIVE: String(assessmentCustomization?.paperObjective || ""),
+    }
+  );
+  sessionContextPayload.scienceGenerationMetadata = scienceGenerationMetadata;
   const prompt = teacherNotesOnly
     ? renderPromptWithEnglishDownstreamIntelligence(teacherNotesPromptName, {
         SUBJECT: String(subject || ""),
@@ -14422,7 +16028,8 @@ async function generateSessionDetailsArtifact({
         ASSESSMENT_PREFERENCE_JSON: JSON.stringify(teachingStrategy?.assessmentPreference || []),
         SPECIAL_INSTRUCTIONS: String(teachingStrategy?.specialInstructions || "None"),
         TEACHING_RESOURCES_JSON: JSON.stringify(teachingStrategy?.teachingResources || []),
-        OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
+        OUTPUT_LANGUAGE: outputLanguage,
+        OUTPUT_LANGUAGE_RULE: outputLanguageRule,
         READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
         RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
         CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
@@ -14443,7 +16050,8 @@ async function generateSessionDetailsArtifact({
         PREVIOUS_SESSION_CONTEXT: previousSessionContext || "No previous session context provided.",
         LEARNING_PACE: String(teachingStrategy?.pace || "Balanced"),
         TARGET_DIFFICULTY: String(teachingStrategy?.targetDifficulty || "Moderate"),
-        OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
+        OUTPUT_LANGUAGE: outputLanguage,
+        OUTPUT_LANGUAGE_RULE: outputLanguageRule,
         READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
         RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
         CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
@@ -14465,7 +16073,8 @@ async function generateSessionDetailsArtifact({
         TARGET_DIFFICULTY: String(teachingStrategy?.targetDifficulty || "Moderate"),
         TEACHING_STYLE_JSON: JSON.stringify(teachingStrategy?.teachingStyle || []),
         TEACHING_RESOURCES_JSON: JSON.stringify(teachingStrategy?.teachingResources || []),
-        OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
+        OUTPUT_LANGUAGE: outputLanguage,
+        OUTPUT_LANGUAGE_RULE: outputLanguageRule,
         READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
         RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
         CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
@@ -14539,7 +16148,8 @@ async function generateSessionDetailsArtifact({
           includeDifferentiation: sessionPlanningDefaults?.includeDifferentiation ?? true,
           includeRealWorldConnections: sessionPlanningDefaults?.includeRealWorldConnections ?? true,
         }),
-        OUTPUT_LANGUAGE: String(sessionPlanningDefaults?.language || "English"),
+        OUTPUT_LANGUAGE: outputLanguage,
+        OUTPUT_LANGUAGE_RULE: outputLanguageRule,
         READING_LEVEL: String(sessionPlanningDefaults?.readingLevel || "Grade-aligned"),
         SESSION_JSON: JSON.stringify(sessionContextPayload, null, 2),
       }, {
@@ -14562,6 +16172,8 @@ async function generateSessionDetailsArtifact({
         INCLUDE_ASSIGNMENTS: effectiveSessionConfig.includeAssignments ? "YES" : "NO",
         INCLUDE_NOTES: effectiveSessionConfig.includeNotes ? "YES" : "NO",
         SELECTED_SECTIONS_JSON: JSON.stringify(selectedSections),
+        OUTPUT_LANGUAGE: outputLanguage,
+        OUTPUT_LANGUAGE_RULE: outputLanguageRule,
         ASSESSMENT_ENGINE_INSTRUCTIONS: embeddedAssessmentInstructions,
       }, {
         englishMode: englishGenerationMode,
@@ -14791,6 +16403,9 @@ export {
   buildAdaptiveStage1Chunks,
   buildEmptyStage1FactExtraction,
   buildFaithfulStructureFromRawExtraction,
+  backfillStage1MarksFromSource,
+  computeCurriculumStatistics,
+  buildUnitChapterFallbackStage1Facts,
   buildSessionAllocationRecommendationsForTerm,
   buildStage1TransportRecoveryChunks,
   buildDeterministicStage3FallbackFromApprovedClass,
@@ -14805,10 +16420,13 @@ export {
   getAdaptiveStage1ChunkCount,
   getCurriculumProfileConfig,
   deriveAssessmentSectionsForSession,
+  buildScienceGenerationMetadata,
   buildNormalizedTeachingBlocks,
   buildLanguageFallbackStage1Facts,
   buildCombinedCurriculumSourceText,
+  buildTamilStructureDigest,
   buildTamilFastStage1Facts,
+  enrichTamilStage1FactsWithStructure,
   hardenTamilStage1Facts,
   detectCurriculumSubjectFromInput,
   detectIndicCurriculumModeFromInput,
@@ -14817,6 +16435,7 @@ export {
   getCurriculumExtractionOllamaOverrides,
   generateWithOllama,
   isEnglishSubject,
+  isScienceSubject,
   isIndicCurriculumSubject,
   isTamilCurriculumSubject,
   isLanguageSubject,
@@ -14828,6 +16447,7 @@ export {
   renderPromptWithEnglishIntelligence,
   renderPromptWithEnglishDownstreamIntelligence,
   renderStage1PromptWithCurriculumIntelligence,
+  resolveGenerationOutputLanguage,
   requiresTamilTextbookIndexFromInput,
   sanitizeMathDiagramSpec,
   splitChunkToPromptBudget,
@@ -14841,6 +16461,7 @@ export {
   STAGE1_PROMPT_SAFE_BUDGET,
   shouldUseChunkedStage1Fallback,
   shouldUseEnglishIntelligence,
+  shouldUseScienceIntelligence,
   summarizeCurriculumClasses,
 };
 

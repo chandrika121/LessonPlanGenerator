@@ -1,0 +1,5 @@
+{
+  "message": "Ollama request timed out after 600000ms during Stage 1: Raw Curriculum Extraction - Chunk 4/4. Try a smaller curriculum input, chunked extraction, or increase OLLAMA_TIMEOUT_MS.",
+  "stack": "OllamaRequestError: Ollama request timed out after 600000ms during Stage 1: Raw Curriculum Extraction - Chunk 4/4. Try a smaller curriculum input, chunked extraction, or increase OLLAMA_TIMEOUT_MS.\n    at generateWithOllama (/Users/mva357/MVA/LessonPlanGenerator/backend/server.ts:12525:17)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async runStage (/Users/mva357/MVA/LessonPlanGenerator/backend/server.ts:12390:23)\n    at async runStage1ChunkWithAdaptiveRetry (/Users/mva357/MVA/LessonPlanGenerator/backend/server.ts:12071:12)\n    at async <anonymous> (/Users/mva357/MVA/LessonPlanGenerator/backend/server.ts:13828:35)",
+  "code": "ABORT_ERR"
+}

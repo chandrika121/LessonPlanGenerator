@@ -1,0 +1,148 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Classification of Elements",
+      "prerequisites": [
+        "Atomic Structure",
+        "Valency"
+      ],
+      "dependent_topics": [
+        "Compound Formation",
+        "Periodic Classification"
+      ]
+    },
+    {
+      "topic": "Chemical Reactions and Equations",
+      "prerequisites": [
+        "Chemical Substances Properties",
+        "Atomic Structure"
+      ],
+      "dependent_topics": [
+        "Reactivity Series",
+        "Acid-Base Neutralization"
+      ]
+    },
+    {
+      "topic": "Newton's Laws of Motion",
+      "prerequisites": [
+        "Force Concepts",
+        "Motion in One Dimension"
+      ],
+      "dependent_topics": [
+        "Gravitation",
+        "Work and Energy"
+      ]
+    },
+    {
+      "topic": "Optics (Lenses and Mirrors)",
+      "prerequisites": [
+        "Reflection",
+        "Refraction"
+      ],
+      "dependent_topics": [
+        "Image Formation",
+        "Focal Length Determination"
+      ]
+    },
+    {
+      "topic": "Electric Circuits",
+      "prerequisites": [
+        "Current",
+        "Potential Difference"
+      ],
+      "dependent_topics": [
+        "Ohm's Law",
+        "Equivalent Resistance"
+      ]
+    },
+    {
+      "topic": "Cellular Structure and Function",
+      "prerequisites": [
+        "Basic Biology Concepts"
+      ],
+      "dependent_topics": [
+        "Life Processes",
+        "Heredity"
+      ]
+    },
+    {
+      "topic": "Heredity and Evolution",
+      "prerequisites": [
+        "DNA Structure",
+        "Genes"
+      ],
+      "dependent_topics": [
+        "Mendel's Laws",
+        "Natural Selection"
+      ]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Unit I: Chemical Substances - Nature and Behaviour",
+      "chapter_name": "Chemical Reactions and Equations",
+      "difficulty_level": "Moderate",
+      "concept_density": "High",
+      "estimated_teaching_hours": "12",
+      "estimated_sessions": "6",
+      "practical_requirement": "pH determination, properties of acids/bases, classification of reactions",
+      "assessment_requirement": "VSA, SA, LA, Case-based"
+    },
+    {
+      "unit_name": "Unit II: World of Living",
+      "chapter_name": "Life Processes",
+      "difficulty_level": "Moderate",
+      "concept_density": "High",
+      "estimated_teaching_hours": "14",
+      "estimated_sessions": "7",
+      "practical_requirement": "Leaf peel mount, CO2 respiration demonstration",
+      "assessment_requirement": "VSA, SA, LA, Practical Skills"
+    },
+    {
+      "unit_name": "Unit III: Natural Phenomena",
+      "chapter_name": "Natural Phenomena",
+      "difficulty_level": "High",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "10",
+      "estimated_sessions": "5",
+      "practical_requirement": "Focal length determination, light path tracing",
+      "assessment_requirement": "VSA, SA, LA, Numerical"
+    },
+    {
+      "unit_name": "Unit IV: Effects of Current",
+      "chapter_name": "Effects of Current",
+      "difficulty_level": "High",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": "12",
+      "estimated_sessions": "6",
+      "practical_requirement": "Ohm's law graph, equivalent resistance",
+      "assessment_requirement": "VSA, SA, LA, Numerical"
+    },
+    {
+      "unit_name": "Unit V: Natural Resources",
+      "chapter_name": "Linkages between Scientific Knowledge and Other Curricular Areas",
+      "difficulty_level": "Low",
+      "concept_density": "Moderate",
+      "estimated_teaching_hours": "6",
+      "estimated_sessions": "3",
+      "practical_requirement": "Case study analysis",
+      "assessment_requirement": "VSA, SA, Portfolio"
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [
+      "Unit I: Chemical Substances - Nature and Behaviour (Duplicate in Unit 10)",
+      "Unit II: World of Living (Duplicate in Unit 2 and Unit 4)",
+      "Unit III: Natural Phenomena (Duplicate in Unit 3 and Unit 12)",
+      "Unit IV: Effects of Current (Duplicate in Unit 13 and Unit 16)",
+      "Unit V: Natural Resources (Duplicate in Unit 14 and Unit 5)"
+    ],
+    "invalid_chapter_names": [
+      "Unit IV: Effects of Current (Used as chapter name in Unit 13)",
+      "Unit V: Natural Resources (Used as chapter name in Unit 14)",
+      "Unit - I (Used as chapter name in Unit 15)",
+      "Unit-IV (Used as chapter name in Unit 16)"
+    ]
+  }
+}

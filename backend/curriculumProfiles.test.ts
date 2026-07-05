@@ -4,8 +4,13 @@ async function main() {
   process.env.NODE_ENV = "test";
   const {
     buildAdaptiveStage1Chunks,
+    backfillStage1MarksFromSource,
+    buildScienceGenerationMetadata,
     buildCombinedCurriculumSourceText,
     buildDeterministicStage3FallbackFromApprovedClass,
+    buildTamilStructureDigest,
+    computeCurriculumStatistics,
+    buildUnitChapterFallbackStage1Facts,
     buildTamilFastStage1Facts,
     buildEmptyStage1FactExtraction,
     buildStage1TransportRecoveryChunks,
@@ -20,12 +25,14 @@ async function main() {
     getCurriculumProfileConfig,
     getAdaptiveStage1ChunkCount,
     hardenTamilStage1Facts,
+    enrichTamilStage1FactsWithStructure,
     getNotesPromptName,
     isEnglishSubject,
     isIndicCurriculumSubject,
     isLanguageSubject,
     isRetryableOllamaError,
     isTamilCurriculumSubject,
+    resolveGenerationOutputLanguage,
     mergeStage1FactExtractions,
     normalizeSupportingCurriculumDocuments,
     expandStage1FactsToRawExtraction,
@@ -35,6 +42,8 @@ async function main() {
     renderPromptWithEnglishIntelligence,
     renderPromptWithEnglishDownstreamIntelligence,
     renderStage1PromptWithCurriculumIntelligence,
+    isScienceSubject,
+    shouldUseScienceIntelligence,
     STAGE1_PROMPT_SAFE_BUDGET,
     splitChunkToPromptBudget,
     shouldUseChunkedStage1Fallback,
@@ -95,7 +104,25 @@ async function main() {
   assert.equal(isLanguageSubject("Mathematics"), false);
   assert.equal(isTamilCurriculumSubject("Tamil"), true);
   assert.equal(isTamilCurriculumSubject("Mathematics"), false);
+  assert.equal(resolveGenerationOutputLanguage("Hindi", "English"), "Hindi");
+  assert.equal(resolveGenerationOutputLanguage("Hindi Language", ""), "Hindi");
+  assert.equal(resolveGenerationOutputLanguage("Tamil", "English"), "Tamil");
+  assert.equal(resolveGenerationOutputLanguage("Mathematics", "English"), "English");
+  assert.equal(isScienceSubject("Science"), true);
+  assert.equal(isScienceSubject("Physics"), true);
+  assert.equal(isScienceSubject("Chemistry"), true);
+  assert.equal(isScienceSubject("Biology"), true);
+  assert.equal(isScienceSubject("Social Science"), false);
+  assert.equal(isScienceSubject("Computer Science"), false);
+  assert.equal(isScienceSubject("Mathematics"), false);
   assert.equal(isRetryableOllamaError({ code: "OLLAMA_EMPTY_RESPONSE", message: "Ollama returned an empty chat response body." }), true);
+  assert.equal(
+    isRetryableOllamaError({
+      code: "HTTP_500",
+      message: "Ollama request failed with status 500: {\"error\":\"unexpected EOF\"}",
+    }),
+    true
+  );
   assert.equal(
     shouldUseChunkedStage1Fallback(
       {
@@ -158,6 +185,13 @@ async function main() {
     "Mathematics"
   );
   assert.equal(
+    detectCurriculumSubjectFromInput(
+      "# SCIENCE\nScience draws knowledge from Biology, Chemistry, Physics, Earth Science, Mathematics, Computational Sciences.",
+      "Science_SecP1_2026-27.pdf"
+    ),
+    "Science"
+  );
+  assert.equal(
     requiresTamilTextbookIndexFromInput(
       "தமிழ் பாடத்திட்டம்\nஇயல் 1",
       "Class_X_Tamil.pdf"
@@ -204,6 +238,114 @@ async function main() {
     }).model),
     false
   );
+  assert.equal(
+    shouldUseScienceIntelligence({
+      subject: "Physics",
+      sourceText: "",
+      fileName: "",
+    }),
+    true
+  );
+  assert.equal(
+    shouldUseScienceIntelligence({
+      subject: "",
+      sourceText: "Subject: Science\nPracticals\nLaboratory work\nChemical reactions",
+      fileName: "Class_X_Science.pdf",
+    }),
+    true
+  );
+  assert.equal(
+    shouldUseScienceIntelligence({
+      subject: "",
+      sourceText: "Number Systems\nAlgebra\nGraphs",
+      fileName: "Class_IX_Math.pdf",
+    }),
+    false
+  );
+
+  const scienceFallback = buildUnitChapterFallbackStage1Facts(
+    [
+      "# SCIENCE",
+      "Class X (2026-27)",
+      "Theme: Materials",
+      "## Unit I: Chemical Substances - Nature and Behaviour",
+      "Chemical Reactions and Equations: Chemical reactions, Chemical equation.",
+      "Acids, Bases and Salts: Acids and Bases.",
+      "Theme: The World of the Living",
+      "## Unit II: World of Living",
+      "Life processes: Living Being.",
+      "Control and co-ordination in animals and plants: Tropic movements in plants.",
+      "## PRACTICALS",
+    ].join("\n"),
+    {},
+    {
+      fileName: "Science_SecP1_2026-27.pdf",
+      detectedProfile: "cbse_unit_chapter_topic",
+    }
+  );
+  assert.equal(scienceFallback.fallbackApplied, true);
+  assert.equal(scienceFallback.document_metadata.subject, "Science");
+  assert.equal(scienceFallback.units.length, 2);
+  assert.equal(scienceFallback.chapters.length, 4);
+  assert.equal(scienceFallback.units[0].unit_name, "Unit I: Chemical Substances - Nature and Behaviour");
+  assert.equal(scienceFallback.chapters[0].chapter_name, "Chemical Reactions and Equations");
+
+  const scienceMarksBackfill = backfillStage1MarksFromSource({
+    document_metadata: {
+      subject: "Science",
+      class: "Class X",
+    },
+    units: [
+      { unit_id: "U13", unit_name: "Unit IV: Effects of Current", marks: null, topics: [], subtopics: [], key_concepts: [] },
+      { unit_id: "U14", unit_name: "Unit V: Natural Resources", marks: null, topics: [], subtopics: [], key_concepts: [] },
+      { unit_id: "U20", unit_name: "Unit - IV", marks: null, topics: ["Determination of the equivalent resistance of two resistors when connected in series and parallel"], subtopics: [], key_concepts: [] },
+    ],
+    chapters: [],
+  }, [
+    "## Unit No. Unit Marks",
+    "I Chemical Substances-Nature and Behaviour 25",
+    "II World of Living 25",
+    "III Natural Phenomena 12",
+    "IV Effects of Current 13",
+    "V Natural Resources 05",
+  ].join("\n"));
+  assert.equal(scienceMarksBackfill.units[0].marks, 13);
+  assert.equal(scienceMarksBackfill.units[1].marks, 5);
+  assert.equal(scienceMarksBackfill.units[2].marks, null);
+
+  const curriculumStatistics = computeCurriculumStatistics({
+    practicals: [{ title: "Practical 1" }],
+    activities: [{ title: "Activity 1" }],
+    projects: [{ title: "Project 1" }],
+    classes: [{
+      class_name: "Class X",
+      units: [{
+        unit_id: "U1",
+        unit_name: "Chemical Substances",
+        topics: ["Chemical Reactions", "Acids, Bases and Salts"],
+        subtopics: ["Balanced chemical equations"],
+        chapters: [{
+          chapter_id: "C1",
+          chapter_name: "Chemical Reactions and Equations",
+          topics: ["Types of reactions"],
+          subtopics: ["Combination reaction", "Decomposition reaction"],
+        }],
+      }],
+    }],
+  }, [{
+    class_name: "Class X",
+    unit_name: "Chemical Substances",
+    chapter_name: "Chemical Reactions and Equations",
+    outcomes: ["Explain balancing", "Classify reaction types"],
+  }]);
+  assert.equal(curriculumStatistics.total_units, 1);
+  assert.equal(curriculumStatistics.total_chapters, 1);
+  assert.equal(curriculumStatistics.total_topics, 3);
+  assert.equal(curriculumStatistics.total_subtopics, 3);
+  assert.equal(curriculumStatistics.total_learning_outcomes, 2);
+  assert.equal(curriculumStatistics.total_practicals, 1);
+  assert.equal(curriculumStatistics.total_activities, 1);
+  assert.equal(curriculumStatistics.total_projects, 1);
 
   const mixed = detectCurriculumProfile(
     "Module A General Studies Reference Material Notes and Suggested Readings",
@@ -271,6 +413,166 @@ async function main() {
   assert.match(englishDownstreamPrompt, /Never allocate these components entirely to a single term\./);
   assert.match(englishDownstreamPrompt, /English sessions should be planned as an integrated language-learning progression/);
 
+  const scienceDownstreamPrompt = renderPromptWithEnglishDownstreamIntelligence("assessment-generation.md", {
+    SUBJECT: "Physics",
+    GRADE_LEVEL: "Class XI",
+    SESSION_TITLE: "Motion in a Straight Line",
+    SESSION_NUMBER: "1",
+    TOTAL_SESSIONS: "20",
+    DURATION_MINUTES: "45",
+    SELECTED_CHAPTERS_JSON: JSON.stringify(["Motion in a Straight Line"]),
+    LEARNING_OUTCOMES_JSON: JSON.stringify(["Explain displacement and velocity"]),
+    PREVIOUS_SESSION_CONTEXT: "No previous session context provided.",
+    LEARNING_PACE: "Balanced",
+    TARGET_DIFFICULTY: "Moderate",
+    OUTPUT_LANGUAGE: "English",
+    ASSESSMENT_TYPE: "Class test",
+    REQUESTED_TOTAL_MARKS: "20",
+    REQUESTED_TOTAL_QUESTIONS: "10",
+    REQUESTED_DURATION_MINUTES: "20",
+    ASSESSMENT_PREFERENCE_JSON: JSON.stringify([]),
+    BLOOMS_DISTRIBUTION_JSON: JSON.stringify([]),
+    REQUESTED_QUESTION_TYPES_JSON: JSON.stringify([]),
+    ASSESSMENT_SECTION_CONTEXT_JSON: JSON.stringify([]),
+    QUESTION_PAPER_OBJECTIVE: "Check conceptual understanding.",
+    TEACHER_ASSESSMENT_REQUEST_JSON: JSON.stringify({}),
+    SESSION_JSON: JSON.stringify({ subject: "Physics", sessionTitle: "Motion in a Straight Line" }),
+    ASSESSMENT_SCHEMA_JSON: JSON.stringify({ assessment: {} }),
+  }, {
+    stageLabel: "Assessment generation",
+  });
+  assert.match(scienceDownstreamPrompt, /Science Subject Intelligence Layer \(Active\)/);
+  assert.match(scienceDownstreamPrompt, /Science Curriculum and Pedagogical Intelligence Engine/);
+  assert.match(scienceDownstreamPrompt, /Physics/);
+  assert.match(scienceDownstreamPrompt, /Science Generation Policy Layer \(Active\)/);
+  assert.match(scienceDownstreamPrompt, /balanced science blueprint by default/i);
+
+  const scienceTeacherPrompt = renderPromptWithEnglishDownstreamIntelligence("teacher-notes-generation.md", {
+    SUBJECT: "Chemistry",
+    GRADE_LEVEL: "Class X",
+    SESSION_TITLE: "Chemical Reactions and Equations",
+    SESSION_NUMBER: "1",
+    TOTAL_SESSIONS: "20",
+    DURATION_MINUTES: "45",
+    SELECTED_CHAPTERS_JSON: JSON.stringify(["Chemical Reactions and Equations"]),
+    LEARNING_OUTCOMES_JSON: JSON.stringify(["Explain evidence of chemical change"]),
+    PREVIOUS_SESSION_CONTEXT: "No previous session context provided.",
+    TEACHING_STYLE_JSON: JSON.stringify(["Guided discussion"]),
+    STUDENT_LEVEL: "Grade-level mixed",
+    LEARNING_PACE: "Balanced",
+    TARGET_DIFFICULTY: "Moderate",
+    ASSESSMENT_PREFERENCE_JSON: JSON.stringify([]),
+    SPECIAL_INSTRUCTIONS: "",
+    TEACHING_RESOURCES_JSON: JSON.stringify(["Low-cost classroom activity"]),
+    OUTPUT_LANGUAGE: "English",
+    READING_LEVEL: "Grade-aligned",
+    RESPONSE_LENGTH: "Balanced",
+    CREATIVITY: "Moderate",
+    SESSION_JSON: JSON.stringify({ subject: "Chemistry", sessionTitle: "Chemical Reactions and Equations", selectedChapters: ["Chemical Reactions and Equations"] }),
+  }, {
+    stageLabel: "Teacher notes generation",
+  });
+  assert.match(scienceTeacherPrompt, /SCIENCE TEACHER NOTES RULES/);
+  assert.match(scienceTeacherPrompt, /formula literacy/i);
+  assert.match(scienceTeacherPrompt, /expected observations/i);
+
+  const scienceStudentPrompt = renderPromptWithEnglishDownstreamIntelligence("student-notes-generation.md", {
+    SUBJECT: "Biology",
+    GRADE_LEVEL: "Class X",
+    SESSION_TITLE: "Life Processes",
+    SESSION_NUMBER: "3",
+    TOTAL_SESSIONS: "20",
+    DURATION_MINUTES: "45",
+    SELECTED_CHAPTERS_JSON: JSON.stringify(["Life Processes"]),
+    LEARNING_OUTCOMES_JSON: JSON.stringify(["Describe respiration and transport"]),
+    PREVIOUS_SESSION_CONTEXT: "No previous session context provided.",
+    LEARNING_PACE: "Balanced",
+    TARGET_DIFFICULTY: "Moderate",
+    OUTPUT_LANGUAGE: "English",
+    READING_LEVEL: "Grade-aligned",
+    RESPONSE_LENGTH: "Balanced",
+    CREATIVITY: "Moderate",
+    SESSION_JSON: JSON.stringify({ subject: "Biology", sessionTitle: "Life Processes" }),
+  }, {
+    stageLabel: "Student notes generation",
+  });
+  assert.match(scienceStudentPrompt, /SCIENCE STUDENT NOTES RULES/);
+  assert.match(scienceStudentPrompt, /labeled diagram/i);
+  assert.match(scienceStudentPrompt, /process sequence/i);
+
+  const sciencePptPrompt = renderPromptWithEnglishDownstreamIntelligence("session-ppt-prompt.md", {
+    SUBJECT: "Science",
+    GRADE_LEVEL: "Class VII",
+    SESSION_TITLE: "Acids and Bases",
+    SESSION_NUMBER: "2",
+    TOTAL_SESSIONS: "15",
+    DURATION_MINUTES: "40",
+    SELECTED_CHAPTERS_JSON: JSON.stringify(["Acids and Bases"]),
+    LEARNING_OUTCOMES_JSON: JSON.stringify(["Differentiate acids and bases"]),
+    PREVIOUS_SESSION_CONTEXT: "No previous session context provided.",
+    LEARNING_PACE: "Balanced",
+    TARGET_DIFFICULTY: "Moderate",
+    TEACHING_STYLE_JSON: JSON.stringify(["Interactive facilitation"]),
+    TEACHING_RESOURCES_JSON: JSON.stringify(["Projector / PPT"]),
+    OUTPUT_LANGUAGE: "English",
+    READING_LEVEL: "Grade-aligned",
+    RESPONSE_LENGTH: "Balanced",
+    CREATIVITY: "Moderate",
+    SESSION_JSON: JSON.stringify({ subject: "Science", sessionTitle: "Acids and Bases" }),
+    SLIDE_CONFIG_JSON: JSON.stringify({}),
+  }, {
+    stageLabel: "PPT and materials generation",
+  });
+  assert.match(sciencePptPrompt, /SCIENCE PPT AND MATERIALS RULES/);
+  assert.match(sciencePptPrompt, /visual academic science deck/i);
+  assert.match(sciencePptPrompt, /concept diagram/i);
+
+  const scienceHomeworkPrompt = renderPromptWithEnglishDownstreamIntelligence("homework-generation.md", {
+    SUBJECT: "Physics",
+    GRADE_LEVEL: "Class XI",
+    SESSION_TITLE: "Motion in a Straight Line",
+    SESSION_NUMBER: "5",
+    TOTAL_SESSIONS: "30",
+    EXPECTED_HOMEWORK_DURATION: "30",
+    LEARNING_OUTCOMES_JSON: JSON.stringify(["Solve displacement and velocity problems"]),
+    PREVIOUS_SESSION_CONTEXT: "No previous session context provided.",
+    LEARNING_PACE: "Balanced",
+    TARGET_DIFFICULTY: "Moderate",
+    HOMEWORK_PREFERENCES_JSON: JSON.stringify({}),
+    OUTPUT_LANGUAGE: "English",
+    READING_LEVEL: "Grade-aligned",
+    SESSION_JSON: JSON.stringify({ subject: "Physics", sessionTitle: "Motion in a Straight Line" }),
+  }, {
+    stageLabel: "Homework generation",
+  });
+  assert.match(scienceHomeworkPrompt, /SCIENCE HOMEWORK RULES/);
+  assert.match(scienceHomeworkPrompt, /numerical\/problem solving for Physics/i);
+
+  const scienceSessionMetadata = buildScienceGenerationMetadata("assessment-generation.md", {
+    SUBJECT: "Physics",
+    GRADE_LEVEL: "Class XI",
+    SESSION_TITLE: "Motion in a Straight Line",
+    SELECTED_CHAPTERS_JSON: JSON.stringify(["Motion in a Straight Line"]),
+    LEARNING_OUTCOMES_JSON: JSON.stringify(["Solve numerical problems using velocity"]),
+    SESSION_JSON: JSON.stringify({ subject: "Physics", sessionTitle: "Motion in a Straight Line" }),
+    ASSESSMENT_TYPE: "Session assessment",
+    QUESTION_PAPER_OBJECTIVE: "Check conceptual understanding and application.",
+  });
+  assert.equal(scienceSessionMetadata?.scienceMode, "Physics");
+  assert.equal(scienceSessionMetadata?.scienceArtifact, "assessment");
+  assert.ok((scienceSessionMetadata?.scienceContentModes || []).includes("numerical"));
+
+  const scienceStage1Prompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
+    STAGE_NAME: "Stage 1 - Raw Curriculum Extraction",
+    EXTRACTION_RULES: "return JSON only",
+    CHUNK_RULE: "",
+    SOURCE_TEXT: "Subject: Chemistry\nUnits\nChemical Reactions\nPracticals",
+  }, {
+    stageLabel: "Stage 1 - Raw Curriculum Extraction",
+  });
+  assert.match(scienceStage1Prompt, /Science Subject Intelligence Layer \(Active\)/);
+  assert.match(scienceStage1Prompt, /Never force a fixed curriculum structure\./);
+
   const tamilWrappedPrompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
     STAGE_NAME: "Stage 1 - Raw Curriculum Extraction",
     EXTRACTION_RULES: "return JSON only",
@@ -335,10 +637,12 @@ async function main() {
 
   const normalizedSupportingDocuments = normalizeSupportingCurriculumDocuments([
     { role: "textbook_index", fileName: "Tamil Index.pdf", text: "Iyal 1\nIyal 2" },
+    { role: "textbook_structure", fileName: "Tamil Structure.txt", text: "Chapter: மணிமேகலை" },
     { role: "ignored", fileName: "Other.pdf", text: "Should not pass" },
   ]);
-  assert.equal(normalizedSupportingDocuments.length, 1);
+  assert.equal(normalizedSupportingDocuments.length, 2);
   assert.equal(normalizedSupportingDocuments[0].role, "textbook_index");
+  assert.equal(normalizedSupportingDocuments[1].role, "textbook_structure");
 
   const combinedSourceText = buildCombinedCurriculumSourceText(
     "Class X Tamil Curriculum",
@@ -347,6 +651,7 @@ async function main() {
   );
   assert.match(combinedSourceText, /Role: primary_curriculum/);
   assert.match(combinedSourceText, /Role: textbook_index/);
+  assert.match(combinedSourceText, /Role: textbook_structure/);
   assert.ok(
     combinedSourceText.indexOf("Role: primary_curriculum") < combinedSourceText.indexOf("Role: textbook_index"),
     "primary curriculum text should stay ahead of the textbook index in the combined source"
@@ -578,6 +883,43 @@ async function main() {
       "Creative Writing - 17 Marks",
     ]
   );
+  const tamilStructureDigest = buildTamilStructureDigest(`
+    Iyal 3: பண்பாடு
+    Chapter: மணிமேகலை
+    Topic: மார்கழிப் பெருவிழா
+    Subtopic: திருவிழா சூழல்
+    Topic: தொடர் இலக்கணம்
+    Subtopic: ஆகுபெயர்
+  `, {
+    className: "Class IX",
+    subject: "Tamil",
+    title: "Tamil Structure Digest",
+  });
+  assert.ok(tamilStructureDigest);
+  assert.equal(tamilStructureDigest?.chapter_candidates[0]?.chapter_name, "மணிமேகலை");
+  assert.equal(tamilStructureDigest?.topic_candidates.length, 2);
+  assert.equal(tamilStructureDigest?.subtopic_candidates.length, 2);
+
+  const enrichedTamilFacts = enrichTamilStage1FactsWithStructure(tamilFastPathFacts, [{
+    role: "textbook_structure",
+    fileName: "Tamil Structure.txt",
+    text: `
+      Iyal 3: பண்பாடு
+      Chapter: மணிமேகலை
+      Topic: மார்கழிப் பெருவிழா
+      Subtopic: திருவிழா சூழல்
+      Topic: தொடர் இலக்கணம்
+      Subtopic: ஆகுபெயர்
+    `,
+  }], {
+    className: "Class IX",
+  });
+  const enrichedManimekalai = enrichedTamilFacts.stage1Facts.chapters.find((chapter: any) => chapter.chapter_name === "மணிமேகலை");
+  assert.ok(enrichedManimekalai);
+  assert.ok(enrichedManimekalai.topics.includes("மார்கழிப் பெருவிழா"));
+  assert.ok(enrichedManimekalai.topics.includes("தொடர் இலக்கணம்"));
+  assert.ok(enrichedManimekalai.subtopics.includes("திருவிழா சூழல்"));
+  assert.ok(enrichedManimekalai.subtopics.includes("ஆகுபெயர்"));
 
   const hardenedTamil = hardenTamilStage1Facts({
     document_metadata: { subject: "Tamil", class: "8th Standard" },

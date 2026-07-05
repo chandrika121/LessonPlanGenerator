@@ -90,6 +90,7 @@ SESSION CONTEXT
 - Difficulty level: {{TARGET_DIFFICULTY}}
 - Homework preferences: {{HOMEWORK_PREFERENCES_JSON}}
 - Output language: {{OUTPUT_LANGUAGE}}
+- Language execution rule: {{OUTPUT_LANGUAGE_RULE}}
 - Reading level: {{READING_LEVEL}}
 - Session JSON: {{SESSION_JSON}}
 

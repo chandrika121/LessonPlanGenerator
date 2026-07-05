@@ -46,9 +46,38 @@ export interface CurriculumClassSummary {
 }
 
 export interface CurriculumSupportingDocument {
-  role: "textbook_index";
+  role: "textbook_index" | "textbook_structure" | "sunbird_textbook_structure" | "sunbird_content_manifest";
   fileName: string;
   text: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SunbirdSearchCandidate {
+  identifier: string;
+  name: string;
+  contentType?: string;
+  mimeType?: string;
+  board?: string;
+  se_boards?: string[];
+  se_gradeLevels?: string[];
+  se_mediums?: string[];
+  se_subjects?: string[];
+  source: "production" | "sandbox";
+}
+
+export interface SunbirdStructurePreviewResponse {
+  success: boolean;
+  source: "production" | "sandbox";
+  contentId: string;
+  title: string;
+  digestText: string;
+  summary: {
+    totalNodes: number;
+    chapterCandidates: number;
+    topicCandidates: number;
+    subtopicCandidates: number;
+  };
+  supportingDocuments: CurriculumSupportingDocument[];
 }
 
 export interface CurriculumClassOptionsResponse {

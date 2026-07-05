@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: mixed_or_unknown\n- Expected structure type: mixed\n- Use the most source-faithful hierarchy available\n- Preserve ambiguous structure conservatively and avoid invented chapters\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 2 of 4; extract only what is present in this chunk\n\nCurriculum source text:\n# Page 5\n\n परीक्षाथी ध्य ान पूवडक परीक्षा/ ऑ मर्यो क्त िप को सुनने के पिात परीक्षक द्व ारा पूछे गए प्रश् ोों का अपनी समझ\nसे मौक्तखक उत्तर देंगे।\nकौिलोिं के मूल्ािंकन का आधार\nिण श्र िाचन\n1 मवद्याथी में पररम त सोंदभों में प्र युि िब्दोों और पदोों को 1 मवद्याथी केवल अलग - अलग िब्दोों और पदोों के\nसमझने की सामान्य योग्यता है। योग की योग्यता प्र दमिडत करता है। प्र\n2 छोटे सुसोंबद्ध कथनोों को पररम त सोंदभों में समझने की 2 पररम त सोंदभों में िुद्धता से केवल छोटे सुसोंबद्ध\nयोग्यता है। कथनोों का सीममत प्र योग करता है।\n3 पररम त या अपररम त दोनोों सोंदभों में कमथत सू ना को स्प 3 अपेमक्षत दीघड भाषर् में जमटल कथनोों के प्र योग\nि समझने की योग्यता है। की योग्यता प्र दमिडत करता है।\n4 दीघड कथनोों को पयाडप्त िुद्धता से समझता है और 4 अपररम त क्तस्थ मतयोों में मव ारोों को तामक ड क ढोंग से\nमनष्कषड मनकाल सकता है। सोंगमठत कर धाराप्रवाह रू प में प्रस्तु त कर सकता\nहै।\n5 जमटल कथनोों के मव ार-मबोंदुओों को समझने और 5 उद्देश्य और श्र ोता के मलए उपयुि िैली को\nमवश्लेमषत करने की योग्यता प्र दमिडत करता है। अपना सकता है।\nहटप्पणी\n परीक्षर् से पूवड परीक्षाथी को तैयारी के मलए कुछ समय मदया जाए।\n मववरर्ात्मक भाषा में मवषय के अनुकूल तीनोों कालोों का प्र योग अपेमक्षत है।\n मनधाडररत मवषय परीक्षाथी के अनुभव सोंसार के होों, जैसे - कोईु टकुला या हास्य - सोंग सुनाना, हाल में पढ़ी प्र\nपुस्तक या देखे गए मसनेमा की कहानी सुनाना।\n मिक्षाथी को मवषय केंमद्रत तोंत्र स्व अमभव्यक्ति करने का अवसर दान प्र करें।\nपठन कौिल\n सरसरी दृ मि से पढ़कर पाठ का केंद्रीय मव ार ग्र हर् करना।\n एकाग्रम त हो एक अभीि गमत के साथ मौन पठन करना।\n पमठत सामग्री पर अपनी प्र मतमिया व्य ि करना।\n भाषा, मव ार एवों िैली की सराहना करना।\n सामहत्य के प्र मत अमभ रु म का मवकास करना।\n सामहत्य की मवमभन्न मवधाओों की प्र कृमत के अनुसार पठन कौिल का मवकास।\n सोंदभड के अनुसार िब्दोों के अथड – भेदोों की प ह ान करना।\n5\n\n# Page 6\n\n समिय (व्यवहारोपयोगी) िब्द भोंर्ार की वृक्तद्ध करना।\n पमठत सामग्री के मवमभन्न अोंिोों का परस्पर सोंबोंध समझना।\n पमठत अनुच्छेदोों के िीषडक एवों उपिीषडक देना।\n कमवता के प्र मुख उपादान यथा - तुक, लय, यमत , गमत , बलाघात आमद से पररम त कराना।\nलेिन कौिल\n मलमप के मान्य रू प का ही व्य वहार करना।\n मवराम - म ह् ोों का उपयुि प्र योग करना।\n भावपूर्ड भाषा तथा लेखन प्र - िैली का स्व ाभामवक रू प से प्र योग करना।\n उपयुि अनुच्छेदोों में बााँटकर मलखना।\n ाथडना पत्र, मनमोंत्रर् प्र पत्र, बधाई पत्र, सोंवेदना पत्र, ई - मेल , आदेि पत्र, एस .एम.एस आमद मलखना और मवमवध\nपत्रोों को भरना। प्र\n मवमवध स्र ोतोों से आवश्यक सामग्री एकत्र कर अभीि मवषय पर मनबोंध मलखना।\n देखी हु ई घटनाओों का वर्डन करना और उन पर अपनी प्र मतमिया देना।\n महोंदी की एक मवधा से दूसरी मवधा में रू पाोंतरर् का कौिल।\n समारोह और गोमियोों की सू ना और प्र मतवेदन तैयार करना।\n सार, सोंक्षेपीकरर् एवों भावाथड मलखना।\n गद्य एवों पद्य अवतरर्ोों की व्य ाख्या मलखना।\n स्व ानुभूत मव ारोों और भावनाओों को स्प ि सहज और प्र भाविाली ढोंग से अमभव्यि करना।\n िमबद्धता और प्र करर् की एकता बनाए रखना।\n मलखने में सृजनात्मकता लाना।\n अनावश्यक काट - छााँट से ब ते ए हु सुपाठ्य लेखन कायड करना\n दो मभन्न पाठोों की पाठ्यवस्तु पर म ों तन करके उनके मध्य की सोंबद्धता (अोंतसंबोंधोों) पर अपने मव ार अमभव्यि\nकरने में सक्षम होना।\n रटे - रटाए वाक्ोों के ान स्थ पर अमभव्यक्तिपरक / मत क्तस्थ आधाररत / उच्च म ों तन क्ष मता वाले ोों प्रश् पर सहजता से\nअपने मौमलक मव ार कट प्र करना।\nरचनात्मक अहभव्यक्ति\nअनुच्छेद लेिन\n पूणजता – सोंबोंमधत मवषय के सभी पक्षोों को अनुच्छेद के सीममत आकार में सोंयोमजत करना\n मबद्धता क्र – मव ारोों को िमबद्ध एवों तक ड सोंगत मवमध से प्र कट करना\n हिषय - केंहित – ारोंभ प्र से अोंत तक अनुच्छेद का एक सूत्र में बाँधा होना\n6\n\n# Page 7\n\n सामाहसकता – अनावश्यक मवस्तार न देकर सीममत िब्दोों में यथासोंभव मवषय से सोंबद्ध पूरी बात कहने का\nयास प्र करना\nपत्र लेिन\n अनौप ाररक पत्र मव ार - मवमिड का ज़ररया , मजनमें मैत्रीपूर्ड भावना मनमहत , सरलता , सोंमक्षप्त और सादगी से\nभरी लेखन िैली\n औप ाररक पत्रोों ारा द्व दैमनक जीवन की मवमभन्न मतयोों क्तस्थ में कायड , व्य ापार , सोंवाद , परामिड , अनुरोध तथा सुझाव\nके मलए भावी प्र एवों ि स्प सोंप्रेषर् क्ष मता का मवकास\n सरल और बोल ाल की भाषा िैली , उपयुि , सटीक िब्दोों के योग प्र , सीधे - सादे ढोंग से मवषय की ि स्प और\nप्रत्यक्ष मत प्रस्तु\n ारूप प्र की आवश्यक औप ाररकताओों के साथ सुस्पि , सुलझे और िमबद्ध मव ार आवश्यक ; तथ्य , सोंमक्षप्तता\nऔर सोंपूर्डता के साथ भावी प्र मत प्रस्तु\nहिज्ञापन लेिन\n(हिज्ञाहपत िस्तु / हिषय को केंि में रिते हु ए )\n मवज्ञामपत वस्तु के मवमिि गुर्ोों का उल्लेख\n आकषडक लेखन िैली\n तु प्रस् मत में नयापन , वतडमान से जुडाव तथा दूसरोों से मभन्न ता\n मवज्ञापन में आवश्यकतानुसार नारे (स्लोगन) का उपयोग\n मवज्ञापन लेखन में बॉक्स , म त्र अथवा रोंग का उपयोग अमनवायड नहीों है , मकोंतु समय होने पर मत प्रस्तु को भा प्र वी\nबनाने के मलए इनका उपयोग मकया जा सकता है।\nसिंिाद लेिन\n( दी गई पररक्तिहतयोिं के आधार पर सिंिाद लेिन )\n सीमा के भीतर एक दूसरे से जुडे साथडक और उद्देश्यपूर्ड सोंवाद\n पात्रोों के अनुकूल भाषा िैली\n कोिक में विा के हाव - भाव का सोंकेत\n सोंवाद लेखन के अोंत तक मवषय/मुद्दे पर वाताड पूरी\nलघुकथा लेिन\n( हदए गए हिषय / िीषजक आहद के आधार पर रचनात्मक सोच के साथ लघुकथा लेिन )\n कथात्म कता\n मनरोंतरता , मजज्ञासा/रो कता / कल्पनािील्ता\n भावी सोंवाद/ प्र पात्रानुकूल सोंवाद\n7\n\n# Page 8\n\n र नात्म कता/\n उद्देश्यपरकता\nसिंदेि लेिन\n(िुभकामना , पिज - त्य ो ारोिं एििं हििेष अिसरोिं पर हदए र् ाने िाले सिंदेि)\n मवषय से सोंबद्धता\n सोंमक्षप्त और सारगमभडत\n भाषाई दक्षता एवों प्रस् तु मत\n र नात्म कता / सृजनात्म कता\n मवषय के अनुकूल काव्य - पोंक्तियोों का आोंमिक उपयोग , मकोंतु इसकी अमनवायडता नहीों\nई - मेल लेिन\n( हिहिध हिषयोिं पर आधाररत औपचाररक ई - मेल लेिन )\n बोधगम्य भाषा\n मवषय से सोंबद्धता\n सोंमक्षप्त , ि स्प व सारगमभडत\n मििा ार व औप ाररकताओों का मनवाडह\nस्व िृत्त लेिन\n( उपलब्ध ररक्ति के हलए स्व िृत्त लेिन )\n ि स्प , सोंपूर्ड व व्य वक्तस्थत\n नाम , जन्ममतमथ , वतडमान पता , िैक्षमर्क योग्यता , अनुभव , अमभरुम योों , आत्मकथ्य , दूरभाष\nआमद का उल्लेख ( परीक्षा में गोपनीयता का मनवाडह अपेमक्षत )\n अन्य मविेष जानकारी / योग्यता आमद\nसूचना लेिन\n( औपचाररक िैली में ाि व्य ाररक र् ीिन से सिंबिंहधत हिषयोिं पर आधाररत सूचना लेिन )\n सरल एवों बोधगम्य भाषा\n मवषय की िता स्प\n मवषय से जुडी सोंपूर्ड जानकारी\n औप ाररक मििा ार का मनवाडह\n8\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

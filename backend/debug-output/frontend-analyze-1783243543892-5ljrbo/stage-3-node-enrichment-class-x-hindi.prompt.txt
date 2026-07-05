@@ -1,0 +1,1208 @@
+Stage 3: Node Enrichment - Class X - Hindi
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class X",
+  "subject": "Hindi",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Listening Skills (श्रवण कौशल)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Understanding general ability to understand words and phrases in appropriate contexts",
+        "Understanding short coherent statements in appropriate contexts",
+        "Understanding both appropriate and inappropriate contexts",
+        "Understanding long statements with sufficient accuracy",
+        "Understanding and analyzing the meaning of complex statements"
+      ],
+      "subtopics": [
+        "Answering questions asked by the examiner orally based on understanding of the exam-oriented question paper before the exam",
+        "Using appropriate language for three types of contexts suitable for the subject",
+        "Context-based exam experiences (e.g., school play, comedy, recent book/movie story)",
+        "Opportunity for students to express themselves on topic-centered topics"
+      ],
+      "key_concepts": [
+        "Oral expression",
+        "Contextual understanding",
+        "Appropriate language usage"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Listening Skills (श्रवण कौशल)",
+          "source_chapter_name": "Listening Skills (श्रवण कौशल)",
+          "source_heading": "Listening Skills (श्रवण कौशल)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Reading Skills (पठन कौशल)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Skimming to grasp the central theme",
+        "Silent reading with concentration on a specific task",
+        "Expressing opinion on read material",
+        "Appreciating language, theme, and style",
+        "Developing interest in community",
+        "Developing reading skills according to different types of community",
+        "Identifying meaning differences of words according to context"
+      ],
+      "subtopics": [
+        "Understanding relationships between different parts of read material",
+        "Giving headings and subheadings to read paragraphs",
+        "Transforming based on elements like rhyme, rhythm, metaphor, imagery, figures of speech"
+      ],
+      "key_concepts": [
+        "Skimming",
+        "Concentration",
+        "Theme identification",
+        "Community interest"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Reading Skills (पठन कौशल)",
+          "source_chapter_name": "Reading Skills (पठन कौशल)",
+          "source_heading": "Reading Skills (पठन कौशल)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Writing Skills (लेखन कौशल)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Following standard forms of language",
+        "Using appropriate punctuation marks",
+        "Using emotional language and writing style naturally",
+        "Dividing into appropriate paragraphs",
+        "Writing letters: Application, Invitation, Congratulatory, Condolence, Email, Order, SMS",
+        "Filling various letter formats",
+        "Gathering material from various sources to write on a specific topic",
+        "Describing observed events and giving opinions",
+        "Converting one language mode to another",
+        "Preparing speeches for ceremonies and meetings",
+        "Summarizing, condensing, and writing with emotion",
+        "Explaining prose and poetry excerpts",
+        "Expressing personal thoughts and feelings simply and effectively",
+        "Maintaining coherence and unity of thought",
+        "Bringing creativity in writing",
+        "Writing readable text without unnecessary cutting",
+        "Comparing two different texts and expressing their interconnection"
+      ],
+      "subtopics": [
+        "Expressing opinions on high-level questions based on memory or situational basis",
+        "Creative thinking for short stories",
+        "Character dialogue in stories",
+        "Purposeful writing",
+        "Writing letters of good wishes, birthday greetings, and special occasions",
+        "Using poetry lines suitable for the topic",
+        "Writing formal emails based on various topics",
+        "Writing autobiographies based on available facts",
+        "Writing information based on official style"
+      ],
+      "key_concepts": [
+        "Letter writing (various types)",
+        "Speech preparation",
+        "Summary and condensation",
+        "Creative writing",
+        "Email writing",
+        "Autobiography",
+        "Information writing"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Writing Skills (लेखन कौशल)",
+          "source_chapter_name": "Writing Skills (लेखन कौशल)",
+          "source_heading": "Writing Skills (लेखन कौशल)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Creative Expression (रचनात्मक अभिव्यक्ति)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Paragraph Writing (अनुच्छेद लेखन)",
+        "Letter Writing (पत्र लेखन)",
+        "Advertisement Writing (विज्ञापन लेखन)",
+        "Dialogue Writing (संवाद लेखन)",
+        "Short Story Writing (लघुकथा लेखन)",
+        "Card Writing (कार्ड लेखन)",
+        "Email Writing (ई-मेल लेखन)",
+        "Autobiography Writing (स्वचरित्र लेखन)",
+        "Information Writing (सूचना लेखन)"
+      ],
+      "subtopics": [
+        "Paragraph: Completeness, Coherence, Topic-centered structure",
+        "Paragraph: Conciseness",
+        "Letter: Informal (friendship, simplicity, brevity)",
+        "Letter: Formal (official life, business, dialogue, advice, request)",
+        "Advertisement: Attractive style, novelty, slogans, visual elements",
+        "Dialogue: Connected purpose, character-appropriate language, expressions",
+        "Short Story: Narrative quality, interest/curiosity, character dialogue",
+        "Card: Relevance, brevity, language proficiency, creativity",
+        "Email: Understandable language, relevance, brevity, formal tone",
+        "Autobiography: Clarity, completeness, factual details (name, DOB, address, qualifications)",
+        "Information: Simple language, clarity, complete information, formal tone"
+      ],
+      "key_concepts": [
+        "Paragraph structure",
+        "Formal and informal letters",
+        "Advertisement techniques",
+        "Dialogue construction",
+        "Short story elements",
+        "Card formats",
+        "Email protocols",
+        "Autobiographical details",
+        "Information dissemination"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Creative Expression (रचनात्मक अभिव्यक्ति)",
+          "source_chapter_name": "Creative Expression (रचनात्मक अभिव्यक्ति)",
+          "source_heading": "Creative Expression (रचनात्मक अभिव्यक्ति)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U3",
+      "unit_name": "खंड – ग (पाठ्यपुस्तक और पूरक पाठ्यपुस्तक)",
+      "part_or_section": "",
+      "marks": 30,
+      "topics": [
+        "गद्य खंड पाठ्यपुस्तक (हक्षतर् भाग 1)",
+        "काव्य खंड पाठ्यपुस्तक (हक्षतर् भाग 1)",
+        "पूरक पाठ्यपुस्तक (कृहतका भाग 1)"
+      ],
+      "subtopics": [
+        "मक्षमतज (भाग 1) से निर्धारित पाठों में से गद्याोंि के आधार पर विषयवस्तु का ज्ञान, बोध, अभिव्यक्ति आदि पर एक अंकीय पाँच बहुविकल्पी प्रश् पूछे जाएंगे (1x5)",
+        "मक्षमतज (भाग 1) से निर्धारित पाठों में से विषयवस्तु का ज्ञान, बोध, अभिव्यक्ति आदि पर तीन प्रश् पूछे जाएंगे (2x3)",
+        "मक्षमतज (भाग 1) से निर्धारित कविताओं में से काव्याोंि के आधार पर एक अंकीय पाँच बहुविकल्पी प्रश् पूछे जाएंगे (1x5)",
+        "मक्षमतज (भाग 1) से निर्धारित कविताओं के आधार पर विद्यार्थियों का काव्यबोध परखने हेतु तीन प्रश् पूछे जाएंगे (2x3)",
+        "कृहतका (भाग 1) से निर्धारित पाठों पर आधारित दो प्रश् पूछे जाएंगे (4x2)"
+      ],
+      "key_concepts": [
+        "Prose Reading",
+        "Poetry Reading",
+        "Supplementary Reader"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "खंड – ग (पाठ्यपुस्तक और पूरक पाठ्यपुस्तक)",
+          "source_chapter_name": "खंड – ग (पाठ्यपुस्तक और पूरक पाठ्यपुस्तक)",
+          "source_heading": "खंड – ग (पाठ्यपुस्तक और पूरक पाठ्यपुस्तक)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "source_unit_id": "U4",
+      "unit_name": "खंड – घ (रचनात्मक लेखन)",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "लेखन"
+      ],
+      "subtopics": [
+        "विभिन्न विषयों और संदर्भों पर विद्यार्थियों के तर्क संगत विचार प्रकट करने की क्षमता को परखने के लिए संकेत-बिंदुओं पर आधारित समसामयिक एवं व्यावहारिक जीवन से जुड़े हुए तीन विषयों में से किसी एक विषय पर लगभग 120 शब्दों में अनुच्छेद लेखन (6x1=6)",
+        "अभिव्यक्ति की क्षमता पर केंद्रित औपचारिक या अनौपचारिक विषयों में लगभग 100 शब्दों में किसी एक विषय पर पत्र (5x1=5)",
+        "विविध विषयों पर आधारित लगभग 100 शब्दों में ई-मेल लेखन (5x1=5)",
+        "दिए गए विषय/शीर्षक आदि के आधार पर लगभग 100 शब्दों में लघुकथा लेखन (5x1=5)",
+        "दिए गए विषय/परिस्थिति के आधार पर लगभग 80 शब्दों में संवाद लेखन (4x1=4)",
+        "व्यावहारिक जीवन से संबंधित विषयों पर आधारित लगभग 80 शब्दों में सूचना लेखन (4x1=4)"
+      ],
+      "key_concepts": [
+        "Paragraph Writing",
+        "Letter Writing",
+        "Email Writing",
+        "Short Story Writing",
+        "Dialogue Writing",
+        "Information Writing"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "खंड – घ (रचनात्मक लेखन)",
+          "source_chapter_name": "खंड – घ (रचनात्मक लेखन)",
+          "source_heading": "खंड – घ (रचनात्मक लेखन)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "source_unit_id": "U5",
+      "unit_name": "खंड – क (अपठित बोध)",
+      "part_or_section": "",
+      "marks": 14,
+      "topics": [
+        "अपठित गद्याोंि व काव्याोंि पर बोध, मंत्रन, विश्लेषण, सराहना आदि पर बहुविकल्पीय, अतिलघूत्तरात्मक एवं लघूत्तरात्मक प्रश्"
+      ],
+      "subtopics": [
+        "एक अपठित गद्याोंि लगभग 250 शब्दों का इसके आधार पर एक अंकीय तीन बहुविकल्पी प्रश् (1x3=3), अतिलघूत्तरात्मक एवं लघूत्तरात्मक प्रश्न (2x2=4) पूछे जाएंगे",
+        "एक अपठित काव्याोंि लगभग 120 शब्दों का इसके आधार पर एक अंकीय तीन बहुविकल्पी प्रश् (1x3=3), अतिलघूत्तरात्मक एवं लघूत्तरात्मक प्रश्न (2x2=4) पूछे जाएंगे"
+      ],
+      "key_concepts": [
+        "Reading Comprehension",
+        "Analysis",
+        "Appreciation"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "खंड – क (अपठित बोध)",
+          "source_chapter_name": "खंड – क (अपठित बोध)",
+          "source_heading": "खंड – क (अपठित बोध)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "source_unit_id": "U6",
+      "unit_name": "खंड – ख (व्याकरण व्याकरण)",
+      "part_or_section": "",
+      "marks": 16,
+      "topics": [
+        "व्याकरण के लिए निर्धारित विषयों पर विषयवस्तु का बोध, भाषिक बिंदु/संरचना आदि पर अतिलघूत्तरात्मक प्रश्"
+      ],
+      "subtopics": [
+        "रचना के आधार पर वाक्य भेद (1x4=4) (5 में से 4 प्रश् करने होंगे)",
+        "वाच्य (1x4=4) (5 में से 4 प्रश् करने होंगे)",
+        "पद परिचय (1x4=4) (5 में से 4 प्रश् करने होंगे)"
+      ],
+      "key_concepts": [
+        "Grammar",
+        "Sentence Types",
+        "Voice",
+        "Word Order"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "खंड – ख (व्याकरण व्याकरण)",
+          "source_chapter_name": "खंड – ख (व्याकरण व्याकरण)",
+          "source_heading": "खंड – ख (व्याकरण व्याकरण)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U11",
+      "source_unit_id": "U1",
+      "unit_name": "4 अलोंकार- (अथाडलोंकार : उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्)",
+      "part_or_section": "",
+      "marks": 4,
+      "topics": [
+        "उपमा",
+        "रूपक",
+        "उत्प्रेक्षा",
+        "अलंकारोक्ति",
+        "मानवीकरण"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्)",
+          "source_chapter_name": "उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्)",
+          "source_heading": "उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U12",
+      "source_unit_id": "U2",
+      "unit_name": "3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)",
+      "part_or_section": "",
+      "marks": 11,
+      "topics": [
+        "अ गद्य ििंड पाठ्यपुस्त क ( हक्षहतर् भाग 2 )",
+        "ब काव्य ििंड (पाठ्यपुस्त क) ( हक्षहतर् भाग 2 )",
+        "स पूरक पाठ्यपुस्तक ( कृहतका भाग – 2)"
+      ],
+      "subtopics": [
+        "मक्षमतज (भाग 2 ) से मनधाडररत पाठोों में से गद्याोंि के आधार पर मवषयवस्तु का ज्ञ ान, बोध , अमभव्यक्ति आमद पर एक अोंकीय पााँ बहुहिकल्पी रश्न पूछे जाएाँगे।",
+        "मक्षमतज (भाग 2 ) से मनधाडररत पाठोों में से मवषयवस्तु का ज्ञ ान, बोध , अमभव्यक्ति आमद पर तीन प्रश् पूछे जाएाँगे।",
+        "मक्षमतज (भाग 2 ) से मनधाडररत कमवताओों में से काव्याोंि के आधार पर एक अोंकीय पााँ बहुहिकल्पी रश्न पूछे जाएाँगे",
+        "मक्षमतज (भाग 2 ) से मनधाडररत कमवताओों के आधार पर मवद्यामथडयोों का काव्यबोध परखने हेतु तीन प्रश् पूछे जाएाँगे।",
+        "कृमतका (भाग 2 ) से मनधाडररत पाठोों पर आधाररत दो प्रश् पूछे जाएाँगे।"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)",
+          "source_chapter_name": "3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)",
+          "source_heading": "3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U13",
+      "source_unit_id": "U3",
+      "unit_name": "4 ििंड – घ (रचनात्म क लेिन)",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "i मवमभन्न मवषयोों और सोंदभो पर मवद्यामथडयोों के तक ड सोंगत मव ार प्र कट करने की क्ष मता",
+        "ii अमभव्यक्ति की क्ष मता पर केंमद्रत औप ाररक अथवा अनौप ाररक मवषयोों में से मकसी एक मवषय",
+        "iii रोजगार से सोंबोंमधत ररक्तियोों के मलए लगभग 80 िब्दोों में स्व वृत्त लेखन अथवा मवमवध मवषयोों पर आधाररत लगभग 80 िब्दोों में ई - मेल लेखन",
+        "iv मवषय से सोंबोंमधत लगभग 40 िब्दोों के अोंतगडत मवज्ञापन लेखन अथवा सोंदेि लेखन"
+      ],
+      "subtopics": [
+        "सोंकेत-मबोंदुओों पर आधाररत समसाममयक एवों व्य ावहाररक जीवन से जुडे हु ए तीन मवषयोों में से मकसी एक मवषय पर लगभग 120 िब्दोों में अनुच्छे द लेखन",
+        "पत्र (5 x 1= 5)",
+        "स्व वृत्त लेखन (5 x 1= 5) अथवा ई - मेल लेखन (5 x 1= 5)",
+        "मवज्ञापन लेखन (4 x 1 = 4) अथवा सोंदेि लेखन"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "4 ििंड – घ (रचनात्म क लेिन)",
+          "source_chapter_name": "4 ििंड – घ (रचनात्म क लेिन)",
+          "source_heading": "4 ििंड – घ (रचनात्म क लेिन)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U14",
+      "source_unit_id": "U4",
+      "unit_name": "आिंतररक मूल्ािंकन अिंक",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "अ सामहयक आकलन",
+        "ब बहुहिध आकलन",
+        "स पोटजफ़ोहलयो",
+        "द िण एििं िाचन श्र"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "आिंतररक मूल्ािंकन अिंक",
+          "source_chapter_name": "आिंतररक मूल्ािंकन अिंक",
+          "source_heading": "आिंतररक मूल्ािंकन अिंक",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U15",
+      "source_unit_id": "U5",
+      "unit_name": "हनधाजररत पुस्तकें",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "हक्षहतर्, भाग – 2 , एन.सी.ई.आर.टी. , नई मदल्ली ारा प्र कामित नवीनतम सोंस्क द्व रर्",
+        "कृहतका, भाग – 2 , एन.सी.ई.आर.टी. , नई मदल्ली ारा प्र कामित नवीनतम सोंस्क द्व रर्"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "हनधाजररत पुस्तकें",
+          "source_chapter_name": "हनधाजररत पुस्तकें",
+          "source_heading": "हनधाजररत पुस्तकें",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U16",
+      "source_unit_id": "U6",
+      "unit_name": "नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "हक्षहतर्, भाग – 2 काव्य खोंर्",
+        "गद्य खोंर्",
+        "कृहतका, भाग – 2"
+      ],
+      "subtopics": [
+        "देव - सवैया , कमवत्त ( पूरा पाठ )",
+        "मगररजाकुमार माथुर – छाया मत छूना ( पूरा पाठ )",
+        "ऋतुराज – कन्यादान ( पूरा पाठ )",
+        "महावीरप्रसाद मद्ववेदी – ी स्त्र - मिक्षा के मवरोधी कुतकों का खोंर्न ( पूरा पाठ )",
+        "सवेिर दयाल सक्सेना - मानवीय करुर्ा की मदव्य मक ( पूरा पाठ )",
+        "एही ठैयााँ झुलनी हेरानी हो रामा! ( पूरा पाठ )",
+        "जाजड पों म की नाक ( पूरा पाठ )"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे",
+          "source_chapter_name": "नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे",
+          "source_heading": "नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class X",
+  "subject": "Hindi",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Listening Skills (श्रवण कौशल)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Understanding general ability to understand words and phrases in appropriate contexts",
+        "Understanding short coherent statements in appropriate contexts",
+        "Understanding both appropriate and inappropriate contexts",
+        "Understanding long statements with sufficient accuracy",
+        "Understanding and analyzing the meaning of complex statements"
+      ],
+      "subtopics": [
+        "Answering questions asked by the examiner orally based on understanding of the exam-oriented question paper before the exam",
+        "Using appropriate language for three types of contexts suitable for the subject",
+        "Context-based exam experiences (e.g., school play, comedy, recent book/movie story)",
+        "Opportunity for students to express themselves on topic-centered topics"
+      ],
+      "key_concepts": [
+        "Oral expression",
+        "Contextual understanding",
+        "Appropriate language usage"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Listening Skills (श्रवण कौशल)",
+          "source_chapter_name": "Listening Skills (श्रवण कौशल)",
+          "source_heading": "Listening Skills (श्रवण कौशल)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Reading Skills (पठन कौशल)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Skimming to grasp the central theme",
+        "Silent reading with concentration on a specific task",
+        "Expressing opinion on read material",
+        "Appreciating language, theme, and style",
+        "Developing interest in community",
+        "Developing reading skills according to different types of community",
+        "Identifying meaning differences of words according to context"
+      ],
+      "subtopics": [
+        "Understanding relationships between different parts of read material",
+        "Giving headings and subheadings to read paragraphs",
+        "Transforming based on elements like rhyme, rhythm, metaphor, imagery, figures of speech"
+      ],
+      "key_concepts": [
+        "Skimming",
+        "Concentration",
+        "Theme identification",
+        "Community interest"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Reading Skills (पठन कौशल)",
+          "source_chapter_name": "Reading Skills (पठन कौशल)",
+          "source_heading": "Reading Skills (पठन कौशल)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Writing Skills (लेखन कौशल)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Following standard forms of language",
+        "Using appropriate punctuation marks",
+        "Using emotional language and writing style naturally",
+        "Dividing into appropriate paragraphs",
+        "Writing letters: Application, Invitation, Congratulatory, Condolence, Email, Order, SMS",
+        "Filling various letter formats",
+        "Gathering material from various sources to write on a specific topic",
+        "Describing observed events and giving opinions",
+        "Converting one language mode to another",
+        "Preparing speeches for ceremonies and meetings",
+        "Summarizing, condensing, and writing with emotion",
+        "Explaining prose and poetry excerpts",
+        "Expressing personal thoughts and feelings simply and effectively",
+        "Maintaining coherence and unity of thought",
+        "Bringing creativity in writing",
+        "Writing readable text without unnecessary cutting",
+        "Comparing two different texts and expressing their interconnection"
+      ],
+      "subtopics": [
+        "Expressing opinions on high-level questions based on memory or situational basis",
+        "Creative thinking for short stories",
+        "Character dialogue in stories",
+        "Purposeful writing",
+        "Writing letters of good wishes, birthday greetings, and special occasions",
+        "Using poetry lines suitable for the topic",
+        "Writing formal emails based on various topics",
+        "Writing autobiographies based on available facts",
+        "Writing information based on official style"
+      ],
+      "key_concepts": [
+        "Letter writing (various types)",
+        "Speech preparation",
+        "Summary and condensation",
+        "Creative writing",
+        "Email writing",
+        "Autobiography",
+        "Information writing"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Writing Skills (लेखन कौशल)",
+          "source_chapter_name": "Writing Skills (लेखन कौशल)",
+          "source_heading": "Writing Skills (लेखन कौशल)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Creative Expression (रचनात्मक अभिव्यक्ति)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Paragraph Writing (अनुच्छेद लेखन)",
+        "Letter Writing (पत्र लेखन)",
+        "Advertisement Writing (विज्ञापन लेखन)",
+        "Dialogue Writing (संवाद लेखन)",
+        "Short Story Writing (लघुकथा लेखन)",
+        "Card Writing (कार्ड लेखन)",
+        "Email Writing (ई-मेल लेखन)",
+        "Autobiography Writing (स्वचरित्र लेखन)",
+        "Information Writing (सूचना लेखन)"
+      ],
+      "subtopics": [
+        "Paragraph: Completeness, Coherence, Topic-centered structure",
+        "Paragraph: Conciseness",
+        "Letter: Informal (friendship, simplicity, brevity)",
+        "Letter: Formal (official life, business, dialogue, advice, request)",
+        "Advertisement: Attractive style, novelty, slogans, visual elements",
+        "Dialogue: Connected purpose, character-appropriate language, expressions",
+        "Short Story: Narrative quality, interest/curiosity, character dialogue",
+        "Card: Relevance, brevity, language proficiency, creativity",
+        "Email: Understandable language, relevance, brevity, formal tone",
+        "Autobiography: Clarity, completeness, factual details (name, DOB, address, qualifications)",
+        "Information: Simple language, clarity, complete information, formal tone"
+      ],
+      "key_concepts": [
+        "Paragraph structure",
+        "Formal and informal letters",
+        "Advertisement techniques",
+        "Dialogue construction",
+        "Short story elements",
+        "Card formats",
+        "Email protocols",
+        "Autobiographical details",
+        "Information dissemination"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Creative Expression (रचनात्मक अभिव्यक्ति)",
+          "source_chapter_name": "Creative Expression (रचनात्मक अभिव्यक्ति)",
+          "source_heading": "Creative Expression (रचनात्मक अभिव्यक्ति)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U3",
+      "unit_name": "खंड – ग (पाठ्यपुस्तक और पूरक पाठ्यपुस्तक)",
+      "part_or_section": "",
+      "marks": 30,
+      "topics": [
+        "गद्य खंड पाठ्यपुस्तक (हक्षतर् भाग 1)",
+        "काव्य खंड पाठ्यपुस्तक (हक्षतर् भाग 1)",
+        "पूरक पाठ्यपुस्तक (कृहतका भाग 1)"
+      ],
+      "subtopics": [
+        "मक्षमतज (भाग 1) से निर्धारित पाठों में से गद्याोंि के आधार पर विषयवस्तु का ज्ञान, बोध, अभिव्यक्ति आदि पर एक अंकीय पाँच बहुविकल्पी प्रश् पूछे जाएंगे (1x5)",
+        "मक्षमतज (भाग 1) से निर्धारित पाठों में से विषयवस्तु का ज्ञान, बोध, अभिव्यक्ति आदि पर तीन प्रश् पूछे जाएंगे (2x3)",
+        "मक्षमतज (भाग 1) से निर्धारित कविताओं में से काव्याोंि के आधार पर एक अंकीय पाँच बहुविकल्पी प्रश् पूछे जाएंगे (1x5)",
+        "मक्षमतज (भाग 1) से निर्धारित कविताओं के आधार पर विद्यार्थियों का काव्यबोध परखने हेतु तीन प्रश् पूछे जाएंगे (2x3)",
+        "कृहतका (भाग 1) से निर्धारित पाठों पर आधारित दो प्रश् पूछे जाएंगे (4x2)"
+      ],
+      "key_concepts": [
+        "Prose Reading",
+        "Poetry Reading",
+        "Supplementary Reader"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "खंड – ग (पाठ्यपुस्तक और पूरक पाठ्यपुस्तक)",
+          "source_chapter_name": "खंड – ग (पाठ्यपुस्तक और पूरक पाठ्यपुस्तक)",
+          "source_heading": "खंड – ग (पाठ्यपुस्तक और पूरक पाठ्यपुस्तक)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "source_unit_id": "U4",
+      "unit_name": "खंड – घ (रचनात्मक लेखन)",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "लेखन"
+      ],
+      "subtopics": [
+        "विभिन्न विषयों और संदर्भों पर विद्यार्थियों के तर्क संगत विचार प्रकट करने की क्षमता को परखने के लिए संकेत-बिंदुओं पर आधारित समसामयिक एवं व्यावहारिक जीवन से जुड़े हुए तीन विषयों में से किसी एक विषय पर लगभग 120 शब्दों में अनुच्छेद लेखन (6x1=6)",
+        "अभिव्यक्ति की क्षमता पर केंद्रित औपचारिक या अनौपचारिक विषयों में लगभग 100 शब्दों में किसी एक विषय पर पत्र (5x1=5)",
+        "विविध विषयों पर आधारित लगभग 100 शब्दों में ई-मेल लेखन (5x1=5)",
+        "दिए गए विषय/शीर्षक आदि के आधार पर लगभग 100 शब्दों में लघुकथा लेखन (5x1=5)",
+        "दिए गए विषय/परिस्थिति के आधार पर लगभग 80 शब्दों में संवाद लेखन (4x1=4)",
+        "व्यावहारिक जीवन से संबंधित विषयों पर आधारित लगभग 80 शब्दों में सूचना लेखन (4x1=4)"
+      ],
+      "key_concepts": [
+        "Paragraph Writing",
+        "Letter Writing",
+        "Email Writing",
+        "Short Story Writing",
+        "Dialogue Writing",
+        "Information Writing"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "खंड – घ (रचनात्मक लेखन)",
+          "source_chapter_name": "खंड – घ (रचनात्मक लेखन)",
+          "source_heading": "खंड – घ (रचनात्मक लेखन)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "source_unit_id": "U5",
+      "unit_name": "खंड – क (अपठित बोध)",
+      "part_or_section": "",
+      "marks": 14,
+      "topics": [
+        "अपठित गद्याोंि व काव्याोंि पर बोध, मंत्रन, विश्लेषण, सराहना आदि पर बहुविकल्पीय, अतिलघूत्तरात्मक एवं लघूत्तरात्मक प्रश्"
+      ],
+      "subtopics": [
+        "एक अपठित गद्याोंि लगभग 250 शब्दों का इसके आधार पर एक अंकीय तीन बहुविकल्पी प्रश् (1x3=3), अतिलघूत्तरात्मक एवं लघूत्तरात्मक प्रश्न (2x2=4) पूछे जाएंगे",
+        "एक अपठित काव्याोंि लगभग 120 शब्दों का इसके आधार पर एक अंकीय तीन बहुविकल्पी प्रश् (1x3=3), अतिलघूत्तरात्मक एवं लघूत्तरात्मक प्रश्न (2x2=4) पूछे जाएंगे"
+      ],
+      "key_concepts": [
+        "Reading Comprehension",
+        "Analysis",
+        "Appreciation"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "खंड – क (अपठित बोध)",
+          "source_chapter_name": "खंड – क (अपठित बोध)",
+          "source_heading": "खंड – क (अपठित बोध)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "source_unit_id": "U6",
+      "unit_name": "खंड – ख (व्याकरण व्याकरण)",
+      "part_or_section": "",
+      "marks": 16,
+      "topics": [
+        "व्याकरण के लिए निर्धारित विषयों पर विषयवस्तु का बोध, भाषिक बिंदु/संरचना आदि पर अतिलघूत्तरात्मक प्रश्"
+      ],
+      "subtopics": [
+        "रचना के आधार पर वाक्य भेद (1x4=4) (5 में से 4 प्रश् करने होंगे)",
+        "वाच्य (1x4=4) (5 में से 4 प्रश् करने होंगे)",
+        "पद परिचय (1x4=4) (5 में से 4 प्रश् करने होंगे)"
+      ],
+      "key_concepts": [
+        "Grammar",
+        "Sentence Types",
+        "Voice",
+        "Word Order"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "खंड – ख (व्याकरण व्याकरण)",
+          "source_chapter_name": "खंड – ख (व्याकरण व्याकरण)",
+          "source_heading": "खंड – ख (व्याकरण व्याकरण)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U11",
+      "source_unit_id": "U1",
+      "unit_name": "4 अलोंकार- (अथाडलोंकार : उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्)",
+      "part_or_section": "",
+      "marks": 4,
+      "topics": [
+        "उपमा",
+        "रूपक",
+        "उत्प्रेक्षा",
+        "अलंकारोक्ति",
+        "मानवीकरण"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्)",
+          "source_chapter_name": "उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्)",
+          "source_heading": "उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U12",
+      "source_unit_id": "U2",
+      "unit_name": "3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)",
+      "part_or_section": "",
+      "marks": 11,
+      "topics": [
+        "अ गद्य ििंड पाठ्यपुस्त क ( हक्षहतर् भाग 2 )",
+        "ब काव्य ििंड (पाठ्यपुस्त क) ( हक्षहतर् भाग 2 )",
+        "स पूरक पाठ्यपुस्तक ( कृहतका भाग – 2)"
+      ],
+      "subtopics": [
+        "मक्षमतज (भाग 2 ) से मनधाडररत पाठोों में से गद्याोंि के आधार पर मवषयवस्तु का ज्ञ ान, बोध , अमभव्यक्ति आमद पर एक अोंकीय पााँ बहुहिकल्पी रश्न पूछे जाएाँगे।",
+        "मक्षमतज (भाग 2 ) से मनधाडररत पाठोों में से मवषयवस्तु का ज्ञ ान, बोध , अमभव्यक्ति आमद पर तीन प्रश् पूछे जाएाँगे।",
+        "मक्षमतज (भाग 2 ) से मनधाडररत कमवताओों में से काव्याोंि के आधार पर एक अोंकीय पााँ बहुहिकल्पी रश्न पूछे जाएाँगे",
+        "मक्षमतज (भाग 2 ) से मनधाडररत कमवताओों के आधार पर मवद्यामथडयोों का काव्यबोध परखने हेतु तीन प्रश् पूछे जाएाँगे।",
+        "कृमतका (भाग 2 ) से मनधाडररत पाठोों पर आधाररत दो प्रश् पूछे जाएाँगे।"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)",
+          "source_chapter_name": "3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)",
+          "source_heading": "3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U13",
+      "source_unit_id": "U3",
+      "unit_name": "4 ििंड – घ (रचनात्म क लेिन)",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "i मवमभन्न मवषयोों और सोंदभो पर मवद्यामथडयोों के तक ड सोंगत मव ार प्र कट करने की क्ष मता",
+        "ii अमभव्यक्ति की क्ष मता पर केंमद्रत औप ाररक अथवा अनौप ाररक मवषयोों में से मकसी एक मवषय",
+        "iii रोजगार से सोंबोंमधत ररक्तियोों के मलए लगभग 80 िब्दोों में स्व वृत्त लेखन अथवा मवमवध मवषयोों पर आधाररत लगभग 80 िब्दोों में ई - मेल लेखन",
+        "iv मवषय से सोंबोंमधत लगभग 40 िब्दोों के अोंतगडत मवज्ञापन लेखन अथवा सोंदेि लेखन"
+      ],
+      "subtopics": [
+        "सोंकेत-मबोंदुओों पर आधाररत समसाममयक एवों व्य ावहाररक जीवन से जुडे हु ए तीन मवषयोों में से मकसी एक मवषय पर लगभग 120 िब्दोों में अनुच्छे द लेखन",
+        "पत्र (5 x 1= 5)",
+        "स्व वृत्त लेखन (5 x 1= 5) अथवा ई - मेल लेखन (5 x 1= 5)",
+        "मवज्ञापन लेखन (4 x 1 = 4) अथवा सोंदेि लेखन"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "4 ििंड – घ (रचनात्म क लेिन)",
+          "source_chapter_name": "4 ििंड – घ (रचनात्म क लेिन)",
+          "source_heading": "4 ििंड – घ (रचनात्म क लेिन)",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U14",
+      "source_unit_id": "U4",
+      "unit_name": "आिंतररक मूल्ािंकन अिंक",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "अ सामहयक आकलन",
+        "ब बहुहिध आकलन",
+        "स पोटजफ़ोहलयो",
+        "द िण एििं िाचन श्र"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "आिंतररक मूल्ािंकन अिंक",
+          "source_chapter_name": "आिंतररक मूल्ािंकन अिंक",
+          "source_heading": "आिंतररक मूल्ािंकन अिंक",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U15",
+      "source_unit_id": "U5",
+      "unit_name": "हनधाजररत पुस्तकें",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "हक्षहतर्, भाग – 2 , एन.सी.ई.आर.टी. , नई मदल्ली ारा प्र कामित नवीनतम सोंस्क द्व रर्",
+        "कृहतका, भाग – 2 , एन.सी.ई.आर.टी. , नई मदल्ली ारा प्र कामित नवीनतम सोंस्क द्व रर्"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "हनधाजररत पुस्तकें",
+          "source_chapter_name": "हनधाजररत पुस्तकें",
+          "source_heading": "हनधाजररत पुस्तकें",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U16",
+      "source_unit_id": "U6",
+      "unit_name": "नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "हक्षहतर्, भाग – 2 काव्य खोंर्",
+        "गद्य खोंर्",
+        "कृहतका, भाग – 2"
+      ],
+      "subtopics": [
+        "देव - सवैया , कमवत्त ( पूरा पाठ )",
+        "मगररजाकुमार माथुर – छाया मत छूना ( पूरा पाठ )",
+        "ऋतुराज – कन्यादान ( पूरा पाठ )",
+        "महावीरप्रसाद मद्ववेदी – ी स्त्र - मिक्षा के मवरोधी कुतकों का खोंर्न ( पूरा पाठ )",
+        "सवेिर दयाल सक्सेना - मानवीय करुर्ा की मदव्य मक ( पूरा पाठ )",
+        "एही ठैयााँ झुलनी हेरानी हो रामा! ( पूरा पाठ )",
+        "जाजड पों म की नाक ( पूरा पाठ )"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे",
+          "source_chapter_name": "नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे",
+          "source_heading": "नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+# Page 1
+
+ह िं दी मातृभाषा
+हिषय कोड - 002
+कक्षा 9िीिं - 10िीिं (202 5 - 2 6 )
+राष्ट् र ीय हिक्षा नीहत 2020 तथा केंद्रीय माध्यममक मिक्षा बोर्ड ारा द्व समय - समय पर दक्षता आधाररत मिक्षा , कला
+समेमकत अमधगम , अनुभवात्मक अमधगम को अपनाने की बात की गई है , जो मिक्षामथडयोों की मतभा प्र को उजागर करने ,
+खेल - खेल में सीखने पर बल देने , आनोंदपूर्ड ज्ञ ानाजडन और मवद्याजडन के मवमवध तरीकोों को अपनाने तथा अनुभव के ारा द्व
+सीखने पर बल देती है।
+दक्षता आधाररत हिक्षा से तात्पयड है - सीखने और मूल्ाोंकन करने का एक ऐसा मिकोर् दृ , जो मिक्षाथी के सीखने के
+मतफल प्र और मवषय में मविेष दक्षता को ाप्त प्र करने पर बल देता है। दक्षता वह क्ष मता , कौिल , ज्ञ ान और मिकोर् दृ है ,
+जो ि व्यक्त को वास्तमवक जीवन में कायड करने में सहायता करती है। इससे मिक्षाथी यह सीख सकते हैं मक ज्ञ ान और
+कौिल को मकस कार प्र ाप्त प्र मकया जाए तथा उन्हें वास्तमवक जीवन की समस्याओों पर कैसे लागू मकया जाए।
+जीवनोपयोगी बनाना तथा वास्तमवक जीवन के अनुभवोों से पाठ को समृद्ध करना , ही दक्षता आधाररत मिक्षा है । इसके
+मलए उच्च स्त रीय म ों तन कौिल पर मविेष बल देने की आवश्यकता है।
+कला समेहकत अहधगम को मिक्षर् - अमधगम मिया प्र में सुमनमित करना अत्यमधक आवश्यक है। कला के सोंसार में
+कल्पना की एक अलग ही उडान होती है। कला एक ि व्यक्त की र नात्मक अमभव्यक्ति है। कला समेमकत अमधगम से
+तात्पयड है - कला के मवमवध पोों रू सोंगीत , नृत्य , नाटक , कमवता , रोंगिाला , यात्रा , मूमतडकला , आभूषर् बनाना , गीत मलखना ,
+नुक्कड नाटक , कोलाज , पोस्टर , कला दिडनी प्र को मिक्षर् अमधगम की मिया प्र का अमभन्न महस्सा बनाना। मकसी मवषय
+को आरोंभ करने के मलए आइस मकोंग ब्रे गमतमवमध के रू प में तथा सामोंजस्यपूर्ड समझ पैदा करने के मलए अोंतरमवषयक
+या बहुमवषयक पररयोजनाओों के रू प में कला समेमकत अमधगम का योग प्र मकया जाना ामहए। इससे पाठ अमधक
+रो क एवों ाह्य ग्र हो जाएगा।
+अनुभिात्मक अहधगम या आनुभहिक ज्ञ ानार्जन का उद्देश्य िैमक्षक वातावरर् को मिक्षाथी केंमद्रत बनाने के साथ -
+साथ स्व यों मूल्ाोंकन करने , आलो नात्मक रू प से सो ने , मनर्डय लेने तथा ज्ञ ान का मनमाडर् कर उसमें पारोंगत होने से
+है। यहााँ मिक्षक की भूममका सुमवधा प्र दाता व प्रेक्ष क की रहती है। ज्ञ ानाजडन - अनुभामवक ज्ञ ानाजडन , सहयोगात्मक तथा
+स्व तोंत्र रू प से होता है और यह मिक्षामथडयोों को एक साथ कायड करने तथा स्व यों के अनुभव ारा द्व सीखने पर बल देता है।
+यह मसद्धाोंत और व्य वहार के बी की दूरी को कम करता है।
+माध्यममक र स्त तक आते - आते मवद्याथी मकिोर हो ु का होता है और उसमें सुनने , बोलने , पढ़ने , मलखने के साथ - साथ
+आलो नात्मक मि दृ मवकमसत होने लगती है। भाषा के सौोंदयाडत्मक पक्ष , कथात्मकता / गीतात्मकता , दृश्य - श्रव्य और मप्रोंट
+की भाषा की समझ , िब्द िक्तियोों की समझ , राजनैमतक एवों सामामजक े तना का मवकास , स्व यों की अक्तिता का सोंदभड
+और आवश्यकता के अनुसार उपयुि भाषा - योग प्र , िब्दोों का सुम ों मतत योग प्र , भाषा की मनयमबद्ध कृमत प्र आमद से
+मवद्याथी पररम त हो जाता है। इतना ही नहीों , वह मवमवध मवधाओों और अमभव्यक्ति की अनेक िैमलयोों से भी पररम त हो
+ु का होता है। अब मवद्याथी की मि दृ आस - पडोस , राज्य - देि की सीमा को लााँघते ए हु वैमिक मक्षमतज तक फैल जाती है।
+1
+
+---
+
+# Page 2
+
+इन बच्चोों की दुमनया में समा ार , खेल , मिल्म तथा अन्य कलाओों के साथ - साथ पत्र - पमत्रकाएाँ और अलग - अलग तरह
+की मकताबें भी वेि प्र पा ु की होती हैं।
+इस र स्त पर मातृभाषा महोंदी का अध्ययन सामहक्तत्यक , साोंस्कृमतक और व्य ावहाररक भाषा के रू प में कुछ इस तरह से
+हो मक उच्चतर माध्यममक र स्त पर पहुाँ ते - पहुाँ ते यह मवद्यामथडयोों की पह ान , आत्ममविास और मवमिड की भाषा बन
+सके। यास प्र यह भी हो मक मवद्याथी भाषा के मलक्तखत योग प्र के साथ - साथ सहज और स्व ाभामवक मौक्तखक अमभव्यक्ति
+में भी सक्षम हो सके।
+इस पाठ्यक्रम के अध्ययन से –
+( क ) मवद्याथी अगले स्त रोों पर अपनी म रु और आवश्यकता के अनुरूप महोंदी की पढ़ाई कर सकेंगे तथा महोंदी में
+बोलने और मलखने में सक्षम हो सकेंगे।
+( ख ) अपनी भाषा दक्षता के लते उच्चतर माध्यममक र स्त पर मवज्ञान , समाज मवज्ञान और अन्य के साथ सहज
+सोंबद्धता ( अोंतसंबोंध ) स्थ ामपत कर सकेंगे।
+( ग ) दैमनक जीवन व्य वहार के मवमवध क्षेत्र ोों में महोंदी के औप ाररक / अनौप ाररक उपयोग की दक्षता हामसल कर
+सकेंगे।
+( घ ) भाषा योग प्र के परोंपरागत तौर - तरीकोों एवों मवधाओों की जानकारी एवों उनके समसाममयक सोंदभों की समझ
+मवकमसत कर सकेंगे।
+( ङ ) महोंदी भाषा में दक्षता का इस्तेमाल वे अन्य भाषा - सोंर नाओों की समझ मवकमसत करने के मलए कर सकेंगे।
+दृश्य -श्रव्य , मल्टी मीहडया तथा हिहिध हरिंट माध्यमोिं से रसाररत सूचनाओिं को समझना हिश्लेहषत करना और
+सरेहषत कर सकेंगे।
+ कक्षा आठवीों तक अमजडत भामषक कौिलोों (सुनना, बोलना, पढ़ना और मलखना) का उत्तरोत्तर मवकास।
+ सृजनात्मक सामहत्य के आलो नात्मक आस्वाद की क्ष मता का मवकास।
+ स्व तोंत्र और मौक्तखक रू प से अपने मव ारोों की अमभव्यक्ति का मवकास।
+ ज्ञ ान के मवमभन्न अनुिासनोों के मवमिड की भाषा के रू प में महोंदी की मवमिि प्र कृमत एवों क्ष मता का बोध कराना।
+ सामहत्य की प्र भावकारी क्ष मता का उपयोग करते हु ए सभी प्र कार की मवमवधताओों (रािरीयता, धमड , जामत , मलोंग
+एवों भाषा) के प्र मत सकारात्मक और सोंवेदनिील आ ार - मव ार का मवकास।
+ भारतीय भाषाओों एवों मवदेिी भाषाओों की साोंस्कृमतक मवमवधता से परर य।
+ व्य ावहाररक और दैमनक जीवन में मवमवध अमभव्यक्तियोों की मौक्तखक व मलक्तखत क्ष मता का मवकास।
+ सों ार माध्यमोों (मप्रोंट और इलेक्ट्रॉमनक) में प्र युि महोंदी की प्र कृमत से अवगत कराना और नवीन भाषा प्र योग
+करने की क्ष मता से परर य। (मल्टीमीमर्या , सोिल मीमर्या , पौर्कास्ट , ब्ल ाग)
+ मवश्लेषर् और तक ड क्ष मता का मवकास।
+ भा वा मभव्यक्ति क्ष मताओों का उत्तरोत्तर मवकास।
+2
+
+---
+
+# Page 3
+
+ मतभेद, मवरोध और टकराव की पररक्तस्थमतयोों में भी भाषा को सोंवेदनिील और तक ड पूर्ड इस्तेमाल से िाोंमतपूर्ड
+सोंवाद की क्ष मता का मवकास।
+ भाषा की समावेिी और बहुभामषक प्र कृमत की समझ और व्य वहार का मवकास करना।
+हिक्षण युक्तियााँ
+माध्यममक कक्षाओों में अध्यापक की भूममका उम त वातावरर् के मनमाडर् में सहायक होनी ामहए। भाषा और सामहत्य
+की पढ़ाई में इस बात पर ध्य ान देने की ज़ रू रत होगी मक -
+ मवद्याथी द्व ारा की जा रही गलमतयोों को भाषा के मवकास के अमनवायड रर् के रू प में स्व ीकार मकया जाना
+ामहए , मजससे मवद्या थी अबाध रू प से मबना मझझक के मलक्तखत और मौक्तखक अमभव्यक्ति करने में उत्साह का
+अनुभव करें। मवद्यामथडयोों पर िुक्तद्ध का ऐसा दबाव नहीों होना ामहए मक वे तनाव महसूस करने लगें । उन्हें भाषा
+के सहज, कारगर और र नात्मक रू पोों से इस तरह पररम त कराना उम त है मक वे स्व यों , सहज रू प से
+भामषक योग्यताओों का मवकास कर सकें।
+ मवद्याथी स्व तोंत्र और अबाध रू प से मलक्तखत और मौक्तखक अमभव्यक्ति करें । अमधगम बामधत होने पर अध्यापक ,
+अध्यापन िैली में पररवतडन करें।
+ ऐसे मिक्षर् - मबोंदुओों की पह ान की जाए , मज न से कक्षा में मवद्याथी मनरोंतर समिय भागीदा री करें और अध्यापक
+भी इस मिया प्र में उन के साथी ब नें ।
+ हर भाषा का अपना व्य ाकरर् होता है। भाषा की इस प्र कृमत की पह ान कराने में प ररवेिगत और पाठगत
+सोंदभों का योग करना प्र ामहए। यह पूरी प्र मिया ऐसी होनी ामहए मक मवद्याथी स्व यों को िोधकताड समझें तथा
+अध्यापक इसमें केवल मनदेिन करें।
+ महोंदी में क्षेत्र ीय प्र योगोों, अन्य भाषाओों के प्र योगोों के उदाहरर् से यह बात स्प ि की जानी ामहए मक ये प्र योग
+मवभेदीकरर् नहीों उत्पन्न करते है , बक्ति मलमप भाषा के समावेिी स्वरू प को पुि करते हैं और उसका पररवेि
+अमनवायड रू प से बहुभामषक होता है।
+ मभन्न क्ष मता वाले मवद्यामथडयोों के मलए उपयुि मिक्षर् - सामग्री का इस्तेमाल मकया जाए तथा मकसी भी प्र कार से
+उन्हें अन्य मवद्यामथडयोों से कमतर या अलग न समझा जाए।
+ कक्षा में अध्यापक को हर प्र कार की मवमवधताओों (मलोंग, जामत, वगड, धमड आमद) के मत सकारात्मक और प्र
+सोंवेदनिील वातावरर् मनममडत करना ामहए।
+ काव्य भाषा के ममड से मवद्याथी का परर य कराने के मलए ज़ रू री होगा मक मकताबोों में आए काव्याोंिोों की
+लयबद्ध प्रस्तु मतयोों के ऑमर्यो - वीमर्यो कैसेट तैयार मकए जाएाँ। अगर आसानी से कोई गायक / गामयका ममले
+तो कक्षा में मध्यकालीन सामहत्य के अध्यापन - मिक्षर् में उससे मदद ली जानी ामहए।
+3
+
+---
+
+# Page 4
+
+ रा.िै.अ. और प्र . प. ,( एन.सी.ई.आर.टी.) ारा उपलब्ध द्व कराए गए अमधगम प्र मतफल / सीखने - मसखाने की प्र मिया
+जो इस पाठ्य याड के साथ सोंलग्नक के रू प में उपलब्ध है , को मिक्षक द्व ारा दक्षता आधाररत मिक्षा का लक्ष्य
+ाप्त करने के मलये अमनवायड रू प से इस्तेमाल करने की आवश्यकता है। प्र
+ मिक्षा मोंत्रालय के मवमभन्न सोंगठनोों तथा स्व तोंत्र मनमाडताओों द्व ारा उपलब्ध कराए गए कराए गए अन्य कायडिम/
+ई - सामग्री वृत्तम त्र ोों और िी र मि ल्म ोों को मिक्षर् - सामग्री के तौर पर इस्तेमाल करने की ज़ रू रत है। इनके
+दिडन के िम में इन पर लगातार बात प्र ीत के ज़ ररए मसनेमा के माध्यम से भाषा के प्र योग मक मवमििता की
+पह ान कराई जा सकती है और महोंदी की अलग - अलग छटा मदखाई जा सकती है।
+ कक्षा में मस ि ड पाठ्यपुस्त क क

@@ -16,6 +16,8 @@ Generation preferences:
 - Include Homework Exercises: {{INCLUDE_ASSIGNMENTS}}
 - Include Materials Setup (PowerPoint slides, study guide nodes): {{INCLUDE_NOTES}}
 - Prioritize these sections for generation: {{SELECTED_SECTIONS_JSON}}
+- Output language: {{OUTPUT_LANGUAGE}}
+- Language execution rule: {{OUTPUT_LANGUAGE_RULE}}
 
 Non-negotiable rules:
 1. Use only the provided curriculum scope.

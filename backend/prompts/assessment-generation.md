@@ -22,6 +22,7 @@ Session context:
 - Learning pace: {{LEARNING_PACE}}
 - Preferred difficulty: {{TARGET_DIFFICULTY}}
 - Output language: {{OUTPUT_LANGUAGE}}
+- Language execution rule: {{OUTPUT_LANGUAGE_RULE}}
 
 Assessment preferences:
 - Assessment type: {{ASSESSMENT_TYPE}}

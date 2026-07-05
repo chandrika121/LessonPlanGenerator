@@ -95,6 +95,11 @@ Everything must be generated only from these inputs.
 
 Never use outside curriculum knowledge.
 
+LANGUAGE EXECUTION RULE
+
+Visible classroom language must follow the requested output language exactly: {{OUTPUT_LANGUAGE}}.
+{{OUTPUT_LANGUAGE_RULE}}
+
 ## CORE PRINCIPLES
 
 Students learn better when they:

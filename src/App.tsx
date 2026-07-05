@@ -65,6 +65,8 @@ import {
   SessionPlanningDefaults,
   SessionSectionKey,
   SessionPlan,
+  SunbirdSearchCandidate,
+  SunbirdStructurePreviewResponse,
   TeachingStrategy,
   TermRow,
 } from "./types";
@@ -199,6 +201,23 @@ type StudentNotesTemplate = {
   summaryLines: StudentNoteRichLine[];
 };
 
+const resolveWorkspaceOutputLanguage = (workspace?: PlanningWorkspace | null): string => {
+  const requestedLanguage = String(
+    workspace?.sessionPlanningDefaults?.language ||
+    workspace?.academicConfig?.language ||
+    ""
+  ).trim();
+  const subject = String(workspace?.academicConfig?.subject || "").trim().toLowerCase();
+
+  if (subject === "hindi" || subject.includes("hindi language")) {
+    return "Hindi";
+  }
+  if (subject === "tamil" || subject.includes("tamil language")) {
+    return "Tamil";
+  }
+  return requestedLanguage || "English";
+};
+
 export default function App() {
   const LAST_CURRICULUM_ID_KEY = "lms:lastCurriculumId";
   const LAST_WORKSPACE_ID_KEY = "lms:lastWorkspaceId";
@@ -229,6 +248,12 @@ export default function App() {
   const [tamilIndexText, setTamilIndexText] = useState<string>("");
   const [tamilIndexFileName, setTamilIndexFileName] = useState<string>("");
   const [tamilIndexFileSizeStr, setTamilIndexFileSizeStr] = useState<string>("");
+  const [tamilStructureText, setTamilStructureText] = useState<string>("");
+  const [tamilStructureFileName, setTamilStructureFileName] = useState<string>("");
+  const [tamilStructureFileSizeStr, setTamilStructureFileSizeStr] = useState<string>("");
+  const [sunbirdSearchQuery, setSunbirdSearchQuery] = useState<string>("");
+  const [sunbirdSearchResults, setSunbirdSearchResults] = useState<SunbirdSearchCandidate[]>([]);
+  const [sunbirdPreviewSummary, setSunbirdPreviewSummary] = useState<SunbirdStructurePreviewResponse["summary"] | null>(null);
   const [showTamilIndexModal, setShowTamilIndexModal] = useState<boolean>(false);
   const [pendingTamilIndexPreflight, setPendingTamilIndexPreflight] = useState<{
     requestId: string;
@@ -298,6 +323,7 @@ export default function App() {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const tamilIndexFileInputRef = useRef<HTMLInputElement>(null);
+  const tamilStructureFileInputRef = useRef<HTMLInputElement>(null);
   const groupedTerms = termsList.reduce<Record<string, Record<string, TermRow[]>>>((acc, row) => {
     const classKey = row.className || "Curriculum";
     if (!acc[classKey]) {
@@ -344,6 +370,12 @@ export default function App() {
     setTamilIndexText("");
     setTamilIndexFileName("");
     setTamilIndexFileSizeStr("");
+    setTamilStructureText("");
+    setTamilStructureFileName("");
+    setTamilStructureFileSizeStr("");
+    setSunbirdSearchQuery("");
+    setSunbirdSearchResults([]);
+    setSunbirdPreviewSummary(null);
     setShowTamilIndexModal(false);
     setPendingTamilIndexPreflight(null);
   };
@@ -396,14 +428,21 @@ export default function App() {
     requestId: string,
     selectedClasses: string[]
   ) => {
-    const supportingDocuments: CurriculumSupportingDocument[] =
-      detectedCurriculumSubject === "Tamil" && tamilIndexText.trim()
-        ? [{
-            role: "textbook_index",
-            fileName: tamilIndexFileName,
-            text: tamilIndexText,
-          }]
-        : [];
+    const supportingDocuments: CurriculumSupportingDocument[] = [];
+    if (detectedCurriculumSubject === "Tamil" && tamilIndexText.trim()) {
+      supportingDocuments.push({
+        role: "textbook_index",
+        fileName: tamilIndexFileName,
+        text: tamilIndexText,
+      });
+    }
+    if (detectedCurriculumSubject === "Tamil" && tamilStructureText.trim()) {
+      supportingDocuments.push({
+        role: "textbook_structure",
+        fileName: tamilStructureFileName || "Tamil Textbook Structure.txt",
+        text: tamilStructureText,
+      });
+    }
     const res = await fetch("/api/analyze-curriculum", {
       method: "POST",
       headers: {
@@ -525,7 +564,7 @@ export default function App() {
       termNumber: row.termNumber ?? undefined,
       term: row.termName,
       unitName: "Whole Term",
-      chapters: row.chapters || [],
+      chapters: (row.chapters || []).map((chapter) => String(chapter || "").trim()).filter(Boolean),
       recurringStrands: row.recurringStrands || [],
       recurringStrandDetails: row.recurringStrandDetails || [],
       marks: Number(row.marks || 0),
@@ -591,6 +630,158 @@ export default function App() {
       .replace(/\{|\}/g, "")
       .replace(/\s+/g, " ")
       .trim();
+
+  const CHEMICAL_ELEMENT_SYMBOLS = new Set([
+    "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne",
+    "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca",
+    "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn",
+    "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr",
+    "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn",
+    "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd",
+    "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb",
+    "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg",
+    "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th",
+    "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm",
+    "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds",
+    "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og",
+  ]);
+
+  const looksLikeChemicalFormulaToken = (value: string) => {
+    const token = String(value || "").trim();
+    if (!token || !/[A-Z]/.test(token)) return false;
+
+    let index = 0;
+    let groupCount = 0;
+    let hasDigit = false;
+    let hasGrouping = false;
+    let hasChargeOrHydrate = false;
+
+    while (index < token.length) {
+      const char = token[index];
+      if (/[A-Z]/.test(char)) {
+        let symbol = char;
+        if (/[a-z]/.test(token[index + 1] || "")) {
+          symbol += token[index + 1];
+          index += 1;
+        }
+        if (!CHEMICAL_ELEMENT_SYMBOLS.has(symbol)) {
+          return false;
+        }
+        groupCount += 1;
+        index += 1;
+        continue;
+      }
+      if (/\d/.test(char)) {
+        hasDigit = true;
+        while (/\d/.test(token[index + 1] || "")) {
+          index += 1;
+        }
+        index += 1;
+        continue;
+      }
+      if (char === "(" || char === ")" || char === "[" || char === "]") {
+        hasGrouping = true;
+        index += 1;
+        continue;
+      }
+      if (char === "+" || char === "-" || char === "^" || char === "·" || char === ".") {
+        hasChargeOrHydrate = true;
+        index += 1;
+        continue;
+      }
+      return false;
+    }
+
+    return groupCount > 0 && (hasDigit || hasGrouping || hasChargeOrHydrate || groupCount >= 2);
+  };
+
+  const chemicalFormulaToLatex = (value: string) => {
+    const token = String(value || "").trim();
+    if (!looksLikeChemicalFormulaToken(token)) {
+      return "";
+    }
+
+    const chargeMatch = token.match(/^(.*?)(?:\^?(\d*)([+-]))$/);
+    const hasExplicitCharge = Boolean(chargeMatch && (chargeMatch[2] || chargeMatch[3]) && !/[()[\].·]$/.test(chargeMatch[1] || ""));
+    const main = hasExplicitCharge ? String(chargeMatch?.[1] || "") : token;
+    const chargeDigits = hasExplicitCharge ? String(chargeMatch?.[2] || "") : "";
+    const chargeSign = hasExplicitCharge ? String(chargeMatch?.[3] || "") : "";
+
+    let latex = "";
+    let index = 0;
+    while (index < main.length) {
+      const char = main[index];
+      if (/[A-Z]/.test(char)) {
+        let symbol = char;
+        if (/[a-z]/.test(main[index + 1] || "")) {
+          symbol += main[index + 1];
+          index += 1;
+        }
+        latex += `\\mathrm{${symbol}}`;
+        index += 1;
+        continue;
+      }
+      if (/\d/.test(char)) {
+        let digits = char;
+        while (/\d/.test(main[index + 1] || "")) {
+          digits += main[index + 1];
+          index += 1;
+        }
+        latex += `_{${digits}}`;
+        index += 1;
+        continue;
+      }
+      if (char === "(" || char === ")" || char === "[" || char === "]") {
+        latex += char;
+        index += 1;
+        continue;
+      }
+      if (char === "·" || char === ".") {
+        latex += "\\cdot ";
+        index += 1;
+        continue;
+      }
+      index += 1;
+    }
+
+    if (hasExplicitCharge) {
+      latex += `^{${chargeDigits || ""}${chargeSign}}`;
+    }
+    return latex;
+  };
+
+  const splitChemicalFormulaSegments = (value: string) => {
+    const text = String(value || "");
+    if (!text.trim()) return [];
+
+    const segments: Array<{ type: "text" | "math"; value: string }> = [];
+    const candidatePattern = /[A-Z][A-Za-z0-9()[\]^+\-.·]*/g;
+    let lastIndex = 0;
+
+    for (const match of text.matchAll(candidatePattern)) {
+      const token = match[0] || "";
+      const start = match.index ?? 0;
+      if (!looksLikeChemicalFormulaToken(token)) {
+        continue;
+      }
+      if (start > lastIndex) {
+        const prose = text.slice(lastIndex, start);
+        if (prose) segments.push({ type: "text", value: prose });
+      }
+      const latex = chemicalFormulaToLatex(token);
+      if (latex) {
+        segments.push({ type: "math", value: latex });
+        lastIndex = start + token.length;
+      }
+    }
+
+    if (lastIndex < text.length) {
+      const tail = text.slice(lastIndex);
+      if (tail) segments.push({ type: "text", value: tail });
+    }
+
+    return segments.length > 0 ? segments : [{ type: "text", value: text }];
+  };
 
   const formatMathReadableText = (value: unknown): string => {
     if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -1118,7 +1309,9 @@ export default function App() {
       }
 
       if (dollarSegments.some((segment) => segment.type === "math")) {
-        return dollarSegments;
+        return dollarSegments.flatMap((segment) =>
+          segment.type === "text" ? splitChemicalFormulaSegments(segment.value) : [segment]
+        );
       }
     }
 
@@ -1151,7 +1344,10 @@ export default function App() {
       if (prose.trim()) segments.push({ type: "text", value: prose });
     }
 
-    return segments.length > 0 ? segments : [{ type: "text", value: text }];
+    const finalSegments = (segments.length > 0 ? segments : [{ type: "text" as const, value: text }]).flatMap((segment) =>
+      segment.type === "text" ? splitChemicalFormulaSegments(segment.value) : [segment]
+    );
+    return finalSegments.length > 0 ? finalSegments : [{ type: "text", value: text }];
   };
 
   const classifyMathString = (value: string): MathStringClassification => {
@@ -6768,10 +6964,7 @@ export default function App() {
       workspace?.sessionPlanningDefaults?.sessionDurationMinutes ??
       workspace?.academicConfig?.periodDurationMinutes ??
       45,
-    language:
-      workspace?.sessionPlanningDefaults?.language ||
-      workspace?.academicConfig?.language ||
-      "English",
+    language: resolveWorkspaceOutputLanguage(workspace),
     readingLevel: workspace?.sessionPlanningDefaults?.readingLevel || "Grade-aligned",
     responseLength: workspace?.sessionPlanningDefaults?.responseLength || "Balanced",
     creativity: workspace?.sessionPlanningDefaults?.creativity || "Moderate",
@@ -7317,6 +7510,59 @@ export default function App() {
     }
   };
 
+  const loadTamilStructureFile = async (file: File) => {
+    setErrorHeader(null);
+
+    try {
+      const text = await extractCurriculumFileText(file);
+      setTamilStructureFileName(file.name);
+      setTamilStructureFileSizeStr((file.size / 1024).toFixed(1) + " KB");
+      setTamilStructureText(text);
+      setSunbirdPreviewSummary(null);
+    } catch (error: any) {
+      console.error("[Frontend] Tamil structure extraction failed", error);
+      setTamilStructureFileName("");
+      setTamilStructureFileSizeStr("");
+      setTamilStructureText("");
+      setErrorHeader(error.message || "Unable to extract readable text from the Tamil textbook structure file.");
+    }
+  };
+
+  const searchTamilSunbirdContent = async () => {
+    const res = await fetch("/api/tamil/sunbird/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query: sunbirdSearchQuery,
+        className: pendingTamilIndexPreflight?.result?.detectedClasses?.[0]?.className || "Class IX",
+        board: "CBSE",
+        medium: "Tamil",
+        subject: "Tamil",
+      }),
+    });
+    if (!res.ok) {
+      throw new Error(await readErrorFromResponse(res, "Failed to search Sunbird Tamil textbooks."));
+    }
+    return res.json() as Promise<{ success: boolean; candidates: SunbirdSearchCandidate[] }>;
+  };
+
+  const previewTamilSunbirdStructure = async (candidate: SunbirdSearchCandidate) => {
+    const res = await fetch("/api/tamil/sunbird/preview-structure", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contentId: candidate.identifier,
+        source: candidate.source,
+        className: pendingTamilIndexPreflight?.result?.detectedClasses?.[0]?.className || "Class IX",
+        title: candidate.name,
+      }),
+    });
+    if (!res.ok) {
+      throw new Error(await readErrorFromResponse(res, "Failed to fetch Sunbird textbook structure."));
+    }
+    return res.json() as Promise<SunbirdStructurePreviewResponse>;
+  };
+
   /**
    * File Drag & Drop Handlers
    */
@@ -7349,6 +7595,12 @@ export default function App() {
   const handleTamilIndexFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       void loadTamilIndexFile(e.target.files[0]);
+    }
+  };
+
+  const handleTamilStructureFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      void loadTamilStructureFile(e.target.files[0]);
     }
   };
 
@@ -7442,6 +7694,45 @@ export default function App() {
       setErrorHeader(error.message || "Unable to continue Tamil curriculum analysis.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSearchTamilSunbird = async () => {
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Searching Sunbird for Tamil textbook candidates...");
+    try {
+      const result = await searchTamilSunbirdContent();
+      setSunbirdSearchResults(result.candidates || []);
+    } catch (error: any) {
+      console.error("[Frontend] Tamil Sunbird search failed", error);
+      setErrorHeader(error.message || "Unable to search Sunbird Tamil textbooks.");
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
+    }
+  };
+
+  const handleUseTamilSunbirdCandidate = async (candidate: SunbirdSearchCandidate) => {
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage(`Preparing Tamil structure digest from ${candidate.name}...`);
+    try {
+      const preview = await previewTamilSunbirdStructure(candidate);
+      const structureDocument = preview.supportingDocuments.find((document) => document.role === "sunbird_textbook_structure");
+      if (!structureDocument?.text?.trim()) {
+        throw new Error("Sunbird returned no usable textbook structure digest.");
+      }
+      setTamilStructureText(structureDocument.text);
+      setTamilStructureFileName(structureDocument.fileName || `${candidate.name}.txt`);
+      setTamilStructureFileSizeStr(`${Math.max(1, Math.round(structureDocument.text.length / 1024))} KB`);
+      setSunbirdPreviewSummary(preview.summary);
+    } catch (error: any) {
+      console.error("[Frontend] Tamil Sunbird preview failed", error);
+      setErrorHeader(error.message || "Unable to prepare Tamil structure from Sunbird.");
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
     }
   };
 
@@ -8129,10 +8420,18 @@ export default function App() {
     (extractedData as any)?.normalizedStructure ||
     (extractedData as any)?.stagedExtraction?.normalizedStructure ||
     null;
+  const extractionStatistics = (extractedData as any)?.stagedExtraction?.statistics || null;
+  const extractedLearningOutcomes = Array.isArray((extractedData as any)?.stagedExtraction?.learningOutcomes?.learning_outcomes)
+    ? (extractedData as any).stagedExtraction.learningOutcomes.learning_outcomes
+    : [];
   const normalizedClasses = Array.isArray(normalizedCurriculum?.classes) ? normalizedCurriculum.classes : [];
   const normalizedUnits = normalizedClasses.flatMap((cls: any) => cls?.units || []);
   const normalizedChapters = normalizedUnits.flatMap((unit: any) => unit?.chapters || []);
-  const canonicalUnitsCount = normalizedUnits.length || extractedData?.units?.length || 0;
+  const canonicalUnitsCount =
+    Number(extractionStatistics?.total_units || 0) ||
+    normalizedUnits.length ||
+    extractedData?.units?.length ||
+    0;
   const totalTopicsCount = normalizedUnits.length > 0
     ? normalizedUnits.reduce((sum: number, unit: any) => {
         const unitTopicCount = (unit?.topics || []).length;
@@ -8145,6 +8444,7 @@ export default function App() {
     : Array.isArray(extractedData?.units)
       ? extractedData.units.reduce((sum, unit) => sum + (unit.topics?.length || 0), 0)
       : 0;
+  const resolvedTopicsCount = Number(extractionStatistics?.total_topics || 0) || totalTopicsCount;
   const totalSubtopicsCount = normalizedUnits.length > 0
     ? normalizedUnits.reduce((sum: number, unit: any) => {
         const unitSubtopicCount = (unit?.subtopics || []).length;
@@ -8158,10 +8458,19 @@ export default function App() {
         (sum: number, chapter: any) => sum + ((chapter?.subtopics || []).length || 0),
         0
       );
-  const totalObjectivesCount = totalSubtopicsCount > 0
-    ? totalSubtopicsCount
-    : extractedData?.coreObjectives?.length || 0;
+  const resolvedSubtopicsCount = Number(extractionStatistics?.total_subtopics || 0) || totalSubtopicsCount;
+  const uniqueLearningOutcomesCount = [
+    ...new Set(
+      extractedLearningOutcomes.flatMap((entry: any) => entry?.outcomes || []).filter(Boolean)
+    ),
+  ].length;
+  const totalObjectivesCount =
+    Number(extractionStatistics?.total_learning_outcomes || 0) ||
+    uniqueLearningOutcomesCount ||
+    extractedData?.coreObjectives?.length ||
+    0;
   const totalPracticalsCount =
+    Number(extractionStatistics?.total_practicals || 0) ||
     (Array.isArray(normalizedCurriculum?.practicals) ? normalizedCurriculum.practicals.length : 0) ||
     (Array.isArray((extractedData as any)?.stagedExtraction?.activities?.practicals)
       ? (extractedData as any).stagedExtraction.activities.practicals.length
@@ -8177,7 +8486,7 @@ export default function App() {
     },
     {
       label: "Topics available for planning",
-      complete: totalTopicsCount > 0,
+      complete: resolvedTopicsCount > 0,
     },
     {
       label: "Learning outcomes available",
@@ -8557,6 +8866,13 @@ export default function App() {
                   accept=".txt,.pdf"
                   onChange={handleTamilIndexFileSelect}
                 />
+                <input
+                  ref={tamilStructureFileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept=".txt,.pdf"
+                  onChange={handleTamilStructureFileSelect}
+                />
 
                 <button
                   onClick={() => tamilIndexFileInputRef.current?.click()}
@@ -8576,8 +8892,71 @@ export default function App() {
                   </div>
                 )}
 
+                <div className="rounded-3xl border border-slate-200 p-4 space-y-3">
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Optional Structure</div>
+                    <div className="mt-1 text-sm font-semibold text-slate-800">Attach compact textbook structure text</div>
+                    <p className="mt-1 text-xs text-slate-500">Upload headings-only Tamil textbook structure to enrich topics and subtopics without sending the full textbook.</p>
+                  </div>
+                  <button
+                    onClick={() => tamilStructureFileInputRef.current?.click()}
+                    className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                  >
+                    Choose textbook structure file
+                  </button>
+                  {tamilStructureFileName && (
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                      <div className="font-bold">{tamilStructureFileName}</div>
+                      <div className="mt-1 text-xs text-emerald-700">{tamilStructureFileSizeStr || "Structure attached"}</div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="rounded-3xl border border-slate-200 p-4 space-y-3">
+                  <div>
+                    <div className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">Sunbird Assist</div>
+                    <div className="mt-1 text-sm font-semibold text-slate-800">Fetch textbook structure from Sunbird</div>
+                    <p className="mt-1 text-xs text-slate-500">Search a Tamil textbook or collection and convert it into a compact structure digest for this analysis.</p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input
+                      value={sunbirdSearchQuery}
+                      onChange={(e) => setSunbirdSearchQuery(e.target.value)}
+                      placeholder="Optional textbook name"
+                      className="flex-1 rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 focus:border-[#36ADAA] focus:outline-none"
+                    />
+                    <button
+                      onClick={() => void handleSearchTamilSunbird()}
+                      className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50"
+                    >
+                      Search Sunbird
+                    </button>
+                  </div>
+                  {sunbirdSearchResults.length > 0 && (
+                    <div className="max-h-52 space-y-2 overflow-y-auto">
+                      {sunbirdSearchResults.map((candidate) => (
+                        <button
+                          key={`${candidate.source}:${candidate.identifier}`}
+                          onClick={() => void handleUseTamilSunbirdCandidate(candidate)}
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left hover:border-[#36ADAA] hover:bg-[#36ADAA]/5"
+                        >
+                          <div className="text-sm font-bold text-slate-800">{candidate.name}</div>
+                          <div className="mt-1 text-xs text-slate-500">
+                            {candidate.source} · {(candidate.se_gradeLevels || []).join(", ") || "Class not tagged"} · {(candidate.se_mediums || []).join(", ") || "Medium not tagged"}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {sunbirdPreviewSummary && (
+                    <div className="rounded-2xl border border-cyan-200 bg-cyan-50 px-4 py-3 text-xs text-cyan-900">
+                      Sunbird structure ready: {sunbirdPreviewSummary.chapterCandidates} chapter candidates, {sunbirdPreviewSummary.topicCandidates} topic candidates, {sunbirdPreviewSummary.subtopicCandidates} subtopic candidates.
+                    </div>
+                  )}
+                </div>
+
                 <div className="rounded-2xl bg-amber-50 px-4 py-3 text-xs font-medium text-amber-800">
-                  We’ll continue the same analysis flow after this upload. Class selection, if needed, still appears after the index is accepted.
+                  We’ll continue the same analysis flow after the required index upload. Structure support is optional enrichment and will never replace the textbook index anchor.
                 </div>
               </div>
 
@@ -10070,11 +10449,11 @@ export default function App() {
                       </div>
                       <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3">
                         <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Topics</div>
-                        <div className="mt-1 text-lg font-display font-black text-slate-800">{totalTopicsCount}</div>
+                        <div className="mt-1 text-lg font-display font-black text-slate-800">{resolvedTopicsCount}</div>
                       </div>
                       <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3">
                         <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Subtopics</div>
-                        <div className="mt-1 text-lg font-display font-black text-slate-800">{totalSubtopicsCount}</div>
+                        <div className="mt-1 text-lg font-display font-black text-slate-800">{resolvedSubtopicsCount}</div>
                       </div>
                       <div className="rounded-2xl border border-slate-100 bg-white px-4 py-3">
                         <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Objectives</div>

@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: mixed_or_unknown\n- Expected structure type: mixed\n- Use the most source-faithful hierarchy available\n- Preserve ambiguous structure conservatively and avoid invented chapters\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 3 of 4; extract only what is present in this chunk\n\nCurriculum source text:\n# Page 9\n\nह िं दी पाठ्यक्रम -अ\nहिषय कोड - 002\nकक्षा 9िीिं (202 5 - 2 6 )\nपरीक्षाे तु पाठ्यक्रम हिहनदेिन\nििंड भारािंक\nक अपहठत बोध 14\nि व् या ि ाररक व् या करण 16\nग पाठ्यपुस्त क एििं पूरक पाठ्यपुस्त क 30\nघ रचनात्म क लेिन 20\n भारािंक - {80(िाहषजक बोडज परीक्षा)+20 (आिंतररक परीक्षा)\nहनधाजररत समय- 3 घिंटे भारािंक-80\nिाहषजक बोडज परीक्षाे तु भार हिभार्न\nििंड – क (अपहठत बोध)\nहिषयिस्तु उपभार कुल भार\n1 अपमठत गद्याोंि व काव्याोंि पर बोध , म ों तन , मवश्ले षर् , सराहना आमद पर बहुमवकल्पी य ,\nअमत लघू त् त रात्म क एवों लघू त् त रात्म क प्रश्\nअ एक अपमठत गद्याोंि लगभग 250 िब्दोों का इसके आधार पर एक अोंकीय तीन 7 14\nबहुमवकल्पी प्रश् ( 1x 3 = 3 ) , अमतलघू त् त रात्म क एवों लघू त् त रात्म क प्रश् न ( 2 × 2 = 4 ) पूछे\nजाएाँगे\nब एक अपमठत काव्याोंि अमधकतम 120 िब्दोों का इसके आधार पर एक अोंकीय तीन 7\nबहुमवकल्पी प्रश् ( 1x 3 = 3 ) , अमतलघू त् त रात्म क एवों लघू त् त रात्म क प्रश् न ( 2 × 2 = 4 ) पूछे\nजाएाँगे\nििंड – ि (व्या ि ाररक व् या करण)\n2 व्य ाकरर् के मलए मनधाडररत मवषयोों पर मवषयवस्तु का बोध , भामषक मबोंदु/ सोंर ना आमद पर\nअमतलघूत्त रात्म क प्रश् | ( 1 x 16 )\n16\nकुल 20 प्रश् पूछे जाएाँगे, मजनमें से केवल 16 प्रश् ोों के उत्तर देने होोंगे |\nअ िब्द मनमाडर् 8\n9\n\n# Page 10\n\nउपसगड – 2 अोंक, प्रत्य य – 2 अोंक, समास – 4 अोंक\nउपसगड - य प्रत्य - (5 में से 4 प्रश् करने होोंगे ), समास (5 में से 4 प्रश् करने होोंगे )\nब अथड की दृ मि से वाक् भेद – 4 अोंक (5 में से 4 प्रश् करने होोंगे ) 4\nस अलोंकार – 4 अोंक 4\n(िब्दा लोंकार : अनुप्रास , यमक , श् ले ष ) (5 में से 4 प्रश् करने होोंगे )\n3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)\nअ गद्य ििंड पाठ्यपुस्त क ( हक्षहतर् (भाग 1 ) 11\n1 मक्षमतज (भाग 1 )से मनधाडररत पाठोों में से गद्याोंि के आधार पर मवषयवस्तु का ज्ञ ान, 5\nबोध , अमभव्यक्ति आमद पर एक अोंकीय पााँ बहुमवकल्पी प्रश् पूछे जाएाँगे। ( 1 x 5 )\n2 मक्षमतज (भाग 1) से मनधाडररत पाठोों में से मवषयवस्तु का ज्ञ ान, बोध , अमभव्यक्ति 6\nआमद पर तीन प्रश् पूछे जाएाँगे।(मवकल्प समहत - 25 - 30 िब्द - सीमा वाले 4 में से\n3 प्रश् करने होोंगे ) ( 2 x 3 )\nब काव्य ििंड पाठ्यपुस्त क ( हक्षहतर् (भाग 1 ) 11\n1 मक्षमतज (भाग 1) से मनधाडररत कमवताओों में से काव्याोंि के आधार पर एक अोंकीय 5 30\nपााँ बहुमवकल्पी प्रश् पूछे जाएाँगे ( 1 x 5 )\n2 मक्षमतज (भाग 1 ) से मनधाडररत कमवताओों के आधार पर मवद्यामथडयोों का काव्यबोध 6\nपरखने हेतु तीन प्रश् पूछे जाएाँगे। (मवकल्प समहत - 25 - 30 िब्द - सीमा वाले 4 में\nसे 3 प्रश् करने होोंगे ) ( 2x3 )\nस पूरक पाठ्यपुस्तक ( कृहतका भाग – 1 ) 8\nकृमतका ( भाग 1) से मनधाडररत पाठोों पर आधाररत दो प्रश् पूछे जाएाँगे। ( 4x2 ) 8\n(मवकल्प समहत - 50 - 60 िब्द - सीमा वाले 3 में से 2 प्रश् करने होोंगे )\nििंड – घ (रचनात्म क लेिन)\n4 लेिन\nक मवमभन्न मवषयोों और सोंदभो पर मवद्यामथडयोों के तक ड सोंगत मव ार प्र कट करने की क्ष मता 6\nको परखने के मलए सोंकेत-मबोंदुओों पर आधाररत समसाममयक एवों व्य ावहाररक जीवन\nसे जुडे हु ए तीन मवषयोों में से मकसी एक मवषय पर लगभग 120 िब्दोों में अनुच्छे द\nलेखन (6 x1 = 6) 20\nख अमभव्यक्ति की क्ष मता पर केंमद्रत औप ाररक अथवा अनौप ाररक मवषयोों में लगभग 5\n100 िब्दोों में मकसी एक मवषय पर पत्र। (5x1 = 5 )\nग मवमवध मवषयोों पर आधाररत लगभग 100 िब्दोों में ई - मेल लेखन। (5x1 = 5 ) 5\n10\n\n# Page 11\n\nअथिा\nमदए गए मवषय / िीषडक आमद के आधार पर लगभग 100 िब्दोों में लघुकथा लेखन।\n(5x1 = 5 )\nघ मदए गए मवषय/पररक्तस्थ मत के आधार पर लगभग 80 िब्दोों में सोंवाद लेखन। 4\n(4x1 =4 )\nअथिा\nव्य ावहाररक जीवन से सोंबोंमधत मवषयोों पर आधाररत लगभग 80 िब्दोों में सू ना\nलेखन । (4x1 =4 )\nकुल 80\nआिंतररक मूल्ािंकन 20\nअ सामहयक आकलन 5\nब बहुहिध आकलन 5\nस पोटजफ़ोहलयो 5\nद िण एििं िाचन श्र 5\nकुल 100\nहनधाजररत पुस्तकें :\n- 1. हक्षहतर्, भाग – 1 , एन.सी.ई.आर.टी. , नई मदल्ली ारा प्र कामित नवीनतम सोंस्क द्व रर्\n- 2. कृहतका, भाग – 1 , एन.सी.ई.आर.टी. , नई मदल्ली ारा प्र कामित नवीनतम सोंस्क द्व रर्\nनोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे र् –\nहक्षहतर्, भाग – 1 काव्य खोंर्  केदारनाथ अग्रवाल - ोंद्र गहना से लौटती बेर (पूरा पाठ )\n ोंद्र काोंत देवताले – यमराज की मदिा (पूरा पाठ )\nगद्य खोंर्  पला देवी – नाना साहब की पुत्री देवी मैना को भि कर मदया\nगया (पूरा पाठ )\n हजारीप्रसाद मद्ववेदी – एक कुत्ता और एक मैना (पूरा पाठ )\nकृहतका, भाग – 1  मवद्यासागर नौमटयाल – माटी वाली (पूरा पाठ )\n िमिेर बहादुर मसोंह – मकस तरह आक्तखरकार मैं महोंदी में आया (पूरा पाठ )\n11\n\n# Page 12\n\nह िं दी पाठ्यक्रम -अ\nहिषय कोड - 002\nकक्षा 10िीिं (202 5 - 2 6 )\nपरीक्षाे तु पाठ्यक्रम हिहनदेिन\nििंड भारािंक\nक अपहठत बोध 14\nि व् या ि ाररक व् या करण 16\nग पाठ्यपुस्त क एििं पूरक पाठ्यपुस्त क 30\nघ रचनात्म क लेिन 20\n भारािंक - {80(िाहषजक बोडज परीक्षा )+20 (आिंतररक परीक्षा)\nहनधाजररत समय- 3 घिंटे भारािंक-80\nिाहषजक बोडज परीक्षाे तु भार हिभार् न\nििंड – क (अपहठत बोध)\nहिषयिस्तु उप भार कुल भार\n1 अपमठत गद्याोंि व काव्याोंि पर बोध , म ों तन , मवश्ले षर् , सराहना आमद पर बहुमवकल्पी य ,\nअमतलघू त् त रात्म क एवों लघू त् त रात्म क प्रश्\nअ एक अपमठत गद्याोंि लगभग 250 िब्दोों का इसके आधार पर एक अोंकीय तीन 7 14\nबहुमवकल्पी प्रश् ( 1x 3 = 3 ) , अमतलघू त् त रात्म क एवों लघू त् त रात्म क प्रश् न ( 2 × 2 = 4 ) पूछे\nजाएाँगे\nब एक अपमठत काव्याोंि लगभग 120 िब्दोों का इसके आधार पर एक अोंकीय तीन 7\nबहुमवकल्पी प्रश् ( 1x 3 = 3 ) , अमतलघू त् त रात्म क एवों लघू त् त रात्म क प्रश् न ( 2 × 2 = 4 ) पूछे\nजाएाँगे\n2 व्य ाकरर् के मलए मनधाडररत मवषयोों पर मवषयवस्तु का बोध , भामषक मबोंदु/ सोंर ना आमद पर\nअमतलघूत्त रात्म क/लघूत् त रात्म क । प्रश् ( 1 x 16 )\n( कुल 20 प्रश् पूछे जाएाँगे, मजनमें से केवल 16 प्रश् ोों के उत्तर देने होोंगे)\nििंड – ि (व्या ि ाररक व् या करण) 16\n1 र ना के आधार पर वाक् भेद ( 1x 4 = 4 ) (5 में से 4 प्रश् करने होोंगे ) 4\n2 वाच्य ( 1x 4 = 4 ) (5 में से 4 प्रश् करने होोंगे ) 4\n3 पद परर य ( 1x 4 = 4 ) (5 में से 4 प्रश् करने होोंगे ) 4\n12\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

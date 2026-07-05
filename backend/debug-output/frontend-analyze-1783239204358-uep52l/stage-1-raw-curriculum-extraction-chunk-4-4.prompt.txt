@@ -1,0 +1,116 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+- Detected curriculum profile: mixed_or_unknown
+- Expected structure type: mixed
+- Use the most source-faithful hierarchy available
+- Preserve ambiguous structure conservatively and avoid invented chapters
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 4 of 4; extract only what is present in this chunk
+
+Curriculum source text:
+# Page 13
+
+4 अलोंकार- (अथाडलोंकार : उपमा , रू पक , उत्प्रेक्षा, अमतियोक्ति, मानवीकरर्) ( 1 x 4 = 4 ) 4
+(5 में से 4 प्रश् करने होोंगे )
+3 ििंड – ग ( पाठ्यपुस्तक एििं पूरक पाठ्यपुस्त क)
+अ गद्य ििंड पाठ्यपुस्त क ( हक्षहतर् भाग 2 ) 11
+1 मक्षमतज (भाग 2 ) से मनधाडररत पाठोों में से गद्याोंि के आधार पर मवषयवस्तु का ज्ञ ान, 5
+बोध , अमभव्यक्ति आमद पर एक अोंकीय पााँ बहुहिकल्पी रश्न पूछे जाएाँगे। ( 1 x 5 )
+2 मक्षमतज (भाग 2 ) से मनधाडररत पाठोों में से मवषयवस्तु का ज्ञ ान, बोध , अमभव्यक्ति 6
+आमद पर तीन प्रश् पूछे जाएाँगे।(मवकल्प समहत - 25 - 30 िब्द - सीमा वाले 4 में से 3
+प्रश् करने होोंगे ) ( 2 x 3 )
+ब काव्य ििंड (पाठ्यपुस्त क) ( हक्षहतर् भाग 2 ) 11
+30
+1 मक्षमतज (भाग 2 ) से मनधाडररत कमवताओों में से काव्याोंि के आधार पर एक अोंकीय 5
+पााँ बहुहिकल्पी रश्न पूछे जाएाँगे ( 1 x 5 )
+2 मक्षमतज (भाग 2 ) से मनधाडररत कमवताओों के आधार पर मवद्यामथडयोों का काव्यबोध 6
+परखने हेतु तीन प्रश् पूछे जाएाँगे। (मवकल्प समहत - 25 - 30 िब्द - सीमा वाले 4 में से
+3 प्रश् करने होोंगे ) ( 2x3 )
+स पूरक पाठ्यपुस्तक ( कृहतका भाग – 2) 8
+कृमतका (भाग 2 ) से मनधाडररत पाठोों पर आधाररत दो प्रश् पूछे जाएाँगे। ( 4x2 ) 8
+(मवकल्प समहत - 50 - 60 िब्द - सीमा वाले 3 में से 2 प्रश् करने होोंगे )
+4 ििंड – घ (रचनात्म क लेिन)
+i मवमभन्न मवषयोों और सोंदभो पर मवद्यामथडयोों के तक ड सोंगत मव ार प्र कट करने की क्ष मता 6
+को परखने के मलए सोंकेत-मबोंदुओों पर आधाररत समसाममयक एवों व्य ावहाररक जीवन
+से जुडे हु ए तीन मवषयोों में से मकसी एक मवषय पर लगभग 120 िब्दोों में अनुच्छे द
+लेखन (6 x1 = 6)
+ii अमभव्यक्ति की क्ष मता पर केंमद्रत औप ाररक अथवा अनौप ाररक मवषयोों में से मकसी 5 20
+एक मवषय पर लगभग 100 िब्दोों में पत्र (5 x 1= 5)
+iii रोजगार से सोंबोंमधत ररक्तियोों के मलए लगभग 80 िब्दोों में स्व वृत्त लेखन (5 x 1= 5) 5
+अथवा
+मवमवध मवषयोों पर आधाररत लगभग 80 िब्दोों में ई - मेल लेखन (5 x 1= 5)
+iv मवषय से सोंबोंमधत लगभग 40 िब्दोों के अोंतगडत मवज्ञापन लेखन (4 x 1 = 4) 4
+13
+
+# Page 14
+
+अथवा
+सोंदेि लेखन लगभग 4 0 िब्दोों में (िुभकामना , पवड - त् यो हारोों एवों मविेष अवसरोों पर
+मदए जाने वाले सोंदेि) (4 x 1 = 4)
+कुल 80
+आिंतररक मूल्ािंकन अिंक 20
+अ सामहयक आकलन 5
+ब बहुहिध आकलन 5
+स पोटजफ़ोहलयो 5
+द िण एििं िाचन श्र 5
+कुल 100
+हनधाजररत पुस्तकें :
+- 1. हक्षहतर्, भाग – 2 , एन.सी.ई.आर.टी. , नई मदल्ली ारा प्र कामित नवीनतम सोंस्क द्व रर्
+- 2. कृहतका, भाग – 2 , एन.सी.ई.आर.टी. , नई मदल्ली ारा प्र कामित नवीनतम सोंस्क द्व रर्
+नोट – हनम्नहलक्तित पाठोिं से रश्न न ीिं पूछे ाएाँगे र् –
+हक्षहतर्, भाग – 2 काव्य खोंर्  देव - सवैया , कमवत्त ( पूरा पाठ )
+ मगररजाकुमार माथुर – छाया मत छूना ( पूरा पाठ )
+ ऋतुराज – कन्यादान ( पूरा पाठ )
+गद्य खोंर्  महावीरप्रसाद मद्ववेदी – ी स्त्र - मिक्षा के मवरोधी कुतकों का खोंर्न ( पूरा
+पाठ )
+ सवेिर दयाल सक्सेना - मानवीय करुर्ा की मदव्य मक ( पूरा पाठ )
+कृहतका, भाग – 2  एही ठैयााँ झुलनी हेरानी हो रामा! ( पूरा पाठ )
+ जाजड पों म की नाक ( पूरा पाठ )
+कक्षा दसिीिंे तु रश्न पत्र का हिस्तृत रारूप र् ानने के हलए कृपया बोडज द्व ारा र् ारी आदिज रश्न पत्र
+देिें।
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+14

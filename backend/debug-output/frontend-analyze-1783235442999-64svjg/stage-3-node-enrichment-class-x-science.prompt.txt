@@ -1,0 +1,1166 @@
+# Science Subject Intelligence Layer (Active)
+Apply this Science subject intelligence while completing: Stage 3: Node Enrichment - Class X - Science.
+
+SCIENCE SUBJECT INTELLIGENCE LAYER
+You are a Science Curriculum and Pedagogical Intelligence Engine responsible for understanding the complete structure, philosophy, progression and pedagogy of any Science curriculum before Curriculum Extraction, Term Division, Session Planning, Student Notes, Teacher Notes, PPTs, Classroom Activities, Homework, Worksheets, Practicals, Projects, Assessments, Answer Keys and Rubrics are generated.
+Your role is not to generate educational resources, but to build a complete understanding of the curriculum, preserve scientific learning progression, identify the appropriate pedagogy for every educational stage and subject, and ensure this intelligence guides the entire generation pipeline.
+
+PRIMARY OBJECTIVE
+Science is a progressive discipline that develops curiosity, observation, exploration, inquiry, experimentation, reasoning, evidence-based thinking, problem solving and real-world application.
+Before any generation begins:
+Understand the curriculum completely.
+Preserve scientific progression and prerequisite relationships.
+Adapt pedagogy according to grade, learner development and subject.
+Treat Science as a connected learning journey rather than isolated chapters.
+
+CURRICULUM UNDERSTANDING
+Understand and preserve every meaningful curriculum component without omission, simplification or restructuring.
+Identify and preserve:
+Curriculum Philosophy
+Learning Objectives
+Competencies & Learning Outcomes
+Course Structure
+Themes / Units / Chapters / Topics / Subtopics
+Concept Progression
+Scientific Terminology
+Practicals, Experiments & Laboratory Work
+Demonstrations & Investigations
+Projects & Field Activities
+Internal Assessment & Subject Enrichment
+Competency Framework
+Assessment Pattern & Question Paper Design
+Examination Blueprint
+Prescribed Resources
+Formative Components
+Cross-disciplinary Connections
+Maintain every academic entity throughout the generation pipeline.
+
+CURRICULUM STRUCTURE INTELLIGENCE
+Never assume every Science curriculum follows the same hierarchy.
+A curriculum may be organized into:
+Themes
+Units
+Modules
+Chapters
+Domains
+Learning Areas
+Competencies
+Standards
+Investigations
+Practical Sections
+Projects
+Environmental Studies
+Integrated Science
+Physics
+Chemistry
+Biology
+Earth & Environmental Science
+Always:
+Identify the original structure.
+Preserve hierarchy.
+Maintain prerequisite dependencies.
+Follow logical scientific progression.
+Never force a fixed curriculum structure.
+
+SCIENTIFIC LEARNING INTELLIGENCE
+Identify how every lesson should be learned before determining how it should be taught.
+Instructional Domain
+A lesson may involve one or more domains:
+Environmental Awareness
+Observation
+Exploration
+Scientific Inquiry
+Investigation
+Concept Development
+Experimentation
+Laboratory Learning
+Demonstration
+Scientific Reasoning
+Mathematical Application
+Diagram & Data Interpretation
+Model-based Learning
+Problem Solving
+Practical Skills
+Project-based Learning
+STEM Integration
+Health, Life, Physical, Chemical & Earth Science
+Revision
+Examination Preparation
+Learning Objective
+Identify the primary objective such as:
+Curiosity Development
+Observation
+Concept Formation
+Conceptual Understanding
+Scientific Thinking
+Investigation
+Practical Skills
+Logical & Analytical Reasoning
+Mathematical Reasoning
+Scientific Communication
+Critical Thinking
+Problem Solving
+Real-world Application
+Competency Development
+Examination Readiness
+The identified instructional domain and learning objective must guide every downstream output.
+
+SESSION TYPE INTELLIGENCE
+Never use one common instructional approach for every Science lesson.
+Automatically identify the appropriate session type.
+Examples include:
+Observation
+Exploration
+Activity
+Concept Introduction
+Concept Development
+Demonstration
+Investigation
+Experiment
+Practical
+Laboratory
+Numerical Practice
+Diagram Study
+Discussion
+Case Study
+Project
+Revision
+Assessment
+Remedial Session
+Every downstream resource must align with the identified session type.
+
+CLASS-WISE PEDAGOGICAL INTELLIGENCE
+Adapt pedagogy according to learner development.
+
+PRE-PRIMARY (Foundational Stage)
+Focus on developing:
+Curiosity
+Observation
+Exploration
+Sensory Learning
+Nature Awareness
+Everyday Experiences
+Play-based Learning
+Story-based Learning
+Hands-on Activities
+Questioning
+Simple Scientific Vocabulary
+Emphasize exploration over explanation.
+Avoid abstract concepts, formulas and memorization.
+
+PRIMARY (Environmental Studies)
+Treat the subject as Environmental Studies (EVS) rather than discipline-based Science.
+Integrate learning around:
+Self
+Family
+School
+Community
+Plants
+Animals
+Food
+Water
+Air
+Weather
+Seasons
+Health
+Hygiene
+Environment
+Local Surroundings
+Develop through:
+Observation
+Exploration
+Discussion
+Everyday Connections
+Simple Experiments
+Field Activities
+Drawing
+Storytelling
+Environmental Responsibility
+Do not separate Physics, Chemistry and Biology.
+
+MIDDLE SCHOOL (Integrated Science)
+Treat Science as one integrated discipline connecting:
+Physics
+Chemistry
+Biology
+Earth Science
+Environmental Science
+Develop:
+Scientific Inquiry
+Investigation
+Observation
+Experimentation
+Conceptual Understanding
+Scientific Reasoning
+Practical Skills
+Data Recording
+Scientific Communication
+Real-life Applications
+Balance theory, activities and laboratory exposure.
+
+SECONDARY (Integrated Science)
+Strengthen conceptual understanding through:
+Scientific Principles
+Scientific Laws
+Investigation
+Practical Work
+Laboratory Skills
+Analytical Thinking
+Problem Solving
+Data Analysis
+Competency-based Learning
+Real-world Applications
+Examination Readiness
+Integrate experiments, diagrams, investigations and competency-based assessment throughout learning.
+
+SENIOR SECONDARY (Classes XI-XII)
+Science becomes discipline-specific.
+Automatically activate the appropriate subject intelligence:
+Physics
+Chemistry
+Biology
+Never apply one common pedagogy across all three subjects.
+
+Stage 3: Node Enrichment - Class X - Science
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class X",
+  "subject": "Science",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Matter and Its Interactions",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification of elements in the Periodic Table",
+        "Formation of compounds based on atomic structure (Bohr's model) and properties (valency)",
+        "Nature and properties of chemical substances (distillation, crystallisation, chromatography, centrifugation, mixtures, solutions, colloids, suspensions)",
+        "Chemical interactions and changes using symbols and chemical equations (acid-base, metal-non-metal, reversible-irreversible)"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Atomic structure",
+        "Valency",
+        "Periodic Table",
+        "Compounds",
+        "Chemical substances",
+        "Separation techniques",
+        "Mixtures",
+        "Solutions",
+        "Colloids",
+        "Suspensions",
+        "Chemical equations",
+        "Acid and base",
+        "Metal and non-metal",
+        "Reversible and irreversible reactions"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Physical World and Scientific Principles",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Newton's laws and effect of forces (displacement, direction, velocity, acceleration, uniform circular motion, gravity)",
+        "Graphical and mathematical representations of motion in one dimension",
+        "Relationship between mass and weight using universal law of gravitation",
+        "Laws of motion connection",
+        "Image characteristics with lenses (focus, centre of curvature) and ray diagrams",
+        "Combination of lenses (telescope, microscope)",
+        "Circuit characteristics (current, voltage, resistance) and Ohm's law",
+        "Everyday usage of electricity (electricity bill, short circuit, safety measures)",
+        "Work in scientific terms and relationship between potential and kinetic energy (conservation of energy)",
+        "Mechanical advantage and simple machines (levers, pulleys)",
+        "Origin and properties of sound (wavelength, frequency, amplitude)",
+        "Sound propagation through different instruments",
+        "Interconnected systems supporting life on Earth (hydrosphere, biosphere, atmosphere, geosphere, cryosphere)"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Newton's laws",
+        "Forces",
+        "Motion",
+        "Velocity",
+        "Acceleration",
+        "Gravity",
+        "Universal law of gravitation",
+        "Lenses",
+        "Ray diagrams",
+        "Telescope",
+        "Microscope",
+        "Circuits",
+        "Ohm's law",
+        "Electricity",
+        "Work",
+        "Energy conservation",
+        "Simple machines",
+        "Sound",
+        "Earth systems"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Living World at Cellular Level",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Role of cellular components (nucleus, mitochondria, endoplasmic reticulum, vacuoles, chloroplast, cell wall)",
+        "Semi-permeability of cell membrane"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Cellular components",
+        "Nucleus",
+        "Mitochondria",
+        "Endoplasmic reticulum",
+        "Vacuoles",
+        "Chloroplast",
+        "Cell wall",
+        "Cell membrane",
+        "Semi-permeability",
+        "Structural basis of life",
+        "Functional basis of life"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U1",
+      "unit_name": "Life Processes and Heredity",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 3.2 – Analyses similarities and differences in the life processes involved in nutrition (photosynthesis in plants; absorption of nutrients in fungi; digestion in animals), transport (transport of water in plants; circulation in animals), exchange of materials (respiration and excretion), and reproduction",
+        "C 3.3 – Describes the mechanisms of heredity (in terms of DNA, genes, chromosomes) and variation (as changes in the sequence of DNA)"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Life Processes",
+        "Nutrition",
+        "Transport",
+        "Exchange of Materials",
+        "Reproduction",
+        "Heredity",
+        "DNA",
+        "Genes",
+        "Chromosomes",
+        "Variation"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U2",
+      "unit_name": "Interconnectedness between Organisms and Environment",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 4.1 – Applies the knowledge of cellular diversity in organisms along with the ecological role organisms play (autotrophic or heterotrophic nutrition) to classify them into five kingdoms",
+        "C 4.2 – Illustrates different levels of organisations of living organisms (from molecules to organisms)",
+        "C 4.3 – Analyses different levels of biological organisation from organisms to ecosystems and biomes along with interactions that take place at each level",
+        "C 4.4 – Analyses patterns of inheritance of traits in terms of Mendel's laws and its consequences at a population level (using models and/or simulations)",
+        "C 4.5 – Analyses evidences of biological evolution demonstrating the consequences of the process of natural selection in terms of changes — in allele frequency in population, structure, and function of organisms"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Cellular Diversity",
+        "Ecological Role",
+        "Five Kingdoms",
+        "Levels of Organisation",
+        "Ecosystems",
+        "Biomes",
+        "Mendel's Laws",
+        "Inheritance",
+        "Biological Evolution",
+        "Natural Selection"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U3",
+      "unit_name": "Linkages between Scientific Knowledge and Other Curricular Areas",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 5.1 – Explores how literature and arts have influenced Science",
+        "C 5.2 – Examines a case study related to the use of Science in human life from the perspective of Social Sciences and Ethics (for example, Marie Curie, Jenner, treatment of patients with mental illnesses, the story of the atomic bomb, green revolution and GMOs, conservation of biodiversity)",
+        "C 5.3 – Applies scientific principles to explain phenomena in other subjects (sound pitch, octave, and amplitude in music; use of muscles in dance form and sports)"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Literature and Arts",
+        "Social Sciences",
+        "Ethics",
+        "Case Studies",
+        "Interdisciplinary Connections"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U4",
+      "unit_name": "Contribution of India to Science",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 6.1 – Knows and explains the significant contributions of India to all matters (concepts, explanations, methods) that are studied within the curriculum in an integrated manner"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Indian Contributions",
+        "History of Science",
+        "Integrated Curriculum"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U8",
+      "source_unit_id": "U5",
+      "unit_name": "Current Discoveries and Frontiers in Science",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 7.1 – States concepts that represent the most current understanding of the matter being studied, ranging from mere familiarity to conceptual understanding of the matter as appropriate to the developmental stage of the students",
+        "C 7.2 – States questions related to matters in the curriculum for which current scientific understanding is well-recognised"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Current Discoveries",
+        "Frontiers in Science",
+        "Scientific Understanding",
+        "Unanswered Questions"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U9",
+      "source_unit_id": "U6",
+      "unit_name": "Nature of Science by Doing Science",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 8.1 – Develops accurate and appropriate models (including geometric, mathematical, graphical) to represent real-life events and phenomena using scientific principles, and use these models to manipulate variables and predict results"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Scientific Models",
+        "Geometric Models",
+        "Mathematical Models",
+        "Graphical Models",
+        "Variables",
+        "Prediction"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U10",
+      "source_unit_id": "U1",
+      "unit_name": "Chemical Substances - Nature and Behaviour",
+      "part_or_section": "",
+      "marks": 25,
+      "topics": [
+        "Chemical Reactions and Equations",
+        "Periodic Classification of Elements",
+        "Acids, Bases and Salts",
+        "Metals and Non-metals",
+        "Carbon and its Compounds"
+      ],
+      "subtopics": [
+        "Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction",
+        "Döbereiner's Triads, Newlands' Law of Octaves, Mendeléev's Periodic Table, Modern Periodic Table and the Modern, Metallic and Non-metallic Properties",
+        "Acids and Bases – definitions in terms of furnishing of H+ and OH- ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale (Definition relating to logarithm not required), importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching Powder, Baking soda, Washing soda and Plaster of Paris",
+        "Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention",
+        "Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature of alkanes, alkenes, alkyne and carbon compounds containing functional groups (halogens, alcohol, ketones, aldehydes). Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid (only properties and uses), soaps and detergents"
+      ],
+      "key_concepts": [
+        "Chemical Reactions",
+        "Periodic Classification",
+        "Acids Bases Salts",
+        "Metals Non-metals",
+        "Carbon Compounds"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U11",
+      "source_unit_id": "U2",
+      "unit_name": "World of Living",
+      "part_or_section": "",
+      "marks": 25,
+      "topics": [
+        "Life processes",
+        "Control and co-ordination in animals and plants",
+        "Reproduction",
+        "Heredity"
+      ],
+      "subtopics": [
+        "'Living Being'. Basic concept of nutrition, respiration, transport and excretion in plants and animals",
+        "Tropic movements in plants; Introduction of plant hormones; Control and co-ordination in animals: Nervous system; Voluntary, involuntary and reflex action; Chemical co-ordination: animal hormones",
+        "Reproduction in animals and plants (asexual and sexual) reproductive health - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and women's health",
+        "Heredity; Mendel's contribution- Laws for inheritance of traits: Sex determination; brief introduction"
+      ],
+      "key_concepts": [
+        "Life Processes",
+        "Control and Co-ordination",
+        "Reproduction",
+        "Heredity"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U12",
+      "source_unit_id": "U3",
+      "unit_name": "Natural Phenomena",
+      "part_or_section": "",
+      "marks": 12,
+      "topics": [
+        "Reflection of light by curved surfaces",
+        "Refraction",
+        "Refraction of light by spherical lens"
+      ],
+      "subtopics": [
+        "Images formed by spherical mirrors, centre of curvature, principal axis, principal focus, focal length, mirror formula (Derivation not required), magnification",
+        "Laws of refraction, refractive index",
+        "Image formed by spherical lenses; Lens formula (Derivation not required); Magnification. Power of a lens"
+      ],
+      "key_concepts": [
+        "Reflection",
+        "Refraction",
+        "Spherical Mirrors and Lenses"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U13",
+      "source_unit_id": "U4",
+      "unit_name": "Unit IV: Effects of Current",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Functioning of a lens in human eye, defects of vision and their corrections, applications of spherical mirrors and lenses.",
+        "Refraction of light through a prism, dispersion of light, scattering of light, applications in daily life (excluding colour of the sun at sunrise and sunset).",
+        "Theme: How Things Work",
+        "Electric current, potential difference and electric current. Ohm's law; Resistance, Resistivity, Factors on which the resistance of a conductor depends.",
+        "Series combination of resistors, parallel combination of resistors and its applications in daily life.",
+        "Heating effect of electric current and its applications in daily life.",
+        "Electric power, Interrelation between P, V, I and R.",
+        "Magnetic effects of current: Magnetic field, field lines, field due to a current carrying conductor, field due to current carrying coil or solenoid; Force on current carrying conductor, Fleming's Left Hand Rule, Direct current.",
+        "Alternating current: frequency of AC. Advantage of AC over DC. Domestic electric circuits.",
+        "Motor, Electromagnetic Induction, Electric Generator",
+        "Theme: Natural Resources"
+      ],
+      "subtopics": [
+        "Periodic Classification of Elements (Not assessed)",
+        "Heredity and Evolution (Not assessed)",
+        "Electric Effects of Electric Current (Not assessed)"
+      ],
+      "key_concepts": [
+        "Ohm's law",
+        "Resistance and Resistivity",
+        "Series and Parallel combination of resistors",
+        "Heating effect of electric current",
+        "Magnetic field and field lines",
+        "Fleming's Left Hand Rule",
+        "AC and DC",
+        "Domestic electric circuits",
+        "Motor",
+        "Electromagnetic Induction",
+        "Electric Generator"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U14",
+      "source_unit_id": "U5",
+      "unit_name": "Unit V: Natural Resources",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Our environment: Eco-system, Environmental problems, Ozone depletion, waste production and their solutions.",
+        "Biodegradable and non-biodegradable substances."
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Eco-system",
+        "Environmental problems",
+        "Ozone depletion",
+        "Waste production and solutions",
+        "Biodegradable substances",
+        "Non-biodegradable substances"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U15",
+      "source_unit_id": "U1",
+      "unit_name": "Unit - I",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Finding the pH of the following samples by using pH paper/universal indicator: Dilute Hydrochloric Acid, Dilute NaOH solution, Dilute Ethanoic Acid solution, Lemon juice, Water, Dilute Hydrogen Carbonate solution.",
+        "Studying the properties of acids and bases (HCl & NaOH) on the basis of their reaction with: Litmus solution (Blue/Red), Zinc metal, Solid sodium carbonate.",
+        "Performing and observing the following reactions and classifying them into: Combination reaction, Decomposition reaction, Displacement reaction, Double displacement reaction.",
+        "Action of water on quicklime",
+        "Action of heat on ferrous sulphate crystals",
+        "Iron nails kept in copper sulphate solution",
+        "Reaction between sodium sulphate and barium chloride solutions",
+        "Observing the action of Zn, Fe, Cu and Al metals on the following salt solutions: ZnSO4 (aq), FeSO4 (aq), CuSO4 (aq), Al2(SO4)3 (aq).",
+        "Arranging Zn, Fe, Cu and Al (metals) in the decreasing order of reactivity based on the above result."
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "pH determination",
+        "Properties of acids and bases",
+        "Types of chemical reactions",
+        "Reactivity series of metals"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U16",
+      "source_unit_id": "U4",
+      "unit_name": "Unit-IV",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Studying the dependence of potential difference (V) across a resistor on the current (I) passing through it and determine its resistance. Also plotting a graph between V and I."
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Ohm's Law Experiment",
+        "V-I Graph"
+      ],
+      "chapters": []
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class X",
+  "subject": "Science",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Matter and Its Interactions",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification of elements in the Periodic Table",
+        "Formation of compounds based on atomic structure (Bohr's model) and properties (valency)",
+        "Nature and properties of chemical substances (distillation, crystallisation, chromatography, centrifugation, mixtures, solutions, colloids, suspensions)",
+        "Chemical interactions and changes using symbols and chemical equations (acid-base, metal-non-metal, reversible-irreversible)"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Atomic structure",
+        "Valency",
+        "Periodic Table",
+        "Compounds",
+        "Chemical substances",
+        "Separation techniques",
+        "Mixtures",
+        "Solutions",
+        "Colloids",
+        "Suspensions",
+        "Chemical equations",
+        "Acid and base",
+        "Metal and non-metal",
+        "Reversible and irreversible reactions"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Physical World and Scientific Principles",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Newton's laws and effect of forces (displacement, direction, velocity, acceleration, uniform circular motion, gravity)",
+        "Graphical and mathematical representations of motion in one dimension",
+        "Relationship between mass and weight using universal law of gravitation",
+        "Laws of motion connection",
+        "Image characteristics with lenses (focus, centre of curvature) and ray diagrams",
+        "Combination of lenses (telescope, microscope)",
+        "Circuit characteristics (current, voltage, resistance) and Ohm's law",
+        "Everyday usage of electricity (electricity bill, short circuit, safety measures)",
+        "Work in scientific terms and relationship between potential and kinetic energy (conservation of energy)",
+        "Mechanical advantage and simple machines (levers, pulleys)",
+        "Origin and properties of sound (wavelength, frequency, amplitude)",
+        "Sound propagation through different instruments",
+        "Interconnected systems supporting life on Earth (hydrosphere, biosphere, atmosphere, geosphere, cryosphere)"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Newton's laws",
+        "Forces",
+        "Motion",
+        "Velocity",
+        "Acceleration",
+        "Gravity",
+        "Universal law of gravitation",
+        "Lenses",
+        "Ray diagrams",
+        "Telescope",
+        "Microscope",
+        "Circuits",
+        "Ohm's law",
+        "Electricity",
+        "Work",
+        "Energy conservation",
+        "Simple machines",
+        "Sound",
+        "Earth systems"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Living World at Cellular Level",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Role of cellular components (nucleus, mitochondria, endoplasmic reticulum, vacuoles, chloroplast, cell wall)",
+        "Semi-permeability of cell membrane"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Cellular components",
+        "Nucleus",
+        "Mitochondria",
+        "Endoplasmic reticulum",
+        "Vacuoles",
+        "Chloroplast",
+        "Cell wall",
+        "Cell membrane",
+        "Semi-permeability",
+        "Structural basis of life",
+        "Functional basis of life"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U1",
+      "unit_name": "Life Processes and Heredity",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 3.2 – Analyses similarities and differences in the life processes involved in nutrition (photosynthesis in plants; absorption of nutrients in fungi; digestion in animals), transport (transport of water in plants; circulation in animals), exchange of materials (respiration and excretion), and reproduction",
+        "C 3.3 – Describes the mechanisms of heredity (in terms of DNA, genes, chromosomes) and variation (as changes in the sequence of DNA)"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Life Processes",
+        "Nutrition",
+        "Transport",
+        "Exchange of Materials",
+        "Reproduction",
+        "Heredity",
+        "DNA",
+        "Genes",
+        "Chromosomes",
+        "Variation"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U2",
+      "unit_name": "Interconnectedness between Organisms and Environment",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 4.1 – Applies the knowledge of cellular diversity in organisms along with the ecological role organisms play (autotrophic or heterotrophic nutrition) to classify them into five kingdoms",
+        "C 4.2 – Illustrates different levels of organisations of living organisms (from molecules to organisms)",
+        "C 4.3 – Analyses different levels of biological organisation from organisms to ecosystems and biomes along with interactions that take place at each level",
+        "C 4.4 – Analyses patterns of inheritance of traits in terms of Mendel's laws and its consequences at a population level (using models and/or simulations)",
+        "C 4.5 – Analyses evidences of biological evolution demonstrating the consequences of the process of natural selection in terms of changes — in allele frequency in population, structure, and function of organisms"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Cellular Diversity",
+        "Ecological Role",
+        "Five Kingdoms",
+        "Levels of Organisation",
+        "Ecosystems",
+        "Biomes",
+        "Mendel's Laws",
+        "Inheritance",
+        "Biological Evolution",
+        "Natural Selection"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U3",
+      "unit_name": "Linkages between Scientific Knowledge and Other Curricular Areas",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 5.1 – Explores how literature and arts have influenced Science",
+        "C 5.2 – Examines a case study related to the use of Science in human life from the perspective of Social Sciences and Ethics (for example, Marie Curie, Jenner, treatment of patients with mental illnesses, the story of the atomic bomb, green revolution and GMOs, conservation of biodiversity)",
+        "C 5.3 – Applies scientific principles to explain phenomena in other subjects (sound pitch, octave, and amplitude in music; use of muscles in dance form and sports)"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Literature and Arts",
+        "Social Sciences",
+        "Ethics",
+        "Case Studies",
+        "Interdisciplinary Connections"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U4",
+      "unit_name": "Contribution of India to Science",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 6.1 – Knows and explains the significant contributions of India to all matters (concepts, explanations, methods) that are studied within the curriculum in an integrated manner"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Indian Contributions",
+        "History of Science",
+        "Integrated Curriculum"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U8",
+      "source_unit_id": "U5",
+      "unit_name": "Current Discoveries and Frontiers in Science",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 7.1 – States concepts that represent the most current understanding of the matter being studied, ranging from mere familiarity to conceptual understanding of the matter as appropriate to the developmental stage of the students",
+        "C 7.2 – States questions related to matters in the curriculum for which current scientific understanding is well-recognised"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Current Discoveries",
+        "Frontiers in Science",
+        "Scientific Understanding",
+        "Unanswered Questions"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U9",
+      "source_unit_id": "U6",
+      "unit_name": "Nature of Science by Doing Science",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "C 8.1 – Develops accurate and appropriate models (including geometric, mathematical, graphical) to represent real-life events and phenomena using scientific principles, and use these models to manipulate variables and predict results"
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Scientific Models",
+        "Geometric Models",
+        "Mathematical Models",
+        "Graphical Models",
+        "Variables",
+        "Prediction"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U10",
+      "source_unit_id": "U1",
+      "unit_name": "Chemical Substances - Nature and Behaviour",
+      "part_or_section": "",
+      "marks": 25,
+      "topics": [
+        "Chemical Reactions and Equations",
+        "Periodic Classification of Elements",
+        "Acids, Bases and Salts",
+        "Metals and Non-metals",
+        "Carbon and its Compounds"
+      ],
+      "subtopics": [
+        "Chemical reactions, Chemical equation, Balanced chemical equation, types of chemical reactions: combination, decomposition, displacement, double displacement, precipitation, endothermic exothermic reactions, oxidation and reduction",
+        "Döbereiner's Triads, Newlands' Law of Octaves, Mendeléev's Periodic Table, Modern Periodic Table and the Modern, Metallic and Non-metallic Properties",
+        "Acids and Bases – definitions in terms of furnishing of H+ and OH- ions, identification using indicators, chemical properties, examples and uses, neutralization, concept of pH scale (Definition relating to logarithm not required), importance of pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching Powder, Baking soda, Washing soda and Plaster of Paris",
+        "Properties of metals and non-metals; Reactivity series; Formation and properties of ionic compounds; Basic metallurgical processes; Corrosion and its prevention",
+        "Covalent bonds – formation and properties of covalent compounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated Homologous series. Nomenclature of alkanes, alkenes, alkyne and carbon compounds containing functional groups (halogens, alcohol, ketones, aldehydes). Chemical properties of carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol and Ethanoic acid (only properties and uses), soaps and detergents"
+      ],
+      "key_concepts": [
+        "Chemical Reactions",
+        "Periodic Classification",
+        "Acids Bases Salts",
+        "Metals Non-metals",
+        "Carbon Compounds"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U11",
+      "source_unit_id": "U2",
+      "unit_name": "World of Living",
+      "part_or_section": "",
+      "marks": 25,
+      "topics": [
+        "Life processes",
+        "Control and co-ordination in animals and plants",
+        "Reproduction",
+        "Heredity"
+      ],
+      "subtopics": [
+        "'Living Being'. Basic concept of nutrition, respiration, transport and excretion in plants and animals",
+        "Tropic movements in plants; Introduction of plant hormones; Control and co-ordination in animals: Nervous system; Voluntary, involuntary and reflex action; Chemical co-ordination: animal hormones",
+        "Reproduction in animals and plants (asexual and sexual) reproductive health - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and women's health",
+        "Heredity; Mendel's contribution- Laws for inheritance of traits: Sex determination; brief introduction"
+      ],
+      "key_concepts": [
+        "Life Processes",
+        "Control and Co-ordination",
+        "Reproduction",
+        "Heredity"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U12",
+      "source_unit_id": "U3",
+      "unit_name": "Natural Phenomena",
+      "part_or_section": "",
+      "marks": 12,
+      "topics": [
+        "Reflection of light by curved surfaces",
+        "Refraction",
+        "Refraction of light by spherical lens"
+      ],
+      "subtopics": [
+        "Images formed by spherical mirrors, centre of curvature, principal axis, principal focus, focal length, mirror formula (Derivation not required), magnification",
+        "Laws of refraction, refractive index",
+        "Image formed by spherical lenses; Lens formula (Derivation not required); Magnification. Power of a lens"
+      ],
+      "key_concepts": [
+        "Reflection",
+        "Refraction",
+        "Spherical Mirrors and Lenses"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U13",
+      "source_unit_id": "U4",
+      "unit_name": "Unit IV: Effects of Current",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Functioning of a lens in human eye, defects of vision and their corrections, applications of spherical mirrors and lenses.",
+        "Refraction of light through a prism, dispersion of light, scattering of light, applications in daily life (excluding colour of the sun at sunrise and sunset).",
+        "Theme: How Things Work",
+        "Electric current, potential difference and electric current. Ohm's law; Resistance, Resistivity, Factors on which the resistance of a conductor depends.",
+        "Series combination of resistors, parallel combination of resistors and its applications in daily life.",
+        "Heating effect of electric current and its applications in daily life.",
+        "Electric power, Interrelation between P, V, I and R.",
+        "Magnetic effects of current: Magnetic field, field lines, field due to a current carrying conductor, field due to current carrying coil or solenoid; Force on current carrying conductor, Fleming's Left Hand Rule, Direct current.",
+        "Alternating current: frequency of AC. Advantage of AC over DC. Domestic electric circuits.",
+        "Motor, Electromagnetic Induction, Electric Generator",
+        "Theme: Natural Resources"
+      ],
+      "subtopics": [
+        "Periodic Classification of Elements (Not assessed)",
+        "Heredity and Evolution (Not assessed)",
+        "Electric Effects of Electric Current (Not assessed)"
+      ],
+      "key_concepts": [
+        "Ohm's law",
+        "Resistance and Resistivity",
+        "Series and Parallel combination of resistors",
+        "Heating effect of electric current",
+        "Magnetic field and field lines",
+        "Fleming's Left Hand Rule",
+        "AC and DC",
+        "Domestic electric circuits",
+        "Motor",
+        "Electromagnetic Induction",
+        "Electric Generator"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U14",
+      "source_unit_id": "U5",
+      "unit_name": "Unit V: Natural Resources",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Our environment: Eco-system, Environmental problems, Ozone depletion, waste production and their solutions.",
+        "Biodegradable and non-biodegradable substances."
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Eco-system",
+        "Environmental problems",
+        "Ozone depletion",
+        "Waste production and solutions",
+        "Biodegradable substances",
+        "Non-biodegradable substances"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U15",
+      "source_unit_id": "U1",
+      "unit_name": "Unit - I",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Finding the pH of the following samples by using pH paper/universal indicator: Dilute Hydrochloric Acid, Dilute NaOH solution, Dilute Ethanoic Acid solution, Lemon juice, Water, Dilute Hydrogen Carbonate solution.",
+        "Studying the properties of acids and bases (HCl & NaOH) on the basis of their reaction with: Litmus solution (Blue/Red), Zinc metal, Solid sodium carbonate.",
+        "Performing and observing the following reactions and classifying them into: Combination reaction, Decomposition reaction, Displacement reaction, Double displacement reaction.",
+        "Action of water on quicklime",
+        "Action of heat on ferrous sulphate crystals",
+        "Iron nails kept in copper sulphate solution",
+        "Reaction between sodium sulphate and barium chloride solutions",
+        "Observing the action of Zn, Fe, Cu and Al metals on the following salt solutions: ZnSO4 (aq), FeSO4 (aq), CuSO4 (aq), Al2(SO4)3 (aq).",
+        "Arranging Zn, Fe, Cu and Al (metals) in the decreasing order of reactivity based on the above result."
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "pH determination",
+        "Properties of acids and bases",
+        "Types of chemical reactions",
+        "Reactivity series of metals"
+      ],
+      "chapters": []
+    },
+    {
+      "unit_id": "U16",
+      "source_unit_id": "U4",
+      "unit_name": "Unit-IV",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Studying the dependence of potential difference (V) across a resistor on the current (I) passing through it and determine its resistance. Also plotting a graph between V and I."
+      ],
+      "subtopics": [],
+      "key_concepts": [
+        "Ohm's Law Experiment",
+        "V-I Graph"
+      ],
+      "chapters": []
+    }
+  ]
+}
+
+Curriculum source text:
+## Class X (2026-27)
+Introduction
+Science is the study of the natural and physical world around us through a systematic
+process of observing, questioning, forming hypotheses, testing hypotheses through
+experiment, analysing evidence, and continuously revising our knowledge. It develops
+essential skills like curiosity, creativity, evidence-based thinking, and sound decision-making
+that help us lead rational and fulfilling lives. Learning Science provides valid knowledge about
+the world, and builds scientific values and capacities. It draws knowledge from Biology,
+Chemistry, Physics, Earth Science, Mathematics, Computational Sciences, and sometimes
+Social Science and Vocational Education to offer an interdisciplinary understanding of the
+role of science.
+Science Education helps students to develop an understanding of the natural and physical
+world through systematic inquiry. Learning Science also develops important capacities, such
+as observation, questioning, analysis, inference, etc. This helps individuals to meaningfully
+participate in society and the world of work with a scientific temper, critical and evidence-
+primary and secondary — in multiple modes, draws inferences based on data, and
+understanding of scientific concepts, theories, laws and principles, and communicates
+findings using scientific terminology)
+## COURSE STRUCTURE
+## CLASS X (2026-27)
+(Annual Examination)
+Time: 03 Hours Marks: 80
+## Unit No. Unit Marks
+I Chemical Substances-Nature and Behaviour 25
+II World of Living 25
+III Natural Phenomena 12
+IV Effects of Current 13
+V Natural Resources 05
+Total 80
+Internal assessment 20
+Grand Total 100
+Theme: Materials
+## Unit I: Chemical Substances - Nature and Behaviour
+Chemical Reactions and Equations: Chemical reactions, Chemical equation, Balanced
+- 14. Identification of the different parts of an embryo of a dicot seed (pea, gram or red
+kidney bean).
+## Unit-II
+## PRESCRIBED BOOKS:
+ Science - Text book for class X - NCERT Publication
+ Assessment of Practical Skills in Science - Class X - CBSE Publication
+ Laboratory Manual - Science - Class X, NCERT Publication
+ Exemplar Problems Class X – NCERT Publication
+ Reading Material – Science – Class X (2026 - 27) – CBSE
+
+---
+
+# Page 9
+
+## Question Paper Design (Theory)
+## Class X (2025-26)
+Science (086)
+Theory (80 marks)
+Competencies Total
+Demonstrate Knowledge and Understanding 50 %
+Application of Knowledge/Concepts 30 %
+Formulate, Analyze, Evaluate and Create 20 %
+Note:
+ Typology of Questions: VSA including objective type questions, Assertion –
+Reasoning type questions; SA; LA; Source - based/ Case - based/ Passage - based/
+Integrated assessment questions.
+ An internal choice of approximately 33% would be provided.
+Internal Assessment (20 Marks)
+ Periodic Assessment - 05 marks + 05 marks
+ Subject Enrichment (Practical Work) - 05 marks

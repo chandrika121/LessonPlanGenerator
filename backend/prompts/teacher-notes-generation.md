@@ -19,6 +19,7 @@ Session context:
 - Teacher preferences / special instructions: {{SPECIAL_INSTRUCTIONS}}
 - Available teaching resources: {{TEACHING_RESOURCES_JSON}}
 - Output language: {{OUTPUT_LANGUAGE}}
+- Language execution rule: {{OUTPUT_LANGUAGE_RULE}}
 - Reading level: {{READING_LEVEL}}
 - Response length: {{RESPONSE_LENGTH}}
 - Creativity level: {{CREATIVITY}}
