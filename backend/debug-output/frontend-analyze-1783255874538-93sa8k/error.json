@@ -1,0 +1,5 @@
+{
+  "message": "Ollama request failed with status 400: {\"error\":\"{\\\"error\\\":{\\\"code\\\":400,\\\"message\\\":\\\"request (11059 tokens) exceeds the available context size (4096 tokens), try increasing it\\\",\\\"type\\\":\\\"exceed_context_size_error\\\",\\\"n_prompt_tokens\\\":11059,\\\"n_ctx\\\":4096}}\"}",
+  "stack": "OllamaRequestError: Ollama request failed with status 400: {\"error\":\"{\\\"error\\\":{\\\"code\\\":400,\\\"message\\\":\\\"request (11059 tokens) exceeds the available context size (4096 tokens), try increasing it\\\",\\\"type\\\":\\\"exceed_context_size_error\\\",\\\"n_prompt_tokens\\\":11059,\\\"n_ctx\\\":4096}}\"}\n    at generateWithOllama (/Users/mva357/MVA/LessonPlanGenerator/backend/server.ts:13512:15)\n    at async runStage (/Users/mva357/MVA/LessonPlanGenerator/backend/server.ts:13345:23)\n    at async normalizeClassTheory (/Users/mva357/MVA/LessonPlanGenerator/backend/server.ts:11862:20)\n    at async <anonymous> (/Users/mva357/MVA/LessonPlanGenerator/backend/server.ts:14961:32)",
+  "code": "HTTP_400"
+}

@@ -1,0 +1,421 @@
+Stage 3: Node Enrichment - Class X - Tamil
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class X",
+  "subject": "Tamil",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+      "part_or_section": "தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "source_chapter_name": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "source_heading": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "part_or_section": "தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+      "part_or_section": "தக கி ட் ைேகா என் கு ை ! ல்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+          "source_chapter_name": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+          "source_heading": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+          "part_or_section": "தக கி ட் ைேகா என் கு ை ! ல்",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+      "part_or_section": "பண் பகா டு விருந்து தபகா றுதும்! ற்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "source_chapter_name": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "source_heading": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "part_or_section": "பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+      "part_or_section": "கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "source_chapter_name": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "source_heading": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "part_or_section": "கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U5",
+      "unit_name": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+      "part_or_section": "க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "source_chapter_name": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "source_heading": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "part_or_section": "க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+      "part_or_section": "�கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "source_chapter_name": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "source_heading": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "part_or_section": "�கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U7",
+      "unit_name": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+      "part_or_section": "அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "source_chapter_name": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "source_heading": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "part_or_section": "அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class X",
+  "subject": "Tamil",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+      "part_or_section": "தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "source_chapter_name": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "source_heading": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "part_or_section": "தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+      "part_or_section": "தக கி ட் ைேகா என் கு ை ! ல்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+          "source_chapter_name": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+          "source_heading": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+          "part_or_section": "தக கி ட் ைேகா என் கு ை ! ல்",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+      "part_or_section": "பண் பகா டு விருந்து தபகா றுதும்! ற்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "source_chapter_name": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "source_heading": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "part_or_section": "பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+      "part_or_section": "கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "source_chapter_name": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "source_heading": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "part_or_section": "கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U5",
+      "unit_name": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+      "part_or_section": "க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "source_chapter_name": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "source_heading": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "part_or_section": "க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+      "part_or_section": "�கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "source_chapter_name": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "source_heading": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "part_or_section": "�கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U7",
+      "unit_name": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+      "part_or_section": "அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "source_chapter_name": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "source_heading": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "part_or_section": "அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+## CLASS - X 2024 - 2025
+(IYAL 1 to 6)
+Time : 3 hrs80 Marks
+## Section – A - Reading Unseen Passage - 10 marks
+- 1. unseen passage- MCQ -(5 marks)
+( Mozhi, Ilakkiyam, Varalaru)
+- 2. Unseen passage - Short answer -(5 marks)
+( Mozhi, Ilakkiyam, Varalaru)
+## Section -B Grammar Section - 12 marks (MCQ)
+- 1. Eluthu, Chol
+- 2. Thogainilai Thodarkal
+- 3. Thogaanilai Thodarkal
+- 4. Ilakkanam - Podhu
+- 5. Vinaa, Vidai Vagai, Porulkol
+- 6. Agaporul Ilakkanam
+- 1. Official/ Informal Letter (8marks)
+- 2. Essay writing (6marks)
+- 3. Picture Description (3 marks)
+Textbook Prescribed
+Tamil Textbook - Class X, Edition - 2020.
+Content Creation by State Council of Educational Research and Training.
+Tamil Nadu Arasu Printing& Publishing by Tamil Nadu Text book and
+Educational Services Corporation.
+www.careerindia.com
+
+---
+
+# Page 5
+
+Design of Question Paper- (2024-2025)Class X - TAMIL (006)
+Type of No. of
+s.no. Topic Marks Total
+Questions Questions
+## Section – A Reading Unseen Passage
+1 Unseen Passage (1) MCQ 5 5x1 5
+2 Unseen Passage (2) SA 5 5x1 5
+## Section -B Grammar
+3 Give Example MCQ 5 3x1 3
+4 Fill up MCQ 5 3x1 3
+5 Illakkana kurippu MCQ 5 3x1 3
+6 Do as Directed MCQ 5 3x1 3
+## Section -C Main Course Book
+7 Thirukkural Fill ups MCQ 2 2x1 2
+8 Poetry Comprehension MCQ 5 5x1 5

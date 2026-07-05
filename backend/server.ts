@@ -8,6 +8,8 @@ import os from "os";
 import { execFile } from "child_process";
 import { promisify } from "util";
 import mongoose from "mongoose";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { Agent } from "undici";
 import { CurriculumModel } from "./models/Curriculum";
 import { PlanningWorkspaceModel } from "./models/PlanningWorkspace";
@@ -195,7 +197,7 @@ const CURRICULUM_SUBJECT_ALIAS_GROUPS: Array<{ subject: string; aliases: string[
   { subject: "Science", aliases: ["science", "general science", "integrated science"] },
   { subject: "Mathematics", aliases: ["mathematics", "maths", "math", "applied mathematics", "applied math"] },
 ];
-const INDIC_CURRICULUM_EXTRACTION_MODEL = "qwen3.5:35b-mlx";
+const INDIC_CURRICULUM_EXTRACTION_MODEL = "qwen3.5:35b";
 const INDIC_CURRICULUM_SUBJECT_ALIASES = [
   "hindi",
   "hindi language",
@@ -258,14 +260,15 @@ const SUPPORTING_CURRICULUM_DOCUMENT_ROLES = new Set<SupportingCurriculumDocumen
   "sunbird_textbook_structure",
   "sunbird_content_manifest",
 ]);
-const SUNBIRD_PRODUCTION_BASE_URL = "https://diksha.gov.in";
-const SUNBIRD_SANDBOX_BASE_URL = "https://sandbox.sunbirded.org";
+const SUNBIRD_MCP_URL = process.env.SUNBIRD_MCP_URL || "http://127.0.0.1:3001/sse";
+const MCP_CLIENT_INFO = { name: "lesson-plan-generator-backend", version: "1.0.0" } as const;
 
 let cachedEnglishIntelligenceLayer: string | null = null;
 let cachedEnglishDownstreamIntelligenceLayer: string | null = null;
 let cachedScienceIntelligenceLayer: string | null = null;
 const cachedScienceGenerationLayers = new Map<string, string>();
 let cachedTamilCurriculumIntelligenceLayer: string | null = null;
+let sunbirdMcpClientPromise: Promise<Client> | null = null;
 const ENGLISH_EXAM_SECTION_LABELS = [
   "section a",
   "section b",
@@ -866,10 +869,26 @@ function getTamilCurriculumIntelligenceLayerText(): string {
 }
 
 function normalizeTamilOcrLookup(value: string): string {
-  return String(value || "")
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]/gu, "")
-    .trim();
+  let s = String(value || "").toLowerCase();
+  // Remove Unicode replacement characters
+  s = s.replace(/\uFFFD/g, "");
+  // Normalize separated vowel signs: move combining marks back to base character
+  // Common Tamil vowel signs that get separated in OCR: ே  ோ  ை  ொ  ௌ  ௗ
+  s = s.replace(/\u0BC7/g, "ே"); // keep as-is but ensure single char
+  s = s.replace(/\u0BCB/g, "ோ");
+  s = s.replace(/\u0BC8/g, "ை");
+  s = s.replace(/\u0BCA/g, "ொ");
+  s = s.replace(/\u0BCC/g, "ௌ");
+  // Remove spaces between Tamil characters (common OCR artifact)
+  s = s.replace(/([\u0B80-\u0BFF])\s+(?=[\u0B80-\u0BFF])/g, "$1");
+  // Remove leading/trailing spaces around Tamil chars
+  s = s.replace(/\s+([\u0B80-\u0BFF])/g, "$1");
+  s = s.replace(/([\u0B80-\u0BFF])\s+/g, "$1");
+  // Collapse multiple whitespace
+  s = s.replace(/\s+/g, " ");
+  // Remove all non-letter, non-number, non-Tamil characters
+  s = s.replace(/[^\p{L}\p{N}]/gu, "");
+  return s.trim();
 }
 
 function dedupeTamilTitles(values: string[] = []) {
@@ -952,9 +971,31 @@ function parseTamilIndexChaptersFromBlock(unitNumber: number, blockText: string)
   const normalizedBlock = normalizeTamilOcrLookup(blockText);
   const template = TAMIL_IX_TEXTBOOK_INDEX_PATTERNS.find((item) => item.unitNumber === unitNumber);
   if (!template) return [];
-  return template.chapters
+
+  // First, try exact pattern matching as before
+  const exactMatches = template.chapters
     .filter((chapter) => chapter.patterns.some((pattern) => normalizedBlock.includes(normalizeTamilOcrLookup(pattern))))
     .map((chapter) => chapter.title);
+
+  if (exactMatches.length > 0) {
+    return exactMatches;
+  }
+
+  // OCR-fallback: if no patterns matched but we know the unit number,
+  // the OCR may be too corrupted to recognize specific chapter patterns.
+  // Heuristic: if the cleaned text has at least some Tamil characters
+  // but none of our patterns matched, emit all known chapters for this unit.
+  // This ensures we don't return empty chapters for degraded OCR.
+  const tamilCharCount = (normalizedBlock.match(/[\u0B80-\u0BFF]/g) || []).length;
+  const totalChars = normalizedBlock.length;
+
+  // If there's meaningful Tamil content (at least 3 Tamil chars or >20% of text)
+  // but pattern matching failed, use OCR-fallback: return all known chapters
+  if (tamilCharCount >= 3 || (totalChars > 0 && tamilCharCount / totalChars > 0.2)) {
+    return template.chapters.map((chapter) => chapter.title);
+  }
+
+  return [];
 }
 
 function parseTamilTextbookIndexUnits(indexText: string, resolvedClassName: string) {
@@ -1295,10 +1336,12 @@ function buildTamilFastStage1Facts(
   }
 
   const marksDistribution = assessmentSections.map((section) => `${section.title} - ${section.marks} Marks`);
+  // Map Iyal units to CBSE "Main Course Book" section
+  const cbseSectionName = "Main Course Book";
   const units = textbookUnits.map((unit) => ({
     class_name: resolvedClassName,
     subject: "Tamil",
-    part_or_section: unit.theme,
+    part_or_section: cbseSectionName,
     unit_id: `U${unit.unitNumber}`,
     unit_name: `Iyal ${unit.unitNumber} - ${unit.theme}`,
     marks: null,
@@ -1310,7 +1353,7 @@ function buildTamilFastStage1Facts(
     unit.chapters.map((chapterName) => ({
       class_name: resolvedClassName,
       subject: "Tamil",
-      part_or_section: unit.theme,
+      part_or_section: cbseSectionName,
       unit_id: `U${unit.unitNumber}`,
       unit_name: `Iyal ${unit.unitNumber} - ${unit.theme}`,
       chapter_name: chapterName,
@@ -1334,12 +1377,16 @@ function buildTamilFastStage1Facts(
     classes: [{
       class_name: resolvedClassName,
       subject: "Tamil",
-      part_or_section: "",
+      part_or_section: cbseSectionName,
     }],
     units,
     chapters,
     assessment_information: {
       marks_distribution: marksDistribution,
+      cbse_sections: assessmentSections.map((section) => ({
+        title: section.title,
+        marks: section.marks,
+      })),
       excluded_or_non_assessed_content: [],
       teacher_notes: [],
     },
@@ -1384,10 +1431,11 @@ function hardenTamilStage1Facts(
     };
   }
 
+  const cbseSectionName = "Main Course Book";
   const units = textbookUnits.map((unit) => ({
     class_name: resolvedClassName,
     subject: "Tamil",
-    part_or_section: unit.theme,
+    part_or_section: cbseSectionName,
     unit_id: `U${unit.unitNumber}`,
     unit_name: `Iyal ${unit.unitNumber} - ${unit.theme}`,
     marks: null,
@@ -1399,7 +1447,7 @@ function hardenTamilStage1Facts(
     unit.chapters.map((chapterName) => ({
       class_name: resolvedClassName,
       subject: "Tamil",
-      part_or_section: unit.theme,
+      part_or_section: cbseSectionName,
       unit_id: `U${unit.unitNumber}`,
       unit_name: `Iyal ${unit.unitNumber} - ${unit.theme}`,
       chapter_name: chapterName,
@@ -1421,13 +1469,17 @@ function hardenTamilStage1Facts(
     classes: [{
       class_name: resolvedClassName,
       subject: "Tamil",
-      part_or_section: "",
+      part_or_section: cbseSectionName,
     }],
     units,
     chapters,
     assessment_information: {
       ...(stage1Facts?.assessment_information || {}),
       marks_distribution: assessmentSections.map((section) => `${section.title} - ${section.marks} Marks`),
+      cbse_sections: assessmentSections.map((section) => ({
+        title: section.title,
+        marks: section.marks,
+      })),
     },
   };
   const structureEnrichment = enrichTamilStage1FactsWithStructure(nextStage1Facts, options.supportingDocuments || [], {
@@ -7613,7 +7665,8 @@ function inferSourceUnitMarksForEntry(entry: any, marksLookup: ReturnType<typeof
 
   const unitPrefixMatch = unitName.match(/^unit\s*[\-–—:.]?\s*(\d+|[ivxlcdm]+)\b/i);
   const unitNumber = unitPrefixMatch?.[1] ? romanToNumber(unitPrefixMatch[1]) : null;
-  if (unitNumber && unitPrefixMatch[0].trim().length < unitName.trim().length) {
+  const unitPrefixLength = unitPrefixMatch?.[0]?.trim().length || 0;
+  if (unitNumber && unitPrefixLength < unitName.trim().length) {
     const numberedMatch = marksLookup.byUnitNumber.get(unitNumber);
     if (numberedMatch != null) {
       return numberedMatch;
@@ -9433,19 +9486,57 @@ function buildCombinedCurriculumSourceText(
   return sections.filter(Boolean).join("\n\n");
 }
 
-async function fetchSunbirdJson(baseUrl: string, endpoint: string, options: RequestInit = {}) {
-  const response = await fetch(`${baseUrl}${endpoint}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => "");
-    throw new Error(`Sunbird request failed (${response.status}) ${endpoint}: ${errorText || response.statusText}`);
+function isRecord(value: unknown): value is Record<string, any> {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function parseMcpToolPayload(result: any) {
+  if (isRecord(result?.structuredContent)) {
+    return result.structuredContent;
   }
-  return response.json();
+  const textParts = Array.isArray(result?.content)
+    ? result.content
+        .filter((item: any) => item?.type === "text" && typeof item?.text === "string")
+        .map((item: any) => item.text.trim())
+        .filter(Boolean)
+    : [];
+  if (!textParts.length) {
+    return null;
+  }
+  const joined = textParts.join("\n");
+  try {
+    return JSON.parse(joined);
+  } catch {
+    return joined;
+  }
+}
+
+async function getSunbirdMcpClient() {
+  if (!sunbirdMcpClientPromise) {
+    sunbirdMcpClientPromise = (async () => {
+      const client = new Client(MCP_CLIENT_INFO, { capabilities: {} });
+      const transport = new SSEClientTransport(new URL(SUNBIRD_MCP_URL));
+      try {
+        await client.connect(transport);
+        return client;
+      } catch (error) {
+        sunbirdMcpClientPromise = null;
+        throw error;
+      }
+    })();
+  }
+  return sunbirdMcpClientPromise;
+}
+
+async function callSunbirdMcpTool(name: string, args: Record<string, any>) {
+  const client = await getSunbirdMcpClient();
+  const result = await client.callTool({ name, arguments: args });
+  const payload = parseMcpToolPayload(result);
+  if (result?.isError) {
+    const message = typeof payload === "string" ? payload : payload?.error || payload?.message || `MCP tool ${name} failed`;
+    throw new Error(String(message));
+  }
+  return payload;
 }
 
 async function searchSunbirdCatalog(params: {
@@ -9455,111 +9546,198 @@ async function searchSunbirdCatalog(params: {
   subject?: string;
   medium?: string;
 }) {
-  const filters = {
+  const requestedClassName = String(params.className || "Class IX").trim();
+  const requestedClassNumber = extractClassNumber(requestedClassName);
+  const sunbirdGradeLevel =
+    requestedClassNumber != null ? `Class ${requestedClassNumber}` : requestedClassName;
+
+  const productionFilters = {
     primaryCategory: ["Digital Textbook", "eTextbook", "Collection", "Textbook Unit"],
-    se_boards: [String(params.board || "CBSE")],
-    se_gradeLevels: [String(params.className || "Class IX")],
+    se_boards: String(params.board || "Tamil Nadu") === "CBSE"
+      ? ["CBSE", "State (Tamil Nadu)", "State (Andhra Pradesh)"]
+      : [String(params.board || "State (Tamil Nadu)")],
+    se_gradeLevels: [sunbirdGradeLevel],
     se_mediums: [String(params.medium || "Tamil")],
     se_subjects: [String(params.subject || "Tamil"), "Tamil Language"],
   };
-  const body = {
-    request: {
-      filters,
-      query: String(params.query || "").trim(),
-      limit: 10,
-      offset: 0,
-      fields: [
-        "name",
-        "identifier",
-        "mimeType",
-        "contentType",
-        "subject",
-        "gradeLevel",
-        "medium",
-        "board",
-        "se_boards",
-        "se_subjects",
-        "se_mediums",
-        "se_gradeLevels",
-      ],
-      sort_by: { lastPublishedOn: "desc" },
-    },
+  const productionRequestArgs = {
+    filters: productionFilters,
+    query: String(params.query || "").trim(),
+    limit: 10,
+    offset: 0,
+    fields: [
+      "name",
+      "identifier",
+      "mimeType",
+      "contentType",
+      "subject",
+      "gradeLevel",
+      "medium",
+      "board",
+      "se_boards",
+      "se_subjects",
+      "se_mediums",
+      "se_gradeLevels",
+    ],
+    sort_by: { lastPublishedOn: "desc" },
+    facets: [],
   };
 
+  const sandboxRequestArgs = {
+    query: String(params.query || "").trim(),
+    limit: 10,
+    offset: 0,
+    fields: [
+      "name",
+      "mimeType",
+      "contentType",
+      "subject",
+      "board",
+      "se_boards",
+      "se_subjects",
+      "se_mediums",
+      "se_gradeLevels",
+      "creator",
+    ],
+    sort_by: { lastPublishedOn: "desc" },
+    facets: [],
+    filters: {
+      status: ["Live"],
+    } as Record<string, string[]>,
+  };
+
+  const sandboxMedium = String(params.medium || "Tamil").trim();
+  if (["English", "Hindi", "Tamil", "Telugu"].includes(sandboxMedium)) {
+    sandboxRequestArgs.filters.se_mediums = [sandboxMedium];
+  }
+
+  const sandboxBoard = String(params.board || "CBSE").trim();
+  if (sandboxBoard === "CBSE") {
+    sandboxRequestArgs.filters.se_boards = [sandboxBoard];
+  }
+
   const [production, sandbox] = await Promise.allSettled([
-    fetchSunbirdJson(SUNBIRD_PRODUCTION_BASE_URL, "/api/content/v1/search", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
-    fetchSunbirdJson(SUNBIRD_SANDBOX_BASE_URL, "/api/content/v1/search?orgdetails=orgName,email&framework=NCF", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }),
+    callSunbirdMcpTool("search_content", { search_params: productionRequestArgs }),
+    callSunbirdMcpTool("sandbox_search_content", { search_params: sandboxRequestArgs }),
   ]);
 
-  const candidates: SunbirdSearchCandidate[] = [];
-  const pushCandidates = (payload: any, source: "production" | "sandbox") => {
-    const content = payload?.result?.content || [];
+  const collectCandidates = (payload: any, source: "production" | "sandbox") => {
+    const candidates: SunbirdSearchCandidate[] = [];
+    const productionBooks = isRecord(payload?.data?.books) ? Object.values(payload.data.books) : [];
+    const sandboxBooks = Array.isArray(payload?.data?.content) ? payload.data.content : [];
+    const content = source === "production" ? productionBooks : sandboxBooks;
     content.forEach((item: any) => {
       candidates.push({
         identifier: String(item?.identifier || ""),
         name: String(item?.name || ""),
-        contentType: item?.contentType || item?.primaryCategory || "",
-        mimeType: item?.mimeType || "",
-        board: item?.board || item?.se_boards?.[0] || "",
-        se_boards: Array.isArray(item?.se_boards) ? item.se_boards : [],
-        se_gradeLevels: Array.isArray(item?.se_gradeLevels) ? item.se_gradeLevels : [],
-        se_mediums: Array.isArray(item?.se_mediums) ? item.se_mediums : [],
-        se_subjects: Array.isArray(item?.se_subjects) ? item.se_subjects : [],
+        contentType: String(item?.contentType || item?.primaryCategory || ""),
+        mimeType: String(item?.mimeType || ""),
+        board: String(item?.board || item?.se_boards?.[0] || ""),
+        se_boards: Array.isArray(item?.se_boards) ? item.se_boards.map(String) : [],
+        se_gradeLevels: Array.isArray(item?.se_gradeLevels) ? item.se_gradeLevels.map(String) : [],
+        se_mediums: Array.isArray(item?.se_mediums) ? item.se_mediums.map(String) : [],
+        se_subjects: Array.isArray(item?.se_subjects) ? item.se_subjects.map(String) : [],
         source,
       });
     });
+    return candidates.filter((item) => item.identifier && item.name);
   };
 
-  if (production.status === "fulfilled") pushCandidates(production.value, "production");
-  if (sandbox.status === "fulfilled") pushCandidates(sandbox.value, "sandbox");
+  const productionError =
+    production.status === "rejected"
+      ? production.reason?.message || String(production.reason)
+      : null;
+  const sandboxError =
+    sandbox.status === "rejected"
+      ? sandbox.reason?.message || String(sandbox.reason)
+      : null;
+
+  if (productionError) {
+    console.error("[Tamil Sunbird] MCP production search_content failed:", productionError);
+  }
+  if (sandboxError) {
+    console.warn("[Tamil Sunbird] MCP sandbox_search_content degraded:", sandboxError);
+  }
+
+  const productionCandidates =
+    production.status === "fulfilled" ? collectCandidates(production.value, "production") : [];
+  const sandboxCandidates =
+    sandbox.status === "fulfilled" ? collectCandidates(sandbox.value, "sandbox") : [];
+
+  if (production.status === "fulfilled") {
+    const productionBookKeys = isRecord(production.value?.data?.books)
+      ? Object.keys(production.value.data.books)
+      : [];
+    console.info("[Tamil Sunbird] Production MCP search summary:", {
+      count: production.value?.data?.count ?? null,
+      rawBookCount: productionBookKeys.length,
+      candidateCount: productionCandidates.length,
+      query: productionRequestArgs.query,
+      filters: productionRequestArgs.filters,
+      sampleBookKeys: productionBookKeys.slice(0, 5),
+      sampleBooks: productionBookKeys.slice(0, 2).map((key) => production.value.data.books[key]),
+    });
+  }
+
+  if (sandbox.status === "fulfilled") {
+    const sandboxContent = Array.isArray(sandbox.value?.data?.content) ? sandbox.value.data.content : [];
+    console.info("[Tamil Sunbird] Sandbox MCP search summary:", {
+      count: sandbox.value?.data?.count ?? null,
+      rawContentCount: sandboxContent.length,
+      candidateCount: sandboxCandidates.length,
+      query: sandboxRequestArgs.query,
+      filters: sandboxRequestArgs.filters,
+      sampleContent: sandboxContent.slice(0, 2),
+    });
+  }
+
+  if (!productionCandidates.length) {
+    const reasons: string[] = [];
+    if (productionError) {
+      reasons.push(`production failed: ${productionError}`);
+    } else {
+      reasons.push("production returned no usable Sunbird results");
+    }
+    if (sandboxError) {
+      reasons.push(`sandbox failed: ${sandboxError}`);
+    } else if (!sandboxCandidates.length) {
+      reasons.push("sandbox returned no usable Sunbird results");
+    }
+    throw new Error(reasons.join(" | "));
+  }
+
+  if (sandboxError) {
+    console.info(
+      `[Tamil Sunbird] Returning production-only results after sandbox degradation (${productionCandidates.length} production candidates).`
+    );
+  }
 
   return Array.from(
     new Map(
-      candidates
-        .filter((item) => item.identifier && item.name)
+      [...productionCandidates, ...sandboxCandidates]
         .map((item) => [`${item.source}:${item.identifier}`, item] as const)
     ).values()
   );
 }
 
 async function readSunbirdContentTree(contentId: string, source: "production" | "sandbox" = "sandbox") {
-  const baseUrl = source === "sandbox" ? SUNBIRD_SANDBOX_BASE_URL : SUNBIRD_PRODUCTION_BASE_URL;
-  const visited = new Set<string>();
-  const nodes: SunbirdContentManifestNode[] = [];
-
-  const visit = async (identifier: string) => {
-    if (!identifier || visited.has(identifier)) return;
-    visited.add(identifier);
-    const payload = await fetchSunbirdJson(baseUrl, `/api/content/v1/read/${identifier}`);
-    const content = payload?.result?.content;
-    if (!content) return;
-    const children = Array.isArray(content?.leafNodes) ? content.leafNodes.filter(Boolean) : [];
-    nodes.push({
-      identifier: String(content?.identifier || identifier),
-      name: String(content?.name || ""),
-      mimeType: String(content?.mimeType || ""),
-      primaryCategory: String(content?.primaryCategory || ""),
-      board: String(content?.board || content?.se_boards?.[0] || ""),
-      medium: Array.isArray(content?.medium) ? content.medium : Array.isArray(content?.se_mediums) ? content.se_mediums : [],
-      gradeLevel: Array.isArray(content?.gradeLevel) ? content.gradeLevel : Array.isArray(content?.se_gradeLevels) ? content.se_gradeLevels : [],
-      subject: Array.isArray(content?.subject) ? content.subject : Array.isArray(content?.se_subjects) ? content.se_subjects : [],
-      previewUrl: String(content?.previewUrl || ""),
-      artifactUrl: String(content?.artifactUrl || content?.streamingUrl || ""),
-      children,
-    });
-    for (const childId of children) {
-      await visit(String(childId));
-    }
-  };
-
-  await visit(contentId);
-  return nodes;
+  const payload = await callSunbirdMcpTool("read_content_tree", {
+    content_params: { content_id: contentId, source },
+  });
+  const nodes = Array.isArray(payload?.nodes) ? payload.nodes : [];
+  return nodes.map((node: any) => ({
+    identifier: String(node?.identifier || ""),
+    name: String(node?.name || ""),
+    mimeType: String(node?.mimeType || ""),
+    primaryCategory: String(node?.primaryCategory || ""),
+    board: String(node?.board || ""),
+    medium: Array.isArray(node?.medium) ? node.medium.map(String) : [],
+    gradeLevel: Array.isArray(node?.gradeLevel) ? node.gradeLevel.map(String) : [],
+    subject: Array.isArray(node?.subject) ? node.subject.map(String) : [],
+    previewUrl: String(node?.previewUrl || ""),
+    artifactUrl: String(node?.artifactUrl || ""),
+    children: Array.isArray(node?.children) ? node.children.map(String) : [],
+  }));
 }
 
 function reduceSunbirdNodesToTamilStructure(
@@ -12070,7 +12248,7 @@ function normalizeSessionPptGenerationOptions(input: any): SessionPptGenerationO
 function getOllamaConfig(kind: OllamaGenerationKind): { baseUrl: string; model: string } {
   refreshRuntimeEnv();
   const defaultBaseUrl = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11435";
-  const defaultModel = process.env.OLLAMA_MODEL || "qwen3.5:35b-mlx";
+  const defaultModel = process.env.OLLAMA_MODEL || "qwen3.5:35b";
   const sessionContentBaseUrl = process.env.OLLAMA_SESSION_CONTENT_BASE_URL || defaultBaseUrl;
   const sessionContentModel = process.env.OLLAMA_SESSION_CONTENT_MODEL || defaultModel;
   const imageBaseUrl = process.env.OLLAMA_IMAGE_BASE_URL || defaultBaseUrl;

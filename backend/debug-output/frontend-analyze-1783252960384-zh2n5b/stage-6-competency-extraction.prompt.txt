@@ -1,0 +1,390 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 6: Competency Extraction
+- Extract competencies only.
+- No analysis or lesson-planning inference.
+- Use only the provided class/unit/chapter payload as structural context.
+- Do not invent new units or chapters.
+
+Stage payload:
+{
+  "classes": [
+    {
+      "class_name": "Class X",
+      "subject": "Tamil",
+      "units": [
+        {
+          "unit_id": "class-10-tamil-u1",
+          "unit_name": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "part_or_section": "தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Iyal 1 - தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+              "part_or_section": "தொமகா ழி, மனி ே ம் அன் ரன தொமகா ழி தய *",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Unseen Passage MCQ",
+                "Unseen Passage Short Answer"
+              ],
+              "subtopics": [
+                "Mozhi, Ilakkiyam, Varalaru"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-10-tamil-u2",
+          "unit_name": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+          "part_or_section": "தக கி ட் ைேகா என் கு ை ! ல்",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Iyal 2 - தக கி ட் ைேகா என் கு ை ! ல்",
+              "part_or_section": "தக கி ட் ைேகா என் கு ை ! ல்",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Eluthu, Chol",
+                "Thogainilai Thodarkal"
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Section B Grammar"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-10-tamil-u3",
+          "unit_name": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "part_or_section": "பண் பகா டு விருந்து தபகா றுதும்! ற்",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Iyal 3 - பண் பகா டு விருந்து தபகா றுதும்! ற்",
+              "part_or_section": "பண் பகா டு விருந்து தபகா றுதும்! ற்",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Ilakkanam - Podhu",
+                "Vinaa, Vidai Vagai"
+              ],
+              "subtopics": [
+                "Porulkol",
+                "Agaporul Ilakkanam"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-10-tamil-u4",
+          "unit_name": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "part_or_section": "கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Iyal 4 - கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+              "part_or_section": "கல்வி தொமகா ழி தொப யர்ப்புக் கல்வி",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Official/Informal Letter",
+                "Essay Writing"
+              ],
+              "subtopics": [
+                "Picture Description"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-10-tamil-u5",
+          "unit_name": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "part_or_section": "க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Iyal 5 - க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+              "part_or_section": "க ர்ல , அ ை கியல், புது ரம பன்முகக் க ர்ல ஞர்",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Thirukkural Fill ups",
+                "Poetry Comprehension"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-10-tamil-u6",
+          "unit_name": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "part_or_section": "�கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Iyal 6 - �கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+              "part_or_section": "�கா கரிகம், �கா டு, ெ மூகம் சிற் ை கல் ஒளி",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Do as Directed",
+                "Illakkana kurippu"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-10-tamil-u7",
+          "unit_name": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "part_or_section": "அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Iyal 7 - அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+              "part_or_section": "அ ை ம், ே த்துவம், சிந் ேரன ெ ங் க இ ்ல க்கியத்தில் அ ை ம்",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Unseen Passage MCQ",
+                "Unseen Passage Short Answer"
+              ],
+              "subtopics": [
+                "Mozhi, Ilakkiyam, Varalaru"
+              ],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+## CLASS - X 2024 - 2025
+(IYAL 1 to 6)
+Time : 3 hrs80 Marks
+## Section – A - Reading Unseen Passage - 10 marks
+- 1. unseen passage- MCQ -(5 marks)
+( Mozhi, Ilakkiyam, Varalaru)
+- 2. Unseen passage - Short answer -(5 marks)
+( Mozhi, Ilakkiyam, Varalaru)
+## Section -B Grammar Section - 12 marks (MCQ)
+- 1. Eluthu, Chol
+- 2. Thogainilai Thodarkal
+- 3. Thogaanilai Thodarkal
+- 4. Ilakkanam - Podhu
+- 5. Vinaa, Vidai Vagai, Porulkol
+- 6. Agaporul Ilakkanam
+## Section -C Main Course Book - 31 Marks
+( MCQ , Short Answer & Long Answer)
+www.careerindia.com Part -1: Prose
+- 1. Tamil CholValam
+- 2. Ketgirathaa En Kural
+3.Virunthu Potruthum
+
+---
+
+# Page 3
+
+- 4. Seyarkai Nunnarivu
+- 5. Mozhipeyarpu Kalvi
+- 6. Nikaz Kalai
+## Part - II : Poetry
+- 1. Annai Mozhiye
+- 2. Iratura Mozhithal
+- 3. Kaatrae Vaa
+- 4. Mullai Paattu
+- 5. Kaasi kaantam
+- 6. Malaipadu Kadaam
+- 7. Thirukkural
+- 8. Perumal Thirumozhi
+- 9. Paripaadal
+10.Neethi Venpa
+- 11. Thiruvilaiyadal Puraanam
+12.Poo Thoduthal
+- 13. Muthukumaarasami Pillaithamizh
+14.Kambaramayanam
+15.Thirukkural
+## Section – D Non-detail 10 Marks
+- 1. Urainadaiyin Aninalangal
+www.careerindia.com
+- 2. Puyaliley Oru Thoni
+- 3. Gopallapurathu Makkal
+- 4. Vinnai Thandiya Thannampikkai
+
+---
+
+# Page 4
+
+- 5. Puthiya Nampikkai
+- 6. Paaichal
+## Section – E Creative Writing - 17Marks
+- 1. Official/ Informal Letter (8marks)
+- 2. Essay writing (6marks)
+- 3. Picture Description (3 marks)
+Textbook Prescribed
+Tamil Textbook - Class X, Edition - 2020.
+Content Creation by State Council of Educational Research and Training.
+Tamil Nadu Arasu Printing& Publishing by Tamil Nadu Text book and
+Educational Services Corporation.
+www.careerindia.com
+
+---
+
+# Page 5
+
+Design of Question Paper- (2024-2025)Class X - TAMIL (006)
+Type of No. of
+s.no. Topic Marks Total
+Questions Questions
+## Section – A Reading Unseen Passage
+1 Unseen Passage (1) MCQ 5 5x1 5
+2 Unseen Passage (2) SA 5 5x1 5
+## Section -B Grammar
+3 Give Example MCQ 5 3x1 3
+4 Fill up MCQ 5 3x1 3
+5 Illakkana kurippu MCQ 5 3x1 3
+6 Do as Directed MCQ 5 3x1 3
+## Section -C Main Course Book
+7 Thirukkural Fill ups MCQ 2 2x1 2
+8 Poetry Comprehension MCQ 5 5x1 5
+9 Poetry SA 5 3x3 9
+10 Prose LA 5 3x5 15
+## Section – D Non-detail
+11 Non-detail LA 3 1x10 10
+## Section – E Creative Writing
+13 Picture Identification SA 1 1x3 3
+14 Letter Writing LA 2 1x8 8
+15 Essay Writing LA 3 1x6 6
+www.careerindia.com
+80
+
+---
+
+# Page 6
+
+MCQ 24 Marks
+Descriptive 56 Marks
+Unseen Passage 10 Marks
+Grammar 12 Marks
+Main course book 31 Marks
+Non-detail 10 Marks
+Creative Writing 17 Marks
+80 Marks
+Marks Distributionand No. of Periods,TAMIL ( 006) X(2024 – 2025)
+Marks
+Distributi No. of
+on Marks Weightage Periods
+Topics
+1.
+Compreh
+Sec A
+ension 10
+(Unseen
+Passage) 10 Periods
+2.
+Sec B Grammar
+12
+30 Periods
+Course
+book
+80
+Thirukku
+ral Fill 2
+ups
+www.careerindia.com Sec C
+Poetry
+compreh 5
+ension
+40 Periods
+Poetry
+9
+Short
+
+---
+
+# Page 7
+
+Answer
+Prose
+Long 15
+Answer
+Sec D Non- 15 Periods
+detail
+10
+long
+Sec E Ans---
+Creative Writing
+. Picture
+3
+Description
+Letter
+10 Periods
+8
+Writing
+Compositio
+n (General 6
+Essay)
+Internal
+Assessme 20%
+nt
+Total %
+100%
+105Periods
+www.careerindia.com

@@ -1,0 +1,35 @@
+"""Validation for Content Tree API requests."""
+
+from typing import Dict, Any, Tuple
+
+
+def validate_content_tree_request(request_data: Dict[str, Any]) -> Tuple[Dict[str, Any], list]:
+    """Validate the content tree request.
+
+    Args:
+        request_data: Raw request dictionary
+
+    Returns:
+        Tuple of (validated_data, errors) where errors is a list of error messages.
+    """
+    errors: list = []
+    validated: Dict[str, Any] = {}
+
+    if not isinstance(request_data, dict):
+        return validated, ["Request must be a JSON object"]
+
+    content_id = request_data.get("content_id")
+    if not content_id or not isinstance(content_id, str) or not content_id.strip():
+        errors.append("content_id is required and must be a non-empty string")
+    elif not content_id.startswith("do_"):
+        errors.append("content_id must start with 'do_'")
+    else:
+        validated["content_id"] = content_id.strip()
+
+    source = request_data.get("source", "sandbox")
+    if source not in ("sandbox", "production"):
+        errors.append("source must be either 'sandbox' or 'production'")
+    else:
+        validated["source"] = source
+
+    return validated, errors
