@@ -1969,7 +1969,7 @@ async function generateImageWithOllama(
   }
 ): Promise<{ imageDataUrl: string; mimeType: string; model: string }> {
   const requestPayload = {
-    model: process.env.OPENROUTER_IMAGE_MODEL || "sourceful/riverflow-v2.5-pro",
+    model: process.env.OPENROUTER_IMAGE_MODEL || "sourceful/riverflow-v2.5-fast",
     prompt,
     negativePrompt: [
       "text",
@@ -2026,7 +2026,8 @@ async function generateImageWithOllama(
       `${safeStageName(stageName)}.image-attempt-1.exception.txt`,
       String(error?.message || error)
     );
-    throw new Error(`Unable to generate an image with OpenRouter model ${requestPayload.model}.`);
+    const message = String(error?.message || error || "Unknown image generation error");
+    throw new Error(`Unable to generate an image with OpenRouter model ${requestPayload.model}: ${message}`);
   }
 }
 
@@ -2076,36 +2077,16 @@ async function enrichStudentLessonNotesWithVisuals(
       "Prefer clean shapes, arrows without text, color-coded parts, and simple educational composition.",
     ].join(" ");
 
-    try {
-      const generatedVisual = await generateImageWithOllama(
-        requestId,
-        debugDir,
-        `student-notes-visual-${index + 1}`,
-        imagePrompt,
+    enrichedSections.push({
+      ...section,
+      visualAssets: [
         {
-          subject: context.subject,
-          gradeLevel: context.gradeLevel,
-        }
-      );
-      visualsGenerated += 1;
-      enrichedSections.push({
-        ...section,
-        visualAssets: [
-          {
-            prompt: imagePrompt,
-            alt: `${String(section?.heading || `Student note visual ${index + 1}`)} illustration`,
-            imageDataUrl: generatedVisual.imageDataUrl,
-            mimeType: generatedVisual.mimeType,
-            model: generatedVisual.model,
-          },
-        ],
-      });
-    } catch (error: any) {
-      console.warn(
-        `[Ollama][${requestId}][student-notes-visual-${index + 1}] Visual generation skipped: ${error?.message || error}`
-      );
-      enrichedSections.push(section);
-    }
+          prompt: imagePrompt,
+          alt: `${String(section?.heading || `Student note visual ${index + 1}`)} illustration`,
+          model: "planned-visual",
+        },
+      ],
+    });
   }
 
   return {
@@ -2261,6 +2242,40 @@ function normalizeSessionSections(value: unknown): SessionSectionKey[] {
   return sections.length > 0 ? Array.from(new Set(sections)) : [...ALL_SESSION_SECTIONS];
 }
 
+function buildCompactMaterialsSessionPayload(sessionContextPayload: any) {
+  return {
+    sessionNumber: sessionContextPayload?.sessionNumber,
+    sessionTitle: sessionContextPayload?.sessionTitle,
+    subject: sessionContextPayload?.subject,
+    gradeLevel: sessionContextPayload?.gradeLevel,
+    selectedChapters: Array.isArray(sessionContextPayload?.selectedChapters)
+      ? sessionContextPayload.selectedChapters
+      : [],
+    totalSessions: sessionContextPayload?.totalSessions,
+    durationMinutes: sessionContextPayload?.durationMinutes,
+    learningOutcomes: Array.isArray(sessionContextPayload?.learningOutcomes)
+      ? sessionContextPayload.learningOutcomes
+      : [],
+    previousSessionContext: sessionContextPayload?.previousSessionContext || "",
+    teachingStrategy: {
+      pace: sessionContextPayload?.teachingStrategy?.pace || "",
+      targetDifficulty: sessionContextPayload?.teachingStrategy?.targetDifficulty || "",
+      teachingStyle: Array.isArray(sessionContextPayload?.teachingStrategy?.teachingStyle)
+        ? sessionContextPayload.teachingStrategy.teachingStyle
+        : [],
+      teachingResources: Array.isArray(sessionContextPayload?.teachingStrategy?.teachingResources)
+        ? sessionContextPayload.teachingStrategy.teachingResources
+        : [],
+    },
+    sessionPlanningDefaults: {
+      language: sessionContextPayload?.sessionPlanningDefaults?.language || "",
+      readingLevel: sessionContextPayload?.sessionPlanningDefaults?.readingLevel || "",
+      responseLength: sessionContextPayload?.sessionPlanningDefaults?.responseLength || "",
+      creativity: sessionContextPayload?.sessionPlanningDefaults?.creativity || "",
+    },
+  };
+}
+
 function pickSessionSections(sessionPlan: any, selectedSections: SessionSectionKey[]) {
   const partial: Record<string, unknown> = {};
   for (const section of selectedSections) {
@@ -2284,6 +2299,100 @@ function mergeSessionPlanSections(basePlan: any, patchPlan: any, selectedSection
   }
 
   return merged;
+}
+
+function normalizeSessionIdentityText(value: any) {
+  return String(value || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function sessionPlanMatchesRequest(
+  sessionPlan: any,
+  request: {
+    chapterName: string;
+    sessionTitle: string;
+    subject: string;
+    gradeLevel: string;
+    sessionNumber: number;
+  }
+) {
+  if (!sessionPlan || typeof sessionPlan !== "object") {
+    return false;
+  }
+
+  const chapterNeedle = normalizeSessionIdentityText(request.chapterName);
+  const titleNeedle = normalizeSessionIdentityText(request.sessionTitle);
+  const subjectNeedle = normalizeSessionIdentityText(request.subject);
+  const gradeNeedle = normalizeSessionIdentityText(request.gradeLevel);
+  const sessionTitle = normalizeSessionIdentityText(sessionPlan.title);
+  const pptTitle = normalizeSessionIdentityText(sessionPlan?.materials?.ppt?.title || sessionPlan?.materials?.ppt?.presentationTitle);
+  const topicCoverage = Array.isArray(sessionPlan?.materials?.ppt?.coverageSummary?.topicsCovered)
+    ? sessionPlan.materials.ppt.coverageSummary.topicsCovered.map(normalizeSessionIdentityText).join(" ")
+    : "";
+  const audience = normalizeSessionIdentityText(sessionPlan?.materials?.ppt?.audience);
+  const slideCoverage = Array.isArray(sessionPlan?.materials?.ppt?.slides)
+    ? sessionPlan.materials.ppt.slides
+        .flatMap((slide: any) => Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : [])
+        .map(normalizeSessionIdentityText)
+        .join(" ")
+    : "";
+
+  const titleOrTopicMatches =
+    (chapterNeedle && (sessionTitle.includes(chapterNeedle) || pptTitle.includes(chapterNeedle) || topicCoverage.includes(chapterNeedle) || slideCoverage.includes(chapterNeedle))) ||
+    (titleNeedle && (sessionTitle.includes(titleNeedle) || pptTitle.includes(titleNeedle)));
+
+  const subjectMatches = !subjectNeedle || audience.includes(subjectNeedle) || sessionTitle.includes(subjectNeedle) || pptTitle.includes(subjectNeedle);
+  const gradeMatches = !gradeNeedle || audience.includes(gradeNeedle);
+  const sessionMatches =
+    Number(sessionPlan?.sessionNumber || 0) === Number(request.sessionNumber || 0) ||
+    Number(sessionPlan?.sessionNumber || 0) === 0;
+
+  return Boolean(titleOrTopicMatches && subjectMatches && gradeMatches && sessionMatches);
+}
+
+function pptMatchesRequest(
+  ppt: any,
+  request: {
+    chapterName: string;
+    sessionTitle: string;
+    subject: string;
+    gradeLevel: string;
+  }
+) {
+  if (!ppt || typeof ppt !== "object") {
+    return false;
+  }
+
+  const chapterNeedle = normalizeSessionIdentityText(request.chapterName);
+  const titleNeedle = normalizeSessionIdentityText(request.sessionTitle);
+  const subjectNeedle = normalizeSessionIdentityText(request.subject);
+  const gradeNeedle = normalizeSessionIdentityText(request.gradeLevel);
+
+  const titleText = normalizeSessionIdentityText(ppt?.title || ppt?.presentationTitle);
+  const audienceText = normalizeSessionIdentityText(ppt?.audience);
+  const topicCoverage = Array.isArray(ppt?.coverageSummary?.topicsCovered)
+    ? ppt.coverageSummary.topicsCovered.map(normalizeSessionIdentityText).join(" ")
+    : "";
+  const slideCoverage = Array.isArray(ppt?.slides)
+    ? ppt.slides
+        .flatMap((slide: any) => [
+          slide?.slideTitle,
+          ...(Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : []),
+          ...(Array.isArray(slide?.bulletPoints) ? slide.bulletPoints : []),
+        ])
+        .map(normalizeSessionIdentityText)
+        .join(" ")
+    : "";
+
+  const chapterOrTitleMatches =
+    (chapterNeedle && (titleText.includes(chapterNeedle) || topicCoverage.includes(chapterNeedle) || slideCoverage.includes(chapterNeedle))) ||
+    (titleNeedle && (titleText.includes(titleNeedle) || slideCoverage.includes(titleNeedle)));
+  const subjectMatches = !subjectNeedle || titleText.includes(subjectNeedle) || audienceText.includes(subjectNeedle) || slideCoverage.includes(subjectNeedle);
+  const gradeMatches = !gradeNeedle || audienceText.includes(gradeNeedle) || slideCoverage.includes(gradeNeedle);
+
+  return Boolean(chapterOrTitleMatches && subjectMatches && gradeMatches);
 }
 
 function normalizeAssessmentCustomization(input: any): SessionAssessmentCustomization | null {
@@ -2478,6 +2587,326 @@ function buildAssessmentSourceSessionPayload(sessionPlan: any, fallback: Record<
     teacherLessonNotes: compactTeacherLessonNotesForAssessment(sessionPlan.teacherLessonNotes),
     studentLessonNotes: compactStudentLessonNotesForAssessment(sessionPlan.studentLessonNotes),
     topicCoverage: limitStringList(sessionPlan.topicCoverage, 12, 140),
+  };
+}
+
+function buildMaterialsSourceSessionPayload(sessionPlan: any, fallback: Record<string, unknown>) {
+  if (!sessionPlan || typeof sessionPlan !== "object") {
+    return fallback;
+  }
+
+  return {
+    id: sessionPlan.id || fallback.id,
+    sessionNumber: sessionPlan.sessionNumber || fallback.sessionNumber,
+    title: sessionPlan.title || fallback.title,
+    duration: sessionPlan.duration || fallback.duration,
+    learningOutcomes: limitStringList(
+      Array.isArray(sessionPlan.learningOutcomes) ? sessionPlan.learningOutcomes : fallback.learningOutcomes,
+      10,
+      220
+    ),
+    introduction: limitString(sessionPlan.introduction, 700),
+    theory: sessionPlan.theory
+      ? {
+          overview: limitString(sessionPlan.theory.overview, 700),
+          keyPoints: limitStringList(sessionPlan.theory.keyPoints, 10, 220),
+          detailedContent: limitString(sessionPlan.theory.detailedContent, 1200),
+        }
+      : null,
+    activities: (Array.isArray(sessionPlan.activities) ? sessionPlan.activities : []).slice(0, 8).map((item: any) => ({
+      name: limitString(item?.name, 160),
+      instructions: limitStringList(item?.instructions, 4, 220),
+      durationMinutes: Number(item?.durationMinutes || 0) || undefined,
+    })),
+    teacherLessonNotes: compactTeacherLessonNotesForAssessment(sessionPlan.teacherLessonNotes),
+    studentLessonNotes: compactStudentLessonNotesForAssessment(sessionPlan.studentLessonNotes),
+    homework: sessionPlan.homework
+      ? {
+          task: limitString(sessionPlan.homework.task, 300),
+          estimatedTimeMinutes: Number(sessionPlan.homework.estimatedTimeMinutes || 0) || undefined,
+        }
+      : null,
+    topicCoverage: limitStringList(sessionPlan.topicCoverage, 12, 140),
+  };
+}
+
+function hasMaterialsSourceContent(sessionPlan: any) {
+  return hasAssessmentSourceContent(sessionPlan);
+}
+
+function buildDeterministicMaterialsFromSessionPlan(
+  sessionPlan: any,
+  context: {
+    subject: string;
+    gradeLevel: string;
+    sessionTitle: string;
+    sessionNumber: number;
+    durationMinutes: number;
+    learningOutcomes: string[];
+    selectedChapters: string[];
+    generationOptions?: SessionPptGenerationOptions;
+  }
+) {
+  const templatePreset = getPptTemplatePreset(context.generationOptions?.pptTemplateId);
+  const themePreset = PPT_THEME_PRESETS[context.generationOptions?.pptThemeId || "cbse-academic-blue"] || PPT_THEME_PRESETS["cbse-academic-blue"];
+  const learningOutcomes = limitStringList(
+    Array.isArray(sessionPlan?.learningOutcomes) ? sessionPlan.learningOutcomes : context.learningOutcomes,
+    6,
+    180
+  );
+  const teacherNotes = sessionPlan?.teacherLessonNotes || {};
+  const studentNotes = sessionPlan?.studentLessonNotes || {};
+  const theory = sessionPlan?.theory || {};
+  const activities = Array.isArray(sessionPlan?.activities) ? sessionPlan.activities : [];
+  const conceptFlow = Array.isArray(teacherNotes?.conceptFlow) ? teacherNotes.conceptFlow : [];
+  const lessonBlocks = Array.isArray(teacherNotes?.lessonBlocks) ? teacherNotes.lessonBlocks : [];
+  const workedExamples = Array.isArray(studentNotes?.workedExamples) ? studentNotes.workedExamples : [];
+  const quickChecks = limitStringList(
+    teacherNotes?.assessmentQuestions || studentNotes?.selfCheckQuestions || [],
+    5,
+    180
+  );
+  const recapPoints = limitStringList(
+    teacherNotes?.sessionSummary || studentNotes?.summary || theory?.keyPoints || [],
+    5,
+    180
+  );
+  const homeworkTask = limitString(sessionPlan?.homework?.task, 240);
+  const title = String(sessionPlan?.title || context.sessionTitle || `Session ${context.sessionNumber}`);
+  const chapterText = limitStringList(context.selectedChapters, 3, 120).join(", ");
+
+  const makeSlide = (index: number, overrides: Record<string, any>) => {
+    const templateSlot = KAMALANIKETAN_TEMPLATE_SLIDES[index];
+    return {
+      templateId: templatePreset.templateId,
+      templateSlideKey: templateSlot.key,
+      templateSlideTitle: templateSlot.label,
+      isOptionalSlotFilled: true,
+      slideNumber: index + 1,
+      slideType: templateSlot.slideType,
+      slideTitle: templateSlot.label,
+      learningOutcomeIds: learningOutcomes.slice(0, 2),
+      topicCoverage: context.selectedChapters,
+      teacherIntent: "",
+      studentTakeaway: "",
+      layout: "Title + 2-column visual explainer",
+      bulletPoints: [],
+      onSlideText: [],
+      speakerNotes: [],
+      visualPlan: "",
+      assets: [],
+      animationHints: [],
+      timeEstimateMinutes: Math.max(2, Math.round(context.durationMinutes / 12)),
+      ...overrides,
+    };
+  };
+
+  const slides = [
+    makeSlide(0, {
+      slideTitle: title,
+      bulletPoints: limitStringList([
+        `${context.subject} | ${context.gradeLevel}`,
+        chapterText || "Current lesson focus",
+        `${context.durationMinutes} minute session`,
+      ], 3, 80),
+      onSlideText: limitStringList([title, chapterText, `${context.subject} | ${context.gradeLevel}`], 3, 80),
+      teacherIntent: "Introduce the session and set the learning purpose.",
+      studentTakeaway: "Understand what today’s lesson is about.",
+      speakerNotes: limitStringList([
+        teacherNotes?.sessionOverview,
+        ...(teacherNotes?.lessonPurpose || []),
+      ], 4, 220),
+      visualPlan: `A clean classroom hero visual introducing ${title}.`,
+    }),
+    makeSlide(1, {
+      slideTitle: "What We Will Learn",
+      bulletPoints: learningOutcomes,
+      onSlideText: learningOutcomes,
+      teacherIntent: "Share the learning outcomes clearly.",
+      studentTakeaway: "Know what they should learn by the end of class.",
+      speakerNotes: limitStringList([
+        ...learningOutcomes,
+        ...(teacherNotes?.learningOutcomes || []),
+      ], 5, 220),
+      visualPlan: `A structured learning goals visual for ${title}.`,
+    }),
+    makeSlide(2, {
+      slideTitle: "Recall and Prepare",
+      bulletPoints: limitStringList(teacherNotes?.prerequisiteKnowledge || studentNotes?.quickRecall || [], 5, 180),
+      onSlideText: limitStringList(teacherNotes?.prerequisiteKnowledge || studentNotes?.quickRecall || [], 4, 120),
+      teacherIntent: "Activate prior knowledge before new learning.",
+      studentTakeaway: "Reconnect with ideas needed for today’s topic.",
+      speakerNotes: limitStringList(teacherNotes?.previousSessionRecap || teacherNotes?.prerequisiteKnowledge || [], 5, 220),
+      visualPlan: `A prior-knowledge recall visual connected to ${title}.`,
+    }),
+    makeSlide(3, {
+      slideTitle: "Hook and Curiosity",
+      bulletPoints: limitStringList([sessionPlan?.introduction, teacherNotes?.sessionOverview], 3, 180),
+      onSlideText: limitStringList([sessionPlan?.introduction], 2, 140),
+      teacherIntent: "Create curiosity and bridge into the lesson.",
+      studentTakeaway: "See why the topic matters.",
+      speakerNotes: limitStringList([sessionPlan?.introduction, ...(teacherNotes?.lessonPurpose || [])], 4, 220),
+      visualPlan: `An engaging hook visual that sparks curiosity about ${title}.`,
+    }),
+    makeSlide(4, {
+      slideTitle: "Topic Introduction",
+      bulletPoints: limitStringList([theory?.overview, studentNotes?.introduction, ...(studentNotes?.definitions || []).map((item: any) => `${item.term}: ${item.definition}`)], 5, 180),
+      onSlideText: limitStringList([theory?.overview, studentNotes?.introduction], 3, 140),
+      teacherIntent: "Introduce the central idea and vocabulary.",
+      studentTakeaway: "Understand the main concept and basic terms.",
+      speakerNotes: limitStringList([theory?.overview, studentNotes?.introduction], 4, 220),
+      visualPlan: `A concept introduction visual for ${title} with clear educational focus.`,
+    }),
+    makeSlide(5, {
+      slideTitle: limitString(conceptFlow?.[0]?.conceptName || lessonBlocks?.[0]?.title || "Core Concept A", 80),
+      bulletPoints: limitStringList([
+        conceptFlow?.[0]?.definition,
+        conceptFlow?.[0]?.coreExplanation,
+        ...(conceptFlow?.[0]?.keywords || []),
+        ...(lessonBlocks?.[0]?.explanation || []),
+      ], 5, 180),
+      onSlideText: limitStringList([
+        conceptFlow?.[0]?.definition,
+        ...(conceptFlow?.[0]?.keywords || []),
+      ], 4, 120),
+      teacherIntent: "Build the first core concept clearly.",
+      studentTakeaway: "Grasp the first major idea of the lesson.",
+      speakerNotes: limitStringList([
+        conceptFlow?.[0]?.coreExplanation,
+        ...(conceptFlow?.[0]?.examples || []),
+        ...(lessonBlocks?.[0]?.examples || []),
+      ], 5, 220),
+      visualPlan: `A concept-building classroom visual for ${conceptFlow?.[0]?.conceptName || title}.`,
+    }),
+    makeSlide(6, {
+      slideTitle: limitString(conceptFlow?.[1]?.conceptName || "Visual Explanation", 80),
+      bulletPoints: limitStringList([
+        conceptFlow?.[1]?.definition,
+        conceptFlow?.[1]?.coreExplanation,
+        ...(conceptFlow?.[1]?.examples || []),
+      ], 4, 180),
+      onSlideText: limitStringList(conceptFlow?.[1]?.keywords || conceptFlow?.[0]?.keywords || [], 4, 100),
+      teacherIntent: "Explain the second concept with visual emphasis.",
+      studentTakeaway: "See the idea in a more visual form.",
+      speakerNotes: limitStringList([
+        conceptFlow?.[1]?.coreExplanation,
+        ...(conceptFlow?.[1]?.examples || []),
+        ...(conceptFlow?.[1]?.keywords || []),
+      ], 5, 220),
+      visualPlan: `A diagram-style visual that explains ${conceptFlow?.[1]?.conceptName || title}.`,
+    }),
+    makeSlide(7, {
+      slideTitle: limitString(workedExamples?.[0]?.title || "Worked Example", 80),
+      bulletPoints: limitStringList(workedExamples?.[0]?.steps || lessonBlocks?.[1]?.examples || [], 5, 180),
+      onSlideText: limitStringList(workedExamples?.[0]?.steps || [], 4, 120),
+      teacherIntent: "Model the thinking process step by step.",
+      studentTakeaway: "See how the concept is applied.",
+      speakerNotes: limitStringList([
+        workedExamples?.[0]?.explanation,
+        ...(teacherNotes?.guidedPractice || []),
+      ], 4, 220),
+      visualPlan: `A worked-example instructional visual for ${title}.`,
+    }),
+    makeSlide(8, {
+      slideTitle: "Guided Practice",
+      bulletPoints: limitStringList([
+        activities?.[0]?.name,
+        ...(activities?.[0]?.instructions || []),
+        ...(lessonBlocks?.[0]?.activity || []),
+      ], 5, 180),
+      onSlideText: limitStringList([
+        activities?.[0]?.name,
+        ...(activities?.[0]?.instructions || []),
+      ], 4, 120),
+      teacherIntent: "Help students practice with support.",
+      studentTakeaway: "Try the skill with guidance.",
+      speakerNotes: limitStringList([
+        ...(activities?.[0]?.instructions || []),
+        ...(teacherNotes?.guidedPractice || []),
+      ], 5, 220),
+      visualPlan: `A classroom activity visual that supports guided practice for ${title}.`,
+    }),
+    makeSlide(9, {
+      slideTitle: "Quick Check",
+      bulletPoints: quickChecks,
+      onSlideText: quickChecks,
+      teacherIntent: "Check understanding during the lesson.",
+      studentTakeaway: "Reflect on what they can already answer.",
+      speakerNotes: limitStringList([
+        ...(teacherNotes?.assessmentQuestions || []),
+        ...(teacherNotes?.formativeChecks || []),
+      ], 5, 220),
+      visualPlan: `A concise formative assessment slide visual for ${title}.`,
+    }),
+    makeSlide(10, {
+      slideTitle: "Key Takeaways",
+      bulletPoints: recapPoints,
+      onSlideText: recapPoints,
+      teacherIntent: "Summarize the important points clearly.",
+      studentTakeaway: "Leave with the main ideas remembered.",
+      speakerNotes: limitStringList([
+        ...(teacherNotes?.sessionSummary || []),
+        ...(studentNotes?.rememberPoints || []),
+      ], 5, 220),
+      visualPlan: `A recap visual summarizing the main ideas from ${title}.`,
+    }),
+    makeSlide(11, {
+      slideTitle: "Homework and Next Step",
+      bulletPoints: limitStringList([
+        homeworkTask,
+        ...(teacherNotes?.nextSessionBridge || []),
+      ], 4, 180),
+      onSlideText: limitStringList([
+        homeworkTask,
+        ...(teacherNotes?.nextSessionBridge || []),
+      ], 3, 120),
+      teacherIntent: "Close the lesson and set up follow-through.",
+      studentTakeaway: "Know the next task and how today connects forward.",
+      speakerNotes: limitStringList([
+        homeworkTask,
+        ...(teacherNotes?.nextSessionBridge || []),
+      ], 4, 220),
+      visualPlan: `A closure visual for homework and next-class bridge for ${title}.`,
+    }),
+  ];
+
+  return {
+    materials: {
+      ppt: {
+        templateId: templatePreset.templateId,
+        templateName: templatePreset.templateName,
+        themeId: themePreset.themeId,
+        title,
+        presentationTitle: title,
+        presentationGoal: limitString(teacherNotes?.sessionOverview || `Teach ${title} clearly in class.`, 220),
+        audience: `${context.gradeLevel} classroom`,
+        theme: themePreset.themeName,
+        themeTokens: {
+          fonts: themePreset.fonts,
+          colors: themePreset.colors,
+          visualStyle: themePreset.visualStyle,
+        },
+        coverageSummary: {
+          learningOutcomesCovered: learningOutcomes,
+          topicsCovered: context.selectedChapters,
+          taughtConceptsCovered: limitStringList(conceptFlow.map((item: any) => item?.conceptName), 6, 140),
+          omittedContent: [],
+        },
+        slides,
+      },
+      pdf: {
+        documentTitle: `${title} - Student Revision Notes`,
+        keyInformation: recapPoints.length ? recapPoints : learningOutcomes,
+      },
+      docx: {
+        outlineTitle: `${title} - Teacher Lesson Outline`,
+        sections: limitStringList([
+          teacherNotes?.sessionOverview,
+          theory?.overview,
+          ...(teacherNotes?.teachingSequence || []),
+        ], 6, 220),
+      },
+    },
   };
 }
 
@@ -3510,51 +3939,124 @@ function slugifyFileNamePart(value: string) {
 }
 
 const pptAssetResolutionCache = new Map<string, any>();
-const USE_REMOTE_PPT_ASSETS = false;
+const USE_REMOTE_PPT_ASSETS = true;
+
+function scoreReusableAsset(query: string, asset: {
+  sourceSite?: string;
+  sourceUrl?: string;
+  previewUrl?: string;
+  licenseType?: string;
+  attributionText?: string;
+  altText?: string;
+}) {
+  const queryTokens = String(query || "")
+    .toLowerCase()
+    .split(/[^a-z0-9]+/g)
+    .filter((token) => token.length > 2);
+  const haystack = [
+    asset.altText,
+    asset.attributionText,
+    asset.licenseType,
+    asset.sourceSite,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  let score = 0;
+  for (const token of queryTokens) {
+    if (haystack.includes(token)) {
+      score += token.length > 6 ? 3 : 2;
+    }
+  }
+
+  if (asset.previewUrl) score += 2;
+  if (asset.sourceUrl) score += 1;
+  if (String(asset.licenseType || "").toLowerCase().includes("cc")) score += 1;
+  if (String(asset.sourceSite || "").toLowerCase().includes("wikimedia")) score += 1;
+
+  return score;
+}
 
 async function resolveOpenverseImage(query: string) {
-  const url = `https://api.openverse.engineering/v1/images?q=${encodeURIComponent(query)}&page_size=1`;
-  const res = await fetch(url);
+  const url = `https://api.openverse.org/v1/images/?q=${encodeURIComponent(query)}&page_size=5`;
+  const res = await fetch(url, {
+    redirect: "follow",
+    headers: {
+      Accept: "application/json",
+      "Accept-Encoding": "identity",
+      "User-Agent": "LessonPlanGenerator/1.0",
+    },
+  });
   if (!res.ok) {
-    throw new Error(`Openverse lookup failed with status ${res.status}`);
+    const body = await res.text().catch(() => "");
+    throw new Error(`Openverse lookup failed with status ${res.status}${body ? `: ${body.slice(0, 160)}` : ""}`);
   }
-  const data = await res.json();
-  const item = Array.isArray(data?.results) ? data.results[0] : null;
-  if (!item) {
+  const responseText = await res.text();
+  let data: any = null;
+  try {
+    data = responseText ? JSON.parse(responseText) : null;
+  } catch {
+    throw new Error(`Openverse returned a non-JSON response: ${responseText.slice(0, 160)}`);
+  }
+  const items = Array.isArray(data?.results) ? data.results : [];
+  if (!items.length) {
     return null;
   }
-  return {
+  const candidates = items.map((item: any) => ({
     sourceSite: "Openverse",
     sourceUrl: String(item.foreign_landing_url || item.url || ""),
     previewUrl: String(item.thumbnail || item.url || ""),
     licenseType: [item.license, item.license_version].filter(Boolean).join(" ").trim() || "Reusable",
     attributionText: [item.creator, item.title].filter(Boolean).join(" - "),
     altText: String(item.title || query),
-  };
+  }));
+  return candidates
+    .sort((a, b) => scoreReusableAsset(query, b) - scoreReusableAsset(query, a))[0] || null;
 }
 
 async function resolveWikimediaImage(query: string) {
-  const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1200&format=json&origin=*`;
-  const res = await fetch(url);
+  const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1200&format=json&formatversion=2`;
+  const res = await fetch(url, {
+    redirect: "follow",
+    headers: {
+      Accept: "application/json",
+      "Accept-Encoding": "identity",
+      "User-Agent": "LessonPlanGenerator/1.0",
+    },
+  });
   if (!res.ok) {
-    throw new Error(`Wikimedia lookup failed with status ${res.status}`);
+    const body = await res.text().catch(() => "");
+    throw new Error(`Wikimedia lookup failed with status ${res.status}${body ? `: ${body.slice(0, 160)}` : ""}`);
   }
-  const data = await res.json();
+  const responseText = await res.text();
+  let data: any = null;
+  try {
+    data = responseText ? JSON.parse(responseText) : null;
+  } catch {
+    throw new Error(`Wikimedia returned a non-JSON response: ${responseText.slice(0, 160)}`);
+  }
   const pages = Object.values((data as any)?.query?.pages || {}) as any[];
-  const first = pages[0];
-  const info = first?.imageinfo?.[0];
-  if (!info) {
+  const candidates = pages
+    .map((page: any) => {
+      const info = page?.imageinfo?.[0];
+      if (!info) return null;
+      const meta = info.extmetadata || {};
+      return {
+        sourceSite: "Wikimedia Commons",
+        sourceUrl: String(info.descriptionurl || info.url || ""),
+        previewUrl: String(info.thumburl || info.url || ""),
+        licenseType: stripHtmlTags(meta?.LicenseShortName?.value || meta?.UsageTerms?.value || "Reusable"),
+        attributionText: stripHtmlTags(meta?.Artist?.value || meta?.Credit?.value || page?.title || query),
+        altText: stripHtmlTags(meta?.ImageDescription?.value || page?.title || query),
+      };
+    })
+    .filter(Boolean);
+  if (!candidates.length) {
     return null;
   }
-  const meta = info.extmetadata || {};
-  return {
-    sourceSite: "Wikimedia Commons",
-    sourceUrl: String(info.descriptionurl || info.url || ""),
-    previewUrl: String(info.thumburl || info.url || ""),
-    licenseType: stripHtmlTags(meta?.LicenseShortName?.value || meta?.UsageTerms?.value || "Reusable"),
-    attributionText: stripHtmlTags(meta?.Artist?.value || meta?.Credit?.value || first?.title || query),
-    altText: stripHtmlTags(meta?.ImageDescription?.value || first?.title || query),
-  };
+  return candidates
+    .sort((a: any, b: any) => scoreReusableAsset(query, b) - scoreReusableAsset(query, a))[0] || null;
 }
 
 async function resolveReusableImageAsset(query: string) {
@@ -3566,21 +4068,26 @@ async function resolveReusableImageAsset(query: string) {
     return pptAssetResolutionCache.get(normalizedQuery);
   }
 
-  let resolved = null;
+  const candidates: any[] = [];
   try {
-    resolved = await resolveOpenverseImage(normalizedQuery);
+    const openverseResult = await resolveOpenverseImage(normalizedQuery);
+    if (openverseResult) {
+      candidates.push(openverseResult);
+    }
   } catch (error) {
     console.warn(`[PPT Assets] Openverse lookup failed for "${normalizedQuery}":`, error);
   }
 
-  if (!resolved) {
-    try {
-      resolved = await resolveWikimediaImage(normalizedQuery);
-    } catch (error) {
-      console.warn(`[PPT Assets] Wikimedia lookup failed for "${normalizedQuery}":`, error);
+  try {
+    const wikimediaResult = await resolveWikimediaImage(normalizedQuery);
+    if (wikimediaResult) {
+      candidates.push(wikimediaResult);
     }
+  } catch (error) {
+    console.warn(`[PPT Assets] Wikimedia lookup failed for "${normalizedQuery}":`, error);
   }
 
+  const resolved = candidates.sort((a, b) => scoreReusableAsset(normalizedQuery, b) - scoreReusableAsset(normalizedQuery, a))[0] || null;
   pptAssetResolutionCache.set(normalizedQuery, resolved);
   return resolved;
 }
@@ -3771,7 +4278,7 @@ async function resolvePptSlideAssets(
     : [{
         purpose: `Support visual explanation for ${slideTitle}`,
         searchQuery: `${sessionContext.subject || "classroom"} ${slideTitle} diagram`,
-        sourceSite: "OpenRouter image model",
+        sourceSite: "Reusable web image",
         sourceUrl: "",
         licenseType: "Internally generated",
         attributionText: "",
@@ -3798,10 +4305,10 @@ async function resolvePptSlideAssets(
     const finalAsset: Record<string, any> = {
       purpose: renderableToExportPlainText(asset?.purpose || `Support visual explanation for ${slideTitle}`),
       searchQuery,
-      sourceSite: renderableToExportPlainText(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "OpenRouter image model")),
+      sourceSite: renderableToExportPlainText(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "Reusable web image")),
       sourceUrl: "",
       previewUrl: assetImageDataUrl || "",
-      licenseType: renderableToExportPlainText(asset?.licenseType || resolved?.licenseType || (preferSvg ? "Internal SVG diagram" : "Internally generated")),
+      licenseType: renderableToExportPlainText(asset?.licenseType || resolved?.licenseType || (preferSvg ? "Internal SVG diagram" : "Reusable web image")),
       attributionText: "",
       altText: renderableToExportPlainText(asset?.altText || resolved?.altText || `Illustration or diagram for ${slideTitle}`),
       placementHint: renderableToExportPlainText(asset?.placementHint || "Right panel or supporting visual zone"),
@@ -3835,60 +4342,36 @@ async function resolvePptSlideAssets(
       };
     }
 
-    const imagePrompt = [
-      "Create a clean classroom slide visual for a school teacher presentation.",
-      `Subject: ${String(sessionContext.subject || "School subject")}.`,
-      `Grade level: ${String(sessionContext.gradeLevel || "School grade")}.`,
-      `Session title: ${String(sessionContext.sessionTitle || "Lesson session")}.`,
-      `Slide title: ${slideTitle}.`,
-      `Visual requirement: ${String(slide?.visualPlan || finalAsset.purpose || searchQuery)}.`,
-      "Style: accurate, educational, uncluttered, presentation-friendly, white or light background, teacher-safe, no watermark.",
-      "Important: do not include words, labels, text, captions, letters, or numbers inside the image.",
-      "Prefer a clean central composition with diagram-like educational clarity.",
-      "Do not imitate stock-photo websites or watermarked online classroom graphics.",
-    ].join(" ");
-
-    try {
-      const generated = await generateImageWithOllama(
-        requestId,
-        debugDir,
-        `ppt-visual-${slugifyFileNamePart(slideTitle || "slide-visual")}`,
-        imagePrompt,
-        {
-          subject: sessionContext.subject,
-          gradeLevel: sessionContext.gradeLevel,
-        }
-      );
-
+    if (resolved?.previewUrl || resolved?.sourceUrl) {
       return {
         ...finalAsset,
-        imageDataUrl: generated.imageDataUrl,
-        mimeType: generated.mimeType,
-        model: generated.model,
-        sourceKind: "generated-image",
-        sourceSite: "OpenRouter image model",
-        sourceUrl: "",
-        previewUrl: generated.imageDataUrl,
-        licenseType: "Internally generated",
-        attributionText: "",
-      };
-    } catch (error) {
-      console.warn(`[PPT Assets] Image fallback failed for "${slideTitle}":`, error);
-      return {
-        ...finalAsset,
-        sourceKind: "svg-diagram",
-        sourceSite: "Internal SVG fallback",
-        licenseType: "Internal SVG fallback",
-        attributionText: "",
-        imageDataUrl: buildFallbackVisualDataUrl(
-          slideTitle,
-          String(slide?.visualPlan || finalAsset.purpose || searchQuery)
-        ),
-        previewUrl: "",
-        mimeType: "image/svg+xml",
-        model: "internal-svg-fallback",
+        sourceSite: renderableToExportPlainText(resolved.sourceSite || "Reusable web image"),
+        sourceUrl: String(resolved.sourceUrl || ""),
+        previewUrl: String(resolved.previewUrl || resolved.sourceUrl || ""),
+        licenseType: renderableToExportPlainText(resolved.licenseType || "Reusable web image"),
+        attributionText: renderableToExportPlainText(resolved.attributionText || ""),
+        altText: renderableToExportPlainText(resolved.altText || finalAsset.altText || `Illustration or diagram for ${slideTitle}`),
+        imageDataUrl: "",
+        mimeType: "",
+        model: "openverse-or-wikimedia",
+        sourceKind: "reusable-external",
       };
     }
+
+    return {
+      ...finalAsset,
+      sourceKind: "svg-diagram",
+      sourceSite: "Internal SVG fallback",
+      licenseType: "Internal SVG fallback",
+      attributionText: "",
+      imageDataUrl: buildFallbackVisualDataUrl(
+        slideTitle,
+        String(slide?.visualPlan || finalAsset.purpose || searchQuery)
+      ),
+      previewUrl: "",
+      mimeType: "image/svg+xml",
+      model: "internal-svg-fallback",
+    };
   }));
 
   return normalizedAssets;
@@ -4134,12 +4617,12 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     audience: preserveRenderableValue(ppt?.audience || `${sessionContext.gradeLevel || "Grade-aligned"} classroom`),
     theme: preserveRenderableValue(ppt?.theme || themeTokens.themeName, themeTokens.themeName),
     assetSearchPlan: {
-      preferredSources: ["Internal SVG", "OpenRouter image model"],
+      preferredSources: ["Internal SVG", "Reusable web image"],
       safeSearch: typeof ppt?.assetSearchPlan?.safeSearch === "boolean" ? ppt.assetSearchPlan.safeSearch : true,
       licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
       fallbackStrategy: preserveRenderableValue(
         ppt?.assetSearchPlan?.fallbackStrategy ||
-        "Prefer SVG diagrams for concept/process slides and use the OpenRouter image model for all picture-based visuals."
+        "Prefer SVG diagrams for concept/process slides and use reusable web images for all picture-based visuals."
       ),
     },
     licenseChecklist: Array.isArray(ppt?.licenseChecklist) && ppt.licenseChecklist.length > 0
@@ -14416,7 +14899,17 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     const existingGeneratedSessions = typeof workspace.generationScope?.generatedSessions === "object" && workspace.generationScope?.generatedSessions
       ? workspace.generationScope.generatedSessions
       : {};
-    const existingSessionPlan = existingGeneratedSessions?.[generatedSessionKey];
+    const rawExistingSessionPlan = existingGeneratedSessions?.[generatedSessionKey];
+    const requestedSessionTitle = String(req.body?.sessionTitle || chapterName || `Session ${sessionNumber}`);
+    const existingSessionPlan = sessionPlanMatchesRequest(rawExistingSessionPlan, {
+      chapterName,
+      sessionTitle: requestedSessionTitle,
+      subject: String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
+      gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || ""),
+      sessionNumber: roadmapSessionNumber,
+    })
+      ? rawExistingSessionPlan
+      : null;
     const assessmentOnly = selectedSections.length === 1 && selectedSections[0] === "assessment";
 
     if (assessmentOnly) {
@@ -14447,19 +14940,19 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
       durationMinutes,
       config,
       selectedSections,
-      sessionTitle: String(req.body?.sessionTitle || chapterName || `Session ${sessionNumber}`),
+      sessionTitle: requestedSessionTitle,
       learningOutcomes: Array.isArray(req.body?.learningOutcomes) ? req.body.learningOutcomes : [],
       previousSessionContext: String(req.body?.previousSessionContext || "").trim(),
       teachingStrategy: workspace.teachingStrategy || {},
       sessionPlanningDefaults: workspace.sessionPlanningDefaults || {},
       assessmentCustomization,
       pptGenerationOptions,
-      sourceSessionPlan: assessmentOnly ? existingSessionPlan : null,
+      sourceSessionPlan: assessmentOnly || selectedSections.includes("materials") ? existingSessionPlan : null,
     });
     const mergedSessionPlan = {
       id: existingSessionPlan?.id || `session-${generatedSessionKey}`,
       sessionNumber: existingSessionPlan?.sessionNumber || roadmapSessionNumber,
-      title: existingSessionPlan?.title || String(req.body?.sessionTitle || `${chapterName} - Session ${roadmapSessionNumber}`),
+      title: (sessionPlan as any)?.title || requestedSessionTitle || `${chapterName} - Session ${roadmapSessionNumber}`,
       duration: existingSessionPlan?.duration || durationMinutes,
       ...mergeSessionPlanSections(existingSessionPlan, sessionPlan, selectedSections),
     };
@@ -14533,6 +15026,87 @@ app.post("/api/export-pptx", async (req, res) => {
   } catch (error: any) {
     console.error("[PPTX Export] Export failed:", error);
     res.status(500).json({ error: error?.message || "Failed to export PPTX." });
+  }
+});
+
+app.post("/api/generate-slide-visuals", async (req, res) => {
+  try {
+    const sessionPlan = req.body?.sessionPlan;
+    const requestId = makeRequestId("generate-slide-visuals");
+    const debugDir = await ensureDebugDir(requestId);
+    if (!sessionPlan || typeof sessionPlan !== "object" || !sessionPlan.materials?.ppt?.slides) {
+      return res.status(400).json({ error: "A session plan with materials.ppt.slides is required." });
+    }
+
+    const ppt = sessionPlan.materials.ppt;
+    const slides = Array.isArray(ppt.slides) ? ppt.slides : [];
+    const enrichedSlides = await Promise.all(
+      slides.map(async (slide: any) => {
+        const visualAttribution = slide?.visualAttribution || {};
+        const hasVisualPlan = Boolean(visualAttribution.visualPlan);
+        const hasSvgDiagram = Boolean(visualAttribution.svgDiagram?.search || visualAttribution.svgDiagram?.purpose);
+        if (!hasVisualPlan && !hasSvgDiagram) {
+          return slide;
+        }
+
+        const slideTitle = String(slide?.slideTitle || slide?.title || `Slide ${slide?.slideNumber || 0}`);
+        const searchQuery = String(
+          visualAttribution.svgDiagram?.search ||
+          visualAttribution.visualPlan ||
+          `${req.body?.subject || "classroom"} ${slideTitle}`
+        );
+
+        const resolved = await resolveReusableImageAsset(searchQuery);
+        const imageDataUrl = resolved?.previewUrl || resolved?.sourceUrl
+          ? ""
+          : buildFallbackVisualDataUrl(slideTitle, searchQuery);
+        const mimeType = resolved?.previewUrl || resolved?.sourceUrl ? "" : "image/svg+xml";
+        const model = resolved?.previewUrl || resolved?.sourceUrl ? "openverse-or-wikimedia" : "internal-svg-fallback";
+        const sourceSite = resolved?.sourceSite || (resolved?.previewUrl || resolved?.sourceUrl ? "Reusable web image" : "Internal SVG fallback");
+        const licenseType = resolved?.licenseType || (resolved?.previewUrl || resolved?.sourceUrl ? "Reusable web image" : "Internal SVG fallback");
+        const sourceKind: string = resolved?.previewUrl || resolved?.sourceUrl ? "reusable-external" : "svg-diagram";
+
+        const enriched = {
+          ...slide,
+          assets: [
+            {
+              purpose: String(visualAttribution.svgDiagram?.purpose || `Support visual explanation for ${slideTitle}`),
+              searchQuery,
+              sourceSite,
+              sourceUrl: String(resolved?.sourceUrl || ""),
+              previewUrl: String(resolved?.previewUrl || resolved?.sourceUrl || imageDataUrl),
+              licenseType,
+              attributionText: String(resolved?.attributionText || ""),
+              altText: String(resolved?.altText || slideTitle),
+              placementHint: "Right panel or supporting visual zone",
+              imageDataUrl,
+              mimeType,
+              model,
+              sourceKind,
+            },
+          ],
+          generatedVisual: {
+            visualPlan: visualAttribution.visualPlan,
+            svgDiagram: visualAttribution.svgDiagram,
+            imageDataUrl,
+            mimeType,
+            model,
+            sourceSite,
+            licenseType,
+          },
+        };
+
+        return enriched;
+      })
+    );
+
+    const enrichedPpt = { ...ppt, slides: enrichedSlides };
+    const enrichedPlan = { ...sessionPlan, materials: { ...sessionPlan.materials, ppt: enrichedPpt } };
+
+    res.json({ success: true, sessionPlan: enrichedPlan });
+  } catch (error: any) {
+    console.error("[Slide Visuals] Generation failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to generate slide visuals." });
   }
 });
 
@@ -16118,10 +16692,10 @@ async function generateSessionDetailsArtifact({
           }
         },
         assetSearchPlan: {
-          preferredSources: ["Internal SVG", "OpenRouter image model"],
+          preferredSources: ["Internal SVG", "Reusable web image"],
           safeSearch: true,
           licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
-          fallbackStrategy: "Prefer SVG diagrams for concept/process slides and the OpenRouter image model for all picture-based visuals."
+          fallbackStrategy: "Prefer SVG diagrams for concept/process slides and reusable web images for all picture-based visuals."
         },
         licenseChecklist: ["Review generated visuals for classroom accuracy before final export."],
         presentationWarnings: ["Do not include untaught future-session content."],
@@ -16147,11 +16721,21 @@ async function generateSessionDetailsArtifact({
           bulletPoints: ["Key point"],
           onSlideText: ["Exact concise on-slide text"],
           speakerNotes: ["Teacher delivery cue"],
+          visualAttribution: {
+            visualPlan: "A clear line graph showing Temperature (Y-axis) vs. Time (X-axis), with a second overlay or separate bar chart showing Evaporation Rate.",
+            svgDiagram: {
+              purpose: "Data visualization for practice",
+              search: "science data graph temperature evaporation rate line chart educational style",
+              source: "Internal SVG",
+              license: "Internal SVG diagram",
+              animation: "Animate the line drawing itself to show the rise. Highlight specific data points as students identify them."
+            }
+          },
           visualPlan: "What visual should appear and why",
           assets: [{
             purpose: "Why this asset is needed",
             searchQuery: "precise visual search or generation intent",
-            sourceSite: "OpenRouter image model",
+            sourceSite: "Reusable web image",
             sourceUrl: "",
             licenseType: "Internally generated",
             attributionText: "",
@@ -16331,6 +16915,109 @@ async function generateSessionDetailsArtifact({
     }
   );
   sessionContextPayload.scienceGenerationMetadata = scienceGenerationMetadata;
+  const compactMaterialsSessionPayload = buildCompactMaterialsSessionPayload(sessionContextPayload);
+  const materialsSchema = {
+    materials: {
+      ppt: {
+        templateId: "",
+        templateName: "",
+        themeId: "",
+        title: "",
+        presentationTitle: "",
+        presentationGoal: "",
+        audience: "",
+        theme: "",
+        themeTokens: {
+          fonts: {
+            heading: "",
+            body: "",
+          },
+          colors: {
+            primary: "",
+            secondary: "",
+            accent: "",
+            background: "",
+            surface: "",
+            text: "",
+            mutedText: "",
+          },
+          visualStyle: {
+            topBarStyle: "",
+            cardStyle: "",
+            visualFrameStyle: "",
+          },
+        },
+        assetSearchPlan: {
+          preferredSources: [""],
+          safeSearch: true,
+          licensingNotes: [""],
+          fallbackStrategy: "",
+        },
+        licenseChecklist: [""],
+        presentationWarnings: [""],
+        coverageSummary: {
+          learningOutcomesCovered: [""],
+          topicsCovered: [""],
+          taughtConceptsCovered: [""],
+          omittedContent: [""],
+        },
+        slides: [{
+          templateId: "",
+          templateSlideKey: "",
+          templateSlideTitle: "",
+          isOptionalSlotFilled: true,
+          slideNumber: 1,
+          slideType: "",
+          slideTitle: "",
+          learningOutcomeIds: [""],
+          topicCoverage: [""],
+          teacherIntent: "",
+          studentTakeaway: "",
+          layout: "",
+          bulletPoints: [""],
+          onSlideText: [""],
+          speakerNotes: [""],
+          visualAttribution: {
+            visualPlan: "",
+            svgDiagram: {
+              purpose: "",
+              search: "",
+              source: "",
+              license: "",
+              animation: "",
+            },
+          },
+          visualPlan: "",
+          assets: [{
+            purpose: "",
+            searchQuery: "",
+            sourceSite: "",
+            sourceUrl: "",
+            licenseType: "",
+            attributionText: "",
+            altText: "",
+            placementHint: "",
+          }],
+          svgDiagram: {
+            title: "",
+            type: "",
+            instructions: [""],
+            svgCode: "",
+          },
+          animationHints: [""],
+          timeEstimateMinutes: 0,
+        }],
+      },
+      pdf: {
+        documentTitle: "",
+        keyInformation: [""],
+      },
+      docx: {
+        outlineTitle: "",
+        sections: [""],
+      },
+    },
+  };
   const prompt = teacherNotesOnly
     ? renderPromptWithEnglishDownstreamIntelligence(teacherNotesPromptName, {
         SUBJECT: String(subject || ""),
@@ -16400,7 +17087,7 @@ async function generateSessionDetailsArtifact({
         RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
         CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
-        SESSION_JSON: JSON.stringify(sessionContextPayload, null, 2),
+        SESSION_JSON: JSON.stringify(compactMaterialsSessionPayload),
         SLIDE_CONFIG_JSON: JSON.stringify({
           templateId: pptGenerationOptions?.pptTemplateId || "academic-split",
           templateDeck: "Kamalaniketan-pptx template.pptx",
@@ -16418,8 +17105,8 @@ async function generateSessionDetailsArtifact({
             colors: preset.colors,
             visualStyle: preset.visualStyle,
           })),
-          assetPolicy: ["Internal SVG", "OpenRouter image model"],
-          imageFallbackPolicy: "svg first for explainers, OpenRouter image model for all picture-based visuals",
+          assetPolicy: ["Internal SVG", "Reusable web image"],
+          imageFallbackPolicy: "svg first for explainers, reusable web images for all picture-based visuals",
           deckRatio: "16:9",
           outputDepth: "full_slide_spec",
           diagrams: "svg_preferred_for_process_and_structure",
@@ -16447,9 +17134,10 @@ async function generateSessionDetailsArtifact({
               "theme changes must not alter content structure",
             ],
           },
-        }, null, 2),
+        }),
       }, {
         englishMode: englishGenerationMode,
+        scienceMode: false,
         stageLabel: "PPT and materials generation",
       })
     : homeworkOnly
@@ -16506,7 +17194,7 @@ async function generateSessionDetailsArtifact({
     : studentNotesOnly
     ? { studentLessonNotes: baseSchema.studentLessonNotes }
     : materialsOnly
-    ? { materials: baseSchema.materials }
+    ? materialsSchema
     : homeworkOnly
     ? {
         homework: {
@@ -16574,32 +17262,83 @@ async function generateSessionDetailsArtifact({
     ? "assessment"
     : "sessionContent";
 
-  const response = await generateWithOllama(
-    requestId,
-    debugDir,
-    teacherNotesOnly
-      ? "generate-content-session-teacher-notes"
-      : studentNotesOnly
-      ? "generate-content-session-student-notes"
-      : materialsOnly
-      ? "generate-content-session-ppt-materials"
-      : homeworkOnly
-      ? "generate-content-session-homework"
-      : assessmentOnly
-      ? "generate-content-session-assessment"
-      : "generate-content-session",
-    prompt,
-    schema,
-    {
-      ...getOllamaConfig(generationKind),
-      numPredict:
-        assessmentOnly
-          ? Math.max(12288, OLLAMA_NUM_PREDICT)
-          : effectiveSessionConfig.includeAssessments
-          ? Math.max(10240, OLLAMA_NUM_PREDICT)
-          : OLLAMA_NUM_PREDICT,
+  const generationStageName = teacherNotesOnly
+    ? "generate-content-session-teacher-notes"
+    : studentNotesOnly
+    ? "generate-content-session-student-notes"
+    : materialsOnly
+    ? "generate-content-session-ppt-materials"
+    : homeworkOnly
+    ? "generate-content-session-homework"
+    : assessmentOnly
+    ? "generate-content-session-assessment"
+    : "generate-content-session";
+
+  let response;
+  try {
+    response = await generateWithOllama(
+      requestId,
+      debugDir,
+      generationStageName,
+      prompt,
+      schema,
+      {
+        ...getOllamaConfig(generationKind),
+        numPredict:
+          assessmentOnly
+            ? Math.max(12288, OLLAMA_NUM_PREDICT)
+            : effectiveSessionConfig.includeAssessments
+            ? Math.max(10240, OLLAMA_NUM_PREDICT)
+            : OLLAMA_NUM_PREDICT,
+      }
+    );
+  } catch (error: any) {
+    const shouldUseDeterministicMaterialsFallback =
+      materialsOnly &&
+      hasMaterialsSourceContent(sourceSessionPlan) &&
+      (
+        String(error?.code || "") === "OLLAMA_INCOMPLETE_RESPONSE" ||
+        String(error?.code || "") === "OLLAMA_EMPTY_RESPONSE"
+      );
+
+    if (!shouldUseDeterministicMaterialsFallback) {
+      throw error;
     }
-  );
+
+    console.warn(`[Ollama][${requestId}] Falling back to deterministic PPT materials generation from existing session content.`);
+    const fallbackSession = buildDeterministicMaterialsFromSessionPlan(
+      sourceSessionPlan,
+      {
+        subject,
+        gradeLevel,
+        sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+        sessionNumber,
+        durationMinutes,
+        learningOutcomes,
+        selectedChapters,
+        generationOptions: pptGenerationOptions,
+      }
+    );
+    await writeDebugFile(debugDir, "ppt-materials-deterministic-fallback.json", fallbackSession);
+    const normalizedFallbackPpt = await normalizePptMaterial(fallbackSession.materials.ppt, {
+      subject,
+      gradeLevel,
+      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+      learningOutcomes,
+      selectedChapters,
+      requestId,
+      debugDir,
+      generationOptions: pptGenerationOptions,
+    });
+    const fallbackNormalizedSession = {
+      materials: {
+        ...fallbackSession.materials,
+        ppt: normalizedFallbackPpt,
+      },
+    };
+    await writeDebugFile(debugDir, "final-response.json", fallbackNormalizedSession);
+    return fallbackNormalizedSession;
+  }
   let responseText = response.text || "{}";
   if (response.doneReason === "length") {
     const recoveredPptText = materialsOnly ? tryRepairTruncatedPptJson(responseText) : null;
@@ -16647,6 +17386,33 @@ async function generateSessionDetailsArtifact({
       sessionTitle: sessionTitle || `Session ${sessionNumber}`,
     });
     parsedSession.studentLessonNotes = enrichedStudentNotesSession?.studentLessonNotes || parsedSession.studentLessonNotes;
+  }
+  if (parsedSession?.materials?.ppt) {
+    const requestedChapterName = String(selectedChapters?.[0] || sessionTitle || `Session ${sessionNumber}`);
+    const pptLooksCompatible = pptMatchesRequest(parsedSession.materials.ppt, {
+      chapterName: requestedChapterName,
+      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+      subject,
+      gradeLevel,
+    });
+    if (!pptLooksCompatible) {
+      console.warn(`[Ollama][${requestId}] PPT materials content did not match requested subject/session. Replacing with deterministic session-grounded deck.`);
+      const fallbackSession = buildDeterministicMaterialsFromSessionPlan(parsedSession, {
+        subject,
+        gradeLevel,
+        sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+        sessionNumber,
+        durationMinutes,
+        learningOutcomes,
+        selectedChapters,
+        generationOptions: pptGenerationOptions,
+      });
+      parsedSession.materials = {
+        ...parsedSession.materials,
+        ...fallbackSession.materials,
+      };
+      await writeDebugFile(debugDir, "ppt-materials-subject-mismatch-fallback.json", parsedSession.materials);
+    }
   }
   if (parsedSession?.materials?.ppt) {
     parsedSession.materials.ppt = await normalizePptMaterial(parsedSession.materials.ppt, {

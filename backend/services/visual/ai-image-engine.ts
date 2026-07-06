@@ -6,7 +6,7 @@
 import type { AiImageRequest } from "../../../src/types-visual.js";
 
 const OPENROUTER_API_URL = process.env.OPENROUTER_API_URL || "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_IMAGE_MODEL = process.env.OPENROUTER_IMAGE_MODEL || "sourceful/riverflow-v2.5-pro";
+const OPENROUTER_IMAGE_MODEL = process.env.OPENROUTER_IMAGE_MODEL || "sourceful/riverflow-v2.5-fast";
 const OPENROUTER_APP_TITLE = process.env.OPENROUTER_APP_TITLE || "AI PPT Generator";
 const OPENROUTER_TIMEOUT_MS = Number(process.env.OPENROUTER_TIMEOUT_MS) || 180000;
 

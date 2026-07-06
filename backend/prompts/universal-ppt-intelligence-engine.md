@@ -316,104 +316,19 @@ Use the selected template and theme from the provided configuration.
 
 ## OUTPUT CONTRACT
 
-Return **valid JSON only**. Use this exact structure:
+Return **valid JSON only**.
 
 For `assets[]`, generate only the planning/spec fields the PPT runtime needs to create or choose a visual.
 Do not generate final binary/image payload fields yourself.
 Leave actual image rendering to runtime.
 
-```json
-{
-  "materials": {
-    "ppt": {
-      "deckMode": "teacher-delivery",
-      "templateId": "",
-      "templateName": "",
-      "themeId": "",
-      "themeName": "",
-      "theme": "",
-      "themeTokens": {
-        "fonts": { "heading": "", "body": "" },
-        "colors": {
-          "primary": "", "secondary": "", "accent": "",
-          "background": "", "surface": "", "text": "", "mutedText": ""
-        },
-        "visualStyle": {
-          "topBarStyle": "",
-          "cardStyle": "",
-          "visualFrameStyle": ""
-        }
-      },
-      "title": "",
-      "presentationTitle": "",
-      "presentationGoal": "",
-      "audience": "",
-      "assetSearchPlan": {
-        "preferredSources": ["Internal SVG", "OpenRouter image model"],
-        "safeSearch": true,
-        "licensingNotes": ["Use internally generated images and in-app SVG diagrams only."],
-        "fallbackStrategy": "Prefer SVG diagrams for concept/process slides and the OpenRouter image model for all picture-based visuals."
-      },
-      "licenseChecklist": [""],
-      "presentationWarnings": [""],
-      "coverageSummary": {
-        "learningOutcomesCovered": [""],
-        "topicsCovered": [""],
-        "taughtConceptsCovered": [""],
-        "omittedContent": []
-      },
-      "slides": [
-        {
-          "templateId": "",
-          "templateSlideKey": "",
-          "templateSlideTitle": "",
-          "isOptionalSlotFilled": true,
-          "slideNumber": 1,
-          "slideType": "",
-          "slideTitle": "",
-          "learningOutcomeIds": [""],
-          "topicCoverage": [""],
-          "teacherIntent": "",
-          "studentTakeaway": "",
-          "layout": "",
-          "bulletPoints": [""],
-          "onSlideText": [""],
-          "speakerNotes": [""],
-          "visualPlan": "",
-          "assets": [
-            {
-              "purpose": "",
-              "searchQuery": "",
-              "sourceSite": "OpenRouter image model",
-              "sourceUrl": "",
-              "licenseType": "",
-              "attributionText": "",
-              "altText": "",
-              "placementHint": ""
-            }
-          ],
-          "svgDiagram": {
-            "title": "",
-            "type": "",
-            "instructions": [""],
-            "svgCode": ""
-          },
-          "animationHints": [""],
-          "timeEstimateMinutes": 0
-        }
-      ]
-    },
-    "pdf": {
-      "documentTitle": "",
-      "keyInformation": [""]
-    },
-    "docx": {
-      "outlineTitle": "",
-      "sections": [""]
-    }
-  }
-}
-```
+Follow the exact runtime schema provided separately in the request.
+Key requirements:
+- Root object must contain `materials`
+- Include `materials.ppt`, `materials.pdf`, and `materials.docx`
+- Generate exactly 12 slides in the required order
+- Fill slide planning fields completely, but leave runtime-rendered image payload fields empty
+- Keep `assets[]` as planning metadata only
 
 ## FINAL QUALITY VALIDATION
 

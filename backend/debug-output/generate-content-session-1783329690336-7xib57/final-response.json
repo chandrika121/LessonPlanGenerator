@@ -1,0 +1,848 @@
+{
+  "materials": {
+    "ppt": {
+      "deckMode": "teacher-delivery",
+      "templateId": "academic-split",
+      "templateName": "Kamalaniketan Session PPT Template",
+      "themeId": "kamalaniketan-modern",
+      "themeName": "kamalaniketan-modern",
+      "themeTokens": {
+        "themeId": "kamalaniketan-modern",
+        "themeName": "kamalaniketan-modern",
+        "fonts": {
+          "heading": "Outfit",
+          "body": "Inter"
+        },
+        "colors": {
+          "primary": "#36ADAA",
+          "secondary": "#1EABDA",
+          "accent": "#DE8431",
+          "background": "#EEF4F7",
+          "surface": "#FFFFFF",
+          "text": "#0F172A",
+          "mutedText": "#64748B"
+        },
+        "visualStyle": {
+          "topBarStyle": "bold color band",
+          "cardStyle": "rounded modern educator cards",
+          "visualFrameStyle": "large clean visual panel"
+        }
+      },
+      "title": "Integrated Science: Assessment & Revision",
+      "presentationTitle": "Science Review: Concepts, Data & Processes",
+      "presentationGoal": "To consolidate key scientific concepts through visual analysis, formula application, and process review in preparation for assessment.",
+      "audience": "Middle School Integrated Science Students (Grades 6-8)",
+      "theme": "kamalaniketan-modern",
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Internal SVG",
+          "Google Imagen API"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Use internally generated images and in-app SVG diagrams only."
+        ],
+        "fallbackStrategy": "Prefer SVG diagrams for concept/process slides and the Google Imagen API for all picture-based visuals."
+      },
+      "licenseChecklist": [
+        "Review generated visuals for classroom accuracy before final export.",
+        "Ensure scientific symbols in formulas are rendered correctly."
+      ],
+      "presentationWarnings": [
+        "Do not include untaught future-session content.",
+        "Focus on revision of previously taught concepts only."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "LO1: Recall and apply scientific formulas",
+          "LO2: Interpret data from graphs and diagrams",
+          "LO3: Explain key scientific processes"
+        ],
+        "topicsCovered": [
+          "Scientific Formulas & Equations",
+          "Data Analysis & Graphs",
+          "Process Flow Review"
+        ],
+        "taughtConceptsCovered": [
+          "Formula application in context",
+          "Reading X and Y axes correctly",
+          "Step-by-step process sequencing"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Title / Session Identity",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "hook | concept | comparison | process | summary",
+          "slideTitle": "Integrated Science: Assessment & Revision",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Session Overview"
+          ],
+          "teacherIntent": "Introduce the session as a comprehensive review and assessment preparation.",
+          "studentTakeaway": "Students understand today is for consolidating knowledge through visuals and practice.",
+          "layout": "Title + Hero Visual",
+          "bulletPoints": [
+            "Integrated Science Review Session",
+            "Focus: Formulas, Data & Processes",
+            "Goal: Assessment Readiness"
+          ],
+          "onSlideText": [
+            "Science Review: Concepts, Data & Processes",
+            "Session 12 of Integrated Science Unit",
+            "Ready for your assessment?"
+          ],
+          "speakerNotes": [
+            "Welcome students to the review session.",
+            "Explain that today we will revisit key concepts through visuals and problem-solving rather than just reading text.",
+            "Emphasize that this is a safe space to practice before the formal assessment.",
+            "Transition: Let's look at what we need to know."
+          ],
+          "visualPlan": "Hero visual combining elements of chemistry (beaker), physics/math (graph/line), and general science to represent the integrated nature.",
+          "assets": [
+            {
+              "purpose": "Visual representation of Integrated Science themes",
+              "searchQuery": "science laboratory beaker graph formula educational illustration flat design",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Illustration of science tools including a beaker, graph chart, and mathematical symbols.",
+              "placementHint": "Right panel full bleed",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkludGVncmF0ZWQgU2NpZW5jZTogQXNzZXNzbWVudCAmYW1wOyBSZXZpc2lvbiI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+SW50ZWdyYXRlZCBTY2llbmNlOiBBc3Nlc3NtZW50ICZhbXA7IFJldmlzaW9uPC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIEhlcm8gdmlzdWFsIGNvbWJpbmluZyBlbGVtZW50cyBvZiBjaGVtaXN0cnkgKGJlYWtlciksIHBoeXNpY3MvbWF0aCAoZ3JhcGgvbGluZSksIGFuZCBnZW5lcmFsIHNjaWVuY2UgdG8gcmVwcmVzZW50IHRoZSBpbnRlZ3JhdGVkIG5hdHVyZS4KICAgIDwvZGl2PgogIDwvZm9yZWlnbk9iamVjdD4KICA8dGV4dCB4PSI2MDAiIHk9Ijc0OCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmaWxsPSIjNjQ3NDhCIj5SdW50aW1lIGltYWdlIGdlbmVyYXRpb24gd2FzIHVuYXZhaWxhYmxlLCBzbyBhbiBpbnRlcm5hbCBmYWxsYmFjayB2aXN1YWwgd2FzIHVzZWQuPC90ZXh0Pgo8L3N2Zz4=",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Session Identity",
+            "type": "concept map",
+            "instructions": [
+              "Display session title prominently."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in the hero visual slowly.",
+            "Animate text bullet points one by one."
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "concept | summary",
+          "slideTitle": "Learning Outcomes & Success Criteria",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2",
+            "LO3"
+          ],
+          "topicCoverage": [
+            "Session Goals"
+          ],
+          "teacherIntent": "Set clear expectations for what students will be able to do by the end of the session.",
+          "studentTakeaway": "Students know exactly how they will demonstrate their understanding today.",
+          "layout": "3-Column Outcome Cards",
+          "bulletPoints": [
+            "Apply formulas correctly in problems",
+            "Interpret graphs and data accurately",
+            "Explain scientific processes step-by-step"
+          ],
+          "onSlideText": [
+            "1. Apply Formulas: Solve numericals using correct units.",
+            "2. Analyze Data: Read axes, trends, and draw conclusions.",
+            "3. Explain Processes: Sequence steps logically in diagrams."
+          ],
+          "speakerNotes": [
+            "Read through the three main outcomes clearly.",
+            "Outcome 1 is about precision with numbers and symbols (Physics/Chemistry focus).",
+            "Outcome 2 focuses on visual literacy—reading what a graph tells us beyond just looking at it.",
+            "Outcome 3 connects to Biology or Earth Science processes where sequencing matters.",
+            "Ask students: Which of these feels most challenging? Note responses."
+          ],
+          "visualPlan": "Three distinct cards side-by-side, each with an icon representing the outcome (Calculator for formulas, Eye/Graph for data, Flowchart arrow for processes).",
+          "assets": [
+            {
+              "purpose": "Iconography for outcomes",
+              "searchQuery": "calculator icon graph chart flowchart arrow icons set educational style",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Set of three icons: calculator, graph chart, and flow arrow.",
+              "placementHint": "Top left of each card",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkxlYXJuaW5nIE91dGNvbWVzICZhbXA7IFN1Y2Nlc3MgQ3JpdGVyaWEiPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgZmlsbD0iI0Y4RkJGRCIvPgogIDxyZWN0IHg9IjU0IiB5PSI1NCIgd2lkdGg9IjEwOTIiIGhlaWdodD0iNzkyIiByeD0iMzQiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iI0Q5NzcwNiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHJlY3QgeD0iOTYiIHk9Ijk4IiB3aWR0aD0iMTAwOCIgaGVpZ2h0PSIxMTAiIHJ4PSIyNCIgZmlsbD0iIzFENEU4OSIvPgogIDx0ZXh0IHg9IjEzMiIgeT0iMTY1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkZGRkYiPkxlYXJuaW5nIE91dGNvbWVzICZhbXA7IFN1Y2Nlc3MgQ3JpdGVyaWE8L3RleHQ+CiAgPHJlY3QgeD0iMTIwIiB5PSIyNjIiIHdpZHRoPSI0MjAiIGhlaWdodD0iNDcwIiByeD0iMjgiIGZpbGw9IiNFRUY0RjciIHN0cm9rZT0iIzM2QURBQSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMzk1IiByPSI5MiIgZmlsbD0iI0RFODQzMSIgb3BhY2l0eT0iMC4xOCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iNTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMzUiLz4KICA8cmVjdCB4PSIyMzAiIHk9IjUxNSIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyOCIgcng9IjE0IiBmaWxsPSIjMzZBREFBIiBvcGFjaXR5PSIwLjI4Ii8+CiAgPHJlY3QgeD0iMjEwIiB5PSI1NjUiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzFENEU4OSIgb3BhY2l0eT0iMC4xOCIvPgogIDxyZWN0IHg9IjYwMCIgeT0iMjcyIiB3aWR0aD0iNDU2IiBoZWlnaHQ9IjEwMiIgcng9IjI0IiBmaWxsPSIjRkZGN0VEIiBzdHJva2U9IiNERTg0MzEiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjYzMiIgeT0iMzM0IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM5QTM0MTIiPlBsYW5uZWQgQ2xhc3Nyb29tIFZpc3VhbDwvdGV4dD4KICA8Zm9yZWlnbk9iamVjdCB4PSI2MDAiIHk9IjQxMCIgd2lkdGg9IjQzMCIgaGVpZ2h0PSIyNTAiPgogICAgPGRpdiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCIgc3R5bGU9ImZvbnQtZmFtaWx5OiBBcmlhbCwgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAyOHB4OyBsaW5lLWhlaWdodDogMS40NTsgY29sb3I6ICMzMzQxNTU7Ij4KICAgICAgVGhyZWUgZGlzdGluY3QgY2FyZHMgc2lkZS1ieS1zaWRlLCBlYWNoIHdpdGggYW4gaWNvbiByZXByZXNlbnRpbmcgdGhlIG91dGNvbWUgKENhbGN1bGF0b3IgZm9yIGZvcm11bGFzLCBFeWUvR3JhcGggZm9yIGRhdGEsIEZsb3djaGFydCBhcnJvdyBmb3IgcHJvY2Vzc2VzKS4KICAgIDwvZGl2PgogIDwvZm9yZWlnbk9iamVjdD4KICA8dGV4dCB4PSI2MDAiIHk9Ijc0OCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmaWxsPSIjNjQ3NDhCIj5SdW50aW1lIGltYWdlIGdlbmVyYXRpb24gd2FzIHVuYXZhaWxhYmxlLCBzbyBhbiBpbnRlcm5hbCBmYWxsYmFjayB2aXN1YWwgd2FzIHVzZWQuPC90ZXh0Pgo8L3N2Zz4=",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Outcomes Map",
+            "type": "comparison chart",
+            "instructions": [
+              "Visualize the three distinct skills."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal each outcome card sequentially as discussed.",
+            "Highlight keywords in bold color on hover or click."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Prior Knowledge / Recall",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "concept | summary",
+          "slideTitle": "Prerequisites & Key Recall",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Prior Knowledge Activation"
+          ],
+          "teacherIntent": "Activate prior knowledge to bridge into the revision content.",
+          "studentTakeaway": "Students recall essential formulas and definitions needed for today's tasks.",
+          "layout": "Title + Recall Grid",
+          "bulletPoints": [
+            "Recall: Basic Units (m, s, kg)",
+            "Remember: Standard Formulas (v=d/t)",
+            "Review: Graph Axes Labels"
+          ],
+          "onSlideText": [
+            "Units of Measurement: Length (m), Time (s), Mass (kg).",
+            "Key Formula: Speed = Distance / Time.",
+            "Graph Basics: X-axis is Independent, Y-axis is Dependent."
+          ],
+          "speakerNotes": [
+            "Quick fire round: Ask students to shout out the unit for speed.",
+            "Write 'Speed' on board and ask a student to write the formula next to it.",
+            "Clarify the difference between independent (X) and dependent (Y) variables with a quick example.",
+            "Transition: Now that we have our tools ready, let's look at how they work in practice."
+          ],
+          "visualPlan": "A 'Cheat Sheet' style grid showing common units and the speed formula with a small diagram of axes.",
+          "assets": [
+            {
+              "purpose": "Visual aid for recall",
+              "searchQuery": "science unit symbols meter second kilogram educational infographic",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Infographic showing standard SI units for length, time, and mass.",
+              "placementHint": "Left panel",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlByZXJlcXVpc2l0ZXMgJmFtcDsgS2V5IFJlY2FsbCI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+UHJlcmVxdWlzaXRlcyAmYW1wOyBLZXkgUmVjYWxsPC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIEEgJmFwb3M7Q2hlYXQgU2hlZXQmYXBvczsgc3R5bGUgZ3JpZCBzaG93aW5nIGNvbW1vbiB1bml0cyBhbmQgdGhlIHNwZWVkIGZvcm11bGEgd2l0aCBhIHNtYWxsIGRpYWdyYW0gb2YgYXhlcy4KICAgIDwvZGl2PgogIDwvZm9yZWlnbk9iamVjdD4KICA8dGV4dCB4PSI2MDAiIHk9Ijc0OCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmaWxsPSIjNjQ3NDhCIj5SdW50aW1lIGltYWdlIGdlbmVyYXRpb24gd2FzIHVuYXZhaWxhYmxlLCBzbyBhbiBpbnRlcm5hbCBmYWxsYmFjayB2aXN1YWwgd2FzIHVzZWQuPC90ZXh0Pgo8L3N2Zz4=",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Recall Grid",
+            "type": "comparison chart",
+            "instructions": [
+              "Display common symbols."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in the cheat sheet grid.",
+            "Animate the formula components appearing one by one."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "Lesson Hook / Bridge",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "hook | concept | comparison | process | summary",
+          "slideTitle": "Hook: Can You Solve This?",
+          "learningOutcomeIds": [
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Data Interpretation Challenge"
+          ],
+          "teacherIntent": "Capture attention with a real-world problem that requires data analysis.",
+          "studentTakeaway": "Students are engaged in solving a mystery using scientific reasoning.",
+          "layout": "Title + Mystery Image",
+          "bulletPoints": [
+            "A graph shows strange behavior.",
+            "Why did the temperature drop?",
+            "What does this mean for our experiment?"
+          ],
+          "onSlideText": [
+            "Scenario: A plant's growth rate dropped suddenly in Week 4.",
+            "Question: What environmental factor could cause this?",
+            "Task: Analyze the data to find the answer."
+          ],
+          "speakerNotes": [
+            "Present a scenario where experimental results don't match expectations.",
+            "Show a graph with a sudden dip in growth rate (or similar metric).",
+            "Ask students to hypothesize causes based on prior knowledge of factors affecting plants (light, water, soil).",
+            "This hooks them into the importance of accurate data interpretation for LO2.",
+            "Transition: Let's look at how we analyze such graphs systematically."
+          ],
+          "visualPlan": "A line graph showing a plant growth curve with a sharp dip highlighted in red.",
+          "assets": [
+            {
+              "purpose": "Hook visual",
+              "searchQuery": "line graph sudden drop educational illustration mystery science",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Graph showing a line with a sharp downward spike.",
+              "placementHint": "Center of slide",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ikhvb2s6IENhbiBZb3UgU29sdmUgVGhpcz8iPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgZmlsbD0iI0Y4RkJGRCIvPgogIDxyZWN0IHg9IjU0IiB5PSI1NCIgd2lkdGg9IjEwOTIiIGhlaWdodD0iNzkyIiByeD0iMzQiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iI0Q5NzcwNiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHJlY3QgeD0iOTYiIHk9Ijk4IiB3aWR0aD0iMTAwOCIgaGVpZ2h0PSIxMTAiIHJ4PSIyNCIgZmlsbD0iIzFENEU4OSIvPgogIDx0ZXh0IHg9IjEzMiIgeT0iMTY1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkZGRkYiPkhvb2s6IENhbiBZb3UgU29sdmUgVGhpcz88L3RleHQ+CiAgPHJlY3QgeD0iMTIwIiB5PSIyNjIiIHdpZHRoPSI0MjAiIGhlaWdodD0iNDcwIiByeD0iMjgiIGZpbGw9IiNFRUY0RjciIHN0cm9rZT0iIzM2QURBQSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMzk1IiByPSI5MiIgZmlsbD0iI0RFODQzMSIgb3BhY2l0eT0iMC4xOCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iNTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMzUiLz4KICA8cmVjdCB4PSIyMzAiIHk9IjUxNSIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyOCIgcng9IjE0IiBmaWxsPSIjMzZBREFBIiBvcGFjaXR5PSIwLjI4Ii8+CiAgPHJlY3QgeD0iMjEwIiB5PSI1NjUiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzFENEU4OSIgb3BhY2l0eT0iMC4xOCIvPgogIDxyZWN0IHg9IjYwMCIgeT0iMjcyIiB3aWR0aD0iNDU2IiBoZWlnaHQ9IjEwMiIgcng9IjI0IiBmaWxsPSIjRkZGN0VEIiBzdHJva2U9IiNERTg0MzEiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjYzMiIgeT0iMzM0IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM5QTM0MTIiPlBsYW5uZWQgQ2xhc3Nyb29tIFZpc3VhbDwvdGV4dD4KICA8Zm9yZWlnbk9iamVjdCB4PSI2MDAiIHk9IjQxMCIgd2lkdGg9IjQzMCIgaGVpZ2h0PSIyNTAiPgogICAgPGRpdiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCIgc3R5bGU9ImZvbnQtZmFtaWx5OiBBcmlhbCwgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAyOHB4OyBsaW5lLWhlaWdodDogMS40NTsgY29sb3I6ICMzMzQxNTU7Ij4KICAgICAgQSBsaW5lIGdyYXBoIHNob3dpbmcgYSBwbGFudCBncm93dGggY3VydmUgd2l0aCBhIHNoYXJwIGRpcCBoaWdobGlnaHRlZCBpbiByZWQuCiAgICA8L2Rpdj4KICA8L2ZvcmVpZ25PYmplY3Q+CiAgPHRleHQgeD0iNjAwIiB5PSI3NDgiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiIgZmlsbD0iIzY0NzQ4QiI+UnVudGltZSBpbWFnZSBnZW5lcmF0aW9uIHdhcyB1bmF2YWlsYWJsZSwgc28gYW4gaW50ZXJuYWwgZmFsbGJhY2sgdmlzdWFsIHdhcyB1c2VkLjwvdGV4dD4KPC9zdmc+",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Mystery Graph",
+            "type": "flowchart",
+            "instructions": [
+              "Show the dip clearly."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate the line drawing to trace the path, then pause at the drop.",
+            "Flash the red highlight on the anomaly."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Topic Introduction",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "concept | summary",
+          "slideTitle": "Topic Introduction: The Toolkit",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Scientific Formulas & Data Types"
+          ],
+          "teacherIntent": "Formally introduce the core concepts that will be revisited in depth.",
+          "studentTakeaway": "Students understand the relationship between formulas, variables, and data representation.",
+          "layout": "Title + 2-Column Text",
+          "bulletPoints": [
+            "Scientific Formulas define relationships.",
+            "Variables: Independent vs. Dependent.",
+            "Data Types: Qualitative & Quantitative."
+          ],
+          "onSlideText": [
+            "Formulas are mathematical sentences describing nature.",
+            "Independent Variable (X): What we change.",
+            "Dependent Variable (Y): What we measure.",
+            "Qualitative Data: Descriptive observations.",
+            "Quantitative Data: Numerical measurements."
+          ],
+          "speakerNotes": [
+            "Define a formula as more than just math; it's a rule of nature.",
+            "Reiterate the X/Y axis distinction clearly, linking back to the hook graph.",
+            "Distinguish between qualitative (what you see) and quantitative (numbers), crucial for lab reports.",
+            "Transition: Now let's look at how we visualize these relationships."
+          ],
+          "visualPlan": "A split diagram showing a formula on the left and variable definitions on the right.",
+          "assets": [
+            {
+              "purpose": "Concept definition",
+              "searchQuery": "scientific variables independent dependent educational infographic",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Diagram explaining Independent and Dependent variables.",
+              "placementHint": "Right panel",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlRvcGljIEludHJvZHVjdGlvbjogVGhlIFRvb2xraXQiPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgZmlsbD0iI0Y4RkJGRCIvPgogIDxyZWN0IHg9IjU0IiB5PSI1NCIgd2lkdGg9IjEwOTIiIGhlaWdodD0iNzkyIiByeD0iMzQiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iI0Q5NzcwNiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHJlY3QgeD0iOTYiIHk9Ijk4IiB3aWR0aD0iMTAwOCIgaGVpZ2h0PSIxMTAiIHJ4PSIyNCIgZmlsbD0iIzFENEU4OSIvPgogIDx0ZXh0IHg9IjEzMiIgeT0iMTY1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkZGRkYiPlRvcGljIEludHJvZHVjdGlvbjogVGhlIFRvb2xraXQ8L3RleHQ+CiAgPHJlY3QgeD0iMTIwIiB5PSIyNjIiIHdpZHRoPSI0MjAiIGhlaWdodD0iNDcwIiByeD0iMjgiIGZpbGw9IiNFRUY0RjciIHN0cm9rZT0iIzM2QURBQSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMzk1IiByPSI5MiIgZmlsbD0iI0RFODQzMSIgb3BhY2l0eT0iMC4xOCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iNTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMzUiLz4KICA8cmVjdCB4PSIyMzAiIHk9IjUxNSIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyOCIgcng9IjE0IiBmaWxsPSIjMzZBREFBIiBvcGFjaXR5PSIwLjI4Ii8+CiAgPHJlY3QgeD0iMjEwIiB5PSI1NjUiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzFENEU4OSIgb3BhY2l0eT0iMC4xOCIvPgogIDxyZWN0IHg9IjYwMCIgeT0iMjcyIiB3aWR0aD0iNDU2IiBoZWlnaHQ9IjEwMiIgcng9IjI0IiBmaWxsPSIjRkZGN0VEIiBzdHJva2U9IiNERTg0MzEiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjYzMiIgeT0iMzM0IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM5QTM0MTIiPlBsYW5uZWQgQ2xhc3Nyb29tIFZpc3VhbDwvdGV4dD4KICA8Zm9yZWlnbk9iamVjdCB4PSI2MDAiIHk9IjQxMCIgd2lkdGg9IjQzMCIgaGVpZ2h0PSIyNTAiPgogICAgPGRpdiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCIgc3R5bGU9ImZvbnQtZmFtaWx5OiBBcmlhbCwgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAyOHB4OyBsaW5lLWhlaWdodDogMS40NTsgY29sb3I6ICMzMzQxNTU7Ij4KICAgICAgQSBzcGxpdCBkaWFncmFtIHNob3dpbmcgYSBmb3JtdWxhIG9uIHRoZSBsZWZ0IGFuZCB2YXJpYWJsZSBkZWZpbml0aW9ucyBvbiB0aGUgcmlnaHQuCiAgICA8L2Rpdj4KICA8L2ZvcmVpZ25PYmplY3Q+CiAgPHRleHQgeD0iNjAwIiB5PSI3NDgiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiIgZmlsbD0iIzY0NzQ4QiI+UnVudGltZSBpbWFnZSBnZW5lcmF0aW9uIHdhcyB1bmF2YWlsYWJsZSwgc28gYW4gaW50ZXJuYWwgZmFsbGJhY2sgdmlzdWFsIHdhcyB1c2VkLjwvdGV4dD4KPC9zdmc+",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Concept Definitions",
+            "type": "comparison chart",
+            "instructions": [
+              "Compare qualitative vs quantitative."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in definitions one by one.",
+            "Highlight 'Independent' and 'Dependent' keywords."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "core_concept_a",
+          "templateSlideTitle": "Core Concept A",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "concept | summary",
+          "slideTitle": "Core Concept A: Formula Application",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Formula Derivation & Use"
+          ],
+          "teacherIntent": "Build deep understanding of how to manipulate and apply formulas correctly.",
+          "studentTakeaway": "Students can identify variables, substitute values, and calculate results with units.",
+          "layout": "Title + Formula Card",
+          "bulletPoints": [
+            "Identify the correct formula for the problem.",
+            "List knowns (given) and unknowns (to find).",
+            "Substitute values carefully.",
+            "Check units before calculating."
+          ],
+          "onSlideText": [
+            "Step 1: Identify Formula (e.g., Speed = d/t)",
+            "Step 2: List Knowns & Unknowns",
+            "Step 3: Substitute Values",
+            "Step 4: Calculate with Units"
+          ],
+          "speakerNotes": [
+            "Walk through the four-step process for solving any numerical problem.",
+            "Emphasize that skipping Step 2 (listing knowns) is a common error source.",
+            "Stress unit consistency—e.g., converting km to m if necessary before calculating.",
+            "Transition: Let's see this in action with a worked example."
+          ],
+          "visualPlan": "A step-by-step flowchart showing the formula application process.",
+          "assets": [
+            {
+              "purpose": "Process visualization",
+              "searchQuery": "step by step problem solving science math educational diagram",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Flowchart showing the 4 steps of formula application.",
+              "placementHint": "Center",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Formula Application Steps",
+            "type": "flowchart",
+            "instructions": [
+              "Show the logical flow from identification to calculation."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate each step appearing sequentially.",
+            "Highlight 'Units' in green when mentioned."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Core Concept B / Visual Explanation",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "concept | summary",
+          "slideTitle": "Core Concept B: Reading Graphs & Diagrams",
+          "learningOutcomeIds": [
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Graph Interpretation"
+          ],
+          "teacherIntent": "Teach students how to extract meaning from visual data representations.",
+          "studentTakeaway": "Students can identify trends, slopes, and anomalies in scientific graphs.",
+          "layout": "Title + Large Diagram",
+          "bulletPoints": [
+            "Read the Title first for context.",
+            "Check Axis Labels and Units.",
+            "Identify Trends (Positive/Negative/No change).",
+            "Spot Anomalies or Outliers."
+          ],
+          "onSlideText": [
+            "1. Read Title: What is being measured?",
+            "2. Check Axes: X = Independent, Y = Dependent.",
+            "3. Analyze Trend: Steep slope? Flat line?",
+            "4. Note Anomalies: Points that don't fit."
+          ],
+          "speakerNotes": [
+            "Explain the 'Title First' rule—context is key to interpretation.",
+            "Discuss how a steep slope indicates rapid change, while a flat line means no change over time.",
+            "Point out what an outlier might indicate (experimental error or new discovery).",
+            "Transition: Now let's apply this reading skill to a real example."
+          ],
+          "visualPlan": "A detailed line graph with annotations pointing out title, axes labels, trend lines, and an outlier.",
+          "assets": [
+            {
+              "purpose": "Graph analysis example",
+              "searchQuery": "labeled scientific line graph educational diagram anomaly highlighted",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Labeled graph showing axes, title, trend lines, and an outlier point.",
+              "placementHint": "Full bleed background",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Graph Analysis Guide",
+            "type": "labelled diagram",
+            "instructions": [
+              "Show how to read a graph systematically."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate arrows pointing to each feature (Title, Axes, Trend) as discussed.",
+            "Highlight the outlier in red briefly then fade it back or keep distinct."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example / Demonstration",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "concept | summary",
+          "slideTitle": "Example: Calculating Speed from Data",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Numerical Problem Solving"
+          ],
+          "teacherIntent": "Model expert thinking by solving a problem step-by-step.",
+          "studentTakeaway": "Students see exactly how to apply the formula and handle units correctly.",
+          "layout": "Title + Step-by-Step Solution",
+          "bulletPoints": [
+            "Problem: Car travels 150km in 2.5 hours.",
+            "Formula: Speed = Distance / Time.",
+            "Calculation: 150 / 2.5 = 60 km/h."
+          ],
+          "onSlideText": [
+            "Given: d = 150 km, t = 2.5 h",
+            "Formula: v = d/t",
+            "Substitute: v = 150 / 2.5",
+            "Result: v = 60 km/h"
+          ],
+          "speakerNotes": [
+            "Read the problem aloud.",
+            "Ask students to identify knowns and unknowns before writing anything down.",
+            "Write the formula on board, then substitute numbers together with class.",
+            "Perform calculation step-by-step, emphasizing that 150 divided by 2.5 is not just '6' but '60'.",
+            "Stress adding units (km/h) to the final answer.",
+            "Transition: Now you try a similar problem."
+          ],
+          "visualPlan": "A clean layout showing the problem statement on top and the solution steps below with clear arrows.",
+          "assets": [
+            {
+              "purpose": "Worked example visual",
+              "searchQuery": "math word problem car speed calculation educational diagram",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Diagram showing a car and the steps to calculate its speed.",
+              "placementHint": "Left panel",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Speed Calculation Steps",
+            "type": "flowchart",
+            "instructions": [
+              "Show substitution and calculation."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal each step of the solution one by one.",
+            "Animate the final answer appearing with a 'check' mark or highlight."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice / Activity",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "concept | summary",
+          "slideTitle": "Practice Activity: Analyze & Calculate",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Student Practice"
+          ],
+          "teacherIntent": "Students actively apply the concepts to new problems.",
+          "studentTakeaway": "Students practice solving numericals and interpreting graphs independently or in pairs.",
+          "layout": "Title + Activity Instructions",
+          "bulletPoints": [
+            "Task 1: Calculate speed for a train (200km, 4h).",
+            "Task 2: Interpret the provided growth graph.",
+            "Discuss your answers with a partner."
+          ],
+          "onSlideText": [
+            "Activity: Work in pairs.",
+            "Problem A: Find speed of Train X (d=200km, t=4h).",
+            "Graph B: What happened to the plant at Week 3?",
+            "Time: 10 minutes."
+          ],
+          "speakerNotes": [
+            "Distribute worksheets or project problems on screen.",
+            "Instruct students to work in pairs (Think-Pair-Share).",
+            "Circulate room, checking for unit errors and axis misinterpretations.",
+            "Ask one pair to share their answer for Task A.",
+            "Ask another pair to explain the trend they saw in Graph B.",
+            "Transition: Let's check our understanding with a quick quiz."
+          ],
+          "visualPlan": "A slide showing two distinct problems side-by-side for the students to solve.",
+          "assets": [
+            {
+              "purpose": "Practice problem visual",
+              "searchQuery": "train speed calculation graph plant growth educational worksheet style",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Visual representation of the practice problems.",
+              "placementHint": "Center",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Practice Problems",
+            "type": "comparison chart",
+            "instructions": [
+              "Display two distinct tasks."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in the problems.",
+            "Count down timer animation for 10 minutes (optional)."
+          ],
+          "timeEstimateMinutes": 8
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Formative Check / Quick Assessment",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "concept | summary",
+          "slideTitle": "Assessment: Do You Get It?",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Formative Assessment"
+          ],
+          "teacherIntent": "Evaluate student understanding of the session's key points.",
+          "studentTakeaway": "Students self-assess their grasp of formulas and data interpretation.",
+          "layout": "Title + Questions",
+          "bulletPoints": [
+            "Q1: What is the unit for speed?",
+            "Q2: Which axis shows time in a distance-time graph?",
+            "Q3: If slope increases, what happens to speed?"
+          ],
+          "onSlideText": [
+            "1. Unit of Speed? (m/s or km/h)",
+            "2. Time on X-axis or Y-axis?",
+            "3. Steeper slope = Faster/Slower?"
+          ],
+          "speakerNotes": [
+            "Ask students to hold up fingers for answers (1, 2, or 3) or use mini-whiteboards.",
+            "Q1: Check if they know it's distance/time units.",
+            "Q2: Reinforce X-axis = Time/Independent variable.",
+            "Q3: Connect slope steepness directly to speed magnitude.",
+            "Review answers immediately and clarify misconceptions."
+          ],
+          "visualPlan": "Three clear question cards with space for student response indicators (e.g., icons).",
+          "assets": [
+            {
+              "purpose": "Assessment questions",
+              "searchQuery": "quiz questions science speed graph educational infographic",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Three quiz questions displayed clearly.",
+              "placementHint": "Center",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Quick Quiz",
+            "type": "comparison chart",
+            "instructions": [
+              "Display the three assessment questions."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal each question one by one.",
+            "Show correct answer after student response (fade in green text)."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Recap / Key Takeaways",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "concept | summary",
+          "slideTitle": "Session Summary & Reflection",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Recap of Learning"
+          ],
+          "teacherIntent": "Consolidate learning and provide memory aids.",
+          "studentTakeaway": "Students leave with a clear summary of the most important points.",
+          "layout": "Title + Bullet Summary",
+          "bulletPoints": [
+            "Formulas need correct units to work.",
+            "X-axis is Independent, Y-axis is Dependent.",
+            "Steeper slope means faster change/rate."
+          ],
+          "onSlideText": [
+            "- Formulas: Identify variables & use correct units.",
+            "- Graphs: X = What we change (Independent).",
+            "- Trends: Steeper line = Faster rate of change.",
+            "- Check for anomalies in data!"
+          ],
+          "speakerNotes": [
+            "Summarize the three main takeaways clearly.",
+            "Ask students to repeat one key point back to a neighbor.",
+            "Reiterate that checking units is the most common way to avoid errors.",
+            "Transition: Now let's prepare for what comes next."
+          ],
+          "visualPlan": "A checklist style summary with checkmarks next to each point.",
+          "assets": [
+            {
+              "purpose": "Summary visual",
+              "searchQuery": "science study notes checklist educational infographic",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Checklist of key takeaways from the session.",
+              "placementHint": "Center",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Key Takeaways",
+            "type": "flowchart",
+            "instructions": [
+              "Summarize main points."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in each bullet point.",
+            "Animate checkmarks appearing as they are discussed."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Homework / Next Class Bridge",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 12,
+          "slideType": "homework",
+          "slideTitle": "Homework / Next Class Bridge",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Physical World and Motion"
+          ],
+          "teacherIntent": "Use the homework / next class bridge slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "academic-split template slide",
+          "bulletPoints": [
+            "Cover the homework / next class bridge for this session using only taught content."
+          ],
+          "onSlideText": [
+            "Homework / Next Class Bridge"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        }
+      ]
+    }
+  },
+  "id": "session-1",
+  "sessionNumber": 1,
+  "title": "Physical World and Motion",
+  "duration": 45
+}

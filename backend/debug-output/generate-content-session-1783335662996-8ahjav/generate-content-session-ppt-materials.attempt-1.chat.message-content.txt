@@ -1,0 +1,798 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "visual-focus",
+      "templateName": "Visual Focus Educational Template",
+      "themeId": "cbse-academic-blue",
+      "title": "Introduction to Photosynthesis - Grade 7 Science",
+      "presentationTitle": "How Plants Make Food: The Process of Photosynthesis",
+      "presentationGoal": "To enable students to understand the process, requirements, and importance of photosynthesis through visual explanations and guided practice.",
+      "audience": "Grade 7 Students (Age 12-13)",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab, sans-serif",
+          "body": "Open Sans, sans-serif"
+        },
+        "colors": {
+          "primary": "#1a5f7a",
+          "secondary": "#48cae4",
+          "accent": "#ff9e00",
+          "background": "#ffffff",
+          "surface": "#f0f8fa",
+          "text": "#2d3436",
+          "mutedText": "#636e72"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary-with-accent-icon",
+          "cardStyle": "rounded-shadow-elevation-2",
+          "visualFrameStyle": "circular-green-border"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons",
+          "Unsplash Education",
+          "Khan Academy Visuals"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all images are CC0 or Creative Commons Attribution licensed for educational use.",
+          "Verify diagram labels match current curriculum standards."
+        ],
+        "fallbackStrategy": "Use high-contrast SVG diagrams generated inline if external image search fails."
+      },
+      "licenseChecklist": [
+        "All student-facing images are royalty-free or open license.",
+        "No copyrighted textbook excerpts used without permission.",
+        "Teacher notes contain no restricted content."
+      ],
+      "presentationWarnings": [
+        "Ensure projector is bright enough for leaf cross-section diagrams.",
+        "Prepare physical leaves if possible to supplement Slide 7 visuals.",
+        "Check that 'chlorophyll' pronunciation guide in speaker notes is clear."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define photosynthesis and its importance for life on Earth",
+          "Identify the raw materials required (water, carbon dioxide, sunlight)",
+          "Explain the role of chlorophyll in capturing light energy"
+        ],
+        "topicsCovered": [
+          "Definition of Photosynthesis",
+          "Requirements: Sunlight, Water, Carbon Dioxide",
+          "The Role of Chlorophyll and Leaves",
+          "Basic Chemical Equation Overview"
+        ],
+        "taughtConceptsCovered": [
+          "Light energy conversion to chemical energy",
+          "Gas exchange through stomata (introductory)",
+          "Leaf structure function"
+        ],
+        "omittedContent": [
+          "Detailed Calvin Cycle and Light-dependent reactions (reserved for Session 2)",
+          "Chemical formulas with subscripts in depth (Session 3)"
+        ]
+      },
+      "slides": [
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Lesson Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "identity",
+          "slideTitle": "How Plants Make Food: Photosynthesis",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Introduction to Lesson Topic"
+          ],
+          "teacherIntent": "Set the stage for inquiry-based learning and establish curiosity about plant biology.",
+          "studentTakeaway": "I will learn how plants create their own food using sunlight.",
+          "layout": "hero-image-left-text-right",
+          "bulletPoints": [
+            "Subject: Science (Biology)",
+            "Grade 7 - Session 1 of 3",
+            "Essential Question:",
+            "How do green leaves feed the world?"
+          ],
+          "onSlideText": [
+            "Session 1: The Magic of Green Leaves"
+          ],
+          "speakerNotes": [
+            "Welcome students and introduce yourself.",
+            "Ask the essential question aloud: 'If you were a plant, how would you get your food?'",
+            "Explain that today we are unlocking the secret of photosynthesis.",
+            "Mention this is Session 1; future sessions will dive deeper into chemistry.",
+            "Time estimate: 2 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": "High-resolution close-up image of a green leaf with sunlight rays hitting it, symbolizing energy capture.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Hero visual showing a vibrant green plant in sunlight with light beams converging on leaves. Text overlay: 'How do plants eat?'",
+          "assets": [
+            {
+              "purpose": "Background hero image to set the biological context.",
+              "searchQuery": "green leaf close up sunlight rays macro photography",
+              "sourceSite": "Unsplash Education",
+              "sourceUrl": "",
+              "licenseType": "CC0 Public Domain",
+              "attributionText": "Image by Nature Photography Team (Placeholder)",
+              "altText": "Close-up of a green leaf with sunlight rays illuminating it.",
+              "placementHint": "Full background or large left-side panel."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in the title text after the image loads.",
+            "Animate light beams to pulse gently towards the leaf center."
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "What We Will Learn Today",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "outcomes",
+          "slideTitle": "Today's Learning Goals",
+          "learningOutcomeIds": [
+            "LO-001",
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Learning Outcomes Definition"
+          ],
+          "teacherIntent": "Clarify expectations and help students understand the relevance of the topic to their lives.",
+          "studentTakeaway": "I know exactly what I need to be able to do by the end of class.",
+          "layout": "three-column-cards",
+          "bulletPoints": [
+            "Define photosynthesis clearly.",
+            "List 3 things plants need to make food.",
+            "Explain why chlorophyll is essential."
+          ],
+          "onSlideText": [
+            "1. Define Photosynthesis",
+            "2. Identify Requirements: Sunlight, Water, CO₂",
+            "3. Explain Chlorophyll's Role"
+          ],
+          "speakerNotes": [
+            "Read each outcome aloud and ask students to nod if they understand.",
+            "Explain 'Why does this matter?' -> Without photosynthesis, no oxygen for us to breathe and no food chain base.",
+            "Connect LO-002 to real life: 'This is why we need trees in cities.'",
+            "Time estimate: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Three distinct cards with icons: a definition book icon for 'Define', a sun/water drop/CO2 cloud cluster for 'Requirements', and a leaf pigment molecule icon for 'Chlorophyll'.",
+          "assets": [
+            {
+              "purpose": "Iconography to represent each learning outcome visually.",
+              "searchQuery": "science education icons definition requirements chlorophyll flat design",
+              "sourceSite": "Freepik Education Assets",
+              "sourceUrl": "",
+              "licenseType": "CC Attribution Required",
+              "attributionText": "Icons by Science Edu Design Team (Placeholder)",
+              "altText": "Three icons representing definition, requirements, and chlorophyll.",
+              "placementHint": "Center of slide in a 3-column layout."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Slide each card in from the left sequentially as you discuss them."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "What We Already Know",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "activation",
+          "slideTitle": "Recall: Plants and Life",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Prior Knowledge Activation"
+          ],
+          "teacherIntent": "Bridge the gap between what students know (plants grow) and what they need to learn (how).",
+          "studentTakeaway": "I can connect my existing knowledge of plants to today's new concept.",
+          "layout": "question-and-answer-split",
+          "bulletPoints": [
+            "All living things need food for energy.",
+            "Plants are green and grow in soil.",
+            "We breathe air; do plants?"
+          ],
+          "onSlideText": [
+            "Think-Pair-Share:",
+            "- What does a plant eat?",
+            "- Where does it get its water?",
+            "- Do we share the same food source?"
+          ],
+          "speakerNotes": [
+            "Initiate 'Think-Pair-Share' activity.",
+            "Ask: 'If you put a rock in soil, will it grow? Why not?'",
+            "Guide students to realize plants are different because they make their own food (autotrophs).",
+            "Address common misconception: Plants eat dirt. Clarify that roots absorb water/minerals, but the 'food' is made inside.",
+            "Time estimate: 4 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Split screen showing a child eating an apple vs. a plant growing in soil with question marks connecting them.",
+          "assets": [
+            {
+              "purpose": "Visual comparison to stimulate critical thinking about food sources.",
+              "searchQuery": "child eating fruit versus plant growing diagram",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "Public Domain",
+              "attributionText": "Comparison Illustration (Placeholder)",
+              "altText": "Side-by-side comparison of a child and a plant.",
+              "placementHint": "Left side: Child eating; Right side: Plant growing."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal the question marks one by one after student responses are heard."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "The Mystery of Green Leaves",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "hook",
+          "slideTitle": "Why Are Plants Green?",
+          "learningOutcomeIds": [
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Lesson Hook / Curiosity Generator"
+          ],
+          "teacherIntent": "Capture attention with a paradox: If plants need sunlight, why aren't they black to absorb more light?",
+          "studentTakeaway": "I am curious about the specific function of green color in leaves.",
+          "layout": "mystery-center",
+          "bulletPoints": [
+            "Sunlight is full energy.",
+            "Plants reflect some colors.",
+            "They look green to us."
+          ],
+          "onSlideText": [
+            "The Mystery:",
+            "- Sunlight has all colors (Red, Blue, Green).",
+            "- Plants absorb Red and Blue best.",
+            "- They bounce back Green!",
+            "- Why? What is the secret?"
+          ],
+          "speakerNotes": [
+            "Present this as a mystery to solve today.",
+            "Explain that if plants were black, they might overheat or lack specific chemical triggers.",
+            "Use an analogy: 'Like wearing white clothes in summer vs. black shirts.'",
+            "Transition: 'The secret lies in the green pigment called Chlorophyll.'",
+            "Time estimate: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Spectrum of light hitting a leaf. Arrows show Red and Blue entering the leaf, Green arrow bouncing off.",
+          "assets": [
+            {
+              "purpose": "Visual explanation of light absorption vs reflection to hook interest in chlorophyll.",
+              "searchQuery": "light spectrum plant absorption graph red blue green",
+              "sourceSite": "Khan Academy Visuals",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 4.0",
+              "attributionText": "Light Absorption Graph (Placeholder)",
+              "altText": "Diagram showing light spectrum and plant absorption.",
+              "placementHint": "Center of slide."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate the green arrow bouncing off to emphasize reflection."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "What is Photosynthesis?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "introduction",
+          "slideTitle": "Defining the Process",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Definition and Context"
+          ],
+          "teacherIntent": "Provide a clear, comprehensive definition of photosynthesis using etymology and simple language.",
+          "studentTakeaway": "I can define photosynthesis as the process where plants make food using sunlight.",
+          "layout": "definition-box",
+          "bulletPoints": [
+            "- Photo = Light",
+            "- Synthesis = Putting together",
+            "- Plants use light to build sugar (food).",
+            "- Happens in leaves."
+          ],
+          "onSlideText": [
+            "Photosynthesis:",
+            "The process where plants convert sunlight into chemical energy.",
+            "Key Vocabulary: Autotroph, Chlorophyll, Glucose"
+          ],
+          "speakerNotes": [
+            "Break down the word 'Photo-synthesis' on the board.",
+            "Define 'Autotroph': Self-feeder. Contrast with heterotrophs (animals).",
+            "Explain that the product is glucose (a type of sugar) which plants use for energy and growth.",
+            "Emphasize: This process happens primarily in leaves, not roots or stems.",
+            "Time estimate: 4 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Etymology breakdown graphic showing 'Photo' (Sun) + 'Synthesis' (Building Blocks) = Food.",
+          "assets": [
+            {
+              "purpose": "Visual aid to help students remember the definition through word roots.",
+              "searchQuery": "photosynthesis etymology diagram sun building blocks",
+              "sourceSite": "Educational Graphics Library",
+              "sourceUrl": "",
+              "licenseType": "CC0 Public Domain",
+              "attributionText": "Etymology Graphic (Placeholder)",
+              "altText": "Diagram breaking down the word photosynthesis.",
+              "placementHint": "Top of slide."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate 'Photo' and 'Synthesis' coming together to form a leaf icon with sugar cubes inside."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept_a",
+          "templateSlideTitle": "The Three Ingredients",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "concept_explanation",
+          "slideTitle": "What Plants Need to Cook Food",
+          "learningOutcomeIds": [
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Raw Materials: Water, CO₂, Sunlight"
+          ],
+          "teacherIntent": "Detail the three essential inputs required for photosynthesis and their sources.",
+          "studentTakeaway": "I know that plants need water from roots, carbon dioxide from air, and sunlight to make food.",
+          "layout": "three-source-diagram",
+          "bulletPoints": [
+            "- Sunlight (Energy Source)",
+            "- Water (H₂O) via Roots",
+            "- Carbon Dioxide (CO₂) via Leaves"
+          ],
+          "onSlideText": [
+            "The Recipe for Food:",
+            "1. Energy: Sunlight",
+            "2. Liquid: Water from Soil",
+            "3. Gas: CO₂ from Air"
+          ],
+          "speakerNotes": [
+            "Use the analogy of a kitchen recipe.",
+            "Explain water travels up through roots and stems (xylem).",
+            "Explain carbon dioxide enters through tiny pores called stomata on leaves.",
+            "Clarify that sunlight is not 'eaten' but used as energy to power the reaction.",
+            "Time estimate: 5 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Illustration of a plant with arrows indicating water coming from soil (roots), CO2 entering leaves, and Sun shining down.",
+          "assets": [
+            {
+              "purpose": "Visualizing the flow of inputs into the plant system.",
+              "searchQuery": "plant photosynthesis inputs diagram roots air sun",
+              "sourceSite": "Science Visuals Database",
+              "sourceUrl": "",
+              "licenseType": "CC BY 4.0",
+              "attributionText": "Plant Inputs Diagram (Placeholder)",
+              "altText": "Diagram showing water, CO2 and sunlight entering a plant.",
+              "placementHint": "Center of slide."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate arrows flowing into the plant one by one as you list them."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "The Green Factory: Chlorophyll",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "concept_visualization",
+          "slideTitle": "Inside the Leaf: The Role of Chlorophyll",
+          "learningOutcomeIds": [
+            "LO-003"
+          ],
+          "topicCoverage": [
+            "Chlorophyll Function and Location"
+          ],
+          "teacherIntent": "Use a detailed visual to explain where photosynthesis happens inside the leaf cell.",
+          "studentTakeaway": "I understand that chloroplasts containing chlorophyll are the 'kitchens' of the plant.",
+          "layout": "diagram-heavy",
+          "bulletPoints": [
+            "- Chloroplasts: The factories",
+            "- Chlorophyll: The green pigment",
+            "- Captures light energy"
+          ],
+          "onSlideText": [
+            "The Green Secret:",
+            "Chlorophyll inside chloroplasts.",
+            "Absorbs Red & Blue Light.",
+            "Reflects Green Light."
+          ],
+          "speakerNotes": [
+            "Zoom in on a leaf cell structure (conceptually).",
+            "Explain that chloroplasts are the organelles where photosynthesis occurs.",
+            "Reiterate why leaves look green: Chlorophyll reflects green light back to our eyes.",
+            "Analogy: 'Chlorophyll is like solar panels on a roof.'",
+            "Time estimate: 5 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Cross-section of a leaf showing epidermis, mesophyll cells with chloroplasts inside. Highlighted view of a single chloroplast.",
+          "assets": [
+            {
+              "purpose": "Detailed biological diagram to show internal structure and location of photosynthesis.",
+              "searchQuery": "leaf cross section chloroplast labeled biology",
+              "sourceSite": "Biology Online Resources",
+              "sourceUrl": "",
+              "licenseType": "Public Domain / CC0",
+              "attributionText": "Leaf Cross Section Diagram (Placeholder)",
+              "altText": "Cross-section of a leaf highlighting chloroplasts.",
+              "placementHint": "Full slide background or large central image."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Zoom in from the whole leaf to the cell level using animation effects if supported by runtime."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "The Photosynthesis Equation",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "demonstration",
+          "slideTitle": "How the Recipe Works (Step-by-Step)",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Process Flow and Chemical Overview"
+          ],
+          "teacherIntent": "Model the process using a simplified chemical equation to show input-output relationships.",
+          "studentTakeaway": "I can visualize how inputs turn into outputs in photosynthesis.",
+          "layout": "equation-flow",
+          "bulletPoints": [
+            "- Inputs: Water + CO₂ + Light",
+            "- Process: Chlorophyll captures energy",
+            "- Outputs: Glucose (Food) + Oxygen"
+          ],
+          "onSlideText": [
+            "The Equation:",
+            "Sunlight + 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂",
+            "(Carbon Dioxide + Water -> Sugar + Oxygen)"
+          ],
+          "speakerNotes": [
+            "Write the equation on the board or display it clearly.",
+            "Walk through step-by-step: 'We put in CO2 and water.'",
+            "'Sunlight hits chlorophyll, which acts as a catalyst.'",
+            "'The plant makes sugar (glucose) for itself and releases oxygen that we breathe.'",
+            "Emphasize the conservation of mass concept simply.",
+            "Time estimate: 5 minutes."
+          ],
+          "visualAttribution": {
+            "chemicalPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Flowchart showing inputs on left (Sun, Water Drop, CO2 Cloud) transforming into outputs on right (Sugar Cube, Oxygen Bubble).",
+          "assets": [
+            {
+              "purpose": "Visual representation of the chemical equation to aid memory.",
+              "searchQuery": "photosynthesis formula diagram input output flowchart",
+              "sourceSite": "Chemistry Education Visuals",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Photosynthesis Equation Diagram (Placeholder)",
+              "altText": "Flowchart of the photosynthesis chemical equation.",
+              "placementHint": "Center of slide."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate inputs flowing into a central 'Sunlight' box and outputs emerging on the other side."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Let's Practice: The Plant Chef",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "activity",
+          "slideTitle": "Activity: Design a Perfect Leaf",
+          "learningOutcomeIds": [
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Application of Concepts"
+          ],
+          "teacherIntent": "Engage students in applying their knowledge to solve a hypothetical problem.",
+          "studentTakeaway": "I can apply the requirements of photosynthesis to design an efficient plant structure.",
+          "layout": "activity-instruction",
+          "bulletPoints": [
+            "- Scenario: A desert planet with little water.",
+            "- Task: Design a leaf for this environment.",
+            "- Considerations: Size, Color, Stomata."
+          ],
+          "onSlideText": [
+            "Challenge:",
+            "Design a plant that survives in the Desert!",
+            "1. Should it be green or black?",
+            "2. How big should leaves be?",
+            "3. When do stomata open?"
+          ],
+          "speakerNotes": [
+            "Divide class into small groups.",
+            "Give them 5 minutes to discuss and sketch their 'Desert Plant'.",
+            "Prompt: 'If it's hot, should leaves be big (more water loss) or small?'",
+            "'Should they reflect more light? Maybe silver instead of green?'",
+            "Review answers as a class.",
+            "Time estimate: 6 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Illustration of a desert landscape with cacti and sparse vegetation to set the scene for the design challenge.",
+          "assets": [
+            {
+              "purpose": "Contextual image to inspire creative thinking about adaptation.",
+              "searchQuery": "desert plant ecosystem illustration",
+              "sourceSite": "National Geographic Education",
+              "sourceUrl": "",
+              "licenseType": "CC BY-NC-SA 4.0",
+              "attributionText": "Desert Ecosystem Image (Placeholder)",
+              "altText": "Illustration of a desert landscape.",
+              "placementHint": "Background or top banner."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal the three questions one by one to guide group discussion."
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Check Your Understanding",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "assessment",
+          "slideTitle": "Quick Quiz: Photosynthesis Check",
+          "learningOutcomeIds": [
+            "LO-001",
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Formative Assessment"
+          ],
+          "teacherIntent": "Assess immediate understanding of key concepts through varied question types.",
+          "studentTakeaway": "I can demonstrate my knowledge of photosynthesis requirements and definition.",
+          "layout": "quiz-format",
+          "bulletPoints": [
+            "- Q1: What gas do plants take in?",
+            "- Q2: Why are leaves green?",
+            "- Q3: True or False? Plants eat soil."
+          ],
+          "onSlideText": [
+            "Quiz Time:",
+            "1. Which gas is needed for photosynthesis?",
+            "   a) Oxygen b) Carbon Dioxide c) Nitrogen",
+            "2. What pigment makes leaves green?",
+            "3. True or False: Plants get their food from the soil."
+          ],
+          "speakerNotes": [
+            "Ask students to hold up fingers (1-5) for answers.",
+            "Q1 Answer: Carbon Dioxide. Ask why not Oxygen? (They release it).",
+            "Q2 Answer: Chlorophyll. Explain reflection again briefly.",
+            "Q3 Answer: False! They make food; soil provides water/minerals only.",
+            "Time estimate: 4 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Simple quiz layout with question text and multiple-choice options clearly separated.",
+          "assets": [
+            {
+              "purpose": "Visual structure for the assessment questions to ensure clarity.",
+              "searchQuery": "quiz template science education icons",
+              "sourceSite": "Internal Design Assets",
+              "sourceUrl": "",
+              "licenseType": "Proprietary / Internal Use",
+              "attributionText": "Quiz Layout Template (Placeholder)",
+              "altText": "Layout for quiz questions.",
+              "placementHint": "Center of slide."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal answers only after students have voted or discussed."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "What We Learned Today",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Lesson Recap: The Big Picture",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Synthesis of Key Concepts"
+          ],
+          "teacherIntent": "Consolidate learning and provide memory aids for retention.",
+          "studentTakeaway": "I have a clear summary of the photosynthesis process to review later.",
+          "layout": "summary-list",
+          "bulletPoints": [
+            "- Photosynthesis = Making food with light.",
+            "- Needs: Sunlight, Water, CO₂.",
+            "- Happens in Chloroplasts (Chlorophyll).",
+            "- Produces Sugar + Oxygen."
+          ],
+          "onSlideText": [
+            "Key Takeaways:",
+            "1. Plants are self-feeders (Autotrophs).",
+            "2. Sunlight drives the reaction.",
+            "3. Chlorophyll captures light energy.",
+            "4. Oxygen is a byproduct we need."
+          ],
+          "speakerNotes": [
+            "Review each point quickly.",
+            "Ask students to repeat the definition of photosynthesis chorally.",
+            "Highlight: 'Without plants, no oxygen for us.'",
+            "Time estimate: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Infographic style summary with icons representing each key takeaway.",
+          "assets": [
+            {
+              "purpose": "Visual reinforcement of the lesson's core points for retention.",
+              "searchQuery": "photosynthesis infographic summary icon set",
+              "sourceSite": "Educational Infographics Library",
+              "sourceUrl": "",
+              "licenseType": "CC0 Public Domain",
+              "attributionText": "Summary Icons (Placeholder)",
+              "altText": "Icons summarizing photosynthesis key points.",
+              "placementHint": "Side-by-side with text."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in each takeaway as you summarize it."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Next Steps & Homework",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 12,
+          "slideType": "closure",
+          "slideTitle": "Homework: Observe and Prepare",
+          "learningOutcomeIds": [
+            "LO-003"
+          ],
+          "topicCoverage": [
+            "Assignment and Preview"
+          ],
+          "teacherIntent": "Assign meaningful homework that extends learning beyond the classroom and prepares for Session 2.",
+          "studentTakeaway": "I have a clear task to complete at home and know what's coming next.",
+          "layout": "assignment-card",
+          "bulletPoints": [
+            "- Task: Find a plant outside. Observe its leaves.",
+            "- Question: Are all parts green? Why?",
+            "- Prep: Bring a leaf for Session 2 (if possible).",
+            "- Read: Chapter on 'Plant Cells'."
+          ],
+          "onSlideText": [
+            "Your Mission:",
+            "1. Go outside and find one plant.",
+            "2. Look at its leaves closely.",
+            "3. Think about the color green.",
+            "4. Prepare for Session 2: The Chemistry of Life!",
+            "- Any Questions?"
+          ],
+          "speakerNotes": [
+            "Explain the observation task clearly.",
+            "Encourage students to look at different plants (grass, trees, flowers).",
+            "Preview next session: 'Next time we will write out the full chemical equation and see how oxygen is released.'",
+            "Open floor for final questions.",
+            "Dismiss class with a positive note about nature's magic.",
+            "Time estimate: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Image of a student observing a plant in a garden with a checklist overlay for the homework tasks.",
+          "assets": [
+            {
+              "purpose": "Visual cue to make the homework assignment feel like an adventure/exploration.",
+              "searchQuery": "student observing nature science activity",
+              "sourceSite": "Education Stock Photos",
+              "sourceUrl": "",
+              "licenseType": "CC BY 4.0",
+              "attributionText": "Student Observation Image (Placeholder)",
+              "altText": "Child looking at a plant in a garden.",
+              "placementHint": "Right side of slide."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate the checklist items appearing as you assign them."
+          ],
+          "timeEstimateMinutes": 3
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Photosynthesis Lesson Plan - Grade 7 Session 1",
+      "keyInformation": [
+        "Topic: Introduction to Photosynthesis",
+        "Duration: 45 Minutes (Standard Class)",
+        "Key Concepts: Autotrophs, Chlorophyll, Light Energy Conversion",
+        "Assessment Method: Formative Quiz and Observation Task"
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Outline: How Plants Make Food",
+      "sections": [
+        "1. Introduction & Hook (Slides 1-4)",
+        "2. Core Concepts: Requirements & Chlorophyll (Slides 5-7)",
+        "3. Process Demonstration & Equation (Slide

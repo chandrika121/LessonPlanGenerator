@@ -1,0 +1,815 @@
+{
+  "materials": {
+    "ppt": {
+      "deckMode": "teacher-delivery",
+      "templateId": "visual-focus",
+      "templateName": "Visual Focus Educational Template",
+      "themeId": "cbse-academic-blue",
+      "themeName": "cbse-academic-blue",
+      "themeTokens": {
+        "themeId": "cbse-academic-blue",
+        "themeName": "cbse-academic-blue",
+        "fonts": {
+          "heading": "Montserrat Bold",
+          "body": "Open Sans Regular"
+        },
+        "colors": {
+          "primary": "#0056b3",
+          "secondary": "#28a745",
+          "accent": "#ffc107",
+          "background": "#f8f9fa",
+          "surface": "#ffffff",
+          "text": "#212529",
+          "mutedText": "#6c757d"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary-with-icon",
+          "cardStyle": "rounded-shadow-elevation-2",
+          "visualFrameStyle": "organic-green-border"
+        }
+      },
+      "title": "Introduction to Photosynthesis - Grade 7 Science",
+      "presentationTitle": "How Plants Make Food: The Process of Photosynthesis",
+      "presentationGoal": "To enable students to understand the process, requirements, and importance of photosynthesis through visual explanations and guided practice.",
+      "audience": "Grade 7 Students (Age 12-13)",
+      "theme": "cbse-academic-blue",
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Internal SVG",
+          "Google Imagen API"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Use internally generated images and in-app SVG diagrams only."
+        ],
+        "fallbackStrategy": "Use high-contrast schematic line drawings if specific photos fail to load."
+      },
+      "licenseChecklist": [
+        "Verify all external image links are active and accessible in classroom network.",
+        "Confirm no watermarks on generated diagrams.",
+        "Ensure SVG code is self-contained within the JSON structure."
+      ],
+      "presentationWarnings": [
+        "Do not read slides verbatim; use speaker notes for detailed explanations.",
+        "Allow 2 minutes of silence during Slide 7 visual analysis to let students observe details.",
+        "Prepare a real plant or leaf sample if available for the hook activity."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define photosynthesis and its importance",
+          "Identify reactants (CO2, water, sunlight) and products (glucose, oxygen)",
+          "Explain the role of chlorophyll in capturing light energy"
+        ],
+        "topicsCovered": [
+          "Definition of Photosynthesis",
+          "Requirements for Photosynthesis",
+          "The Chemical Process Overview",
+          "Role of Chloroplasts and Chlorophyll"
+        ],
+        "taughtConceptsCovered": [
+          "Light-dependent reactions (conceptual)",
+          "Gas exchange through stomata",
+          "Glucose as energy storage"
+        ],
+        "omittedContent": [
+          "Detailed Calvin Cycle steps (reserved for Session 2)",
+          "Respiration vs. Photosynthesis comparison (Session 3)"
+        ]
+      },
+      "slides": [
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Title / Session Identity",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "identity",
+          "slideTitle": "How Plants Make Food: Photosynthesis",
+          "learningOutcomeIds": [
+            "LO-01"
+          ],
+          "topicCoverage": [
+            "Introduction to Lesson Topic",
+            "Lesson Purpose Statement"
+          ],
+          "teacherIntent": "To capture student attention and set the context for today's exploration of plant biology.",
+          "studentTakeaway": "I will learn how plants create their own food using sunlight.",
+          "layout": "hero-image-left-text-right",
+          "bulletPoints": [
+            "Subject: Science (Biology)",
+            "Grade 7 - Chapter 12: Nutrition in Plants",
+            "Session 1 of 3",
+            "Essential Question: How do plants eat without mouths?"
+          ],
+          "onSlideText": [
+            "How Do Plants Make Food?",
+            "The Magic Process: Photosynthesis"
+          ],
+          "speakerNotes": [
+            "Welcome class! Today we begin a fascinating journey into the world of plant biology.",
+            "Ask students: 'Have you ever seen a plant eat?' Wait for responses. Clarify that plants don't have mouths or stomachs like us.",
+            "Introduce the Essential Question: How do they get energy if they can't chew food?",
+            "Explain that today we will discover the secret process called Photosynthesis, which literally means 'making with light'.",
+            "Transition: Let's look at what you need to know by the end of this lesson.",
+            "Estimated time: 2 minutes."
+          ],
+          "visualPlan": "Hero visual: Sunlight streaming through a large green maple or oak leaf, highlighting chlorophyll-rich areas.",
+          "assets": [
+            {
+              "purpose": "Background hero image to establish theme",
+              "searchQuery": "sunlight penetrating green leaf macro photography",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Sunlight rays passing through a green leaf showing veins and chlorophyll.",
+              "placementHint": "Full background or left 60% of slide.",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkhvdyBQbGFudHMgTWFrZSBGb29kOiBQaG90b3N5bnRoZXNpcyI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+SG93IFBsYW50cyBNYWtlIEZvb2Q6IFBob3Rvc3ludGhlc2lzPC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIEhlcm8gdmlzdWFsOiBTdW5saWdodCBzdHJlYW1pbmcgdGhyb3VnaCBhIGxhcmdlIGdyZWVuIG1hcGxlIG9yIG9hayBsZWFmLCBoaWdobGlnaHRpbmcgY2hsb3JvcGh5bGwtcmljaCBhcmVhcy4KICAgIDwvZGl2PgogIDwvZm9yZWlnbk9iamVjdD4KICA8dGV4dCB4PSI2MDAiIHk9Ijc0OCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmaWxsPSIjNjQ3NDhCIj5SdW50aW1lIGltYWdlIGdlbmVyYXRpb24gd2FzIHVuYXZhaWxhYmxlLCBzbyBhbiBpbnRlcm5hbCBmYWxsYmFjayB2aXN1YWwgd2FzIHVzZWQuPC90ZXh0Pgo8L3N2Zz4=",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in the title text slowly.",
+            "Animate light rays to pulse gently."
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "outcomes",
+          "slideTitle": "What We Will Learn Today",
+          "learningOutcomeIds": [
+            "LO-01",
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Learning Objectives",
+            "Success Criteria Definition"
+          ],
+          "teacherIntent": "To provide clear, measurable goals so students know exactly what success looks like.",
+          "studentTakeaway": "I can identify the ingredients and products of photosynthesis.",
+          "layout": "three-column-cards",
+          "bulletPoints": [
+            "Define Photosynthesis clearly",
+            "Identify 3 key requirements: Sunlight, Water, CO2",
+            "Explain why plants need sunlight to survive"
+          ],
+          "onSlideText": [
+            "1. Define the process of photosynthesis.",
+            "2. List reactants and products involved.",
+            "3. Explain the role of chlorophyll."
+          ],
+          "speakerNotes": [
+            "Read through these three goals together as a class.",
+            "Explain 'Reactants' simply: These are the ingredients we put in (like flour for cake).",
+            "Explain 'Products': The result or what comes out (the finished cake).",
+            "Ask students to repeat after you: 'Photosynthesis is how plants make food using sunlight.'",
+            "Emphasize that by the end of class, every student should be able to draw and explain this process.",
+            "Transition: Before we start our new journey, let's check what we already know about plants.",
+            "Estimated time: 3 minutes."
+          ],
+          "visualPlan": "Icon-based layout showing a book for definition, ingredients icons for requirements, and a leaf icon for the role of chlorophyll.",
+          "assets": [
+            {
+              "purpose": "Visual representation of learning goals",
+              "searchQuery": "science education icons photosynthesis definitions",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Three educational icons representing definition, ingredients, and plant function.",
+              "placementHint": "Centered in three columns.",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IldoYXQgV2UgV2lsbCBMZWFybiBUb2RheSI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+V2hhdCBXZSBXaWxsIExlYXJuIFRvZGF5PC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIEljb24tYmFzZWQgbGF5b3V0IHNob3dpbmcgYSBib29rIGZvciBkZWZpbml0aW9uLCBpbmdyZWRpZW50cyBpY29ucyBmb3IgcmVxdWlyZW1lbnRzLCBhbmQgYSBsZWFmIGljb24gZm9yIHRoZSByb2xlIG9mIGNobG9yb3BoeWxsLgogICAgPC9kaXY+CiAgPC9mb3JlaWduT2JqZWN0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNzQ4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiM2NDc0OEIiPlJ1bnRpbWUgaW1hZ2UgZ2VuZXJhdGlvbiB3YXMgdW5hdmFpbGFibGUsIHNvIGFuIGludGVybmFsIGZhbGxiYWNrIHZpc3VhbCB3YXMgdXNlZC48L3RleHQ+Cjwvc3ZnPg==",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Slide each outcome card in from the left, center, and right sequentially."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Prior Knowledge / Recall",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "activation",
+          "slideTitle": "Recall: How Do Living Things Need Food?",
+          "learningOutcomeIds": [
+            "LO-01"
+          ],
+          "topicCoverage": [
+            "Prior Knowledge Activation",
+            "Connection to Human Nutrition"
+          ],
+          "teacherIntent": "To bridge the gap between what students know about human nutrition and how plants differ.",
+          "studentTakeaway": "I understand that all living things need energy, but get it differently.",
+          "layout": "comparison-split",
+          "bulletPoints": [
+            "Humans eat food (bread, fruits)",
+            "Plants do not have mouths or stomachs",
+            "All life needs energy to grow and move"
+          ],
+          "onSlideText": [
+            "How Do We Get Energy?",
+            "- Eating Food",
+            "- Digestion in Stomach",
+            "Do Plants Eat Like Us?"
+          ],
+          "speakerNotes": [
+            "Ask: 'Who ate breakfast today? What did you eat?' (Get 2-3 answers).",
+            "Explain that humans are heterotrophs - we must find and consume food.",
+            "Contrast this with plants. Ask: 'If a plant doesn't have a mouth, how does it get energy to grow tall?'",
+            "Prompt students to think about where they see green leaves or sunlight on plants.",
+            "Clarify that while the source is different (eating vs making), the need for energy is the same.",
+            "Transition: Now let's look at a real-life mystery that explains how this happens.",
+            "Estimated time: 3 minutes."
+          ],
+          "visualPlan": "Side-by-side illustration comparing human digestion (eating) vs plant environment (sun/soil).",
+          "assets": [
+            {
+              "purpose": "Visual comparison of nutrition sources",
+              "searchQuery": "human eating food vs plant growing diagram cartoon",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Cartoon showing a child eating an apple and a plant growing under the sun.",
+              "placementHint": "Split screen layout, left human, right plant.",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlJlY2FsbDogSG93IERvIExpdmluZyBUaGluZ3MgTmVlZCBGb29kPyI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+UmVjYWxsOiBIb3cgRG8gTGl2aW5nIFRoaW5ncyBOZWVkIEZvb2Q/PC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIFNpZGUtYnktc2lkZSBpbGx1c3RyYXRpb24gY29tcGFyaW5nIGh1bWFuIGRpZ2VzdGlvbiAoZWF0aW5nKSB2cyBwbGFudCBlbnZpcm9ubWVudCAoc3VuL3NvaWwpLgogICAgPC9kaXY+CiAgPC9mb3JlaWduT2JqZWN0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNzQ4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiM2NDc0OEIiPlJ1bnRpbWUgaW1hZ2UgZ2VuZXJhdGlvbiB3YXMgdW5hdmFpbGFibGUsIHNvIGFuIGludGVybmFsIGZhbGxiYWNrIHZpc3VhbCB3YXMgdXNlZC48L3RleHQ+Cjwvc3ZnPg==",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in the 'Human' side first, then animate a question mark appearing over the plant."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "Lesson Hook / Bridge",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "hook",
+          "slideTitle": "The Great Plant Mystery",
+          "learningOutcomeIds": [
+            "LO-01"
+          ],
+          "topicCoverage": [
+            "Engagement Strategy",
+            "Curiosity Generation"
+          ],
+          "teacherIntent": "To spark curiosity through a thought experiment or observation that challenges common assumptions.",
+          "studentTakeaway": "I am curious about the invisible process happening inside leaves.",
+          "layout": "full-bleed-image-question",
+          "bulletPoints": [
+            "Imagine you are a plant...",
+            "You have no mouth, no stomach!",
+            "But you grow huge and strong every day."
+          ],
+          "onSlideText": [
+            "The Mystery:",
+            "How does a tiny seed become a giant tree?",
+            "Without eating anything?"
+          ],
+          "speakerNotes": [
+            "Present the hook: 'Imagine you are a plant. You have no mouth, no stomach, and you can't walk to get food.'",
+            "Ask students: 'How do you think this tiny seed becomes a giant oak tree?' (Allow 30 seconds of thinking).",
+            "Reveal that plants make their own food using sunlight.",
+            "Use the analogy: 'Plants are like solar-powered factories. They don't buy groceries; they cook their own meals!'",
+            "This sets up the need for a specific process called Photosynthesis.",
+            "Transition: Let's officially define what this amazing process is.",
+            "Estimated time: 4 minutes."
+          ],
+          "visualPlan": "Visual contrast showing a small seed and a large mature tree, emphasizing growth without visible food consumption.",
+          "assets": [
+            {
+              "purpose": "Hook visual to illustrate transformation",
+              "searchQuery": "acorn growing into oak tree time lapse concept art",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Illustration showing the growth from a small acorn to a large oak tree.",
+              "placementHint": "Center of slide with text overlay.",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlRoZSBHcmVhdCBQbGFudCBNeXN0ZXJ5Ij4KICA8cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI5MDAiIGZpbGw9IiNGOEZCRkQiLz4KICA8cmVjdCB4PSI1NCIgeT0iNTQiIHdpZHRoPSIxMDkyIiBoZWlnaHQ9Ijc5MiIgcng9IjM0IiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNEOTc3MDYiIHN0cm9rZS13aWR0aD0iNiIvPgogIDxyZWN0IHg9Ijk2IiB5PSI5OCIgd2lkdGg9IjEwMDgiIGhlaWdodD0iMTEwIiByeD0iMjQiIGZpbGw9IiMxRDRFODkiLz4KICA8dGV4dCB4PSIxMzIiIHk9IjE2NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZGRkZGIj5UaGUgR3JlYXQgUGxhbnQgTXlzdGVyeTwvdGV4dD4KICA8cmVjdCB4PSIxMjAiIHk9IjI2MiIgd2lkdGg9IjQyMCIgaGVpZ2h0PSI0NzAiIHJ4PSIyOCIgZmlsbD0iI0VFRjRGNyIgc3Ryb2tlPSIjMzZBREFBIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjkyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjE4Ii8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMzk1IiByPSI1MiIgZmlsbD0iI0RFODQzMSIgb3BhY2l0eT0iMC4zNSIvPgogIDxyZWN0IHg9IjIzMCIgeT0iNTE1IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMzNkFEQUEiIG9wYWNpdHk9IjAuMjgiLz4KICA8cmVjdCB4PSIyMTAiIHk9IjU2NSIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyOCIgcng9IjE0IiBmaWxsPSIjMUQ0RTg5IiBvcGFjaXR5PSIwLjE4Ii8+CiAgPHJlY3QgeD0iNjAwIiB5PSIyNzIiIHdpZHRoPSI0NTYiIGhlaWdodD0iMTAyIiByeD0iMjQiIGZpbGw9IiNGRkY3RUQiIHN0cm9rZT0iI0RFODQzMSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHRleHQgeD0iNjMyIiB5PSIzMzQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzlBMzQxMiI+UGxhbm5lZCBDbGFzc3Jvb20gVmlzdWFsPC90ZXh0PgogIDxmb3JlaWduT2JqZWN0IHg9IjYwMCIgeT0iNDEwIiB3aWR0aD0iNDMwIiBoZWlnaHQ9IjI1MCI+CiAgICA8ZGl2IHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIiBzdHlsZT0iZm9udC1mYW1pbHk6IEFyaWFsLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDI4cHg7IGxpbmUtaGVpZ2h0OiAxLjQ1OyBjb2xvcjogIzMzNDE1NTsiPgogICAgICBWaXN1YWwgY29udHJhc3Qgc2hvd2luZyBhIHNtYWxsIHNlZWQgYW5kIGEgbGFyZ2UgbWF0dXJlIHRyZWUsIGVtcGhhc2l6aW5nIGdyb3d0aCB3aXRob3V0IHZpc2libGUgZm9vZCBjb25zdW1wdGlvbi4KICAgIDwvZGl2PgogIDwvZm9yZWlnbk9iamVjdD4KICA8dGV4dCB4PSI2MDAiIHk9Ijc0OCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmaWxsPSIjNjQ3NDhCIj5SdW50aW1lIGltYWdlIGdlbmVyYXRpb24gd2FzIHVuYXZhaWxhYmxlLCBzbyBhbiBpbnRlcm5hbCBmYWxsYmFjayB2aXN1YWwgd2FzIHVzZWQuPC90ZXh0Pgo8L3N2Zz4=",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate the seed growing into a tree slowly to emphasize time and growth."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Topic Introduction",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "introduction",
+          "slideTitle": "Defining Photosynthesis",
+          "learningOutcomeIds": [
+            "LO-01"
+          ],
+          "topicCoverage": [
+            "Definition of Key Term",
+            "Etymology and Context"
+          ],
+          "teacherIntent": "To provide a clear, comprehensive definition of the core concept.",
+          "studentTakeaway": "Photosynthesis is the process where plants make food using sunlight.",
+          "layout": "definition-box-highlight",
+          "bulletPoints": [
+            "Photo = Light",
+            "Synthesis = Putting together / Making",
+            "Definition: Plants use light energy to convert CO2 and water into glucose."
+          ],
+          "onSlideText": [
+            "Photosynthesis:",
+            "- 'Photo' means Light",
+            "- 'Synthesis' means To Make",
+            "Plants make their own food using sunlight!"
+          ],
+          "speakerNotes": [
+            "Break down the word: Photo (Light) + Synthesis (Making). Together, it means 'making with light'.",
+            "Write on board: Photosynthesis = Making Food Using Sunlight.",
+            "Explain that this is a chemical process happening inside plant cells.",
+            "Clarify that glucose (sugar) is the food they make for energy and growth.",
+            "Emphasize that oxygen is also produced as a byproduct, which we breathe!",
+            "Transition: Now let's look at exactly what ingredients are needed to start this process.",
+            "Estimated time: 4 minutes."
+          ],
+          "visualPlan": "Etymological breakdown of the word Photosynthesis showing its components and meaning.",
+          "assets": [
+            {
+              "purpose": "Visual aid for vocabulary building",
+              "searchQuery": "photosynthesis etymology diagram light synthesis icons",
+              "sourceSite": "Internal SVG fallback",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG fallback",
+              "attributionText": "",
+              "altText": "Diagram breaking down the word Photosynthesis into Photo (Light) and Synthesis (Making).",
+              "placementHint": "Center of slide.",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkRlZmluaW5nIFBob3Rvc3ludGhlc2lzIj4KICA8cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI5MDAiIGZpbGw9IiNGOEZCRkQiLz4KICA8cmVjdCB4PSI1NCIgeT0iNTQiIHdpZHRoPSIxMDkyIiBoZWlnaHQ9Ijc5MiIgcng9IjM0IiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNEOTc3MDYiIHN0cm9rZS13aWR0aD0iNiIvPgogIDxyZWN0IHg9Ijk2IiB5PSI5OCIgd2lkdGg9IjEwMDgiIGhlaWdodD0iMTEwIiByeD0iMjQiIGZpbGw9IiMxRDRFODkiLz4KICA8dGV4dCB4PSIxMzIiIHk9IjE2NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZGRkZGIj5EZWZpbmluZyBQaG90b3N5bnRoZXNpczwvdGV4dD4KICA8cmVjdCB4PSIxMjAiIHk9IjI2MiIgd2lkdGg9IjQyMCIgaGVpZ2h0PSI0NzAiIHJ4PSIyOCIgZmlsbD0iI0VFRjRGNyIgc3Ryb2tlPSIjMzZBREFBIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjkyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjE4Ii8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMzk1IiByPSI1MiIgZmlsbD0iI0RFODQzMSIgb3BhY2l0eT0iMC4zNSIvPgogIDxyZWN0IHg9IjIzMCIgeT0iNTE1IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMzNkFEQUEiIG9wYWNpdHk9IjAuMjgiLz4KICA8cmVjdCB4PSIyMTAiIHk9IjU2NSIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyOCIgcng9IjE0IiBmaWxsPSIjMUQ0RTg5IiBvcGFjaXR5PSIwLjE4Ii8+CiAgPHJlY3QgeD0iNjAwIiB5PSIyNzIiIHdpZHRoPSI0NTYiIGhlaWdodD0iMTAyIiByeD0iMjQiIGZpbGw9IiNGRkY3RUQiIHN0cm9rZT0iI0RFODQzMSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHRleHQgeD0iNjMyIiB5PSIzMzQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzlBMzQxMiI+UGxhbm5lZCBDbGFzc3Jvb20gVmlzdWFsPC90ZXh0PgogIDxmb3JlaWduT2JqZWN0IHg9IjYwMCIgeT0iNDEwIiB3aWR0aD0iNDMwIiBoZWlnaHQ9IjI1MCI+CiAgICA8ZGl2IHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIiBzdHlsZT0iZm9udC1mYW1pbHk6IEFyaWFsLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDI4cHg7IGxpbmUtaGVpZ2h0OiAxLjQ1OyBjb2xvcjogIzMzNDE1NTsiPgogICAgICBFdHltb2xvZ2ljYWwgYnJlYWtkb3duIG9mIHRoZSB3b3JkIFBob3Rvc3ludGhlc2lzIHNob3dpbmcgaXRzIGNvbXBvbmVudHMgYW5kIG1lYW5pbmcuCiAgICA8L2Rpdj4KICA8L2ZvcmVpZ25PYmplY3Q+CiAgPHRleHQgeD0iNjAwIiB5PSI3NDgiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMiIgZmlsbD0iIzY0NzQ4QiI+UnVudGltZSBpbWFnZSBnZW5lcmF0aW9uIHdhcyB1bmF2YWlsYWJsZSwgc28gYW4gaW50ZXJuYWwgZmFsbGJhY2sgdmlzdWFsIHdhcyB1c2VkLjwvdGV4dD4KPC9zdmc+",
+              "mimeType": "image/svg+xml",
+              "model": "internal-svg-fallback",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate the word parts appearing one by one before combining them into the full definition."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept_a",
+          "templateSlideTitle": "Core Concept A",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "concept_explanation",
+          "slideTitle": "What Plants Need to Start",
+          "learningOutcomeIds": [
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Reactants: Sunlight, Water, Carbon Dioxide"
+          ],
+          "teacherIntent": "To detail the specific inputs required for photosynthesis.",
+          "studentTakeaway": "Plants need sunlight, water from roots, and carbon dioxide from air to make food.",
+          "layout": "three-item-list",
+          "bulletPoints": [
+            "1. Sunlight (Energy Source)",
+            "2. Water (Absorbed by Roots)",
+            "3. Carbon Dioxide (From Air via Leaves)"
+          ],
+          "onSlideText": [
+            "The 3 Essential Ingredients:",
+            "- ☀️ Sunlight",
+            "- 💧 Water (from soil)",
+            "- 🌬️ CO2 (Carbon Dioxide from air)"
+          ],
+          "speakerNotes": [
+            "Explain each ingredient in detail.",
+            "Sunlight: The energy source. Without it, the factory stops working at night.",
+            "Water: Absorbed by roots and travels up to leaves through tiny tubes (xylem).",
+            "Carbon Dioxide: A gas we breathe out; plants take this from the air through tiny holes in leaves called stomata.",
+            "Analogy: Just like a baker needs flour, water, and heat to bake bread, plants need these three things for photosynthesis.",
+            "Transition: Now that we know what goes IN, let's see how it all works together visually.",
+            "Estimated time: 5 minutes."
+          ],
+          "visualPlan": "Iconographic representation of the three reactants: Sunlight, Water, and Carbon Dioxide.",
+          "assets": [
+            {
+              "purpose": "Visual identification of inputs",
+              "searchQuery": "photosynthesis ingredients icons sun water co2 leaf stomata",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Icons representing sunlight, water droplets from roots, and carbon dioxide gas entering a leaf.",
+              "placementHint": "Three columns below the title.",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate each ingredient appearing sequentially as it is discussed."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Core Concept B / Visual Explanation",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "concept_diagram",
+          "slideTitle": "The Photosynthesis Factory",
+          "learningOutcomeIds": [
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Process Flow: Inputs to Outputs",
+            "Role of Chlorophyll and Sunlight"
+          ],
+          "teacherIntent": "To provide a visual model that connects inputs, the process (chloroplasts), and outputs.",
+          "studentTakeaway": "Sunlight + Water + CO2 -> Glucose + Oxygen inside chloroplasts.",
+          "layout": "flowchart-diagram",
+          "bulletPoints": [
+            "- Inputs: Sunlight, H2O, CO2",
+            "- Location: Chloroplasts (Green Part)",
+            "- Outputs: Food (Glucose) & Oxygen"
+          ],
+          "onSlideText": [
+            "The Process:",
+            "Sun + Water + Air -> Plant Food + Oxygen",
+            "(Happens in Green Parts of Leaves)"
+          ],
+          "speakerNotes": [
+            "Point to the diagram. Explain that inside leaves are tiny factories called chloroplasts.",
+            "Explain Chlorophyll: The green pigment that captures sunlight like a solar panel.",
+            "Walk through the flow: Sunlight hits the leaf -> Water comes up from roots -> CO2 enters air holes -> Energy is captured -> Food and Oxygen are made.",
+            "Emphasize that oxygen is released into the air, which we need to breathe. This is why forests are called 'the lungs of the earth'.",
+            "Transition: Now let's see a real-world example of this process in action through a worked scenario.",
+            "Estimated time: 5 minutes."
+          ],
+          "visualPlan": "Cross-sectional diagram of a leaf with labeled parts: Stomata, Chloroplasts, Xylem (water), Phloem (food transport). Arrows showing input/output flow.",
+          "assets": [
+            {
+              "purpose": "Core process visualization",
+              "searchQuery": "photosynthesis leaf cross section diagram chlorophyll stomata labeled",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Labeled cross-section of a leaf showing the photosynthesis process inside chloroplasts.",
+              "placementHint": "Centered, large enough to see details.",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate arrows flowing from inputs into the leaf, then glowing inside chloroplasts to show energy conversion."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example / Demonstration",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "example_demonstration",
+          "slideTitle": "Example: A Day in the Life of a Leaf",
+          "learningOutcomeIds": [
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Application of Concept to Real Scenario"
+          ],
+          "teacherIntent": "To model expert thinking by tracing the path of energy and matter through the process.",
+          "studentTakeaway": "I can trace how sunlight turns into food for a plant.",
+          "layout": "step-by-step-timeline",
+          "bulletPoints": [
+            "- Morning: Sun rises, light hits leaf",
+            "- Roots drink water from soil",
+            "- Leaves absorb CO2 from air",
+            "- Chlorophyll captures energy -> Makes Glucose"
+          ],
+          "onSlideText": [
+            "Step 1: Light Hits Leaf (Energy In)",
+            "Step 2: Water & Air Enter Plant",
+            "Step 3: Green Pigment Works!",
+            "Result: Food Made + Oxygen Released"
+          ],
+          "speakerNotes": [
+            "Tell a story: 'Imagine it's morning. The sun rises.' (Point to Step 1).",
+            "Explain that the plant wakes up and starts drinking water through its roots.",
+            "Describe how tiny holes in leaves open to let CO2 in.",
+            "Highlight the magic moment: Chlorophyll captures light energy and uses it to combine water and CO2 into sugar (glucose) for food.",
+            "Conclude with the release of oxygen bubbles - 'The plant is breathing out fresh air!'",
+            "Ask students: 'What would happen if there was no sun?' (Process stops, no food made).",
+            "Transition: Now it's your turn to practice this thinking!",
+            "Estimated time: 4 minutes."
+          ],
+          "visualPlan": "Sequential visual steps illustrating the daily cycle of photosynthesis in a single plant.",
+          "assets": [
+            {
+              "purpose": "Step-by-step process visualization",
+              "searchQuery": "photosynthesis step by step sequence diagram morning to afternoon leaf",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Four-step visual guide showing the daily process of photosynthesis in a leaf.",
+              "placementHint": "Vertical timeline on left side.",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate each step appearing as the story progresses. Highlight 'Energy In' and 'Food Made' with color changes."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice / Activity",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "activity",
+          "slideTitle": "Activity: What's Missing?",
+          "learningOutcomeIds": [
+            "LO-01",
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Active Learning Application",
+            "Problem Solving"
+          ],
+          "teacherIntent": "To engage students in identifying missing components of the photosynthesis process.",
+          "studentTakeaway": "I can identify which ingredient is needed for a plant to survive.",
+          "layout": "interactive-question-card",
+          "bulletPoints": [
+            "- Scenario: A plant turns yellow and stops growing.",
+            "- Question: Which ingredient might be missing?",
+            "- Options: Sunlight, Water, CO2"
+          ],
+          "onSlideText": [
+            "Scenario:",
+            "A houseplant is wilting and turning brown.",
+            "Think-Pair-Share:",
+            "Which 'ingredient' did the plant not get enough of?",
+            "- Sunlight? - Water? - Air?"
+          ],
+          "speakerNotes": [
+            "Present the scenario: A houseplant is wilting and turning brown.",
+            "Ask students to turn to their partner (Think-Pair-Share) for 1 minute.",
+            "Discuss answers. Guide them to realize it could be any of the three, but usually water or light in a home setting.",
+            "Follow up: 'What if we put a plant in a dark closet? What happens?' (No photosynthesis -> no food).",
+            "Reinforce that all three are essential; missing one stops the process.",
+            "Transition: Let's check what you've learned with some quick questions!",
+            "Estimated time: 5 minutes."
+          ],
+          "visualPlan": "Visual prompt showing a struggling houseplant with three option cards (Sun, Water, CO2) for students to choose from.",
+          "assets": [
+            {
+              "purpose": "Activity visual aid",
+              "searchQuery": "wilting plant illustration educational diagram options sun water air",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Diagram showing a wilting plant with three options for missing resources.",
+              "placementHint": "Center of slide.",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal the options one by one after students have discussed in pairs."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Formative Check / Quick Assessment",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "assessment",
+          "slideTitle": "Quiz Time!",
+          "learningOutcomeIds": [
+            "LO-01",
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Formative Assessment of Learning Outcomes"
+          ],
+          "teacherIntent": "To quickly gauge student understanding through targeted questions.",
+          "studentTakeaway": "I can answer key questions about photosynthesis correctly.",
+          "layout": "quiz-format",
+          "bulletPoints": [
+            "- Q1: What does 'Photo' mean?",
+            "- Q2: Name one product of photosynthesis.",
+            "- Q3: Where does water come from?"
+          ],
+          "onSlideText": [
+            "1. What is the meaning of 'Photo' in Photosynthesis?",
+            "   a) Plant b) Light c) Food",
+            "2. Which gas do plants release into the air?",
+            "   a) Oxygen b) Carbon Dioxide c) Nitrogen"
+          ],
+          "speakerNotes": [
+            "Ask students to hold up fingers for answers (1 finger = A, 2 = B, etc.) or use mini-whiteboards.",
+            "Q1 Answer: Light. Remind them of the etymology.",
+            "Q2 Answer: Oxygen. Ask 'Why is this important?' (We breathe it!).",
+            "Q3 Answer: Soil/Roots. Water absorbed by roots travels up to leaves.",
+            "Review any incorrect answers immediately with a quick explanation.",
+            "Transition: Let's wrap up what we've learned today.",
+            "Estimated time: 4 minutes."
+          ],
+          "visualPlan": "Simple, high-contrast multiple-choice questions designed for quick classroom polling.",
+          "assets": [
+            {
+              "purpose": "Assessment content",
+              "searchQuery": "science quiz template photosynthesis mcq icons",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Multiple choice questions about photosynthesis with clear options.",
+              "placementHint": "Centered text blocks.",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal answers after students have voted. Use green checkmarks for correct options."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Recap / Key Takeaways",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Recap / Key Takeaways",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Physical World and Motion"
+          ],
+          "teacherIntent": "Use the recap / key takeaways slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "visual-focus template slide",
+          "bulletPoints": [
+            "Cover the recap / key takeaways for this session using only taught content."
+          ],
+          "onSlideText": [
+            "Recap / Key Takeaways"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Homework / Next Class Bridge",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 12,
+          "slideType": "homework",
+          "slideTitle": "Homework / Next Class Bridge",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Physical World and Motion"
+          ],
+          "teacherIntent": "Use the homework / next class bridge slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "visual-focus template slide",
+          "bulletPoints": [
+            "Cover the homework / next class bridge for this session using only taught content."
+          ],
+          "onSlideText": [
+            "Homework / Next Class Bridge"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        }
+      ]
+    }
+  },
+  "id": "session-1",
+  "sessionNumber": 1,
+  "title": "Physical World and Motion",
+  "duration": 45
+}

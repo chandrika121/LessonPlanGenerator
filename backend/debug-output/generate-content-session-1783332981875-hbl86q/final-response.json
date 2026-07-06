@@ -1,0 +1,780 @@
+{
+  "materials": {
+    "ppt": {
+      "deckMode": "teacher-delivery",
+      "templateId": "academic-split",
+      "templateName": "Academic Split",
+      "themeId": "kamalaniketan-modern",
+      "themeName": "Kamalaniketan Modern",
+      "themeTokens": {
+        "themeId": "kamalaniketan-modern",
+        "themeName": "Kamalaniketan Modern",
+        "fonts": {
+          "heading": "Outfit",
+          "body": "Inter"
+        },
+        "colors": {
+          "primary": "#36ADAA",
+          "secondary": "#1EABDA",
+          "accent": "#DE8431",
+          "background": "#EEF4F7",
+          "surface": "#FFFFFF",
+          "text": "#0F172A",
+          "mutedText": "#64748B"
+        },
+        "visualStyle": {
+          "topBarStyle": "bold color band with soft contrast surfaces",
+          "cardStyle": "rounded modern educator cards",
+          "visualFrameStyle": "large clean visual panel with soft border"
+        }
+      },
+      "title": "Number System - Session 14",
+      "presentationTitle": "Number System - Session 14",
+      "presentationGoal": "This session focuses on applying Euclid's axioms and postulates to prove basic properties of lines, specifically that two distinct points determine a unique line. Students will transition from visual intuition to form...",
+      "audience": "Class IX classroom",
+      "theme": "Kamalaniketan Modern",
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Internal SVG",
+          "Google Imagen API"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Use internally generated images and in-app SVG diagrams only."
+        ],
+        "fallbackStrategy": "Prefer SVG diagrams for concept/process slides and use the Google Imagen API for all picture-based visuals."
+      },
+      "licenseChecklist": [
+        "All visuals should be internally generated or rendered as in-app SVG diagrams.",
+        "Review generated visuals for classroom accuracy before export."
+      ],
+      "presentationWarnings": [
+        "Do not extend beyond the taught session scope.",
+        "Replace placeholder asset URLs with final selected reusable assets before export if needed."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [],
+        "topicsCovered": [
+          "Number System"
+        ],
+        "taughtConceptsCovered": [
+          "Uniqueness of a Line",
+          "Proof by Contradiction in Geometry"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Title / Session Identity",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title",
+          "slideTitle": "Number System - Session 14",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Introduce the session and set the learning purpose.",
+          "studentTakeaway": "Understand what today’s lesson is about.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "Mathematics | Class IX",
+            "Number System",
+            "45 minute session"
+          ],
+          "onSlideText": [
+            "Number System - Session 14",
+            "Number System",
+            "Mathematics | Class IX"
+          ],
+          "speakerNotes": [
+            "This session focuses on applying Euclid's axioms and postulates to prove basic properties of lines, specifically that two distinct points determine a unique line. Students will transition from visual intuition to form...",
+            "To establish the foundational axiom that two points determine a unique line.",
+            "To introduce students to the structure of geometric proofs using contradiction."
+          ],
+          "visualPlan": "A clean classroom hero visual introducing Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Number System - Session 14",
+              "searchQuery": "Mathematics Number System - Session 14 diagram",
+              "sourceSite": "Puter planned visual",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Generated in browser via Puter or internal SVG fallback",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Number System - Session 14",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ik51bWJlciBTeXN0ZW0gLSBTZXNzaW9uIDE0Ij4KICA8cmVjdCB3aWR0aD0iMTIwMCIgaGVpZ2h0PSI5MDAiIGZpbGw9IiNGOEZCRkQiLz4KICA8cmVjdCB4PSI1NCIgeT0iNTQiIHdpZHRoPSIxMDkyIiBoZWlnaHQ9Ijc5MiIgcng9IjM0IiBmaWxsPSIjRkZGRkZGIiBzdHJva2U9IiNEOTc3MDYiIHN0cm9rZS13aWR0aD0iNiIvPgogIDxyZWN0IHg9Ijk2IiB5PSI5OCIgd2lkdGg9IjEwMDgiIGhlaWdodD0iMTEwIiByeD0iMjQiIGZpbGw9IiMxRDRFODkiLz4KICA8dGV4dCB4PSIxMzIiIHk9IjE2NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjRkZGRkZGIj5OdW1iZXIgU3lzdGVtIC0gU2Vzc2lvbiAxNDwvdGV4dD4KICA8cmVjdCB4PSIxMjAiIHk9IjI2MiIgd2lkdGg9IjQyMCIgaGVpZ2h0PSI0NzAiIHJ4PSIyOCIgZmlsbD0iI0VFRjRGNyIgc3Ryb2tlPSIjMzZBREFBIiBzdHJva2Utd2lkdGg9IjQiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjkyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjE4Ii8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMzk1IiByPSI1MiIgZmlsbD0iI0RFODQzMSIgb3BhY2l0eT0iMC4zNSIvPgogIDxyZWN0IHg9IjIzMCIgeT0iNTE1IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMzNkFEQUEiIG9wYWNpdHk9IjAuMjgiLz4KICA8cmVjdCB4PSIyMTAiIHk9IjU2NSIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIyOCIgcng9IjE0IiBmaWxsPSIjMUQ0RTg5IiBvcGFjaXR5PSIwLjE4Ii8+CiAgPHJlY3QgeD0iNjAwIiB5PSIyNzIiIHdpZHRoPSI0NTYiIGhlaWdodD0iMTAyIiByeD0iMjQiIGZpbGw9IiNGRkY3RUQiIHN0cm9rZT0iI0RFODQzMSIgc3Ryb2tlLXdpZHRoPSIzIi8+CiAgPHRleHQgeD0iNjMyIiB5PSIzMzQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzlBMzQxMiI+UGxhbm5lZCBDbGFzc3Jvb20gVmlzdWFsPC90ZXh0PgogIDxmb3JlaWduT2JqZWN0IHg9IjYwMCIgeT0iNDEwIiB3aWR0aD0iNDMwIiBoZWlnaHQ9IjI1MCI+CiAgICA8ZGl2IHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hodG1sIiBzdHlsZT0iZm9udC1mYW1pbHk6IEFyaWFsLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDI4cHg7IGxpbmUtaGVpZ2h0OiAxLjQ1OyBjb2xvcjogIzMzNDE1NTsiPgogICAgICBBIGNsZWFuIGNsYXNzcm9vbSBoZXJvIHZpc3VhbCBpbnRyb2R1Y2luZyBOdW1iZXIgU3lzdGVtIC0gU2Vzc2lvbiAxNC4KICAgIDwvZGl2PgogIDwvZm9yZWlnbk9iamVjdD4KICA8dGV4dCB4PSI2MDAiIHk9Ijc0OCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmaWxsPSIjNjQ3NDhCIj5SdW50aW1lIGltYWdlIGdlbmVyYXRpb24gd2FzIHVuYXZhaWxhYmxlLCBzbyBhbiBpbnRlcm5hbCBmYWxsYmFjayB2aXN1YWwgd2FzIHVzZWQuPC90ZXh0Pgo8L3N2Zz4=",
+              "mimeType": "image/svg+xml",
+              "model": "puter-planned-visual",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Number System - Session 14 visual",
+            "type": "visual support",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Number System - Session 14.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "learning-outcomes",
+          "slideTitle": "What We Will Learn",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Share the learning outcomes clearly.",
+          "studentTakeaway": "Know what they should learn by the end of class.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [],
+          "onSlideText": [],
+          "speakerNotes": [
+            "Students will articulate that exactly one unique line passes through two distinct points.",
+            "Students will use logical deduction (reductio ad absurdum) to justify the uniqueness property.",
+            "Students will distinguish between 'existence' and 'uniqueness' in geometric proofs."
+          ],
+          "visualPlan": "A structured learning goals visual for Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for What We Will Learn",
+              "searchQuery": "Mathematics What We Will Learn diagram",
+              "sourceSite": "Puter planned visual",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Generated in browser via Puter or internal SVG fallback",
+              "attributionText": "",
+              "altText": "Illustration or diagram for What We Will Learn",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IldoYXQgV2UgV2lsbCBMZWFybiI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+V2hhdCBXZSBXaWxsIExlYXJuPC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIEEgc3RydWN0dXJlZCBsZWFybmluZyBnb2FscyB2aXN1YWwgZm9yIE51bWJlciBTeXN0ZW0gLSBTZXNzaW9uIDE0LgogICAgPC9kaXY+CiAgPC9mb3JlaWduT2JqZWN0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNzQ4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiM2NDc0OEIiPlJ1bnRpbWUgaW1hZ2UgZ2VuZXJhdGlvbiB3YXMgdW5hdmFpbGFibGUsIHNvIGFuIGludGVybmFsIGZhbGxiYWNrIHZpc3VhbCB3YXMgdXNlZC48L3RleHQ+Cjwvc3ZnPg==",
+              "mimeType": "image/svg+xml",
+              "model": "puter-planned-visual",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "What We Will Learn visual",
+            "type": "visual support",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for What We Will Learn.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Prior Knowledge / Recall",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "prerequisite",
+          "slideTitle": "Recall and Prepare",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Activate prior knowledge before new learning.",
+          "studentTakeaway": "Reconnect with ideas needed for today’s topic.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "Definition of a point, line, ray, and plane",
+            "Basic understanding of Euclid's first three axioms/postulates",
+            "Ability to identify collinear vs non-collinear points"
+          ],
+          "onSlideText": [
+            "Definition of a point, line, ray, and plane",
+            "Basic understanding of Euclid's first three axioms/postulates",
+            "Ability to identify collinear vs non-collinear points"
+          ],
+          "speakerNotes": [
+            "Euclid defined geometry based on self-evident truths called postulates.",
+            "Postulate 1: A straight line can be drawn from any point to any other point.",
+            "The concept of 'uniqueness' in geometric constructions."
+          ],
+          "visualPlan": "A prior-knowledge recall visual connected to Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Recall and Prepare",
+              "searchQuery": "Mathematics Recall and Prepare diagram",
+              "sourceSite": "Puter planned visual",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Generated in browser via Puter or internal SVG fallback",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Recall and Prepare",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlJlY2FsbCBhbmQgUHJlcGFyZSI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+UmVjYWxsIGFuZCBQcmVwYXJlPC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIEEgcHJpb3Ita25vd2xlZGdlIHJlY2FsbCB2aXN1YWwgY29ubmVjdGVkIHRvIE51bWJlciBTeXN0ZW0gLSBTZXNzaW9uIDE0LgogICAgPC9kaXY+CiAgPC9mb3JlaWduT2JqZWN0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNzQ4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiM2NDc0OEIiPlJ1bnRpbWUgaW1hZ2UgZ2VuZXJhdGlvbiB3YXMgdW5hdmFpbGFibGUsIHNvIGFuIGludGVybmFsIGZhbGxiYWNrIHZpc3VhbCB3YXMgdXNlZC48L3RleHQ+Cjwvc3ZnPg==",
+              "mimeType": "image/svg+xml",
+              "model": "puter-planned-visual",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Recall and Prepare visual",
+            "type": "visual support",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Recall and Prepare.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "Lesson Hook / Bridge",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "hook",
+          "slideTitle": "Hook and Curiosity",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Create curiosity and bridge into the lesson.",
+          "studentTakeaway": "See why the topic matters.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "This session focuses on applying Euclid's axioms and postulates to prove basic properties of lines, specifically that two distinct points determine a unique line. Students will..."
+          ],
+          "onSlideText": [],
+          "speakerNotes": [
+            "To establish the foundational axiom that two points determine a unique line.",
+            "To introduce students to the structure of geometric proofs using contradiction."
+          ],
+          "visualPlan": "An engaging hook visual that sparks curiosity about Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Hook and Curiosity",
+              "searchQuery": "Mathematics Hook and Curiosity diagram",
+              "sourceSite": "Puter planned visual",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Generated in browser via Puter or internal SVG fallback",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Hook and Curiosity",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9Ikhvb2sgYW5kIEN1cmlvc2l0eSI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+SG9vayBhbmQgQ3VyaW9zaXR5PC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIEFuIGVuZ2FnaW5nIGhvb2sgdmlzdWFsIHRoYXQgc3BhcmtzIGN1cmlvc2l0eSBhYm91dCBOdW1iZXIgU3lzdGVtIC0gU2Vzc2lvbiAxNC4KICAgIDwvZGl2PgogIDwvZm9yZWlnbk9iamVjdD4KICA8dGV4dCB4PSI2MDAiIHk9Ijc0OCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmaWxsPSIjNjQ3NDhCIj5SdW50aW1lIGltYWdlIGdlbmVyYXRpb24gd2FzIHVuYXZhaWxhYmxlLCBzbyBhbiBpbnRlcm5hbCBmYWxsYmFjayB2aXN1YWwgd2FzIHVzZWQuPC90ZXh0Pgo8L3N2Zz4=",
+              "mimeType": "image/svg+xml",
+              "model": "puter-planned-visual",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Hook and Curiosity visual",
+            "type": "visual support",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Hook and Curiosity.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Topic Introduction",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "introduction",
+          "slideTitle": "Topic Introduction",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Introduce the central idea and vocabulary.",
+          "studentTakeaway": "Understand the main concept and basic terms.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "Welcome back! In Session 1, we reviewed basic shapes. Today, we unlock a powerful tool used by architects and engineers: the Pythagorean theorem. We will learn how to find missi...",
+            "Hypotenuse: The longest side of a right-angled triangle, located opposite the right angle.",
+            "Isosceles Triangle: A triangle with at least two sides of equal length and corresponding base angles that are equal."
+          ],
+          "onSlideText": [
+            "Welcome back! In Session 1, we reviewed basic shapes. Today, we unlock a powerful tool used by architects and engineers: the Pythagorean..."
+          ],
+          "speakerNotes": [
+            "Welcome back! In Session 1, we reviewed basic shapes. Today, we unlock a powerful tool used by architects and engineers: the Pythagorean theorem. We will learn how to find missing sides in right-angled triangles and d..."
+          ],
+          "visualPlan": "A concept introduction visual for Number System - Session 14 with clear educational focus.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Topic Introduction",
+              "searchQuery": "Mathematics Topic Introduction diagram",
+              "sourceSite": "Puter planned visual",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Generated in browser via Puter or internal SVG fallback",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Topic Introduction",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlRvcGljIEludHJvZHVjdGlvbiI+CiAgPHJlY3Qgd2lkdGg9IjEyMDAiIGhlaWdodD0iOTAwIiBmaWxsPSIjRjhGQkZEIi8+CiAgPHJlY3QgeD0iNTQiIHk9IjU0IiB3aWR0aD0iMTA5MiIgaGVpZ2h0PSI3OTIiIHJ4PSIzNCIgZmlsbD0iI0ZGRkZGRiIgc3Ryb2tlPSIjRDk3NzA2IiBzdHJva2Utd2lkdGg9IjYiLz4KICA8cmVjdCB4PSI5NiIgeT0iOTgiIHdpZHRoPSIxMDA4IiBoZWlnaHQ9IjExMCIgcng9IjI0IiBmaWxsPSIjMUQ0RTg5Ii8+CiAgPHRleHQgeD0iMTMyIiB5PSIxNjUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI0MiIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iI0ZGRkZGRiI+VG9waWMgSW50cm9kdWN0aW9uPC90ZXh0PgogIDxyZWN0IHg9IjEyMCIgeT0iMjYyIiB3aWR0aD0iNDIwIiBoZWlnaHQ9IjQ3MCIgcng9IjI4IiBmaWxsPSIjRUVGNEY3IiBzdHJva2U9IiMzNkFEQUEiIHN0cm9rZS13aWR0aD0iNCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iOTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMTgiLz4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSIzOTUiIHI9IjUyIiBmaWxsPSIjREU4NDMxIiBvcGFjaXR5PSIwLjM1Ii8+CiAgPHJlY3QgeD0iMjMwIiB5PSI1MTUiIHdpZHRoPSIyMDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzM2QURBQSIgb3BhY2l0eT0iMC4yOCIvPgogIDxyZWN0IHg9IjIxMCIgeT0iNTY1IiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjI4IiByeD0iMTQiIGZpbGw9IiMxRDRFODkiIG9wYWNpdHk9IjAuMTgiLz4KICA8cmVjdCB4PSI2MDAiIHk9IjI3MiIgd2lkdGg9IjQ1NiIgaGVpZ2h0PSIxMDIiIHJ4PSIyNCIgZmlsbD0iI0ZGRjdFRCIgc3Ryb2tlPSIjREU4NDMxIiBzdHJva2Utd2lkdGg9IjMiLz4KICA8dGV4dCB4PSI2MzIiIHk9IjMzNCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI4IiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOUEzNDEyIj5QbGFubmVkIENsYXNzcm9vbSBWaXN1YWw8L3RleHQ+CiAgPGZvcmVpZ25PYmplY3QgeD0iNjAwIiB5PSI0MTAiIHdpZHRoPSI0MzAiIGhlaWdodD0iMjUwIj4KICAgIDxkaXYgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHN0eWxlPSJmb250LWZhbWlseTogQXJpYWwsIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMjhweDsgbGluZS1oZWlnaHQ6IDEuNDU7IGNvbG9yOiAjMzM0MTU1OyI+CiAgICAgIEEgY29uY2VwdCBpbnRyb2R1Y3Rpb24gdmlzdWFsIGZvciBOdW1iZXIgU3lzdGVtIC0gU2Vzc2lvbiAxNCB3aXRoIGNsZWFyIGVkdWNhdGlvbmFsIGZvY3VzLgogICAgPC9kaXY+CiAgPC9mb3JlaWduT2JqZWN0PgogIDx0ZXh0IHg9IjYwMCIgeT0iNzQ4IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiM2NDc0OEIiPlJ1bnRpbWUgaW1hZ2UgZ2VuZXJhdGlvbiB3YXMgdW5hdmFpbGFibGUsIHNvIGFuIGludGVybmFsIGZhbGxiYWNrIHZpc3VhbCB3YXMgdXNlZC48L3RleHQ+Cjwvc3ZnPg==",
+              "mimeType": "image/svg+xml",
+              "model": "puter-planned-visual",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Topic Introduction visual",
+            "type": "visual support",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Topic Introduction.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "core_concept_a",
+          "templateSlideTitle": "Core Concept A",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "concept",
+          "slideTitle": "Uniqueness of a Line",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Build the first core concept clearly.",
+          "studentTakeaway": "Grasp the first major idea of the lesson.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "The property that exactly one line passes through any two distinct points.",
+            "While Euclid's first postulate guarantees existence (we can draw it), we must prove uniqueness. We use 'Proof by Contradiction'. If we assume there are two lines, they would hav...",
+            "We are moving from 'drawing' lines to proving properties of lines. Today we prove that through any two distinct points, there is exactly one line."
+          ],
+          "onSlideText": [
+            "The property that exactly one line passes through any two distinct points."
+          ],
+          "speakerNotes": [
+            "While Euclid's first postulate guarantees existence (we can draw it), we must prove uniqueness. We use 'Proof by Contradiction'. If we assume there are two lines, they would have to share more than just the two points...",
+            "Two nails on a wall connected by a taut string represent the unique line segment."
+          ],
+          "visualPlan": "A concept-building classroom visual for Uniqueness of a Line.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Uniqueness of a Line",
+              "searchQuery": "Mathematics Uniqueness of a Line diagram",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Uniqueness of a Line",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Uniqueness of a Line visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Uniqueness of a Line.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"720\" viewBox=\"0 0 960 720\" role=\"img\" aria-label=\"Uniqueness of a Line\">\n  <rect x=\"0\" y=\"0\" width=\"960\" height=\"720\" fill=\"#F8FBFD\"/>\n  <rect x=\"60\" y=\"52\" width=\"840\" height=\"84\" rx=\"24\" fill=\"#36ADAA\"/>\n  <text x=\"88\" y=\"104\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"34\" fill=\"#FFFFFF\">Uniqueness of a Line</text>\n  <text x=\"88\" y=\"146\" font-family=\"Arial, sans-serif\" font-size=\"18\" fill=\"#64748B\">CBSE-inspired classroom explanation flow</text>\n  \n      <rect x=\"100\" y=\"170\" width=\"760\" height=\"120\" rx=\"28\" fill=\"#FFFFFF\" stroke=\"#36ADAA\" stroke-width=\"4\"/>\n      <circle cx=\"154\" cy=\"230\" r=\"28\" fill=\"#DE8431\"/>\n      <text x=\"154\" y=\"240\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"30\" fill=\"#FFFFFF\">1</text>\n      <foreignObject x=\"210\" y=\"192\" width=\"600\" height=\"78\">\n        <div xmlns=\"http://www.w3.org/1999/xhtml\" style=\"font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #0F172A;\">\n          The property that exactly one line passes through any two distinct points.\n        </div>\n      </foreignObject>\n      \n    \n</svg>"
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Core Concept B / Visual Explanation",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "visual-explanation",
+          "slideTitle": "Proof by Contradiction in Geometry",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Explain the second concept with visual emphasis.",
+          "studentTakeaway": "See the idea in a more visual form.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "A method where we assume the opposite of what we want to prove and show it leads to an impossible situation.",
+            "To prove 'Unique', we start by assuming 'Not Unique' (i.e., at least two lines). We then follow logical steps until we hit a contradiction with known facts or definitions. There..."
+          ],
+          "onSlideText": [],
+          "speakerNotes": [
+            "To prove 'Unique', we start by assuming 'Not Unique' (i.e., at least two lines). We then follow logical steps until we hit a contradiction with known facts or definitions. Therefore, our assumption was wrong."
+          ],
+          "visualPlan": "A diagram-style visual that explains Proof by Contradiction in Geometry.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Proof by Contradiction in Geometry",
+              "searchQuery": "Mathematics Proof by Contradiction in Geometry diagram",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Proof by Contradiction in Geometry",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Proof by Contradiction in Geometry visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Proof by Contradiction in Geometry.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"720\" viewBox=\"0 0 960 720\" role=\"img\" aria-label=\"Proof by Contradiction in Geometry\">\n  <rect x=\"0\" y=\"0\" width=\"960\" height=\"720\" fill=\"#F8FBFD\"/>\n  <rect x=\"60\" y=\"52\" width=\"840\" height=\"84\" rx=\"24\" fill=\"#36ADAA\"/>\n  <text x=\"88\" y=\"104\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"34\" fill=\"#FFFFFF\">Proof by Contradiction in Geometry</text>\n  <text x=\"88\" y=\"146\" font-family=\"Arial, sans-serif\" font-size=\"18\" fill=\"#64748B\">CBSE-inspired classroom explanation flow</text>\n  \n      <rect x=\"100\" y=\"170\" width=\"760\" height=\"120\" rx=\"28\" fill=\"#FFFFFF\" stroke=\"#36ADAA\" stroke-width=\"4\"/>\n      <circle cx=\"154\" cy=\"230\" r=\"28\" fill=\"#DE8431\"/>\n      <text x=\"154\" y=\"240\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"30\" fill=\"#FFFFFF\">1</text>\n      <foreignObject x=\"210\" y=\"192\" width=\"600\" height=\"78\">\n        <div xmlns=\"http://www.w3.org/1999/xhtml\" style=\"font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #0F172A;\">\n          A method where we assume the opposite of what we want to prove and show it leads to an impossible situation.\n        </div>\n      </foreignObject>\n      <line x1=\"480\" y1=\"290\" x2=\"480\" y2=\"324\" stroke=\"#DE8431\" stroke-width=\"6\" stroke-linecap=\"round\"/>\n    \n      <rect x=\"100\" y=\"324\" width=\"760\" height=\"120\" rx=\"28\" fill=\"#FFFFFF\" stroke=\"#36ADAA\" stroke-width=\"4\"/>\n      <circle cx=\"154\" cy=\"384\" r=\"28\" fill=\"#DE8431\"/>\n      <text x=\"154\" y=\"394\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"30\" fill=\"#FFFFFF\">2</text>\n      <foreignObject x=\"210\" y=\"346\" width=\"600\" height=\"78\">\n        <div xmlns=\"http://www.w3.org/1999/xhtml\" style=\"font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #0F172A;\">\n          To prove &apos;Unique&apos;, we start by assuming &apos;Not Unique&apos; (i.e., at least two lines). We then follow logical steps until we hit a contradiction with known facts or definitions. There...\n        </div>\n      </foreignObject>\n      \n    \n</svg>"
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example / Demonstration",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "worked-example",
+          "slideTitle": "Finding the Hypotenuse",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Model the thinking process step by step.",
+          "studentTakeaway": "See how the concept is applied.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "Identify the known sides.",
+            "Substitute into Pythagorean formula."
+          ],
+          "onSlideText": [
+            "Identify the known sides.",
+            "Substitute into Pythagorean formula."
+          ],
+          "speakerNotes": [
+            "We square the lengths of the legs (6 and 8), add them together to get the area of the hypotenuse's square, then take the square root to find the length.",
+            "Ask: If points A and B are distinct, how many lines pass through them? (Answer: 1)",
+            "Ask: What if we assume two lines exist? Where do they intersect?",
+            "Check for understanding of the term 'distinct' in this context."
+          ],
+          "visualPlan": "A worked-example instructional visual for Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Finding the Hypotenuse",
+              "searchQuery": "Mathematics Finding the Hypotenuse diagram",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Finding the Hypotenuse",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Finding the Hypotenuse visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Finding the Hypotenuse.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"720\" viewBox=\"0 0 960 720\" role=\"img\" aria-label=\"Finding the Hypotenuse\">\n  <rect x=\"0\" y=\"0\" width=\"960\" height=\"720\" fill=\"#F8FBFD\"/>\n  <rect x=\"60\" y=\"52\" width=\"840\" height=\"84\" rx=\"24\" fill=\"#36ADAA\"/>\n  <text x=\"88\" y=\"104\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"34\" fill=\"#FFFFFF\">Finding the Hypotenuse</text>\n  <text x=\"88\" y=\"146\" font-family=\"Arial, sans-serif\" font-size=\"18\" fill=\"#64748B\">CBSE-inspired classroom explanation flow</text>\n  \n      <rect x=\"100\" y=\"170\" width=\"760\" height=\"120\" rx=\"28\" fill=\"#FFFFFF\" stroke=\"#36ADAA\" stroke-width=\"4\"/>\n      <circle cx=\"154\" cy=\"230\" r=\"28\" fill=\"#DE8431\"/>\n      <text x=\"154\" y=\"240\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"30\" fill=\"#FFFFFF\">1</text>\n      <foreignObject x=\"210\" y=\"192\" width=\"600\" height=\"78\">\n        <div xmlns=\"http://www.w3.org/1999/xhtml\" style=\"font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #0F172A;\">\n          Identify the known sides.\n        </div>\n      </foreignObject>\n      <line x1=\"480\" y1=\"290\" x2=\"480\" y2=\"324\" stroke=\"#DE8431\" stroke-width=\"6\" stroke-linecap=\"round\"/>\n    \n      <rect x=\"100\" y=\"324\" width=\"760\" height=\"120\" rx=\"28\" fill=\"#FFFFFF\" stroke=\"#36ADAA\" stroke-width=\"4\"/>\n      <circle cx=\"154\" cy=\"384\" r=\"28\" fill=\"#DE8431\"/>\n      <text x=\"154\" y=\"394\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"30\" fill=\"#FFFFFF\">2</text>\n      <foreignObject x=\"210\" y=\"346\" width=\"600\" height=\"78\">\n        <div xmlns=\"http://www.w3.org/1999/xhtml\" style=\"font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #0F172A;\">\n          Substitute into Pythagorean formula.\n        </div>\n      </foreignObject>\n      \n    \n</svg>"
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice / Activity",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "guided-practice",
+          "slideTitle": "Guided Practice",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Help students practice with support.",
+          "studentTakeaway": "Try the skill with guidance.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "Students draw 3 distinct pairs of dots and attempt to draw 'two' straight lines between each pair, observing it's impossible."
+          ],
+          "onSlideText": [],
+          "speakerNotes": [
+            "Ask: If points A and B are distinct, how many lines pass through them? (Answer: 1)",
+            "Ask: What if we assume two lines exist? Where do they intersect?",
+            "Check for understanding of the term 'distinct' in this context."
+          ],
+          "visualPlan": "A classroom activity visual that supports guided practice for Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Guided Practice",
+              "searchQuery": "Mathematics Guided Practice diagram",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Guided Practice",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Guided Practice visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Guided Practice.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"720\" viewBox=\"0 0 960 720\" role=\"img\" aria-label=\"Guided Practice\">\n  <rect x=\"0\" y=\"0\" width=\"960\" height=\"720\" fill=\"#F8FBFD\"/>\n  <rect x=\"60\" y=\"52\" width=\"840\" height=\"84\" rx=\"24\" fill=\"#36ADAA\"/>\n  <text x=\"88\" y=\"104\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"34\" fill=\"#FFFFFF\">Guided Practice</text>\n  <text x=\"88\" y=\"146\" font-family=\"Arial, sans-serif\" font-size=\"18\" fill=\"#64748B\">CBSE-inspired classroom explanation flow</text>\n  \n      <rect x=\"100\" y=\"170\" width=\"760\" height=\"120\" rx=\"28\" fill=\"#FFFFFF\" stroke=\"#36ADAA\" stroke-width=\"4\"/>\n      <circle cx=\"154\" cy=\"230\" r=\"28\" fill=\"#DE8431\"/>\n      <text x=\"154\" y=\"240\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"30\" fill=\"#FFFFFF\">1</text>\n      <foreignObject x=\"210\" y=\"192\" width=\"600\" height=\"78\">\n        <div xmlns=\"http://www.w3.org/1999/xhtml\" style=\"font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #0F172A;\">\n          Students draw 3 distinct pairs of dots and attempt to draw &apos;two&apos; straight lines between each pair, observing it&apos;s impossible.\n        </div>\n      </foreignObject>\n      \n    \n</svg>"
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Formative Check / Quick Assessment",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "quick-assessment",
+          "slideTitle": "Quick Check",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Check understanding during the lesson.",
+          "studentTakeaway": "Reflect on what they can already answer.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "Prove that if two distinct lines intersect, they can have only one point in common."
+          ],
+          "onSlideText": [
+            "Prove that if two distinct lines intersect, they can have only one point in common."
+          ],
+          "speakerNotes": [
+            "Prove that if two distinct lines intersect, they can have only one point in common.",
+            "Ask students to hold up 1 finger for 'one line' and 2 fingers for 'two lines' when given pairs of points."
+          ],
+          "visualPlan": "A concise formative assessment slide visual for Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Quick Check",
+              "searchQuery": "Mathematics Quick Check diagram",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Quick Check",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Quick Check visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Quick Check.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"720\" viewBox=\"0 0 960 720\" role=\"img\" aria-label=\"Quick Check\">\n  <rect x=\"0\" y=\"0\" width=\"960\" height=\"720\" fill=\"#F8FBFD\"/>\n  <rect x=\"60\" y=\"52\" width=\"840\" height=\"84\" rx=\"24\" fill=\"#36ADAA\"/>\n  <text x=\"88\" y=\"104\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"34\" fill=\"#FFFFFF\">Quick Check</text>\n  <text x=\"88\" y=\"146\" font-family=\"Arial, sans-serif\" font-size=\"18\" fill=\"#64748B\">CBSE-inspired classroom explanation flow</text>\n  \n      <rect x=\"100\" y=\"170\" width=\"760\" height=\"120\" rx=\"28\" fill=\"#FFFFFF\" stroke=\"#36ADAA\" stroke-width=\"4\"/>\n      <circle cx=\"154\" cy=\"230\" r=\"28\" fill=\"#DE8431\"/>\n      <text x=\"154\" y=\"240\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"30\" fill=\"#FFFFFF\">1</text>\n      <foreignObject x=\"210\" y=\"192\" width=\"600\" height=\"78\">\n        <div xmlns=\"http://www.w3.org/1999/xhtml\" style=\"font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #0F172A;\">\n          Prove that if two distinct lines intersect, they can have only one point in common.\n        </div>\n      </foreignObject>\n      \n    \n</svg>"
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Recap / Key Takeaways",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Key Takeaways",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Summarize the important points clearly.",
+          "studentTakeaway": "Leave with the main ideas remembered.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "We proved that two distinct points determine exactly one unique line using logical contradiction."
+          ],
+          "onSlideText": [
+            "We proved that two distinct points determine exactly one unique line using logical contradiction."
+          ],
+          "speakerNotes": [
+            "We proved that two distinct points determine exactly one unique line using logical contradiction.",
+            "3-4-5 is a common triplet.",
+            "Equilateral = 60°, 60°, 60°."
+          ],
+          "visualPlan": "A recap visual summarizing the main ideas from Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Key Takeaways",
+              "searchQuery": "Mathematics Key Takeaways diagram",
+              "sourceSite": "Internal SVG",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Internal SVG diagram",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Key Takeaways",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "",
+              "mimeType": "",
+              "model": "",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Key Takeaways visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Key Takeaways.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"720\" viewBox=\"0 0 960 720\" role=\"img\" aria-label=\"Key Takeaways\">\n  <rect x=\"0\" y=\"0\" width=\"960\" height=\"720\" fill=\"#F8FBFD\"/>\n  <rect x=\"60\" y=\"52\" width=\"840\" height=\"84\" rx=\"24\" fill=\"#36ADAA\"/>\n  <text x=\"88\" y=\"104\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"34\" fill=\"#FFFFFF\">Key Takeaways</text>\n  <text x=\"88\" y=\"146\" font-family=\"Arial, sans-serif\" font-size=\"18\" fill=\"#64748B\">CBSE-inspired classroom explanation flow</text>\n  \n      <rect x=\"100\" y=\"170\" width=\"760\" height=\"120\" rx=\"28\" fill=\"#FFFFFF\" stroke=\"#36ADAA\" stroke-width=\"4\"/>\n      <circle cx=\"154\" cy=\"230\" r=\"28\" fill=\"#DE8431\"/>\n      <text x=\"154\" y=\"240\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"30\" fill=\"#FFFFFF\">1</text>\n      <foreignObject x=\"210\" y=\"192\" width=\"600\" height=\"78\">\n        <div xmlns=\"http://www.w3.org/1999/xhtml\" style=\"font-family: Arial, sans-serif; font-size: 24px; line-height: 1.35; color: #0F172A;\">\n          We proved that two distinct points determine exactly one unique line using logical contradiction.\n        </div>\n      </foreignObject>\n      \n    \n</svg>"
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Homework / Next Class Bridge",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 12,
+          "slideType": "homework",
+          "slideTitle": "Homework and Next Step",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "teacherIntent": "Close the lesson and set up follow-through.",
+          "studentTakeaway": "Know the next task and how today connects forward.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "Tomorrow we will explore what happens when two distinct lines intersect and prove they share exactly one point."
+          ],
+          "onSlideText": [
+            "Tomorrow we will explore what happens when two distinct lines intersect and prove they share exactly one point."
+          ],
+          "speakerNotes": [
+            "Tomorrow we will explore what happens when two distinct lines intersect and prove they share exactly one point."
+          ],
+          "visualPlan": "A closure visual for homework and next-class bridge for Number System - Session 14.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Homework and Next Step",
+              "searchQuery": "Mathematics Homework and Next Step diagram",
+              "sourceSite": "Puter planned visual",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Generated in browser via Puter or internal SVG fallback",
+              "attributionText": "",
+              "altText": "Illustration or diagram for Homework and Next Step",
+              "placementHint": "Right panel or supporting visual zone",
+              "imageDataUrl": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgdmlld0JveD0iMCAwIDEyMDAgOTAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IkhvbWV3b3JrIGFuZCBOZXh0IFN0ZXAiPgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjkwMCIgZmlsbD0iI0Y4RkJGRCIvPgogIDxyZWN0IHg9IjU0IiB5PSI1NCIgd2lkdGg9IjEwOTIiIGhlaWdodD0iNzkyIiByeD0iMzQiIGZpbGw9IiNGRkZGRkYiIHN0cm9rZT0iI0Q5NzcwNiIgc3Ryb2tlLXdpZHRoPSI2Ii8+CiAgPHJlY3QgeD0iOTYiIHk9Ijk4IiB3aWR0aD0iMTAwOCIgaGVpZ2h0PSIxMTAiIHJ4PSIyNCIgZmlsbD0iIzFENEU4OSIvPgogIDx0ZXh0IHg9IjEzMiIgeT0iMTY1IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iNDIiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNGRkZGRkYiPkhvbWV3b3JrIGFuZCBOZXh0IFN0ZXA8L3RleHQ+CiAgPHJlY3QgeD0iMTIwIiB5PSIyNjIiIHdpZHRoPSI0MjAiIGhlaWdodD0iNDcwIiByeD0iMjgiIGZpbGw9IiNFRUY0RjciIHN0cm9rZT0iIzM2QURBQSIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPGNpcmNsZSBjeD0iMzMwIiBjeT0iMzk1IiByPSI5MiIgZmlsbD0iI0RFODQzMSIgb3BhY2l0eT0iMC4xOCIvPgogIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjM5NSIgcj0iNTIiIGZpbGw9IiNERTg0MzEiIG9wYWNpdHk9IjAuMzUiLz4KICA8cmVjdCB4PSIyMzAiIHk9IjUxNSIgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyOCIgcng9IjE0IiBmaWxsPSIjMzZBREFBIiBvcGFjaXR5PSIwLjI4Ii8+CiAgPHJlY3QgeD0iMjEwIiB5PSI1NjUiIHdpZHRoPSIyNDAiIGhlaWdodD0iMjgiIHJ4PSIxNCIgZmlsbD0iIzFENEU4OSIgb3BhY2l0eT0iMC4xOCIvPgogIDxyZWN0IHg9IjYwMCIgeT0iMjcyIiB3aWR0aD0iNDU2IiBoZWlnaHQ9IjEwMiIgcng9IjI0IiBmaWxsPSIjRkZGN0VEIiBzdHJva2U9IiNERTg0MzEiIHN0cm9rZS13aWR0aD0iMyIvPgogIDx0ZXh0IHg9IjYzMiIgeT0iMzM0IiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM5QTM0MTIiPlBsYW5uZWQgQ2xhc3Nyb29tIFZpc3VhbDwvdGV4dD4KICA8Zm9yZWlnbk9iamVjdCB4PSI2MDAiIHk9IjQxMCIgd2lkdGg9IjQzMCIgaGVpZ2h0PSIyNTAiPgogICAgPGRpdiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94aHRtbCIgc3R5bGU9ImZvbnQtZmFtaWx5OiBBcmlhbCwgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAyOHB4OyBsaW5lLWhlaWdodDogMS40NTsgY29sb3I6ICMzMzQxNTU7Ij4KICAgICAgQSBjbG9zdXJlIHZpc3VhbCBmb3IgaG9tZXdvcmsgYW5kIG5leHQtY2xhc3MgYnJpZGdlIGZvciBOdW1iZXIgU3lzdGVtIC0gU2Vzc2lvbiAxNC4KICAgIDwvZGl2PgogIDwvZm9yZWlnbk9iamVjdD4KICA8dGV4dCB4PSI2MDAiIHk9Ijc0OCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmaWxsPSIjNjQ3NDhCIj5SdW50aW1lIGltYWdlIGdlbmVyYXRpb24gd2FzIHVuYXZhaWxhYmxlLCBzbyBhbiBpbnRlcm5hbCBmYWxsYmFjayB2aXN1YWwgd2FzIHVzZWQuPC90ZXh0Pgo8L3N2Zz4=",
+              "mimeType": "image/svg+xml",
+              "model": "puter-planned-visual",
+              "sourceKind": "svg-diagram"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Homework and Next Step visual",
+            "type": "visual support",
+            "instructions": [
+              "If a sourced image is not precise enough, use a compact classroom diagram for Homework and Next Step.",
+              "Prefer labelled structure/flow/comparison visuals only when they directly improve teaching clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 4
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Number System - Session 14 - Student Revision Notes",
+      "keyInformation": [
+        "We proved that two distinct points determine exactly one unique line using logical contradiction."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Number System - Session 14 - Teacher Lesson Outline",
+      "sections": [
+        "This session focuses on applying Euclid's axioms and postulates to prove basic properties of lines, specifically that two distinct points determine a unique line. Students will transition from visual intuition to form...",
+        "Recap Euclid's first postulate and ask if it guarantees uniqueness.",
+        "Pose the problem: Can we draw more than one line through two points?",
+        "Demonstrate a proof by contradiction on the board (Assume 2 lines exist -> derive contradiction).",
+        "Guide students to write their own simplified version of the logic.",
+        "Apply the concept to solve a 'find the number of lines' problem."
+      ]
+    }
+  }
+}

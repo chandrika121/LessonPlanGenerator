@@ -700,6 +700,16 @@ export interface SessionPlan {
         layout?: RenderableMathText;
         onSlideText?: RenderableMathText[];
         speakerNotes?: RenderableMathText[];
+        visualAttribution?: {
+          visualPlan?: RenderableMathText;
+          svgDiagram?: {
+            purpose?: RenderableMathText;
+            search?: RenderableMathText;
+            source?: RenderableMathText;
+            license?: RenderableMathText;
+            animation?: RenderableMathText;
+          };
+        };
         visualPlan?: RenderableMathText;
         assets?: {
           purpose?: RenderableMathText;
@@ -721,6 +731,21 @@ export interface SessionPlan {
           type?: string;
           instructions?: RenderableMathText[];
           svgCode?: string;
+        };
+        generatedVisual?: {
+          visualPlan?: RenderableMathText;
+          svgDiagram?: {
+            purpose?: RenderableMathText;
+            search?: RenderableMathText;
+            source?: RenderableMathText;
+            license?: RenderableMathText;
+            animation?: RenderableMathText;
+          };
+          imageDataUrl?: string;
+          mimeType?: string;
+          model?: RenderableMathText;
+          sourceSite?: RenderableMathText;
+          licenseType?: RenderableMathText;
         };
         animationHints?: RenderableMathText[];
         timeEstimateMinutes?: number;

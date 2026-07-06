@@ -6398,69 +6398,79 @@ export default function App() {
     triggerDownload(htmlDocument, `${fileStem}.html`, "text/html;charset=utf-8");
   };
 
-  const handleExportPptSlidesPdf = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => {
+  const handleExportPptSlidesPdf = async (session: SessionPlan) => {
+    const ppt = session.materials?.ppt;
     const slides = getPptSlides(ppt);
     if (!ppt || slides.length === 0) {
       setErrorHeader("Generate PPT slides first before exporting a slide-only PDF.");
       return;
     }
 
-    const slidesMarkup = slides.map((slide, index) => {
-      const accent = getPptAccentStyle(index);
-      const primaryAsset = getPrimaryPptAsset(slide);
-      const onSlideTags = (slide.onSlideText || [])
-        .slice(0, 3)
-        .map((item) => `<span class="tag ${accent.exportTagClass}">${renderRichValueToExportHtml(item)}</span>`)
-        .join("");
-      const bullets = (slide.bulletPoints || [])
-        .slice(0, 5)
-        .map((item) => `<li>${renderRichValueToExportHtml(item)}</li>`)
-        .join("");
-      const visualSrc = primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "";
-      const visualMarkup = visualSrc
-        ? `<img src="${escapeHtml(visualSrc)}" alt="${escapeHtml(primaryAsset?.altText || primaryAsset?.purpose || "Slide visual")}" />`
-        : slide.svgDiagram?.svgCode?.trim().startsWith("<svg")
-        ? `<div class="svg-wrap">${slide.svgDiagram.svgCode}</div>`
-        : `
-          <div class="visual-fallback">
-            <div class="visual-chip">${renderRichValueToExportHtml(slide.svgDiagram?.title || "Planned Visual")}</div>
-            <p>${renderRichValueToExportHtml(slide.visualPlan || "Visual will be finalized during export.")}</p>
-          </div>
-        `;
+    setErrorHeader(null);
+    setLoading(true);
+    setLoadingMessage("Preparing visuals and exporting slides PDF...");
 
-      return `
-        <section class="slide-page">
-          <div class="slide-shell">
-            <div class="slide-bar ${accent.exportBarClass}"></div>
-            <div class="slide-grid">
-              <div class="slide-copy">
-                <div class="deck-label">${renderRichValueToExportHtml(getPptTitle(ppt))}</div>
-                <h1>${renderRichValueToExportHtml(slide.slideTitle || `Slide ${index + 1}`)}</h1>
-                ${onSlideTags ? `<div class="tag-row">${onSlideTags}</div>` : ""}
-                ${bullets ? `<ul class="bullet-list">${bullets}</ul>` : ""}
-                <div class="slide-footer">
-                  ${slide.studentTakeaway ? `<div class="info-card"><div class="info-label">Takeaway</div><div>${renderRichValueToExportHtml(slide.studentTakeaway)}</div></div>` : ""}
-                  ${slide.timeEstimateMinutes != null ? `<div class="info-card"><div class="info-label">Timing</div><div>${escapeHtml(slide.timeEstimateMinutes)} minutes</div></div>` : ""}
+    try {
+      const enrichedSession = await ensureSlideVisuals(session);
+      const enrichedPpt = enrichedSession.materials?.ppt;
+      const enrichedSlides = getPptSlides(enrichedPpt);
+
+      const slidesMarkup = enrichedSlides.map((slide, index) => {
+        const accent = getPptAccentStyle(index);
+        const primaryAsset = getPrimaryPptAsset(slide);
+        const onSlideTags = (slide.onSlideText || [])
+          .slice(0, 3)
+          .map((item) => `<span class="tag ${accent.exportTagClass}">${renderRichValueToExportHtml(item)}</span>`)
+          .join("");
+        const bullets = (slide.bulletPoints || [])
+          .slice(0, 5)
+          .map((item) => `<li>${renderRichValueToExportHtml(item)}</li>`)
+          .join("");
+        const visualSrc = primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "";
+        const visualMarkup = visualSrc
+          ? `<img src="${escapeHtml(visualSrc)}" alt="${escapeHtml(primaryAsset?.altText || primaryAsset?.purpose || "Slide visual")}" />`
+          : slide.svgDiagram?.svgCode?.trim().startsWith("<svg")
+          ? `<div class="svg-wrap">${slide.svgDiagram.svgCode}</div>`
+          : `
+            <div class="visual-fallback">
+              <div class="visual-chip">${renderRichValueToExportHtml(slide.svgDiagram?.title || "Planned Visual")}</div>
+              <p>${renderRichValueToExportHtml(slide.visualPlan || "Visual will be finalized during export.")}</p>
+            </div>
+          `;
+
+        return `
+          <section class="slide-page">
+            <div class="slide-shell">
+              <div class="slide-bar ${accent.exportBarClass}"></div>
+              <div class="slide-grid">
+                <div class="slide-copy">
+                  <div class="deck-label">${renderRichValueToExportHtml(getPptTitle(enrichedPpt))}</div>
+                  <h1>${renderRichValueToExportHtml(slide.slideTitle || `Slide ${index + 1}`)}</h1>
+                  ${onSlideTags ? `<div class="tag-row">${onSlideTags}</div>` : ""}
+                  ${bullets ? `<ul class="bullet-list">${bullets}</ul>` : ""}
+                  <div class="slide-footer">
+                    ${slide.studentTakeaway ? `<div class="info-card"><div class="info-label">Takeaway</div><div>${renderRichValueToExportHtml(slide.studentTakeaway)}</div></div>` : ""}
+                    ${slide.timeEstimateMinutes != null ? `<div class="info-card"><div class="info-label">Timing</div><div>${escapeHtml(slide.timeEstimateMinutes)} minutes</div></div>` : ""}
+                  </div>
+                </div>
+                <div class="slide-visual">
+                  <div class="visual-label">Visual Panel</div>
+                  <div class="visual-frame">${visualMarkup}</div>
                 </div>
               </div>
-              <div class="slide-visual">
-                <div class="visual-label">Visual Panel</div>
-                <div class="visual-frame">${visualMarkup}</div>
-              </div>
             </div>
-          </div>
-        </section>
-      `;
-    }).join("");
+          </section>
+        `;
+      }).join("");
 
-    const exportWindow = window.open("", "_blank", "width=1440,height=960");
-    if (!exportWindow) {
-      setErrorHeader("The PDF export window was blocked. Allow pop-ups and try again.");
-      return;
-    }
+      const exportWindow = window.open("", "_blank", "width=1440,height=960");
+      if (!exportWindow) {
+        setErrorHeader("The PDF export window was blocked. Allow pop-ups and try again.");
+        return;
+      }
 
-    const docTitle = escapeHtml(getPptTitle(ppt));
-    exportWindow.document.write(`<!doctype html>
+      const docTitle = escapeHtml(getPptTitle(enrichedPpt));
+      exportWindow.document.write(`<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
@@ -6510,33 +6520,23 @@ export default function App() {
       .visual-fallback p { margin: 16px 0 0; font-size: 14px; line-height: 1.6; color: #475569; }
       .tag-teal { background: rgba(54, 173, 170, 0.12); color: #1f8d8a; }
       .tag-blue { background: rgba(30, 171, 218, 0.12); color: #0f7aa0; }
-      .tag-purple { background: rgba(127, 100, 234, 0.12); color: #5f49c3; }
-      .tag-orange { background: rgba(222, 132, 49, 0.12); color: #b8651d; }
-      .tag-green { background: rgba(60, 197, 131, 0.12); color: #269c63; }
-      .export-rich-line { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px; max-width: 100%; }
-      .export-rich-line-display { display: block; width: 100%; }
-      .export-rich-text { white-space: pre-wrap; }
-      .export-rich-math { display: inline-flex; max-width: 100%; overflow-x: auto; vertical-align: middle; }
-      .export-rich-math-display { display: block; width: 100%; }
-      .katex .katex-mathml, .katex annotation { display: none !important; }
-      .katex-display { margin: 0.25em 0; overflow: hidden; }
-      @media print {
-        body { padding: 0; background: #ffffff; }
-        .slide-shell { box-shadow: none; }
-      }
+      .tag-purple { background: rgba(127, 100, 234, 0.12); color: #4b3ab5; }
+      .tag-orange { background: rgba(222, 132, 49, 0.12); color: #b55f1a; }
+      .tag-green { background: rgba(60, 197, 131, 0.12); color: #1a8a55; }
     </style>
   </head>
   <body>
     ${slidesMarkup}
-    <script>
-      window.onload = () => {
-        setTimeout(() => window.print(), 300);
-      };
-      window.onafterprint = () => window.close();
-    </script>
   </body>
 </html>`);
-    exportWindow.document.close();
+
+      exportWindow.document.close();
+    } catch (error: any) {
+      setErrorHeader(error?.message || "Failed to export slides PDF.");
+    } finally {
+      setLoading(false);
+      setLoadingMessage("");
+    }
   };
 
   const handleExportPptx = async (session: SessionPlan) => {
@@ -6548,16 +6548,19 @@ export default function App() {
 
     setErrorHeader(null);
     setLoading(true);
-    setLoadingMessage("Building editable PowerPoint deck...");
+    setLoadingMessage("Preparing visuals and building PowerPoint deck...");
 
     try {
+      const enrichedSession = await ensureSlideVisuals(session);
+      const enrichedPpt = enrichedSession.materials?.ppt;
+
       const response = await fetch("/api/export-pptx", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ppt,
-          sessionTitle: session.title,
-          sessionNumber: session.sessionNumber,
+          ppt: enrichedPpt,
+          sessionTitle: enrichedSession.title,
+          sessionNumber: enrichedSession.sessionNumber,
           subject: academicConfigDraft.subject,
           gradeLevel: academicConfigDraft.className,
         }),
@@ -6568,13 +6571,51 @@ export default function App() {
       }
 
       const blob = await response.blob();
-      triggerBlobDownload(blob, `${buildSessionExportBaseName(session)}-slides.pptx`);
+      triggerBlobDownload(blob, `${buildSessionExportBaseName(enrichedSession)}-slides.pptx`);
     } catch (error: any) {
       setErrorHeader(error?.message || "Failed to export PPTX.");
     } finally {
       setLoading(false);
       setLoadingMessage("");
     }
+  };
+
+  const ensureSlideVisuals = async (session: SessionPlan): Promise<SessionPlan> => {
+    const slides = session.materials?.ppt?.slides;
+    if (!slides || slides.length === 0) return session;
+
+    const visualSlides = slides.filter((slide) => slide.visualAttribution?.visualPlan || slide.visualAttribution?.svgDiagram?.search);
+    if (visualSlides.length === 0) return session;
+
+    const allVisualSlidesResolved = visualSlides.every((slide) => {
+      const primaryAsset = Array.isArray(slide.assets) ? slide.assets[0] : null;
+      return Boolean(
+        slide.generatedVisual?.imageDataUrl ||
+        primaryAsset?.imageDataUrl ||
+        primaryAsset?.previewUrl ||
+        primaryAsset?.sourceUrl
+      );
+    });
+    if (allVisualSlidesResolved) return session;
+
+    const response = await fetch("/api/generate-slide-visuals", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionPlan: session,
+        sessionTitle: session.title,
+        sessionNumber: session.sessionNumber,
+        subject: academicConfigDraft.subject,
+        gradeLevel: academicConfigDraft.className,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(await readErrorFromResponse(response, "Failed to generate slide visuals."));
+    }
+
+    const data = await response.json();
+    return data?.sessionPlan || session;
   };
 
   const buildSessionConfigFromWorkspace = (workspace?: PlanningWorkspace | null): SessionConfig => ({
@@ -7282,9 +7323,7 @@ export default function App() {
             ])
           )
         : {};
-    if (Object.keys(generatedFromWorkspace || {}).length > 0) {
-      setGeneratedSessions(generatedFromWorkspace || {});
-    }
+    setGeneratedSessions(generatedFromWorkspace || {});
   }, [activeWorkspace]);
 
   useEffect(() => {
@@ -11860,7 +11899,7 @@ export default function App() {
                                               Export Editable PPTX
                                             </button>
                                             <button
-                                              onClick={() => handleExportPptSlidesPdf(ppt)}
+                                              onClick={() => handleExportPptSlidesPdf(session)}
                                               className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
                                             >
                                               <Download className="w-3.5 h-3.5" />
