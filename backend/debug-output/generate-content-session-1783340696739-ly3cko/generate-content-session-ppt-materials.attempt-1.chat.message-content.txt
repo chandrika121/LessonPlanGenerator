@@ -1,0 +1,689 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "textbook-clean",
+      "templateName": "Textbook Clean Layout",
+      "themeId": "cbse-academic-blue",
+      "title": "Introduction to Photosynthesis - Grade 7 Science",
+      "presentationTitle": "How Plants Make Food: The Process of Photosynthesis",
+      "presentationGoal": "To enable students to understand the process, requirements, and importance of photosynthesis through visual explanations and guided practice.",
+      "audience": "Grade 7 Students (Age 12-13)",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab, serif",
+          "body": "Open Sans, sans-serif"
+        },
+        "colors": {
+          "primary": "#1a5f7a",
+          "secondary": "#48cae4",
+          "accent": "#ff9e00",
+          "background": "#ffffff",
+          "surface": "#f8f9fa",
+          "text": "#2d3436",
+          "mutedText": "#636e72"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary",
+          "cardStyle": "shadow-elevation-1",
+          "visualFrameStyle": "rounded-corners-accent-border"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons",
+          "NASA Image and Video Library",
+          "USDA Plants Database"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all images are CC0 or Creative Commons Attribution licensed for educational use.",
+          "Avoid copyrighted textbook diagrams; recreate using SVG where possible."
+        ],
+        "fallbackStrategy": "Use generated SVG diagrams and color-coded flowcharts if specific photographs cannot be sourced immediately."
+      },
+      "licenseChecklist": [
+        "Verify image licenses before finalizing presentation",
+        "Ensure no restricted commercial use in school setting"
+      ],
+      "presentationWarnings": [
+        "Do not confuse photosynthesis with respiration; emphasize the difference clearly.",
+        "Clarify that plants do not 'eat' soil but absorb water and minerals."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define photosynthesis",
+          "Identify requirements for photosynthesis",
+          "Explain the role of chlorophyll",
+          "Describe the basic equation"
+        ],
+        "topicsCovered": [
+          "Definition and meaning",
+          "Leaf structure relevance",
+          "Sunlight, water, CO2 inputs",
+          "Glucose production",
+          "Oxygen release"
+        ],
+        "taughtConceptsCovered": [
+          "Autotrophs vs Heterotrophs",
+          "Chloroplast function",
+          "Chemical equation components"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Lesson Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "How Plants Make Food: Photosynthesis",
+          "learningOutcomeIds": [
+            "LO-01"
+          ],
+          "topicCoverage": [
+            "Introduction to Lesson Topic"
+          ],
+          "teacherIntent": "Introduce the lesson topic, establish relevance, and capture student curiosity about how plants survive.",
+          "studentTakeaway": "Plants create their own food using sunlight, water, and air.",
+          "layout": "hero-image-left",
+          "bulletPoints": [
+            "Subject: Science (Biology)",
+            "Grade 7 - Chapter 12",
+            "Session 1 of 3",
+            "Essential Question: How do plants eat without mouths?"
+          ],
+          "onSlideText": [
+            "How Plants Make Food:",
+            "The Process of Photosynthesis"
+          ],
+          "speakerNotes": [
+            "Welcome students and introduce the topic.",
+            "Ask the essential question: 'If you are hungry, where do you get food? What about plants?'",
+            "Explain that today we will discover how plants make their own food without going to a store or kitchen.",
+            "Mention this is Session 1 of 3 covering plant nutrition in depth.",
+            "Estimated time: 2 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": "High-quality hero image showing a vibrant green leaf with sunlight rays hitting it, symbolizing energy capture.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Hero visual of a sunlit leaf with light beams indicating solar energy absorption.",
+          "assets": [
+            {
+              "purpose": "Visual hook to represent photosynthesis",
+              "searchQuery": "sunlight hitting green leaf macro photography",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 4.0",
+              "attributionText": "Image by Science Education Resources",
+              "altText": "Close-up of a green leaf with sunlight rays illuminating it.",
+              "placementHint": "Left side, full height"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in title text after image appears."
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "learning_outcomes",
+          "slideTitle": "What We Will Learn Today",
+          "learningOutcomeIds": [
+            "LO-01",
+            "LO-02",
+            "LO-03"
+          ],
+          "topicCoverage": [
+            "Learning Objectives and Success Criteria"
+          ],
+          "teacherIntent": "Clearly state what students will achieve by the end of the lesson to set expectations.",
+          "studentTakeaway": "I can define photosynthesis, list its requirements, and explain why it matters for life on Earth.",
+          "layout": "split-list",
+          "bulletPoints": [
+            "Define 'Photosynthesis' and identify key terms.",
+            "List the three essential ingredients plants need to make food.",
+            "Explain how sunlight is converted into chemical energy."
+          ],
+          "onSlideText": [
+            "1. Define Photosynthesis",
+            "2. Identify Requirements: Sunlight, Water, CO₂",
+            "3. Explain Energy Conversion"
+          ],
+          "speakerNotes": [
+            "Read the three outcomes aloud.",
+            "Explain that 'Photos' means light and 'Synthesis' means putting together.",
+            "Emphasize outcome 2: Students must remember these are non-negotiable requirements; without any one, food production stops.",
+            "Outcome 3 is crucial for understanding why plants are the foundation of life.",
+            "Estimated time: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate each bullet point to appear sequentially as discussed."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Prerequisite Knowledge Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "prerequisite_knowledge",
+          "slideTitle": "What We Already Know",
+          "learningOutcomeIds": [
+            "LO-01"
+          ],
+          "topicCoverage": [
+            "Prior Knowledge Activation"
+          ],
+          "teacherIntent": "Activate prior knowledge about plants, food chains, and basic biology to build a bridge to new concepts.",
+          "studentTakeaway": "Recall that all living things need energy and plants are the starting point of most food chains.",
+          "layout": "text-first",
+          "bulletPoints": [
+            "All living organisms need energy to survive.",
+            "Plants grow in soil, water, and sunlight.",
+            "Animals eat plants or other animals for energy."
+          ],
+          "onSlideText": [
+            "Recall: Energy is needed by all life.",
+            "Question: Where do plants get their food?",
+            "Fact: Plants are 'Producers' in the food chain."
+          ],
+          "speakerNotes": [
+            "Ask students to raise hands if they know what a producer is.",
+            "Discuss why animals cannot make their own food (heterotrophs) while plants can (autotrophs).",
+            "Quick check: 'If the sun disappeared, would we survive? Why?' Connect this to plant energy needs.",
+            "Estimated time: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Use a 'reveal' animation for the question to encourage thinking before answering."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "Lesson Hook Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "lesson_hook",
+          "slideTitle": "The Mystery of the Hungry Plant",
+          "learningOutcomeIds": [
+            "LO-01"
+          ],
+          "topicCoverage": [
+            "Engagement and Curiosity Generation"
+          ],
+          "teacherIntent": "Create a cognitive conflict or curiosity gap to motivate students to learn how plants eat.",
+          "studentTakeaway": "Plants must have a unique way of making food since they don't move or chew.",
+          "layout": "image-centered",
+          "bulletPoints": [
+            "Imagine you are a plant rooted in the ground.",
+            "You cannot walk to find food.",
+            "How do you survive without eating?"
+          ],
+          "onSlideText": [
+            "The Mystery:",
+            "Plants don't eat like us!",
+            "So, how do they get energy?",
+            "Hint: They use sunlight."
+          ],
+          "speakerNotes": [
+            "Tell a short story about a plant that 'wonders' where its food comes from.",
+            "Ask students to brainstorm ideas in pairs for 30 seconds (Think-Pair-Share).",
+            "Common misconception alert: Students might say plants eat soil. Correct this gently by explaining roots absorb water/minerals, not solid food.",
+            "Transition: 'Today we will uncover the secret recipe plants use.'",
+            "Estimated time: 4 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in the 'Hint' text after student discussion."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Topic Introduction Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "topic_introduction",
+          "slideTitle": "What is Photosynthesis?",
+          "learningOutcomeIds": [
+            "LO-01"
+          ],
+          "topicCoverage": [
+            "Definition and Core Concept Introduction"
+          ],
+          "teacherIntent": "Provide a clear, comprehensive definition of photosynthesis and break down the terminology.",
+          "studentTakeaway": "Photosynthesis is the process where plants use sunlight to make food from water and carbon dioxide.",
+          "layout": "text-first",
+          "bulletPoints": [
+            "Definition: Process by which green plants make their own food.",
+            "Etymology: 'Photo' (Light) + 'Synthesis' (Putting together).",
+            "Key Vocabulary: Autotrophs, Chlorophyll, Glucose."
+          ],
+          "onSlideText": [
+            "Photosynthesis:",
+            "Making Food using Light.",
+            "Autotrophs = Self-feeders.",
+            "Chlorophyll = Green pigment that captures light."
+          ],
+          "speakerNotes": [
+            "Write the word 'PHOTOSYNTHESIS' on the board and break it down phonetically.",
+            "Explain 'Autotroph': Auto (self) + troph (feeding). Plants feed themselves.",
+            "Introduce Chlorophyll: It's like a solar panel inside the leaf that makes them green.",
+            "Clarify that Glucose is the sugar/food produced, not just energy but building material for growth.",
+            "Estimated time: 5 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Highlight the Greek roots of 'Photo' and 'Synthesis' in different colors."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "core_concept_a",
+          "templateSlideTitle": "Core Concept A Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "core_concept_a",
+          "slideTitle": "The Ingredients: What Plants Need",
+          "learningOutcomeIds": [
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Requirements for Photosynthesis"
+          ],
+          "teacherIntent": "Detail the three essential inputs required for photosynthesis to occur.",
+          "studentTakeaway": "Plants need Sunlight, Water (H₂O), and Carbon Dioxide (CO₂) to make food.",
+          "layout": "split-list",
+          "bulletPoints": [
+            "1. Sunlight: The energy source from the sun.",
+            "2. Water (H₂O): Absorbed by roots, travels up stems.",
+            "3. Carbon Dioxide (CO₂): Enters through tiny pores called stomata."
+          ],
+          "onSlideText": [
+            "Essential Ingredients:",
+            "- Sunlight",
+            "- Water (from soil)",
+            "- CO₂ (from air)"
+          ],
+          "speakerNotes": [
+            "Explain the journey of water: Roots -> Stem -> Leaves.",
+            "Describe stomata as 'mouths' on leaves that open and close to let gas in/out.",
+            "Emphasize that without sunlight, the process stops (why plants die in dark cupboards).",
+            "Ask students to point out where they think CO₂ comes from if it's not visible like water or light.",
+            "Estimated time: 5 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate each ingredient appearing as it is discussed."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Core Concept B Visual Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "core_concept_b_visual",
+          "slideTitle": "The Process: Inside the Leaf",
+          "learningOutcomeIds": [
+            "LO-03"
+          ],
+          "topicCoverage": [
+            "Mechanism of Photosynthesis and Chloroplasts"
+          ],
+          "teacherIntent": "Visually demonstrate how inputs are transformed into outputs within the leaf structure.",
+          "studentTakeaway": "Chlorophyll in chloroplasts captures light energy to convert water and CO₂ into glucose and oxygen.",
+          "layout": "diagram-centered",
+          "bulletPoints": [
+            "Location: Chloroplasts inside leaf cells.",
+            "Action: Light energy splits water molecules.",
+            "Result: Glucose (food) + Oxygen (waste product)."
+          ],
+          "onSlideText": [
+            "Inside the Leaf:",
+            "- Sunlight hits Chlorophyll",
+            "- Water + CO₂ enter",
+            "-> Food (Glucose) + O₂ released"
+          ],
+          "speakerNotes": [
+            "Use a diagram to show chloroplasts as green factories inside cells.",
+            "Explain the chemical transformation: Light energy is converted into Chemical Energy stored in glucose bonds.",
+            "Clarify that Oxygen is a byproduct, which is why we breathe it out and plants give us air to breathe.",
+            "Analogy: Like a solar-powered factory turning raw materials (water/CO₂) into products (sugar/oxygen).",
+            "Estimated time: 6 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": "Detailed cross-section diagram of a leaf showing stomata, veins, and chloroplasts with arrows indicating input/output flow.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Cross-section diagram of a leaf highlighting the path from roots to leaves and gas exchange through stomata.",
+          "assets": [
+            {
+              "purpose": "Visualizing internal plant structure",
+              "searchQuery": "leaf cross section photosynthesis chloroplasts labeled diagram",
+              "sourceSite": "USDA Plants Database / Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "Public Domain / CC BY-SA",
+              "attributionText": "Botanical Illustration by Science Education Resources",
+              "altText": "Diagram showing leaf cross-section with labeled chloroplasts and gas exchange.",
+              "placementHint": "Center of slide, large size"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Use 'path' animation for arrows to show flow from water/CO2 inputs to glucose/O2 outputs."
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "worked_example",
+          "slideTitle": "The Photosynthesis Equation",
+          "learningOutcomeIds": [
+            "LO-03"
+          ],
+          "topicCoverage": [
+            "Chemical Representation of the Process"
+          ],
+          "teacherIntent": "Model how to read and understand the chemical equation for photosynthesis.",
+          "studentTakeaway": "The balanced equation shows inputs on the left, outputs on the right, with sunlight as the catalyst.",
+          "layout": "text-first",
+          "bulletPoints": [
+            "Equation: 6CO₂ + 6H₂O + Light → C₆H₁₂O₆ + 6O₂",
+            "Inputs (Left): Carbon Dioxide + Water + Sunlight.",
+            "Outputs (Right): Glucose + Oxygen."
+          ],
+          "onSlideText": [
+            "The Formula:",
+            "Carbon Dioxide + Water --(Sunlight)--> Glucose + Oxygen"
+          ],
+          "speakerNotes": [
+            "Write the equation on the board.",
+            "Break down each component: CO₂ (gas), H₂O (liquid), C₆H₁₂O₆ (sugar).",
+            "Explain that 'Light' is written above the arrow because it's energy, not a substance consumed like water or gas.",
+            "Walk through reading left-to-right as an input-output process.",
+            "Ask: 'What happens if we remove CO₂ from this equation?' (Answer: No reaction occurs).",
+            "Estimated time: 5 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Highlight the reactants (left side) in blue and products (right side) in green."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "guided_practice",
+          "slideTitle": "Let's Solve a Problem Together",
+          "learningOutcomeIds": [
+            "LO-01",
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Application of Concepts through Scenario Analysis"
+          ],
+          "teacherIntent": "Engage students in applying their knowledge to a real-world scenario involving missing ingredients.",
+          "studentTakeaway": "Students can predict the outcome of photosynthesis when one ingredient is removed or limited.",
+          "layout": "split-list",
+          "bulletPoints": [
+            "Scenario: A plant is placed in a dark cupboard for 2 weeks.",
+            "Question: Will it make food? Why?",
+            "Activity: Discuss with your partner and write the answer."
+          ],
+          "onSlideText": [
+            "Problem:",
+            "Plant in Dark Cupboard",
+            "Missing Ingredient?",
+            "-> Result?"
+          ],
+          "speakerNotes": [
+            "Present the scenario clearly.",
+            "Guide students to identify 'Sunlight' as the missing ingredient.",
+            "Ask: 'What happens if a plant has water and CO₂ but no light?' (Answer: No photosynthesis, plant starves).",
+            "Encourage students to use the word 'energy' in their explanation.",
+            "Estimated time: 5 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal the 'Result' question after student discussion."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Assessment Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "quick_assessment",
+          "slideTitle": "Check Your Understanding",
+          "learningOutcomeIds": [
+            "LO-01",
+            "LO-02",
+            "LO-03"
+          ],
+          "topicCoverage": [
+            "Formative Assessment of Learning Outcomes"
+          ],
+          "teacherIntent": "Quickly assess individual student understanding through targeted questions.",
+          "studentTakeaway": "Students can identify the correct inputs and outputs of photosynthesis independently.",
+          "layout": "text-first",
+          "bulletPoints": [
+            "1. What gas do plants take in?",
+            "2. Where does the energy for this process come from?",
+            "3. Name one product made by plants."
+          ],
+          "onSlideText": [
+            "Quick Quiz:",
+            "- Gas taken in: ?",
+            "- Energy source: ?",
+            "- Product made: ?"
+          ],
+          "speakerNotes": [
+            "Ask students to hold up fingers for answers (1-3) or use mini-whiteboards.",
+            "Expected Answers: 1. Carbon Dioxide, 2. Sunlight/Light, 3. Glucose/Oxygen.",
+            "Address misconceptions immediately if many get it wrong (e.g., confusing Oxygen intake with CO₂).",
+            "Estimated time: 4 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Show questions one by one to allow thinking time."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Summary Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Lesson Summary: Key Takeaways",
+          "learningOutcomeIds": [
+            "LO-01",
+            "LO-02"
+          ],
+          "topicCoverage": [
+            "Synthesis of Learning Points"
+          ],
+          "teacherIntent": "Consolidate the main points and provide memory aids for retention.",
+          "studentTakeaway": "Photosynthesis is a light-driven process converting CO₂ and water into food (glucose) and oxygen, essential for life.",
+          "layout": "text-first",
+          "bulletPoints": [
+            "- Plants are autotrophs; they make their own food.",
+            "- Requires Sunlight, Water, and Carbon Dioxide.",
+            "- Produces Glucose (food) and Oxygen.",
+            "- Occurs in chloroplasts using chlorophyll."
+          ],
+          "onSlideText": [
+            "Key Points:",
+            "1. Autotrophs make food",
+            "2. Inputs: Sun, Water, CO₂",
+            "3. Outputs: Glucose + O₂"
+          ],
+          "speakerNotes": [
+            "Review the three main points quickly.",
+            "Reinforce that this process is why we have oxygen to breathe and food to eat (directly or indirectly).",
+            "Ask students to repeat the definition of 'Autotroph' together as a class.",
+            "Estimated time: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in each point as it is summarized."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Homework and Next Session Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 12,
+          "slideType": "homework_next_session",
+          "slideTitle": "Your Task & What's Next",
+          "learningOutcomeIds": [
+            "LO-03"
+          ],
+          "topicCoverage": [
+            "Assignment and Future Learning Preview"
+          ],
+          "teacherIntent": "Assign meaningful homework that reinforces the lesson and preview the next session to maintain continuity.",
+          "studentTakeaway": "Students have a clear task to complete at home and know what they will learn in Session 2.",
+          "layout": "text-first",
+          "bulletPoints": [
+            "- Homework: Draw and label a diagram of photosynthesis.",
+            "- Question for Home: Why are plants green?",
+            "- Next Session: Factors affecting the rate of photosynthesis."
+          ],
+          "onSlideText": [
+            "Homework:",
+            "Draw & Label Photosynthesis Diagram",
+            "Think About It: Why Green?",
+            "Next Time: Speeding Up or Slowing Down?"
+          ],
+          "speakerNotes": [
+            "Explain the homework requirement clearly (diagram must include inputs, outputs, and chloroplasts).",
+            "Pose the 'Why Green?' question as a curiosity driver for next time.",
+            "Preview Session 2: We will learn about what makes photosynthesis faster or slower (light intensity, temperature).",
+            "End with an encouraging closing statement: 'Great job discovering how plants eat today!'",
+            "Estimated time: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in the 'Next Time' preview at the end."
+          ],
+          "timeEstimateMinutes": 3
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Photosynthesis Lesson Plan - Grade 7 Science",
+      "keyInformation": [
+        "Session Title: How Plants Make Food (Photosynthesis)",
+        "Grade Level: 7",
+        "Duration: 35 Minutes",
+        "Key Concepts: Autotrophs, Chlorophyll, Inputs/Outputs of Photosynthesis"
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Outline: Introduction to Photosynthesis",
+      "sections": [
+        "1. Lesson Identity and Objectives",
+        "2. Prerequisite Knowledge Activation",
+        "3. Engagement Hook (The Mystery)",
+        "4. Core Concept Definition & Terminology",
+        "5. Detailed Process Explanation (Inputs/Outputs)",
+        "6. Visual Analysis of Leaf Structure",
+        "7. Chemical Equation Modeling",
+        "8. Guided Practice Scenario",
+        "9. Formative Assessment Quiz",
+        "10. Summary and Key Takeaways",
+        "11. Homework Assignment & Next Session Preview"
+      ]
+    }
+  }
+}

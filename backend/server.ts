@@ -2276,6 +2276,23 @@ function buildCompactMaterialsSessionPayload(sessionContextPayload: any) {
   };
 }
 
+function buildMaterialsAntiDriftInstructions(subject: string, selectedChapters: string[], sessionTitle: string) {
+  const chapterText = limitStringList(selectedChapters, 4, 120).join(", ") || "the requested chapter";
+  const normalizedSubject = canonicalizeSubjectName(subject || "") || String(subject || "").trim() || "the requested subject";
+  const instructions = [
+    "Subject-scope guardrails:",
+    `- Treat the requested subject as authoritative: ${normalizedSubject}.`,
+    `- Teach only the requested session: ${sessionTitle || "the current session"}.`,
+    `- Teach only the requested chapter/topic focus: ${chapterText}.`,
+    "- Use only the provided session JSON and chapter metadata.",
+    "- Do not infer a different subject from generic examples, visuals, or prior model habits.",
+    "- If the requested subject is Mathematics, never introduce Biology, Science process content, Photosynthesis, chlorophyll, stomata, leaves, plants, cells, or organelles.",
+    "- Reject off-topic process/experiment content unless it is explicitly present in the provided session JSON.",
+    "- If any field would drift off-subject, rewrite it to match the requested subject and chapter before returning JSON.",
+  ];
+  return instructions.join("\n");
+}
+
 function pickSessionSections(sessionPlan: any, selectedSections: SessionSectionKey[]) {
   const partial: Record<string, unknown> = {};
   for (const section of selectedSections) {
@@ -2308,9 +2325,162 @@ function normalizeSessionIdentityText(value: any) {
     .trim();
 }
 
+function slugifySessionIdentityPart(value: any) {
+  return normalizeSessionIdentityText(value)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+}
+
+function buildGeneratedSessionStorageKey(request: {
+  roadmapSessionNumber: number;
+  chapterName?: string;
+  sessionTitle?: string;
+}) {
+  const topicSlug = slugifySessionIdentityPart(request.chapterName || request.sessionTitle || `session-${request.roadmapSessionNumber}`) || `session-${request.roadmapSessionNumber}`;
+  return `session-${request.roadmapSessionNumber}__${topicSlug}`;
+}
+
+function collectSessionPlanMatchText(sessionPlan: any) {
+  if (!sessionPlan || typeof sessionPlan !== "object") {
+    return "";
+  }
+
+  const textParts = [
+    sessionPlan.title,
+    ...(Array.isArray(sessionPlan.topicCoverage) ? sessionPlan.topicCoverage : []),
+    ...(Array.isArray(sessionPlan.learningOutcomes) ? sessionPlan.learningOutcomes : []),
+    sessionPlan.introduction,
+    sessionPlan?.theory?.overview,
+    ...(Array.isArray(sessionPlan?.theory?.keyPoints) ? sessionPlan.theory.keyPoints : []),
+    sessionPlan?.theory?.detailedContent,
+    sessionPlan?.teacherLessonNotes?.sessionOverview,
+    ...(Array.isArray(sessionPlan?.teacherLessonNotes?.learningOutcomes) ? sessionPlan.teacherLessonNotes.learningOutcomes : []),
+    ...(Array.isArray(sessionPlan?.teacherLessonNotes?.lessonPurpose) ? sessionPlan.teacherLessonNotes.lessonPurpose : []),
+    ...(Array.isArray(sessionPlan?.teacherLessonNotes?.teachingSequence) ? sessionPlan.teacherLessonNotes.teachingSequence : []),
+    sessionPlan?.studentLessonNotes?.title,
+    sessionPlan?.studentLessonNotes?.sessionOverview,
+    sessionPlan?.studentLessonNotes?.introduction,
+    ...(Array.isArray(sessionPlan?.studentLessonNotes?.keyTerms) ? sessionPlan.studentLessonNotes.keyTerms : []),
+    ...(Array.isArray(sessionPlan?.studentLessonNotes?.summary) ? sessionPlan.studentLessonNotes.summary : []),
+  ];
+
+  return textParts.map(normalizeSessionIdentityText).filter(Boolean).join(" ");
+}
+
+function hasCrossSubjectSignals(subject: string, text: string) {
+  const normalizedText = normalizeSessionIdentityText(text);
+  if (!normalizedText) {
+    return false;
+  }
+
+  if (isMathSubject(subject)) {
+    return /\bscience\b|\bbiology\b|\bphotosynthesis\b|\bchlorophyll\b|\bstomata\b|\bleaf\b|\bleaves\b|\bplant\b|\bplants\b/.test(normalizedText);
+  }
+
+  const canonicalSubject = canonicalizeSubjectName(subject || "").toLowerCase();
+  if (canonicalSubject.includes("science") || canonicalSubject.includes("biology")) {
+    return /\bmathematics\b|\bmaths\b|\bnumber system\b|\brational number\b|\birrational number\b/.test(normalizedText);
+  }
+
+  return false;
+}
+
+function getEquivalentTopicNeedles(subject: string, chapterName: string, sessionTitle: string) {
+  const needles = new Set<string>();
+  const push = (value: any) => {
+    const normalized = normalizeSessionIdentityText(value);
+    if (normalized) {
+      needles.add(normalized);
+    }
+  };
+
+  push(chapterName);
+  push(sessionTitle);
+
+  if (isMathSubject(subject)) {
+    const combined = [chapterName, sessionTitle].map(normalizeSessionIdentityText).filter(Boolean).join(" ");
+    if (/\bnumber system\b/.test(combined)) {
+      [
+        "real number",
+        "real numbers",
+        "rational number",
+        "rational numbers",
+        "irrational number",
+        "irrational numbers",
+        "number line",
+        "decimal expansion",
+        "terminating decimal",
+        "non terminating non repeating",
+        "square root",
+        "sqrt 2",
+        "root 2",
+      ].forEach(push);
+    }
+  }
+
+  return Array.from(needles);
+}
+
+function coverageMatchesAnyNeedle(coverage: string, needles: string[]) {
+  if (!coverage) {
+    return false;
+  }
+  return needles.some((needle) => needle && coverage.includes(needle));
+}
+
+function findMatchingCoverageNeedle(coverage: string, needles: string[]) {
+  if (!coverage) {
+    return "";
+  }
+  return needles.find((needle) => needle && coverage.includes(needle)) || "";
+}
+
+function findMatchingGeneratedSessionEntry(
+  generatedSessions: Record<string, any>,
+  request: {
+    requestedSessionKey?: string;
+    roadmapSessionNumber: number;
+    chapterName: string;
+    sessionTitle: string;
+    subject: string;
+    gradeLevel: string;
+    sessionNumber: number;
+  }
+) {
+  const preferredKey = String(request.requestedSessionKey || "").trim() || buildGeneratedSessionStorageKey({
+    roadmapSessionNumber: request.roadmapSessionNumber,
+    chapterName: request.chapterName,
+    sessionTitle: request.sessionTitle,
+  });
+  const legacyKey = String(request.roadmapSessionNumber);
+  const candidates: Array<[string, any]> = [];
+
+  if (generatedSessions[preferredKey]) {
+    candidates.push([preferredKey, generatedSessions[preferredKey]]);
+  }
+  if (generatedSessions[legacyKey]) {
+    candidates.push([legacyKey, generatedSessions[legacyKey]]);
+  }
+  for (const [key, value] of Object.entries(generatedSessions || {})) {
+    if (key !== preferredKey && key !== legacyKey) {
+      candidates.push([key, value]);
+    }
+  }
+
+  for (const [key, sessionPlan] of candidates) {
+    if (sessionPlanMatchesRequest(sessionPlan, request)) {
+      return { key, sessionPlan };
+    }
+  }
+
+  return { key: preferredKey, sessionPlan: null };
+}
+
 function sessionPlanMatchesRequest(
   sessionPlan: any,
   request: {
+    roadmapSessionNumber?: number;
     chapterName: string;
     sessionTitle: string;
     subject: string;
@@ -2326,25 +2496,33 @@ function sessionPlanMatchesRequest(
   const titleNeedle = normalizeSessionIdentityText(request.sessionTitle);
   const subjectNeedle = normalizeSessionIdentityText(request.subject);
   const gradeNeedle = normalizeSessionIdentityText(request.gradeLevel);
+  const topicNeedles = getEquivalentTopicNeedles(request.subject, request.chapterName, request.sessionTitle);
   const sessionTitle = normalizeSessionIdentityText(sessionPlan.title);
   const pptTitle = normalizeSessionIdentityText(sessionPlan?.materials?.ppt?.title || sessionPlan?.materials?.ppt?.presentationTitle);
   const topicCoverage = Array.isArray(sessionPlan?.materials?.ppt?.coverageSummary?.topicsCovered)
     ? sessionPlan.materials.ppt.coverageSummary.topicsCovered.map(normalizeSessionIdentityText).join(" ")
     : "";
   const audience = normalizeSessionIdentityText(sessionPlan?.materials?.ppt?.audience);
+  const contentCoverage = collectSessionPlanMatchText(sessionPlan);
   const slideCoverage = Array.isArray(sessionPlan?.materials?.ppt?.slides)
     ? sessionPlan.materials.ppt.slides
         .flatMap((slide: any) => Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : [])
         .map(normalizeSessionIdentityText)
         .join(" ")
     : "";
+  const allCoverage = [sessionTitle, pptTitle, topicCoverage, audience, slideCoverage, contentCoverage].filter(Boolean).join(" ");
+
+  if (hasCrossSubjectSignals(request.subject, allCoverage)) {
+    return false;
+  }
 
   const titleOrTopicMatches =
-    (chapterNeedle && (sessionTitle.includes(chapterNeedle) || pptTitle.includes(chapterNeedle) || topicCoverage.includes(chapterNeedle) || slideCoverage.includes(chapterNeedle))) ||
-    (titleNeedle && (sessionTitle.includes(titleNeedle) || pptTitle.includes(titleNeedle)));
+    coverageMatchesAnyNeedle(allCoverage, topicNeedles) ||
+    (chapterNeedle && allCoverage.includes(chapterNeedle)) ||
+    (titleNeedle && allCoverage.includes(titleNeedle));
 
-  const subjectMatches = !subjectNeedle || audience.includes(subjectNeedle) || sessionTitle.includes(subjectNeedle) || pptTitle.includes(subjectNeedle);
-  const gradeMatches = !gradeNeedle || audience.includes(gradeNeedle);
+  const subjectMatches = !subjectNeedle || allCoverage.includes(subjectNeedle);
+  const gradeMatches = !gradeNeedle || audience.includes(gradeNeedle) || contentCoverage.includes(gradeNeedle);
   const sessionMatches =
     Number(sessionPlan?.sessionNumber || 0) === Number(request.sessionNumber || 0) ||
     Number(sessionPlan?.sessionNumber || 0) === 0;
@@ -2369,6 +2547,7 @@ function pptMatchesRequest(
   const titleNeedle = normalizeSessionIdentityText(request.sessionTitle);
   const subjectNeedle = normalizeSessionIdentityText(request.subject);
   const gradeNeedle = normalizeSessionIdentityText(request.gradeLevel);
+  const topicNeedles = getEquivalentTopicNeedles(request.subject, request.chapterName, request.sessionTitle);
 
   const titleText = normalizeSessionIdentityText(ppt?.title || ppt?.presentationTitle);
   const audienceText = normalizeSessionIdentityText(ppt?.audience);
@@ -2385,11 +2564,17 @@ function pptMatchesRequest(
         .map(normalizeSessionIdentityText)
         .join(" ")
     : "";
+  const allCoverage = [titleText, audienceText, topicCoverage, slideCoverage].filter(Boolean).join(" ");
+
+  if (hasCrossSubjectSignals(request.subject, allCoverage)) {
+    return false;
+  }
 
   const chapterOrTitleMatches =
-    (chapterNeedle && (titleText.includes(chapterNeedle) || topicCoverage.includes(chapterNeedle) || slideCoverage.includes(chapterNeedle))) ||
-    (titleNeedle && (titleText.includes(titleNeedle) || slideCoverage.includes(titleNeedle)));
-  const subjectMatches = !subjectNeedle || titleText.includes(subjectNeedle) || audienceText.includes(subjectNeedle) || slideCoverage.includes(subjectNeedle);
+    coverageMatchesAnyNeedle(allCoverage, topicNeedles) ||
+    (chapterNeedle && allCoverage.includes(chapterNeedle)) ||
+    (titleNeedle && allCoverage.includes(titleNeedle));
+  const subjectMatches = !subjectNeedle || allCoverage.includes(subjectNeedle);
   const gradeMatches = !gradeNeedle || audienceText.includes(gradeNeedle) || slideCoverage.includes(gradeNeedle);
 
   return Boolean(chapterOrTitleMatches && subjectMatches && gradeMatches);
@@ -2694,6 +2879,7 @@ function buildDeterministicMaterialsFromSessionPlan(
       onSlideText: [],
       speakerNotes: [],
       visualPlan: "",
+      svgDiagram: null,
       assets: [],
       animationHints: [],
       timeEstimateMinutes: Math.max(2, Math.round(context.durationMinutes / 12)),
@@ -2728,7 +2914,6 @@ function buildDeterministicMaterialsFromSessionPlan(
         ...learningOutcomes,
         ...(teacherNotes?.learningOutcomes || []),
       ], 5, 220),
-      visualPlan: `A structured learning goals visual for ${title}.`,
     }),
     makeSlide(2, {
       slideTitle: "Recall and Prepare",
@@ -2737,7 +2922,6 @@ function buildDeterministicMaterialsFromSessionPlan(
       teacherIntent: "Activate prior knowledge before new learning.",
       studentTakeaway: "Reconnect with ideas needed for today’s topic.",
       speakerNotes: limitStringList(teacherNotes?.previousSessionRecap || teacherNotes?.prerequisiteKnowledge || [], 5, 220),
-      visualPlan: `A prior-knowledge recall visual connected to ${title}.`,
     }),
     makeSlide(3, {
       slideTitle: "Hook and Curiosity",
@@ -2755,7 +2939,6 @@ function buildDeterministicMaterialsFromSessionPlan(
       teacherIntent: "Introduce the central idea and vocabulary.",
       studentTakeaway: "Understand the main concept and basic terms.",
       speakerNotes: limitStringList([theory?.overview, studentNotes?.introduction], 4, 220),
-      visualPlan: `A concept introduction visual for ${title} with clear educational focus.`,
     }),
     makeSlide(5, {
       slideTitle: limitString(conceptFlow?.[0]?.conceptName || lessonBlocks?.[0]?.title || "Core Concept A", 80),
@@ -2776,7 +2959,6 @@ function buildDeterministicMaterialsFromSessionPlan(
         ...(conceptFlow?.[0]?.examples || []),
         ...(lessonBlocks?.[0]?.examples || []),
       ], 5, 220),
-      visualPlan: `A concept-building classroom visual for ${conceptFlow?.[0]?.conceptName || title}.`,
     }),
     makeSlide(6, {
       slideTitle: limitString(conceptFlow?.[1]?.conceptName || "Visual Explanation", 80),
@@ -2805,7 +2987,6 @@ function buildDeterministicMaterialsFromSessionPlan(
         workedExamples?.[0]?.explanation,
         ...(teacherNotes?.guidedPractice || []),
       ], 4, 220),
-      visualPlan: `A worked-example instructional visual for ${title}.`,
     }),
     makeSlide(8, {
       slideTitle: "Guided Practice",
@@ -2824,7 +3005,6 @@ function buildDeterministicMaterialsFromSessionPlan(
         ...(activities?.[0]?.instructions || []),
         ...(teacherNotes?.guidedPractice || []),
       ], 5, 220),
-      visualPlan: `A classroom activity visual that supports guided practice for ${title}.`,
     }),
     makeSlide(9, {
       slideTitle: "Quick Check",
@@ -2836,7 +3016,6 @@ function buildDeterministicMaterialsFromSessionPlan(
         ...(teacherNotes?.assessmentQuestions || []),
         ...(teacherNotes?.formativeChecks || []),
       ], 5, 220),
-      visualPlan: `A concise formative assessment slide visual for ${title}.`,
     }),
     makeSlide(10, {
       slideTitle: "Key Takeaways",
@@ -2848,7 +3027,6 @@ function buildDeterministicMaterialsFromSessionPlan(
         ...(teacherNotes?.sessionSummary || []),
         ...(studentNotes?.rememberPoints || []),
       ], 5, 220),
-      visualPlan: `A recap visual summarizing the main ideas from ${title}.`,
     }),
     makeSlide(11, {
       slideTitle: "Homework and Next Step",
@@ -2866,7 +3044,6 @@ function buildDeterministicMaterialsFromSessionPlan(
         homeworkTask,
         ...(teacherNotes?.nextSessionBridge || []),
       ], 4, 220),
-      visualPlan: `A closure visual for homework and next-class bridge for ${title}.`,
     }),
   ];
 
@@ -3940,15 +4117,16 @@ function slugifyFileNamePart(value: string) {
 
 const pptAssetResolutionCache = new Map<string, any>();
 const USE_REMOTE_PPT_ASSETS = true;
-
-function scoreReusableAsset(query: string, asset: {
+type ReusablePptAsset = {
   sourceSite?: string;
   sourceUrl?: string;
   previewUrl?: string;
   licenseType?: string;
   attributionText?: string;
   altText?: string;
-}) {
+};
+
+function scoreReusableAsset(query: string, asset: ReusablePptAsset) {
   const queryTokens = String(query || "")
     .toLowerCase()
     .split(/[^a-z0-9]+/g)
@@ -4003,7 +4181,7 @@ async function resolveOpenverseImage(query: string) {
   if (!items.length) {
     return null;
   }
-  const candidates = items.map((item: any) => ({
+  const candidates: ReusablePptAsset[] = items.map((item: any) => ({
     sourceSite: "Openverse",
     sourceUrl: String(item.foreign_landing_url || item.url || ""),
     previewUrl: String(item.thumbnail || item.url || ""),
@@ -4167,6 +4345,19 @@ function getPptTemplatePreset(templateId?: string | null) {
 function shouldPreferSvgVisual(slide: any) {
   const type = String(slide?.slideType || "").toLowerCase();
   const key = String(slide?.templateSlideKey || "").toLowerCase();
+  const mathHint = [
+    slide?.subject,
+    slide?.slideTitle,
+    ...(Array.isArray(slide?.bulletPoints) ? slide.bulletPoints : []),
+    ...(Array.isArray(slide?.onSlideText) ? slide.onSlideText : []),
+    ...(Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : []),
+    slide?.visualPlan,
+  ]
+    .map((item: any) => renderableToExportPlainText(item))
+    .join(" ");
+  if (isMathSubject(String(slide?.subject || "")) || inferMathDiagramTypeFromText(mathHint) || /\bnumber system|rational|irrational|integer|natural number\b/i.test(mathHint)) {
+    return true;
+  }
   return [
     "visual-explanation",
     "concept",
@@ -4184,7 +4375,100 @@ function shouldPreferSvgVisual(slide: any) {
   ].includes(key);
 }
 
+function slideRequiresVisual(slide: any) {
+  const key = String(slide?.templateSlideKey || "").toLowerCase();
+  const type = String(slide?.slideType || "").toLowerCase();
+  const explicitVisual = Boolean(
+    String(slide?.visualPlan || "").trim() ||
+    (Array.isArray(slide?.assets) && slide.assets.length > 0) ||
+    String(slide?.svgDiagram?.title || "").trim() ||
+    String(slide?.svgDiagram?.type || "").trim() ||
+    (Array.isArray(slide?.svgDiagram?.instructions) && slide.svgDiagram.instructions.length > 0) ||
+    String(slide?.visualAttribution?.visualPlan || "").trim() ||
+    String(slide?.visualAttribution?.svgDiagram?.search || "").trim()
+  );
+  if (explicitVisual) {
+    return true;
+  }
+
+  return [
+    "title_identity",
+    "lesson_hook",
+    "core_concept_b_visual",
+  ].includes(key) || [
+    "visual-explanation",
+    "hook",
+  ].includes(type);
+}
+
+function buildMathFocusedSvgDiagram(slide: any, themeTokens: any) {
+  const title = xmlEscape(renderableToExportPlainText(slide?.slideTitle || "Math Visual"));
+  const sourceText = [
+    slide?.slideTitle,
+    ...(Array.isArray(slide?.bulletPoints) ? slide.bulletPoints : []),
+    ...(Array.isArray(slide?.onSlideText) ? slide.onSlideText : []),
+    ...(Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : []),
+    slide?.visualPlan,
+  ].map((item: any) => renderableToExportPlainText(item)).join(" ");
+  const inferredType = inferMathDiagramTypeFromText(sourceText) || (/number system|rational|irrational/i.test(sourceText) ? "numberLine" : "");
+  const primary = String(themeTokens?.colors?.primary || "#1D4E89").replace("#", "");
+  const accent = String(themeTokens?.colors?.accent || "#D97706").replace("#", "");
+  const surface = String(themeTokens?.colors?.surface || "#FFFFFF").replace("#", "");
+  const text = String(themeTokens?.colors?.text || "#1F2937").replace("#", "");
+
+  if (inferredType === "numberLine") {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="${title}">
+  <rect width="960" height="720" fill="#F8FBFD"/>
+  <rect x="60" y="50" width="840" height="90" rx="24" fill="#${primary}"/>
+  <text x="90" y="106" font-family="Arial, sans-serif" font-weight="700" font-size="34" fill="#FFFFFF">${title}</text>
+  <line x1="120" y1="390" x2="840" y2="390" stroke="#${text}" stroke-width="6" stroke-linecap="round"/>
+  <polygon points="840,390 816,378 816,402" fill="#${text}"/>
+  <polygon points="120,390 144,378 144,402" fill="#${text}"/>
+  <g font-family="Arial, sans-serif" font-size="22" fill="#${text}" text-anchor="middle">
+    <line x1="180" y1="360" x2="180" y2="420" stroke="#${text}" stroke-width="4"/><text x="180" y="450">-2</text>
+    <line x1="300" y1="360" x2="300" y2="420" stroke="#${text}" stroke-width="4"/><text x="300" y="450">-1</text>
+    <line x1="420" y1="360" x2="420" y2="420" stroke="#${text}" stroke-width="4"/><text x="420" y="450">0</text>
+    <line x1="540" y1="360" x2="540" y2="420" stroke="#${text}" stroke-width="4"/><text x="540" y="450">1</text>
+    <line x1="660" y1="360" x2="660" y2="420" stroke="#${text}" stroke-width="4"/><text x="660" y="450">2</text>
+    <line x1="780" y1="360" x2="780" y2="420" stroke="#${text}" stroke-width="4"/><text x="780" y="450">3</text>
+  </g>
+  <rect x="110" y="500" width="340" height="120" rx="22" fill="#${surface}" stroke="#${primary}" stroke-width="4"/>
+  <text x="140" y="548" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#${primary}">Rational Numbers</text>
+  <text x="140" y="585" font-family="Arial, sans-serif" font-size="22" fill="#${text}">Can be written as p/q</text>
+  <rect x="510" y="500" width="340" height="120" rx="22" fill="#${surface}" stroke="#${accent}" stroke-width="4"/>
+  <text x="540" y="548" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#${accent}">Irrational Numbers</text>
+  <text x="540" y="585" font-family="Arial, sans-serif" font-size="22" fill="#${text}">Non-terminating, non-repeating</text>
+</svg>`;
+  }
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="${title}">
+  <rect width="960" height="720" fill="#F8FBFD"/>
+  <rect x="60" y="52" width="840" height="90" rx="24" fill="#${primary}"/>
+  <text x="90" y="108" font-family="Arial, sans-serif" font-weight="700" font-size="34" fill="#FFFFFF">${title}</text>
+  <rect x="150" y="190" width="660" height="90" rx="22" fill="#${surface}" stroke="#${primary}" stroke-width="4"/>
+  <text x="480" y="245" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#${primary}">Real Numbers</text>
+  <line x1="480" y1="280" x2="480" y2="360" stroke="#${accent}" stroke-width="6"/>
+  <line x1="280" y1="360" x2="680" y2="360" stroke="#${accent}" stroke-width="6"/>
+  <rect x="120" y="380" width="280" height="170" rx="24" fill="#${surface}" stroke="#${primary}" stroke-width="4"/>
+  <text x="260" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#${primary}">Rational</text>
+  <text x="260" y="478" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#${text}">Integers, fractions,</text>
+  <text x="260" y="510" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#${text}">terminating decimals</text>
+  <rect x="560" y="380" width="280" height="170" rx="24" fill="#${surface}" stroke="#${accent}" stroke-width="4"/>
+  <text x="700" y="435" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#${accent}">Irrational</text>
+  <text x="700" y="478" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#${text}">Roots like √2, π,</text>
+  <text x="700" y="510" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" fill="#${text}">non-repeating decimals</text>
+</svg>`;
+}
+
 function buildFallbackSvgDiagram(slide: any, themeTokens: any) {
+  if (isMathSubject(String(slide?.subject || ""))) {
+    const mathSvg = buildMathFocusedSvgDiagram(slide, themeTokens);
+    if (mathSvg) {
+      return mathSvg;
+    }
+  }
   const title = xmlEscape(renderableToExportPlainText(slide?.slideTitle || "Concept Diagram"));
   const rawItems = Array.isArray(slide?.onSlideText) && slide.onSlideText.length > 0
     ? slide.onSlideText
@@ -4273,6 +4557,9 @@ async function resolvePptSlideAssets(
   }
 ) {
   const slideTitle = renderableToExportPlainText(slide?.slideTitle || slide?.title || "Slide visual");
+  if (!slideRequiresVisual(slide)) {
+    return [];
+  }
   const existingAssets = Array.isArray(slide?.assets) && slide.assets.length > 0
     ? slide.assets
     : [{
@@ -4472,6 +4759,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
         ...slide,
         slideTitle,
         templateSlideKey: templateSlot.key,
+        subject: sessionContext.subject,
       },
       sessionContext
     );
@@ -4484,6 +4772,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       ...slide,
       slideTitle,
       templateSlideKey: templateSlot.key,
+      subject: sessionContext.subject,
     }, themeTokens) : "");
 
     const normalizedSlide = {
@@ -4519,12 +4808,16 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       speakerNotes: Array.isArray(slide?.speakerNotes) && slide.speakerNotes.length > 0
         ? preserveRenderableList(slide.speakerNotes)
         : bulletPoints.map((item: string) => `Explain: ${item}`),
-      visualPlan: preserveRenderableValue(
-        slide?.visualPlan ||
-        `Use a precise classroom visual for ${slideTitleText}. Prefer diagram/SVG when conceptual accuracy matters.`
-      ),
-      assets: normalizedAssets,
-      svgDiagram: slide?.svgDiagram
+      visualPlan: slideRequiresVisual(slide)
+        ? preserveRenderableValue(
+            slide?.visualPlan ||
+            `Use a precise classroom visual for ${slideTitleText}. Prefer diagram/SVG when conceptual accuracy matters.`
+          )
+        : "",
+      assets: slideRequiresVisual(slide) ? normalizedAssets : [],
+      svgDiagram: !slideRequiresVisual(slide)
+        ? null
+        : slide?.svgDiagram
         ? slide.svgDiagram
         : {
             title: `${slideTitleText} visual`,
@@ -4581,7 +4874,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       speakerNotes: ["Leave concise placeholders only when the session does not naturally support this slot."],
       visualPlan: templateSlot.key === "core_concept_b_visual"
         ? "Prefer a clean diagram or labelled visual that matches the taught concept."
-        : "Use the template visual area only if it strengthens this session's taught content.",
+        : "",
       assets: [],
       svgDiagram: templateSlot.key === "core_concept_b_visual"
         || templateSlot.key === "core_concept_a"
@@ -14425,7 +14718,11 @@ app.get("/api/planning-workspaces/:id/generated-sessions/:sessionKey", async (re
       typeof workspace.generationScope.generatedSessions === "object"
         ? workspace.generationScope.generatedSessions
         : {};
-    const sessionPlan = generatedSessions[String(req.params.sessionKey)];
+    const requestedSessionKey = String(req.params.sessionKey);
+    const legacySessionKey = String(req.query.legacySessionKey || "");
+    const sessionPlan =
+      generatedSessions[requestedSessionKey] ||
+      (legacySessionKey ? generatedSessions[legacySessionKey] : null);
 
     if (!sessionPlan) {
       return res.status(404).json({ error: "Saved generated session not found." });
@@ -14438,7 +14735,7 @@ app.get("/api/planning-workspaces/:id/generated-sessions/:sessionKey", async (re
 
     res.json({
       success: true,
-      sessionKey: String(req.params.sessionKey),
+      sessionKey: requestedSessionKey,
       selectedSections,
       sessionPlan: serializedSession,
     });
@@ -14895,21 +15192,21 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     const selectedSections = normalizeSessionSections(req.body?.selectedSections);
     const assessmentCustomization = normalizeAssessmentCustomization(req.body?.assessmentCustomization);
     const pptGenerationOptions = normalizeSessionPptGenerationOptions(req.body?.pptGenerationOptions);
-    const generatedSessionKey = String(roadmapSessionNumber);
     const existingGeneratedSessions = typeof workspace.generationScope?.generatedSessions === "object" && workspace.generationScope?.generatedSessions
       ? workspace.generationScope.generatedSessions
       : {};
-    const rawExistingSessionPlan = existingGeneratedSessions?.[generatedSessionKey];
     const requestedSessionTitle = String(req.body?.sessionTitle || chapterName || `Session ${sessionNumber}`);
-    const existingSessionPlan = sessionPlanMatchesRequest(rawExistingSessionPlan, {
+    const existingSessionMatch = findMatchingGeneratedSessionEntry(existingGeneratedSessions, {
+      requestedSessionKey: String(req.body?.sessionKey || "").trim(),
+      roadmapSessionNumber,
       chapterName,
       sessionTitle: requestedSessionTitle,
       subject: String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
       gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || ""),
       sessionNumber: roadmapSessionNumber,
-    })
-      ? rawExistingSessionPlan
-      : null;
+    });
+    const generatedSessionKey = existingSessionMatch.key;
+    const existingSessionPlan = existingSessionMatch.sessionPlan;
     const assessmentOnly = selectedSections.length === 1 && selectedSections[0] === "assessment";
 
     if (assessmentOnly) {
@@ -14951,6 +15248,7 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     });
     const mergedSessionPlan = {
       id: existingSessionPlan?.id || `session-${generatedSessionKey}`,
+      sessionKey: generatedSessionKey,
       sessionNumber: existingSessionPlan?.sessionNumber || roadmapSessionNumber,
       title: (sessionPlan as any)?.title || requestedSessionTitle || `${chapterName} - Session ${roadmapSessionNumber}`,
       duration: existingSessionPlan?.duration || durationMinutes,
@@ -16235,8 +16533,8 @@ app.post("/api/generate-session-details", async (req, res) => {
         assessmentQuestions: ["Oral or written assessment question"],
         blackboardSummary: ["Key point for board summary"],
         endOfClassRecap: [{
-          prompt: "A cell is the ________ unit of life.",
-          expectedAnswer: "basic"
+          prompt: "Today I understood the idea of ________.",
+          expectedAnswer: "the session concept"
         }]
       },
     studentLessonNotes: {
@@ -16290,22 +16588,22 @@ app.post("/api/generate-session-details", async (req, res) => {
       quickSummary: ["Short summary point"],
       keyTerms: ["Important keyword"],
       fillInTheBlanks: [{
-        prompt: "A ________ is the basic unit of life.",
-        answer: "cell"
+        prompt: "A ________ helps explain the main idea.",
+        answer: "key term"
       }],
       mcqQuestions: [{
-        question: "Which organelle controls the cell?",
-        options: ["A. Ribosome", "B. Nucleus", "C. Vacuole", "D. Cytoplasm"],
-        answer: "B. Nucleus"
+        question: "Which option best matches the lesson concept?",
+        options: ["A. Choice 1", "B. Choice 2", "C. Choice 3", "D. Choice 4"],
+        answer: "A. Choice 1"
       }],
       veryShortAnswerQuestions: [{
-        question: "What is a cell?",
-        answer: "The basic structural and functional unit of life."
+        question: "What is the main concept discussed today?",
+        answer: "A short subject-appropriate definition."
       }],
       didYouKnow: ["Interesting supporting fact"],
       summary: ["Short summary point"],
       quickRevision: ["Revision cue"],
-      rememberPoints: ["Cell -> Basic Unit of Life"]
+      rememberPoints: ["Concept -> Meaning -> Example"]
     },
       learningOutcomes: ["Specific action-oriented objectives"],
       introduction: "A exciting 3-5 minute hook, inquiry question, or classroom starter",
@@ -16544,8 +16842,8 @@ async function generateSessionDetailsArtifact({
       }],
       sessionSummary: ["Closing recap point"],
       endOfClassRecap: [{
-        prompt: "A cell is the ________ unit of life.",
-        expectedAnswer: "basic"
+        prompt: "Today I understood the idea of ________.",
+        expectedAnswer: "the session concept"
       }],
       nextSessionBridge: ["How today connects to the next lesson"]
     },
@@ -16632,22 +16930,22 @@ async function generateSessionDetailsArtifact({
       quickSummary: ["Short summary point"],
       keyTerms: ["Important keyword"],
       fillInTheBlanks: [{
-        prompt: "A ________ is the basic unit of life.",
-        answer: "cell"
+        prompt: "A ________ helps explain the main idea.",
+        answer: "key term"
       }],
       mcqQuestions: [{
-        question: "Which organelle controls the cell?",
-        options: ["A. Ribosome", "B. Nucleus", "C. Vacuole", "D. Cytoplasm"],
-        answer: "B. Nucleus"
+        question: "Which option best matches the lesson concept?",
+        options: ["A. Choice 1", "B. Choice 2", "C. Choice 3", "D. Choice 4"],
+        answer: "A. Choice 1"
       }],
       veryShortAnswerQuestions: [{
-        question: "What is a cell?",
-        answer: "The basic structural and functional unit of life."
+        question: "What is the main concept discussed today?",
+        answer: "A short subject-appropriate definition."
       }],
       didYouKnow: ["Interesting supporting fact"],
       summary: ["Short summary point"],
       quickRevision: ["Revision cue"],
-      rememberPoints: ["Cell -> Basic Unit of Life"]
+      rememberPoints: ["Concept -> Meaning -> Example"]
     },
     learningOutcomes: ["Specific action-oriented objectives"],
     introduction: "A exciting 3-5 minute hook, inquiry question, or classroom starter",
@@ -16722,13 +17020,13 @@ async function generateSessionDetailsArtifact({
           onSlideText: ["Exact concise on-slide text"],
           speakerNotes: ["Teacher delivery cue"],
           visualAttribution: {
-            visualPlan: "A clear line graph showing Temperature (Y-axis) vs. Time (X-axis), with a second overlay or separate bar chart showing Evaporation Rate.",
+            visualPlan: "A subject-appropriate teaching visual that clarifies the main idea without adding off-topic content.",
             svgDiagram: {
-              purpose: "Data visualization for practice",
-              search: "science data graph temperature evaporation rate line chart educational style",
+              purpose: "Concept visualization for classroom explanation",
+              search: "subject appropriate educational concept diagram",
               source: "Internal SVG",
               license: "Internal SVG diagram",
-              animation: "Animate the line drawing itself to show the rise. Highlight specific data points as students identify them."
+              animation: "Reveal the visual step by step as the teacher explains it."
             }
           },
           visualPlan: "What visual should appear and why",
@@ -16916,6 +17214,14 @@ async function generateSessionDetailsArtifact({
   );
   sessionContextPayload.scienceGenerationMetadata = scienceGenerationMetadata;
   const compactMaterialsSessionPayload = buildCompactMaterialsSessionPayload(sessionContextPayload);
+  const materialsSourceSessionPayload = hasMaterialsSourceContent(sourceSessionPlan)
+    ? buildMaterialsSourceSessionPayload(sourceSessionPlan, compactMaterialsSessionPayload)
+    : compactMaterialsSessionPayload;
+  const materialsAntiDriftInstructions = buildMaterialsAntiDriftInstructions(
+    subject,
+    selectedChapters,
+    sessionTitle || `Session ${sessionNumber}`
+  );
   const materialsSchema = {
     materials: {
       ppt: {
@@ -17068,7 +17374,7 @@ async function generateSessionDetailsArtifact({
         stageLabel: "Student notes generation",
       })
     : materialsOnly
-    ? renderPromptWithEnglishDownstreamIntelligence(UNIVERSAL_PPT_PROMPT_NAME, {
+    ? `${materialsAntiDriftInstructions}\n\n${renderPromptWithEnglishDownstreamIntelligence(UNIVERSAL_PPT_PROMPT_NAME, {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
@@ -17087,7 +17393,7 @@ async function generateSessionDetailsArtifact({
         RESPONSE_LENGTH: String(sessionPlanningDefaults?.responseLength || "Balanced"),
         CREATIVITY: String(sessionPlanningDefaults?.creativity || "Moderate"),
         SELECTED_CHAPTERS_JSON: JSON.stringify(selectedChapters),
-        SESSION_JSON: JSON.stringify(compactMaterialsSessionPayload),
+        SESSION_JSON: JSON.stringify(materialsSourceSessionPayload),
         SLIDE_CONFIG_JSON: JSON.stringify({
           templateId: pptGenerationOptions?.pptTemplateId || "academic-split",
           templateDeck: "Kamalaniketan-pptx template.pptx",
@@ -17139,7 +17445,7 @@ async function generateSessionDetailsArtifact({
         englishMode: englishGenerationMode,
         scienceMode: false,
         stageLabel: "PPT and materials generation",
-      })
+      })}`
     : homeworkOnly
     ? renderPromptWithEnglishDownstreamIntelligence("homework-generation.md", {
         SUBJECT: String(subject || ""),
@@ -17295,7 +17601,6 @@ async function generateSessionDetailsArtifact({
   } catch (error: any) {
     const shouldUseDeterministicMaterialsFallback =
       materialsOnly &&
-      hasMaterialsSourceContent(sourceSessionPlan) &&
       (
         String(error?.code || "") === "OLLAMA_INCOMPLETE_RESPONSE" ||
         String(error?.code || "") === "OLLAMA_EMPTY_RESPONSE"
@@ -17305,9 +17610,13 @@ async function generateSessionDetailsArtifact({
       throw error;
     }
 
-    console.warn(`[Ollama][${requestId}] Falling back to deterministic PPT materials generation from existing session content.`);
+    const deterministicSourceSession =
+      hasMaterialsSourceContent(sourceSessionPlan)
+        ? sourceSessionPlan
+        : {};
+    console.warn(`[Ollama][${requestId}] Falling back to deterministic PPT materials generation after incomplete Ollama response.`);
     const fallbackSession = buildDeterministicMaterialsFromSessionPlan(
-      sourceSessionPlan,
+      deterministicSourceSession,
       {
         subject,
         gradeLevel,
@@ -17319,7 +17628,14 @@ async function generateSessionDetailsArtifact({
         generationOptions: pptGenerationOptions,
       }
     );
-    await writeDebugFile(debugDir, "ppt-materials-deterministic-fallback.json", fallbackSession);
+    await writeDebugFile(debugDir, "materials-generation-decision.json", {
+      resolution: "ollama_incomplete_fallback",
+      usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+    });
+    await writeDebugFile(debugDir, "ppt-materials-deterministic-fallback.json", {
+      usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+      fallbackSession,
+    });
     const normalizedFallbackPpt = await normalizePptMaterial(fallbackSession.materials.ppt, {
       subject,
       gradeLevel,
@@ -17358,27 +17674,86 @@ async function generateSessionDetailsArtifact({
       console.warn(`[Ollama][${requestId}] Repaired duplicate assessment array keys before JSON parsing.`);
     }
   }
-  const parsedSession = await parseSessionJsonWithRecovery(
-    requestId,
-    debugDir,
-    responseText,
-    {
-      stageName: teacherNotesOnly
-        ? "generate-content-session-teacher-notes"
-        : studentNotesOnly
-        ? "generate-content-session-student-notes"
-        : materialsOnly
-        ? "generate-content-session-ppt-materials"
-        : homeworkOnly
-        ? "generate-content-session-homework"
-        : assessmentOnly
-        ? "generate-content-session-assessment"
-        : "generate-content-session",
-      subject,
-      selectedChapters,
-      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+  const parseStageName = teacherNotesOnly
+    ? "generate-content-session-teacher-notes"
+    : studentNotesOnly
+    ? "generate-content-session-student-notes"
+    : materialsOnly
+    ? "generate-content-session-ppt-materials"
+    : homeworkOnly
+    ? "generate-content-session-homework"
+    : assessmentOnly
+    ? "generate-content-session-assessment"
+    : "generate-content-session";
+
+  let parsedSession: any;
+  try {
+    parsedSession = await parseSessionJsonWithRecovery(
+      requestId,
+      debugDir,
+      responseText,
+      {
+        stageName: parseStageName,
+        subject,
+        selectedChapters,
+        sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+      }
+    );
+  } catch (error: any) {
+    const shouldUseDeterministicMaterialsFallback =
+      materialsOnly && String(error?.code || "") === "SESSION_JSON_INVALID";
+
+    if (!shouldUseDeterministicMaterialsFallback) {
+      throw error;
     }
-  );
+
+    const deterministicSourceSession =
+      hasMaterialsSourceContent(sourceSessionPlan)
+        ? sourceSessionPlan
+        : {};
+    console.warn(`[Ollama][${requestId}] Falling back to deterministic PPT materials generation after invalid Ollama JSON.`);
+    const fallbackSession = buildDeterministicMaterialsFromSessionPlan(
+      deterministicSourceSession,
+      {
+        subject,
+        gradeLevel,
+        sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+        sessionNumber,
+        durationMinutes,
+        learningOutcomes,
+        selectedChapters,
+        generationOptions: pptGenerationOptions,
+      }
+    );
+    await writeDebugFile(debugDir, "materials-generation-decision.json", {
+      resolution: "ollama_invalid_json_fallback",
+      parseStageName,
+      usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+    });
+    await writeDebugFile(debugDir, "ppt-materials-invalid-json-fallback.json", {
+      parseStageName,
+      usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+      fallbackSession,
+    });
+    const normalizedFallbackPpt = await normalizePptMaterial(fallbackSession.materials.ppt, {
+      subject,
+      gradeLevel,
+      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+      learningOutcomes,
+      selectedChapters,
+      requestId,
+      debugDir,
+      generationOptions: pptGenerationOptions,
+    });
+    const fallbackNormalizedSession = {
+      materials: {
+        ...fallbackSession.materials,
+        ppt: normalizedFallbackPpt,
+      },
+    };
+    await writeDebugFile(debugDir, "final-response.json", fallbackNormalizedSession);
+    return fallbackNormalizedSession;
+  }
   if (parsedSession?.studentLessonNotes && !isMathSubject(subject)) {
     const enrichedStudentNotesSession = await enrichStudentLessonNotesWithVisuals(requestId, debugDir, parsedSession, {
       subject,
@@ -17389,6 +17764,30 @@ async function generateSessionDetailsArtifact({
   }
   if (parsedSession?.materials?.ppt) {
     const requestedChapterName = String(selectedChapters?.[0] || sessionTitle || `Session ${sessionNumber}`);
+    const pptTopicNeedles = getEquivalentTopicNeedles(
+      subject,
+      requestedChapterName,
+      sessionTitle || `Session ${sessionNumber}`
+    );
+    const pptTitleText = normalizeSessionIdentityText(
+      parsedSession.materials.ppt?.title || parsedSession.materials.ppt?.presentationTitle
+    );
+    const pptAudienceText = normalizeSessionIdentityText(parsedSession.materials.ppt?.audience);
+    const pptTopicCoverage = Array.isArray(parsedSession.materials.ppt?.coverageSummary?.topicsCovered)
+      ? parsedSession.materials.ppt.coverageSummary.topicsCovered.map(normalizeSessionIdentityText).join(" ")
+      : "";
+    const pptSlideCoverage = Array.isArray(parsedSession.materials.ppt?.slides)
+      ? parsedSession.materials.ppt.slides
+          .flatMap((slide: any) => [
+            slide?.slideTitle,
+            ...(Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : []),
+            ...(Array.isArray(slide?.bulletPoints) ? slide.bulletPoints : []),
+          ])
+          .map(normalizeSessionIdentityText)
+          .join(" ")
+      : "";
+    const pptAllCoverage = [pptTitleText, pptAudienceText, pptTopicCoverage, pptSlideCoverage].filter(Boolean).join(" ");
+    const matchedTopicNeedle = findMatchingCoverageNeedle(pptAllCoverage, pptTopicNeedles);
     const pptLooksCompatible = pptMatchesRequest(parsedSession.materials.ppt, {
       chapterName: requestedChapterName,
       sessionTitle: sessionTitle || `Session ${sessionNumber}`,
@@ -17397,7 +17796,11 @@ async function generateSessionDetailsArtifact({
     });
     if (!pptLooksCompatible) {
       console.warn(`[Ollama][${requestId}] PPT materials content did not match requested subject/session. Replacing with deterministic session-grounded deck.`);
-      const fallbackSession = buildDeterministicMaterialsFromSessionPlan(parsedSession, {
+      const deterministicSourceSession =
+        hasMaterialsSourceContent(sourceSessionPlan)
+          ? sourceSessionPlan
+          : parsedSession;
+      const fallbackSession = buildDeterministicMaterialsFromSessionPlan(deterministicSourceSession, {
         subject,
         gradeLevel,
         sessionTitle: sessionTitle || `Session ${sessionNumber}`,
@@ -17411,7 +17814,36 @@ async function generateSessionDetailsArtifact({
         ...parsedSession.materials,
         ...fallbackSession.materials,
       };
-      await writeDebugFile(debugDir, "ppt-materials-subject-mismatch-fallback.json", parsedSession.materials);
+      await writeDebugFile(debugDir, "materials-generation-decision.json", {
+        resolution: "ollama_rejected_subject_mismatch",
+        usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+        matcher: {
+          requestedChapterName,
+          sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+          topicNeedles: pptTopicNeedles,
+          matchedTopicNeedle,
+          subject,
+          gradeLevel,
+          coveragePreview: limitString(pptAllCoverage, 1200),
+        },
+      });
+      await writeDebugFile(debugDir, "ppt-materials-subject-mismatch-fallback.json", {
+        usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+        materials: parsedSession.materials,
+      });
+    } else {
+      await writeDebugFile(debugDir, "materials-generation-decision.json", {
+        resolution: "ollama_valid",
+        usedSourceSessionPlan: hasMaterialsSourceContent(sourceSessionPlan),
+        matcher: {
+          requestedChapterName,
+          sessionTitle: sessionTitle || `Session ${sessionNumber}`,
+          topicNeedles: pptTopicNeedles,
+          matchedTopicNeedle,
+          subject,
+          gradeLevel,
+        },
+      });
     }
   }
   if (parsedSession?.materials?.ppt) {
