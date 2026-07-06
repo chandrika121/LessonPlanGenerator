@@ -461,6 +461,7 @@ export interface CanonicalAssessmentPackage {
 
 export interface SessionPlan {
   id: string;
+  sessionKey?: string;
   sessionNumber: number;
   title: string;
   duration: number; // in mins

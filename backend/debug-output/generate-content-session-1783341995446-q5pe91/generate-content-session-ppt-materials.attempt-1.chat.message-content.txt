@@ -1,0 +1,747 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "textbook-clean",
+      "templateName": "Textbook Clean Layout",
+      "themeId": "cbse-academic-blue",
+      "title": "Number System - Session 1: Introduction to Real Numbers",
+      "presentationTitle": "The World of Number Systems",
+      "presentationGoal": "To introduce students to the classification of numbers, distinguishing between rational and irrational numbers through visual examples and real-world contexts.",
+      "audience": "Grade 9 Mathematics Students",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab",
+          "body": "Open Sans"
+        },
+        "colors": {
+          "primary": "#1a4d80",
+          "secondary": "#2c7da0",
+          "accent": "#e6b925",
+          "background": "#f8f9fa",
+          "surface": "#ffffff",
+          "text": "#333333",
+          "mutedText": "#666666"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary",
+          "cardStyle": "shadow-elevation-2",
+          "visualFrameStyle": "rounded-corners-accent-border"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons",
+          "Khan Academy Visuals",
+          "Math is Fun Graphics Library"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all images are under Creative Commons or Public Domain licenses.",
+          "Attribution required for non-public domain assets."
+        ],
+        "fallbackStrategy": "Use generated SVG diagrams if specific stock photos fail to load."
+      },
+      "licenseChecklist": [
+        "Verify no copyrighted textbook figures are used without permission",
+        "Confirm all mathematical symbols follow standard LaTeX conventions"
+      ],
+      "presentationWarnings": [
+        "Ensure the distinction between terminating and non-terminating decimals is clear.",
+        "Do not confuse students with advanced proofs of irrationality in this session."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define rational numbers",
+          "Identify irrational numbers",
+          "Distinguish between terminating and non-terminating decimals"
+        ],
+        "topicsCovered": [
+          "Classification of Real Numbers",
+          "Rational vs Irrational Numbers",
+          "Decimal Expansions"
+        ],
+        "taughtConceptsCovered": [
+          "Definition of Rational Numbers (p/q)",
+          "Examples of Integers, Fractions, and Decimals as Rationals",
+          "Non-terminating non-recurring decimals as Irrational",
+          "Visual representation on the Number Line"
+        ],
+        "omittedContent": [
+          "Detailed proofs of irrationality (e.g., sqrt(2)) - reserved for Session 3",
+          "Operations with complex surds - reserved for future sessions"
+        ]
+      },
+      "slides": [
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Lesson Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "The Number System: Real Numbers",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Introduction to Chapter 1"
+          ],
+          "teacherIntent": "Set the stage for the chapter and establish curiosity about numbers.",
+          "studentTakeaway": "I am starting a journey into understanding all types of numbers.",
+          "layout": "hero-image-left",
+          "bulletPoints": [
+            "Chapter 1: Number System",
+            "Session 1: Introduction to Real Numbers",
+            "Grade 9 Mathematics"
+          ],
+          "onSlideText": [
+            "The World of Numbers",
+            "From Counting to Infinity",
+            "Rational vs. Irrational"
+          ],
+          "speakerNotes": [
+            "Welcome students and introduce the chapter title.",
+            "Ask: 'How many types of numbers do you know?'",
+            "Explain that today we will explore the complete set of Real Numbers.",
+            "Transition to learning outcomes by asking what they hope to learn."
+          ],
+          "visualAttribution": {
+            "visualPlan": "A stylized number line extending infinitely in both directions, with distinct markers for integers and fractions.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Hero visual showing a fractal pattern of numbers or an infinite spiral to represent the complexity of real numbers.",
+          "assets": [
+            {
+              "purpose": "Background context",
+              "searchQuery": "infinite number line artistic illustration",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 4.0",
+              "attributionText": "Number Line Concept Art",
+              "altText": "Artistic representation of an infinite number line with mathematical symbols.",
+              "placementHint": "Left side, full height"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in title",
+            "Slide up bullet points one by one"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes & Goals",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "learning_outcomes",
+          "slideTitle": "What We Will Learn Today",
+          "learningOutcomeIds": [
+            "LO-001",
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Rational Numbers Definition",
+            "Irrational Numbers Identification"
+          ],
+          "teacherIntent": "Clarify expectations and the 'why' behind learning these concepts.",
+          "studentTakeaway": "I know exactly what I need to be able to do by the end of class.",
+          "layout": "split-screen",
+          "bulletPoints": [
+            "Define Rational Numbers (p/q form)",
+            "Identify Irrational Numbers visually",
+            "Distinguish decimal expansions"
+          ],
+          "onSlideText": [
+            "1. Define rational numbers clearly.",
+            "2. Identify irrational examples.",
+            "3. Classify decimals correctly."
+          ],
+          "speakerNotes": [
+            "Read out the outcomes and explain their importance in daily life (e.g., measurements, finance).",
+            "Outcome 1: You must know that any fraction is a rational number.",
+            "Outcome 2: Not all numbers can be written as simple fractions; these are irrational.",
+            "Outcome 3: The decimal expansion tells us the type of number instantly."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Bullet points appear on click"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Recall: What Do We Know?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "prerequisite_knowledge",
+          "slideTitle": "Prior Knowledge Check",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Natural Numbers",
+            "Whole Numbers",
+            "Integers"
+          ],
+          "teacherIntent": "Activate prior knowledge of number sets to build a foundation for Real Numbers.",
+          "studentTakeaway": "I remember the hierarchy of numbers from Natural to Integers.",
+          "layout": "text-heavy-list",
+          "bulletPoints": [
+            "Natural Numbers: 1, 2, 3...",
+            "Whole Numbers: 0, 1, 2...",
+            "Integers: ..., -2, -1, 0, 1, ..."
+          ],
+          "onSlideText": [
+            "Recall the number sets:",
+            "- Natural (N)",
+            "- Whole (W)",
+            "- Integers (Z)"
+          ],
+          "speakerNotes": [
+            "Ask students to list examples of each set.",
+            "Draw a quick Venn diagram on the blackboard showing N inside W, and W inside Z.",
+            "Question: 'Are all integers rational numbers? Why?'",
+            "Transition: 'Today we expand this family tree further.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal each set with a distinct color"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "The Mystery of Pi and Square Roots",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "lesson_hook",
+          "slideTitle": "Can All Numbers Be Fractions?",
+          "learningOutcomeIds": [
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Irrational Numbers Concept"
+          ],
+          "teacherIntent": "Create cognitive dissonance by challenging the idea that all numbers are rational.",
+          "studentTakeaway": "There must be a type of number we haven't seen yet.",
+          "layout": "centered-question",
+          "bulletPoints": [
+            "Is 3.14 exactly equal to 22/7?",
+            "What about the diagonal of a square?",
+            "Can every decimal end or repeat?"
+          ],
+          "onSlideText": [
+            "The Great Question:",
+            "Are all numbers rational?",
+            "Think: The Circle and the Square."
+          ],
+          "speakerNotes": [
+            "Hook: 'If I measure a circle's circumference, can I write it as p/q?'",
+            "Show an image of a square with side 1. Ask for the diagonal length (sqrt(2)).",
+            "Ask students to try writing sqrt(2) or Pi as a fraction.",
+            "Reveal that some numbers simply cannot be written this way."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Pulse the question mark",
+            "Fade in 'Think: The Circle and the Square'"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Defining Rational Numbers",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "topic_introduction",
+          "slideTitle": "What is a Rational Number?",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Definition of Rational Numbers"
+          ],
+          "teacherIntent": "Provide the formal definition and immediate examples.",
+          "studentTakeaway": "A rational number is any number that can be written as p/q where q is not zero.",
+          "layout": "definition-box",
+          "bulletPoints": [
+            "Form: p / q (where q ≠ 0)",
+            "p and q are integers",
+            "Includes fractions, terminating decimals"
+          ],
+          "onSlideText": [
+            "Rational Number Definition:",
+            "- Can be written as p/q",
+            "- Denominator (q) is non-zero integer",
+            "- Numerator (p) can be any integer"
+          ],
+          "speakerNotes": [
+            "Write the definition clearly on the board.",
+            "Emphasize that 'rational' comes from 'ratio'.",
+            "Examples: 1/2, -3/4, 5 (as 5/1), 0.75 (as 3/4).",
+            "Clarify that integers are also rational numbers."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Highlight 'q ≠ 0' in red"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "core_concept_a_visual",
+          "templateSlideTitle": "Visualizing Rational Numbers on Number Line",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "core_concept_a_visual",
+          "slideTitle": "Rational Numbers Everywhere",
+          "learningOutcomeIds": [
+            "LO-001"
+          ],
+          "topicCoverage": [
+            "Density of Rational Numbers"
+          ],
+          "teacherIntent": "Show that rational numbers are dense on the number line.",
+          "studentTakeaway": "Between any two integers, there are infinitely many rational numbers.",
+          "layout": "diagram-focused",
+          "bulletPoints": [
+            "-1 to 0 contains -1/2, -1/3...",
+            "Infinite points between markers",
+            "Every fraction has a spot"
+          ],
+          "onSlideText": [
+            "Density of Rationals:",
+            "Between any two numbers,",
+            "there are infinite rationals.",
+            "Example: 0.1, 0.2, ... between 0 and 1."
+          ],
+          "speakerNotes": [
+            "Draw a number line from -2 to 2 on the board.",
+            "Mark integers first.",
+            "Then mark fractions like 1/2, 3/4, -1/5.",
+            "Ask: 'Can you find another one between 0 and 1?'",
+            "Explain that no matter how close two rationals are, there is always another rational in between."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [
+              "Draw a horizontal line with arrows on both ends.",
+              "Mark points at -2, -1, 0, 1, 2.",
+              "Add intermediate ticks for fractions like 1/4, 3/4."
+            ],
+            "svgCode": "<svg viewBox=\"0 0 800 200\"><line x1=\"50\" y1=\"100\" x2=\"750\" y2=\"100\" stroke=\"#333\" stroke-width=\"2\"/><text x=\"40\" y=\"90\">-2</text><text x=\"240\" y=\"90\">-1</text><text x=\"440\" y=\"90\">0</text><text x=\"640\" y=\"90\">1</text><text x=\"750\" y=\"90\">2</text></svg>"
+          },
+          "animationHints": [
+            "Animate points appearing sequentially"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Irrational Numbers: The Exceptions",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "core_concept_b_visual",
+          "slideTitle": "When Decimals Don't Repeat",
+          "learningOutcomeIds": [
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Irrational Numbers Definition",
+            "Decimal Expansions"
+          ],
+          "teacherIntent": "Introduce irrational numbers through their decimal expansion properties.",
+          "studentTakeaway": "Numbers with non-terminating, non-recurring decimals are irrational.",
+          "layout": "comparison-table",
+          "bulletPoints": [
+            "- Non-terminating decimals",
+            "- No repeating pattern (non-recurring)",
+            "- Cannot be written as p/q"
+          ],
+          "onSlideText": [
+            "Irrational Numbers:",
+            "- Decimal expansion never ends.",
+            "- Digits do not repeat in a cycle.",
+            "- Examples: √2, π, e."
+          ],
+          "speakerNotes": [
+            "Contrast with rational numbers (terminating or recurring).",
+            "Show the decimal for Pi: 3.14159... and explain it goes on forever without a pattern.",
+            "Explain that √2 is approximately 1.414..., but never repeats exactly.",
+            "Emphasize that these numbers exist on the number line too, even if we can't write them as fractions."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [
+              "Create a split view: Left side shows 'Rational' with repeating pattern (e.g., 0.333...), Right side shows 'Irrational' with random digits."
+            ],
+            "svgCode": "<svg viewBox=\"0 0 800 200\"><rect x=\"50\" y=\"50\" width=\"300\" height=\"100\" fill=\"#e6f7ff\" stroke=\"#1a4d80\"/><text x=\"70\" y=\"90\">Rational: 0.333...</text><line x1="20" y1="50" x2="20" y2="150" stroke="#ccc"/><rect x="450\" y=\"50\" width=\"300\" height=\"100\" fill=\"#fff8e6\" stroke=\"#d97706\"/><text x=\"470\" y=\"90\">Irrational: 1.4142...</text></svg>"
+          },
+          "animationHints": [
+            "Highlight the repeating vs non-repeating parts"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Classifying Numbers: Step-by-Step",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "worked_example",
+          "slideTitle": "Is It Rational or Irrational?",
+          "learningOutcomeIds": [
+            "LO-001",
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Classification Practice"
+          ],
+          "teacherIntent": "Model the thought process for classifying numbers.",
+          "studentTakeaway": "I can check if a number is rational by looking at its decimal form or p/q structure.",
+          "layout": "step-by-step",
+          "bulletPoints": [
+            "- Example 1: √4 = 2 (Rational)",
+            "- Example 2: π (Irrational)",
+            "- Example 3: 0.5757... (Recurring -> Rational)"
+          ],
+          "onSlideText": [
+            "Worked Examples:",
+            "1. √4 = 2/1 → Rational",
+            "2. π ≈ 3.14159... → Irrational",
+            "3. 0.787878... (Recurring) → Rational"
+          ],
+          "speakerNotes": [
+            "Walk through Example 1: Simplify √4 to get 2, which is an integer, hence rational.",
+            "Example 2: Pi never ends or repeats; it's the classic irrational number.",
+            "Example 3: Even though it looks long, if digits repeat (78), it can be converted to a fraction. Show that 0.5757... = 57/99."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [
+              "Show a flowchart: Input Number -> Check Decimal? -> Terminating/Recurring? Yes=Rational, No=Irrational."
+            ],
+            "svgCode": "<svg viewBox=\"0 0 600 300\"><rect x=\"50\" y=\"20\" width=\"100\" height=\"40\" fill=\"#ddd\"/><text x=\"70\" y="45">Number</text><line x1="100" y1="60" x2="100" y2="90"/><polygon points="100,90 90,80 110,80" fill="#333"/><rect x=\"50\" y=\"90\" width="200\" height=\"40\" rx=\"10\"/><text x=\"70\" y="115">Decimal Type?</text><line x1="150\" y1="130\" x2="150\" y2="160"/><polygon points="150,160 140,150 160,150" fill="#333\"><path d=\"M150,160 L180,190 M150,160 L120,190\" stroke=\"#333\"/><rect x=\"170\" y=\"190\" width=\"100\" height=\"40\" fill=\"#d4edda\"/><text x="180" y="215">Rational</text><rect x=\"60\" y=\"190\" width=\"100\" height=\"40\" fill=\"#f8d7da\"/><text x=\"70\" y="215\">Irrational</text></svg>"
+          },
+          "animationHints": [
+            "Reveal each step of the flowchart"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Classify These Numbers!",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "guided_practice",
+          "slideTitle": "Activity: Rational or Irrational?",
+          "learningOutcomeIds": [
+            "LO-001",
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Application of Concepts"
+          ],
+          "teacherIntent": "Engage students in active classification practice.",
+          "studentTakeaway": "I can apply the rules to new numbers independently.",
+          "layout": "interactive-list",
+          "bulletPoints": [
+            "- √5",
+            "- 0.123456789...",
+            "- 2/3",
+            "- π + 1"
+          ],
+          "onSlideText": [
+            "Classify:",
+            "A) √5",
+            "B) 0.123... (non-recurring)",
+            "C) 2/3",
+            "D) π + 1"
+          ],
+          "speakerNotes": [
+            "Ask students to work in pairs for 2 minutes.",
+            "A: √5 is not a perfect square, so irrational.",
+            "B: Explicitly stated non-recurring -> Irrational.",
+            "C: Fraction form -> Rational.",
+            "D: Sum of rational and irrational is always irrational."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [
+              "Display the four options as cards that flip to reveal answers."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Click to show answer key for each item"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Check: Understanding",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "quick_assessment",
+          "slideTitle": "Exit Ticket Questions",
+          "learningOutcomeIds": [
+            "LO-001",
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Assessment of Learning Outcomes"
+          ],
+          "teacherIntent": "Verify understanding before closing the session.",
+          "studentTakeaway": "I can answer questions about rational and irrational numbers correctly.",
+          "layout": "question-list",
+          "bulletPoints": [
+            "- Is 0 a rational number?",
+            "- Can √9 be written as p/q?",
+            "- What makes a decimal irrational?"
+          ],
+          "onSlideText": [
+            "1. Is zero (0) rational? Yes/No",
+            "2. Simplify √9 and classify.",
+            "3. Define the key feature of an irrational number."
+          ],
+          "speakerNotes": [
+            "Ask students to write answers on a slip of paper or raise hands.",
+            "Q1: 0 = 0/1, so yes, rational.",
+            "Q2: √9 = 3 = 3/1, so it is rational (common misconception trap).",
+            "Q3: Non-terminating and non-recurring."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [
+              "Simple text-based question cards."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal answers after student response"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Summary: The Real Number Family",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Today's Key Takeaways",
+          "learningOutcomeIds": [
+            "LO-001",
+            "LO-002"
+          ],
+          "topicCoverage": [
+            "Review of Concepts"
+          ],
+          "teacherIntent": "Consolidate learning and reinforce the distinction between rational and irrational.",
+          "studentTakeaway": "I understand that Real Numbers include both Rational (p/q) and Irrational numbers.",
+          "layout": "concept-map",
+          "bulletPoints": [
+            "- Rational: p/q, terminating/recurring decimals",
+            "- Irrational: Non-terminating, non-recurring",
+            "- Both exist on the number line"
+          ],
+          "onSlideText": [
+            "Key Points:",
+            "1. All integers are rational.",
+            "2. Decimals either repeat or don't.",
+            "3. Irrational numbers fill the gaps."
+          ],
+          "speakerNotes": [
+            "Summarize: Rational = Ratio, Irrational = Not a ratio.",
+            "Reiterate that both types make up the set of Real Numbers.",
+            "Ask students to share one thing they learned today."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [
+              "Show a Venn diagram of Real Numbers splitting into Rational and Irrational."
+            ],
+            "svgCode": "<svg viewBox=\"0 0 600 300\"><circle cx="250" cy="150\" r="80\" fill=\"#e6f7ff\" stroke=\"#1a4d80\"/><text x="200\" y="155\">Rational</text><circle cx=\"350\" cy=\"150\" r=\"80\" fill=\"#fff8e6\" stroke=\"#d97706\"/><text x=\"300\" y=\"155\">Irrational</text></svg>"
+          },
+          "animationHints": [
+            "Fade in summary points"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Homework & Next Steps",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 12,
+          "slideType": "homework_next_session",
+          "slideTitle": "Practice and Preview",
+          "learningOutcomeIds": [
+            "LO-003"
+          ],
+          "topicCoverage": [
+            "Homework Assignment",
+            "Next Session Preview"
+          ],
+          "teacherIntent": "Assign practice tasks and set the stage for future learning.",
+          "studentTakeaway": "I have homework to reinforce today's lesson, and I know what comes next.",
+          "layout": "two-column-lists",
+          "bulletPoints": [
+            "- Exercise 1.2: Q1-Q5 (Textbook)",
+            "- Identify 3 irrational numbers in daily life",
+            "- Next Session: Proving Irrationality"
+          ],
+          "onSlideText": [
+            "Homework:",
+            "Complete Exercises on Rational/Irrational classification.",
+            "Find examples of Pi or √2 in real world.",
+            "Next Class: How do we prove a number is irrational?"
+          ],
+          "speakerNotes": [
+            "Assign specific textbook exercises (e.g., NCERT Exercise 1.2).",
+            "Challenge students to find where these numbers appear outside math class.",
+            "Preview next session: We will learn the proof that √2 cannot be written as a fraction."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [
+              "Show a 'Coming Soon' graphic for the proof of irrationality."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade out at end"
+          ],
+          "timeEstimateMinutes": 3
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Number System - Session 1: Introduction to Real Numbers",
+      "keyInformation": [
+        "Session covers definitions of Rational and Irrational numbers.",
+        "Focus on decimal expansions (terminating vs non-terminating).",
+        "Includes worked examples for classification."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Plan: Number System Session 1",
+      "sections": [
+        "Introduction and Hook",
+        "Definitions of Rational Numbers",
+        "Visualizing on the Number Line",
+        "Irrational Numbers and Decimal Expansions",
+        "Worked Examples and Classification",
+        "Guided Practice Activity",
+        "Assessment and Summary"
+      ]
+    }
+  }
+}

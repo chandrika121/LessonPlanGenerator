@@ -198,7 +198,21 @@ Never overload slides.
 
 ## VISUAL PEDAGOGY RULES
 
-Every slide should recommend visuals. Do not return vague labels like only "Image".
+Use visuals selectively. Not every slide needs an image, diagram, or visual panel.
+
+Only recommend visuals when they materially improve understanding, such as:
+- structure, process, cycle, flow, comparison, timeline, map, graph, hierarchy, or spatial explanation
+- a hook slide where a strong hero visual improves engagement
+- a worked example or guided practice slide where a diagram, graph, or labelled figure is necessary
+
+Text-first slides such as learning outcomes, quick checks, summaries, or homework may intentionally have no visual recommendation when the teaching is clear without one.
+
+When a slide does not need a visual:
+- leave `visualPlan` empty
+- leave `assets[]` empty
+- leave `svgDiagram` empty or null
+
+Do not return vague labels like only "Image" when a visual is required.
 
 Generate specific visual intent such as:
 - "Cross-section diagram of..."
@@ -243,11 +257,13 @@ Generate an engaging opening statement that creates curiosity.
 **Purpose:** Clearly communicate what students should know, understand, and be able to do.
 Include: 3–5 measurable learning outcomes with action verbs, success criteria, skills developed, real-world relevance.
 Explain each learning outcome — students should understand **why** every outcome matters.
+Usually text-first. Add a visual only if it significantly clarifies the outcomes.
 
 ### Slide 3 — `prerequisite_knowledge`
 **Purpose:** Activate existing knowledge before introducing new concepts.
 Include: Previously learned concepts, required skills, quick revision, connections to prior lessons, diagnostic questions, knowledge recall activities.
 If this is the first lesson, generate suitable foundational knowledge instead.
+Usually text-first. Use a visual only if recall depends on a diagram, map, graph, or comparison.
 
 ### Slide 4 — `lesson_hook`
 **Purpose:** Generate curiosity and capture attention.
@@ -283,27 +299,32 @@ Generate subject-appropriate demonstrations:
 - History: event analysis or source evaluation
 - Business: case study analysis
 Never skip reasoning steps.
+Only add a visual when the example genuinely needs a diagram, graph, figure, setup, or labelled representation.
 
 ### Slide 9 — `guided_practice`
 **Purpose:** Students actively participate and practice.
 Generate appropriate activities: Think-Pair-Share, classroom discussion, observation, experiment, problem solving, worksheet, coding, group work, role play, matching, sequencing, drawing, brainstorming, data analysis.
 Generate complete teacher instructions and expected outcomes.
+Use a visual only when the practice task depends on one.
 
 ### Slide 10 — `quick_assessment`
 **Purpose:** Evaluate understanding during instruction.
 Generate 3–5 quick questions from today's learning outcomes only.
 Formats: MCQ, short answer, true/false, matching, fill-in-the-blanks, image-based, numerical, application, analysis, HOTS, reflection.
 Expected answers should live in `speakerNotes`.
+Usually no visual unless the assessment item is explicitly image/graph/diagram-based.
 
 ### Slide 11 — `summary`
 **Purpose:** Consolidate and reinforce learning.
 Include: Key takeaways, important vocabulary, major ideas, memory aids/mnemonics, common mistakes to avoid, real-life connections, reflection prompts.
 Avoid merely repeating previous slides — synthesize learning.
+Usually no visual unless a recap diagram or concept map clearly improves retention.
 
 ### Slide 12 — `homework_next_session`
 **Purpose:** Complete today's learning and prepare for future learning.
 Include: Homework/practice tasks, extension activities, observation tasks, reflection questions, reading preparation, research activities, creative assignments, preview of next session, motivational closing, question time.
 If homework is unavailable, use reflection/observation/preparation guidance without inventing curriculum.
+Usually no visual unless a preview diagram or observation image is truly necessary.
 
 ## TEMPLATE AND THEME RULES
 

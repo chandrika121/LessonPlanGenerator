@@ -1,0 +1,397 @@
+{
+  "teacherLessonNotes": {
+    "sessionOverview": "This session introduces Class IX students to the expansion of the number system from rational numbers to include irrational numbers. Students will learn definitions, properties, and representations on the number line.",
+    "prerequisiteKnowledge": [
+      "Understanding of integers and whole numbers",
+      "Basic concept of fractions (rational numbers)",
+      "Ability to plot simple fractions on a number line"
+    ],
+    "previousSessionRecap": [],
+    "learningOutcomes": [
+      "Define rational and irrational numbers with precision.",
+      "Distinguish between terminating, non-terminating recurring, and non-terminating non-recurring decimals.",
+      "Represent √2 on the number line using geometric construction."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Questioning with simple real-life example"
+      },
+      {
+        "minutes": 10,
+        "topic": "Theory: Rational Numbers Review & Extension",
+        "teachingStrategy": "Direct instruction and comparison table creation"
+      },
+      {
+        "minutes": 25,
+        "topic": "Activity: Constructing Irrational Numbers on Number Line",
+        "teachingStrategy": "Guided discovery and hands-on geometric construction"
+      }
+    ],
+    "lessonPurpose": [
+      "To bridge the gap between Class VIII number systems and higher mathematics.",
+      "To resolve the 'gap' in numbers where √2 exists but cannot be written as p/q."
+    ],
+    "teachingSequence": [
+      "1. Ask students to write 5/3 on the board. Confirm it is rational.",
+      "2. Introduce the concept of non-terminating, non-recurring decimals using √2.",
+      "3. Define Irrational Numbers formally.",
+      "4. Demonstrate geometric construction for √2 on the number line step-by-step.",
+      "5. Guide students to replicate the construction in their notebooks."
+    ],
+    "guidedPractice": [
+      "Teacher asks: 'Is 0 a rational number?' Students respond with reasoning (p/q form).",
+      "Teacher leads class through drawing perpendicular lines of length 1 unit.",
+      "Students calculate hypotenuse using Pythagoras theorem mentally."
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction & Definitions",
+        "durationMinutes": 5,
+        "teacherPrompt": [
+          "Can you write the number 'one-third' as a fraction?",
+          "What happens if we try to find a square root of 2 in our current list of numbers?"
+        ],
+        "explanation": [
+          "Rational numbers are those that can be expressed as p/q where q is not zero. Irrational numbers cannot be written this way and have non-terminating, non-recurring decimal expansions."
+        ],
+        "examples": [
+          "1/2 = 0.5 (Terminating)",
+          "1/3 = 0.333... (Recurring)",
+          "√2 ≈ 1.41421356... (Non-recurring)"
+        ],
+        "boardWork": [
+          "Definition of Rational: p/q, q≠0",
+          "Definition of Irrational: Cannot be written as p/q"
+        ],
+        "boardSteps": [
+          "Write 'Rational Numbers' on left side.",
+          "Write 'Irrational Numbers' on right side."
+        ],
+        "solutionFlow": [],
+        "proofSteps": [],
+        "geometryDiagrams": [],
+        "checkUnderstanding": [
+          "Is 0.123456789... (non-recurring) rational or irrational?"
+        ],
+        "expectedAnswers": [
+          "Irrational, because it does not repeat and cannot be written as a fraction."
+        ],
+        "activity": []
+      },
+      {
+        "title": "Geometric Construction of √2",
+        "durationMinutes": 10,
+        "teacherPrompt": [
+          "How can we find the length of the hypotenuse if both legs are 1 unit?",
+          "Where does this new number fit on our existing number line?"
+        ],
+        "explanation": [
+          "Using Pythagoras theorem (a² + b² = c²), a triangle with sides 1 and 1 has a hypotenuse of √2. We can transfer this length to the number line using an arc."
+        ],
+        "examples": [],
+        "boardWork": [
+          "Draw Number Line",
+          "Mark O at 0, A at 1.",
+          "Construct perpendicular AB = 1 unit.",
+          "Join OB. Length is √2."
+        ],
+        "boardSteps": [
+          "Step 1: Draw horizontal line with origin O and point A(1).",
+          "Step 2: At A, draw a vertical line of length 1 to B.",
+          "Step 3: Join OB. By Pythagoras, OB = √(1²+1²) = √2."
+        ],
+        "solutionFlow": [
+          "OB² = OA² + AB²",
+          "OB² = 1 + 1 = 2",
+          "OB = √2"
+        ],
+        "proofSteps": [],
+        "geometryDiagrams": [
+          {
+            "id": "diagram-1",
+            "type": "numberLine",
+            "template": "sqrtNumberLineConstruction",
+            "params": {
+              "roots": [
+                2,
+                3,
+                5
+              ],
+              "highlightRoot": 5
+            },
+            "title": "Construction of sqrt(2)",
+            "caption": "Right triangle OAB used to locate √2 on the number line",
+            "points": [
+              {
+                "id": "O",
+                "x": 50,
+                "y": 180,
+                "label": "O"
+              },
+              {
+                "id": "A",
+                "x": 200,
+                "y": 180,
+                "label": "A (1)"
+              },
+              {
+                "id": "B",
+                "x": 200,
+                "y": 50,
+                "label": "B"
+              }
+            ],
+            "lines": [
+              {
+                "from": "O",
+                "to": "A",
+                "label": "1 unit",
+                "style": "solid",
+                "highlight": false
+              },
+              {
+                "from": "A",
+                "to": "B",
+                "label": "1 unit",
+                "style": "solid",
+                "highlight": false
+              },
+              {
+                "from": "O",
+                "to": "B",
+                "label": "√2 units",
+                "style": "solid",
+                "highlight": true
+              }
+            ],
+            "arcs": [
+              {
+                "center": "O",
+                "radius": 150,
+                "startAngle": 90,
+                "endAngle": 45,
+                "label": "Arc",
+                "highlight": false
+              }
+            ],
+            "labels": [],
+            "measurements": [],
+            "highlights": [],
+            "bars": []
+          }
+        ],
+        "checkUnderstanding": [
+          "Why do we use an arc centered at O?"
+        ],
+        "expectedAnswers": [
+          "To transfer the length of OB (√2) onto the number line starting from O."
+        ],
+        "activity": []
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Rational Numbers",
+        "definition": "Numbers expressible as p/q where p, q are integers and q ≠ 0.",
+        "coreExplanation": "Includes all terminating decimals (like 0.5) and recurring decimals (like 0.33...). Every integer is a rational number because it can be written over 1.",
+        "importance": "Forms the foundation of arithmetic operations taught in earlier grades.",
+        "observedIn": [
+          "Fractions",
+          "Decimals"
+        ],
+        "whyStudyIt": "To understand which numbers have exact fractional representations.",
+        "relationshipWithPrevious": "Extension of Class VIII fractions and integers.",
+        "relationshipWithFuture": "Contrast with irrational numbers leads to Real Numbers set.",
+        "keywords": [
+          "Terminating",
+          "Recurring",
+          "p/q form"
+        ],
+        "teacherMoves": [
+          "Emphasize that 'q' cannot be zero."
+        ],
+        "examples": [
+          "-3, 0, 1/2, -4.5 (which is -9/2)"
+        ],
+        "visuals": [],
+        "solutionFlow": [],
+        "proofSteps": [],
+        "teacherPrompt": [],
+        "explanation": [],
+        "boardWork": [],
+        "boardSteps": [],
+        "checkUnderstanding": [],
+        "expectedAnswers": [],
+        "activity": [],
+        "geometryDiagrams": []
+      },
+      {
+        "conceptName": "Irrational Numbers",
+        "definition": "Numbers that cannot be expressed as p/q. Their decimal expansion is non-terminating and non-recurring.",
+        "coreExplanation": "Examples include √2, √3, π. They fill the 'gaps' between rational numbers on the number line.",
+        "importance": "Essential for geometry (diagonals of squares) and trigonometry.",
+        "observedIn": [
+          "Square roots of non-perfect squares",
+          "Pi"
+        ],
+        "whyStudyIt": "To complete the set of Real Numbers.",
+        "relationshipWithPrevious": "Extends beyond fractions to include geometric lengths that don't fit p/q.",
+        "relationshipWithFuture": "Used in algebraic simplification and higher geometry proofs.",
+        "keywords": [
+          "Non-terminating",
+          "Non-recurring",
+          "Geometric length"
+        ],
+        "teacherMoves": [
+          "Show the decimal expansion of √2 on a calculator to prove it never repeats."
+        ],
+        "examples": [
+          {
+            "text": "",
+            "latex": "\\sqrt{2} ≈ 1.414...",
+            "displayLatex": ""
+          },
+          "π ≈ 3.14159..."
+        ],
+        "visuals": [],
+        "solutionFlow": [],
+        "proofSteps": [],
+        "teacherPrompt": [],
+        "explanation": [],
+        "boardWork": [],
+        "boardSteps": [],
+        "checkUnderstanding": [],
+        "expectedAnswers": [],
+        "activity": [],
+        "geometryDiagrams": []
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "Is the number -√2 rational or irrational?",
+        "level": "Understanding",
+        "expectedResponse": "Irrational because it cannot be written as a fraction of integers.",
+        "answerPoints": [
+          "Identifies negative sign does not change nature",
+          "Recognizes √2 is non-terminating/non-recurring"
+        ]
+      },
+      {
+        "question": "Can you find two rational numbers between 1 and 2?",
+        "level": "Application",
+        "expectedResponse": "Yes, e.g., 1.5 (3/2) or 1.25 (5/4).",
+        "answerPoints": [
+          "Provides valid fractions/deimals",
+          "Values lie strictly between 1 and 2"
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Students think all square roots are irrational.",
+        "correction": "Clarify that perfect squares (like √4, √9) result in integers which are rational."
+      },
+      {
+        "misconception": "Confusing 'non-terminating' with 'irrational'.",
+        "correction": "Distinguish between recurring decimals (rational but non-terminating like 0.33...) and non-recurring ones."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Provide a pre-drawn number line template for the construction activity.",
+        "Focus on identifying perfect squares first before moving to irrational roots."
+      ],
+      "averageLearners": [
+        "Ensure they can independently draw the perpendicular and arc.",
+        "Ask them to list 3 examples of each type."
+      ],
+      "advancedLearners": [
+        "Challenge: Can you find an irrational number between two rational numbers?"
+      ]
+    },
+    "teacherTips": [
+      "Use a large compass for the board demonstration so all students can see.",
+      "Emphasize that 'Real Numbers' = Rational + Irrational."
+    ],
+    "misconceptions": [
+      "Thinking 0 is irrational because it has no decimal part.",
+      "Believing π is exactly 22/7 (it's an approximation)."
+    ],
+    "formativeChecks": [
+      "Thumbs up if you understand the difference between recurring and non-recurring decimals."
+    ],
+    "assessmentQuestions": [
+      "Write one example of a rational number with a terminating decimal.",
+      "Is √9 rational? Justify your answer in one sentence."
+    ],
+    "blackboardSummary": [
+      "Rational: p/q (Terminating/Recurring)",
+      "Irrational: Non-terminating, Non-recurring",
+      "√2 = 1.414... on Number Line"
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap & Hook",
+        "minutes": 5,
+        "purpose": "Refresh prerequisite ideas of fractions and introduce the gap in numbers."
+      },
+      {
+        "segment": "Theory Delivery",
+        "minutes": 10,
+        "purpose": "Define terms clearly with examples."
+      },
+      {
+        "segment": "Construction Activity",
+        "minutes": 25,
+        "purpose": "Visualize and locate irrational numbers on the number line."
+      }
+    ],
+    "sessionSummary": [
+      "We expanded our number system to include Irrational Numbers which fill the gaps between rational numbers."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "A number that cannot be written as p/q is called ________.",
+        "expectedAnswer": "Irrational"
+      }
+    ],
+    "nextSessionBridge": [
+      "Next session, we will learn how to represent √3 and other roots on the number line using a spiral pattern."
+    ]
+  },
+  "learningOutcomes": [
+    "Students can define rational and irrational numbers.",
+    "Students can distinguish between terminating, recurring, and non-recurring decimals.",
+    "Students can construct and locate √2 on the number line geometrically."
+  ],
+  "introduction": "Imagine you have a square with side length exactly 1 meter. What is the exact length of its diagonal? If I ask for this as a fraction, like '3/4' or '50/7', can you do it? Today we discover that some numbers simply cannot be written as fractions, and they are just as real as the ones you know!",
+  "theory": {
+    "overview": "The Number System in Class IX expands from Rational Numbers to include Irrational Numbers. Together, they form the set of Real Numbers.",
+    "keyPoints": [
+      "Rational numbers can be written as p/q (q≠0).",
+      "Irrational numbers have non-terminating and non-recurring decimal expansions.",
+      "Every point on a number line represents a real number."
+    ],
+    "detailedContent": "A rational number is any number that can be expressed in the form p/q where p and q are integers and q ≠ 0. This includes all integers, fractions, terminating decimals (e.g., 0.25), and recurring decimals (e.g., 0.33...). An irrational number cannot be written as a simple fraction. Its decimal expansion goes on forever without repeating any pattern. Common examples include √2, √3, and π. While rational numbers are dense on the number line, they do not cover every point; irrational numbers fill these gaps."
+  },
+  "activities": [
+    {
+      "name": "Number Line Construction Challenge",
+      "instructions": [
+        "Draw a horizontal line representing the real number line.",
+        "Mark points O (0) and A (1).",
+        "At point A, draw a perpendicular line segment AB of length 1 unit upwards.",
+        "Join OB to form a right-angled triangle OAB.",
+        "Using a compass centered at O with radius equal to the length of hypotenuse OB, mark an arc on the number line. Label this intersection P.",
+        "Verify that OP represents √2."
+      ],
+      "durationMinutes": 15
+    }
+  ],
+  "id": "CBSE-MATH-IX-S01-RS",
+  "sessionNumber": 1,
+  "title": "Introduction to Number Systems: Rational vs Irrational Numbers",
+  "duration": 45
+}

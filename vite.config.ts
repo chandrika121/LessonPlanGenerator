@@ -25,6 +25,17 @@ export default defineConfig(() => {
         '/api': {
           target: `http://localhost:${backendPort}`,
           changeOrigin: true,
+          configure: (proxy) => {
+            proxy.on('error', (err, req) => {
+              const message = err instanceof Error ? err.message : String(err);
+              const code = (err as NodeJS.ErrnoException | undefined)?.code || "UNKNOWN";
+              const reason =
+                code === "ECONNREFUSED"
+                  ? `Backend dev server is not reachable on http://localhost:${backendPort} yet.`
+                  : `Proxy target http://localhost:${backendPort} failed.`;
+              console.error(`[vite-proxy] ${req.method} ${req.url} -> ${reason} code=${code} message=${message}`);
+            });
+          },
         },
       },
       // HMR is disabled in AI Studio via DISABLE_HMR env var.

@@ -271,6 +271,27 @@ const resolveWorkspaceOutputLanguage = (workspace?: PlanningWorkspace | null): s
   return requestedLanguage || "English";
 };
 
+const normalizeSessionIdentityText = (value: unknown): string =>
+  String(value || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .trim();
+
+const buildSessionStorageKey = (sessionNum: number, chapterName?: string, sessionTitle?: string): string => {
+  const topicSlug = normalizeSessionIdentityText(chapterName || sessionTitle || `session-${sessionNum}`)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80) || `session-${sessionNum}`;
+  return `session-${sessionNum}__${topicSlug}`;
+};
+
+const getOutlineSessionKey = (outlineItem?: { sessionNumber?: number; chapterName?: string; title?: string } | null): string =>
+  buildSessionStorageKey(
+    Number(outlineItem?.sessionNumber || 0) || 0,
+    outlineItem?.chapterName,
+    outlineItem?.title
+  );
+
 export default function App() {
   const LAST_CURRICULUM_ID_KEY = "lms:lastCurriculumId";
   const LAST_WORKSPACE_ID_KEY = "lms:lastWorkspaceId";
@@ -378,7 +399,7 @@ export default function App() {
   }[]>([]);
 
   // Step 4 State: Deep Sessions Plans
-  const [generatedSessions, setGeneratedSessions] = useState<Record<string, SessionPlan>>({});
+  const [generatedSessionsByKey, setGeneratedSessionsByKey] = useState<Record<string, SessionPlan>>({});
   const [activeSessionNumber, setActiveSessionNumber] = useState<number>(1);
   const [activeSubTab, setActiveSubTab] = useState<"teacherNotes" | "studentNotes" | "materials" | "homework" | "assessments">("teacherNotes");
   const [activeMaterialTab, setActiveMaterialTab] = useState<"ppt" | "pdf" | "docx">("ppt");
@@ -524,7 +545,7 @@ export default function App() {
     setCurrentCurriculumId("");
     setCurrentWorkspaceId("");
     setActiveWorkspace(null);
-    setGeneratedSessions({});
+    setGeneratedSessionsByKey({});
     setFileName("");
     setFileSizeStr("");
     setShowUploadedCurriculumMaterial(false);
@@ -548,6 +569,39 @@ export default function App() {
     }
     const text = await res.text().catch(() => "");
     return text || fallback;
+  };
+
+  const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+  const isRetryableBootstrapFetchError = (error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error || "");
+    return /failed to fetch|networkerror|load failed|fetch failed/i.test(message);
+  };
+
+  const fetchWithBootstrapRetry = async (
+    input: RequestInfo | URL,
+    init?: RequestInit,
+    label = "request"
+  ) => {
+    const delays = [250, 800];
+    let lastError: unknown = null;
+
+    for (let attempt = 0; attempt < delays.length + 1; attempt += 1) {
+      try {
+        return await fetch(input, init);
+      } catch (error) {
+        lastError = error;
+        if (!isRetryableBootstrapFetchError(error) || attempt === delays.length) {
+          throw error;
+        }
+        if (attempt === 0) {
+          setLoadingMessage(`Waiting for the backend to become reachable before retrying ${label}...`);
+        }
+        await wait(delays[attempt]);
+      }
+    }
+
+    throw lastError instanceof Error ? lastError : new Error(`Failed to load ${label}.`);
   };
 
   const detectCurriculumClassOptions = async (): Promise<CurriculumClassOptionsResponse> => {
@@ -624,7 +678,7 @@ export default function App() {
     if (authSession?.schoolId) params.set("schoolId", authSession.schoolId);
     if (authSession?.role) params.set("role", authSession.role);
     const queryString = params.toString();
-    const res = await fetch(apiUrl(`/api/curriculums${queryString ? `?${queryString}` : ""}`));
+    const res = await fetchWithBootstrapRetry(apiUrl(`/api/curriculums${queryString ? `?${queryString}` : ""}`), undefined, "saved curriculums");
     if (!res.ok) {
       throw new Error(await readErrorFromResponse(res, "Failed to load saved curriculums."));
     }
@@ -636,7 +690,7 @@ export default function App() {
 
   const syncWorkspaceState = (workspace: PlanningWorkspace) => {
     if (currentWorkspaceId && currentWorkspaceId !== workspace._id) {
-      setGeneratedSessions({});
+      setGeneratedSessionsByKey({});
     }
     setCurrentWorkspaceId(workspace._id);
     setActiveWorkspace(workspace);
@@ -6435,7 +6489,7 @@ export default function App() {
     }
 
     const generatedSessionPlans = sessionsOutline.map((outlineItem) => {
-      const generated = generatedSessions[outlineItem.sessionNumber];
+      const generated = generatedSessionsByKey[getOutlineSessionKey(outlineItem)];
       return {
         sessionNumber: outlineItem.sessionNumber,
         title: outlineItem.title,
@@ -6833,13 +6887,16 @@ export default function App() {
     selectedSections: SessionSectionKey[],
     outlineItem?: {
       id?: string;
+      chapterName?: string;
       title?: string;
       duration?: number;
     }
   ) => {
     if (!currentWorkspaceId) return null;
     const query = new URLSearchParams({ sections: selectedSections.join(",") });
-    const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/generated-sessions/${sessionNum}?${query.toString()}`);
+    const sessionKey = buildSessionStorageKey(sessionNum, outlineItem?.chapterName, outlineItem?.title);
+    query.set("legacySessionKey", String(sessionNum));
+    const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/generated-sessions/${encodeURIComponent(sessionKey)}?${query.toString()}`);
     if (res.status === 404) {
       return null;
     }
@@ -6848,18 +6905,22 @@ export default function App() {
     }
     const data = await res.json();
     const sessionPlan = data.sessionPlan as SessionPlan;
-    setGeneratedSessions((prev) => ({
-      ...prev,
-      [sessionNum]: {
-        ...prev[sessionNum],
-        ...(outlineItem || {}),
-        ...sessionPlan,
-        id: sessionPlan.id || outlineItem?.id || prev[sessionNum]?.id || `session-${sessionNum}`,
-        title: sessionPlan.title || outlineItem?.title || prev[sessionNum]?.title || `Session ${sessionNum}`,
-        duration: sessionPlan.duration || outlineItem?.duration || prev[sessionNum]?.duration || 45,
-        sessionNumber: Number(sessionPlan.sessionNumber || sessionNum),
-      },
-    }));
+    setGeneratedSessionsByKey((prev) => {
+      const existingSession = prev[sessionKey];
+      return {
+        ...prev,
+        [sessionKey]: {
+          ...existingSession,
+          ...(outlineItem || {}),
+          ...sessionPlan,
+          id: sessionPlan.id || outlineItem?.id || existingSession?.id || `session-${sessionNum}`,
+          sessionKey: sessionPlan.sessionKey || sessionKey,
+          title: sessionPlan.title || outlineItem?.title || existingSession?.title || `Session ${sessionNum}`,
+          duration: sessionPlan.duration || outlineItem?.duration || existingSession?.duration || 45,
+          sessionNumber: Number(sessionPlan.sessionNumber || sessionNum),
+        },
+      };
+    });
     return sessionPlan;
   };
 
@@ -6950,7 +7011,7 @@ export default function App() {
     setPptGenerationOptionsBySession((prev) => ({
       ...prev,
       [sessionNum]: {
-        ...getPptGenerationOptions(sessionNum, generatedSessions[sessionNum]),
+        ...getPptGenerationOptions(sessionNum),
         ...(prev[sessionNum] || {}),
         [field]: value,
       },
@@ -7329,7 +7390,11 @@ export default function App() {
   ) => {
     if (!workspaceId) return null;
     const view = options?.view || "planning";
-    const res = await fetch(apiUrl(`/api/planning-workspaces/${workspaceId}?view=${view}`));
+    const res = await fetchWithBootstrapRetry(
+      `/api/planning-workspaces/${workspaceId}?view=${view}`,
+      undefined,
+      "planning workspace"
+    );
     if (!res.ok) {
       throw new Error(await readErrorFromResponse(res, "Failed to load planning workspace."));
     }
@@ -7346,7 +7411,11 @@ export default function App() {
     if (!curriculumId) return null;
     const view = options?.view || "planning";
 
-    const existingRes = await fetch(apiUrl(`/api/planning-workspaces/by-curriculum/${curriculumId}?view=${view}`));
+    const existingRes = await fetchWithBootstrapRetry(
+      `/api/planning-workspaces/by-curriculum/${curriculumId}?view=${view}`,
+      undefined,
+      "curriculum workspace lookup"
+    );
     if (existingRes.ok) {
       const existingData = await existingRes.json();
       return existingData.workspace as PlanningWorkspace;
@@ -7388,7 +7457,7 @@ export default function App() {
 
     try {
       const [res, workspace] = await Promise.all([
-        fetch(apiUrl(`/api/curriculums/${curriculumId}`)),
+        fetchWithBootstrapRetry(apiUrl(`/api/curriculums/${curriculumId}`, undefined, "curriculum restore")),
         ensurePlanningWorkspaceForCurriculum(curriculumId, { view: "planning" }),
       ]);
       if (!res.ok) {
@@ -7530,15 +7599,16 @@ export default function App() {
       typeof (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions === "object"
         ? Object.fromEntries(
             Object.entries((activeWorkspace.generationScope as Record<string, unknown>).generatedSessions as Record<string, SessionPlan>).map(([key, value]) => [
-              key,
+              value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
               {
                 ...value,
-                sessionNumber: Number(key) || value.sessionNumber,
+                sessionKey: value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
+                sessionNumber: Number(value.sessionNumber || 0) || Number(key) || value.sessionNumber,
               },
             ])
           )
         : {};
-    setGeneratedSessions(generatedFromWorkspace || {});
+    setGeneratedSessionsByKey(generatedFromWorkspace || {});
   }, [activeWorkspace]);
 
   useEffect(() => {
@@ -7551,7 +7621,8 @@ export default function App() {
       return;
     }
     const requiredSections = getSectionsForTab(activeSubTab);
-    const currentSession = generatedSessions[activeSessionNumber];
+    const targetSessionKey = getOutlineSessionKey(targetOutline);
+    const currentSession = generatedSessionsByKey[targetSessionKey];
     if (hasRequiredSessionSections(currentSession, requiredSections)) {
       return;
     }
@@ -7560,6 +7631,7 @@ export default function App() {
       try {
         await fetchStoredSessionSections(activeSessionNumber, requiredSections, {
           id: targetOutline.id,
+          chapterName: targetOutline.chapterName,
           title: targetOutline.title,
           duration: targetOutline.duration,
         });
@@ -7568,7 +7640,7 @@ export default function App() {
         setErrorHeader(error?.message || "Unable to load the saved session content.");
       }
     })();
-  }, [activeStep, activeSubTab, activeSessionNumber, currentWorkspaceId, sessionsOutline, generatedSessions]);
+  }, [activeStep, activeSubTab, activeSessionNumber, currentWorkspaceId, sessionsOutline, generatedSessionsByKey]);
 
   useEffect(() => {
     const duration = Number(sessionPlanningDefaultsDraft.sessionDurationMinutes || academicConfigDraft.periodDurationMinutes || 45);
@@ -8808,7 +8880,7 @@ export default function App() {
   const generatedSessionArtifactKeys = getGeneratedSessionArtifactKeys(activeWorkspace);
   const readySessionCount = new Set([
     ...Array.from(generatedSessionArtifactKeys),
-    ...Object.keys(generatedSessions).map((key) => String(key)),
+    ...Object.keys(generatedSessionsByKey).map((key) => String(key)),
   ]).size;
 
   /**
@@ -8839,8 +8911,9 @@ export default function App() {
     const selectedSections = requestedSections.length ? requestedSections : allSessionSections;
 
     const previousOutlineItem = sessionsOutline.find((item) => item.sessionNumber === sessionNum - 1);
-    const previousGeneratedSession = previousOutlineItem ? generatedSessions[previousOutlineItem.sessionNumber] : null;
-    const pptGenerationOptions = getPptGenerationOptions(sessionNum, generatedSessions[sessionNum]);
+    const previousGeneratedSession = previousOutlineItem ? generatedSessionsByKey[getOutlineSessionKey(previousOutlineItem)] : null;
+    const currentGeneratedSession = generatedSessionsByKey[getOutlineSessionKey(outlineItem)];
+    const pptGenerationOptions = getPptGenerationOptions(sessionNum, currentGeneratedSession);
     const previousSessionContext = previousGeneratedSession
       ? `${previousGeneratedSession.title || `Session ${previousOutlineItem?.sessionNumber}`}: ${
           previousGeneratedSession.teacherLessonNotes?.sessionSummary?.join(" ") ||
@@ -8859,10 +8932,16 @@ export default function App() {
     );
 
     try {
+      const sessionKey = buildSessionStorageKey(
+        sessionNum,
+        outlineItem.chapterName || selectedTermRow.chapters[0],
+        outlineItem.title
+      );
       const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/generate-content`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildPlannerRequestPayload({
+          sessionKey,
           chapterName: outlineItem.chapterName || selectedTermRow.chapters[0],
           roadmapSessionNumber: sessionNum,
           sessionNumber: outlineItem.chapterSessionNumber || sessionNum,
@@ -8893,12 +8972,13 @@ export default function App() {
         setActiveWorkspace(workspace);
         localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
       }
-      setGeneratedSessions((prev) => ({
+      setGeneratedSessionsByKey((prev) => ({
         ...prev,
-        [sessionNum]: {
+        [sessionKey]: {
           ...details,
           ...outlineItem,
           id: details.id || outlineItem.id,
+          sessionKey: details.sessionKey || sessionKey,
           title: details.title || outlineItem.title,
           duration: details.duration || outlineItem.duration,
           sessionNumber: outlineItem.sessionNumber,
@@ -8921,7 +9001,7 @@ export default function App() {
     const targetOutline = outlineItem || sessionsOutline.find((item) => item.sessionNumber === (sessionNum || activeSessionNumber));
     if (!targetOutline) return;
     const targetSessionNumber = sessionNum || targetOutline.sessionNumber;
-    const currentSession = generatedSessions[targetSessionNumber];
+    const currentSession = generatedSessionsByKey[getOutlineSessionKey(targetOutline)];
     if (tabId === "assessments") {
       const customization = getAssessmentCustomization(targetSessionNumber);
       if (!hasAssessmentSourceContent(currentSession)) {
@@ -8953,9 +9033,10 @@ export default function App() {
     // Process top-down
     for (let i = 0; i < sessionsOutline.length; i++) {
       const item = sessionsOutline[i];
+      const itemSessionKey = getOutlineSessionKey(item);
       const isAlreadyGenerated =
-        generatedSessionArtifactKeys.has(String(item.sessionNumber)) ||
-        Boolean(generatedSessions[item.sessionNumber]);
+        generatedSessionArtifactKeys.has(itemSessionKey) ||
+        Boolean(generatedSessionsByKey[itemSessionKey]);
       if (!isAlreadyGenerated) {
         await handleGenerateFullSessionPack(item.sessionNumber, item);
       }
@@ -11853,9 +11934,10 @@ export default function App() {
                         className="w-full min-w-[280px] max-w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 outline-none transition focus:border-[#36ADAA] focus:bg-white"
                       >
                         {sessionsOutline.map((item) => {
+                          const itemSessionKey = getOutlineSessionKey(item);
                           const hasDeepData =
-                            generatedSessionArtifactKeys.has(String(item.sessionNumber)) ||
-                            Boolean(generatedSessions[item.sessionNumber]);
+                            generatedSessionArtifactKeys.has(itemSessionKey) ||
+                            Boolean(generatedSessionsByKey[itemSessionKey]);
                           return (
                             <option key={item.id} value={item.sessionNumber}>
                               {`Session ${item.sessionNumber} • ${item.title} • ${item.sessionKind === "strand_practice" ? "Practice" : "Lesson"} • ${hasDeepData ? "Ready" : "Pending"}`}
@@ -11887,9 +11969,10 @@ export default function App() {
                 {sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber) ? (
                   (() => {
                     const outlineItem = sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber)!;
+                    const activeSessionKey = getOutlineSessionKey(outlineItem);
                     const session = {
                       ...outlineItem,
-                      ...generatedSessions[activeSessionNumber],
+                      ...generatedSessionsByKey[activeSessionKey],
                     } as SessionPlan & {
                       chapterName?: string;
                       chapterSessionNumber?: number;
