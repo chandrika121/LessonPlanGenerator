@@ -13,6 +13,7 @@ import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { Agent } from "undici";
 import { CurriculumModel } from "./models/Curriculum";
 import { PlanningWorkspaceModel } from "./models/PlanningWorkspace";
+import { generateAiImage } from "./services/visual/ai-image-engine.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,7 +29,6 @@ const OLLAMA_NUM_PREDICT = Number(process.env.OLLAMA_NUM_PREDICT) || 8192;
 const OLLAMA_STAGE1_NUM_PREDICT = Number(process.env.OLLAMA_STAGE1_NUM_PREDICT) || 4096;
 const OLLAMA_TIMEOUT_MS = Number(process.env.OLLAMA_TIMEOUT_MS) || 600000;
 const STAGE1_PROMPT_SAFE_BUDGET = Number(process.env.STAGE1_PROMPT_SAFE_BUDGET) || 14000;
-const OLLAMA_IMAGE_TIMEOUT_MS = Number(process.env.OLLAMA_IMAGE_TIMEOUT_MS) || 180000;
 const OLLAMA_ASSESSMENT_TIMEOUT_MS = Number(process.env.OLLAMA_ASSESSMENT_TIMEOUT_MS) || Math.max(900000, OLLAMA_TIMEOUT_MS);
 const MAX_STUDENT_NOTE_VISUALS = Number(process.env.MAX_STUDENT_NOTE_VISUALS) || 3;
 const MAX_CHUNK_SPLIT_DEPTH = 2;
@@ -159,7 +159,7 @@ const SCIENCE_GENERATION_SHARED_PROMPT_NAME = "science-generation-shared-layer.m
 const SCIENCE_GENERATION_SESSION_PROMPT_NAME = "science-session-generation-layer.md";
 const SCIENCE_GENERATION_TEACHER_PROMPT_NAME = "science-teacher-notes-generation-layer.md";
 const SCIENCE_GENERATION_STUDENT_PROMPT_NAME = "science-student-notes-generation-layer.md";
-const SCIENCE_GENERATION_PPT_PROMPT_NAME = "science-ppt-generation-layer.md";
+const UNIVERSAL_PPT_PROMPT_NAME = "universal-ppt-intelligence-engine.md";
 const SCIENCE_GENERATION_HOMEWORK_PROMPT_NAME = "science-homework-generation-layer.md";
 const SCIENCE_GENERATION_ASSESSMENT_PROMPT_NAME = "science-assessment-generation-layer.md";
 const TAMIL_CURRICULUM_INTELLIGENCE_PROMPT_NAME = "tamil-curriculum-intelligence-layer.md";
@@ -644,7 +644,7 @@ function detectScienceGenerationArtifact(promptName: string): ScienceGenerationA
   if (normalized === "session-generation.md") return "session_package";
   if (normalized.includes("teacher-notes-generation")) return "teacher_notes";
   if (normalized.includes("student-notes-generation")) return "student_notes";
-  if (normalized === "session-ppt-prompt.md" || normalized === "ppt-generation.md") return "ppt_materials";
+  if (normalized === "universal-ppt-intelligence-engine.md") return "ppt_materials";
   if (normalized === "homework-generation.md") return "homework";
   if (normalized === "assessment-generation.md") return "assessment";
   return null;
@@ -1591,7 +1591,7 @@ function buildScienceArtifactGenerationLayer(
     session_package: SCIENCE_GENERATION_SESSION_PROMPT_NAME,
     teacher_notes: SCIENCE_GENERATION_TEACHER_PROMPT_NAME,
     student_notes: SCIENCE_GENERATION_STUDENT_PROMPT_NAME,
-    ppt_materials: SCIENCE_GENERATION_PPT_PROMPT_NAME,
+    ppt_materials: UNIVERSAL_PPT_PROMPT_NAME,
     homework: SCIENCE_GENERATION_HOMEWORK_PROMPT_NAME,
     assessment: SCIENCE_GENERATION_ASSESSMENT_PROMPT_NAME,
   };
@@ -1958,140 +1958,76 @@ function isTrivialCurriculumChunk(text: string) {
   return getChunkSignalText(normalized).length < 3;
 }
 
-function looksLikeBase64Image(value: string) {
-  const normalized = String(value || "").trim();
-  return normalized.length > 128 && /^[A-Za-z0-9+/=\s]+$/.test(normalized);
-}
-
-function buildImageDataUrl(imageValue: string, mimeType: string = "image/png") {
-  const normalized = String(imageValue || "").trim();
-  if (!normalized) return "";
-  if (normalized.startsWith("data:image/")) return normalized;
-  return `data:${mimeType};base64,${normalized.replace(/\s+/g, "")}`;
-}
-
-function extractGeneratedImagePayload(data: any) {
-  const openAiImage = data?.data?.find?.((item: any) => typeof item?.b64_json === "string" || typeof item?.url === "string");
-  if (typeof openAiImage?.b64_json === "string") {
-    return {
-      imageDataUrl: buildImageDataUrl(openAiImage.b64_json, "image/png"),
-      mimeType: "image/png",
-    };
-  }
-  if (typeof openAiImage?.url === "string" && openAiImage.url.trim()) {
-    return {
-      imageDataUrl: openAiImage.url.trim(),
-      mimeType: openAiImage.url.startsWith("data:image/") ? openAiImage.url.slice(5, openAiImage.url.indexOf(";")) : "image/png",
-    };
-  }
-
-  const possibleImage =
-    (Array.isArray(data?.images) && typeof data.images[0] === "string" && data.images[0]) ||
-    (typeof data?.image === "string" && data.image) ||
-    (typeof data?.response === "string" && looksLikeBase64Image(data.response) ? data.response : "");
-
-  if (typeof possibleImage === "string" && possibleImage.trim()) {
-    return {
-      imageDataUrl: buildImageDataUrl(possibleImage, "image/png"),
-      mimeType: "image/png",
-    };
-  }
-
-  return null;
-}
-
 async function generateImageWithOllama(
   requestId: string,
   debugDir: string,
   stageName: string,
-  prompt: string
-): Promise<{ imageDataUrl: string; mimeType: string; model: string }> {
-  const ollamaConfig = getOllamaConfig("image");
-  const negativePrompt = [
-    "no words",
-    "no text",
-    "no letters",
-    "no typography",
-    "no labels",
-    "no captions",
-    "no title text",
-    "no handwritten text",
-    "no gibberish text",
-    "no watermark",
-  ].join(", ");
-  const endpoints = [
-    {
-      url: `${ollamaConfig.baseUrl}/api/generate`,
-      body: {
-        model: ollamaConfig.model,
-        prompt,
-        stream: false,
-        options: {
-          temperature: 0.2,
-          negative_prompt: negativePrompt,
-        },
-      },
-    },
-    {
-      url: `${ollamaConfig.baseUrl}/v1/images/generations`,
-      body: {
-        model: ollamaConfig.model,
-        prompt,
-        negative_prompt: negativePrompt,
-        n: 1,
-        size: "768x768",
-        response_format: "b64_json",
-      },
-    },
-  ];
-
-  for (let index = 0; index < endpoints.length; index += 1) {
-    const endpoint = endpoints[index];
-    const controller = new AbortController();
-    const timeoutHandle = setTimeout(() => controller.abort(), OLLAMA_IMAGE_TIMEOUT_MS);
-    try {
-      await writeDebugFile(
-        debugDir,
-        `${safeStageName(stageName)}.image-attempt-${index + 1}.request.json`,
-        { url: endpoint.url, body: endpoint.body }
-      );
-
-      const response = await fetch(endpoint.url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(endpoint.body),
-        signal: controller.signal,
-        dispatcher: OLLAMA_FETCH_DISPATCHER,
-      } as any);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        await writeDebugFile(debugDir, `${safeStageName(stageName)}.image-attempt-${index + 1}.error.txt`, errorText);
-        continue;
-      }
-
-      const data = await response.json();
-      await writeDebugFile(debugDir, `${safeStageName(stageName)}.image-attempt-${index + 1}.response.json`, data);
-      const extracted = extractGeneratedImagePayload(data);
-      if (extracted?.imageDataUrl) {
-        return {
-          imageDataUrl: extracted.imageDataUrl,
-          mimeType: extracted.mimeType,
-          model: ollamaConfig.model,
-        };
-      }
-    } catch (error: any) {
-      await writeDebugFile(
-        debugDir,
-        `${safeStageName(stageName)}.image-attempt-${index + 1}.exception.txt`,
-        String(error?.message || error)
-      );
-    } finally {
-      clearTimeout(timeoutHandle);
-    }
+  prompt: string,
+  options?: {
+    subject?: string;
+    gradeLevel?: string;
   }
+): Promise<{ imageDataUrl: string; mimeType: string; model: string }> {
+  const requestPayload = {
+    model: process.env.OPENROUTER_IMAGE_MODEL || "sourceful/riverflow-v2.5-pro",
+    prompt,
+    negativePrompt: [
+      "text",
+      "labels",
+      "captions",
+      "numbers",
+      "watermark",
+      "decorative clutter",
+    ].join(", "),
+  };
 
-  throw new Error(`Unable to generate an image with Ollama model ${ollamaConfig.model}.`);
+  await writeDebugFile(
+    debugDir,
+    `${safeStageName(stageName)}.image-attempt-1.request.json`,
+    {
+      provider: "openrouter",
+      request: requestPayload,
+    }
+  );
+
+  try {
+    const generated = await generateAiImage({
+      prompt,
+      negativePrompt: requestPayload.negativePrompt,
+      style: "illustration",
+      aspectRatio: "1:1",
+      gradeLevel: Number.parseInt(String(options?.gradeLevel || ""), 10) || 8,
+      subject: String(options?.subject || "General Education"),
+      outputFormat: "png",
+    });
+
+    await writeDebugFile(
+      debugDir,
+      `${safeStageName(stageName)}.image-attempt-1.response.json`,
+      {
+        provider: "openrouter",
+        model: requestPayload.model,
+        width: generated.width,
+        height: generated.height,
+        imageUrlPreview: typeof generated.imageUrl === "string" ? generated.imageUrl.slice(0, 120) : "",
+      }
+    );
+
+    return {
+      imageDataUrl: generated.imageUrl,
+      mimeType: generated.imageUrl.startsWith("data:image/")
+        ? generated.imageUrl.slice(5, generated.imageUrl.indexOf(";"))
+        : "image/png",
+      model: requestPayload.model,
+    };
+  } catch (error: any) {
+    await writeDebugFile(
+      debugDir,
+      `${safeStageName(stageName)}.image-attempt-1.exception.txt`,
+      String(error?.message || error)
+    );
+    throw new Error(`Unable to generate an image with OpenRouter model ${requestPayload.model}.`);
+  }
 }
 
 async function enrichStudentLessonNotesWithVisuals(
@@ -2145,7 +2081,11 @@ async function enrichStudentLessonNotesWithVisuals(
         requestId,
         debugDir,
         `student-notes-visual-${index + 1}`,
-        imagePrompt
+        imagePrompt,
+        {
+          subject: context.subject,
+          gradeLevel: context.gradeLevel,
+        }
       );
       visualsGenerated += 1;
       enrichedSections.push({
@@ -3789,6 +3729,32 @@ function buildFallbackSvgDiagram(slide: any, themeTokens: any) {
 </svg>`;
 }
 
+function buildFallbackVisualDataUrl(slideTitle: string, visualPlan: string) {
+  const safeTitle = xmlEscape(slideTitle || "Slide visual");
+  const safePlan = xmlEscape(visualPlan || "Teacher-guided classroom visual");
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-label="${safeTitle}">
+  <rect width="1200" height="900" fill="#F8FBFD"/>
+  <rect x="54" y="54" width="1092" height="792" rx="34" fill="#FFFFFF" stroke="#D97706" stroke-width="6"/>
+  <rect x="96" y="98" width="1008" height="110" rx="24" fill="#1D4E89"/>
+  <text x="132" y="165" font-family="Arial, sans-serif" font-size="42" font-weight="700" fill="#FFFFFF">${safeTitle}</text>
+  <rect x="120" y="262" width="420" height="470" rx="28" fill="#EEF4F7" stroke="#36ADAA" stroke-width="4"/>
+  <circle cx="330" cy="395" r="92" fill="#DE8431" opacity="0.18"/>
+  <circle cx="330" cy="395" r="52" fill="#DE8431" opacity="0.35"/>
+  <rect x="230" y="515" width="200" height="28" rx="14" fill="#36ADAA" opacity="0.28"/>
+  <rect x="210" y="565" width="240" height="28" rx="14" fill="#1D4E89" opacity="0.18"/>
+  <rect x="600" y="272" width="456" height="102" rx="24" fill="#FFF7ED" stroke="#DE8431" stroke-width="3"/>
+  <text x="632" y="334" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#9A3412">Planned Classroom Visual</text>
+  <foreignObject x="600" y="410" width="430" height="250">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Arial, sans-serif; font-size: 28px; line-height: 1.45; color: #334155;">
+      ${safePlan}
+    </div>
+  </foreignObject>
+  <text x="600" y="748" font-family="Arial, sans-serif" font-size="22" fill="#64748B">Runtime image generation was unavailable, so an internal fallback visual was used.</text>
+</svg>`;
+  return `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+}
+
 async function resolvePptSlideAssets(
   requestId: string,
   debugDir: string,
@@ -3805,7 +3771,7 @@ async function resolvePptSlideAssets(
     : [{
         purpose: `Support visual explanation for ${slideTitle}`,
         searchQuery: `${sessionContext.subject || "classroom"} ${slideTitle} diagram`,
-        sourceSite: "Ollama image model",
+        sourceSite: "OpenRouter image model",
         sourceUrl: "",
         licenseType: "Internally generated",
         attributionText: "",
@@ -3832,7 +3798,7 @@ async function resolvePptSlideAssets(
     const finalAsset: Record<string, any> = {
       purpose: renderableToExportPlainText(asset?.purpose || `Support visual explanation for ${slideTitle}`),
       searchQuery,
-      sourceSite: renderableToExportPlainText(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "Ollama image model")),
+      sourceSite: renderableToExportPlainText(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "OpenRouter image model")),
       sourceUrl: "",
       previewUrl: assetImageDataUrl || "",
       licenseType: renderableToExportPlainText(asset?.licenseType || resolved?.licenseType || (preferSvg ? "Internal SVG diagram" : "Internally generated")),
@@ -3887,7 +3853,11 @@ async function resolvePptSlideAssets(
         requestId,
         debugDir,
         `ppt-visual-${slugifyFileNamePart(slideTitle || "slide-visual")}`,
-        imagePrompt
+        imagePrompt,
+        {
+          subject: sessionContext.subject,
+          gradeLevel: sessionContext.gradeLevel,
+        }
       );
 
       return {
@@ -3896,7 +3866,7 @@ async function resolvePptSlideAssets(
         mimeType: generated.mimeType,
         model: generated.model,
         sourceKind: "generated-image",
-        sourceSite: "Ollama image model",
+        sourceSite: "OpenRouter image model",
         sourceUrl: "",
         previewUrl: generated.imageDataUrl,
         licenseType: "Internally generated",
@@ -3906,7 +3876,17 @@ async function resolvePptSlideAssets(
       console.warn(`[PPT Assets] Image fallback failed for "${slideTitle}":`, error);
       return {
         ...finalAsset,
-        sourceKind: "none",
+        sourceKind: "svg-diagram",
+        sourceSite: "Internal SVG fallback",
+        licenseType: "Internal SVG fallback",
+        attributionText: "",
+        imageDataUrl: buildFallbackVisualDataUrl(
+          slideTitle,
+          String(slide?.visualPlan || finalAsset.purpose || searchQuery)
+        ),
+        previewUrl: "",
+        mimeType: "image/svg+xml",
+        model: "internal-svg-fallback",
       };
     }
   }));
@@ -4154,12 +4134,12 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     audience: preserveRenderableValue(ppt?.audience || `${sessionContext.gradeLevel || "Grade-aligned"} classroom`),
     theme: preserveRenderableValue(ppt?.theme || themeTokens.themeName, themeTokens.themeName),
     assetSearchPlan: {
-      preferredSources: ["Internal SVG", "Ollama image model"],
+      preferredSources: ["Internal SVG", "OpenRouter image model"],
       safeSearch: typeof ppt?.assetSearchPlan?.safeSearch === "boolean" ? ppt.assetSearchPlan.safeSearch : true,
       licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
       fallbackStrategy: preserveRenderableValue(
         ppt?.assetSearchPlan?.fallbackStrategy ||
-        "Prefer SVG diagrams for concept/process slides and use the Ollama image model for all picture-based visuals."
+        "Prefer SVG diagrams for concept/process slides and use the OpenRouter image model for all picture-based visuals."
       ),
     },
     licenseChecklist: Array.isArray(ppt?.licenseChecklist) && ppt.licenseChecklist.length > 0
@@ -4245,6 +4225,80 @@ async function fetchBinaryAsset(url: string) {
   };
 }
 
+function parsePngDimensions(buffer: Buffer) {
+  if (buffer.length < 24) return null;
+  if (buffer.readUInt32BE(0) !== 0x89504e47) return null;
+  return {
+    width: buffer.readUInt32BE(16),
+    height: buffer.readUInt32BE(20),
+  };
+}
+
+function parseJpegDimensions(buffer: Buffer) {
+  if (buffer.length < 4 || buffer[0] !== 0xff || buffer[1] !== 0xd8) return null;
+  let offset = 2;
+  while (offset + 8 < buffer.length) {
+    if (buffer[offset] !== 0xff) {
+      offset += 1;
+      continue;
+    }
+    const marker = buffer[offset + 1];
+    const size = buffer.readUInt16BE(offset + 2);
+    if ([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf].includes(marker)) {
+      return {
+        height: buffer.readUInt16BE(offset + 5),
+        width: buffer.readUInt16BE(offset + 7),
+      };
+    }
+    if (size < 2) break;
+    offset += 2 + size;
+  }
+  return null;
+}
+
+function parseSvgDimensions(buffer: Buffer) {
+  const text = buffer.toString("utf8", 0, Math.min(buffer.length, 2000));
+  const widthMatch = text.match(/\bwidth=["']([\d.]+)/i);
+  const heightMatch = text.match(/\bheight=["']([\d.]+)/i);
+  if (widthMatch && heightMatch) {
+    return {
+      width: Number(widthMatch[1]),
+      height: Number(heightMatch[1]),
+    };
+  }
+  const viewBoxMatch = text.match(/\bviewBox=["'][^"']*?(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)["']/i);
+  if (viewBoxMatch) {
+    return {
+      width: Number(viewBoxMatch[1]),
+      height: Number(viewBoxMatch[2]),
+    };
+  }
+  return null;
+}
+
+function detectImageDimensions(buffer: Buffer, mimeType: string) {
+  const normalized = String(mimeType || "").toLowerCase();
+  if (normalized.includes("png")) return parsePngDimensions(buffer);
+  if (normalized.includes("jpeg") || normalized.includes("jpg")) return parseJpegDimensions(buffer);
+  if (normalized.includes("svg")) return parseSvgDimensions(buffer);
+  return null;
+}
+
+function fitImageWithinFrame(frameW: number, frameH: number, imageW?: number | null, imageH?: number | null) {
+  if (!imageW || !imageH || imageW <= 0 || imageH <= 0) {
+    return { x: 0, y: 0, w: frameW, h: frameH };
+  }
+  const scale = Math.min(frameW / imageW, frameH / imageH);
+  const w = Math.max(1, Math.round(imageW * scale));
+  const h = Math.max(1, Math.round(imageH * scale));
+  return {
+    x: Math.round((frameW - w) / 2),
+    y: Math.round((frameH - h) / 2),
+    w,
+    h,
+  };
+}
+
 async function resolvePptVisualMedia(slide: any, slideIndex: number) {
   const preferredAsset = Array.isArray(slide?.assets)
     ? slide.assets.find((asset: any) => Boolean(asset?.imageDataUrl))
@@ -4253,36 +4307,46 @@ async function resolvePptVisualMedia(slide: any, slideIndex: number) {
   if (preferredAsset?.imageDataUrl) {
     const decoded = decodeDataUrl(preferredAsset.imageDataUrl);
     if (decoded) {
+      const dimensions = detectImageDimensions(decoded.buffer, decoded.mimeType);
       return {
         fileName: `generated-slide-${slideIndex + 1}.${mimeTypeToExtension(decoded.mimeType)}`,
         buffer: decoded.buffer,
         mimeType: decoded.mimeType,
         altText: String(preferredAsset.altText || preferredAsset.purpose || slide?.slideTitle || "Slide visual"),
         sourceKind: preferredAsset.sourceKind || "generated-image",
+        width: dimensions?.width,
+        height: dimensions?.height,
       };
     }
   }
 
   const svgCode = String(slide?.svgDiagram?.svgCode || "").trim();
   if (svgCode.startsWith("<svg") || svgCode.startsWith("<?xml")) {
+    const svgBuffer = Buffer.from(svgCode, "utf8");
+    const dimensions = detectImageDimensions(svgBuffer, "image/svg+xml");
     return {
       fileName: `diagram-slide-${slideIndex + 1}.svg`,
-      buffer: Buffer.from(svgCode, "utf8"),
+      buffer: svgBuffer,
       mimeType: "image/svg+xml",
       altText: String(slide?.svgDiagram?.title || slide?.slideTitle || "Slide diagram"),
       sourceKind: "svg-diagram",
+      width: dimensions?.width,
+      height: dimensions?.height,
     };
   }
 
   const remoteUrl = String(preferredAsset?.previewUrl || preferredAsset?.sourceUrl || "").trim();
   if (USE_REMOTE_PPT_ASSETS && remoteUrl) {
     const fetched = await fetchBinaryAsset(remoteUrl);
+    const dimensions = detectImageDimensions(fetched.buffer, fetched.mimeType);
     return {
       fileName: `asset-slide-${slideIndex + 1}.${mimeTypeToExtension(fetched.mimeType)}`,
       buffer: fetched.buffer,
       mimeType: fetched.mimeType,
       altText: String(preferredAsset?.altText || preferredAsset?.purpose || slide?.slideTitle || "Slide visual"),
       sourceKind: preferredAsset?.sourceKind || "generated-image",
+      width: dimensions?.width,
+      height: dimensions?.height,
     };
   }
 
@@ -4342,29 +4406,85 @@ function buildSolidShapeXml(id: number, x: number, y: number, cx: number, cy: nu
   return `<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="Shape ${id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:solidFill><a:srgbClr val="${fillColor}"/></a:solidFill><a:ln w="0"><a:noFill/></a:ln></p:spPr></p:sp>`;
 }
 
-function buildImageShapeXml(id: number, relId: string, x: number, y: number, cx: number, cy: number, borderColor: string) {
-  return `<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="Visual ${id}" descr="Teacher presentation visual"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="roundRect"><a:avLst/></a:prstGeom><a:blipFill rotWithShape="true"><a:blip r:embed="${relId}"/><a:stretch><a:fillRect l="0" t="0" r="0" b="0"/></a:stretch></a:blipFill><a:ln w="12700"><a:solidFill><a:srgbClr val="${borderColor}"/></a:solidFill><a:prstDash val="solid"/></a:ln></p:spPr></p:sp>`;
+function buildImageFrameXml(id: number, x: number, y: number, cx: number, cy: number, borderColor: string, fillColor: string) {
+  return `<p:sp><p:nvSpPr><p:cNvPr id="${id}" name="Visual Frame ${id}"/><p:cNvSpPr/><p:nvPr/></p:nvSpPr><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="roundRect"><a:avLst/></a:prstGeom><a:solidFill><a:srgbClr val="${fillColor}"/></a:solidFill><a:ln w="12700"><a:solidFill><a:srgbClr val="${borderColor}"/></a:solidFill><a:prstDash val="solid"/></a:ln></p:spPr></p:sp>`;
 }
 
-function buildTemplateLayout(templateId: string, hasVisual: boolean) {
+function buildImageShapeXml(id: number, relId: string, x: number, y: number, cx: number, cy: number) {
+  return `<p:pic><p:nvPicPr><p:cNvPr id="${id}" name="Visual ${id}" descr="Teacher presentation visual"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="${relId}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="${x}" y="${y}"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`;
+}
+
+function estimateVisualFrame(slide: any) {
+  const key = String(slide?.templateSlideKey || "").toLowerCase();
+  if (["core_concept_b_visual", "worked_example", "title_identity"].includes(key)) return "large";
+  if (["quick_assessment", "summary", "learning_outcomes"].includes(key)) return "small";
+  return "medium";
+}
+
+function estimateTextDensity(slide: any, templateId: string) {
+  const title = renderableToExportPlainText(slide?.slideTitle || "");
+  const onSlideText = Array.isArray(slide?.onSlideText) ? slide.onSlideText.map((item: any) => renderableToExportPlainText(item)) : [];
+  const bulletPoints = Array.isArray(slide?.bulletPoints) ? slide.bulletPoints.map((item: any) => renderableToExportPlainText(item)) : [];
+  const totalChars = [title, ...onSlideText, ...bulletPoints].join(" ").length;
+  const itemCount = onSlideText.length + bulletPoints.length;
+  const baseDensity = totalChars > 420 || itemCount > (templateId === "visual-focus" ? 5 : 6) ? "dense" : totalChars < 180 && itemCount <= 3 ? "light" : "balanced";
+  return baseDensity;
+}
+
+function buildTemplateLayout(templateId: string, hasVisual: boolean, slide?: any) {
+  const density = estimateTextDensity(slide, templateId);
+  const visualWeight = estimateVisualFrame(slide);
+  const visualHeavy = hasVisual && (templateId === "visual-focus" || visualWeight === "large");
+  const denseText = density === "dense";
+  const lightText = density === "light";
+  const bodyWidthInches = !hasVisual
+    ? 17.75
+    : templateId === "visual-focus"
+    ? visualWeight === "small" ? 8.6 : 7.6
+    : visualHeavy
+    ? 8.7
+    : denseText
+    ? 11.1
+    : 10.0;
+  const visualWidthInches = !hasVisual
+    ? 0
+    : templateId === "visual-focus"
+    ? visualWeight === "small" ? 8.75 : 9.75
+    : visualHeavy
+    ? 8.7
+    : denseText
+    ? 6.2
+    : 7.45;
+  const bodyHeightInches = denseText ? 6.25 : lightText ? 5.45 : 5.9;
+  const visualHeightInches = templateId === "visual-focus"
+    ? visualWeight === "small" ? 5.7 : 6.6
+    : visualHeavy
+    ? 6.1
+    : denseText
+    ? 4.7
+    : 5.25;
+
   if (templateId === "textbook-clean") {
     return {
       bandHeight: 0,
       titleX: emu(1.05),
       titleY: emu(0.82),
-      titleW: emu(11.4),
+      titleW: emu(hasVisual && denseText ? 10.4 : 11.4),
       metaX: emu(1.05),
       metaY: emu(1.62),
-      metaW: emu(11.4),
+      metaW: emu(hasVisual && denseText ? 10.4 : 11.4),
       bodyX: emu(1.05),
-      bodyY: emu(2.22),
-      bodyW: hasVisual ? emu(10.5) : emu(17.75),
-      bodyH: emu(6.0),
-      visualX: emu(12.05),
-      visualY: emu(2.18),
-      visualW: emu(6.75),
-      visualH: emu(4.8),
+      bodyY: emu(2.16),
+      bodyW: emu(bodyWidthInches),
+      bodyH: emu(bodyHeightInches),
+      visualX: emu(19.8 - visualWidthInches),
+      visualY: emu(2.08),
+      visualW: emu(visualWidthInches),
+      visualH: emu(visualHeightInches),
       footerY: emu(9.15),
+      titleSize: 28,
+      bodySize: denseText ? 17 : 19,
+      visualTextSize: 16,
     };
   }
 
@@ -4373,19 +4493,22 @@ function buildTemplateLayout(templateId: string, hasVisual: boolean) {
       bandHeight: emu(0.42),
       titleX: emu(0.95),
       titleY: emu(0.78),
-      titleW: emu(8.1),
+      titleW: emu(lightText ? 9.2 : 8.4),
       metaX: emu(0.95),
       metaY: emu(1.58),
-      metaW: emu(8.3),
+      metaW: emu(lightText ? 9.2 : 8.4),
       bodyX: emu(0.95),
-      bodyY: emu(2.4),
-      bodyW: emu(7.2),
-      bodyH: emu(5.65),
-      visualX: emu(8.65),
-      visualY: emu(1.92),
-      visualW: emu(10.15),
-      visualH: emu(6.5),
-      footerY: emu(9.15),
+      bodyY: emu(2.28),
+      bodyW: emu(bodyWidthInches),
+      bodyH: emu(bodyHeightInches),
+      visualX: emu(19.6 - visualWidthInches),
+      visualY: emu(1.88),
+      visualW: emu(visualWidthInches),
+      visualH: emu(visualHeightInches),
+      footerY: emu(9.12),
+      titleSize: lightText ? 30 : 28,
+      bodySize: denseText ? 16 : 18,
+      visualTextSize: 17,
     };
   }
 
@@ -4393,23 +4516,26 @@ function buildTemplateLayout(templateId: string, hasVisual: boolean) {
     bandHeight: emu(0.42),
     titleX: emu(0.95),
     titleY: emu(0.78),
-    titleW: emu(9.8),
+    titleW: emu(hasVisual && visualHeavy ? 8.7 : 9.8),
     metaX: emu(0.95),
     metaY: emu(1.58),
-    metaW: emu(9.8),
+    metaW: emu(hasVisual && visualHeavy ? 8.7 : 9.8),
     bodyX: emu(0.95),
-    bodyY: emu(2.3),
-    bodyW: hasVisual ? emu(10.0) : emu(17.8),
-    bodyH: emu(5.9),
-    visualX: emu(11.35),
-    visualY: emu(2.18),
-    visualW: emu(7.45),
-    visualH: emu(5.25),
-    footerY: emu(9.15),
+    bodyY: emu(2.24),
+    bodyW: emu(bodyWidthInches),
+    bodyH: emu(bodyHeightInches),
+    visualX: emu(19.5 - visualWidthInches),
+    visualY: emu(2.08),
+    visualW: emu(visualWidthInches),
+    visualH: emu(visualHeightInches),
+    footerY: emu(9.12),
+    titleSize: denseText ? 28 : 30,
+    bodySize: denseText ? 17 : 19,
+    visualTextSize: 17,
   };
 }
 
-function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?: string) {
+function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visual?: { width?: number; height?: number } | null, visualRelId?: string) {
   const templateId = String(ppt?.templateId || "academic-split");
   const theme = ppt?.themeTokens || {};
   const colors = theme.colors || {};
@@ -4423,7 +4549,7 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?
   const headingFont = String(fonts.heading || "Cambria");
   const bodyFont = String(fonts.body || "Aptos");
   const hasVisual = Boolean(visualRelId);
-  const layout = buildTemplateLayout(templateId, hasVisual);
+  const layout = buildTemplateLayout(templateId, hasVisual, slide);
   const slideTitle = renderableToExportPlainText(slide?.slideTitle || `Slide ${slideIndex + 1}`);
   const deckTitle = renderableToExportPlainText(ppt?.presentationTitle || ppt?.title || "Session Presentation");
   const metaLine = [deckTitle, renderableToExportPlainText(slide?.templateSlideTitle || slide?.slideType || "Teacher deck")].filter(Boolean).join("  •  ");
@@ -4449,7 +4575,7 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?
   parts.push(
     buildTextBoxXml(shapeId++, layout.titleX, layout.titleY, layout.titleW, emu(0.72), [slideTitle], {
       fontFace: headingFont,
-      fontSize: templateId === "textbook-clean" ? 28 : 30,
+      fontSize: layout.titleSize,
       color: text,
       bold: true,
     })
@@ -4464,7 +4590,7 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?
   parts.push(
     buildTextBoxXml(shapeId++, layout.bodyX, layout.bodyY, layout.bodyW, layout.bodyH, bodyParagraphs.length ? bodyParagraphs : [renderableToExportPlainText(slide?.visualPlan || "Teacher-guided explanation slide.")], {
       fontFace: bodyFont,
-      fontSize: templateId === "visual-focus" ? 18 : 20,
+      fontSize: layout.bodySize,
       color: text,
       fillColor: surface,
       lineColor: primary,
@@ -4473,7 +4599,24 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?
     })
   );
   if (visualRelId) {
-    parts.push(buildImageShapeXml(shapeId++, visualRelId, layout.visualX, layout.visualY, layout.visualW, layout.visualH, accent));
+    const frameInset = emu(0.18);
+    const imageFit = fitImageWithinFrame(
+      layout.visualW - frameInset * 2,
+      layout.visualH - frameInset * 2,
+      visual?.width,
+      visual?.height
+    );
+    parts.push(buildImageFrameXml(shapeId++, layout.visualX, layout.visualY, layout.visualW, layout.visualH, accent, surface));
+    parts.push(
+      buildImageShapeXml(
+        shapeId++,
+        visualRelId,
+        layout.visualX + frameInset + imageFit.x,
+        layout.visualY + frameInset + imageFit.y,
+        imageFit.w,
+        imageFit.h
+      )
+    );
   } else {
     parts.push(
       buildTextBoxXml(shapeId++, layout.visualX, layout.visualY, layout.visualW, layout.visualH, [
@@ -4481,7 +4624,7 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visualRelId?
         renderableToExportPlainText(slide?.visualPlan || "Teacher-selected visual support will appear here in export."),
       ], {
         fontFace: bodyFont,
-        fontSize: 18,
+        fontSize: layout.visualTextSize,
         color: muted,
         fillColor: surface,
         lineColor: accent,
@@ -4649,7 +4792,7 @@ async function buildEditablePptxBufferFromMaterial(ppt: any, sessionMeta: {
       if (visual) {
         await fs.writeFile(path.join(mediaDir, visual.fileName), visual.buffer);
       }
-      const slideXml = buildPptSlideXml(ppt, slide, index, visual ? "rId3" : undefined);
+      const slideXml = buildPptSlideXml(ppt, slide, index, visual, visual ? "rId3" : undefined);
       await fs.writeFile(path.join(slideDir, `slide${index + 1}.xml`), slideXml, "utf8");
       await fs.writeFile(path.join(slideRelsDir, `slide${index + 1}.xml.rels`), buildPptSlideRelsXml(index, visual?.fileName), "utf8");
       await fs.writeFile(path.join(notesDir, `notesSlide${index + 1}.xml`), buildNotesSlideXml(slide), "utf8");
@@ -15975,10 +16118,10 @@ async function generateSessionDetailsArtifact({
           }
         },
         assetSearchPlan: {
-          preferredSources: ["Internal SVG", "Ollama image model"],
+          preferredSources: ["Internal SVG", "OpenRouter image model"],
           safeSearch: true,
           licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
-          fallbackStrategy: "Prefer SVG diagrams for concept/process slides and the Ollama image model for all picture-based visuals."
+          fallbackStrategy: "Prefer SVG diagrams for concept/process slides and the OpenRouter image model for all picture-based visuals."
         },
         licenseChecklist: ["Review generated visuals for classroom accuracy before final export."],
         presentationWarnings: ["Do not include untaught future-session content."],
@@ -16007,8 +16150,8 @@ async function generateSessionDetailsArtifact({
           visualPlan: "What visual should appear and why",
           assets: [{
             purpose: "Why this asset is needed",
-            searchQuery: "ollama image prompt seed",
-            sourceSite: "Ollama image model",
+            searchQuery: "precise visual search or generation intent",
+            sourceSite: "OpenRouter image model",
             sourceUrl: "",
             licenseType: "Internally generated",
             attributionText: "",
@@ -16172,7 +16315,7 @@ async function generateSessionDetailsArtifact({
       : studentNotesOnly
       ? studentNotesPromptName
       : materialsOnly
-      ? "session-ppt-prompt.md"
+      ? UNIVERSAL_PPT_PROMPT_NAME
       : homeworkOnly
       ? "homework-generation.md"
       : "session-generation.md",
@@ -16238,7 +16381,7 @@ async function generateSessionDetailsArtifact({
         stageLabel: "Student notes generation",
       })
     : materialsOnly
-    ? renderPromptWithEnglishDownstreamIntelligence("session-ppt-prompt.md", {
+    ? renderPromptWithEnglishDownstreamIntelligence(UNIVERSAL_PPT_PROMPT_NAME, {
         SUBJECT: String(subject || ""),
         GRADE_LEVEL: String(gradeLevel || ""),
         SESSION_TITLE: String(sessionTitle || `Session ${sessionNumber}`),
@@ -16275,8 +16418,8 @@ async function generateSessionDetailsArtifact({
             colors: preset.colors,
             visualStyle: preset.visualStyle,
           })),
-          assetPolicy: ["Internal SVG", "Ollama image model"],
-          imageFallbackPolicy: "svg first for explainers, Ollama image model for all picture-based visuals",
+          assetPolicy: ["Internal SVG", "OpenRouter image model"],
+          imageFallbackPolicy: "svg first for explainers, OpenRouter image model for all picture-based visuals",
           deckRatio: "16:9",
           outputDepth: "full_slide_spec",
           diagrams: "svg_preferred_for_process_and_structure",
@@ -16575,6 +16718,11 @@ app.post("/api/generate-sessions-outline", async (req, res) => {
     res.status(500).json({ error: error?.message || "Session outline generation failed." });
   }
 });
+
+// ======== VISUAL ROUTES ========
+import visualsRouter from "./routes/visuals.js";
+
+app.use("/api/visuals", visualsRouter);
 
 export {
   buildApprovedTheoryHierarchy,

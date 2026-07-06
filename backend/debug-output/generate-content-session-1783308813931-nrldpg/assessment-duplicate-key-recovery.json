@@ -1,0 +1,908 @@
+{
+  "assessment": {
+  "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 20,
+      "totalQuestions": 10,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        },
+        {
+          "type": "longAnswer",
+          "label": "Long Answer",
+          "questionCount": 2,
+          "marksEach": 5
+        }
+      ]
+    },
+  "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Analyze the character traits of Albert Einstein as presented in the text.",
+        "Discuss the conflict between creative intelligence and rigid educational systems.",
+        "Explain why the author describes Einstein's mind as 'beautiful' from a humanitarian perspective."
+      ],
+      "assessedConcepts": [
+        "Einstein's early childhood traits",
+        "Conflict with regimented schooling",
+        "Non-conformity in education",
+        "Scientific brilliance vs. Humanitarianism",
+        "The meaning of 'A Truly Beautiful Mind'"
+      ],
+      "conceptCoveragePriorities": [
+        "Einstein's non-conformist nature and its impact on his early life",
+        "The dual definition of a beautiful mind (intellect + empathy)"
+      ],
+      "misconceptionTargets": [
+        "Believing 'Beautiful Mind' refers only to high IQ or academic success in school.",
+        "Assuming Einstein was always an obedient student."
+      ],
+      "competencyFocus": [
+        "Understanding",
+        "Analysis"
+      ]
+    },
+  "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-prescribed-books",
+          "title": "Prescribed Books",
+          "marks": 20,
+          "questionCount": 10,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10"
+          ],
+          "focus": "Session-aligned assessment focusing on character analysis and thematic understanding."
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Einstein's early life and school conflict",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Non-conformity and intellectual freedom",
+          "questionRefs": [
+            "q3",
+            "q4"
+          ],
+          "competency": "Analysis",
+          "importance": "high"
+        },
+        {
+          "concept": "Humanitarianism and the 'Beautiful Mind'",
+          "questionRefs": [
+            "q5",
+            "q6",
+            "q7",
+            "q8"
+          ],
+          "competency": "Understanding & Analysis",
+          "importance": "core"
+        },
+        {
+          "concept": "Scientific achievements and peace advocacy",
+          "questionRefs": [
+            "q9",
+            "q10"
+          ],
+          "competency": "Analysis",
+          "importance": "high"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Analyze the character traits of Albert Einstein as presented in the text.",
+          "questionRefs": [
+            "q2",
+            "q4",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Discuss the conflict between creative intelligence and rigid educational systems.",
+          "questionRefs": [
+            "q1",
+            "q3"
+          ]
+        },
+        {
+          "outcome": "Explain why the author describes Einstein's mind as 'beautiful' from a humanitarian perspective.",
+          "questionRefs": [
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 35,
+        "hard": 25
+      },
+      "bloomsDistribution": {
+        "recall": 20,
+        "understanding": 35,
+        "application": 15,
+        "analysis": 20,
+        "evaluation": 10
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 2,
+        "analysis": 4
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 3,
+        "shortAnswer": 2,
+        "longAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Prescribed Books",
+          "minutes": 15
+        }
+      ]
+    },
+  "paper": {
+      "instructions": [
+        "Read the passage 'A Truly Beautiful Mind' carefully.",
+        "Answer all questions based strictly on the session content taught today.",
+        "Write your answers clearly and concisely."
+      ],
+      "sections": [
+        {
+          "id": "section-prescribed-books",
+          "title": "Prescribed Books",
+          "marks": 20,
+          "questionCount": 10,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10"
+          ],
+          "source": "curriculum"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Why did Einstein's teachers initially believe he would never succeed?",
+          "options": [
+            "A. He was too slow in learning mathematics.",
+            "B. He spoke very late and disliked the rigid school discipline.",
+            "C. He refused to play with other children during breaks.",
+            "D. He had a physical disability that prevented him from writing."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Einstein's early life and school conflict"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Early Childhood"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Recall of facts",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: 'Einstein was considered a failure by some teachers because he didn't fit the mold...'"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "What did Einstein prefer over social interaction in his early years?",
+          "options": [
+            "A. Playing team sports.",
+            "B. Mechanical toys and solitary thinking.",
+            "C. Memorizing historical dates.",
+            "D. Listening to stories read by teachers."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Einstein's early life and school conflict"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Early Childhood"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Recall of facts",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: '...preference for mechanical toys over social interaction.'"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "The term 'regimentation' in the text refers to:",
+          "options": [
+            "A. A strict system of discipline and order.",
+            "B. The study of ancient history.",
+            "C. A method of creative writing.",
+            "D. An international peace treaty."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Non-conformity and intellectual freedom"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Educational Conflict"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Vocabulary in context",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Student notes: 'Regimentation = The process of imposing strict discipline...'"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "veryShortAnswer",
+          "subtype": "vsa",
+          "prompt": "Name one quality of Einstein's childhood that later contributed to his scientific success.",
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Einstein's early life and school conflict"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Early Childhood Traits"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Connecting traits to outcomes",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: 'This very independence allowed him to question established laws...'"
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "veryShortAnswer",
+          "subtype": "vsa",
+          "prompt": "What was Einstein's reaction to the 'regimented' nature of German schools?",
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Non-conformity and intellectual freedom"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Educational Conflict"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Identifying conflict",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: 'Einstein leaving school in Munich because he felt stifled.'"
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "veryShortAnswer",
+          "subtype": "vsa",
+          "prompt": "Why did Einstein write a letter to President Roosevelt?",
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Scientific achievements and peace advocacy"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "The Visionary and the Pacifist"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Cause and effect reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Student notes: 'Warned President Roosevelt about the potential of an atomic bomb.'"
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "shortAnswer",
+          "subtype": "sa",
+          "prompt": "How did Einstein's attitude toward authority affect his early education?",
+          "marks": 2,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Non-conformity and intellectual freedom"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Educational Conflict"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Analyzing cause-effect relationships",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: 'Einstein's refusal to fit into the rigid German school system...'"
+          ]
+        },
+        {
+          "id": "q8",
+          "questionNumber": 8,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "shortAnswer",
+          "subtype": "sa",
+          "prompt": "What does the author mean by calling Einstein's mind 'beautiful'?",
+          "marks": 2,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Humanitarianism and the 'Beautiful Mind'"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "The Visionary and the Pacifist"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Interpreting thematic meaning",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: 'It refers not just to his intelligence, but to his humanitarian spirit...'"
+          ]
+        },
+        {
+          "id": "q9",
+          "questionNumber": 9,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "longAnswer",
+          "subtype": "la",
+          "prompt": "Analyze the character traits of Albert Einstein as presented in the text. How do these traits explain his later success?",
+          "marks": 5,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Einstein's early life and school conflict",
+            "Non-conformity and intellectual freedom"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Character Analysis"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Synthesizing character traits and outcomes",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: 'Analyze Einstein's childhood traits that contributed to his later success.'"
+          ]
+        },
+        {
+          "id": "q10",
+          "questionNumber": 10,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "longAnswer",
+          "subtype": "la",
+          "prompt": "Explain why the author describes Einstein's mind as 'beautiful' from a humanitarian perspective. Discuss his transition from scientist to world citizen.",
+          "marks": 5,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Humanitarianism and the 'Beautiful Mind'",
+            "Scientific achievements and peace advocacy"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "The Visionary and the Pacifist"
+          ],
+          "bloomsLevel": "evaluation",
+          "competencyTag": "Evaluating humanitarian impact",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: 'Explain why the author describes Einstein's mind as beautiful from a humanitarian perspective.'"
+          ]
+        }
+      ]
+    },
+  "evaluation": {
+      "answerKey": {
+  "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "B. He spoke very late and disliked the rigid school discipline.",
+            "explanation": "The text states Einstein was a late talker and clashed with the regimented nature of German schools, leading teachers to doubt his success.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "B. Mechanical toys and solitary thinking.",
+            "explanation": "Einstein preferred mechanical toys over social interaction, which fostered his independent thought processes.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "A. A strict system of discipline and order.",
+            "explanation": "'Regimentation' refers to the imposition of strict rules that suppressed individuality, which Einstein hated.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "His independence/non-conformity or his deep love for mathematics/physics.",
+            "explanation": "Any valid trait mentioned in the text such as 'independence', 'non-conformist nature', or 'deep-seated love for math' is acceptable.",
+            "marks": 1,
+            "subtype": "vsa"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "He felt stifled and left the school.",
+            "explanation": "Einstein found the regimentation suffocating, leading him to leave Munich because he could not conform.",
+            "marks": 1,
+            "subtype": "vsa"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "To warn about the potential of an atomic bomb.",
+            "explanation": "Einstein wrote to Roosevelt to alert them that Germany might develop nuclear weapons, though it inadvertently started the Manhattan Project.",
+            "marks": 1,
+            "subtype": "vsa"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "Einstein's refusal to follow rigid rules and his questioning nature made him a 'failure' in the traditional school system. He felt suffocated by rote learning, which led him to leave Munich.",
+            "explanation": "Students must mention: 1) His non-conformist attitude/refusal to obey blindly (1 mark). 2) The result was conflict with teachers or leaving school because he felt stifled/suffocated (1 mark).",
+            "marks": 2,
+            "subtype": "sa"
+          },
+          {
+            "questionId": "q8",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "The 'beautiful mind' refers not just to his high IQ, but to his humanitarian spirit. It signifies a combination of immense scientific logic and deep empathy for humanity.",
+            "explanation": "Students must mention: 1) The title does not refer only to intelligence/IQ (1 mark). 2) It includes his concern for peace/humanitarianism/empathy (1 mark).",
+            "marks": 2,
+            "subtype": "sa"
+          },
+          {
+            "questionId": "q9",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "Einstein was a non-conformist who disliked rigid systems. He spoke late and preferred solitary thinking with mechanical toys, which made him seem like a failure in school. However, this independence allowed him to question established laws of physics later in life.",
+            "explanation": "Marks allocation: 1 mark for identifying his childhood traits (late talker, non-conformist). 2 marks for explaining how these traits led to success (independence/questioning nature vs rote learning). 2 marks for a coherent connection between the two points. Acceptable variations include mentioning his love for math/physics as a sanctuary.",
+            "marks": 5,
+            "subtype": "la"
+          },
+          {
+            "questionId": "q10",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "The author calls Einstein's mind 'beautiful' because of his humanitarianism. While he was a scientific genius (Relativity, E=mc²), he realized science could be destructive (atomic bomb). He transitioned from a physicist to a world citizen who campaigned for peace and a world government.",
+            "explanation": "Marks allocation: 1 mark defining 'beautiful mind' as humanitarianism/empathy. 2 marks discussing his scientific achievements briefly. 2 marks explaining the shift to advocacy (peace, disarmament) after realizing the destructive power of science.",
+            "marks": 5,
+            "subtype": "la"
+          }
+        ]
+},
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (A)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Valid trait identified (e.g., independence, non-conformity, love for math)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks if the student identifies a specific positive trait mentioned in the text that links to his success."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mention of feeling stifled/suffocated or leaving school",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for identifying the negative reaction to regimentation."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mention of warning about atomic bomb/nuclear weapons",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for the correct reason regarding the letter to Roosevelt."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Identifies non-conformist attitude/refusal to follow rules blindly.",
+                "marks": 1
+              },
+              {
+                "criterion": "Explains the consequence (felt stifled/left school/conflict with teachers).",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise. Partial credit for mentioning only one aspect."
+            ]
+          },
+          {
+            "questionId": "q8",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Clarifies that 'beautiful' refers to humanitarianism/empathy, not just IQ.",
+                "marks": 1
+              },
+              {
+                "criterion": "Mentions the combination of intellect and concern for humanity/peace.",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise. Accept variations in wording as long as the core meaning is present."
+            ]
+          },
+          {
+            "questionId": "q9",
+            "totalMarks": 5,
+            "markBreakdown": [
+              {
+                "criterion": "Identifies key character traits (non-conformist, independent, late talker).",
+                "marks": 1
+              },
+              {
+                "criterion": "Explains the conflict with school/rigid systems.",
+                "marks": 2
+              },
+              {
+                "criterion": "Connects these traits to his later success (questioning laws, independence).",
+                "marks": 2
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise. Ensure the student links the childhood behavior to the adult outcome."
+            ]
+          },
+          {
+            "questionId": "q10",
+            "totalMarks": 5,
+            "markBreakdown": [
+              {
+                "criterion": "Defines 'beautiful mind' as humanitarianism/empathy.",
+                "marks": 1
+              },
+              {
+                "criterion": "Discusses his scientific achievements (Relativity/E=mc²).",
+                "marks": 2
+              },
+              {
+                "criterion": "Explains the transition to world citizen/peace advocate due to fear of nuclear destruction.",
+                "marks": 2
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise. The answer must show understanding of both his scientific and moral dimensions."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Identifies non-conformist attitude/refusal to follow rules blindly.",
+                "marks": 1
+              },
+              {
+                "criterion": "Explains the consequence (felt stifled/left school/conflict with teachers).",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Einstein was a non-conformist who refused to follow rigid rules. This made him feel suffocated in school, leading him to leave Munich."
+          },
+          {
+            "questionId": "q8",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Clarifies that 'beautiful' refers to humanitarianism/empathy, not just IQ.",
+                "marks": 1
+              },
+              {
+                "criterion": "Mentions the combination of intellect and concern for humanity/peace.",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "The 'beautiful mind' refers to his humanitarian spirit. It is not just about being smart, but having a heart that cares for peace."
+          },
+          {
+            "questionId": "q9",
+            "totalMarks": 5,
+            "criteria": [
+              {
+                "criterion": "Identifies key character traits (non-conformist, independent).",
+                "marks": 1
+              },
+              {
+                "criterion": "Explains the conflict with school/rigid systems.",
+                "marks": 2
+              },
+              {
+                "criterion": "Connects these traits to his later success (questioning laws, independence).",
+                "marks": 2
+              }
+            ],
+            "sampleAnswer": "Einstein was a non-conformist who disliked rigid systems. He felt stifled by rote learning and left school. However, this independence allowed him to question established physics laws later in life."
+          },
+          {
+            "questionId": "q10",
+            "totalMarks": 5,
+            "criteria": [
+              {
+                "criterion": "Defines 'beautiful mind' as humanitarianism/empathy.",
+                "marks": 1
+              },
+              {
+                "criterion": "Discusses his scientific achievements (Relativity/E=mc²).",
+                "marks": 2
+              },
+              {
+                "criterion": "Explains the transition to world citizen/peace advocate due to fear of nuclear destruction.",
+                "marks": 2
+              }
+            ],
+            "sampleAnswer": "The title refers to his humanitarianism. He was a genius who realized science could destroy lives (atomic bomb), so he became an advocate for peace and a world government."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea.",
+        "Accept any phrasing that conveys the correct meaning from the text.",
+        "Do not penalize minor spelling errors unless they obscure the meaning of key terms like 'regimentation' or 'humanitarianism'.",
+        "Ensure students are answering based on the session content, not external knowledge."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "For Long Answer questions (q9, q10), ensure the connection between childhood traits and adult success is explicit in the answer.",
+        "Check that students distinguish between 'intelligence' and 'humanitarianism' when answering about the title."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers regarding Einstein's character traits.",
+        "Ensure partial marks are awarded fairly for incomplete but correct reasoning in short answer questions."
+      ]
+    },
+  "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts including early life, educational conflict, and humanitarianism."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from factual recall (MCQs) to analysis and evaluation.",
+        "Questions are strictly bounded by Session 1 content ('A Truly Beautiful Mind')."
+      ]
+    },
+  "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (3 MCQs, 3 VSA, 2 SA, 2 LA)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total of 20."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to 'section-prescribed-books' as per allowed sections."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned with session learning outcomes."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included. All questions derive from Session 1 text."
+        ]
+      }
+    }
+}
+}

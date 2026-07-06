@@ -1,0 +1,773 @@
+{
+  "materials": {
+    "ppt": {
+      "deckMode": "teacher-delivery",
+      "templateId": "kamalaniketan-session-12",
+      "templateName": "Kamalaniketan Session PPT Template",
+      "themeId": "kamalaniketan-modern",
+      "title": "Integrated Science: Assessment & Revision",
+      "presentationTitle": "Science Review: Concepts, Data & Processes",
+      "presentationGoal": "To consolidate scientific inquiry skills, review core concepts through visual analysis, and assess student understanding of formulas, diagrams, and processes.",
+      "audience": "Middle School Integrated Science Students (Grades 6-8)",
+      "theme": "kamalaniketan-modern",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Outfit",
+          "body": "Inter"
+        },
+        "colors": {
+          "primary": "#36ADAA",
+          "secondary": "#1EABDA",
+          "accent": "#DE8431",
+          "background": "#EEF4F7",
+          "surface": "#FFFFFF",
+          "text": "#0F172A",
+          "mutedText": "#64748B"
+        },
+        "visualStyle": {
+          "topBarStyle": "bold color band",
+          "cardStyle": "rounded modern educator cards",
+          "visualFrameStyle": "large clean visual panel"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Internal SVG",
+          "Ollama image model"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Use internally generated images and in-app SVG diagrams only."
+        ],
+        "fallbackStrategy": "Prefer SVG diagrams for concept/process slides and the Ollama image model for all picture-based visuals."
+      },
+      "licenseChecklist": [
+        "Review generated visuals for classroom accuracy before final export.",
+        "Ensure scientific symbols in formulas are rendered correctly."
+      ],
+      "presentationWarnings": [
+        "Do not include untaught future-session content.",
+        "Focus on revision of previously taught integrated science topics (Physics, Chemistry, Biology basics)."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Recall and apply scientific formulas",
+          "Interpret labeled diagrams and data graphs",
+          "Explain core biological/physical processes",
+          "Synthesize concepts across disciplines"
+        ],
+        "topicsCovered": [
+          "Scientific Formulas & Units",
+          "Process Diagrams (e.g., Photosynthesis, Water Cycle)",
+          "Data Interpretation & Graphing",
+          "Integrated Science Concepts Review"
+        ],
+        "taughtConceptsCovered": [
+          "Formula derivation and application logic",
+          "Visual analysis of scientific structures",
+          "Step-by-step process sequencing",
+          "Critical thinking through data questions"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Science Review: Concepts & Data",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "hook | concept | comparison | process | summary",
+          "slideTitle": "Integrated Science: Assessment & Revision Session",
+          "learningOutcomeIds": [
+            "LO-Review-01"
+          ],
+          "topicCoverage": [
+            "Session Overview",
+            "Learning Goals"
+          ],
+          "teacherIntent": "Introduce the session as a comprehensive review of integrated science concepts, setting the stage for active recall and application.",
+          "studentTakeaway": "Students understand today is about connecting formulas, diagrams, and processes to real-world scientific thinking.",
+          "layout": "Title + Hero Visual",
+          "bulletPoints": [
+            "Integrated Science Review Session",
+            "Focus: Formulas, Diagrams & Processes",
+            "Goal: Connect concepts across Physics, Chemistry, Biology"
+          ],
+          "onSlideText": [
+            "Science Assessment & Revision",
+            "Connecting Concepts Through Visuals",
+            "Session 12 of Integrated Science Module"
+          ],
+          "speakerNotes": [
+            "Welcome students to today's revision session.",
+            "Explain that we are not just memorizing, but connecting how Physics formulas relate to Chemical processes and Biological systems.",
+            "Emphasize the 'Integrated' nature: seeing science as one connected journey rather than isolated subjects.",
+            "Ask: What is your favorite scientific diagram you've studied so far?",
+            "Transition: Let's look at what we will achieve today."
+          ],
+          "visualPlan": "A large, clean hero image showing a split visual of a formula (e.g., F=ma), a biological cell structure, and a chemical reaction equation merging into one cohesive 'Science' icon.",
+          "assets": [
+            {
+              "purpose": "Visual hook to represent integrated science",
+              "searchQuery": "integrated science concept art formulas biology chemistry physics fusion",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Artistic representation of integrated science combining math, life, and physical sciences.",
+              "placementHint": "Full bleed background with overlay text"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Session Identity",
+            "type": "concept map",
+            "instructions": [
+              "Display session title clearly at the top."
+            ],
+            "svgCode": "<svg><!-- Hero visual placeholder --></svg>"
+          },
+          "animationHints": [
+            "Fade in slide title and key points sequentially"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Today's Learning Goals",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "concept | summary",
+          "slideTitle": "What We Will Achieve Today",
+          "learningOutcomeIds": [
+            "LO-Review-01",
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Learning Outcomes",
+            "Success Criteria"
+          ],
+          "teacherIntent": "Clearly state the measurable outcomes so students know exactly what they need to master by the end of the session.",
+          "studentTakeaway": "Students can articulate that they will be able to apply formulas, read diagrams, and explain processes confidently.",
+          "layout": "2-column list with icons",
+          "bulletPoints": [
+            "Apply scientific formulas correctly",
+            "Interpret complex data graphs & tables",
+            "Exain biological/physical processes visually"
+          ],
+          "onSlideText": [
+            "1. Apply Formulas: Units, Symbols, Logic",
+            "2. Analyze Diagrams: Labeled Structures & Flows",
+            "3. Explain Processes: Step-by-Step Sequencing",
+            "4. Connect Concepts: Real-world Applications"
+          ],
+          "speakerNotes": [
+            "Read through the four main outcomes.",
+            "Outcome 1 is about precision in using formulas (e.g., Speed = Distance/Time).",
+            "Outcome 2 focuses on data literacy—reading graphs and tables accurately.",
+            "Outcome 3 requires students to describe processes like photosynthesis or energy transfer without gaps.",
+            "Outcome 4 ensures they see the 'big picture' of how these concepts link together in real life.",
+            "Ask: Which outcome do you think is most challenging for you?"
+          ],
+          "visualPlan": "Four distinct icons representing each goal: a calculator/formula, an eye/graph chart, a flowchart/process arrow, and a globe/connection node.",
+          "assets": [
+            {
+              "purpose": "Visual representation of learning goals",
+              "searchQuery": "science education icon set formulas graphs processes connection",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Icons representing formula application, data analysis, process explanation, and concept connection.",
+              "placementHint": "Left column with text on right"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Learning Outcomes Map",
+            "type": "flowchart",
+            "instructions": [
+              "Show the four outcomes as a linear progression of skills."
+            ],
+            "svgCode": "<svg><!-- Icon layout placeholder --></svg>"
+          },
+          "animationHints": [
+            "Reveal each outcome bullet point one by one"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Recall: What We Know Already",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "concept | summary",
+          "slideTitle": "Activating Prior Knowledge",
+          "learningOutcomeIds": [
+            "LO-Review-01"
+          ],
+          "topicCoverage": [
+            "Prerequisite Concepts",
+            "Previous Session Summary"
+          ],
+          "teacherIntent": "Bridge the gap between what students learned previously and today's revision tasks by activating relevant prior knowledge.",
+          "studentTakeaway": "Students recall key formulas, diagram types, and process steps from previous lessons to prepare for deeper analysis.",
+          "layout": "Recall Grid",
+          "bulletPoints": [
+            "Key Formulas: Speed, Force, Density",
+            "Diagram Types: Labeled Parts & Flowcharts",
+            "Processes: Photosynthesis, Energy Transfer"
+          ],
+          "onSlideText": [
+            "Quick Recall Activity:",
+            "- What is the formula for Speed?",
+            "- Identify parts of a plant cell.",
+            "- Describe energy flow in an ecosystem."
+          ],
+          "speakerNotes": [
+            "Start with a quick 'Think-Pair-Share' activity.",
+            "Ask students to write down one key formula they remember from Physics/Chemistry/Biology units.",
+            "Discuss: What do all these formulas have in common? (Relationships between variables).",
+            "Review the types of diagrams we've studied: labeled structures vs. process flows.",
+            "Remind them that today's session builds on this foundation to test their ability to apply and connect these ideas.",
+            "Transition: Now let's dive into a real-world hook."
+          ],
+          "visualPlan": "A 'brainstorm' style graphic showing sticky notes with keywords like 'Speed', 'Cell', 'Energy' floating around a central lightbulb icon.",
+          "assets": [
+            {
+              "purpose": "Visual cue for recall activity",
+              "searchQuery": "sticky notes brainstorm science concepts education",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Visual representation of students recalling key scientific terms.",
+              "placementHint": "Background element"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Knowledge Activation Map",
+            "type": "concept map",
+            "instructions": [
+              "Show connections between previous topics and today's review."
+            ],
+            "svgCode": "<svg><!-- Sticky notes layout --></svg>"
+          },
+          "animationHints": [
+            "Fade in sticky note elements"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "The Mystery of the Missing Data",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "hook | concept",
+          "slideTitle": "Hook: Solving a Scientific Puzzle",
+          "learningOutcomeIds": [
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Real-world Application",
+            "Critical Thinking"
+          ],
+          "teacherIntent": "Capture attention with a mystery or problem that requires using formulas, diagrams, and process knowledge to solve.",
+          "studentTakeaway": "Students are engaged by the challenge of solving a real-world scientific puzzle using their revision skills.",
+          "layout": "Problem Statement + Visual Clue",
+          "bulletPoints": [
+            "Scenario: A plant is growing slower than expected.",
+            "Clues: Data graph, Diagram of light exposure.",
+            "Challenge: Identify the missing factor."
+          ],
+          "onSlideText": [
+            "The Case of the Slow Growth",
+            "- Graph shows low photosynthesis rate.",
+            "- Diagram shows limited sunlight.",
+            "- Question: What is limiting the process?"
+          ],
+          "speakerNotes": [
+            "Present this scenario as a 'Scientific Mystery'.",
+            "Show the graph (hypothetical) and diagram on screen.",
+            "Ask students to work in pairs for 2 minutes to identify the missing factor using their knowledge of photosynthesis processes and data interpretation.",
+            "Encourage them to use terms like 'limiting factor', 'energy input', or 'process rate'.",
+            "This hooks them into applying formulas (rate = change/time) and process understanding immediately.",
+            "Transition: Let's break down the core concepts needed to solve this."
+          ],
+          "visualPlan": "A detective-style graphic with a magnifying glass over a graph showing low growth, alongside a diagram of a plant in shadow.",
+          "assets": [
+            {
+              "purpose": "Hook visual for mystery scenario",
+              "searchQuery": "science mystery investigation plant growth data graph",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Illustration of a scientific investigation involving plant growth and data analysis.",
+              "placementHint": "Center stage"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Mystery Scenario Visuals",
+            "type": "comparison chart",
+            "instructions": [
+              "Show the 'expected' vs 'actual' data points."
+            ],
+            "svgCode": "<svg><!-- Mystery visual placeholder --></svg>"
+          },
+          "animationHints": [
+            "Reveal clues one by one"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Core Concepts: Formulas & Processes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "concept | process",
+          "slideTitle": "Defining the Core Scientific Elements",
+          "learningOutcomeIds": [
+            "LO-Review-01",
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Formulas & Equations",
+            "Process Definitions",
+            "Diagram Interpretation"
+          ],
+          "teacherIntent": "Provide a thorough, integrated definition of the key elements: formulas as tools for calculation and processes as sequences of events.",
+          "studentTakeaway": "Students understand that formulas quantify relationships in nature, while diagrams visualize these abstract concepts.",
+          "layout": "Split Screen: Text & Visual",
+          "bulletPoints": [
+            "Formulas: Quantify Relationships (e.g., F=ma)",
+            "Processes: Sequences of Events (e.g., Respiration)",
+            "Diagrams: Visualizing the Invisible"
+          ],
+          "onSlideText": [
+            "Scientific Formulas",
+            "- Define relationships between variables.",
+            "- Require correct units and symbols.",
+            "-",
+            "Scientific Processes",
+            "- Step-by-step transformations (Chem/Bio).",
+            "- Driven by energy or matter flow."
+          ],
+          "speakerNotes": [
+            "Define a formula as the 'language' of science that quantifies relationships.",
+            "Explain that processes are not just static states but dynamic sequences (e.g., how light becomes chemical energy).",
+            "Highlight that diagrams bridge the gap between abstract formulas and real-world phenomena.",
+            "Emphasize the importance of units in formulas for accuracy.",
+            "Transition: Now let's look at a visual representation of these processes."
+          ],
+          "visualPlan": "A split view showing a formula (e.g., Speed = Distance/Time) on one side and a corresponding process diagram (motion arrows) on the other, linked by an arrow labeled 'Relationship'.",
+          "assets": [
+            {
+              "purpose": "Visual link between formulas and processes",
+              "searchQuery": "science formula to process diagram connection visual",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Diagram showing the link between a mathematical formula and its physical representation.",
+              "placementHint": "Center"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Formula-Process Linkage",
+            "type": "flowchart",
+            "instructions": [
+              "Show how variables in a formula map to steps in a process."
+            ],
+            "svgCode": "<svg><!-- Formula-process link --></svg>"
+          },
+          "animationHints": [
+            "Animate the connection arrow"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "core_concept_a_visual",
+          "templateSlideTitle": "Visualizing Processes: Photosynthesis & Energy",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "process | comparison",
+          "slideTitle": "Process Flow: From Light to Chemical Energy",
+          "learningOutcomeIds": [
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Photosynthesis Process",
+            "Energy Transfer Diagrams"
+          ],
+          "teacherIntent": "Use a detailed visual diagram to teach the step-by-step nature of biological processes and energy transformations.",
+          "studentTakeaway": "Students can trace the flow of energy from light input through chemical transformation in plants.",
+          "layout": "Full-width Process Diagram",
+          "bulletPoints": [
+            "- Input: Sunlight, Water, CO2",
+            "- Mechanism: Chloroplasts & Pigments",
+            "- Output: Glucose, Oxygen"
+          ],
+          "onSlideText": [
+            "Photosynthesis Flowchart:",
+            "1. Light Absorption (Chlorophyll)",
+            "2. Water Splitting (Photolysis)",
+            "3. Carbon Fixation",
+            "4. Glucose Production"
+          ],
+          "speakerNotes": [
+            "Guide students through the diagram step-by-step.",
+            "Ask: What happens if light is missing? (Process stops).",
+            "Connect this to the 'Mystery' from Slide 4—lack of light limits the process rate.",
+            "Explain how energy transforms from electromagnetic (light) to chemical potential (glucose).",
+            "This visual reinforces the concept that processes are sequences, not single events.",
+            "Transition: Let's look at another critical aspect: data interpretation."
+          ],
+          "visualPlan": "A detailed labeled diagram of a plant cell chloroplast showing light hitting it and glucose being produced, with arrows indicating energy flow.",
+          "assets": [
+            {
+              "purpose": "Detailed process visualization",
+              "searchQuery": "photosynthesis process diagram chloroplast light energy conversion",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Detailed scientific illustration of photosynthesis showing inputs, outputs, and internal cellular processes.",
+              "placementHint": "Full width"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Photosynthesis Process Flow",
+            "type": "process flowchart",
+            "instructions": [
+              "Show the sequential steps of photosynthesis with clear labels."
+            ],
+            "svgCode": "<svg><!-- Detailed process diagram --></svg>"
+          },
+          "animationHints": [
+            "Animate arrows to show direction of energy/matter flow"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Data Interpretation: Reading the Graphs",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "comparison | process",
+          "slideTitle": "Analyzing Scientific Data & Trends",
+          "learningOutcomeIds": [
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Graph Interpretation",
+            "Data Analysis Skills"
+          ],
+          "teacherIntent": "Teach students how to extract meaning from graphs and tables, a critical skill for scientific inquiry.",
+          "studentTakeaway": "Students can identify trends, compare data points, and draw conclusions from visual representations of experimental results.",
+          "layout": "Graph Analysis Panel",
+          "bulletPoints": [
+            "- Identify Axes: Independent vs Dependent",
+            "- Spot Trends: Linear, Exponential, Plateau",
+            "- Calculate Rates: Slope = Change/Time"
+          ],
+          "onSlideText": [
+            "Reading the Data:",
+            "1. What is changing? (Independent Variable)",
+            "2. What is measured? (Dependent Variable)",
+            "3. What does the slope tell us?",
+            "4. Are there anomalies?"
+          ],
+          "speakerNotes": [
+            "Show a sample graph of plant growth over time.",
+            "Walk through how to read the axes: X-axis is usually what you change (light intensity), Y-axis is what you measure (growth rate).",
+            "Explain that the slope represents the 'rate'—a key concept in formulas like Speed = Distance/Time.",
+            "Discuss anomalies: What if a data point doesn't fit? It could be an error or a new discovery!",
+            "Transition: Now let's apply this to a worked example."
+          ],
+          "visualPlan": "A clear line graph showing plant growth vs. light intensity, with annotations pointing out axes, slope, and key data points.",
+          "assets": [
+            {
+              "purpose": "Data interpretation visual",
+              "searchQuery": "science graph plant growth light intensity trend analysis",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Graph illustrating the relationship between light intensity and plant growth rate.",
+              "placementHint": "Center"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Data Graph Analysis",
+            "type": "comparison chart",
+            "instructions": [
+              "Highlight axes, slope, and trend lines."
+            ],
+            "svgCode": "<svg><!-- Graph with annotations --></svg>"
+          },
+          "animationHints": [
+            "Reveal graph elements sequentially"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example: Solving the Mystery",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "process | concept",
+          "slideTitle": "Step-by-Step Solution to the Puzzle",
+          "learningOutcomeIds": [
+            "LO-Review-01",
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Problem Solving",
+            "Application of Concepts"
+          ],
+          "teacherIntent": "Model expert thinking by solving the 'Mystery' from Slide 4 using formulas, diagrams, and process knowledge.",
+          "studentTakeaway": "Students see how to systematically apply scientific reasoning to solve a real-world problem.",
+          "layout": "Step-by-Step Solution",
+          "bulletPoints": [
+            "- Step 1: Analyze the Graph (Low Rate)",
+            "- Step 2: Check Diagrams (Limited Light)",
+            "- Step 3: Apply Formula (Rate = f(Light))",
+            "- Conclusion: Light is the limiting factor."
+          ],
+          "onSlideText": [
+            "Solving the Case:",
+            "1. Observation: Graph shows low growth.",
+            "2. Evidence: Diagram shows shadowed plant.",
+            "3. Reasoning: Photosynthesis needs light energy.",
+            "4. Formula Connection: Rate depends on Light Input."
+          ],
+          "speakerNotes": [
+            "Walk through the solution step-by-step, mimicking a scientist's thought process.",
+            "Step 1: Look at the data—what does it say? (Low rate).",
+            "Step 2: Check the conditions in the diagram. What is missing?",
+            "Step 3: Connect this to our knowledge of photosynthesis and energy transfer formulas.",
+            "Step 4: Conclude that light intensity is the limiting factor affecting the process rate.",
+            "Emphasize that we used both visual data (graph/diagram) and conceptual knowledge (process rules).",
+            "Transition: Now it's your turn to practice."
+          ],
+          "visualPlan": "A flowchart showing the logical steps taken to solve the mystery, with icons for observation, evidence, reasoning, and conclusion.",
+          "assets": [
+            {
+              "purpose": "Visual guide for problem solving",
+              "searchQuery": "scientific method step by step logic puzzle solution diagram",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Flowchart illustrating the logical steps of solving a scientific mystery.",
+              "placementHint": "Center"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Problem Solving Logic Flow",
+            "type": "flowchart",
+            "instructions": [
+              "Show the deductive reasoning path."
+            ],
+            "svgCode": "<svg><!-- Problem solving flow --></svg>"
+          },
+          "animationHints": [
+            "Animate each step appearing in sequence"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice: Analyze & Explain",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "concept | summary",
+          "slideTitle": "Activity: Your Turn to Investigate",
+          "learningOutcomeIds": [
+            "LO-Review-01",
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Active Learning",
+            "Peer Discussion"
+          ],
+          "teacherIntent": "Provide a structured activity where students apply the concepts they just reviewed to new scenarios.",
+          "studentTakeaway": "Students actively practice analyzing diagrams and formulas in pairs, reinforcing their understanding through peer discussion.",
+          "layout": "Activity Instructions + Visual Prompt",
+          "bulletPoints": [
+            "- Task: Analyze a new graph/diagram pair.",
+            "- Question: What is the limiting factor?",
+            "- Output: Write one sentence explanation."
+          ],
+          "onSlideText": [
+            "Group Activity:",
+            "1. Look at the provided data set.",
+            "2. Identify the independent and dependent variables.",
+            "3. Discuss with your partner: What is limiting this process?",
+            "4. Write a short explanation using scientific terms."
+          ],
+          "speakerNotes": [
+            "Distribute or project new scenario cards (e.g., different plant conditions).",
+            "Instruct students to work in pairs for 5 minutes.",
+            "Circulate the room, listening for correct use of terminology like 'limiting factor', 'rate', and specific process names.",
+            "Prompt struggling groups: 'What does the graph tell you about the rate? What do we know about that process?'",
+            "Transition: Let's check our understanding with a quick assessment."
+          ],
+          "visualPlan": "A graphic showing two students discussing over a document, or an icon of a magnifying glass over a new data set.",
+          "assets": [
+            {
+              "purpose": "Visual cue for group activity",
+              "searchQuery": "students collaborating science study group discussion",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Illustration of students working together on a scientific problem.",
+              "placementHint": "Right side"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Activity Workflow",
+            "type": "flowchart",
+            "instructions": [
+              "Show the steps for the group activity."
+            ],
+            "svgCode": "<svg><!-- Activity flow --></svg>"
+          },
+          "animationHints": [
+            "Fade in instructions"
+          ],
+          "timeEstimateMinutes": 7
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Check: Do You Understand?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "concept | summary",
+          "slideTitle": "Assessing Your Understanding",
+          "learningOutcomeIds": [
+            "LO-Review-01",
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Formative Assessment",
+            "Concept Check"
+          ],
+          "teacherIntent": "Evaluate student understanding of the session's key concepts through targeted questions.",
+          "studentTakeaway": "Students self-assess their grasp of formulas, diagrams, and processes before moving to homework.",
+          "layout": "Question Cards",
+          "bulletPoints": [
+            "- Q1: What is the formula for Speed?",
+            "- Q2: Identify the limiting factor in this graph.",
+            "- Q3: Explain why light is needed for photosynthesis."
+          ],
+          "onSlideText": [
+            "Quick Quiz:",
+            "1. Formula for Density? (Mass/Volume)",
+            "2. What variable limits growth here?",
+            "3. Why do plants need sunlight?"
+          ],
+          "speakerNotes": [
+            "Present the questions one by one.",
+            "Allow 30 seconds per question for individual thinking, then ask for show of hands or verbal answers.",
+            "Q1: Check if they know Mass/Volume and units (kg/m³).",
+            "Q2: Refer back to a graph shown earlier; look for the plateau or low slope.",
+            "Q3: Look for keywords like 'energy source', 'photosynthesis', or 'chemical reaction'.",
+            "Provide immediate feedback and clarify any misconceptions on the spot.",
+            "Transition: Let's wrap up what we've learned."
+          ],
+          "visualPlan": "Simple question cards with icons representing each type of question (formula, graph, concept).",
+          "assets": [
+            {
+              "purpose": "Visual representation of quiz questions",
+              "searchQuery": "quiz card science education assessment icon set",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Icons representing different types of scientific questions.",
+              "placementHint": "Center"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Assessment Questions",
+            "type": "comparison chart",
+            "instructions": [
+              "Display the three key assessment questions clearly."
+            ],
+            "svgCode": "<svg><!-- Quiz layout --></svg>"
+          },
+          "animationHints": [
+            "Reveal each question after discussion"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Summary: Key Takeaways & Connections",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "summary | concept",
+          "slideTitle": "What We Learned Today",
+          "learningOutcomeIds": [
+            "LO-Review-01",
+            "LO-Review-02"
+          ],
+          "topicCoverage": [
+            "Key Concepts Recap",
+            "Synthesis of Learning"
+          ],
+          "teacherIntent": "Consolidate the session's learning by summarizing key points and reinforcing connections between formulas, diagrams, and processes.",
+          "studentTakeaway": "Students leave with a clear mental map of how scientific concepts interconnect and why they matter.",
+          "layout": "Summary List + Visual Synthesis",
+          "bulletPoints": [
+            "- Formulas quantify relationships (Speed, Density).",
+            "- Diagrams visualize abstract processes.",
+            "- Data analysis reveals trends and limits.",
+            "- Science is an integrated journey."
+          ],
+          "onSlideText": [
+            "Key Takeaways:",
+            "1. Use formulas to calculate rates accurately.",
+            "2. Read diagrams to understand structures & flows.",
+            "3. Analyze data to find limiting factors.",
+            "4. Connect all concepts for real-world solutions."
+          ],
+          "speakerNotes": [
+            "Summarize the four main points of the session.",
+            "Reiterate that formulas are tools, diagrams are maps, and data is evidence.",
+            "Emphasize the 'Integrated' theme: how a change in one variable (light) affects the whole process (photosynthesis).",
+            "Ask students to share one thing they found most interesting or challenging today.",
+            "Transition: Now let's prepare for what comes next."
+          ],
+          "visualPlan": "A concept map showing 'Formulas', 'Diagrams', and 'Data' all connected in a circle labeled 'Integrated Science'.",
+          "assets": [
+            {
+              "purpose": "Visual summary of key takeaways",
+              "searchQuery": "integrated science concept map formulas diagrams data synthesis",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Concept map visualizing the integration of scientific tools and concepts.",
+              "placementHint": "Center"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Session Summary Map",
+            "type": "concept map",
+            "instructions": [
+              "Show how all session topics connect."
+            ],
+            "svgCode": "<svg><!-- Concept summary --></svg>"

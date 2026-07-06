@@ -1,12 +1,8 @@
 {
-  "url": "http://192.168.1.82:11435/api/generate",
-  "body": {
-    "model": "x/z-image-turbo:bf16",
-    "prompt": "Create a clean classroom slide visual for a school teacher presentation. Subject: Mathematics. Grade level: Class IX. Session title: Introduction to Polynomials - Session 1. Slide title: Homework / Next Class Bridge. Visual requirement: Use the template visual area only if it strengthens this session's taught content.. Style: accurate, educational, uncluttered, presentation-friendly, white or light background, teacher-safe, no watermark. Important: do not include words, labels, text, captions, letters, or numbers inside the image. Prefer a clean central composition with diagram-like educational clarity. Do not imitate stock-photo websites or watermarked online classroom graphics.",
-    "stream": false,
-    "options": {
-      "temperature": 0.2,
-      "negative_prompt": "no words, no text, no letters, no typography, no labels, no captions, no title text, no handwritten text, no gibberish text, no watermark"
-    }
+  "provider": "openrouter",
+  "request": {
+    "model": "sourceful/riverflow-v2.5-pro",
+    "prompt": "Create a clean classroom slide visual for a school teacher presentation. Subject: Science (086). Grade level: Class X / 10 / General. Session title: Physical World and Motion. Slide title: Homework / Next Class Bridge. Visual requirement: Use the template visual area only if it strengthens this session's taught content.. Style: accurate, educational, uncluttered, presentation-friendly, white or light background, teacher-safe, no watermark. Important: do not include words, labels, text, captions, letters, or numbers inside the image. Prefer a clean central composition with diagram-like educational clarity. Do not imitate stock-photo websites or watermarked online classroom graphics.",
+    "negativePrompt": "text, labels, captions, numbers, watermark, decorative clutter"
   }
 }

@@ -1,0 +1,642 @@
+{
+  "materials": {
+    "ppt": {
+      "deckMode": "teacher-delivery",
+      "templateId": "kamalaniketan-session-12",
+      "templateName": "Kamalaniketan Session PPT Template",
+      "themeId": "kamalaniketan-modern",
+      "title": "Integrated Science: Assessment & Revision",
+      "presentationTitle": "Science Review: Concepts, Formulas & Applications",
+      "presentationGoal": "To consolidate key scientific concepts, reinforce formula application through diagrams and data interpretation, and prepare students for assessment via targeted revision.",
+      "audience": "Middle School Integrated Science Students (Grades 6-8)",
+      "theme": "kamalaniketan-modern",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Outfit",
+          "body": "Inter"
+        },
+        "colors": {
+          "primary": "#36ADAA",
+          "secondary": "#1EABDA",
+          "accent": "#DE8431",
+          "background": "#EEF4F7",
+          "surface": "#FFFFFF",
+          "text": "#0F172A",
+          "mutedText": "#64748B"
+        },
+        "visualStyle": {
+          "topBarStyle": "bold color band",
+          "cardStyle": "rounded modern educator cards",
+          "visualFrameStyle": "large clean visual panel"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Internal SVG",
+          "Ollama image model"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Use internally generated images and in-app SVG diagrams only."
+        ],
+        "fallbackStrategy": "Prefer SVG diagrams for concept/process slides and the Ollama image model for all picture-based visuals."
+      },
+      "licenseChecklist": [
+        "Review generated visuals for classroom accuracy before final export.",
+        "Ensure scientific symbols in formulas are rendered correctly."
+      ],
+      "presentationWarnings": [
+        "Do not include untaught future-session content.",
+        "Focus on revision of previously taught concepts only."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Recall and apply scientific formulas",
+          "Interpret diagrams, graphs, and data sets",
+          "Explain core scientific processes",
+          "Demonstrate conceptual understanding of integrated science topics"
+        ],
+        "topicsCovered": [
+          "Scientific Formulas & Equations",
+          "Diagram Interpretation",
+          "Process Flows in Science",
+          "Data Analysis and Graphs",
+          "Core Conceptual Review"
+        ],
+        "taughtConceptsCovered": [
+          "Formula application logic",
+          "Visual data representation",
+          "Cause-effect relationships in processes",
+          "Scientific terminology recall"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Science Review: Concepts & Applications",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "hook",
+          "slideTitle": "Integrated Science: Assessment & Revision Session",
+          "learningOutcomeIds": [
+            "LO-Revision-01"
+          ],
+          "topicCoverage": [
+            "Session Overview",
+            "Learning Theme"
+          ],
+          "teacherIntent": "Introduce the session as a comprehensive review and assessment preparation, setting the tone for active recall.",
+          "studentTakeaway": "Students understand today is about connecting concepts, formulas, and visuals to prepare for success.",
+          "layout": "Title + Hero Visual",
+          "bulletPoints": [
+            "Integrated Science Review Session",
+            "Focus: Formulas, Diagrams & Processes",
+            "Goal: Assessment Preparation"
+          ],
+          "onSlideText": [
+            "Science Review: Concepts, Formulas & Applications",
+            "Session 12 of Integrated Science Module",
+            "Grade Level: Middle School (6-8)",
+            "Essential Question: How do we connect scientific theory to real-world data?"
+          ],
+          "speakerNotes": [
+            "Welcome students and introduce the session as a crucial review.",
+            "Explain that today is not about learning new topics but connecting what they already know.",
+            "Highlight the focus areas: formulas, diagrams, processes, and conceptual understanding.",
+            "Ask students to think of one scientific concept they found challenging recently.",
+            "Transition by stating we will start with a quick hook to activate their memory."
+          ],
+          "visualPlan": "A large hero image showing a collage of science elements: a beaker, a graph chart, and a labeled diagram connected by lines, symbolizing integration.",
+          "assets": [
+            {
+              "purpose": "Visual representation of integrated science concepts",
+              "searchQuery": "science laboratory equipment graphs diagrams connection concept art",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Collage of science beakers, data charts, and labeled biological diagrams connected by lines.",
+              "placementHint": "Full bleed background with overlay text"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Session Theme Connection",
+            "type": "concept map",
+            "instructions": [
+              "Show the central theme 'Integrated Science' connecting to Formulas, Diagrams, and Processes."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150'><circle cx='200' cy='75' r='60' fill='#EEF4F7' stroke='#36ADAA' stroke-width='3'/><text x='200' y='80' text-anchor='middle' font-family='sans-serif' font-size='14' fill='#0F172A'>Integrated Science</text></svg>"
+          },
+          "animationHints": [
+            "Fade in the title and essential question.",
+            "Animate the hero visual to appear after 1 second."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Session Learning Outcomes & Goals",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "concept",
+          "slideTitle": "What We Will Achieve Today",
+          "learningOutcomeIds": [
+            "LO-Revision-01",
+            "LO-Revision-02"
+          ],
+          "topicCoverage": [
+            "Learning Objectives",
+            "Success Criteria"
+          ],
+          "teacherIntent": "Clearly state the measurable outcomes so students know exactly what they will be able to do by the end of the session.",
+          "studentTakeaway": "Students can articulate that they will master formula application, diagram interpretation, and process explanation.",
+          "layout": "2-column list with icons",
+          "bulletPoints": [
+            "Recall key scientific formulas accurately",
+            "Interpret complex diagrams and data graphs",
+            "Explain processes using correct terminology",
+            "Apply concepts to solve assessment-style problems"
+          ],
+          "onSlideText": [
+            "1. Recall & Apply Formulas: Use equations correctly in context.",
+            "2. Visual Literacy: Decode labeled diagrams and data graphs.",
+            "3. Process Explanation: Describe scientific processes step-by-step.",
+            "4. Conceptual Synthesis: Connect theory to real-world examples."
+          ],
+          "speakerNotes": [
+            "Read through each outcome clearly.",
+            "Explain that 'Recall' means remembering the formula, but 'Apply' means using it in a problem.",
+            "Emphasize visual literacy as a key skill for science exams (interpreting graphs/diagrams).",
+            "Connect these outcomes to real-world assessment readiness.",
+            "Ask students: Which of these areas do you feel most confident about?"
+          ],
+          "visualPlan": "A clean icon-based list where each outcome has a corresponding visual cue (e.g., calculator for formulas, eye/glasses for diagrams).",
+          "assets": [
+            {
+              "purpose": "Visual cues for learning outcomes",
+              "searchQuery": "science icons formula diagram graph process synthesis flat design",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Flat design icons representing formulas, diagrams, processes, and concepts.",
+              "placementHint": "Left column next to text"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Outcome Progression",
+            "type": "flowchart",
+            "instructions": [
+              "Show a linear progression from Recall -> Interpretation -> Explanation -> Application."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100'><rect x='50' y='20' width='70' height='60' rx='5' fill='#EEF4F7'/><text x='85' y='55' text-anchor='middle' font-size='12'>Recall</text><path d='M120 50 L130 50' stroke='#36ADAA' marker-end='url(#arrow)'/><rect x='140' y='20' width='70' height='60' rx='5' fill='#EEF4F7'/><text x='175' y='55' text-anchor='middle' font-size='12'>Interpret</text></svg>"
+          },
+          "animationHints": [
+            "Reveal each outcome bullet point one by one.",
+            "Highlight the 'Application' goal in accent color."
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Activating Prior Knowledge: What Do You Remember?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "hook",
+          "slideTitle": "Quick Recall & Connections",
+          "learningOutcomeIds": [
+            "LO-Revision-01"
+          ],
+          "topicCoverage": [
+            "Prerequisite Knowledge",
+            "Previous Session Summary"
+          ],
+          "teacherIntent": "Activate existing neural pathways related to formulas, diagrams, and processes before diving into deeper revision.",
+          "studentTakeaway": "Students recall key terms and concepts from previous sessions, establishing a foundation for today's review.",
+          "layout": "Question & Answer format",
+          "bulletPoints": [
+            "What is the formula for Speed?",
+            "Identify parts of a plant cell diagram",
+            "Recall steps in photosynthesis process"
+          ],
+          "onSlideText": [
+            "Quick Fire Questions:",
+            "- What does 'V' stand for in V=IR?",
+            "- Name two types of energy transformations.",
+            "- Look at this graph: What is the independent variable?"
+          ],
+          "speakerNotes": [
+            "Start with a quick fire round to get students thinking immediately.",
+            "Ask about basic formulas (Speed, Density) and their variables.",
+            "Show a simple diagram of a plant cell or animal cell on screen for 10 seconds; ask them to name two labeled parts from memory.",
+            "Discuss the graph question: Remind them that independent variable is usually on the X-axis.",
+            "Use this as a diagnostic to see what needs more focus during the session."
+          ],
+          "visualPlan": "A split screen showing three quick prompts with simple icons or partial diagrams for each recall task.",
+          "assets": [
+            {
+              "purpose": "Visual prompt for diagram recall",
+              "searchQuery": "simple plant cell labeled diagram black and white outline",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Simple line drawing of a plant cell with some labels missing.",
+              "placementHint": "Right side panel"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Variable Identification Chart",
+            "type": "comparison chart",
+            "instructions": [
+              "Show X-axis vs Y-axis labeling to reinforce graph reading skills."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 100'><line x1='10' y1='90' x2='140' y2='90' stroke='#0F172A'/><text x='75' y='105' text-anchor='middle'>Independent Variable (X)</text><line x1='30' y1='80' x2='30' y2='10' stroke='#0F172A'/><text x='10' y='45' transform='rotate(-90 10,45)' text-anchor='middle'>Dependent Variable (Y)</text></svg>"
+          },
+          "animationHints": [
+            "Reveal questions one by one.",
+            "Highlight the X and Y axes in different colors."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "The Mystery of the Missing Data: A Hook",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "hook",
+          "slideTitle": "Real-World Problem Solving",
+          "learningOutcomeIds": [
+            "LO-Revision-02"
+          ],
+          "topicCoverage": [
+            "Lesson Hook",
+            "Contextual Application"
+          ],
+          "teacherIntent": "Capture attention with a real-world scenario that requires applying formulas and interpreting data to solve.",
+          "studentTakeaway": "Students see the relevance of scientific concepts in solving practical problems.",
+          "layout": "Storytelling / Case Study",
+          "bulletPoints": [
+            "Scenario: A scientist needs to calculate speed from incomplete data.",
+            "Challenge: Identify missing variables and interpret a partial graph.",
+            "Goal: Use logic and formulas to find the answer."
+          ],
+          "onSlideText": [
+            "The Mystery of the Missing Data",
+            "- Scenario: A car travels 150km in 2.5 hours, but speedometer failed at start.",
+            "- Question: Can we calculate average speed? What data do we need?",
+            "- Visual Clue: Look at this partial distance-time graph."
+          ],
+          "speakerNotes": [
+            "Present the scenario as a mystery to solve together.",
+            "Ask students what information is missing and how they would get it (e.g., using time and distance).",
+            "Show the partial graph on screen. Ask them to identify the slope or calculate speed from two points.",
+            "This hooks them into reviewing formulas (Speed = Distance/Time) and diagram interpretation immediately.",
+            "Transition: 'Now let's look at how we systematically review these core concepts.'"
+          ],
+          "visualPlan": "A graphic of a car with a broken dashboard, next to a distance-time graph showing two points but missing the line or slope calculation area.",
+          "assets": [
+            {
+              "purpose": "Visual context for the problem",
+              "searchQuery": "car speedometer broken dashboard illustration cartoon style",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Cartoon car with a broken or blank speedometer.",
+              "placementHint": "Left side"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Distance-Time Graph Clue",
+            "type": "graph",
+            "instructions": [
+              "Show axes labeled Distance (km) and Time (h). Plot two points: (0,0) and (2.5, 150)."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'><line x1='20' y1='140' x2='190' y2='140' stroke='#0F172A'/><text x='100' y='160' text-anchor='middle'>Time (h)</text><line x1='30' y1='150' x2='30' y2='10' stroke='#0F172A'/><text x='10' y='80' transform='rotate(-90 10,80)' text-anchor='middle'>Distance (km)</text><circle cx='30' cy='140' r='3' fill='#DE8431'/><circle cx='175' cy='20' r='3' fill='#DE8431'/></svg>"
+          },
+          "animationHints": [
+            "Animate the car appearing first.",
+            "Then reveal the graph points one by one."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Core Concepts: Formulas, Diagrams & Processes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "concept",
+          "slideTitle": "The Three Pillars of Scientific Review",
+          "learningOutcomeIds": [
+            "LO-Revision-01",
+            "LO-Revision-02"
+          ],
+          "topicCoverage": [
+            "Topic Introduction",
+            "Key Terminology"
+          ],
+          "teacherIntent": "Formally introduce the three main areas of focus for this revision session: Formulas, Diagrams/Graphs, and Processes.",
+          "studentTakeaway": "Students understand that scientific mastery involves balancing calculation, visual interpretation, and process explanation.",
+          "layout": "3-column concept cards",
+          "bulletPoints": [
+            "1. Scientific Formulas & Equations: The language of numbers.",
+            "2. Diagrams & Data Interpretation: Reading the evidence.",
+            "3. Processes & Mechanisms: Understanding how things work."
+          ],
+          "onSlideText": [
+            "Pillar 1: Formulas (e.g., F=ma, V=IR)",
+            "- Units matter! Always check for correct SI units.",
+            "- Rearranging equations is a key skill.",
+            "",
+            "Pillar 2: Diagrams & Data",
+            "- Labeling parts correctly.",
+            "- Interpreting trends in graphs (slope, intercept).",
+            "",
+            "Pillar 3: Processes",
+            "- Sequencing steps logically.",
+            "- Identifying inputs and outputs."
+          ],
+          "speakerNotes": [
+            "Introduce the three pillars as the framework for today's review.",
+            "For Formulas, emphasize that units are crucial (e.g., meters vs kilometers).",
+            "For Diagrams/Data, explain that scientists 'read' evidence just like reading a book.",
+            "For Processes, mention sequencing and cause-effect relationships.",
+            "Ask students to give an example of each pillar from their recent studies."
+          ],
+          "visualPlan": "Three distinct cards or columns, each with an icon representing the pillar (Calculator for formulas, Eye/Graph for diagrams, Gears/Cycle for processes).",
+          "assets": [
+            {
+              "purpose": "Visual representation of the three pillars",
+              "searchQuery": "science icons calculator eye graph gears cycle flat design set",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Set of three icons: a calculator, an eye over a graph, and interlocking gears.",
+              "placementHint": "Top row above text"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Scientific Review Framework",
+            "type": "comparison chart",
+            "instructions": [
+              "Show three distinct blocks labeled Formulas, Diagrams, Processes with connecting arrows to 'Understanding'."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150'><rect x='20' y='20' width='120' height='80' fill='#EEF4F7'/><text x='80' y='60' text-anchor='middle'>Formulas</text><rect x='140' y='20' width='120' height='80' fill='#EEF4F7'/><text x='200' y='60' text-anchor='middle'>Diagrams</text><rect x='260' y='20' width='120' height='80' fill='#EEF4F7'/><text x='320' y='60' text-anchor='middle'>Processes</text></svg>"
+          },
+          "animationHints": [
+            "Fade in each pillar card sequentially.",
+            "Highlight the 'Units matter!' point for formulas."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "core_concept_a",
+          "templateSlideTitle": "Deep Dive: Scientific Formulas & Equations",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "concept",
+          "slideTitle": "Mastering Formulas and Units",
+          "learningOutcomeIds": [
+            "LO-Revision-01"
+          ],
+          "topicCoverage": [
+            "Formula Application",
+            "Unit Conversion"
+          ],
+          "teacherIntent": "Provide a detailed review of how to handle formulas, including rearranging and unit consistency.",
+          "studentTakeaway": "Students understand the importance of units and can confidently manipulate equations.",
+          "layout": "Text + Formula Box",
+          "bulletPoints": [
+            "- Identify knowns and unknowns first.",
+            "- Select the correct formula from memory or reference.",
+            "- Check unit consistency (e.g., m/s vs km/h).",
+            "- Rearrange algebraically if needed."
+          ],
+          "onSlideText": [
+            "Key Steps for Formula Problems:",
+            "1. List variables: What do you have? What do you need?",
+            "2. Choose formula: Speed = Distance / Time (v=d/t)",
+            "3. Check units: Convert km to m if necessary.",
+            "4. Calculate and label answer with correct unit."
+          ],
+          "speakerNotes": [
+            "Walk through the steps of solving a problem using formulas.",
+            "Emphasize step 1 (listing variables) as it prevents errors.",
+            "Discuss common pitfalls: forgetting to convert units or mixing up numerator/denominator in rearranged equations.",
+            "Use an example like calculating density (Density = Mass/Volume) to illustrate unit checking (g/cm³ vs kg/m³).",
+            "Ask students to identify the 'unknown' variable in a given problem."
+          ],
+          "visualPlan": "A clear, large display of a formula with variables highlighted in different colors, alongside a checklist for solving steps.",
+          "assets": [
+            {
+              "purpose": "Visual aid for formula manipulation",
+              "searchQuery": "formula rearrangement visual guide algebra science education",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Visual diagram showing how to rearrange a formula (e.g., F=ma) by covering the variable.",
+              "placementHint": "Right side panel"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Formula Rearrangement Triangle",
+            "type": "labelled diagram",
+            "instructions": [
+              "Show a triangle with F, m, and a to demonstrate how covering one reveals the formula for it."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'><polygon points='75,10 140,130 10,130' fill='#EEF4F7' stroke='#36ADAA'/><text x='75' y='80' text-anchor='middle'>F</text><line x1='25' y1='90' x2='125' y2='90' stroke='#DE8431'/><text x='75' y='110' text-anchor='middle'>m a</text></svg>"
+          },
+          "animationHints": [
+            "Animate the triangle to show covering 'F', then 'm', then 'a'.",
+            "Highlight unit conversion steps in red."
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Visual Literacy: Diagrams & Data Interpretation",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "comparison",
+          "slideTitle": "Reading the Evidence: Graphs and Labels",
+          "learningOutcomeIds": [
+            "LO-Revision-02"
+          ],
+          "topicCoverage": [
+            "Diagram Interpretation",
+            "Data Analysis"
+          ],
+          "teacherIntent": "Teach students how to systematically interpret scientific visuals, focusing on labels and trends.",
+          "studentTakeaway": "Students can decode complex diagrams and extract meaningful data from graphs.",
+          "layout": "Split screen with diagram and analysis points",
+          "bulletPoints": [
+            "- Read titles and axis labels carefully.",
+            "- Identify the independent vs dependent variable.",
+            "- Look for trends: increasing, decreasing, constant.",
+            "- Note anomalies or outliers in data."
+          ],
+          "onSlideText": [
+            "How to Analyze a Graph:",
+            "1. Title: What is being measured?",
+            "2. Axes: X (Independent) vs Y (Dependent).",
+            "3. Trend: Is the line going up, down, or flat?",
+            "4. Calculation: Slope = Rise / Run."
+          ],
+          "speakerNotes": [
+            "Explain that graphs tell a story; students must learn to read it.",
+            "Reiterate X vs Y axis roles clearly.",
+            "Discuss how to calculate slope (gradient) as a measure of rate of change.",
+            "Point out common mistakes: misreading the scale or ignoring units on axes.",
+            "Ask students to describe what a specific graph shows in their own words."
+          ],
+          "visualPlan": "A large, clear line graph showing a positive correlation (e.g., Temperature vs Time) with annotations pointing to title, axes, and slope calculation area.",
+          "assets": [
+            {
+              "purpose": "Example of data interpretation",
+              "searchQuery": "line graph temperature time trend analysis educational diagram",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Line graph showing a positive correlation between two variables with labeled axes and slope indicator.",
+              "placementHint": "Full width panel"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Graph Analysis Framework",
+            "type": "flowchart",
+            "instructions": [
+              "Show a flow from Title -> Axes -> Trend -> Calculation."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150'><rect x='20' y='20' width='80' height='60' fill='#EEF4F7'/><text x='60' y='55' text-anchor='middle'>Title</text><path d='M100 50 L130 50' stroke='#36ADAA'/><rect x='140' y='20' width='80' height='60' fill='#EEF4F7'/><text x='180' y='55' text-anchor='middle'>Axes</text></svg>"
+          },
+          "animationHints": [
+            "Animate the graph elements appearing sequentially.",
+            "Highlight the slope calculation area."
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example: Solving a Multi-Step Problem",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "process",
+          "slideTitle": "Example: Calculating Speed from Graph Data",
+          "learningOutcomeIds": [
+            "LO-Revision-01"
+          ],
+          "topicCoverage": [
+            "Worked Example",
+            "Problem Solving"
+          ],
+          "teacherIntent": "Model expert thinking by solving a problem that combines formula application and data interpretation.",
+          "studentTakeaway": "Students see the step-by-step logic required to solve complex science problems.",
+          "layout": "Step-by-step breakdown",
+          "bulletPoints": [
+            "- Step 1: Identify points on graph (0,0) and (2.5h, 150km).",
+            "- Step 2: Select formula v = d/t.",
+            "- Step 3: Substitute values: v = 150 / 2.5.",
+            "- Step 4: Calculate result: 60 km/h."
+          ],
+          "onSlideText": [
+            "Problem: Find the average speed from the graph below.",
+            "",
+            "Step 1: Read Data",
+            "- Distance (d) = 150 km",
+            "- Time (t) = 2.5 hours",
+            "",
+            "Step 2: Apply Formula",
+            "- Speed (v) = d / t",
+            "",
+            "Step 3: Calculate",
+            "- v = 150 / 2.5 = 60 km/h"
+          ],
+          "speakerNotes": [
+            "Walk through the example slowly, explaining each step.",
+            "Ask students to predict the next step before revealing it.",
+            "Emphasize why we chose those specific points on the graph (start and end of a linear section).",
+            "Discuss unit consistency: The answer is in km/h because inputs were in km and hours.",
+            "Highlight that this combines both formula knowledge and data reading skills."
+          ],
+          "visualPlan": "The same distance-time graph from Slide 4, now with the two points highlighted and a calculation box appearing next to it showing the math.",
+          "assets": [
+            {
+              "purpose": "Visual aid for worked example",
+              "searchQuery": "distance time graph solved problem step by step educational illustration",
+              "sourceSite": "Ollama image model",
+              "sourceUrl": "",
+              "licenseType": "Internally generated",
+              "attributionText": "",
+              "altText": "Graph with highlighted points and a calculation box showing the formula application.",
+              "placementHint": "Right side panel"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Calculation Flow",
+            "type": "flowchart",
+            "instructions": [
+              "Show data extraction -> Formula selection -> Calculation."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 150'><rect x='20' y='20' width='80' height='60' fill='#EEF4F7'/><text x='60' y='55' text-anchor='middle'>Data</text><path d='M100 50 L130 50' stroke='#36ADAA'/><rect x='140' y='20' width='80' height='60' fill='#EEF4F7'/><text x='180' y='55' text-anchor='middle'>Formula</text></svg>"
+          },
+          "animationHints": [
+            "Reveal each step of the solution one by one.",
+            "Animate the calculation result appearing last."
+          ],
+          "timeEstimateMinutes": 7
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice: Apply Your Skills",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "process",
+          "slideTitle": "Activity: Analyze and Solve",
+          "learningOutcomeIds": [
+            "LO-Revision-01",
+            "LO-Revision-02"
+          ],
+          "topicCoverage": [
+            "Guided Practice",
+            "Active Learning"
+          ],
+          "teacherIntent": "Engage students in active practice to reinforce the concepts just reviewed.",
+          "studentTakeaway": "Students actively apply formulas and interpret data, receiving immediate feedback.",
+          "layout": "Activity instructions + Visual prompt",
+          "bulletPoints": [
+            "- Task: Analyze a new graph showing plant growth over time.",
+            "- Calculate average rate of growth between Day 5 and Day 10.",
+            "- Identify the independent variable in this experiment."
+          ],
+          "onSlideText": [
+            "Activity Instructions:",
+            "1. Look at the 'Plant Growth' graph provided on your desk/screen.",
+            "2. Calculate: (Height at Day 10 - Height at Day 5) / Time Interval.",
+            "3. Identify variables: What is changing? What is being measured?",
+            "4. Discuss with a partner for 3 minutes."
+          ],
+          "speakerNotes": [
+            "Distribute the activity sheet or project the graph on screen.",
+            "Give students 2-3 minutes to work individually, then pair up for discussion (Think-Pair-Share).",
+            "Circulate the room to observe and assist struggling groups.",
+            "Ask pairs to share their answers: What was the rate? Which variable is independent?",
+            "Provide immediate feedback on common errors like subtracting time instead of height."
+          ],
+          "visualPlan": "A graph showing plant growth (height vs days) with specific points marked for calculation, alongside a checklist for the activity.",
+          "assets": [
+            {
+              "purpose": "Visual prompt for

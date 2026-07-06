@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: cbse_unit_chapter_topic\n- Expected structure type: unit_chapter_topic\n- Preserve explicit chapter headings only when they are clearly present\n- Keep unit -> chapter -> topic hierarchy for chapter-organized board syllabi\n\nReturn JSON only.\nDisable reasoning and answer directly.\nExtract curriculum hierarchy faithfully from the source.\n\nCapture:\n- document_metadata\n- classes\n- units\n- chapters\n- topics\n- subtopics\n- key concepts\n- marks attached to units or chapters when explicit\n\nRules:\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\n- If a unit is followed directly by topic lists, keep that as unit -> topics\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\n- Never convert a unit into a chapter just because no deeper chapter heading exists\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\n- Never generate the complete curriculum content\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\n- If a chunk contains only partial information, return only what is visible in that chunk\n- Do not infer, estimate, explain, recommend, or analyze\n- Do not include any fields other than the requested schema\n- This is partial curriculum input for chunk 3 of 5; extract only what is present in this chunk\n\nCurriculum source text:\n# Page 4\n\nC 8.2 – Designs and implements a plan for scientific inquiry (formulates hypotheses, makes\npredictions, identifies variables, accurately uses scientific instruments, represents data —\nprimary and secondary — in multiple modes, draws inferences based on data, and\nunderstanding of scientific concepts, theories, laws and principles, and communicates\nfindings using scientific terminology)\n## COURSE STRUCTURE\n## CLASS X (2026-27)\n(Annual Examination)\nTime: 03 Hours Marks: 80\n## Unit No. Unit Marks\nI Chemical Substances-Nature and Behaviour 25\nII World of Living 25\nIII Natural Phenomena 12\nIV Effects of Current 13\nV Natural Resources 05\nTotal 80\nInternal assessment 20\nGrand Total 100\nTheme: Materials\n## Unit I: Chemical Substances - Nature and Behaviour\nChemical Reactions and Equations: Chemical reactions, Chemical equation, Balanced\nchemical equation, types of chemical reactions: combination, decomposition, displacement,\ndouble displacement, precipitation, endothermic exothermic reactions, oxidation and\nreduction.\nThe following topics are included in the syllabus but will be assessed only formatively to\nreinforce understanding without adding to summative assessments. The reduces academic\nstress while ensuring meaningful learning. Schools can integrate these with existing\nchapters as they align well. Relevant NCERT textual material is enclosed for reference.\nPeriodic Classification of Elements: Döbereiner’s Triads, Newlands’ Law of Octaves,\nMendeléev’s Periodic Table, Modern Periodic Table and the Modern, Metallic and Non-\nmetallic Properties.\n+\nAcids, Bases and Salts: Acids and Bases – definitions in terms of furnishing of H and\n–\nOH ions, identification using indicators, chemical properties, examples and uses,\nneutralization, concept of pH scale (Definition relating to logarithm not required), importance\n\n# Page 5\n\nof pH in everyday life; preparation and uses of Sodium Hydroxide, Bleaching Powder,\nBaking soda, Washing soda and Plaster of Paris.\nMetals and Non-metals: Properties of metals and non-metals; Reactivity series; Formation\nand properties of ionic compounds; Basic metallurgical processes; Corrosion and its\nprevention.\nCarbon and its Compounds: Covalent bonds – formation and properties of covalent\ncompounds, Versatile nature of carbon, Hydrocarbons – saturated and unsaturated\nHomologous series. Nomenclature of alkanes, alkenes, alkyne and carbon compounds\ncontaining functional groups (halogens, alcohol, ketones, aldehydes). Chemical properties\nof carbon compounds (combustion, oxidation, addition and substitution reaction). Ethanol\nand Ethanoic acid (only properties and uses), soaps and detergents.\nTheme: The World of the Living\n## Unit II: World of Living\nLife processes: ‘Living Being’. Basic concept of nutrition, respiration, transport and excretion\nin plants and animals.\nControl and co-ordination in animals and plants: Tropic movements in plants;\nIntroduction of plant hormones; Control and co-ordination in animals: Nervous system;\nVoluntary, involuntary and reflex action; Chemical co-ordination: animal hormones.\nReproduction: Reproduction in animals and plants (asexual and sexual) reproductive\nhealth - need and methods of family planning. Safe sex vs HIV/AIDS. Child bearing and\nwomen’s health.\nHeredity: Heredity; Mendel’s contribution- Laws for inheritance of traits: Sex determination;\nbrief introduction.\nThe following topics are included in the syllabus but will be assessed only formatively to\nreinforce understanding without adding to summative assessments. The reduces\nacademic stress while ensuring meaningful learning. Schools can integrate these with\nexisting chapters as they align well. Relevant NCERT textual material is enclosed for\nreference.\nEvolution: Acquired and Inherited Traits, Speciation, Evolution and Classification, Tracing\nEvolutionary Relationships, Fossils, Evolution by Stages, Human Evolution\nTheme: Natural Phenomena\n## Unit III: Natural Phenomena\nReflection of light by curved surfaces; Images formed by spherical mirrors, centre of\ncurvature, principal axis, principal focus, focal length, mirror formula (Derivation not\nrequired), magnification.\nRefraction; Laws of refraction, refractive index.\nRefraction of light by spherical lens; Image formed by spherical lenses; Lens formula\n(Derivation not required); Magnification. Power of a lens.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

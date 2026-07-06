@@ -500,7 +500,7 @@ async function main() {
   assert.match(scienceStudentPrompt, /labeled diagram/i);
   assert.match(scienceStudentPrompt, /process sequence/i);
 
-  const sciencePptPrompt = renderPromptWithEnglishDownstreamIntelligence("session-ppt-prompt.md", {
+  const sciencePptPrompt = renderPromptWithEnglishDownstreamIntelligence("universal-ppt-intelligence-engine.md", {
     SUBJECT: "Science",
     GRADE_LEVEL: "Class VII",
     SESSION_TITLE: "Acids and Bases",
@@ -523,9 +523,9 @@ async function main() {
   }, {
     stageLabel: "PPT and materials generation",
   });
-  assert.match(sciencePptPrompt, /SCIENCE PPT AND MATERIALS RULES/);
-  assert.match(sciencePptPrompt, /visual academic science deck/i);
-  assert.match(sciencePptPrompt, /concept diagram/i);
+  assert.match(sciencePptPrompt, /UNIVERSAL CLASSROOM PRESENTATION INTELLIGENCE ENGINE/);
+  assert.match(sciencePptPrompt, /Science Subject Intelligence Layer \(Active\)/);
+  assert.match(sciencePptPrompt, /visual academic/i);
 
   const scienceHomeworkPrompt = renderPromptWithEnglishDownstreamIntelligence("homework-generation.md", {
     SUBJECT: "Physics",
