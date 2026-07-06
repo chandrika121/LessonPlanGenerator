@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\r\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: multi_class_board_syllabus\n- Expected structure type: multi_class_unit_topic\n- Preserve separate classes/grades when multiple classes appear in one document\n- Never merge Class XI and Class XII structures together\r\n\r\nReturn JSON only.\r\nDisable reasoning and answer directly.\r\nExtract curriculum hierarchy faithfully from the source.\r\n\r\nCapture:\r\n- document_metadata\r\n- classes\r\n- units\r\n- chapters\r\n- topics\r\n- subtopics\r\n- key concepts\r\n- marks attached to units or chapters when explicit\r\n\r\nRules:\r\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\r\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\r\n- If a unit is followed directly by topic lists, keep that as unit -> topics\r\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\r\n- Never convert a unit into a chapter just because no deeper chapter heading exists\r\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\r\n- Never generate the complete curriculum content\r\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\r\n- If a chunk contains only partial information, return only what is visible in that chunk\r\n- Do not infer, estimate, explain, recommend, or analyze\r\n- Do not include any fields other than the requested schema\r\n- This is partial curriculum input for chunk 2 of 2; extract only what is present in this chunk\r\n\r\nCurriculum source text:\r\n# Page 7\n\n## Unit IX: Electronic Devices\n## Chapter–14: Semiconductor Electronics: Materials, Devices and Simple Circuits\nEnergy bands in conductors, semiconductors and insulators (qualitative ideas only) Intrinsic\nand extrinsic semiconductors- p and n type, p-n junction\nSemiconductor diode - I-V characteristics in forward and reverse bias, application of junction\ndiode -diode as a rectifier.\n\n# Page 8\n\n## PRACTICALS\nThe record to be submitted by the students at the time of their annual examination has to\ninclude:\nRecord of at least 8 Experiments [with 4 from each section], to be performed by the\nstudents.\nRecord of at least 6 Activities [with 3 each from section A and section B], to be\nperformed by the students.\nThe Report of the project carried out by the students.\nEvaluation Scheme\nMax. Marks: 30 Time 3 hours\nTwo experiments one from each section 7+7 Marks\nPractical record [experiments and activities] 5 Marks\nOne activity from any section 3 Marks\nInvestigatory Project 3 Marks\nViva on experiments, activities and project 5 Marks\nTotal 30 marks\nExperiments SECTION–A\n- 1. To determine resistivity of two / three wires by plotting a graph for potential difference\nversus current.\n- 2. To find resistance of a given wire / standard resistor using metre bridge.\n- 3. To verify the laws of combination (series) of resistances using a metre bridge.\n## OR\nTo verify the laws of combination (parallel) of resistances using a metre bridge.\n- 4. To determine resistance of a galvanometer by half-deflection method and to find its\nfigure of merit.\n- 5. To convert the given galvanometer (of known resistance and figure of merit) into a\nvoltmeter of desired range and to verify the same.\n## OR\nTo convert the given galvanometer (of known resistance and figure of merit) into an\nammeter of desired range and to verify the same.\n- 6. To find the frequency of AC mains with a sonometer.\n\n# Page 9\n\nActivities\n- 1. To measure the resistance and impedance of an inductor with or without iron core.\n- 2. To measure resistance, voltage (AC/DC), current (AC) and check continuity of a given\ncircuit using multimeter.\n- 3. To assemble a household circuit comprising three bulbs, three (on/off) switches, a fuse\nand a power source.\n- 4. To assemble the components of a given electrical circuit.\n- 5. To study the variation in potential drop with length of a wire for a steady current.\n- 6. To draw the diagram of a given open circuit comprising at least a battery,\nresistor/rheostat, key, ammeter and voltmeter. Mark the components that are not\nconnected in proper order and correct the circuit and also the circuit diagram.\n## SECTION-B\nExperiments\n- 1. To find the value of v for different values of u in case of a concave mirror and to find the\nfocal length.\n- 2. To find the focal length of a convex mirror, using a convex lens.\n- 3. To find the focal length of a convex lens by plotting graphs between u and v or between\n1/u and 1/v .\n- 4. To find the focal length of a concave lens, using a convex lens.\n- 5. To determine angle of minimum deviation for a given prism by plotting a graph between\nangle of incidence and angle of deviation.\n- 6. To determine refractive index of a glass slab using a travelling microscope.\n- 7. To find the refractive index of a liquid using convex lens and plane mirror.\n- 8. To find the refractive index of a liquid using a concave mirror and a plane mirror.\n- 9. To draw the I-V characteristic curve for a p-n junction diode in forward and reverse\nbias.\nActivities\n- 1. To identify a diode, an LED, a resistor and a capacitor from a mixed collection of such\nitems.\n- 2. Use of multimeter to see the unidirectional flow of current in case of a diode and an\nLED and check whether a given electronic component (e.g., diode) is in working order.\n\n# Page 10\n\n- 3. To study effect of intensity of light (by varying distance of the source) on an LDR.\n- 4. To observe refraction and lateral deviation of a beam of light incident obliquely on a\nglass slab.\n- 5. To observe diffraction of light due to a thin slit.\n- 6. To study the nature and size of the image formed by a (i) convex lens, or (ii) concave\nmirror, on a screen by using a candle and a screen (for different distances of the candle\nfrom the lens/mirror).\n- 7. To obtain a lens combination with the specified focal length by using two lenses from\nthe given set of lenses.\nSuggested Investigatory Projects\n- 1. To study various factors on which the internal resistance/EMF of a cell depends.\n- 2. To study the variations in current flowing in a circuit containing an LDR because of a\nvariation in\n(a) the power of the incandescent lamp, used to 'illuminate' the LDR (keeping all\nthe lamps at a fixed distance).\n(b) the distance of an incandescent lamp (of fixed power) used to 'illuminate' the\n## LDR.\n- 3. To find the refractive indices of (a) water (b) oil (transparent) using a plane mirror, an\nequiconvex lens (made from a glass of known refractive index) and an adjustable\nobject needle.\n- 4. To investigate the relation between the ratio of (i) output and input voltage and (ii)\nnumber of turns in the secondary coil and primary coil of a self-designed transformer.\n- 5. To investigate the dependence of the angle of deviation on the angle of incidence\nusing a hollow prism filled one by one, with different transparent fluids.\n- 6. To estimate the charge induced on each one of the two identical Styrofoam (or pith)\nballs suspended in a vertical plane by making use of Coulomb's law.\n- 7. To study the factor on which the self-inductance of a coil depends by observing the\neffect of this coil, when put in series with a resistor/(bulb) in a circuit fed up by an\nA.C. source of adjustable frequency.\n- 8. To study the earth's magnetic field using a compass needle -bar magnet by plotting\nmagnetic field lines and tangent galvanometer.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

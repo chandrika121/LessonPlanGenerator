@@ -1,0 +1,2911 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class XI",
+      "subject": "CHEMISTRY",
+      "units": [
+        {
+          "unit_id": "class-11-chemistry-u1",
+          "unit_name": "Some Basic Concepts of Chemistry",
+          "topics": [
+            "Importance of Chemistry",
+            "Nature of Matter",
+            "Properties of Matter and their Measurement",
+            "Uncertainty in Measurement",
+            "Laws of Chemical Combination",
+            "Dalton's Atomic Theory",
+            "Atomic and Molecular Masses",
+            "Mole Concept and Molar Masses",
+            "Percentage Composition",
+            "Stoichiometry and Stoichiometric Calculations"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Some Basic Concepts of Chemistry",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u1",
+          "unit_name": "E. Quantitative Estimation",
+          "topics": [
+            "Using a mechanical balance/electronic balance.",
+            "Preparation of standard solution of Oxalic acid.",
+            "Determination of strength of a given solution of Sodium hydroxide by titrating it against standard solution of Oxalic acid.",
+            "Preparation of standard solution of Sodium carbonate.",
+            "Determination of strength of a given solution of hydrochloric acid by titrating it against standard Sodium Carbonate solution."
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "E. Quantitative Estimation",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u2",
+          "unit_name": "Structure of Atom",
+          "topics": [
+            "Discovery of Sub-atomic Particles",
+            "Atomic Models",
+            "Developments Leading to the Bohr's Model of Atom",
+            "Bohr's Model for Hydrogen Atom",
+            "Towards Quantum Mechanical Model of the Atom",
+            "Quantum Mechanical Model of Atom"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Structure of Atom",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u2",
+          "unit_name": "F. Qualitative Analysis",
+          "topics": [
+            "Determination of one anion and one cation in a given salt.",
+            "Detection of -Nitrogen, Sulphur, Chlorine in organic compounds."
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "F. Qualitative Analysis",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u3",
+          "unit_name": "Classification of Elements and Periodicity in Properties",
+          "topics": [
+            "Why we Need to Classify Elements?",
+            "Genesis of Periodic Classification",
+            "Modern Periodic Law and the Present Form of Periodic Table",
+            "Nomenclature of Elements with Atomic Number > 100",
+            "Electronic Configuration of Elements and the Periodic Table",
+            "Electronic Configuration of Elements and Types of Elements: s-, p-, d-, f- Blocks",
+            "Periodic Trends in Properties of Elements"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Classification of Elements and Periodicity in Properties",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u3",
+          "unit_name": "PROJECTS",
+          "topics": [
+            "Checking the bacterial contamination in drinking water by testing sulphide ion.",
+            "Study of the methods of purification of water.",
+            "Testing the hardness, presence of Iron, Fluoride, Chloride, etc., depending upon the regional variation in drinking water and study of causes of presence of these ions above permissible limit (if any).",
+            "Investigation of the foaming capacity of different washing soaps and the effect of addition of Sodium carbonate on it.",
+            "Study the acidity of different samples of tea leaves.",
+            "Determination of the rate of evaporation of different liquids.",
+            "Study the effect of acids and bases on the tensile strength of fibers.",
+            "Study of acidity of fruit and vegetable juices."
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "PROJECTS",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u4",
+          "unit_name": "Chemical Bonding and Molecular Structure",
+          "topics": [
+            "Kossel-Lewis Approach to Chemical Bonding",
+            "Ionic or Electrovalent Bond",
+            "Bond Parameters",
+            "The Valence Shell Electron Pair Repulsion (VSEPR) Theory",
+            "Valence Bond Theory",
+            "Hybridisation",
+            "Molecular Orbital Theory",
+            "Bonding in Some Homonuclear Diatomic Molecules",
+            "Hydrogen Bonding"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chemical Bonding and Molecular Structure",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u5",
+          "unit_name": "Chemical Thermodynamics",
+          "topics": [
+            "Thermodynamic Terms",
+            "Applications",
+            "Measurement of ∆U and ∆H: Calorimetry",
+            "Enthalpy Change",
+            "∆H of a Reaction – Reaction Enthalpy",
+            "Enthalpies for Different Types of Reactions",
+            "Spontaneity",
+            "Gibbs Energy Change and Equilibrium"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chemical Thermodynamics",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u6",
+          "unit_name": "Equilibrium",
+          "topics": [
+            "Equilibrium in Physical Processes",
+            "Equilibrium in Chemical Processes – Dynamic Equilibrium",
+            "Law of Chemical Equilibrium and Equilibrium Constant",
+            "Homogeneous Equilibria",
+            "Heterogeneous Equilibria",
+            "Applications of Equilibrium Constants",
+            "Relationship between Equilibrium Constant K, Reaction Quotient Q and Gibbs Energy G",
+            "Factors Affecting Equilibria",
+            "Ionic Equilibrium in Solution",
+            "Acids, Bases and Salts",
+            "Ionization of Acids and Bases",
+            "Buffer Solutions",
+            "Solubility Equilibria of Sparingly Soluble Salts"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Equilibrium",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u7",
+          "unit_name": "Redox Reactions",
+          "topics": [
+            "Classical Idea of Redox Reactions – Oxidation and Reduction Reactions",
+            "Redox Reactions in Terms of Electron Transfer Reactions",
+            "Oxidation Number",
+            "Redox Reactions and Electrode Processes"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Redox Reactions",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u8",
+          "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+          "topics": [
+            "General Introduction",
+            "Tetravalence of Carbon: Shapes of Organic Compounds",
+            "Structural Representations of Organic Compounds",
+            "Classification of Organic Compounds",
+            "Nomenclature of Organic Compounds",
+            "Isomerism",
+            "Fundamental Concepts in Organic Reaction Mechanism",
+            "Methods of Purification of Organic Compounds",
+            "Qualitative Analysis of Organic Compounds",
+            "Quantitative Analysis"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Some basic Principles and Techniques",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u9",
+          "unit_name": "Hydrocarbons",
+          "topics": [
+            "Classification",
+            "Alkanes",
+            "Alkenes",
+            "Alkynes",
+            "Aromatic Hydrocarbon",
+            "Carcinogenic and Toxicity"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Hydrocarbons",
+              "topics": [
+                "Classification"
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Alkanes"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Chemistry",
+      "units": [
+        {
+          "unit_id": "class-12-chemistry-u1",
+          "unit_name": "Unit 1: Solutions",
+          "topics": [
+            "Types of Solutions",
+            "Expression of Concentration of Solutions",
+            "Solubility",
+            "Vapour Pressure of Liquid Solutions",
+            "Ideal and Non –Ideal Solutions",
+            "Colligative Properties and Determination of Molar Mass",
+            "Abnormal Molecular Masses"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Solutions",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u1",
+          "unit_name": "Qualitative Analysis",
+          "topics": [
+            "Determination of one anion and one cation in a given salt"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Qualitative Analysis",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u2",
+          "unit_name": "Unit 2: Electrochemistry",
+          "topics": [
+            "Electrochemical Cells",
+            "Galvanic Cells",
+            "Nernst Equation",
+            "Conductance of Electrolytic solutions",
+            "Electrolytic Cells and Electrolysis",
+            "Batteries",
+            "Fuel Cells",
+            "Corrosion"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Electrochemistry",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u3",
+          "unit_name": "Unit 3: Chemical Kinetics",
+          "topics": [
+            "Rate of a Chemical reaction",
+            "factors influencing rate of reaction",
+            "integrated rate equations",
+            "Temperature Dependence of the rate of a reaction",
+            "Collision theory of Chemical Reactions"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chemical Kinetics",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u4",
+          "unit_name": "Unit 4: d and f Block Elements",
+          "topics": [
+            "Position in the Periodic Table",
+            "Electronic configuration of the d-Block Elements",
+            "General properties of the Transition Elements (d-Block)",
+            "Some Important Compounds of Transition Elements",
+            "The Lanthanoids",
+            "The Actinoids",
+            "Some Applications of d- and f- Block Elements"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "d and f Block Elements",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u5",
+          "unit_name": "Unit 5: Coordination Compounds",
+          "topics": [
+            "Werner's Theory of Coordination Compound",
+            "Definition of Some important terms pertaining to Coordination Compounds",
+            "Nomenclature of Coordination Compounds.",
+            "Isomerism in Coordination Compounds",
+            "Bonding in coordination compounds",
+            "Bonding in Metal Carbonyls",
+            "Importance and Applications of Coordination Compounds"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Coordination Compounds",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u6",
+          "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+          "topics": [
+            "Classification",
+            "Nomenclature",
+            "Nature of C–X bond",
+            "Methods of Preparation of Haloalkanes",
+            "Preparation of Haloarenes",
+            "Physical Properties",
+            "Chemical Reactions",
+            "Polyhalogen Compounds"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Haloalkanes and Haloarenes",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u7",
+          "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+          "topics": [
+            "Classification",
+            "Nomenclature",
+            "Structures of Functional Groups",
+            "Alcohols and Phenols",
+            "Some commercially Important Alcohols",
+            "Ethers"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Alcohols, Phenols and Ethers",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u8",
+          "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+          "topics": [
+            "Nomenclature and Structure of Carbonyl Group",
+            "Preparation of Aldehydes and Ketones",
+            "Physical Properties and Chemical Reactions",
+            "Uses of Aldehydes and Ketones",
+            "Nomenclature Structure of Carboxyl Group",
+            "Methods of Preparation of Carboxylic Acids",
+            "Uses of Carboxylic Acids"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u9",
+          "unit_name": "Unit 9: Amines",
+          "topics": [
+            "Structure of Amines",
+            "Classification",
+            "Nomenclature",
+            "Preparation of Amines",
+            "Physical Properties",
+            "Chemical Reactions",
+            "Methods of Preparation of Diazonium Salts",
+            "Physical Propeties",
+            "Chemical Reactions Importance of Diazonium Salts in Synthesis of Aromatic Compounds"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Amines",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u10",
+          "unit_name": "Unit 10: Biomolecules",
+          "topics": [
+            "Carbohydrates.",
+            "Proteins",
+            "Enzymes",
+            "Vitamins Nucleic Acids",
+            "Hormones"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Biomolecules",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u11",
+          "unit_name": "Surface Chemistry",
+          "topics": [
+            "Adsorption - physisorption and chemisorption",
+            "factors affecting adsorption of gases on solids",
+            "colloidal state distinction between true solutions, colloids and suspension; lyophilic, lyophobic properties of colloids; coagulation, emulsion - types of emulsions"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Surface Chemistry",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-chemistry-u12",
+          "unit_name": "General Principles and Processes of Isolation",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "General Principles and Processes of Isolation",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "C11-U1",
+      "title": "Some Basic Concepts of Chemistry",
+      "description": "Foundational understanding of matter, measurement, and stoichiometry.",
+      "competencies": [
+        "Explain the importance of chemistry in various disciplines.",
+        "Distinguish between different types of matter and their properties.",
+        "Apply principles of uncertainty and significant figures in measurements.",
+        "Utilize laws of chemical combination to predict reaction outcomes.",
+        "Calculate atomic and molecular masses using Dalton's theory.",
+        "Perform mole concept calculations and determine molar masses.",
+        "Compute percentage composition from chemical formulas.",
+        "Execute stoichiometric calculations for reactants and products."
+      ],
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "chapter_name": "Some Basic Concepts of Chemistry"
+    },
+    {
+      "code": "C11-U2-PartA",
+      "title": "Structure of Atom",
+      "description": "Understanding the evolution and models of atomic structure.",
+      "competencies": [
+        "Trace the discovery history of sub-atomic particles.",
+        "Compare historical atomic models with modern quantum mechanical concepts.",
+        "Analyze developments leading to Bohr's model for hydrogen.",
+        "Apply Bohr's theory to explain spectral lines of hydrogen.",
+        "Describe the transition from classical mechanics to quantum mechanical models."
+      ],
+      "unit_name": "Structure of Atom",
+      "chapter_name": "Structure of Atom"
+    },
+    {
+      "code": "C12-U1-PartA",
+      "title": "Qualitative Analysis (Class XII)",
+      "description": "Identification techniques for ions in salts.",
+      "competencies": [
+        "Identify one anion and one cation from a given salt sample using standard tests."
+      ],
+      "unit_name": "Qualitative Analysis",
+      "chapter_name": "Qualitative Analysis"
+    },
+    {
+      "code": "C12-U2-PartA",
+      "title": "Electrochemistry (Class XII)",
+      "description": "Principles of electrochemical cells and energy conversion.",
+      "competencies": [
+        "Differentiate between galvanic and electrolytic cells.",
+        "Apply the Nernst equation to calculate cell potentials under non-standard conditions.",
+        "Analyze conductance properties in electrolytic solutions.",
+        "Explain mechanisms of batteries, fuel cells, and corrosion processes."
+      ],
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapter_name": "Electrochemistry"
+    },
+    {
+      "code": "C12-U3-PartA",
+      "title": "Chemical Kinetics (Class XII)",
+      "description": "Study of reaction rates and influencing factors.",
+      "competencies": [
+        "Define rate of a chemical reaction and determine it experimentally.",
+        "Analyze factors influencing the rate of reactions including concentration, temperature, and catalysts.",
+        "Derive and apply integrated rate equations for zero and first-order reactions.",
+        "Explain collision theory in the context of molecular interactions."
+      ],
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapter_name": "Chemical Kinetics"
+    },
+    {
+      "code": "C12-U4-PartA",
+      "title": "d and f Block Elements (Class XII)",
+      "description": "Properties and applications of transition and inner-transition elements.",
+      "competencies": [
+        "Correlate electronic configuration with position in the periodic table for d-block elements.",
+        "Describe general properties including oxidation states, magnetic behavior, and catalytic activity.",
+        "Explain characteristics of lanthanoids and actinoids.",
+        "Identify applications of transition metals in industrial processes."
+      ],
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapter_name": "d and f Block Elements"
+    },
+    {
+      "code": "C12-U5-PartA",
+      "title": "Coordination Compounds (Class XII)",
+      "description": "Structure, bonding, and isomerism in coordination chemistry.",
+      "competencies": [
+        "Apply Werner's theory to explain the structure of coordination compounds.",
+        "Use IUPAC nomenclature rules for naming complex ions.",
+        "Identify different types of isomerism (structural and stereoisomerism) in complexes.",
+        "Compare bonding theories including Valence Bond Theory, Crystal Field Theory, and Metal Carbonyl bonding."
+      ],
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapter_name": "Coordination Compounds"
+    },
+    {
+      "code": "C12-U6-PartA",
+      "title": "Haloalkanes and Haloarenes (Class XII)",
+      "description": "Properties, preparation, and reactions of halogenated hydrocarbons.",
+      "competencies": [
+        "Distinguish between haloalkanes and haloarenes based on structure and bonding.",
+        "Apply IUPAC nomenclature rules for polyhalogen compounds.",
+        "Predict products of substitution and elimination reactions in haloalkanes.",
+        "Analyze the nature of C-X bonds and their reactivity."
+      ],
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "chapter_name": "Haloalkanes and Haloarenes"
+    },
+    {
+      "code": "C12-U7-PartA",
+      "title": "Alcohols, Phenols and Ethers (Class XII)",
+      "description": "Classification and properties of oxygen-containing organic compounds.",
+      "competencies": [
+        "Differentiate between alcohols, phenols, and ethers based on functional groups.",
+        "Apply nomenclature rules for commercially important alcohols.",
+        "Analyze physical properties including boiling points and solubility trends."
+      ],
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "chapter_name": "Alcohols, Phenols and Ethers"
+    },
+    {
+      "code": "C12-U8-PartA",
+      "title": "Aldehydes, Ketones and Carboxylic Acids (Class XII)",
+      "description": "Reactivity and synthesis of carbonyl compounds.",
+      "competencies": [
+        "Identify functional groups in aldehydes, ketones, and carboxylic acids.",
+        "Predict preparation methods for these compounds from precursors.",
+        "Analyze physical properties and chemical reactions including nucleophilic addition."
+      ],
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "chapter_name": "Aldehydes, Ketones and Carboxylic Acids"
+    },
+    {
+      "code": "C12-U9-PartA",
+      "title": "Amines (Class XII)",
+      "description": "Structure, properties, and synthesis of nitrogen-containing compounds.",
+      "competencies": [
+        "Distinguish primary, secondary, and tertiary amines based on structure.",
+        "Apply nomenclature rules for substituted amines.",
+        "Predict preparation methods including reduction of nitro compounds and Hofmann bromamide reaction."
+      ],
+      "unit_name": "Unit 9: Amines",
+      "chapter_name": "Amines"
+    },
+    {
+      "code": "C12-U10-PartA",
+      "title": "Biomolecules (Class XII)",
+      "description": "Chemistry of carbohydrates, proteins, and nucleic acids.",
+      "competencies": [
+        "Classify biomolecules into carbohydrates, proteins, vitamins, hormones, and enzymes."
+      ],
+      "unit_name": "Unit 10: Biomolecules",
+      "chapter_name": "Biomolecules"
+    },
+    {
+      "code": "C12-U11-PartA",
+      "title": "Surface Chemistry (Class XII)",
+      "description": "Phenomena at interfaces and colloidal systems.",
+      "competencies": [
+        "Differentiate between physisorption and chemisorption mechanisms."
+      ],
+      "unit_name": "Surface Chemistry",
+      "chapter_name": "Surface Chemistry"
+    },
+    {
+      "code": "C12-U12-PartA",
+      "title": "General Principles of Isolation (Class XII)",
+      "description": "Methods for extraction and purification of elements.",
+      "competencies": [
+        "Explain principles of concentration, oxidation, reduction, electrolytic refining."
+      ],
+      "unit_name": "General Principles and Processes of Isolation",
+      "chapter_name": "General Principles and Processes of Isolation"
+    },
+    {
+      "code": "C12-U7-PartB",
+      "title": "Organic Chemistry: Basic Principles (Class XI)",
+      "description": "Fundamentals of organic structure, nomenclature, and mechanisms.",
+      "competencies": [
+        "Represent structures using various notations including bond-line formulas."
+      ],
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapter_name": "Some basic Principles and Techniques"
+    },
+    {
+      "code": "C12-U8-PartB",
+      "title": "Hydrocarbons (Class XI)",
+      "description": "Classification and properties of aliphatic and aromatic hydrocarbons.",
+      "competencies": [
+        "Distinguish between alkanes, alkenes, alkynes, and aromatics."
+      ],
+      "unit_name": "Hydrocarbons",
+      "chapter_name": "Hydrocarbons"
+    },
+    {
+      "code": "C12-U9-PartB",
+      "title": "Chemical Bonding (Class XI)",
+      "description": "Theories of chemical bonding and molecular geometry.",
+      "competencies": [
+        "Apply Kossel-Lewis approach to predict bond formation."
+      ],
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "chapter_name": "Chemical Bonding and Molecular Structure"
+    },
+    {
+      "code": "C12-U5-PartB",
+      "title": "Thermodynamics (Class XI)",
+      "description": "Energy changes in chemical processes.",
+      "competencies": [
+        "Define thermodynamic terms including enthalpy, entropy, and Gibbs energy."
+      ],
+      "unit_name": "Chemical Thermodynamics",
+      "chapter_name": "Chemical Thermodynamics"
+    },
+    {
+      "code": "C12-U6-PartB",
+      "title": "Equilibrium (Class XI)",
+      "description": "Dynamic equilibrium in physical and chemical processes.",
+      "competencies": [
+        "Apply the law of mass action to calculate equilibrium constants."
+      ],
+      "unit_name": "Equilibrium",
+      "chapter_name": "Equilibrium"
+    },
+    {
+      "code": "C12-U7-PartB",
+      "title": "Redox Reactions (Class XI)",
+      "description": "Oxidation-reduction processes and electrode potentials.",
+      "competencies": [
+        "Identify oxidation numbers in complex molecules."
+      ],
+      "unit_name": "Redox Reactions",
+      "chapter_name": "Redox Reactions"
+    },
+    {
+      "code": "C12-U3-PartB",
+      "title": "Classification of Elements (Class XI)",
+      "description": "Periodic trends and electronic configurations.",
+      "competencies": [
+        "Explain the genesis of periodic classification."
+      ],
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "chapter_name": "Classification of Elements and Periodicity in Properties"
+    },
+    {
+      "code": "C12-U4-PartB",
+      "title": "Quantitative Estimation (Class XI)",
+      "description": "Volumetric analysis techniques.",
+      "competencies": [
+        "Prepare standard solutions of oxalic acid and sodium carbonate."
+      ],
+      "unit_name": "E. Quantitative Estimation",
+      "chapter_name": "E. Quantitative Estimation"
+    },
+    {
+      "code": "C12-U5-PartB",
+      "title": "Qualitative Analysis (Class XI)",
+      "description": "Detection of elements in organic compounds.",
+      "competencies": [
+        "Detect nitrogen, sulphur, and chlorine in organic samples."
+      ],
+      "unit_name": "F. Qualitative Analysis",
+      "chapter_name": "F. Qualitative Analysis"
+    },
+    {
+      "code": "C12-U6-PartB",
+      "title": "Project Work (Class XI)",
+      "description": "Scientific investigation and data analysis.",
+      "competencies": [
+        "Design and execute a scientific project involving laboratory testing."
+      ],
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS"
+    },
+    {
+      "code": "C12-U7-PartB",
+      "title": "Practical Skills (Class XI)",
+      "description": "Laboratory techniques and safety.",
+      "competencies": [
+        "Demonstrate basic laboratory skills including cutting, bending glass tubes."
+      ],
+      "unit_name": "A. Basic Laboratory Techniques",
+      "chapter_name": "Basic Laboratory Techniques"
+    },
+    {
+      "code": "C12-U8-PartB",
+      "title": "Characterization (Class XI)",
+      "description": "Purification and melting/boiling point determination.",
+      "competencies": [
+        "Determine physical constants like melting and boiling points."
+      ],
+      "unit_name": "B. Characterization and Purification",
+      "chapter_name": "Characterization and Purification"
+    },
+    {
+      "code": "C12-U9-PartB",
+      "title": "pH Experiments (Class XI)",
+      "description": "Acid-base properties and indicators.",
+      "competencies": [
+        "Determine pH of various solutions using universal indicator."
+      ],
+      "unit_name": "C. Experiments based on pH",
+      "chapter_name": "Experiments based on pH"
+    },
+    {
+      "code": "C12-U10-PartB",
+      "title": "Equilibrium Shifts (Class XI)",
+      "description": "Le Chatelier's principle application.",
+      "competencies": [
+        "Observe shifts in equilibrium due to concentration changes."
+      ],
+      "unit_name": "D. Chemical Equilibrium",
+      "chapter_name": "Chemical Equilibrium"
+    },
+    {
+      "code": "C12-U1-PartB",
+      "title": "Solutions (Class XII)",
+      "description": "Properties and concentration expressions.",
+      "competencies": [
+        "Calculate concentrations using various units."
+      ],
+      "unit_name": "Unit 1: Solutions",
+      "chapter_name": "Solutions"
+    },
+    {
+      "code": "C12-U4-PartB",
+      "title": "Surface Chemistry (Class XII)",
+      "description": "Colloidal systems and adsorption.",
+      "competencies": [
+        "Prepare lyophilic and lyophobic sols."
+      ],
+      "unit_name": "A. Surface Chemistry",
+      "chapter_name": "Surface Chemistry"
+    },
+    {
+      "code": "C12-U5-PartB",
+      "title": "Chromatography (Class XII)",
+      "description": "Separation techniques.",
+      "competencies": [
+        "Perform paper chromatography to separate pigments."
+      ],
+      "unit_name": "E. Chromatography",
+      "chapter_name": "Chromatography"
+    },
+    {
+      "code": "C12-U6-PartB",
+      "title": "Organic Synthesis (Class XII)",
+      "description": "Preparation of organic compounds.",
+      "competencies": [
+        "Synthesize acetanilide or other specified derivatives."
+      ],
+      "unit_name": "G. Preparation of Organic Compounds",
+      "chapter_name": "Organic Synthesis"
+    },
+    {
+      "code": "C12-U7-PartB",
+      "title": "Functional Group Tests (Class XII)",
+      "description": "Identification of organic functional groups.",
+      "competencies": [
+        "Perform characteristic tests for unsaturation, alcohols, phenols, etc."
+      ],
+      "unit_name": "H. Tests for Functional Groups",
+      "chapter_name": "Functional Group Analysis"
+    },
+    {
+      "code": "C12-U8-PartB",
+      "title": "Food Chemistry (Class XII)",
+      "description": "Analysis of food components.",
+      "competencies": [
+        "Detect carbohydrates, fats, and proteins in food samples."
+      ],
+      "unit_name": "I. Characteristic Tests of Foodstuffs",
+      "chapter_name": "Food Chemistry"
+    },
+    {
+      "code": "C12-U9-PartB",
+      "title": "Redox Titration (Class XII)",
+      "description": "Determination of KMnO4 concentration.",
+      "competencies": [
+        "Standardize KMnO4 solution using oxalic acid or Mohr's salt."
+      ],
+      "unit_name": "J. Determination of Concentration",
+      "chapter_name": "Redox Titration"
+    },
+    {
+      "code": "C12-U10-PartB",
+      "title": "Qualitative Analysis (Class XII)",
+      "description": "Advanced ion detection.",
+      "competencies": [
+        "Identify cations and anions in complex mixtures."
+      ],
+      "unit_name": "K. Qualitative analysis",
+      "chapter_name": "Qualitative Analysis"
+    },
+    {
+      "code": "C12-U11-PartB",
+      "title": "Project Work (Class XII)",
+      "description": "Investigatory projects.",
+      "competencies": [
+        "Conduct a scientific investigation on food adulteration or fermentation."
+      ],
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS"
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      {
+        "class": "Class XI",
+        "theory_total_marks": 70,
+        "practical_total_marks": 30,
+        "unit_breakdown_theory": [
+          {
+            "unit": "Some Basic Concepts of Chemistry",
+            "marks": 7
+          },
+          {
+            "unit": "Structure of Atom",
+            "marks": 9
+          },
+          {
+            "unit": "Classification of Elements and Periodicity in Properties",
+            "marks": 6
+          },
+          {
+            "unit": "Chemical Bonding and Molecular Structure",
+            "marks": 7
+          },
+          {
+            "unit": "Chemical Thermodynamics",
+            "marks": 9
+          },
+          {
+            "unit": "Equilibrium",
+            "marks": 7
+          },
+          {
+            "unit": "Redox Reactions",
+            "marks": 4
+          },
+          {
+            "unit": "Organic Chemistry: Some basic Principles and Techniques",
+            "marks": 11
+          },
+          {
+            "unit": "Hydrocarbons",
+            "marks": 10
+          }
+        ],
+        "practical_breakdown_theory_marks": [
+          {
+            "component": "Volumetric Analysis",
+            "marks": 8
+          },
+          {
+            "component": "Salt Analysis",
+            "marks": 8
+          },
+          {
+            "component": "Content Based Experiment",
+            "marks": 6
+          },
+          {
+            "component": "Project Work",
+            "marks": 4
+          },
+          {
+            "component": "Class record and viva",
+            "marks": 4
+          }
+        ]
+      },
+      {
+        "class": "Class XII",
+        "theory_total_marks": 70,
+        "practical_total_marks": 30,
+        "unit_breakdown_theory": [
+          {
+            "unit": "Solutions",
+            "marks": 7
+          },
+          {
+            "unit": "Electrochemistry",
+            "marks": 9
+          },
+          {
+            "unit": "Chemical Kinetics",
+            "marks": 7
+          },
+          {
+            "unit": "d and f Block Elements",
+            "marks": 7
+          },
+          {
+            "unit": "Coordination Compounds",
+            "marks": 7
+          },
+          {
+            "unit": "Haloalkanes and Haloarenes",
+            "marks": 6
+          },
+          {
+            "unit": "Alcohols, Phenols and Ethers",
+            "marks": 6
+          },
+          {
+            "unit": "Aldehydes, Ketones and Carboxylic Acids",
+            "marks": 8
+          },
+          {
+            "unit": "Amines",
+            "marks": 6
+          },
+          {
+            "unit": "Biomolecules",
+            "marks": 7
+          }
+        ],
+        "practical_breakdown_theory_marks": [
+          {
+            "component": "Volumetric Analysis",
+            "marks": 8
+          },
+          {
+            "component": "Salt Analysis",
+            "marks": 8
+          },
+          {
+            "component": "Content Based Experiment",
+            "marks": 6
+          },
+          {
+            "component": "Project Work",
+            "marks": 4
+          },
+          {
+            "component": "Class record and viva",
+            "marks": 4
+          }
+        ]
+      }
+    ],
+    "question_paper_design": [
+      {
+        "class": "XI & XII",
+        "time_duration_theory": "3 Hours",
+        "domains": [
+          {
+            "domain": "Remembering and Understanding",
+            "marks": 28,
+            "percentage": 40
+          },
+          {
+            "domain": "Applying",
+            "marks": 21,
+            "percentage": 30
+          },
+          {
+            "domain": "Analysing, Evaluating and Creating",
+            "marks": 21,
+            "percentage": 30
+          }
+        ],
+        "rules": [
+          "No chapter wise weightage is provided; care to be taken to cover all chapters.",
+          "Suitable internal variations may be made for generating various templates.",
+          "There will be no overall choice in the question paper.",
+          "33% internal choices will be given in all the sections."
+        ]
+      }
+    ],
+    "competency_weightage": [
+      {
+        "class": "Class XI",
+        "formative_only_topics": [
+          "s & p Block Elements (Electronic configuration, atomic & Ionic radii, Ionization Enthalpy, Hydration Enthalpy and general trends)",
+          "The Gaseous State"
+        ],
+        "note": "Topics included in syllabus but assessed only formatively to reinforce understanding without adding to summative assessments."
+      },
+      {
+        "class": "Class XII",
+        "formative_only_topics": [
+          "Surface Chemistry (Adsorption, colloidal state)",
+          "General Principles and Processes of Isolation of Elements",
+          "Polymers",
+          "Chemistry in Everyday life"
+        ],
+        "note": "Topics included in syllabus but assessed only formatively to reinforce understanding without adding to summative assessments."
+      }
+    ],
+    "bloom_levels": [
+      {
+        "level_1": "Remembering and Understanding",
+        "description": "Exhibit memory of previously learned material by recalling facts, terms, basic concepts and answers. Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions and stating main ideas.",
+        "weightage_marks_xi_xii": 28,
+        "weightage_percentage": 40
+      },
+      {
+        "level_2": "Applying",
+        "description": "Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way.",
+        "weightage_marks_xi_xii": 21,
+        "weightage_percentage": 30
+      },
+      {
+        "level_3": "Analysing, Evaluating and Creating",
+        "description": "Examine and break information into parts by identifying motives or causes. Make inferences and find evidence to support generalizations. Present and defend opinions by making judgments about information, validity of ideas or quality of work based on a set of criteria. Compile information together in a different way by combining elements in a new pattern or proposing alternative solutions.",
+        "weightage_marks_xi_xii": 21,
+        "weightage_percentage": 30
+      }
+    ],
+    "internal_assessment": [
+      {
+        "class": "Class XI & XII",
+        "visually_challenged_students_scheme": {
+          "total_marks": 30,
+          "components": [
+            {
+              "component": "Identification/Familiarity with the apparatus",
+              "marks": 5
+            },
+            {
+              "component": "Written test (based on given/prescribed practical's)",
+              "marks": 10
+            },
+            {
+              "component": "Practical Record",
+              "marks": 5
+            },
+            {
+              "component": "Viva",
+              "marks": 10
+            }
+          ]
+        },
+        "written_test_details": {
+          "duration_minutes": 30,
+          "question_count_total": 15,
+          "questions_to_answer": 10,
+          "type": "Practical skill based very short answer type questions"
+        }
+      }
+    ],
+    "practical_assessment": [
+      {
+        "class": "Class XI",
+        "evaluation_scheme_marks": 30,
+        "components": [
+          {
+            "component": "Volumetric Analysis",
+            "marks": 8
+          },
+          {
+            "component": "Salt Analysis",
+            "marks": 8
+          },
+          {
+            "component": "Content Based Experiment",
+            "marks": 6
+          },
+          {
+            "component": "Project Work",
+            "marks": 4
+          },
+          {
+            "component": "Class record and viva",
+            "marks": 4
+          }
+        ],
+        "syllabus_categories": [
+          {
+            "category": "Basic Laboratory Techniques",
+            "experiments": [
+              "Cutting glass tube and glass rod",
+              "Bending a glass tube",
+              "Drawing out a glass jet",
+              "Boring a cork"
+            ]
+          },
+          {
+            "category": "Characterization and Purification of Chemical Substances",
+            "experiments": [
+              {
+                "experiment": "Determination of melting point of an organic compound"
+              },
+              {
+                "experiment": "Determination of boiling point of an organic compound"
+              },
+              {
+                "experiment": "Crystallization (Alum, Copper Sulphate, Benzoic Acid)"
+              }
+            ]
+          },
+          {
+            "category": "Experiments based on pH",
+            "experiments": [
+              "Determination of pH of solutions from fruit juices/known concentrations using pH paper/universal indicator",
+              "Comparing the pH of strong and weak acids of same concentration",
+              "Study pH change in titration of a strong base using universal indicator",
+              "Study pH change by common-ion effect"
+            ]
+          },
+          {
+            "category": "Chemical Equilibrium",
+            "experiments": [
+              "Shift in equilibrium between ferric ions and thiocyanate ions",
+              "Shift in equilibrium between [Co(H2O)6]2+ and chloride ions"
+            ]
+          },
+          {
+            "category": "Quantitative Estimation",
+            "experiments": [
+              "Using a mechanical/electronic balance",
+              "Preparation of standard solution of Oxalic acid",
+              "Determination of strength of NaOH by titration against standard Oxalic acid",
+              "Preparation of standard solution of Sodium carbonate",
+              "Determination of strength of HCl by titration against standard Sodium Carbonate"
+            ]
+          },
+          {
+            "category": "Qualitative Analysis",
+            "experiments": [
+              "Determination of one anion and one cation in a given salt (Cations: Pb, Cu, Al, Fe, Mn, Ni, Zn, Co, Ca, Sr, Ba, Mg, NH4+; Anions: CO3, S, SO3, NO3, NO2, Cl, Br, I, SO4, PO4, CH3COO)",
+              "Detection of Nitrogen, Sulphur, Chlorine in organic compounds"
+            ]
+          }
+        ],
+        "visually_challenged_list": [
+          {
+            "category": "Characterization and Purification",
+            "experiments": [
+              "Crystallization (copper sulphate, benzoic acid)"
+            ]
+          },
+          {
+            "category": "Experiments based on pH",
+            "experiments": [
+              "Determination of pH using pH paper",
+              "Comparing pH of strong/weak acids"
+            ]
+          },
+          {
+            "category": "Chemical Equilibrium",
+            "experiments": [
+              "Shift in equilibrium (ferric/thiocyanate)",
+              "Shift in equilibrium (Co complex)"
+            ]
+          },
+          {
+            "category": "Quantitative estimation",
+            "experiments": [
+              "Preparation of standard oxalic acid",
+              "Determination of molarity of NaOH by titration against oxalic acid"
+            ]
+          },
+          {
+            "category": "Qualitative Analysis",
+            "experiments": [
+              "One anion and one cation (NH4+, CO3, S, SO3, Cl, CH3COO)",
+              "Detection of Nitrogen in organic compound",
+              "Detection of Halogen in organic compound"
+            ]
+          }
+        ]
+      },
+      {
+        "class": "Class XII",
+        "evaluation_scheme_marks": 30,
+        "components": [
+          {
+            "component": "Volumetric Analysis",
+            "marks": 8
+          },
+          {
+            "component": "Salt Analysis",
+            "marks": 8
+          },
+          {
+            "component": "Content Based Experiment",
+            "marks": 6
+          },
+          {
+            "component": "Project Work",
+            "marks": 4
+          },
+          {
+            "component": "Class record and viva",
+            "marks": 4
+          }
+        ],
+        "syllabus_categories": [
+          {
+            "category": "Surface Chemistry",
+            "experiments": [
+              "Preparation of lyophilic sol (starch, egg albumin, gum) and lyophobic sol (aluminum hydroxide, ferric hydroxide, arsenous sulphide)",
+              "Dialysis of sols prepared above",
+              "Study role of emulsifying agents in stabilizing emulsion"
+            ]
+          },
+          {
+            "category": "Chemical Kinetics",
+            "experiments": [
+              "Effect of concentration and temperature on rate between Sodium Thiosulphate and Hydrochloric acid",
+              "Study reaction rates (Iodide ion + H2O2 OR KIO3 + Na2SO3 with starch indicator)"
+            ]
+          },
+          {
+            "category": "Thermochemistry",
+            "experiments": [
+              "Enthalpy of dissolution (Copper Sulphate or Potassium Nitrate)",
+              "Enthalpy of neutralization (HCl and NaOH)",
+              "Determination of enthalpy change during interaction between Acetone and Chloroform"
+            ]
+          },
+          {
+            "category": "Electrochemistry",
+            "experiments": [
+              "Variation of cell potential in Zn/Zn || Cu/Cu with concentration changes (CuSO4 or ZnSO4)"
+            ]
+          },
+          {
+            "category": "Chromatography",
+            "experiments": [
+              "Separation of pigments from leaves/flowers and determination of Rf values",
+              "Separation of constituents in an inorganic mixture containing two cations"
+            ]
+          },
+          {
+            "category": "Preparation of Inorganic Compounds",
+            "experiments": [
+              "Double salt (Ferrous Ammonium Sulphate or Potash Alum)",
+              "Potassium Ferric Oxalate"
+            ]
+          },
+          {
+            "category": "Preparation of Organic Compounds",
+            "experiments": [
+              "Acetanilide",
+              "Di-benzal acetone",
+              "p-Nitroacetanilide",
+              "Aniline yellow or 2-Naphthol Aniline dye"
+            ]
+          },
+          {
+            "category": "Tests for Functional Groups",
+            "experiments": [
+              "Unsaturation, alcoholic, phenolic, aldehydic, ketonic, carboxylic and amino (Primary) groups"
+            ]
+          },
+          {
+            "category": "Characteristic Tests of Biomolecules",
+            "experiments": [
+              "Tests for carbohydrates, fats and proteins in pure samples and foodstuffs"
+            ]
+          },
+          {
+            "category": "Volumetric Analysis / Quantitative Estimation",
+            "experiments": [
+              "Determination of concentration/molarity of KMnO4 solution by titrating against standard Oxalic acid or Ferrous Ammonium Sulphate"
+            ]
+          },
+          {
+            "category": "Qualitative Analysis",
+            "experiments": [
+              "Determination of one anion and one cation in a given salt (Cations: Pb, Cu, Al, Fe, Mn, Ni, Zn, Co, Ca, Sr, Ba, Mg, NH4+; Anions: CO3, S, SO3, NO3, NO2, Cl, Br, I, SO4, PO4, CH3COO, C2O4)"
+            ]
+          }
+        ],
+        "visually_challenged_list": [
+          {
+            "category": "Surface Chemistry",
+            "experiments": [
+              "Preparation of lyophilic and lyophobic sols"
+            ]
+          },
+          {
+            "category": "Chromatography",
+            "experiments": [
+              "Separation of pigments from leaves/flowers (Rf values)"
+            ]
+          },
+          {
+            "category": "Tests for Functional Groups",
+            "experiments": [
+              "Alcoholic, Carboxylic groups; Aldehyde, Ketonic groups"
+            ]
+          },
+          {
+            "category": "Characteristic Tests",
+            "experiments": [
+              "Carbohydrates and proteins in foodstuffs"
+            ]
+          },
+          {
+            "category": "Preparation of Inorganic Compounds",
+            "experiments": [
+              "Potash Alum"
+            ]
+          },
+          {
+            "category": "Quantitative Analysis (Mandatory)",
+            "experiments": [
+              "(a) Preparation of standard solution of Oxalic acid; (b) Determination of molarity of KMnO4 against Oxalic acid",
+              "Repeat using Ferrous ammonium sulphate"
+            ]
+          },
+          {
+            "category": "Qualitative Analysis (Mandatory)",
+            "experiments": [
+              "Determination of one anion and one cation in a given salt (NH4+, CO3, S, SO3, Cl, CH3COO)"
+            ]
+          }
+        ]
+      }
+    ],
+    "project_assessment": [
+      {
+        "class": "Class XI",
+        "total_marks": 4,
+        "description": "Scientific investigations involving laboratory testing and collecting information from other sources.",
+        "suggested_projects": [
+          "Checking the bacterial contamination in drinking water by testing sulphide ion",
+          "Study of the methods of purification of water",
+          "Testing hardness/presence of Iron, Fluoride, Chloride etc. in drinking water and study causes",
+          "Investigation of foaming capacity of different washing soaps and effect of Sodium carbonate",
+          "Study acidity of different samples of tea leaves",
+          "Determination of rate of evaporation of different liquids",
+          "Effect of acids/bases on tensile strength of fibers",
+          "Acidity of fruit and vegetable juices"
+        ]
+      },
+      {
+        "class": "Class XII",
+        "total_marks": 4,
+        "description": "Scientific investigations involving laboratory testing and collecting information from other sources.",
+        "suggested_projects": [
+          "Study presence of oxalate ions in guava fruit at different stages of ripening",
+          "Quantity of casein present in different samples of milk",
+          "Preparation of soybean milk and comparison with natural milk (curd formation, temperature effect)",
+          "Effect of Potassium Bisulphate as food preservative under various conditions",
+          "Digestion of starch by salivary amylase and effect of pH/temperature",
+          "Comparative study of rate of fermentation (wheat flour, gram flour, potato juice, carrot juice)",
+          "Extraction of essential oils from Saunf, Ajwain, Illaichi",
+          "Study common food adulterants in fat, oil, butter, sugar, turmeric powder, chili powder and pepper"
+        ]
+      }
+    ]
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "chapter_name": "Some Basic Concepts of Chemistry",
+      "topic": "Foundational understanding of matter, measurement, and stoichiometry.",
+      "outcomes": [
+        "Explain the importance of chemistry in various disciplines.",
+        "Distinguish between different types of matter and their properties.",
+        "Apply principles of uncertainty and significant figures in measurements.",
+        "Utilize laws of chemical combination to predict reaction outcomes.",
+        "Calculate atomic and molecular masses using Dalton's theory.",
+        "Perform mole concept calculations and determine molar masses.",
+        "Compute percentage composition from chemical formulas.",
+        "Execute stoichiometric calculations for reactants and products."
+      ]
+    },
+    {
+      "unit_name": "Structure of Atom",
+      "chapter_name": "Structure of Atom",
+      "topic": "Understanding the evolution and models of atomic structure.",
+      "outcomes": [
+        "Trace the discovery history of sub-atomic particles.",
+        "Compare historical atomic models with modern quantum mechanical concepts.",
+        "Analyze developments leading to Bohr's model for hydrogen.",
+        "Apply Bohr's theory to explain spectral lines of hydrogen.",
+        "Describe the transition from classical mechanics to quantum mechanical models."
+      ]
+    },
+    {
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapter_name": "Some basic Principles and Techniques",
+      "topic": "Fundamentals of organic structure, nomenclature, and mechanisms.",
+      "outcomes": [
+        "Represent structures using various notations including bond-line formulas."
+      ]
+    },
+    {
+      "unit_name": "Hydrocarbons",
+      "chapter_name": "Hydrocarbons",
+      "topic": "Classification and properties of aliphatic and aromatic hydrocarbons.",
+      "outcomes": [
+        "Distinguish between alkanes, alkenes, alkynes, and aromatics."
+      ]
+    },
+    {
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "chapter_name": "Chemical Bonding and Molecular Structure",
+      "topic": "Theories of chemical bonding and molecular geometry.",
+      "outcomes": [
+        "Apply Kossel-Lewis approach to predict bond formation."
+      ]
+    },
+    {
+      "unit_name": "Chemical Thermodynamics",
+      "chapter_name": "Chemical Thermodynamics",
+      "topic": "Energy changes in chemical processes.",
+      "outcomes": [
+        "Define thermodynamic terms including enthalpy, entropy, and Gibbs energy."
+      ]
+    },
+    {
+      "unit_name": "Equilibrium",
+      "chapter_name": "Equilibrium",
+      "topic": "Dynamic equilibrium in physical and chemical processes.",
+      "outcomes": [
+        "Apply the law of mass action to calculate equilibrium constants."
+      ]
+    },
+    {
+      "unit_name": "Redox Reactions",
+      "chapter_name": "Redox Reactions",
+      "topic": "Oxidation-reduction processes and electrode potentials.",
+      "outcomes": [
+        "Identify oxidation numbers in complex molecules."
+      ]
+    },
+    {
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "chapter_name": "Classification of Elements and Periodicity in Properties",
+      "topic": "Periodic trends and electronic configurations.",
+      "outcomes": [
+        "Explain the genesis of periodic classification."
+      ]
+    },
+    {
+      "unit_name": "E. Quantitative Estimation",
+      "chapter_name": "E. Quantitative Estimation",
+      "topic": "Volumetric analysis techniques.",
+      "outcomes": [
+        "Prepare standard solutions of oxalic acid and sodium carbonate."
+      ]
+    },
+    {
+      "unit_name": "F. Qualitative Analysis",
+      "chapter_name": "F. Qualitative Analysis",
+      "topic": "Detection of elements in organic compounds.",
+      "outcomes": [
+        "Detect nitrogen, sulphur, and chlorine in organic samples."
+      ]
+    },
+    {
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "topic": "Scientific investigation and data analysis.",
+      "outcomes": [
+        "Design and execute a scientific project involving laboratory testing."
+      ]
+    },
+    {
+      "unit_name": "Unit 1: Solutions",
+      "chapter_name": "Solutions",
+      "topic": "Properties and concentration expressions",
+      "outcomes": [
+        "Calculate concentrations using various units."
+      ]
+    },
+    {
+      "unit_name": "Qualitative Analysis",
+      "chapter_name": "Qualitative Analysis",
+      "topic": "Identification techniques for ions in salts.",
+      "outcomes": [
+        "Identify one anion and one cation from a given salt sample using standard tests."
+      ]
+    },
+    {
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapter_name": "Electrochemistry",
+      "topic": "Principles of electrochemical cells and energy conversion.",
+      "outcomes": [
+        "Differentiate between galvanic and electrolytic cells.",
+        "Apply the Nernst equation to calculate cell potentials under non-standard conditions.",
+        "Analyze conductance properties in electrolytic solutions.",
+        "Explain mechanisms of batteries, fuel cells, and corrosion processes."
+      ]
+    },
+    {
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapter_name": "Chemical Kinetics",
+      "topic": "Study of reaction rates and influencing factors.",
+      "outcomes": [
+        "Define rate of a chemical reaction and determine it experimentally.",
+        "Analyze factors influencing the rate of reactions including concentration, temperature, and catalysts.",
+        "Derive and apply integrated rate equations for zero and first-order reactions.",
+        "Explain collision theory in the context of molecular interactions."
+      ]
+    },
+    {
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapter_name": "d and f Block Elements",
+      "topic": "Properties and applications of transition and inner-transition elements.",
+      "outcomes": [
+        "Correlate electronic configuration with position in the periodic table for d-block elements.",
+        "Describe general properties including oxidation states, magnetic behavior, and catalytic activity.",
+        "Explain characteristics of lanthanoids and actinoids.",
+        "Identify applications of transition metals in industrial processes."
+      ]
+    },
+    {
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapter_name": "Coordination Compounds",
+      "topic": "Structure, bonding, and isomerism in coordination chemistry.",
+      "outcomes": [
+        "Apply Werner's theory to explain the structure of coordination compounds.",
+        "Use IUPAC nomenclature rules for naming complex ions.",
+        "Identify different types of isomerism (structural and stereoisomerism) in complexes.",
+        "Compare bonding theories including Valence Bond Theory, Crystal Field Theory, and Metal Carbonyl bonding."
+      ]
+    },
+    {
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "chapter_name": "Haloalkanes and Haloarenes",
+      "topic": "Properties, preparation, and reactions of halogenated hydrocarbons.",
+      "outcomes": [
+        "Distinguish between haloalkanes and haloarenes based on structure and bonding.",
+        "Apply IUPAC nomenclature rules for polyhalogen compounds.",
+        "Predict products of substitution and elimination reactions in haloalkanes.",
+        "Analyze the nature of C-X bonds and their reactivity."
+      ]
+    },
+    {
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "chapter_name": "Alcohols, Phenols and Ethers",
+      "topic": "Classification and properties of oxygen-containing organic compounds.",
+      "outcomes": [
+        "Differentiate between alcohols, phenols, and ethers based on functional groups.",
+        "Apply nomenclature rules for commercially important alcohols.",
+        "Analyze physical properties including boiling points and solubility trends."
+      ]
+    },
+    {
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+      "topic": "Reactivity and synthesis of carbonyl compounds.",
+      "outcomes": [
+        "Identify functional groups in aldehydes, ketones, and carboxylic acids.",
+        "Predict preparation methods for these compounds from precursors.",
+        "Analyze physical properties and chemical reactions including nucleophilic addition."
+      ]
+    },
+    {
+      "unit_name": "Unit 9: Amines",
+      "chapter_name": "Amines",
+      "topic": "Structure, properties, and synthesis of nitrogen-containing compounds.",
+      "outcomes": [
+        "Distinguish primary, secondary, and tertiary amines based on structure.",
+        "Apply nomenclature rules for substituted amines.",
+        "Predict preparation methods including reduction of nitro compounds and Hofmann bromamide reaction."
+      ]
+    },
+    {
+      "unit_name": "Unit 10: Biomolecules",
+      "chapter_name": "Biomolecules",
+      "topic": "Chemistry of carbohydrates, proteins, and nucleic acids.",
+      "outcomes": [
+        "Classify biomolecules into carbohydrates, proteins, vitamins, hormones, and enzymes."
+      ]
+    },
+    {
+      "unit_name": "Surface Chemistry",
+      "chapter_name": "Surface Chemistry",
+      "topic": "Phenomena at interfaces and colloidal systems.",
+      "outcomes": [
+        "Differentiate between physisorption and chemisorption mechanisms."
+      ]
+    },
+    {
+      "unit_name": "General Principles and Processes of Isolation",
+      "chapter_name": "General Principles and Processes of Isolation",
+      "topic": "Methods for extraction and purification of elements.",
+      "outcomes": [
+        "Explain principles of concentration, oxidation, reduction, electrolytic refining."
+      ]
+    }
+  ]
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [],
+  "projects": [
+    {
+      "type": "project",
+      "title": "Checking the bacterial contamination in drinking water by testing sulphide ion.",
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "details": "Scientific investigation involving laboratory testing to check for bacterial contamination."
+    },
+    {
+      "type": "project",
+      "title": "Study of the methods of purification of water.",
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "details": "Scientific investigation involving laboratory testing and collecting information."
+    },
+    {
+      "type": "project",
+      "title": "Testing the hardness, presence of Iron, Fluoride, Chloride in drinking water.",
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "details": "Investigation depending on regional variation and study of causes for ions above permissible limit."
+    },
+    {
+      "type": "project",
+      "title": "Investigation of the foaming capacity of different washing soaps.",
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "details": "Study on effect of addition of Sodium carbonate."
+    },
+    {
+      "type": "project",
+      "title": "Study the acidity of different samples of tea leaves.",
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "details": "Scientific investigation involving laboratory testing."
+    },
+    {
+      "type": "project",
+      "title": "Determination of the rate of evaporation of different liquids.",
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "details": "Scientific investigation involving laboratory testing."
+    },
+    {
+      "type": "project",
+      "title": "Study the effect of acids and bases on the tensile strength of fibers.",
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "details": "Scientific investigation involving laboratory testing."
+    },
+    {
+      "type": "project",
+      "title": "Study of acidity of fruit and vegetable juices.",
+      "unit_name": "PROJECTS",
+      "chapter_name": "PROJECTS",
+      "details": "Scientific investigation involving laboratory testing."
+    }
+  ],
+  "practicals": [
+    {
+      "type": "practical",
+      "title": "Basic Laboratory Techniques: Cutting glass tube and rod, Bending a glass tube.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "A. Basic Laboratory Techniques",
+      "details": "Micro-chemical methods should be used wherever possible."
+    },
+    {
+      "type": "practical",
+      "title": "Basic Laboratory Techniques: Drawing out a glass jet, Boring a cork.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "A. Basic Laboratory Techniques",
+      "details": "Micro-chemical methods should be used wherever possible."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of melting point of an organic compound.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "B. Characterization and Purification of Chemical Substances",
+      "details": "Characterization experiment."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of boiling point of an organic compound.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "B. Characterization and Purification of Chemical Substances",
+      "details": "Characterization experiment."
+    },
+    {
+      "type": "practical",
+      "title": "Crystallization: Alum, Copper Sulphate, or Benzoic Acid.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "B. Characterization and Purification of Chemical Substances",
+      "details": "Crystallization of impure sample."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of pH using fruit juices, acids, bases, salts.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "C. Experiments based on pH",
+      "details": "Using pH paper or universal indicator."
+    },
+    {
+      "type": "practical",
+      "title": "Comparing the pH of solutions of strong and weak acids.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "C. Experiments based on pH",
+      "details": "Same concentration comparison."
+    },
+    {
+      "type": "practical",
+      "title": "Study the pH change in titration of a strong base.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "C. Experiments based on pH",
+      "details": "Using universal indicator."
+    },
+    {
+      "type": "practical",
+      "title": "Study the pH change by common-ion in weak acids and bases.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "C. Experiments based on pH",
+      "details": "Effect of common ion."
+    },
+    {
+      "type": "practical",
+      "title": "Study shift in equilibrium: Ferric ions and thiocyanate ions.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "D. Chemical Equilibrium",
+      "details": "By increasing/decreasing concentration of either ion."
+    },
+    {
+      "type": "practical",
+      "title": "Study shift in equilibrium: [Co(H2O)6] and chloride ions.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "D. Chemical Equilibrium",
+      "details": "By changing concentration of either ion."
+    },
+    {
+      "type": "practical",
+      "title": "Using a mechanical/electronic balance.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "E. Quantitative Estimation",
+      "details": "Basic quantitative skill."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation of standard solution of Oxalic acid.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "E. Quantitative Estimation",
+      "details": "Standardization."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of strength of Sodium hydroxide solution.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "E. Quantitative Estimation",
+      "details": "Titrating against standard Oxalic acid."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation of standard solution of Sodium carbonate.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "E. Quantitative Estimation",
+      "details": "Standardization."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of strength of hydrochloric acid solution.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "E. Quantitative Estimation",
+      "details": "Titrating against standard Sodium Carbonate."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of one anion and one cation in a given salt.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "F. Qualitative Analysis",
+      "details": "Cations: Pb, Cu, Al, Fe, Mn, Ni, Zn, Co, Ca, Sr, Ba, Mg, NH4+. Anions: CO3, S, SO3, NO3, NO2, Cl, Br, I, SO4, PO4, CH3COO."
+    },
+    {
+      "type": "practical",
+      "title": "Detection of Nitrogen, Sulphur, Chlorine in organic compounds.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XI)",
+      "chapter_name": "F. Qualitative Analysis",
+      "details": "Organic compound analysis."
+    },
+    {
+      "type": "practical",
+      "title": "Crystallization: Copper sulphate or Benzoic acid.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "A. Characterization and Purification of Chemical Substances",
+      "details": "For visually challenged students."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of pH using fruit juices, acids, bases.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "B. Experiments based on pH",
+      "details": "Using pH paper."
+    },
+    {
+      "type": "practical",
+      "title": "Comparing the pH of strong and weak acids.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "B. Experiments based on pH",
+      "details": "Same concentration."
+    },
+    {
+      "type": "practical",
+      "title": "Study shift in equilibrium: Ferric ions and thiocyanate.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "C. Chemical Equilibrium",
+      "details": "Concentration change."
+    },
+    {
+      "type": "practical",
+      "title": "Study shift in equilibrium: [Co(H2O)6] and chloride.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "C. Chemical Equilibrium",
+      "details": "Concentration change."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation of standard solution of oxalic acid.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "D. Quantitative estimation",
+      "details": "Standardization."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of molarity of Sodium hydroxide.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "D. Quantitative estimation",
+      "details": "Titrating against standard oxalic acid."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of one anion and cation in a given salt.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "E. Qualitative Analysis",
+      "details": "Cations: NH4+. Anions: CO3, S, SO3, Cl, CH3COO."
+    },
+    {
+      "type": "practical",
+      "title": "Detection of Nitrogen in organic compound.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "E. Qualitative Analysis",
+      "details": "Organic analysis."
+    },
+    {
+      "type": "practical",
+      "title": "Detection of Halogen in organic compound.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII - Visually Challenged)",
+      "chapter_name": "E. Qualitative Analysis",
+      "details": "Organic analysis."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation of lyophilic and lyophobic sol.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "A. Surface Chemistry",
+      "details": "Lyophilic: starch, egg albumin, gum. Lyophobic: aluminum hydroxide, ferric hydroxide."
+    },
+    {
+      "type": "practical",
+      "title": "Dialysis of sol.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "A. Surface Chemistry",
+      "details": "Prepared in previous step."
+    },
+    {
+      "type": "practical",
+      "title": "Study of role of emulsifying agents.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "A. Surface Chemistry",
+      "details": "Stabilizing emulsion of different oils."
+    },
+    {
+      "type": "practical",
+      "title": "Effect of concentration and temperature on reaction rate.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "B. Chemical Kinetics",
+      "details": "Sodium Thiosulphate and Hydrochloric acid."
+    },
+    {
+      "type": "practical",
+      "title": "Study of reaction rates: Iodide ion with Hydrogen Peroxide.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "B. Chemical Kinetics",
+      "details": "Room temperature, different concentrations."
+    },
+    {
+      "type": "practical",
+      "title": "Study of reaction rates: Potassium Iodate and Sodium Sulphate.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "B. Chemical Kinetics",
+      "details": "Clock reaction using starch solution."
+    },
+    {
+      "type": "practical",
+      "title": "Enthalpy of dissolution: Copper Sulphate or Potassium Nitrate.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "C. Thermochemistry",
+      "details": "Calorimetry experiment."
+    },
+    {
+      "type": "practical",
+      "title": "Enthalpy of neutralization: Strong acid and strong base.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "C. Thermochemistry",
+      "details": "HCl and NaOH."
+    },
+    {
+      "type": "practical",
+      "title": "Enthalpy change: Acetone and Chloroform interaction.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "C. Thermochemistry",
+      "details": "Hydrogen bond formation."
+    },
+    {
+      "type": "practical",
+      "title": "Variation of cell potential in Zn/Zn || Cu/Cu.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "D. Electrochemistry",
+      "details": "With change in concentration of electrolytes."
+    },
+    {
+      "type": "practical",
+      "title": "Separation of pigments by paper chromatography.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "E. Chromatography",
+      "details": "From leaves and flowers, determination of Rf values."
+    },
+    {
+      "type": "practical",
+      "title": "Separation of constituents in an inorganic mixture.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "E. Chromatography",
+      "details": "Two cations with large difference in Rf values."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation of double salt: Ferrous Ammonium Sulphate or Potash Alum.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "F. Preparation of Inorganic Compounds",
+      "details": "Inorganic synthesis."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation of Potassium Ferric Oxalate.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "F. Preparation of Inorganic Compounds",
+      "details": "Inorganic synthesis."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation: Acetanilide.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "G. Preparation of Organic Compounds",
+      "details": "Organic synthesis."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation: Di-benzal acetone.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "G. Preparation of Organic Compounds",
+      "details": "Organic synthesis."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation: p-Nitroacetanilide.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "G. Preparation of Organic Compounds",
+      "details": "Organic synthesis."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation: Aniline yellow or 2-Naphthol Aniline dye.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "G. Preparation of Organic Compounds",
+      "details": "Organic synthesis."
+    },
+    {
+      "type": "practical",
+      "title": "Tests for functional groups: Unsaturation, alcoholic, phenolic.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "H. Tests for the functional groups present in organic compounds",
+      "details": "Aldehydic, ketonic, carboxylic and amino (Primary) groups."
+    },
+    {
+      "type": "practical",
+      "title": "Characteristic tests of carbohydrates, fats and proteins.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "I. Characteristic tests of biomolecules",
+      "details": "In pure samples and detection in given foodstuffs."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of concentration/molarity of KMnO4 solution.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "J. Titration Experiments",
+      "details": "Titrating against standard Oxalic acid or Ferrous Ammonium Sulphate."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of one anion and cation in a given salt.",
+      "unit_name": "PRACTICAL SYLLABUS (Class XII)",
+      "chapter_name": "K. Qualitative analysis",
+      "details": "Cations: Pb, Cu, Al, Fe, Mn, Ni, Zn, Co, Ca, Sr, Ba, Mg, NH4+. Anions: CO3, S, SO3, NO3, NO2, Cl, Br, I, SO4, PO4, CH3COO, C2O4."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation of lyophilic and lyophobic sol.",
+      "unit_name": "PRACTICAL SYLLABUS (Visually Challenged - Class XII)",
+      "chapter_name": "A. Surface Chemistry",
+      "details": "Lyophilic: starch, egg albumin, gum. Lyophobic: Ferric hydroxide."
+    },
+    {
+      "type": "practical",
+      "title": "Separation of pigments by paper chromatography.",
+      "unit_name": "PRACTICAL SYLLABUS (Visually Challenged - Class XII)",
+      "chapter_name": "B. Chromatography",
+      "details": "Leaves and flowers, determination of Rf values."
+    },
+    {
+      "type": "practical",
+      "title": "Tests for functional groups: Alcoholic/Carboxylic.",
+      "unit_name": "PRACTICAL SYLLABUS (Visually Challenged - Class XII)",
+      "chapter_name": "C. Tests for the functional groups present in organic compounds",
+      "details": "Aldehyde and Ketonic groups."
+    },
+    {
+      "type": "practical",
+      "title": "Characteristic tests of carbohydrates and proteins.",
+      "unit_name": "PRACTICAL SYLLABUS (Visually Challenged - Class XII)",
+      "chapter_name": "D. Characteristic tests in foodstuffs",
+      "details": "In given foodstuffs."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation of Potash Alum.",
+      "unit_name": "PRACTICAL SYLLABUS (Visually Challenged - Class XII)",
+      "chapter_name": "E. Preparation of Inorganic Compounds",
+      "details": "Inorganic synthesis."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation and titration: Oxalic acid standard solution.",
+      "unit_name": "PRACTICAL SYLLABUS (Visually Challenged - Class XII)",
+      "chapter_name": "F. Quantitative analysis",
+      "details": "(a) Preparation of given volume, (b) Determination of molarity of KMnO4."
+    },
+    {
+      "type": "practical",
+      "title": "Preparation and titration: Ferrous ammonium sulphate standard solution.",
+      "unit_name": "PRACTICAL SYLLABUS (Visually Challenged - Class XII)",
+      "chapter_name": "F. Quantitative analysis",
+      "details": "(a) Preparation, (b) Determination of molarity of KMnO4."
+    },
+    {
+      "type": "practical",
+      "title": "Determination of one anion and cation in a given salt.",
+      "unit_name": "PRACTICAL SYLLABUS (Visually Challenged - Class XII)",
+      "chapter_name": "G. Qualitative Analysis",
+      "details": "Cations: NH4+. Anions: CO3, S, SO3, Cl, CH3COO."
+    }
+  ]
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

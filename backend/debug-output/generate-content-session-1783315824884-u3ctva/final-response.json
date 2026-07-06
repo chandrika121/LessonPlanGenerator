@@ -1,0 +1,711 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":9,\"totalQuestions\":7,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Define electric charge and its types.",
+        "Explain the quantization of charge using q=ne.",
+        "Apply the law of conservation of charge to simple scenarios.",
+        "Differentiate between conductors, insulators, and semiconductors."
+      ],
+      "assessedConcepts": [
+        "Quantization of Charge (q=ne)",
+        "Conservation of Charge",
+        "Types of Charges (+/-)",
+        "Material Classification (Conductors/Insulators)"
+      ],
+      "conceptCoveragePriorities": [
+        "Quantization of Charge",
+        "Conservation of Charge"
+      ],
+      "misconceptionTargets": [
+        "Friction creates charge",
+        "Charge is a fluid that flows"
+      ],
+      "competencyFocus": [
+        "Application",
+        "Understanding"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "title": "Theory: Max Marks 70, Time 3 hrs",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Session-aligned assessment focus on Electric Charges and Fields"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Quantization of Charge",
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q4"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Conservation of Charge",
+          "questionRefs": [
+            "q3",
+            "q5"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        },
+        {
+          "concept": "Material Classification",
+          "questionRefs": [
+            "q6",
+            "q7"
+          ],
+          "competency": "Understanding",
+          "importance": "supporting"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define electric charge and its types.",
+          "questionRefs": [
+            "q1",
+            "q6"
+          ]
+        },
+        {
+          "outcome": "Explain the quantization of charge using q=ne.",
+          "questionRefs": [
+            "q2",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Apply the law of conservation of charge to simple scenarios.",
+          "questionRefs": [
+            "q3",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Differentiate between conductors, insulators, and semiconductors.",
+          "questionRefs": [
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 35,
+        "application": 30,
+        "analysis": 15,
+        "evaluation": 5
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 2,
+        "analysis": 1
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Theory: Max Marks 70, Time 3 hrs",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session.",
+        "Section A contains MCQs (1 mark each). Section B contains Very Short Answers (1 mark each). Section C contains Short Answers (2 marks each).",
+        "Total Time: 15 minutes. Total Marks: 9."
+      ],
+      "sections": [
+        {
+          "id": "section-theory-max-marks-70-time-3-hrs",
+          "title": "Theory: Max Marks 70, Time 3 hrs",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following statements correctly describes the nature of electric charge?",
+          "options": [
+            "A. Charge is continuous and can take any value.",
+            "B. Charge is quantized and exists in discrete packets.",
+            "C. Charge can be created but not destroyed.",
+            "D. Like charges attract each other."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Define electric charge and its types."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Properties of Charge"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Charge is quantized (q=ne)."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "If a body has a charge of -3.2 x 10^-19 C, how many excess electrons does it possess? (Take e = 1.6 x 10^-19 C)",
+          "options": [
+            "A. 1 electron",
+            "B. 2 electrons",
+            "C. 3 electrons",
+            "D. 4 electrons"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Explain the quantization of charge using q=ne."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Calculation of Charge"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Numerical application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: q = ne calculation."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "When a glass rod is rubbed with silk, the glass rod becomes positively charged because:",
+          "options": [
+            "A. It gains protons from the silk.",
+            "B. It loses electrons to the silk.",
+            "C. It creates positive charge through friction.",
+            "D. The silk transfers negative charge to it."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Apply the law of conservation of charge to simple scenarios."
+          ],
+          "conceptRefs": [
+            "Conservation of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Charge Transfer"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Glass loses electrons, silk gains them."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "State whether a charge of 1.5e is possible for an isolated body. Justify your answer in one sentence.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Explain the quantization of charge using q=ne."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Discrete Nature of Charge"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: n must be an integer."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Define the Law of Conservation of Charge.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Apply the law of conservation of charge to simple scenarios."
+          ],
+          "conceptRefs": [
+            "Conservation of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Fundamental Laws"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Definition",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Total charge in isolated system remains constant."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Explain why a plastic rod rubbed with wool becomes negatively charged. Mention the direction of electron flow.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "2-3 sentences",
+          "learningOutcomeRefs": [
+            "Define electric charge and its types."
+          ],
+          "conceptRefs": [
+            "Conservation of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Charge Transfer Mechanism"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Explanation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Plastic gains electrons from wool."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Differentiate between a conductor and an insulator based on the mobility of electric charges.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "2-3 sentences",
+          "learningOutcomeRefs": [
+            "Differentiate between conductors, insulators, and semiconductors."
+          ],
+          "conceptRefs": [
+            "Material Classification"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Properties of Materials"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Differentiation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Conductors have free flow, insulators have fixed charges."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "B. Charge is quantized and exists in discrete packets.",
+            "explanation": "Charge comes in integer multiples of the elementary charge (e), not continuous values.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "B. 2 electrons",
+            "explanation": "n = q/e = (-3.2 x 10^-19) / (1.6 x 10^-19) = -2. The magnitude is 2.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "B. It loses electrons to the silk.",
+            "explanation": "Friction causes transfer of electrons; glass loses them (becoming positive), silk gains them (becoming negative).",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "No, because charge must be an integer multiple of e (n must be an integer).",
+            "explanation": "Quantization implies q = ne where n is an integer; 1.5e is not possible.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "The total electric charge in an isolated system remains constant over time.",
+            "explanation": "Charge cannot be created or destroyed, only transferred.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "The plastic rod becomes negative because it gains electrons from the wool. Electrons flow from wool to plastic.",
+            "explanation": "Point 1: Gains electrons (1 mark). Point 2: Direction of flow (1 mark).",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "In conductors, charges move freely throughout the material. In insulators, charges are fixed and cannot move easily.",
+            "explanation": "Point 1: Conductors have free mobility (1 mark). Point 2: Insulators have fixed charges (1 mark).",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct answer (No) with valid reason (integer multiple)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks if the student states 'No' and mentions that n must be an integer."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct definition of conservation law",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for stating that total charge in an isolated system remains constant."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Mentioning gain of electrons by plastic",
+                "marks": 1
+              },
+              {
+                "criterion": "Stating direction of flow (Wool to Plastic)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for each valid point."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Description of charge mobility in conductors (free flow)",
+                "marks": 1
+              },
+              {
+                "criterion": "Description of charge mobility in insulators (fixed/no flow)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for each valid point."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "First valid point: Plastic gains electrons",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point: Direction of flow (Wool -> Plastic)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "The plastic rod becomes negative because it gains electrons from the wool. Electrons flow from wool to plastic."
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "First valid point: Conductors allow free movement of charges",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point: Insulators restrict charge movement (fixed charges)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "In conductors, charges move freely throughout the material. In insulators, charges are fixed and cannot move easily."
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point: Plastic gains electrons",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point: Direction of flow (Wool -> Plastic)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "The plastic rod becomes negative because it gains electrons from the wool. Electrons flow from wool to plastic."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point: Conductors allow free movement of charges",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point: Insulators restrict charge movement (fixed charges)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "In conductors, charges move freely throughout the material. In insulators, charges are fixed and cannot move easily."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea in short answer questions.",
+        "For MCQs, only the correct option is awarded marks."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Ensure that 'No' is accepted for q4 only if accompanied by the reason regarding integer multiples."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers (e.g., 'plastic gains electrons' vs 'electrons move to plastic')."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of quantization, conservation, and material classification concepts."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier MCQs to more demanding short answers."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Requested questions: 7",
+          "Generated questions: 7"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Requested marks: 9",
+          "Generated marks: 9"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Theory: Max Marks 70, Time 3 hrs: 7 question(s), 9 mark(s)"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Answer key items: 7",
+          "Marking scheme items: 7",
+          "Rubric-linked questions: 4"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

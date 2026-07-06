@@ -1,0 +1,674 @@
+Stage 3: Node Enrichment - Class XI - CHEMISTRY
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XI",
+  "subject": "CHEMISTRY",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "part_or_section": "",
+      "marks": 7,
+      "topics": [
+        "Importance of Chemistry",
+        "Nature of Matter",
+        "Properties of Matter and their Measurement",
+        "Uncertainty in Measurement",
+        "Laws of Chemical Combination",
+        "Dalton's Atomic Theory",
+        "Atomic and Molecular Masses",
+        "Mole Concept and Molar Masses",
+        "Percentage Composition",
+        "Stoichiometry and Stoichiometric Calculations"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Some Basic Concepts of Chemistry",
+          "source_chapter_name": "Some Basic Concepts of Chemistry",
+          "source_heading": "Some Basic Concepts of Chemistry",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Structure of Atom",
+      "part_or_section": "",
+      "marks": 9,
+      "topics": [
+        "Discovery of Sub-atomic Particles",
+        "Atomic Models",
+        "Developments Leading to the Bohr's Model of Atom",
+        "Bohr's Model for Hydrogen Atom",
+        "Towards Quantum Mechanical Model of the Atom",
+        "Quantum Mechanical Model of Atom"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Structure of Atom",
+          "source_chapter_name": "Structure of Atom",
+          "source_heading": "Structure of Atom",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "part_or_section": "",
+      "marks": 6,
+      "topics": [
+        "Why we Need to Classify Elements?",
+        "Genesis of Periodic Classification",
+        "Modern Periodic Law and the Present Form of Periodic Table",
+        "Nomenclature of Elements with Atomic Number > 100",
+        "Electronic Configuration of Elements and the Periodic Table",
+        "Electronic Configuration of Elements and Types of Elements: s-, p-, d-, f- Blocks",
+        "Periodic Trends in Properties of Elements"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Classification of Elements and Periodicity in Properties",
+          "source_chapter_name": "Classification of Elements and Periodicity in Properties",
+          "source_heading": "Classification of Elements and Periodicity in Properties",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "part_or_section": "",
+      "marks": 7,
+      "topics": [
+        "Kossel-Lewis Approach to Chemical Bonding",
+        "Ionic or Electrovalent Bond",
+        "Bond Parameters",
+        "The Valence Shell Electron Pair Repulsion (VSEPR) Theory",
+        "Valence Bond Theory",
+        "Hybridisation",
+        "Molecular Orbital Theory",
+        "Bonding in Some Homonuclear Diatomic Molecules",
+        "Hydrogen Bonding"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Bonding and Molecular Structure",
+          "source_chapter_name": "Chemical Bonding and Molecular Structure",
+          "source_heading": "Chemical Bonding and Molecular Structure",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Thermodynamics",
+      "part_or_section": "",
+      "marks": 9,
+      "topics": [
+        "Thermodynamic Terms",
+        "Applications",
+        "Measurement of ∆U and ∆H: Calorimetry",
+        "Enthalpy Change",
+        "∆H of a Reaction – Reaction Enthalpy",
+        "Enthalpies for Different Types of Reactions",
+        "Spontaneity",
+        "Gibbs Energy Change and Equilibrium"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Thermodynamics",
+          "source_chapter_name": "Thermodynamics",
+          "source_heading": "Thermodynamics",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Equilibrium",
+      "part_or_section": "",
+      "marks": 7,
+      "topics": [
+        "Equilibrium in Physical Processes",
+        "Equilibrium in Chemical Processes – Dynamic Equilibrium",
+        "Law of Chemical Equilibrium and Equilibrium Constant",
+        "Homogeneous Equilibria",
+        "Heterogeneous Equilibria",
+        "Applications of Equilibrium Constants",
+        "Relationship between Equilibrium Constant K, Reaction Quotient Q and Gibbs Energy G",
+        "Factors Affecting Equilibria",
+        "Ionic Equilibrium in Solution",
+        "Acids, Bases and Salts",
+        "Ionization of Acids and Bases",
+        "Buffer Solutions",
+        "Solubility Equilibria of Sparingly Soluble Salts"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Equilibrium",
+          "source_chapter_name": "Equilibrium",
+          "source_heading": "Equilibrium",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Redox Reactions",
+      "part_or_section": "",
+      "marks": 4,
+      "topics": [
+        "Classical Idea of Redox Reactions – Oxidation and Reduction Reactions",
+        "Redox Reactions in Terms of Electron Transfer Reactions",
+        "Oxidation Number",
+        "Redox Reactions and Electrode Processes"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Redox Reactions",
+          "source_chapter_name": "Redox Reactions",
+          "source_heading": "Redox Reactions",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "part_or_section": "",
+      "marks": 11,
+      "topics": [
+        "General Introduction",
+        "Tetravalence of Carbon: Shapes of Organic Compounds",
+        "Structural Representations of Organic Compounds",
+        "Classification of Organic Compounds",
+        "Nomenclature of Organic Compounds",
+        "Isomerism",
+        "Fundamental Concepts in Organic Reaction Mechanism",
+        "Methods of Purification of Organic Compounds",
+        "Qualitative Analysis of Organic Compounds",
+        "Quantitative Analysis"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Some basic Principles and Techniques",
+          "source_chapter_name": "Some basic Principles and Techniques",
+          "source_heading": "Some basic Principles and Techniques",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Hydrocarbons",
+      "part_or_section": "",
+      "marks": 10,
+      "topics": [
+        "Classification",
+        "Alkanes",
+        "Alkenes",
+        "Alkynes",
+        "Aromatic Hydrocarbon",
+        "Carcinogenic and Toxicity"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Hydrocarbons",
+          "source_chapter_name": "Hydrocarbons",
+          "source_heading": "Hydrocarbons",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U22",
+      "unit_name": "Formative Assessment Topics (Not for Summative)",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "s & p Block Elements: Electronic configuration, atomic & Ionic radii, Ionization Enthalpy, Hydration Enthalpy and general trends in physical and chemical properties of s and p block elements across the periods and down the groups; unique behavior of the first element in each group.",
+        "The Gaseous State: Qualitative treatment of Gas laws, Ideal gas equation and deviations from it."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XI",
+  "subject": "CHEMISTRY",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "part_or_section": "",
+      "marks": 7,
+      "topics": [
+        "Importance of Chemistry",
+        "Nature of Matter",
+        "Properties of Matter and their Measurement",
+        "Uncertainty in Measurement",
+        "Laws of Chemical Combination",
+        "Dalton's Atomic Theory",
+        "Atomic and Molecular Masses",
+        "Mole Concept and Molar Masses",
+        "Percentage Composition",
+        "Stoichiometry and Stoichiometric Calculations"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Some Basic Concepts of Chemistry",
+          "source_chapter_name": "Some Basic Concepts of Chemistry",
+          "source_heading": "Some Basic Concepts of Chemistry",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Structure of Atom",
+      "part_or_section": "",
+      "marks": 9,
+      "topics": [
+        "Discovery of Sub-atomic Particles",
+        "Atomic Models",
+        "Developments Leading to the Bohr's Model of Atom",
+        "Bohr's Model for Hydrogen Atom",
+        "Towards Quantum Mechanical Model of the Atom",
+        "Quantum Mechanical Model of Atom"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Structure of Atom",
+          "source_chapter_name": "Structure of Atom",
+          "source_heading": "Structure of Atom",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "part_or_section": "",
+      "marks": 6,
+      "topics": [
+        "Why we Need to Classify Elements?",
+        "Genesis of Periodic Classification",
+        "Modern Periodic Law and the Present Form of Periodic Table",
+        "Nomenclature of Elements with Atomic Number > 100",
+        "Electronic Configuration of Elements and the Periodic Table",
+        "Electronic Configuration of Elements and Types of Elements: s-, p-, d-, f- Blocks",
+        "Periodic Trends in Properties of Elements"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Classification of Elements and Periodicity in Properties",
+          "source_chapter_name": "Classification of Elements and Periodicity in Properties",
+          "source_heading": "Classification of Elements and Periodicity in Properties",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "part_or_section": "",
+      "marks": 7,
+      "topics": [
+        "Kossel-Lewis Approach to Chemical Bonding",
+        "Ionic or Electrovalent Bond",
+        "Bond Parameters",
+        "The Valence Shell Electron Pair Repulsion (VSEPR) Theory",
+        "Valence Bond Theory",
+        "Hybridisation",
+        "Molecular Orbital Theory",
+        "Bonding in Some Homonuclear Diatomic Molecules",
+        "Hydrogen Bonding"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Bonding and Molecular Structure",
+          "source_chapter_name": "Chemical Bonding and Molecular Structure",
+          "source_heading": "Chemical Bonding and Molecular Structure",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Thermodynamics",
+      "part_or_section": "",
+      "marks": 9,
+      "topics": [
+        "Thermodynamic Terms",
+        "Applications",
+        "Measurement of ∆U and ∆H: Calorimetry",
+        "Enthalpy Change",
+        "∆H of a Reaction – Reaction Enthalpy",
+        "Enthalpies for Different Types of Reactions",
+        "Spontaneity",
+        "Gibbs Energy Change and Equilibrium"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Thermodynamics",
+          "source_chapter_name": "Thermodynamics",
+          "source_heading": "Thermodynamics",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Equilibrium",
+      "part_or_section": "",
+      "marks": 7,
+      "topics": [
+        "Equilibrium in Physical Processes",
+        "Equilibrium in Chemical Processes – Dynamic Equilibrium",
+        "Law of Chemical Equilibrium and Equilibrium Constant",
+        "Homogeneous Equilibria",
+        "Heterogeneous Equilibria",
+        "Applications of Equilibrium Constants",
+        "Relationship between Equilibrium Constant K, Reaction Quotient Q and Gibbs Energy G",
+        "Factors Affecting Equilibria",
+        "Ionic Equilibrium in Solution",
+        "Acids, Bases and Salts",
+        "Ionization of Acids and Bases",
+        "Buffer Solutions",
+        "Solubility Equilibria of Sparingly Soluble Salts"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Equilibrium",
+          "source_chapter_name": "Equilibrium",
+          "source_heading": "Equilibrium",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Redox Reactions",
+      "part_or_section": "",
+      "marks": 4,
+      "topics": [
+        "Classical Idea of Redox Reactions – Oxidation and Reduction Reactions",
+        "Redox Reactions in Terms of Electron Transfer Reactions",
+        "Oxidation Number",
+        "Redox Reactions and Electrode Processes"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Redox Reactions",
+          "source_chapter_name": "Redox Reactions",
+          "source_heading": "Redox Reactions",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "part_or_section": "",
+      "marks": 11,
+      "topics": [
+        "General Introduction",
+        "Tetravalence of Carbon: Shapes of Organic Compounds",
+        "Structural Representations of Organic Compounds",
+        "Classification of Organic Compounds",
+        "Nomenclature of Organic Compounds",
+        "Isomerism",
+        "Fundamental Concepts in Organic Reaction Mechanism",
+        "Methods of Purification of Organic Compounds",
+        "Qualitative Analysis of Organic Compounds",
+        "Quantitative Analysis"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Some basic Principles and Techniques",
+          "source_chapter_name": "Some basic Principles and Techniques",
+          "source_heading": "Some basic Principles and Techniques",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Hydrocarbons",
+      "part_or_section": "",
+      "marks": 10,
+      "topics": [
+        "Classification",
+        "Alkanes",
+        "Alkenes",
+        "Alkynes",
+        "Aromatic Hydrocarbon",
+        "Carcinogenic and Toxicity"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Hydrocarbons",
+          "source_chapter_name": "Hydrocarbons",
+          "source_heading": "Hydrocarbons",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U22",
+      "unit_name": "Formative Assessment Topics (Not for Summative)",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "s & p Block Elements: Electronic configuration, atomic & Ionic radii, Ionization Enthalpy, Hydration Enthalpy and general trends in physical and chemical properties of s and p block elements across the periods and down the groups; unique behavior of the first element in each group.",
+        "The Gaseous State: Qualitative treatment of Gas laws, Ideal gas equation and deviations from it."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    }
+  ]
+}
+
+Curriculum source text:
+# Page 2
+
+## COURSE STRUCTURE
+## CLASS XI
+## THEORY
+Time: 3 Hours Total Marks: 70
+- S. No UNIT Marks
+1 Some Basic Concepts of Chemistry 7
+2 Structure of Atom 9
+3 Classification of Elements and Periodicity in Properties 6
+4 Chemical Bonding and Molecular Structure 7
+5 Chemical Thermodynamics 9
+6 Equilibrium 7
+7 Redox Reactions 4
+8 Organic Chemistry: Some basic Principles and 11
+Techniques
+9 Hydrocarbons 10
+## TOTAL 70
+# Page 6
+
+Note: Any other investigatory project, which involves about 10 periods of work, can
+be chosen with the approval of the teacher.
+Practical Examination for Visually Challenged Students Class XI
+Note: Same Evaluation scheme and general guidelines for visually challenged
+students as given for Class XII may be followed.
+List of apparatus for identification for assessment in practicals (All experiments)
+Beaker, tripod stand, wire gauze, glass rod, funnel, filter paper, Bunsen
+burner, test tube, test tube stands, dropper, test tube holder, ignition tube,
+china dish, tongs, standard flask, pipette, burette, conical flask, clamp stand,
+dropper, wash bottle
+- Odor detection in qualitative analysis.
+- Procedure/Setup of the apparatus.
+List of Experiments
+- A. Characterization and Purification of Chemical Substances
+Crystallization of an impure sample of any one of the following:
+copper sulphate, benzoic acid.
+- B. Experiments based on pH
+- 1. Determination of pH of some solutions obtained from fruit juices, solutions of
+known and varied concentrations of acids, bases and salts using pH paper.
+
+Note: The above practical may be carried out in an experiential manner rather than
+recording observations.
+Prescribed Books:
+- 1. Chemistry Part – I, Class-XI, Published by NCERT.
+- 2. Chemistry Part – II, Class-XI, Published by NCERT.
+- 3. Manual of Microscale Chemistry laboratory kit, Published by NCERT
+Links for NCERT textbooks:
+- 1. https://ncert.nic.in/textbook.php?kech1=0-6
+- 2. https://ncert.nic.in/textbook.php?kech2=0-3
+- 3. https://ncert.nic.in/division/dek/pdf/Manual_01.pdf
+7

@@ -1,0 +1,98 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Units and Measurements",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Motion in a Straight Line"
+      ]
+    },
+    {
+      "topic": "Motion in a Straight Line",
+      "prerequisites": [
+        "Units and Measurements"
+      ],
+      "dependent_topics": [
+        "Motion in a Plane"
+      ]
+    },
+    {
+      "topic": "Motion in a Plane",
+      "prerequisites": [
+        "Motion in a Straight Line"
+      ],
+      "dependent_topics": []
+    },
+    {
+      "topic": "Laws of Motion",
+      "prerequisites": [],
+      "dependent_topics": [
+        "Work, Energy and Power"
+      ]
+    },
+    {
+      "topic": "Work, Energy and Power",
+      "prerequisites": [
+        "Laws of Motion"
+      ],
+      "dependent_topics": []
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Units and Measurements",
+      "difficulty_level": "Low",
+      "concept_density": "High",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Vernier Callipers, Screw Gauge, Spherometer experiments required.",
+      "assessment_requirement": "Significant figures and dimensional analysis problems."
+    },
+    {
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Straight Line",
+      "difficulty_level": "Medium",
+      "concept_density": "High",
+      "estimated_teaching_hours": 15,
+      "estimated_sessions": 8,
+      "practical_requirement": "Graph plotting and error analysis.",
+      "assessment_requirement": "Calculus-based motion problems."
+    },
+    {
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Plane",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Projectile motion experiments.",
+      "assessment_requirement": "Vector operations and relative velocity problems."
+    },
+    {
+      "unit_name": "Unit III: Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Friction and inclined plane experiments.",
+      "assessment_requirement": "Free body diagrams and Newton's laws applications."
+    },
+    {
+      "unit_name": "Unit IV: Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Conservation of energy experiments.",
+      "assessment_requirement": "Work-energy theorem and collision problems."
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [],
+    "invalid_chapter_names": []
+  }
+}

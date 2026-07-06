@@ -1,0 +1,405 @@
+{
+  "studentLessonNotes": {
+    "title": "Electric Charges and Fields: The Invisible Force",
+    "sessionOverview": "Explore the fundamental nature of electric charge, how charges interact through electric fields, and the laws governing these invisible forces.",
+    "introduction": "Welcome to Chapter 1! Today, we uncover the secrets behind why your hair stands up after taking off a woolen cap or how lightning strikes. We will dive into the world of 'Electric Charges' and the invisible 'Electric Fields' that surround them. You don't need to be a superhero to understand this; you just need to know how nature's basic building blocks interact.",
+    "learningObjectives": [
+      "Understand what electric charge is and its fundamental properties (quantization and conservation).",
+      "Explain Coulomb's Law and calculate the force between two point charges.",
+      "Define an Electric Field and visualize how it acts on other charges.",
+      "Distinguish between positive and negative charges and their interactions."
+    ],
+    "quickRecall": [
+      "Matter is made of atoms containing protons (+) and electrons (-).",
+      "Like charges repel; opposite charges attract.",
+      "Force causes a change in motion (Newton's Laws)."
+    ],
+    "easyToRemember": [
+      "Charge is quantized: It comes in tiny, indivisible packets of 'e'.",
+      "Field lines flow from Positive to Negative."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Properties of Electric Charge vs. Mass",
+        "headers": [
+          "Feature",
+          "Electric Charge (q)",
+          "Mass (m)"
+        ],
+        "rows": [
+          [
+            "Nature",
+            "Can be positive or negative",
+            "Always positive"
+          ],
+          [
+            "Conservation",
+            "Total charge is conserved",
+            "Total mass is conserved (in classical physics)"
+          ],
+          [
+            "Interaction",
+            "Like charges repel, opposites attract",
+            "Mass always attracts"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Coulomb's Law",
+        "formula": {
+          "text": "F = k * |q1 * q2| / r^2",
+          "latex": "F = \\frac{1}{4\\pi\\epsilon_0} \\frac{|q_1 q_2|}{r^2}"
+        },
+        "meaning": "The force between two point charges is directly proportional to the product of their magnitudes and inversely proportional to the square of the distance between them.",
+        "whenToUse": "When calculating the electrostatic force between two stationary point charges in a vacuum or air."
+      },
+      {
+        "title": "Electric Field Intensity",
+        "formula": {
+          "text": "E = F / q0",
+          "latex": "E = \\frac{F}{q_0}"
+        },
+        "meaning": "The electric field at a point is the force experienced per unit positive test charge placed at that point.",
+        "whenToUse": "When determining the strength and direction of an electric field created by a source charge."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "electricFieldLines",
+        "title": "Electric Field Lines around a Positive Charge",
+        "caption": "Visualizing the invisible electric field radiating outward from a positive point charge.",
+        "points": [
+          {
+            "id": "source",
+            "x": 200,
+            "y": 200,
+            "label": "+"
+          }
+        ],
+        "lines": [
+          {
+            "from": "source",
+            "to": "infinity",
+            "label": "Field Lines",
+            "style": "dashed",
+            "direction": "outward"
+          }
+        ],
+        "arcs": [],
+        "labels": [
+          {
+            "text": "Radial Direction",
+            "x": 250,
+            "y": 150
+          }
+        ],
+        "measurements": []
+      }
+    ],
+    "proofSteps": [
+      "Start with the observation that force increases as charges get closer.",
+      "Observe that doubling the distance reduces the force to one-fourth (Inverse Square Law).",
+      "Conclude that Force is proportional to q1 * q2 and inversely proportional to r^2."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Thinking electric field lines can cross each other.",
+        "correction": "Field lines never intersect because a charge cannot experience force in two different directions at the same point.",
+        "example": "If they crossed, a test charge would move in two directions simultaneously, which is impossible."
+      },
+      {
+        "mistake": "Forgetting that Coulomb's law applies only to point charges.",
+        "correction": "For extended objects (like rods or spheres), you must integrate or use specific formulas for their geometry.",
+        "example": "Do not use F = kq1q2/r^2 directly for two large charged metal plates."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "What is Electric Charge?",
+        "explanation": "Electric charge is a fundamental property of matter that causes it to experience a force when placed in an electromagnetic field. Think of it as the 'electric personality' of a particle.",
+        "keyPoints": [
+          "There are two types: Positive (+) and Negative (-).",
+          "Like charges repel; opposite charges attract.",
+          "Charge is quantized (comes in discrete packets)."
+        ],
+        "examples": [
+          "Rubbing a glass rod with silk gives it a positive charge.",
+          "Rubbing a plastic rod with wool gives it a negative charge."
+        ],
+        "whyItMatters": "Without charge, there would be no electricity, no atoms holding together, and no life as we know it.",
+        "terminology": [
+          "Quantization of Charge",
+          "Conservation of Charge"
+        ],
+        "detailedExplanation": "Charge is not continuous; it comes in multiples of the elementary charge 'e' (charge of an electron). Any charge Q must be Q = n*e, where n is an integer. Also, charge can never be created or destroyed, only transferred.",
+        "observedIn": [
+          "Static electricity shocks",
+          "Lightning bolts",
+          "Hair standing up after removing a hat"
+        ],
+        "visualSupport": [
+          "Diagram showing electrons moving from wool to plastic rod."
+        ],
+        "visualAssets": [
+          {
+            "prompt": "A simple illustration of a plastic rod and a piece of wool. Arrows show small negative dots (electrons) moving from the wool to the rod, leaving the wool positive and the rod negative.",
+            "alt": "Electron transfer diagram showing static electricity generation",
+            "imageDataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+            "mimeType": "image/png",
+            "model": "educational-illustration"
+          }
+        ],
+        "importantNotes": [
+          "Charge is always conserved in an isolated system.",
+          "The unit of charge is the Coulomb (C)."
+        ],
+        "memoryTechniques": [
+          "Remember: 'P' for Positive and 'N' for Negative. Opposites attract like a magnet."
+        ],
+        "conceptSummary": [
+          "Charge is quantized, conserved, and creates forces between objects."
+        ]
+      },
+      {
+        "heading": "Coulomb's Law: The Force of Attraction",
+        "explanation": "This law tells us exactly how strong the push or pull is between two charged particles. It depends on how big the charges are and how far apart they are.",
+        "keyPoints": [
+          "Force is directly proportional to the product of charges (q1 * q2).",
+          "Force is inversely proportional to the square of the distance (1/r^2).",
+          "The force acts along the line joining the two charges."
+        ],
+        "examples": [
+          "If you double the distance between two charges, the force becomes 1/4th as strong.",
+          "If you double one charge, the force doubles."
+        ],
+        "whyItMatters": "It is the foundation of electrostatics, just like Newton's Law of Gravitation is for gravity.",
+        "terminology": [
+          "Electrostatic Force",
+          "Point Charge",
+          "Permittivity of Free Space (ε₀)"
+        ],
+        "detailedExplanation": "The formula F = k(q1q2)/r^2 shows that if you move charges further apart, the force drops very quickly. This is why static shocks happen when things are close but vanish when they are far away.",
+        "observedIn": [
+          "Combing hair near a TV screen",
+          "Balloon sticking to a wall"
+        ],
+        "visualSupport": [
+          "Graph showing Force vs. Distance (inverse square curve)."
+        ],
+        "visualAssets": [
+          {
+            "prompt": "A graph with 'Distance' on the x-axis and 'Force' on the y-axis. A curve starts high on the left and drops rapidly to the right, labeled 'Inverse Square Law'.",
+            "alt": "Graph illustrating Coulomb's inverse square law",
+            "imageDataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+            "mimeType": "image/png",
+            "model": "educational-chart"
+          }
+        ],
+        "importantNotes": [
+          "The constant k = 1/(4πε₀) ≈ 9 × 10^9 N·m²/C².",
+          "This law applies strictly to stationary point charges."
+        ],
+        "memoryTechniques": [
+          "Remember: 'Far away, weak force. Close up, strong force.'"
+        ],
+        "conceptSummary": [
+          "Coulomb's Law defines the magnitude of electrostatic force between two point charges."
+        ]
+      },
+      {
+        "heading": "The Electric Field: An Invisible Web",
+        "explanation": "A charge doesn't just 'touch' another charge; it creates a field around itself. This field is like an invisible web that tells other charges how to move.",
+        "keyPoints": [
+          "Electric Field (E) is Force per unit charge (F/q).",
+          "Direction: Away from positive, towards negative.",
+          "Field lines never cross."
+        ],
+        "examples": [
+          "Imagine a magnet; the field lines are like the invisible lines of force around it.",
+          "A test charge placed in the field feels a push or pull."
+        ],
+        "whyItMatters": "Fields explain how forces act at a distance without physical contact.",
+        "terminology": [
+          "Electric Field Lines",
+          "Test Charge",
+          "Field Intensity"
+        ],
+        "detailedExplanation": "If you place a positive charge in space, it creates an electric field. If you bring another positive charge near, the field pushes it away. The density of field lines shows the strength of the field.",
+        "observedIn": [
+          "Lightning rods guiding lightning",
+          "Electrostatic precipitators in factories"
+        ],
+        "visualSupport": [
+          "Diagram of field lines radiating from a positive charge and converging on a negative charge."
+        ],
+        "visualAssets": [
+          {
+            "prompt": "Two charges: a large '+' on the left and a large '-' on the right. Curved arrows (field lines) flow from '+' to '-', showing the direction of the electric field.",
+            "alt": "Electric dipole field lines diagram",
+            "imageDataUrl": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+            "mimeType": "image/png",
+            "model": "educational-diagram"
+          }
+        ],
+        "importantNotes": [
+          "The electric field is a vector quantity (has magnitude and direction).",
+          "Inside a conductor in electrostatic equilibrium, the electric field is zero."
+        ],
+        "memoryTechniques": [
+          "Remember: 'Lines leave Positive, Enter Negative.'"
+        ],
+        "conceptSummary": [
+          "The electric field is the region around a charge where other charges experience a force."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Quantization of Charge",
+        "definition": "The principle that total charge on any body is an integral multiple of the elementary charge (e). Q = ne."
+      },
+      {
+        "term": "Electric Field Intensity",
+        "definition": "The force experienced by a unit positive test charge placed at a point in an electric field."
+      },
+      {
+        "term": "Point Charge",
+        "definition": "An idealized charge with negligible size compared to the distance from it, treated as a single point."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Calculating Force Between Two Charges",
+        "problem": "Two point charges q1 = +2 μC and q2 = -3 μC are placed 0.5 m apart in air. Calculate the magnitude of the force between them.",
+        "diagramRef": "diagram-1",
+        "given": [
+          "q1 = +2 × 10^-6 C",
+          "q2 = -3 × 10^-6 C",
+          "r = 0.5 m"
+        ],
+        "formula": [
+          "F = k * |q1 * q2| / r^2"
+        ],
+        "steps": [
+          "Identify the values and convert units to Coulombs.",
+          "Substitute values into Coulomb's Law formula."
+        ],
+        "solutionSteps": [
+          "F = (9 × 10^9) * |(2 × 10^-6) * (-3 × 10^-6)| / (0.5)^2",
+          "F = (9 × 10^9) * (6 × 10^-12) / 0.25",
+          "F = 54 × 10^-3 / 0.25",
+          "F = 216 × 10^-3 N = 0.216 N"
+        ],
+        "reasoning": [
+          "We use the magnitude of charges because we are calculating force strength.",
+          "The negative sign indicates attraction, but the magnitude is positive."
+        ],
+        "explanation": "First, we convert microcoulombs to Coulombs. Then we plug everything into the formula. Since the distance is squared in the denominator, a small distance leads to a larger force.",
+        "finalAnswer": "0.216 N (Attractive)",
+        "latex": "F = 0.216 \\text{ N}",
+        "displayLatex": "\\frac{(9 \\times 10^9)(2 \\times 10^{-6})(3 \\times 10^{-6})}{(0.5)^2}"
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Charge is quantized: Q = ne.",
+        "Electric Field E = F/q."
+      ],
+      "formulas": [
+        "F = k(q1q2)/r^2",
+        "E = kQ/r^2"
+      ],
+      "facts": [
+        "Charge is conserved.",
+        "Field lines never intersect."
+      ],
+      "keywords": [
+        "Quantization",
+        "Conservation",
+        "Electric Field",
+        "Coulomb's Law"
+      ],
+      "conceptMap": [
+        "Charge -> Quantized -> Creates Field -> Exerts Force"
+      ],
+      "quickRecap": [
+        "Like charges repel, opposites attract.",
+        "Force drops with square of distance."
+      ]
+    },
+    "selfCheckQuestions": [
+      "If the distance between two charges is doubled, what happens to the force?",
+      "Can a body have a charge of 1.5e? Why or why not?",
+      "In which direction do electric field lines point relative to a negative charge?"
+    ],
+    "quickSummary": [
+      "Electric charges interact via forces described by Coulomb's Law.",
+      "These forces are mediated by an Electric Field."
+    ],
+    "keyTerms": [
+      "Electrostatics",
+      "Elementary Charge (e)",
+      "Permittivity"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "The total charge of an isolated system is always ______.",
+        "answer": "constant"
+      },
+      {
+        "prompt": "Electric field lines originate from a ______ charge and terminate at a ______ charge.",
+        "answer": "positive, negative"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is true about electric charge?",
+        "options": [
+          "A. It can be created",
+          "B. It is quantized",
+          "C. It depends on mass only",
+          "D. It is always positive"
+        ],
+        "answer": "B. It is quantized"
+      },
+      {
+        "question": "If the distance between two charges is halved, the force becomes:",
+        "options": [
+          "A. Half",
+          "B. Double",
+          "C. Four times",
+          "D. One-fourth"
+        ],
+        "answer": "C. Four times"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "Define quantization of charge.",
+        "answer": "Charge exists in discrete packets equal to integer multiples of the elementary charge (e)."
+      },
+      {
+        "question": "What is the SI unit of electric charge?",
+        "answer": "Coulomb (C)."
+      }
+    ],
+    "didYouKnow": [
+      "The total positive charge in one proton is exactly equal to the magnitude of the negative charge in one electron."
+    ],
+    "summary": [
+      "We learned that charge is quantized, conserved, and creates electric fields."
+    ],
+    "quickRevision": [
+      "F = kq1q2/r^2",
+      "E = F/q"
+    ],
+    "rememberPoints": [
+      "Charge -> Quantized (ne)",
+      "Field Lines -> Out from +, Into -",
+      "Force -> Inverse Square Law"
+    ]
+  }
+}

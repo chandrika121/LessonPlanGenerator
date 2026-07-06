@@ -1,0 +1,119 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+- Detected curriculum profile: multi_class_board_syllabus
+- Expected structure type: multi_class_unit_topic
+- Preserve separate classes/grades when multiple classes appear in one document
+- Never merge Class XI and Class XII structures together
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 2 of 2; extract only what is present in this chunk
+
+Curriculum source text:
+- 6. To observe the difference between
+(i) a convex lens and a concave lens
+(ii) a convex mirror and a concave mirror and to estimate the likely difference
+between the power of two given convex /concave lenses.
+- 7. To design an inductor coil and to know the effect of
+(i) change in the number of turns
+(ii) Introduction of ferromagnetic material as its core material on the inductance of
+the coil.
+- 8. To design a (i) step up (ii) step down transformer on a given core and know the
+relation between its input and output voltages.
+
+---
+
+# Page 11
+
+Note: The above practicals may be carried out in an experiential manner rather than recording
+observations.
+Prescribed Books:
+- 1. Physics, Class XI, Part -I and II, Published by NCERT.
+- 2. Physics, Class XII, Part -I and II, Published by NCERT.
+- 3. Laboratory Manual of Physics for class XII Published by NCERT.
+- 4. The list of other related books and manuals brought out by NCERT (consider
+multimedia also).
+Note:
+The content indicated in NCERT textbooks as excluded for the year 2026-27 is not to
+be tested by schools and will not be assessed in the Board examinations 2026-27.
+
+---
+
+# Page 12
+
+## QUESTION PAPER DESIGN
+Theory (Class: XI/XII)
+Maximum Marks: 70 Duration: 3 hrs.
+S No. Typology of Questions Total Approximate
+Marks Percentage
+1 Remembering : Exhibit memory of previously learned 27 38 %
+material by recalling facts, terms, basic concepts, and
+answers.
+Understanding : Demonstrate understanding of facts and
+ideas by organizing, comparing, translating, interpreting,
+giving descriptions, and stating main ideas
+2 Applying : Solve problems to new situations by applying 22 32%
+acquired knowledge, facts, techniques and rules in a
+different way.
+3 Analysing : Examine and break information into parts by 21 30%
+identifying motives or causes. Make inferences and find
+evidence to support generalizations
+Evaluating:
+Present and defend opinions by making judgments about
+information, validity of ideas, or quality of work based on a
+set of criteria.
+Creating :
+Compile information together in a different way by
+combining elements in a new pattern or proposing
+alternative solutions.
+Total Marks 70 100
+Practical 30
+Gross Total 100
+Note:
+The above template is only a sample. Suitable internal variations may be made for generating
+similar templates keeping the overall weightage to different form of questions and typology of
+questions same .
+For more details kindly refer to Sample Question Paper of class XII for the year 2026-
+27 to be published by CBSE at its website.

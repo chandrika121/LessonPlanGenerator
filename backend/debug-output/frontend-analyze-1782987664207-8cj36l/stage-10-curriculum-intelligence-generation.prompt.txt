@@ -1,0 +1,1250 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class XI",
+      "subject": "PHYSICS",
+      "units": [
+        {
+          "unit_id": "class-11-physics-u1",
+          "unit_name": "Unit 1",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Units and Measurements",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "SI units",
+                "symbols of physical quantities",
+                "nomenclature"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-physics-u2",
+          "unit_name": "Unit 2",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Motion in a Straight Line",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            },
+            {
+              "chapter_id": "C2",
+              "chapter_name": "Motion in a Plane",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-physics-u3",
+          "unit_name": "Unit 3",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Laws of Motion",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-physics-u4",
+          "unit_name": "Unit 4",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Work, Energy and Power",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "power"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-physics-u5",
+          "unit_name": "Unit 5",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Motion of System of Particles and Rigid Body",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Physics",
+      "units": []
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "C1",
+      "title": "Units and Measurements",
+      "description": "Emphasis on basic conceptual understanding of measurement, SI units, symbols, nomenclature, significant figures, dimensional analysis, and uncertainty determination.",
+      "competencies": [
+        "Understand the need for measurement and systems of units including fundamental and derived units.",
+        "Apply international standards for SI units, symbols, and nomenclature of physical quantities.",
+        "Determine significant figures and calculate uncertainty in results.",
+        "Perform dimensional analysis and apply it to solve problems."
+      ],
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Units and Measurements"
+    },
+    {
+      "code": "C2",
+      "title": "Motion in a Straight Line",
+      "description": "Develop conceptual competence in describing motion using calculus, graphs, and equations for uniform and non-uniform acceleration.",
+      "competencies": [
+        "Define frame of reference and describe motion in a straight line.",
+        "Apply elementary concepts of differentiation and integration to describe motion.",
+        "Distinguish between average speed/velocity and instantaneous velocity.",
+        "Analyze uniformly accelerated motion using graphical methods (v-t, x-t) and calculus-based relations."
+      ],
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Straight Line"
+    },
+    {
+      "code": "C3",
+      "title": "Motion in a Plane",
+      "description": "Master vector operations and apply them to analyze projectile motion and uniform circular motion.",
+      "competencies": [
+        "Differentiate between scalar and vector quantities and perform vector addition, subtraction, and resolution.",
+        "Calculate scalar and vector products of vectors.",
+        "Analyze cases of uniform velocity and acceleration in a plane including projectile motion.",
+        "Describe uniform circular motion."
+      ],
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Plane"
+    },
+    {
+      "code": "C4",
+      "title": "Laws of Motion",
+      "description": "Develop problem-solving abilities regarding forces, momentum conservation, friction, and circular motion dynamics.",
+      "competencies": [
+        "Explain intuitive concepts of force, inertia, Newton's laws (1st, 2nd, 3rd), impulse, and linear momentum conservation.",
+        "Analyze equilibrium of concurrent forces including static, kinetic, rolling friction, and lubrication.",
+        "Apply dynamics principles to uniform circular motion, centripetal force, banked roads, and level curves."
+      ],
+      "unit_name": "Unit III: Laws of Motion",
+      "chapter_name": "Laws of Motion"
+    },
+    {
+      "code": "C5",
+      "title": "Work, Energy and Power",
+      "description": "Apply work-energy theorems to analyze collisions, potential energy variations, and power in various physical scenarios.",
+      "competencies": [
+        "Calculate work done by constant and variable forces.",
+        "Apply the work-energy theorem involving kinetic energy and power.",
+        "Analyze conservative vs. non-conservative forces, potential energy (including springs), and motion in vertical circles.",
+        "Evaluate elastic and inelastic collisions in one and two dimensions."
+      ],
+      "unit_name": "Unit IV: Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power"
+    },
+    {
+      "code": "C6",
+      "title": "System of Particles and Rotational Motion",
+      "description": "Understand rotational dynamics, center of mass concepts, torque, angular momentum conservation, and moment of inertia.",
+      "competencies": [
+        "Determine the center of mass for particle systems and rigid bodies (e.g., uniform rod).",
+        "Apply laws of motion to rotation including torque, angular momentum, and their conservation.",
+        "Analyze equilibrium conditions for rigid bodies in rotational motion.",
+        "Calculate moment of inertia and radius of gyration for simple geometrical objects."
+      ],
+      "unit_name": "Unit V: Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion"
+    },
+    {
+      "code": "C7",
+      "title": "Gravitation",
+      "description": "Apply universal laws of gravitation to planetary motion, satellite dynamics, and gravitational potential.",
+      "competencies": [
+        "State Kepler's laws and the Universal Law of Gravitation.",
+        "Analyze acceleration due to gravity variations with altitude and depth.",
+        "Calculate gravitational potential energy, escape speed, orbital velocity, and total energy of orbiting satellites."
+      ],
+      "unit_name": "Unit VI: Gravitation",
+      "chapter_name": "Gravitation"
+    },
+    {
+      "code": "C8",
+      "title": "Mechanical Properties of Solids",
+      "description": "Understand elastic behavior, stress-strain relationships, and material properties like Young's modulus.",
+      "competencies": [
+        "Explain elasticity, Hooke's law, and the relationship between stress and strain.",
+        "Define and apply concepts of Young's modulus, bulk modulus, shear modulus (qualitative), Poisson's ratio, and elastic energy."
+      ],
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Solids"
+    },
+    {
+      "code": "C9",
+      "title": "Mechanical Properties of Fluids",
+      "description": "Apply principles of fluid statics and dynamics including pressure, viscosity, surface tension, and Bernoulli's theorem.",
+      "competencies": [
+        "Analyze Pascal's law applications (hydraulic lift/brakes) and fluid column pressure.",
+        "Explain viscosity, Stokes' law, terminal velocity, streamline/turbulent flow, and critical velocity.",
+        "Apply Bernoulli's theorem to Torricelli's law and dynamic lift."
+      ],
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Mechanical Properties of Fluids"
+    },
+    {
+      "code": "C10",
+      "title": "Thermal Properties of Matter",
+      "description": "Understand heat transfer mechanisms, thermal expansion, specific heats, and blackbody radiation laws.",
+      "competencies": [
+        "Distinguish between heat and temperature; explain anomalous expansion of water."
+      ],
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Thermal Properties of Matter"
+    },
+    {
+      "code": "C11",
+      "title": "Thermodynamics",
+      "description": "Apply laws of thermodynamics to analyze state variables, processes (isothermal, adiabatic), and energy transformations.",
+      "competencies": [
+        "Define thermal equilibrium, temperature, zeroth law, heat, work, and internal energy."
+      ],
+      "unit_name": "Unit VIII: Thermodynamics",
+      "chapter_name": "Thermodynamics"
+    },
+    {
+      "code": "C12",
+      "title": "Kinetic Theory of Gases",
+      "description": "Connect macroscopic gas properties to microscopic molecular behavior using kinetic theory assumptions.",
+      "competencies": [
+        "Derive and apply the equation of state for a perfect gas."
+      ],
+      "unit_name": "Unit IX: Behavior of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Kinetic Theory"
+    },
+    {
+      "code": "C13",
+      "title": "Oscillations",
+      "description": "Analyze periodic motion, simple harmonic motion (SHM), energy in oscillation, and the physics of pendulums.",
+      "competencies": [
+        "Describe periodic functions, time period, frequency, and displacement as a function of time."
+      ],
+      "unit_name": "Unit X: Oscillations and Waves",
+      "chapter_name": "Oscillations"
+    },
+    {
+      "code": "C14",
+      "title": "Waves",
+      "description": "Understand wave motion types, superposition principles, standing waves, beats, and interference phenomena.",
+      "competencies": [
+        "Distinguish between transverse and longitudinal waves."
+      ],
+      "unit_name": "Unit X: Oscillations and Waves",
+      "chapter_name": "Waves"
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [],
+    "question_paper_design": [],
+    "competency_weightage": [],
+    "bloom_levels": [],
+    "internal_assessment": [
+      "The record, to be submitted by the students, at the time of their annual examination, has to include: Record of at least 8 Experiments (with 4 from each section), to be performed by the students. Record of at least 6 Activities (with 3 each from section A and section B), to be performed by the students. Report of the project carried out by the students."
+    ],
+    "practical_assessment": [
+      {
+        "component": "Two experiments one from each section",
+        "marks": "7+7"
+      },
+      {
+        "component": "Practical record (experiment and activities)",
+        "marks": 5
+      },
+      {
+        "component": "One activity from any section",
+        "marks": 3
+      }
+    ],
+    "project_assessment": [
+      {
+        "component": "Investigatory Project",
+        "marks": 3,
+        "description": "Report of the project carried out by the students."
+      },
+      {
+        "component": "Viva on experiments, activities and project",
+        "marks": 5
+      }
+    ]
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Units and Measurements",
+      "topic": "Units and Measurements",
+      "outcomes": [
+        "Understand the need for measurement and systems of units including fundamental and derived units.",
+        "Apply international standards for SI units, symbols, and nomenclature of physical quantities.",
+        "Determine significant figures and calculate uncertainty in results.",
+        "Perform dimensional analysis and apply it to solve problems."
+      ]
+    },
+    {
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Straight Line",
+      "topic": "Motion in a Straight Line",
+      "outcomes": [
+        "Define frame of reference and describe motion in a straight line.",
+        "Apply elementary concepts of differentiation and integration to describe motion.",
+        "Distinguish between average speed/velocity and instantaneous velocity.",
+        "Analyze uniformly accelerated motion using graphical methods (v-t, x-t) and calculus-based relations."
+      ]
+    },
+    {
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Plane",
+      "topic": "Motion in a Plane",
+      "outcomes": [
+        "Differentiate between scalar and vector quantities and perform vector addition, subtraction, and resolution.",
+        "Calculate scalar and vector products of vectors.",
+        "Analyze cases of uniform velocity and acceleration in a plane including projectile motion.",
+        "Describe uniform circular motion."
+      ]
+    },
+    {
+      "unit_name": "Unit III: Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "topic": "Laws of Motion",
+      "outcomes": [
+        "Explain intuitive concepts of force, inertia, Newton's laws (1st, 2nd, 3rd), impulse, and linear momentum conservation.",
+        "Analyze equilibrium of concurrent forces including static, kinetic, rolling friction, and lubrication.",
+        "Apply dynamics principles to uniform circular motion, centripetal force, banked roads, and level curves."
+      ]
+    },
+    {
+      "unit_name": "Unit IV: Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power",
+      "topic": "Work, Energy and Power",
+      "outcomes": [
+        "Calculate work done by constant and variable forces.",
+        "Apply the work-energy theorem involving kinetic energy and power.",
+        "Analyze conservative vs. non-conservative forces, potential energy (including springs), and motion in vertical circles.",
+        "Evaluate elastic and inelastic collisions in one and two dimensions."
+      ]
+    }
+  ]
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [
+    {
+      "type": "activity",
+      "title": "To make a paper scale of given least count, e.g., 0.2cm, 0.5 cm.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To determine mass of a given body using a metre scale by principle of moments.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To plot a graph for a given set of data, with proper choice of scales and error bars.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To measure the force of limiting friction for rolling of a roller on a horizontal plane.",
+      "unit_name": "Unit III: Laws of Motion",
+      "chapter_name": "Chapter–4: Laws of Motion",
+      "details": "Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To study the variation in range of a projectile with angle of projection.",
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Chapter–3: Motion in a Plane",
+      "details": "Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To study the conservation of energy of a ball rolling down on an inclined plane (using a double inclined plane).",
+      "unit_name": "Unit IV: Work, Energy and Power",
+      "chapter_name": "Chapter–5: Work, Energy and Power",
+      "details": "Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To study dissipation of energy of a simple pendulum by plotting a graph between square of amplitude and time.",
+      "unit_name": "Unit X: Oscillations and Waves",
+      "chapter_name": "Chapter–13: Oscillations",
+      "details": "Section A"
+    },
+    {
+      "type": "activity",
+      "title": "To observe change of state and plot a cooling curve for molten wax.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–10: Thermal Properties of Matter",
+      "details": "Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To observe and explain the effect of heating on a bi-metallic strip.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–10: Thermal Properties of Matter",
+      "details": "Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To note the change in level of liquid in a container on heating and interpret the observations.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–10: Thermal Properties of Matter",
+      "details": "Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To study the effect of detergent on surface tension of water by observing capillary rise.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–9: Mechanical Properties of Fluids",
+      "details": "Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To study the factors affecting the rate of loss of heat of a liquid.",
+      "unit_name": "Unit VIII: Thermodynamics",
+      "chapter_name": "Chapter–11: Thermodynamics",
+      "details": "Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To study the effect of load on depression of a suitably clamped metre scale loaded at (i) its end (ii) in the middle.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–8: Mechanical Properties of Solids",
+      "details": "Section B"
+    },
+    {
+      "type": "activity",
+      "title": "To observe the decrease in pressure with increase in velocity of a fluid.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–9: Mechanical Properties of Fluids",
+      "details": "Section B"
+    }
+  ],
+  "projects": [
+    {
+      "title": "Investigatory Project",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Report of the project carried out by the students."
+    }
+  ],
+  "practicals": [
+    {
+      "title": "To measure diameter of a small spherical/cylindrical body and to measure internal diameter and depth of a given beaker/calorimeter using Vernier Callipers and hence find its volume.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "title": "To measure diameter of a given wire and thickness of a given sheet using screw gauge.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "title": "To determine volume of an irregular lamina using screw gauge.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "title": "To determine radius of curvature of a given spherical surface by a spherometer.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "title": "To determine the mass of two different objects using a beam balance.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "title": "To find the weight of a given body using parallelogram law of vectors.",
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Chapter–1: Units and Measurements",
+      "details": "Section A"
+    },
+    {
+      "title": "Using a simple pendulum, plot its graph and use it to find the effective length of second's pendulum.",
+      "unit_name": "Unit X: Oscillations and Waves",
+      "chapter_name": "Chapter–13: Oscillations",
+      "details": "Section A"
+    },
+    {
+      "title": "To study variation of time period of a simple pendulum of a given length by taking bobs of same size but different masses and interpret the result.",
+      "unit_name": "Unit X: Oscillations and Waves",
+      "chapter_name": "Chapter–13: Oscillations",
+      "details": "Section A"
+    },
+    {
+      "title": "To study the relationship between force of limiting friction and normal reaction and to find the co- efficient of friction between a block and a horizontal surface.",
+      "unit_name": "Unit III: Laws of Motion",
+      "chapter_name": "Chapter–4: Laws of Motion",
+      "details": "Section A"
+    },
+    {
+      "title": "To find the downward force, along an inclined plane, acting on a roller due to gravitational pull of the earth and study its relationship with the angle of inclination θ by plotting graph between force and Sinθ.",
+      "unit_name": "Unit III: Laws of Motion",
+      "chapter_name": "Chapter–4: Laws of Motion",
+      "details": "Section A"
+    },
+    {
+      "title": "To determine Young's modulus of elasticity of the material of a given wire.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–8: Mechanical Properties of Solids",
+      "details": "Section B"
+    },
+    {
+      "title": "To find the force constant of a helical spring by plotting a graph between load and extension.",
+      "unit_name": "Unit IV: Work, Energy and Power",
+      "chapter_name": "Chapter–5: Work, Energy and Power",
+      "details": "Section B"
+    },
+    {
+      "title": "To study the variation in volume with pressure for a sample of air at constant temperature by plotting graphs between P and V, and between P and 1/V.",
+      "unit_name": "Unit IX: Behaviour of Perfect Gases and Kinetic Theory of Gases",
+      "chapter_name": "Chapter–12: Kinetic Theory",
+      "details": "Section B"
+    },
+    {
+      "title": "To determine the surface tension of water by capillary rise method.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–9: Mechanical Properties of Fluids",
+      "details": "Section B"
+    },
+    {
+      "title": "To determine the coefficient of viscosity of a given viscous liquid by measuring terminal velocity of a given spherical body.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–9: Mechanical Properties of Fluids",
+      "details": "Section B"
+    },
+    {
+      "title": "To study the relationship between the temperature of a hot body and time by plotting a cooling curve.",
+      "unit_name": "Unit VIII: Thermodynamics",
+      "chapter_name": "Chapter–11: Thermodynamics",
+      "details": "Section B"
+    },
+    {
+      "title": "To determine specific heat capacity of a given solid by method of mixtures.",
+      "unit_name": "Unit VII: Properties of Bulk Matter",
+      "chapter_name": "Chapter–10: Thermal Properties of Matter",
+      "details": "Section B"
+    },
+    {
+      "title": "To study the relation between frequency and length of a given wire under constant tension using sonometer.",
+      "unit_name": "Unit X: Oscillations and Waves",
+      "chapter_name": "Chapter–14: Waves",
+      "details": "Section B"
+    },
+    {
+      "title": "To study the relation between the length of a given wire and tension for constant frequency using sonometer.",
+      "unit_name": "Unit X: Oscillations and Waves",
+      "chapter_name": "Chapter–14: Waves",
+      "details": "Section B"
+    },
+    {
+      "title": "To find the speed of sound in air at room temperature using a resonance tube by two resonance positions.",
+      "unit_name": "Unit X: Oscillations and Waves",
+      "chapter_name": "Chapter–14: Waves",
+      "details": "Section B"
+    }
+  ]
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

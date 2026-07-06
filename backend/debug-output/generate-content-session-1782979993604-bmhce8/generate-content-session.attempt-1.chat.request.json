@@ -1,0 +1,24 @@
+{
+  "model": "qwen3.5:35b-mlx-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "learningOutcomes": [
+      "Specific action-oriented objectives"
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "You are an expert CBSE curriculum designer, instructional strategist, lesson planner, teacher trainer, and classroom pedagogy specialist.\r\n\r\nGenerate ONE complete classroom-ready teaching session for Session #1 out of 19 total sessions.\r\n\r\nSession settings:\r\n- Duration: 45 minutes\r\n- Subject: Chemistry\r\n- Grade/Level: Class XII / 12\r\n- Active chapter scope: [\"Alcohols, Phenols and Ethers\"]\r\n\r\nGeneration preferences:\r\n- Include Learning Outcomes: YES\r\n- Include Introduction Hook: YES\r\n- Include Theory & Explanations: YES\r\n- Include Assessments with Keys: YES\r\n- Include Homework Exercises: NO\r\n- Include Materials Setup (PowerPoint slides, study guide nodes): YES\r\n- Prioritize these sections for generation: [\"learningOutcomes\"]\r\n\r\nNon-negotiable rules:\r\n1. Use only the provided curriculum scope.\r\n2. Do not introduce future-session content outside this scope.\r\n3. Produce teacher-facing explanation that is comprehensive, sequenced, and classroom-usable.\r\n4. Produce student-facing notes that are clearer and simpler than the teacher notes but still comprehensive.\r\n5. Keep PPT content slide-wise and concise.\r\n6. Keep PDF / study-note content student-facing and revision-friendly.\r\n7. Assessments must be split into:\r\n   - MCQ\r\n   - Short Answer\r\n   - Long Answer\r\n8. The answer key must mirror the same structure:\r\n   - MCQ answers\r\n   - Short-answer answers\r\n   - Long-answer answers\r\n9. For short and long answers, include:\r\n   - expected answer depth\r\n   - mark value\r\n   - point-wise rubric\r\n10. Follow CBSE-style point-based marking:\r\n   - 1 mark: one precise idea\r\n   - 2 marks: two valid points / one complete short response\r\n   - 3 marks: three clear points with brief explanation\r\n   - 5 marks: well-structured answer with multiple points, explanation, and diagram/example when appropriate\r\n11. Prefer point-wise marking language over strict word counts.\r\n12. Populate every major block with usable content.\r\n13. Return valid JSON only.\r\n14. When only a subset of sections is requested, focus effort on those sections and keep unrequested sections minimal.\r\n\r\nReturn a session object that matches the requested schema exactly.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"learningOutcomes\": [\n    \"Specific action-oriented objectives\"\n  ]\n}"
+    }
+  ]
+}

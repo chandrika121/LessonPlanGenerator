@@ -1,0 +1,226 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8A - Class XI
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "units": [
+    {
+      "unit_id": "class-11-physics-unit-i",
+      "unit_name": "Unit 1",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electric Charges and Fields"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Electrostatic Potential and Capacitance"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-physics-unit-ii",
+      "unit_name": "Unit 2",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Current Electricity"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-physics-unit-iii",
+      "unit_name": "Unit 3",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Moving Charges and Magnetism"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Magnetism and Matter"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-physics-unit-iv",
+      "unit_name": "Unit 4",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electromagnetic Induction"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Alternating Current"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-11-physics-unit-i",
+      "unit_name": "Unit 1",
+      "chapter_id": "C1",
+      "chapter_name": "Electric Charges and Fields"
+    },
+    {
+      "unit_id": "class-11-physics-unit-i",
+      "unit_name": "Unit 1",
+      "chapter_id": "C2",
+      "chapter_name": "Electrostatic Potential and Capacitance"
+    },
+    {
+      "unit_id": "class-11-physics-unit-ii",
+      "unit_name": "Unit 2",
+      "chapter_id": "C1",
+      "chapter_name": "Current Electricity"
+    },
+    {
+      "unit_id": "class-11-physics-unit-iii",
+      "unit_name": "Unit 3",
+      "chapter_id": "C1",
+      "chapter_name": "Moving Charges and Magnetism"
+    },
+    {
+      "unit_id": "class-11-physics-unit-iii",
+      "unit_name": "Unit 3",
+      "chapter_id": "C2",
+      "chapter_name": "Magnetism and Matter"
+    },
+    {
+      "unit_id": "class-11-physics-unit-iv",
+      "unit_name": "Unit 4",
+      "chapter_id": "C1",
+      "chapter_name": "Electromagnetic Induction"
+    },
+    {
+      "unit_id": "class-11-physics-unit-iv",
+      "unit_name": "Unit 4",
+      "chapter_id": "C2",
+      "chapter_name": "Alternating Current"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C12-PHYS-U1-C1",
+      "title": "Electric Charges and Fields",
+      "description": "Understanding electric charges, conservation of charge, Coulomb's law, superposition principle, continuous charge distribution, electric field, electric field lines, electric dipole, torque on a dipole, electric flux, and Gauss's theorem applications.",
+      "competencies": [
+        "Apply Coulomb's law to calculate force between point charges",
+        "Use superposition principle for forces between multiple charges",
+        "Analyze continuous charge distribution scenarios",
+        "Describe electric field due to point charge and dipole",
+        "Interpret electric field lines and flux",
+        "Apply Gauss's theorem to find fields of symmetric charge distributions"
+      ],
+      "unit_name": "Unit 1",
+      "chapter_name": "Chapter–1: Electric Charges and Fields"
+    },
+    {
+      "code": "C12-PHYS-U1-C2",
+      "title": "Electrostatic Potential and Capacitance",
+      "description": "Mastering concepts of electric potential, potential difference, equipotential surfaces, electrical potential energy, conductors, dielectrics, capacitors, capacitance, and energy storage.",
+      "competencies": [
+        "Calculate electric potential and potential difference",
+        "Determine electrical potential energy of charge systems",
+        "Analyze behavior of conductors and dielectrics",
+        "Compute capacitance for various configurations",
+        "Evaluate energy stored in capacitors"
+      ],
+      "unit_name": "Unit 1",
+      "chapter_name": "Chapter–2: Electrostatic Potential and Capacitance"
+    },
+    {
+      "code": "C12-PHYS-U2-C3",
+      "title": "Current Electricity",
+      "description": "Exploring electric current, drift velocity, Ohm's law, resistivity, internal resistance, Kirchhoff's rules, and Wheatstone bridge.",
+      "competencies": [
+        "Relate drift velocity to electric current",
+        "Apply Ohm's law to linear and non-linear circuits",
+        "Calculate resistivity and conductivity",
+        "Analyze temperature dependence of resistance",
+        "Use Kirchhoff's rules for circuit analysis",
+        "Operate Wheatstone bridge for resistance measurement"
+      ],
+      "unit_name": "Unit 2",
+      "chapter_name": "Chapter–3: Current Electricity"
+    },
+    {
+      "code": "C12-PHYS-U3-C4",
+      "title": "Moving Charges and Magnetism",
+      "description": "Investigating magnetic fields, Biot-Savart law, Ampere's law, forces on moving charges and current-carrying conductors, torque on current loops, and galvanometers.",
+      "competencies": [
+        "Apply Biot-Savart law to calculate magnetic fields",
+        "Use Ampere's law for symmetric current distributions",
+        "Calculate force on moving charges in magnetic fields",
+        "Determine force between parallel current-carrying conductors",
+        "Analyze torque on current loops and magnetic dipoles"
+      ],
+      "unit_name": "Unit 3",
+      "chapter_name": "Chapter–4: Moving Charges and Magnetism"
+    },
+    {
+      "code": "C12-PHYS-U3-C5",
+      "title": "Magnetism and Matter",
+      "description": "Understanding magnetic properties of materials, magnetic dipoles, magnetization, and temperature effects on magnetic properties.",
+      "competencies": [
+        "Classify materials as para-, dia-, or ferro-magnetic",
+        "Analyze magnetic field intensity due to dipoles",
+        "Evaluate torque on magnetic dipoles in uniform fields",
+        "Explain magnetization and temperature effects"
+      ],
+      "unit_name": "Unit 3",
+      "chapter_name": "Chapter–5: Magnetism and Matter"
+    },
+    {
+      "code": "C12-PHYS-U4-C6",
+      "title": "Electromagnetic Induction",
+      "description": "Studying electromagnetic induction, Faraday's laws, Lenz's law, self and mutual induction.",
+      "competencies": [
+        "Apply Faraday's laws to calculate induced EMF",
+        "Use Lenz's law to determine direction of induced current",
+        "Analyze self and mutual induction phenomena"
+      ],
+      "unit_name": "Unit 4",
+      "chapter_name": "Chapter–6: Electromagnetic Induction"
+    },
+    {
+      "code": "C12-PHYS-U4-C7",
+      "title": "Alternating Current",
+      "description": "Exploring AC characteristics, reactance, impedance, LCR circuits, resonance, power factor, and transformers.",
+      "competencies": [
+        "Calculate peak and RMS values of AC quantities",
+        "Analyze reactance and impedance in AC circuits",
+        "Study resonance in LCR series circuits",
+        "Evaluate power factor and wattless current"
+      ],
+      "unit_name": "Unit 4",
+      "chapter_name": "Chapter–7: Alternating Current"
+    }
+  ]
+}

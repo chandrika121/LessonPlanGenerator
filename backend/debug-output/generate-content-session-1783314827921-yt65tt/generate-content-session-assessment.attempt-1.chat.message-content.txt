@@ -1,0 +1,700 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Students will define electric charge and distinguish between positive and negative types.",
+        "Students will explain the quantization of charge using q=ne.",
+        "Students will state and apply Coulomb's Law to calculate electrostatic force.",
+        "Students will define an electric field and describe its direction."
+      ],
+      "assessedConcepts": [
+        "Quantization of Charge",
+        "Conservation of Charge",
+        "Coulomb's Law",
+        "Electric Field Definition"
+      ],
+      "conceptCoveragePriorities": [
+        "Quantization of Charge (q=ne)",
+        "Conservation of Charge",
+        "Application of Coulomb's Law"
+      ],
+      "misconceptionTargets": [
+        "Charge is a fluid that flows out.",
+        "Field lines are physical objects."
+      ],
+      "competencyFocus": [
+        "Understanding",
+        "Application"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "title": "Theory: Max Marks 70, Time 3 hrs",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Session-aligned assessment of Electric Charges and Fields"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Quantization of Charge",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Conservation of Charge",
+          "questionRefs": [
+            "q2"
+          ],
+          "competency": "Recall",
+          "importance": "core"
+        },
+        {
+          "concept": "Coulomb's Law",
+          "questionRefs": [
+            "q3",
+            "q5",
+            "q6"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        },
+        {
+          "concept": "Electric Field Definition",
+          "questionRefs": [
+            "q7"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will define electric charge and distinguish between positive and negative types.",
+          "questionRefs": [
+            "q1"
+          ]
+        },
+        {
+          "outcome": "Students will explain the quantization of charge using q=ne.",
+          "questionRefs": [
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Students will state and apply Coulomb's Law to calculate electrostatic force.",
+          "questionRefs": [
+            "q3",
+            "q5",
+            "q6"
+          ]
+        },
+        {
+          "outcome": "Students will define an electric field and describe its direction.",
+          "questionRefs": [
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 35,
+        "application": 40,
+        "analysis": 10,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 3,
+        "application": 4,
+        "analysis": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Theory: Max Marks 70, Time 3 hrs",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session.",
+        "Section A contains MCQs (1 mark each). Section B contains Very Short Answers (1 mark each). Section C contains Short Answers (2 marks each).",
+        "Show necessary steps for calculation-based questions."
+      ],
+      "sections": [
+        {
+          "id": "section-theory-max-marks-70-time-3-hrs",
+          "title": "Theory: Max Marks 70, Time 3 hrs",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following statements correctly describes the nature of electric charge?",
+          "options": [
+            "A. Charge is continuous and can be divided infinitely.",
+            "B. Charge is quantized and exists in discrete packets.",
+            "C. Charge is created when two bodies are rubbed together.",
+            "D. Charge is a vector quantity with magnitude and direction."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will define electric charge and distinguish between positive and negative types."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Properties of Charge"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Charge is quantized (q=ne)."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "State the principle of conservation of charge.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Students will define electric charge and distinguish between positive and negative types."
+          ],
+          "conceptRefs": [
+            "Conservation of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Conservation Law"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Total charge in an isolated system remains constant."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "If the distance between two point charges is doubled, the electrostatic force between them becomes:",
+          "options": [
+            "A. Half of the original force",
+            "B. One-fourth of the original force",
+            "C. Double the original force",
+            "D. Four times the original force"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will state and apply Coulomb's Law to calculate electrostatic force."
+          ],
+          "conceptRefs": [
+            "Coulomb's Law"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Inverse Square Law"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual application",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Force is inversely proportional to the square of distance."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Calculate the number of electrons required to produce a total charge of -1 Coulomb.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "Numerical value with unit",
+          "learningOutcomeRefs": [
+            "Students will explain the quantization of charge using q=ne."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Elementary Charge Calculation"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Calculation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: q = ne, where e = 1.6 x 10^-19 C."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Two point charges, +2 µC and -4 µC, are placed 0.5 meters apart in air. Calculate the magnitude of the electrostatic force between them.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Step-by-step calculation",
+          "learningOutcomeRefs": [
+            "Students will state and apply Coulomb's Law to calculate electrostatic force."
+          ],
+          "conceptRefs": [
+            "Coulomb's Law"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Force Calculation"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: F = k(q1q2)/r^2."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Explain why the force between two charges becomes four times stronger if the distance between them is halved.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Explanation with reference to formula",
+          "learningOutcomeRefs": [
+            "Students will state and apply Coulomb's Law to calculate electrostatic force."
+          ],
+          "conceptRefs": [
+            "Coulomb's Law"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Inverse Square Relationship"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Force is inversely proportional to r^2."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Define an electric field and state the direction of the electric field lines for a single positive point charge.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Definition and directional description",
+          "learningOutcomeRefs": [
+            "Students will define an electric field and describe its direction."
+          ],
+          "conceptRefs": [
+            "Electric Field Definition"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Field Lines"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Field lines originate from positive charges."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "B. Charge is quantized and exists in discrete packets.",
+            "explanation": "Charge exists in integer multiples of the elementary charge (e), making it discrete, not continuous.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "The total electric charge in an isolated system remains constant.",
+            "explanation": "Charge cannot be created or destroyed, only transferred.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "B. One-fourth of the original force",
+            "explanation": "According to Coulomb's Law, F is inversely proportional to r^2. If r becomes 2r, F becomes F/4.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "6.25 x 10^18 electrons",
+            "explanation": "n = q/e = 1 / (1.6 x 10^-19) = 6.25 x 10^18.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "1.152 N",
+            "explanation": "F = k|q1q2|/r^2 = (9x10^9 * 2x10^-6 * 4x10^-6) / (0.5)^2 = 72x10^-3 / 0.25 = 0.288 N. Wait, calculation: (9e9 * 2e-6 * 4e-6) / 0.25 = (72e-3)/0.25 = 0.288 N. Correction: The answer is 0.288 N.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "Since force is inversely proportional to the square of distance (F ∝ 1/r^2), halving the distance (r/2) results in a force proportional to 1/(r/2)^2 = 4/r^2. Thus, the force becomes four times stronger.",
+            "explanation": "Demonstrates understanding of the inverse square relationship in Coulomb's Law.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "An electric field is the region around a charge where it exerts force on other charges. For a positive point charge, field lines radiate outwards (away from the charge).",
+            "explanation": "Correct definition and direction of field lines for a positive source.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct statement of conservation principle",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if the student mentions 'isolated system' and 'constant/unchanged'."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct numerical value (6.25 x 10^18)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for correct calculation using e = 1.6 x 10^-19 C."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct formula substitution and unit conversion",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct final answer (0.288 N)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for correct setup/conversion, 1 mark for correct result."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Mentioning inverse square relationship (F ∝ 1/r^2)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct logical conclusion (force becomes 4x)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for clear reasoning linking distance change to force change."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct definition of electric field",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct direction (outwards/radiating) for positive charge",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for each distinct correct component."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q5",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Correct formula and unit conversion",
+                "marks": 1
+              },
+              {
+                "criterion": "Accurate calculation of force",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "F = (9x10^9 * 2x10^-6 * 4x10^-6) / (0.5)^2 = 0.288 N"
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Identification of inverse square law",
+                "marks": 1
+              },
+              {
+                "criterion": "Logical deduction of force increase",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Since F is inversely proportional to r^2, halving r makes the denominator (r/2)^2 = r^2/4. Thus F becomes 4 times larger."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Definition of electric field as region of influence",
+                "marks": 1
+              },
+              {
+                "criterion": "Direction specified as outwards from positive charge",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Electric field is the space around a charge where force is exerted. For a positive charge, lines point away from it."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea or step.",
+        "For MCQs, only the correct option is accepted.",
+        "Partial credit is allowed for calculation errors if the method is correct."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Ensure consistency in marking numerical answers (e.g., significant figures)."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers.",
+        "Review calculation-based questions for common arithmetic errors."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of Quantization, Conservation, Coulomb's Law, and Electric Fields."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from conceptual MCQs to calculation-based short answers."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (3 MCQs, 2 VSA, 2 SA)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total (9 marks)."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to a valid section (section-theory-max-marks-70-time-3-hrs)."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b-mlx-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\r\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: multi_class_board_syllabus\n- Expected structure type: multi_class_unit_topic\n- Preserve separate classes/grades when multiple classes appear in one document\n- Never merge Class XI and Class XII structures together\r\n\r\nReturn JSON only.\r\nDisable reasoning and answer directly.\r\nExtract curriculum hierarchy faithfully from the source.\r\n\r\nCapture:\r\n- document_metadata\r\n- classes\r\n- units\r\n- chapters\r\n- topics\r\n- subtopics\r\n- key concepts\r\n- marks attached to units or chapters when explicit\r\n\r\nRules:\r\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\r\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\r\n- If a unit is followed directly by topic lists, keep that as unit -> topics\r\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\r\n- Never convert a unit into a chapter just because no deeper chapter heading exists\r\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\r\n- Never generate the complete curriculum content\r\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\r\n- If a chunk contains only partial information, return only what is visible in that chunk\r\n- Do not infer, estimate, explain, recommend, or analyze\r\n- Do not include any fields other than the requested schema\r\n- This is partial curriculum input for chunk 3 of 4; extract only what is present in this chunk\r\n\r\nCurriculum source text:\r\nof Elements - Principles and\nmethods of extraction - concentration, oxidation, reduction - electrolytic method\nand refining\n- 3. Polymers – Polymerisation, Homopolymers and copolymer with few examples\n- 4. Chemistry in Everyday life - Chemicals in medicines - analgesics,\ntranquilizers antiseptics, disinfectants, antimicrobials, antifertility drugs,\nantibiotics, antacids, antihistamines. Chemicals in food - preservatives, artificial\nsweetening agents, antioxidants.\n9\n\n---\n\n# Page 10\n\n## PRACTICAL\nEvaluation Scheme for Examination Marks\nVolumetric Analysis 08\nSalt Analysis 08\nContent Based Experiment 06\nProject Work 04\n## Class record and viva 04\nTotal 30\n## PRACTICAL SYLLABUS\nMicro-chemical methods are available for several of the practical experiments,\nwherever possible such techniques should be used.\n- A. Surface Chemistry\n- 1. Preparation of one lyophilic and one lyophobic sol\nLyophilic sol - starch, egg albumin and gum\nLyophobic sol – aluminum hydroxide, ferric hydroxide, arsenous\nsulphide.\n- 2. Dialysis of sol-prepared in (a) above.\n- 3. Study of the role of emulsifying agents in stabilizing the emulsion of different\noils.\n- B. Chemical Kinetics\n- 1. Effect of concentration and temperature on the rate of reaction between Sodium\nThiosulphate and Hydrochloric acid.\n- 2. Study of reaction rates of any one of the following:\n Reaction of Iodide ion with Hydrogen Peroxide at room temperature using\ndifferent concentration of Iodide ions.\n Reaction between Potassium Iodate, (KIO 3 ) and Sodium Sulphate:\n(Na 2 SO 3 ) using starch solution as indicator (clock reaction).\n- C. Thermochemistry\nAny one of the following experiments\n Enthalpy of dissolution of Copper Sulphate or Potassium Nitrate.\n Enthalpy of neutralization of strong acid (HCI) and strong base (NaOH).\n Determination of enthalpy change during interaction (Hydrogen bond\nformation) between Acetone and Chloroform.\n10\n\n---\n\n# Page 11\n\n- D. Electrochemistry\n2+ 2+\nVariation of cell potential in Zn/Zn || Cu /Cu with change in concentration of\nelectrolytes (CuSO 4 or ZnSO 4 ) at room temperature.\n- E. Chromatography\n- 1. Separation of pigments from extracts of leaves and flowers by paper\nchromatography and determination of Rf values.\n- 2. Separation of constituents present in an inorganic mixture containing two\ncations only (constituents having large difference in Rf values to be provided).\n- F. Preparation of Inorganic Compounds\n- 1. Preparation of double salt of Ferrous Ammonium Sulphate or Potash Alum.\n- 2. Preparation of Potassium Ferric Oxalate.\n- G. Preparation of Organic Compounds\nPreparation of any one of the following compounds\n- 1. Acetanilide\n- 2. Di –benzal acetone\n- 3. p-Nitroacetanilide\n- 4. Aniline yellow or 2 - Naphthol Aniline dye.\n- H. Tests for the functional groups present in organic compounds\nUnsaturation, alcoholic, phenolic, aldehydic, ketonic, carboxylic and amino (Primary)\ngroups.\n- I. Characteristic tests of carbohydrates, fats and proteins in pure samples and\ntheir detection in given foodstuffs.\n- J. Determination of concentration/ molarity of KMnO4 solution by titrating it\nagainst a standard solution of:\n- 1. Oxalic acid,\n- 2. Ferrous Ammonium Sulphate\n(Students will be required to prepare standard solutions by weighing themselves).\n- K. Qualitative analysis\nDetermination of one anion and one cation in a given salt\n𝟐+ 𝟐+ 𝟑+ 𝟑+ 𝟐+ 𝟐+ 𝟐+ 𝟐+ 𝟐+ 𝟐+ 𝟐+ 𝟐+\nCations: 𝑷𝒃 , 𝑪𝒖 , 𝑨𝒍 , 𝑭𝒆 , 𝑴𝒏 , 𝑵𝒊 𝒁𝒏 𝑪𝒐 𝑪𝒂 𝑺𝒓 𝑩𝒂 𝑴𝒈 ,\n+\n𝑵𝑯 𝟒\n𝟐− 𝟐− 𝟐− − − − − − 𝟐− 𝟑− − 2-\nAnions: 𝑪𝑶 𝟑 , 𝐒 , 𝐒𝐎 𝟑 , 𝑵𝑶 𝟑 , 𝑵𝑶 𝟐 , 𝐂𝐥 , 𝐁𝐫 , 𝐈 , 𝑺𝑶 𝟒 , 𝑷𝑶 𝟒 , 𝐂𝐇 𝟑 𝐂𝐎𝐎 , C 2 O 4\n(Note: Insoluble salts excluded)\n11\n\n---\n\n# Page 12\n\n## PROJECTS\nScientific investigations involving laboratory testing and collecting information from\nother sources.\nA few suggested Projects\na) Study of the presence of oxalate ions in guava fruit at different stages of\nripening.\nb) Study of quantity of casein present in different samples of milk.\nc) Preparation of soybean milk and its comparison with the natural milk with\nrespect to curd formation, effect of temperature, etc.\nd) Study of the effect of Potassium Bisulphate as food preservative under various\nconditions (temperature, concentration, time, etc.)\ne) Study of digestion of starch by salivary amylase and effect of pH and\ntemperature on it.\nf) Comparative study of the rate of fermentation of following materials: wheat\nflour, gram flour, potato juice, carrot juice, etc.\ng) Extraction of essential oils present in Saunf (aniseed), Ajwain (carom), Illaichi\n(cardamom).\nh) Study of common food adulterants in fat, oil, butter, sugar, turmeric power, chili\npowder and pepper.\nNote: Any other investigatory project, which involves about 10 periods of work,\ncan be chosen with the approval of the teacher.\nPractical Examination for Visually Challenged Learners Classes XI and XII\nEvaluation Scheme Marks\nIdentification/Familiarity with the apparatus 5\nWritten test (based on given/prescribed practical’s) 10\nPractical Record 5\nViva 10\nTotal 30\n12\n\n---\n\n# Page 13\n\nGeneral Guidelines\n The practical examination will be of two-hour duration.\n A separate list of ten experiments is included here.\n The written examination in practicals for these students will be conducted at the\ntime of practical examination of all other students.\n The written test will be of 30 minutes’ duration.\n The question paper given to the students should be legibly typed. It should\ncontain a total of 15 practical skill based very short answer type questions. A\nstudent would be required to answer any 10 questions.\n A writer may be allowed to such students as per CBSE examination rules.\n All questions included in the question papers should be related to the listed\npracticals\n Every question should require about two minutes to be answered.\n These students are also required to maintain a practical file. A student is\nexpected to record at least five of the listed experiments as per the specific\ninstructions for each subject. These practicals should be duly checked and\nsigned by the internal examiner.\n The format of writing any experiment in the practical file should include aim,\napparatus required, simple theory, procedure, related practical skills,\nprecautions etc.\n Questions may be generated jointly by the external/internal examiners and\nused for assessment.\n The viva questions may include questions based on basic\ntheory/principle/concept, apparatus/materials/ chemicals required, procedure,\nprecautions, sources of error etc.\nList of apparatus for identification/familiarity for assessment in practical (All\nexperiments)\nBeaker, glass rod, tripod stand, wire gauze, Bunsen burner, Whatman filter paper, gas\njar, capillary tube, pestle and mortar, test tubes, tongs, test tube holder, test tube\nstand, burette, pipette, conical flask, standard flask, clamp stand, funnel, filter paper.\nHands-on Assessment\n Identification/familiarity with the apparatus\n Odour detection in qualitative analysis\nList of Experiments\nThe experiments have been divided into two sections: Section A and Section B.\nThe experiments mentioned in Section B are mandatory.\n13\n\n---\n\n# Page 14\n\n## SECTION A\n- A. Surface Chemistry\n- 1. Preparation of one lyophilic and one lyophobic sol\ni. Lyophilic sol - starch, egg albumin and gum\nii. Lyophobic sol – Ferric hydroxide\n- B. Chromatography\nSeparation of pigments from extracts of leaves and flowers by paper\nchromatography and determination of Rf values (distance values may be\nprovided).\n- C. Tests for the functional groups present in organic compounds\n- 1. Alcoholic and Carboxylic groups\n- 2. Aldehyde and Kenotic groups\n- D. Characteristic tests of carbohydrates and proteins in the given foodstuffs.\n- E. Preparation of Inorganic Compounds- Potash Alum\n## SECTION B (Mandatory)\n- F. Quantitative analysis\n- 1. (a) Preparation of a given volume of the standard solution of Oxalic acid.\n(b) Determination of molarity of KMnO 4 solution by titrating it again\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

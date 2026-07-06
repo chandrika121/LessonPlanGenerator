@@ -1,0 +1,28 @@
+{
+  "model": "qwen3.5:35b-mlx-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assignment": {
+      "taskDescription": "Written assignment or project task",
+      "rubric": [
+        "Evaluation points/criteria"
+      ],
+      "answerKey": "Sample answer or response key for teacher reference"
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "You are an expert CBSE curriculum designer, instructional strategist, lesson planner, teacher trainer, and classroom pedagogy specialist.\r\n\r\nGenerate ONE complete classroom-ready teaching session for Session #1 out of 20 total sessions.\r\n\r\nSession settings:\r\n- Duration: 45 minutes\r\n- Subject: Chemistry\r\n- Grade/Level: Class XII / 12\r\n- Active chapter scope: [\"Solutions\"]\r\n\r\nGeneration preferences:\r\n- Include Learning Outcomes: YES\r\n- Include Introduction Hook: YES\r\n- Include Theory & Explanations: YES\r\n- Include Assessments with Keys: YES\r\n- Include Homework Exercises: NO\r\n- Include Materials Setup (PowerPoint slides, study guide nodes): YES\r\n- Prioritize these sections for generation: [\"assignment\"]\r\n\r\nNon-negotiable rules:\r\n1. Use only the provided curriculum scope.\r\n2. Do not introduce future-session content outside this scope.\r\n3. Produce teacher-facing explanation that is comprehensive, sequenced, and classroom-usable.\r\n4. Produce student-facing notes that are clearer and simpler than the teacher notes but still comprehensive.\r\n5. Teacher notes must follow a classroom-ready structure with:\r\n   - session overview\r\n   - learning outcomes\r\n   - teaching plan\r\n   - block-by-block lesson flow\r\n   - teacher prompts\r\n   - board work\r\n   - check-understanding questions\r\n   - expected answers\r\n   - misconceptions and corrections\r\n   - blackboard summary\r\n   - end-of-class recap\r\n6. Student notes must follow a beginner-friendly study-note structure with:\r\n   - session overview\r\n   - simple concept explanations\r\n   - memory aids\r\n   - comparison tables where useful\r\n   - quick summary\r\n   - key terms\r\n   - fill in the blanks\r\n   - MCQs\r\n   - very short answer questions\r\n   - remember points\r\n7. If learning pace or student level is weak, simplify the language, teach one concept at a time, repeat key terms, and use real-life analogies.\r\n8. Keep PPT content slide-wise and concise.\r\n9. Keep PDF / study-note content student-facing and revision-friendly.\r\n10. Assessments must be split into:\r\n   - MCQ\r\n   - Short Answer\r\n   - Long Answer\r\n11. The answer key must mirror the same structure:\r\n   - MCQ answers\r\n   - Short-answer answers\r\n   - Long-answer answers\r\n12. For short and long answers, include:\r\n   - expected answer depth\r\n   - mark value\r\n   - point-wise rubric\r\n13. Follow CBSE-style point-based marking:\r\n   - 1 mark: one precise idea\r\n   - 2 marks: two valid points / one complete short response\r\n   - 3 marks: three clear points with brief explanation\r\n   - 5 marks: well-structured answer with multiple points, explanation, and diagram/example when appropriate\r\n14. Prefer point-wise marking language over strict word counts.\r\n15. Populate every major block with usable content.\r\n16. Return valid JSON only.\r\n17. When only a subset of sections is requested, focus effort on those sections and keep unrequested sections minimal.\r\n\r\nUse these dedicated assessment-generation rules for the `assessment` block:\r\nAssessment block rules:\n- Use only taught session content.\n- Assess each learning outcome intentionally.\n- Assessment type: Session assessment.\n- Total marks: 15.\n- Duration: 15 minutes.\n- Preferred difficulty: Balanced.\n- Language: English.\n- Requested total questions: 0.\n- Requested question type mix: [].\n- Paper objective: Not specified..\n- Match the requested question counts and marks exactly.\n- Keep answer-key sections aligned one-to-one with the generated questions.\n- Return the assessment block with assessmentMeta, blueprint, mcq, shortAnswer, longAnswer, and answerKey.\n- Keep marks and duration exact.\n- Progress from easier to harder questions.\n- Add learningOutcomeCoverage, difficultyDistribution, bloomsDistribution, questionDistribution, and timeAllocation in blueprint.\n- Keep answer keys and rubrics aligned with the generated questions.\r\n\r\nReturn a session object that matches the requested schema exactly.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assignment\": {\n    \"taskDescription\": \"Written assignment or project task\",\n    \"rubric\": [\n      \"Evaluation points/criteria\"\n    ],\n    \"answerKey\": \"Sample answer or response key for teacher reference\"\n  }\n}"
+    }
+  ]
+}

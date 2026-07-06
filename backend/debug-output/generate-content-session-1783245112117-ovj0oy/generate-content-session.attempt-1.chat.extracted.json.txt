@@ -1,0 +1,415 @@
+{
+  "id": "phys-ch1-sess1-001",
+  "sessionNumber": 1,
+  "title": "Electric Charges and Fields: The Invisible Force",
+  "duration": 45,
+  "teacherLessonNotes": {
+    "sessionOverview": "This session introduces the fundamental concepts of electric charge, its properties, and the nature of electric fields. Students will explore how charges interact through forces and visualize these interactions using field lines.",
+    "prerequisiteKnowledge": [
+      "Basic understanding of atomic structure (protons, electrons, neutrons)",
+      "Concept of conservation of mass",
+      "Basic vector addition"
+    ],
+    "previousSessionRecap": [
+      "Matter is made of atoms",
+      "Atoms contain charged particles"
+    ],
+    "learningOutcomes": [
+      "Define electric charge and state its two types (positive and negative).",
+      "Explain the fundamental properties of charge: quantization, conservation, and additivity.",
+      "Describe the concept of an electric field and draw field lines for a single point charge.",
+      "Distinguish between conductors and insulators based on charge mobility."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Demonstration with a balloon and hair to spark curiosity about invisible forces."
+      },
+      {
+        "minutes": 15,
+        "topic": "Properties of Charge",
+        "teachingStrategy": "Direct instruction with real-life analogies (coins, magnets) and board derivations."
+      },
+      {
+        "minutes": 15,
+        "topic": "Electric Field Concept",
+        "teachingStrategy": "Visual modeling using chalk dust or simulation to show field lines."
+      },
+      {
+        "minutes": 10,
+        "topic": "Synthesis & Recap",
+        "teachingStrategy": "Q&A session and blackboard summary."
+      }
+    ],
+    "lessonPurpose": [
+      "To establish the foundation for understanding electrostatics.",
+      "To move students from macroscopic observations to microscopic particle interactions.",
+      "To introduce the concept of a 'field' as a physical entity."
+    ],
+    "teachingSequence": [
+      "Hook: Rub a balloon on hair and ask why it sticks to the wall.",
+      "Define Charge: Introduce positive (protons) and negative (electrons).",
+      "Properties: Discuss Quantization (q=ne), Conservation, and Additivity.",
+      "Field Concept: Explain 'action at a distance' vs. 'field theory'.",
+      "Visuals: Draw field lines for +q and -q charges.",
+      "Differentiation: Simplify math for slow learners; introduce Coulomb's law preview for advanced learners."
+    ],
+    "guidedPractice": [
+      "Ask students to identify the charge type in a rubbed glass rod vs. silk.",
+      "Have students sketch field lines for two positive charges repelling each other.",
+      "Oral check: 'If I remove an electron, does the object become positive or negative?'"
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction to Charge",
+        "durationMinutes": 5,
+        "teacherPrompt": [
+          "Why does a balloon stick to your hair after rubbing it?",
+          "What invisible force is at work here?"
+        ],
+        "explanation": [
+          "Matter contains charged particles: protons (+) and electrons (-).",
+          "Like charges repel; opposite charges attract.",
+          "Charge is a fundamental property of matter."
+        ],
+        "examples": [
+          "Rubbing a plastic comb on dry hair attracts paper bits.",
+          "Lightning is a massive discharge of static electricity."
+        ],
+        "boardWork": [
+          "Definition: Charge (q) is the property causing electrostatic force.",
+          "Types: Positive (+), Negative (-)."
+        ],
+        "boardSteps": [
+          "Write 'Charge: Property of matter' on board.",
+          "Draw a simple atom with + and - signs."
+        ],
+        "solutionFlow": [
+          "Identify the source of charge (excess/deficit of electrons).",
+          "State the sign based on electron movement."
+        ],
+        "proofSteps": [
+          "Observation: Rubbed objects attract light objects.",
+          "Inference: A new property (charge) has been created."
+        ],
+        "geometryDiagrams": [
+          {
+            "id": "diagram-1",
+            "type": "atomModel",
+            "title": "Simple Atom Model",
+            "caption": "Visualizing protons and electrons",
+            "points": [
+              {
+                "id": "Nucleus",
+                "x": 50,
+                "y": 50,
+                "label": "+"
+              },
+              {
+                "id": "Electron1",
+                "x": 80,
+                "y": 20,
+                "label": "-"
+              },
+              {
+                "id": "Electron2",
+                "x": 20,
+                "y": 80,
+                "label": "-"
+              }
+            ],
+            "lines": [
+              {
+                "from": "Nucleus",
+                "to": "Electron1",
+                "label": "orbit"
+              },
+              {
+                "from": "Nucleus",
+                "to": "Electron2",
+                "label": "orbit"
+              }
+            ],
+            "arcs": [],
+            "labels": [
+              {
+                "text": "Proton (+)",
+                "x": 45,
+                "y": 45
+              },
+              {
+                "text": "Electron (-)",
+                "x": 85,
+                "y": 15
+              }
+            ],
+            "measurements": []
+          }
+        ],
+        "checkUnderstanding": [
+          "If an atom loses an electron, what is its net charge?"
+        ],
+        "expectedAnswers": [
+          "It becomes positively charged."
+        ],
+        "activity": [
+          "Quick pair-share: Rub a pen on your sleeve and try to pick up paper scraps."
+        ]
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Quantization of Charge",
+        "definition": "Charge exists in discrete packets, not continuous amounts.",
+        "coreExplanation": "Total charge (q) is always an integer multiple of the elementary charge (e). Formula: q = ne, where n is an integer and e = 1.6 x 10^-19 C.",
+        "importance": "Explains why we cannot have half an electron's worth of charge in isolation.",
+        "observedIn": [
+          "Electrostatic experiments",
+          "Cathode ray tubes"
+        ],
+        "whyStudyIt": "Fundamental to understanding atomic interactions and modern electronics.",
+        "relationshipWithPrevious": "Builds on the knowledge that atoms have electrons.",
+        "relationshipWithFuture": "Leads to current (I = dq/dt) in later chapters.",
+        "keywords": [
+          "Quantization",
+          "Elementary charge (e)",
+          "Integer multiple"
+        ],
+        "teacherMoves": [
+          "Emphasize that n cannot be 1.5 or 2.3."
+        ],
+        "examples": [
+          "A body with -3e charge has 3 extra electrons.",
+          "A body with +2e charge is missing 2 electrons."
+        ],
+        "visuals": [
+          "Stack of coins analogy: You can have 1 coin or 2, but not 1.5 coins."
+        ],
+        "solutionFlow": [
+          "Identify total charge q.",
+          "Divide by e (1.6 x 10^-19 C).",
+          "Result is n (number of electrons)."
+        ],
+        "proofSteps": [
+          "Millikan's Oil Drop Experiment proved this.",
+          "No experiment has ever found a charge less than e."
+        ],
+        "geometryDiagrams": []
+      },
+      {
+        "conceptName": "Electric Field",
+        "definition": "The region around a charge where its influence can be felt by other charges.",
+        "coreExplanation": "A charge creates an electric field (E) in the surrounding space. Another charge placed in this field experiences a force (F = qE).",
+        "importance": "Replaces 'action at a distance' with a local interaction model.",
+        "observedIn": [
+          "Compass needle deflection near magnets (analogy)",
+          "Dust particles moving near charged rods"
+        ],
+        "whyStudyIt": "Essential for understanding forces without physical contact.",
+        "relationshipWithPrevious": "Extends the concept of force to a field concept.",
+        "relationshipWithFuture": "Directly leads to Gauss's Law and potential energy.",
+        "keywords": [
+          "Electric Field (E)",
+          "Field Lines",
+          "Direction"
+        ],
+        "teacherMoves": [
+          "Draw arrows radiating from a positive charge."
+        ],
+        "examples": [
+          "Sun's gravity field affects Earth without touching it.",
+          "Wind field moves a leaf."
+        ],
+        "visuals": [
+          "Diagram of radial lines coming out of +q and going into -q."
+        ],
+        "solutionFlow": [
+          "Determine direction: Away from +, Towards -.",
+          "Draw lines starting perpendicular to the surface."
+        ],
+        "proofSteps": [
+          "Field lines never cross (unique direction at a point).",
+          "Density of lines indicates field strength."
+        ],
+        "geometryDiagrams": [
+          {
+            "id": "concept-diagram-1",
+            "type": "fieldLines",
+            "title": "Electric Field Lines",
+            "caption": "Visualizing the electric field around a point charge",
+            "points": [
+              {
+                "id": "Center",
+                "x": 50,
+                "y": 50,
+                "label": "+"
+              }
+            ],
+            "lines": [
+              {
+                "from": "Center",
+                "to": "Top",
+                "label": "Field Line"
+              },
+              {
+                "from": "Center",
+                "to": "Bottom",
+                "label": "Field Line"
+              },
+              {
+                "from": "Center",
+                "to": "Left",
+                "label": "Field Line"
+              },
+              {
+                "from": "Center",
+                "to": "Right",
+                "label": "Field Line"
+              }
+            ],
+            "arcs": [],
+            "labels": [
+              {
+                "text": "Radial Outward",
+                "x": 60,
+                "y": 20
+              }
+            ],
+            "measurements": []
+          }
+        ]
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "Can a body have a charge of 1.5e?",
+        "level": "Understanding",
+        "expectedResponse": "No, because charge is quantized.",
+        "answerPoints": [
+          "Charge must be an integer multiple of e.",
+          "1.5 is not an integer."
+        ]
+      },
+      {
+        "question": "In which direction do field lines point for a negative charge?",
+        "level": "Remembering",
+        "expectedResponse": "Towards the charge.",
+        "answerPoints": [
+          "Field lines originate from positive.",
+          "They terminate at negative."
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Field lines are physical wires or strings.",
+        "correction": "Clarify that field lines are imaginary constructs used to visualize the direction and strength of the field."
+      },
+      {
+        "misconception": "Like charges attract if they are close enough.",
+        "correction": "Reiterate Coulomb's Law: Like charges ALWAYS repel, regardless of distance (in electrostatics)."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Use the 'coin stack' analogy for quantization.",
+        "Focus on drawing simple radial lines without complex math."
+      ],
+      "averageLearners": [
+        "Practice calculating 'n' in q=ne.",
+        "Draw field lines for single charges accurately."
+      ],
+      "advancedLearners": [
+        "Discuss why field lines cannot intersect.",
+        "Predict the behavior of a dipole in an external field."
+      ]
+    },
+    "teacherTips": [
+      "Use a Van de Graaff generator if available for a dramatic demo.",
+      "Emphasize that 'charge' is a property, not a substance."
+    ],
+    "misconceptions": [
+      "Confusing electric field with magnetic field.",
+      "Thinking neutral objects have no charge at all (they do, just balanced)."
+    ],
+    "formativeChecks": [
+      "Thumbs up/down for 'Quantization' concept.",
+      "Exit ticket: Draw one field line."
+    ],
+    "assessmentQuestions": [
+      "State the principle of conservation of charge with an example."
+    ],
+    "blackboardSummary": [
+      "1. Charge is quantized (q=ne).",
+      "2. Like repel, Opposite attract.",
+      "3. Electric field lines go Out from +, In to -."
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap & Hook",
+        "minutes": 5,
+        "purpose": "Refresh atomic structure and introduce static electricity."
+      },
+      {
+        "segment": "Core Theory",
+        "minutes": 20,
+        "purpose": "Deep dive into Quantization and Field Lines."
+      },
+      {
+        "segment": "Practice & Wrap-up",
+        "minutes": 15,
+        "purpose": "Guided drawing and Q&A."
+      }
+    ],
+    "sessionSummary": [
+      "We learned that charge is discrete, conserved, and creates an invisible field around it."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "Electric field lines originate from ______ charges and terminate at ______ charges.",
+        "expectedAnswer": "positive; negative"
+      }
+    ],
+    "nextSessionBridge": [
+      "Next session: We will calculate the force between two point charges using Coulomb's Law."
+    ]
+  },
+  "learningOutcomes": [
+    "Students will define electric charge and distinguish between positive and negative types.",
+    "Students will explain the quantization of charge (q=ne) and conservation of charge.",
+    "Students will describe the concept of an electric field and draw field lines for point charges.",
+    "Students will differentiate between conductors and insulators based on charge mobility."
+  ],
+  "introduction": "Imagine holding a balloon. You rub it against your hair, and suddenly, it sticks to the wall as if glued by magic! What is this invisible force? Today, we uncover the secret of 'Electric Charges'—the fundamental property that makes lightning strike, phones work, and atoms hold together. We will move from seeing static electricity in our daily lives to understanding the invisible fields that govern them.",
+  "theory": {
+    "overview": "Electric charge is a fundamental property of matter that causes it to experience a force when placed in an electromagnetic field. There are two types: positive (protons) and negative (electrons). Charges interact via attraction (opposites) and repulsion (likes).",
+    "keyPoints": [
+      "Charge is quantized: q = ne, where n is an integer.",
+      "Total charge in an isolated system is conserved.",
+      "Electric field lines represent the direction of force on a positive test charge."
+    ],
+    "detailedContent": "The concept of electric charge begins with the atom. Protons carry a positive charge (+e), and electrons carry a negative charge (-e). When an object gains electrons, it becomes negatively charged; when it loses electrons, it becomes positively charged. A crucial property is quantization: you cannot have half an electron's charge. The total charge Q on any body is always an integral multiple of the elementary charge e (1.6 x 10^-19 C). Another key principle is conservation: in an isolated system, the net charge remains constant; it can only be transferred, not created or destroyed. Finally, we introduce the Electric Field. A charge creates a region around it called the electric field. If another charge enters this region, it feels a force. We visualize this using field lines: they start from positive charges and end at negative charges. The density of these lines indicates the strength of the field."
+  },
+  "activities": [
+    {
+      "name": "The Balloon Stick Challenge",
+      "instructions": [
+        "Students rub a plastic balloon on their hair or wool sweater for 10 seconds.",
+        "They attempt to stick the balloon to a wall or ceiling.",
+        "Class discussion: Why did it stick? What happened to the electrons?"
+      ],
+      "durationMinutes": 5
+    },
+    {
+      "name": "Field Line Sketching",
+      "instructions": [
+        "Draw a positive charge (+) on the board.",
+        "Students draw 4-6 field lines radiating outward, ensuring they are perpendicular to the charge surface.",
+        "Repeat for a negative charge (-), drawing lines converging inward.",
+        "Compare: Note that lines never cross."
+      ],
+      "durationMinutes": 10
+    }
+  ]
+}

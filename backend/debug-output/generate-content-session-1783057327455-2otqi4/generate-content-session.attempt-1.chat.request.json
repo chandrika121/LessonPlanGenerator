@@ -1,0 +1,833 @@
+{
+  "model": "qwen3.5:35b-mlx-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "id": "unique-session-id",
+    "sessionNumber": 1,
+    "title": "Vibrant, educational title for this session",
+    "duration": 45,
+    "teacherLessonNotes": {
+      "sessionOverview": "Teacher-facing overview of this session",
+      "prerequisiteKnowledge": [
+        "What students should already know"
+      ],
+      "previousSessionRecap": [
+        "Short recap points from the previous lesson"
+      ],
+      "learningOutcomes": [
+        "Specific session outcome phrased for teacher delivery"
+      ],
+      "teachingPlan": [
+        {
+          "minutes": 5,
+          "topic": "Introduction",
+          "teachingStrategy": "Questioning with simple real-life example"
+        }
+      ],
+      "lessonPurpose": [
+        "Why this lesson matters"
+      ],
+      "teachingSequence": [
+        "Teacher-facing lesson flow with explanation steps"
+      ],
+      "guidedPractice": [
+        "Teacher-led checks and guided responses"
+      ],
+      "lessonBlocks": [
+        {
+          "title": "Introduction",
+          "durationMinutes": 5,
+          "teacherPrompt": [
+            "Prompt teachers can ask"
+          ],
+          "explanation": [
+            "What the teacher should explain"
+          ],
+          "examples": [
+            "Simple classroom example"
+          ],
+          "boardWork": [
+            "What to write on the board"
+          ],
+          "boardSteps": [
+            "Step 1 on the board",
+            "Step 2 on the board"
+          ],
+          "solutionFlow": [
+            "Solve line by line",
+            "State the final answer clearly"
+          ],
+          "proofSteps": [
+            "Reasoning or theorem step"
+          ],
+          "geometryDiagrams": [
+            {
+              "id": "diagram-1",
+              "type": "rightTriangle",
+              "title": "Right triangle diagram",
+              "caption": "Textbook-style diagram used during board work",
+              "points": [
+                {
+                  "id": "A",
+                  "x": 65,
+                  "y": 155,
+                  "label": "A"
+                },
+                {
+                  "id": "B",
+                  "x": 245,
+                  "y": 155,
+                  "label": "B"
+                },
+                {
+                  "id": "C",
+                  "x": 65,
+                  "y": 55,
+                  "label": "C"
+                }
+              ],
+              "lines": [
+                {
+                  "from": "A",
+                  "to": "B",
+                  "label": "base"
+                },
+                {
+                  "from": "A",
+                  "to": "C",
+                  "label": "height"
+                },
+                {
+                  "from": "B",
+                  "to": "C",
+                  "label": "hypotenuse",
+                  "highlight": true
+                }
+              ],
+              "arcs": [],
+              "labels": [
+                {
+                  "text": "90 deg",
+                  "x": 82,
+                  "y": 142
+                }
+              ],
+              "measurements": []
+            }
+          ],
+          "checkUnderstanding": [
+            "Quick question to ask students"
+          ],
+          "expectedAnswers": [
+            "Expected student answer"
+          ],
+          "activity": [
+            "Optional mini activity"
+          ]
+        }
+      ],
+      "conceptFlow": [
+        {
+          "conceptName": "Concept name",
+          "definition": "Short definition",
+          "coreExplanation": "Teacher-facing explanation",
+          "importance": "Why it matters",
+          "observedIn": [
+            "Where students observe it"
+          ],
+          "whyStudyIt": "Why students study it",
+          "relationshipWithPrevious": "Connection with previous concepts",
+          "relationshipWithFuture": "Connection with future learning without teaching it",
+          "keywords": [
+            "Important keyword"
+          ],
+          "teacherMoves": [
+            "Explain this first"
+          ],
+          "examples": [
+            "Useful example"
+          ],
+          "visuals": [
+            "Suggested visual support"
+          ],
+          "solutionFlow": [
+            "State the formula",
+            "Substitute values",
+            "Simplify carefully"
+          ],
+          "proofSteps": [
+            "State the known fact",
+            "Apply the theorem",
+            "Conclude the result"
+          ],
+          "geometryDiagrams": [
+            {
+              "id": "concept-diagram-1",
+              "type": "anglePair",
+              "title": "Angle pair",
+              "caption": "Use when the concept needs a board diagram",
+              "points": [],
+              "lines": [],
+              "arcs": [],
+              "labels": [],
+              "measurements": []
+            }
+          ]
+        }
+      ],
+      "classroomQuestions": [
+        {
+          "question": "Teacher question",
+          "level": "Understanding",
+          "expectedResponse": "Likely student response",
+          "answerPoints": [
+            "Point teachers should listen for"
+          ]
+        }
+      ],
+      "commonMisconceptionsDetailed": [
+        {
+          "misconception": "Common wrong idea",
+          "correction": "Teacher correction for that misconception"
+        }
+      ],
+      "differentiation": {
+        "slowLearners": [
+          "Support strategies"
+        ],
+        "averageLearners": [
+          "Core expectations"
+        ],
+        "advancedLearners": [
+          "Extension prompts"
+        ]
+      },
+      "teacherTips": [
+        "Pedagogical tips"
+      ],
+      "misconceptions": [
+        "Likely misconceptions to address"
+      ],
+      "formativeChecks": [
+        "Natural formative assessment checkpoint"
+      ],
+      "assessmentQuestions": [
+        "Oral or written assessment question"
+      ],
+      "blackboardSummary": [
+        "Key point for board summary"
+      ],
+      "timePlan": [
+        {
+          "segment": "Recap",
+          "minutes": 5,
+          "purpose": "Refresh prerequisite ideas"
+        }
+      ],
+      "sessionSummary": [
+        "Closing recap point"
+      ],
+      "endOfClassRecap": [
+        {
+          "prompt": "A cell is the ________ unit of life.",
+          "expectedAnswer": "basic"
+        }
+      ],
+      "nextSessionBridge": [
+        "How today connects to the next lesson"
+      ]
+    },
+    "studentLessonNotes": {
+      "title": "Student lesson note title",
+      "sessionOverview": "Simple overview of what this session covers",
+      "introduction": "Student-friendly introduction",
+      "learningObjectives": [
+        "After this lesson you will be able to..."
+      ],
+      "quickRecall": [
+        "Short prerequisite revision point"
+      ],
+      "easyToRemember": [
+        "Simple memory line for the concept"
+      ],
+      "comparisonTables": [
+        {
+          "title": "Comparison table title",
+          "headers": [
+            "Feature",
+            "Type A",
+            "Type B"
+          ],
+          "rows": [
+            [
+              "Example feature",
+              "Example A",
+              "Example B"
+            ]
+          ]
+        }
+      ],
+      "formulaCards": [
+        {
+          "title": "Formula title",
+          "formula": {
+            "text": "Formula in readable form",
+            "latex": "a^2 + b^2 = c^2"
+          },
+          "meaning": "What the formula means",
+          "whenToUse": "When students should use it"
+        }
+      ],
+      "geometryDiagrams": [
+        {
+          "id": "diagram-1",
+          "type": "rightTriangle",
+          "title": "Right triangle diagram",
+          "caption": "A clean labelled geometry diagram",
+          "points": [
+            {
+              "id": "A",
+              "x": 65,
+              "y": 155,
+              "label": "A"
+            },
+            {
+              "id": "B",
+              "x": 245,
+              "y": 155,
+              "label": "B"
+            },
+            {
+              "id": "C",
+              "x": 65,
+              "y": 55,
+              "label": "C"
+            }
+          ],
+          "lines": [
+            {
+              "from": "A",
+              "to": "B",
+              "label": "base"
+            },
+            {
+              "from": "A",
+              "to": "C",
+              "label": "height"
+            },
+            {
+              "from": "B",
+              "to": "C",
+              "label": "hypotenuse",
+              "highlight": true
+            }
+          ],
+          "arcs": [],
+          "labels": [
+            {
+              "text": "90 deg",
+              "x": 82,
+              "y": 142
+            }
+          ],
+          "measurements": []
+        }
+      ],
+      "proofSteps": [
+        "Reasoning step 1",
+        "Reasoning step 2"
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Common incorrect step",
+          "correction": "Correct method",
+          "example": "Short example"
+        }
+      ],
+      "sections": [
+        {
+          "heading": "Main idea",
+          "explanation": "Comprehensive but student-friendly explanation",
+          "keyPoints": [
+            "Revision point"
+          ],
+          "examples": [
+            "Worked example or everyday example"
+          ],
+          "whyItMatters": "Why students should care about this concept",
+          "terminology": [
+            "Important term"
+          ],
+          "detailedExplanation": "A slightly deeper but student-friendly explanation",
+          "observedIn": [
+            "Where students observe it"
+          ],
+          "visualSupport": [
+            "Diagram or visual suggestion"
+          ],
+          "visualAssets": [
+            {
+              "prompt": "Image generation prompt",
+              "alt": "Student-friendly illustration alt text",
+              "imageDataUrl": "data:image/png;base64,...",
+              "mimeType": "image/png",
+              "model": "runtime image model"
+            }
+          ],
+          "importantNotes": [
+            "Exam point or caution note"
+          ],
+          "memoryTechniques": [
+            "Mnemonic or memory tip"
+          ],
+          "conceptSummary": [
+            "One-line takeaway"
+          ]
+        }
+      ],
+      "definitions": [
+        {
+          "term": "Key term",
+          "definition": "Clear definition"
+        }
+      ],
+      "workedExamples": [
+        {
+          "title": "Worked example title",
+          "problem": "Solve the problem clearly",
+          "diagramRef": "diagram-1",
+          "given": [
+            "Given value 1",
+            "Given value 2"
+          ],
+          "formula": [
+            "Required formula"
+          ],
+          "steps": [
+            "Step 1",
+            "Step 2"
+          ],
+          "solutionSteps": [
+            "Write formula",
+            "Substitute values",
+            "Simplify",
+            "State final answer"
+          ],
+          "reasoning": [
+            "Why this method applies"
+          ],
+          "explanation": "How this example works",
+          "finalAnswer": "Final answer with unit",
+          "latex": "x = y + z",
+          "displayLatex": "\\\\frac{a+b}{c}"
+        }
+      ],
+      "revisionSection": {
+        "definitions": [
+          "Important definition"
+        ],
+        "formulas": [
+          "Useful formula if applicable"
+        ],
+        "facts": [
+          "Important fact"
+        ],
+        "keywords": [
+          "Keyword"
+        ],
+        "conceptMap": [
+          "Concept map cue"
+        ],
+        "quickRecap": [
+          "Fast revision point"
+        ]
+      },
+      "selfCheckQuestions": [
+        "Question students can answer independently"
+      ],
+      "quickSummary": [
+        "Short summary point"
+      ],
+      "keyTerms": [
+        "Important keyword"
+      ],
+      "fillInTheBlanks": [
+        {
+          "prompt": "A ________ is the basic unit of life.",
+          "answer": "cell"
+        }
+      ],
+      "mcqQuestions": [
+        {
+          "question": "Which organelle controls the cell?",
+          "options": [
+            "A. Ribosome",
+            "B. Nucleus",
+            "C. Vacuole",
+            "D. Cytoplasm"
+          ],
+          "answer": "B. Nucleus"
+        }
+      ],
+      "veryShortAnswerQuestions": [
+        {
+          "question": "What is a cell?",
+          "answer": "The basic structural and functional unit of life."
+        }
+      ],
+      "didYouKnow": [
+        "Interesting supporting fact"
+      ],
+      "summary": [
+        "Short summary point"
+      ],
+      "quickRevision": [
+        "Revision cue"
+      ],
+      "rememberPoints": [
+        "Cell -> Basic Unit of Life"
+      ]
+    },
+    "learningOutcomes": [
+      "Specific action-oriented objectives"
+    ],
+    "introduction": "A exciting 3-5 minute hook, inquiry question, or classroom starter",
+    "theory": {
+      "overview": "Plain language conceptual summary",
+      "keyPoints": [
+        "3-5 fundamental bullet points"
+      ],
+      "detailedContent": "In-depth content discussion with examples"
+    },
+    "activities": [
+      {
+        "name": "Name of classroom task",
+        "instructions": [
+          "Step-by-step instructions for teachers & students"
+        ],
+        "durationMinutes": 10
+      }
+    ],
+    "materials": {
+      "ppt": {
+        "templateId": "kamalaniketan-session-12",
+        "templateName": "Kamalaniketan Session PPT Template",
+        "themeId": "kamalaniketan-modern",
+        "title": "Presentation title",
+        "presentationTitle": "Presentation title",
+        "presentationGoal": "What this PPT helps achieve in the session",
+        "audience": "Grade-specific classroom audience",
+        "theme": "Visual theme for the deck",
+        "themeTokens": {
+          "fonts": {
+            "heading": "Outfit",
+            "body": "Inter"
+          },
+          "colors": {
+            "primary": "#36ADAA",
+            "secondary": "#1EABDA",
+            "accent": "#DE8431",
+            "background": "#EEF4F7",
+            "surface": "#FFFFFF",
+            "text": "#0F172A",
+            "mutedText": "#64748B"
+          },
+          "visualStyle": {
+            "topBarStyle": "bold color band",
+            "cardStyle": "rounded modern educator cards",
+            "visualFrameStyle": "large clean visual panel"
+          }
+        },
+        "assetSearchPlan": {
+          "preferredSources": [
+            "Internal SVG",
+            "Ollama image model"
+          ],
+          "safeSearch": true,
+          "licensingNotes": [
+            "Use internally generated images and in-app SVG diagrams only."
+          ],
+          "fallbackStrategy": "Prefer SVG diagrams for concept/process slides and the Ollama image model for all picture-based visuals."
+        },
+        "licenseChecklist": [
+          "Review generated visuals for classroom accuracy before final export.",
+          "Verify reusable license before final export."
+        ],
+        "presentationWarnings": [
+          "Do not include untaught future-session content.",
+          "Do not include untaught future-session content (e.g., Mole concept details)."
+        ],
+        "coverageSummary": {
+          "learningOutcomesCovered": [
+            "Learning outcome id or text"
+          ],
+          "topicsCovered": [
+            "Topic covered"
+          ],
+          "taughtConceptsCovered": [
+            "Concept covered"
+          ],
+          "omittedContent": []
+        },
+        "slides": [
+          {
+            "templateId": "kamalaniketan-session-12",
+            "templateSlideKey": "title_identity",
+            "templateSlideTitle": "Title / Session Identity",
+            "isOptionalSlotFilled": true,
+            "slideNumber": 1,
+            "slideType": "hook | concept | comparison | process | summary",
+            "slideTitle": "Slide title",
+            "learningOutcomeIds": [
+              "LO1"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "teacherIntent": "Why this slide exists",
+            "studentTakeaway": "What students should leave with",
+            "layout": "Title + 2-column visual explainer",
+            "bulletPoints": [
+              "Key point"
+            ],
+            "onSlideText": [
+              "Exact concise on-slide text"
+            ],
+            "speakerNotes": [
+              "Teacher delivery cue"
+            ],
+            "visualPlan": "What visual should appear and why",
+            "assets": [
+              {
+                "purpose": "Why this asset is needed",
+                "searchQuery": "ollama image prompt seed",
+                "sourceSite": "Ollama image model",
+                "sourceUrl": "",
+                "licenseType": "Internally generated",
+                "attributionText": "",
+                "altText": "Accessible description",
+                "placementHint": "Right panel / full bleed / inset"
+              }
+            ],
+            "svgDiagram": {
+              "title": "Diagram title",
+              "type": "flowchart | timeline | labelled diagram | comparison chart",
+              "instructions": [
+                "How the diagram should communicate the concept"
+              ],
+              "svgCode": "<svg><!-- optional compact svg --></svg>"
+            },
+            "animationHints": [
+              "Reveal arrows step-by-step"
+            ],
+            "timeEstimateMinutes": 5
+          }
+        ]
+      },
+      "pdf": {
+        "documentTitle": "Student PDF / revision document title",
+        "keyInformation": [
+          "Student-facing study note or revision point"
+        ]
+      },
+      "docx": {
+        "outlineTitle": "Teacher lesson note outline title",
+        "sections": [
+          "Teacher-facing section content"
+        ]
+      }
+    },
+    "homework": {
+      "task": "Interactive or practical homework task",
+      "estimatedTimeMinutes": 30
+    },
+    "assessment": {
+      "assessmentMeta": {
+        "assessmentType": "Mixed formative checks",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "preferredDifficulty": "Balanced",
+        "language": "English",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ],
+        "instructions": [
+          "Answer all questions based only on the concepts taught in this session."
+        ]
+      },
+      "blueprint": {
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "MCQ",
+            "minutes": 5
+          }
+        ]
+      },
+      "mcq": [
+        {
+          "id": "q1",
+          "questionSubtype": "mcq",
+          "question": "MCQ question",
+          "options": [
+            "A. option",
+            "B. option",
+            "C. option",
+            "D. option"
+          ],
+          "answer": "Correct option",
+          "explanation": "Why this option is correct",
+          "marks": 1,
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "easy",
+          "bloomsLevel": "understanding"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q5",
+          "questionSubtype": "shortAnswer",
+          "question": "Short-answer question",
+          "answer": "Model short answer",
+          "expectedLength": "1-2 clear points",
+          "marks": 2,
+          "rubric": [
+            "1 mark for first correct point",
+            "1 mark for second correct point"
+          ],
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "medium",
+          "bloomsLevel": "application"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "q7",
+          "questionSubtype": "longAnswer",
+          "question": "Long-answer question",
+          "answer": "Model long answer",
+          "expectedLength": "4-5 well-structured points with explanation",
+          "marks": 5,
+          "rubric": [
+            "Marks awarded point-wise",
+            "Credit explanation quality",
+            "Credit labelled example or diagram if relevant"
+          ],
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "hard",
+          "bloomsLevel": "analysis"
+        }
+      ],
+      "answerKey": {
+        "mcq": [
+          {
+            "answer": "Correct option",
+            "explanation": "Brief explanation",
+            "marks": 1,
+            "questionSubtype": "mcq"
+          }
+        ],
+        "shortAnswer": [
+          {
+            "answer": "Point-wise short answer",
+            "rubric": [
+              "Point 1",
+              "Point 2"
+            ],
+            "marks": 2,
+            "questionSubtype": "shortAnswer"
+          }
+        ],
+        "longAnswer": [
+          {
+            "answer": "Structured long answer",
+            "rubric": [
+              "Point 1",
+              "Point 2",
+              "Point 3",
+              "Point 4",
+              "Point 5"
+            ],
+            "marks": 5,
+            "questionSubtype": "longAnswer"
+          }
+        ],
+        "generalMarkingGuidance": [
+          "Award marks point-wise for each valid idea.",
+          "Accept equivalent scientific wording if the meaning is correct.",
+          "For long answers, reward structure, explanation, and relevant examples."
+        ]
+      }
+    },
+    "assignment": {
+      "taskDescription": "Written assignment or project task",
+      "rubric": [
+        "Evaluation points/criteria"
+      ],
+      "answerKey": "Sample answer or response key for teacher reference"
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "You are an expert CBSE curriculum designer, instructional strategist, lesson planner, teacher trainer, and classroom pedagogy specialist.\r\n\r\nGenerate ONE complete classroom-ready teaching session for Session #1 out of 20 total sessions.\r\n\r\nSession settings:\r\n- Duration: 45 minutes\r\n- Subject: Chemistry\r\n- Grade/Level: Class XII / 12\r\n- Active chapter scope: [\"Solutions\"]\r\n\r\nGeneration preferences:\r\n- Include Learning Outcomes: YES\r\n- Include Introduction Hook: YES\r\n- Include Theory & Explanations: YES\r\n- Include Assessments with Keys: YES\r\n- Include Homework Exercises: NO\r\n- Include Materials Setup (PowerPoint slides, study guide nodes): YES\r\n- Prioritize these sections for generation: [\"teacherLessonNotes\",\"studentLessonNotes\",\"learningOutcomes\",\"introduction\",\"theory\"]\r\n\r\nNon-negotiable rules:\r\n1. Use only the provided curriculum scope.\r\n2. Do not introduce future-session content outside this scope.\r\n3. Produce teacher-facing explanation that is comprehensive, sequenced, and classroom-usable.\r\n4. Produce student-facing notes that are clearer and simpler than the teacher notes but still comprehensive.\r\n5. Teacher notes must follow a classroom-ready structure with:\r\n   - session overview\r\n   - learning outcomes\r\n   - teaching plan\r\n   - block-by-block lesson flow\r\n   - teacher prompts\r\n   - board work\r\n   - check-understanding questions\r\n   - expected answers\r\n   - misconceptions and corrections\r\n   - blackboard summary\r\n   - end-of-class recap\r\n6. Student notes must follow a beginner-friendly study-note structure with:\r\n   - session overview\r\n   - simple concept explanations\r\n   - memory aids\r\n   - comparison tables where useful\r\n   - quick summary\r\n   - key terms\r\n   - fill in the blanks\r\n   - MCQs\r\n   - very short answer questions\r\n   - remember points\r\n7. If learning pace or student level is weak, simplify the language, teach one concept at a time, repeat key terms, and use real-life analogies.\r\n8. Keep PPT content slide-wise and concise.\r\n9. Keep PDF / study-note content student-facing and revision-friendly.\r\n10. Assessments must be split into:\r\n   - MCQ\r\n   - Short Answer\r\n   - Long Answer\r\n11. The answer key must mirror the same structure:\r\n   - MCQ answers\r\n   - Short-answer answers\r\n   - Long-answer answers\r\n12. For short and long answers, include:\r\n   - expected answer depth\r\n   - mark value\r\n   - point-wise rubric\r\n13. Follow CBSE-style point-based marking:\r\n   - 1 mark: one precise idea\r\n   - 2 marks: two valid points / one complete short response\r\n   - 3 marks: three clear points with brief explanation\r\n   - 5 marks: well-structured answer with multiple points, explanation, and diagram/example when appropriate\r\n14. Prefer point-wise marking language over strict word counts.\r\n15. Populate every major block with usable content.\r\n16. Return valid JSON only.\r\n17. When only a subset of sections is requested, focus effort on those sections and keep unrequested sections minimal.\r\n\r\nUse these dedicated assessment-generation rules for the `assessment` block:\r\nAssessment block rules:\n- Use only taught session content.\n- Assess each learning outcome intentionally.\n- Assessment type: Session assessment.\n- Total marks: 15.\n- Duration: 15 minutes.\n- Preferred difficulty: Balanced.\n- Language: English.\n- Requested total questions: 0.\n- Requested question type mix: [].\n- Paper objective: Not specified..\n- Match the requested question counts and marks exactly.\n- Keep answer-key sections aligned one-to-one with the generated questions.\n- Return the assessment block with assessmentMeta, blueprint, mcq, shortAnswer, longAnswer, and answerKey.\n- Keep marks and duration exact.\n- Progress from easier to harder questions.\n- Add learningOutcomeCoverage, difficultyDistribution, bloomsDistribution, questionDistribution, and timeAllocation in blueprint.\n- Keep answer keys and rubrics aligned with the generated questions.\r\n\r\nReturn a session object that matches the requested schema exactly.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"id\": \"unique-session-id\",\n  \"sessionNumber\": 1,\n  \"title\": \"Vibrant, educational title for this session\",\n  \"duration\": 45,\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Teacher-facing overview of this session\",\n    \"prerequisiteKnowledge\": [\n      \"What students should already know\"\n    ],\n    \"previousSessionRecap\": [\n      \"Short recap points from the previous lesson\"\n    ],\n    \"learningOutcomes\": [\n      \"Specific session outcome phrased for teacher delivery\"\n    ],\n    \"teachingPlan\": [\n      {\n        \"minutes\": 5,\n        \"topic\": \"Introduction\",\n        \"teachingStrategy\": \"Questioning with simple real-life example\"\n      }\n    ],\n    \"lessonPurpose\": [\n      \"Why this lesson matters\"\n    ],\n    \"teachingSequence\": [\n      \"Teacher-facing lesson flow with explanation steps\"\n    ],\n    \"guidedPractice\": [\n      \"Teacher-led checks and guided responses\"\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"teacherPrompt\": [\n          \"Prompt teachers can ask\"\n        ],\n        \"explanation\": [\n          \"What the teacher should explain\"\n        ],\n        \"examples\": [\n          \"Simple classroom example\"\n        ],\n        \"boardWork\": [\n          \"What to write on the board\"\n        ],\n        \"boardSteps\": [\n          \"Step 1 on the board\",\n          \"Step 2 on the board\"\n        ],\n        \"solutionFlow\": [\n          \"Solve line by line\",\n          \"State the final answer clearly\"\n        ],\n        \"proofSteps\": [\n          \"Reasoning or theorem step\"\n        ],\n        \"geometryDiagrams\": [\n          {\n            \"id\": \"diagram-1\",\n            \"type\": \"rightTriangle\",\n            \"title\": \"Right triangle diagram\",\n            \"caption\": \"Textbook-style diagram used during board work\",\n            \"points\": [\n              {\n                \"id\": \"A\",\n                \"x\": 65,\n                \"y\": 155,\n                \"label\": \"A\"\n              },\n              {\n                \"id\": \"B\",\n                \"x\": 245,\n                \"y\": 155,\n                \"label\": \"B\"\n              },\n              {\n                \"id\": \"C\",\n                \"x\": 65,\n                \"y\": 55,\n                \"label\": \"C\"\n              }\n            ],\n            \"lines\": [\n              {\n                \"from\": \"A\",\n                \"to\": \"B\",\n                \"label\": \"base\"\n              },\n              {\n                \"from\": \"A\",\n                \"to\": \"C\",\n                \"label\": \"height\"\n              },\n              {\n                \"from\": \"B\",\n                \"to\": \"C\",\n                \"label\": \"hypotenuse\",\n                \"highlight\": true\n              }\n            ],\n            \"arcs\": [],\n            \"labels\": [\n              {\n                \"text\": \"90 deg\",\n                \"x\": 82,\n                \"y\": 142\n              }\n            ],\n            \"measurements\": []\n          }\n        ],\n        \"checkUnderstanding\": [\n          \"Quick question to ask students\"\n        ],\n        \"expectedAnswers\": [\n          \"Expected student answer\"\n        ],\n        \"activity\": [\n          \"Optional mini activity\"\n        ]\n      }\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Concept name\",\n        \"definition\": \"Short definition\",\n        \"coreExplanation\": \"Teacher-facing explanation\",\n        \"importance\": \"Why it matters\",\n        \"observedIn\": [\n          \"Where students observe it\"\n        ],\n        \"whyStudyIt\": \"Why students study it\",\n        \"relationshipWithPrevious\": \"Connection with previous concepts\",\n        \"relationshipWithFuture\": \"Connection with future learning without teaching it\",\n        \"keywords\": [\n          \"Important keyword\"\n        ],\n        \"teacherMoves\": [\n          \"Explain this first\"\n        ],\n        \"examples\": [\n          \"Useful example\"\n        ],\n        \"visuals\": [\n          \"Suggested visual support\"\n        ],\n        \"solutionFlow\": [\n          \"State the formula\",\n          \"Substitute values\",\n          \"Simplify carefully\"\n        ],\n        \"proofSteps\": [\n          \"State the known fact\",\n          \"Apply the theorem\",\n          \"Conclude the result\"\n        ],\n        \"geometryDiagrams\": [\n          {\n            \"id\": \"concept-diagram-1\",\n            \"type\": \"anglePair\",\n            \"title\": \"Angle pair\",\n            \"caption\": \"Use when the concept needs a board diagram\",\n            \"points\": [],\n            \"lines\": [],\n            \"arcs\": [],\n            \"labels\": [],\n            \"measurements\": []\n          }\n        ]\n      }\n    ],\n    \"classroomQuestions\": [\n      {\n        \"question\": \"Teacher question\",\n        \"level\": \"Understanding\",\n        \"expectedResponse\": \"Likely student response\",\n        \"answerPoints\": [\n          \"Point teachers should listen for\"\n        ]\n      }\n    ],\n    \"commonMisconceptionsDetailed\": [\n      {\n        \"misconception\": \"Common wrong idea\",\n        \"correction\": \"Teacher correction for that misconception\"\n      }\n    ],\n    \"differentiation\": {\n      \"slowLearners\": [\n        \"Support strategies\"\n      ],\n      \"averageLearners\": [\n        \"Core expectations\"\n      ],\n      \"advancedLearners\": [\n        \"Extension prompts\"\n      ]\n    },\n    \"teacherTips\": [\n      \"Pedagogical tips\"\n    ],\n    \"misconceptions\": [\n      \"Likely misconceptions to address\"\n    ],\n    \"formativeChecks\": [\n      \"Natural formative assessment checkpoint\"\n    ],\n    \"assessmentQuestions\": [\n      \"Oral or written assessment question\"\n    ],\n    \"blackboardSummary\": [\n      \"Key point for board summary\"\n    ],\n    \"timePlan\": [\n      {\n        \"segment\": \"Recap\",\n        \"minutes\": 5,\n        \"purpose\": \"Refresh prerequisite ideas\"\n      }\n    ],\n    \"sessionSummary\": [\n      \"Closing recap point\"\n    ],\n    \"endOfClassRecap\": [\n      {\n        \"prompt\": \"A cell is the ________ unit of life.\",\n        \"expectedAnswer\": \"basic\"\n      }\n    ],\n    \"nextSessionBridge\": [\n      \"How today connects to the next lesson\"\n    ]\n  },\n  \"studentLessonNotes\": {\n    \"title\": \"Student lesson note title\",\n    \"sessionOverview\": \"Simple overview of what this session covers\",\n    \"introduction\": \"Student-friendly introduction\",\n    \"learningObjectives\": [\n      \"After this lesson you will be able to...\"\n    ],\n    \"quickRecall\": [\n      \"Short prerequisite revision point\"\n    ],\n    \"easyToRemember\": [\n      \"Simple memory line for the concept\"\n    ],\n    \"comparisonTables\": [\n      {\n        \"title\": \"Comparison table title\",\n        \"headers\": [\n          \"Feature\",\n          \"Type A\",\n          \"Type B\"\n        ],\n        \"rows\": [\n          [\n            \"Example feature\",\n            \"Example A\",\n            \"Example B\"\n          ]\n        ]\n      }\n    ],\n    \"formulaCards\": [\n      {\n        \"title\": \"Formula title\",\n        \"formula\": {\n          \"text\": \"Formula in readable form\",\n          \"latex\": \"a^2 + b^2 = c^2\"\n        },\n        \"meaning\": \"What the formula means\",\n        \"whenToUse\": \"When students should use it\"\n      }\n    ],\n    \"geometryDiagrams\": [\n      {\n        \"id\": \"diagram-1\",\n        \"type\": \"rightTriangle\",\n        \"title\": \"Right triangle diagram\",\n        \"caption\": \"A clean labelled geometry diagram\",\n        \"points\": [\n          {\n            \"id\": \"A\",\n            \"x\": 65,\n            \"y\": 155,\n            \"label\": \"A\"\n          },\n          {\n            \"id\": \"B\",\n            \"x\": 245,\n            \"y\": 155,\n            \"label\": \"B\"\n          },\n          {\n            \"id\": \"C\",\n            \"x\": 65,\n            \"y\": 55,\n            \"label\": \"C\"\n          }\n        ],\n        \"lines\": [\n          {\n            \"from\": \"A\",\n            \"to\": \"B\",\n            \"label\": \"base\"\n          },\n          {\n            \"from\": \"A\",\n            \"to\": \"C\",\n            \"label\": \"height\"\n          },\n          {\n            \"from\": \"B\",\n            \"to\": \"C\",\n            \"label\": \"hypotenuse\",\n            \"highlight\": true\n          }\n        ],\n        \"arcs\": [],\n        \"labels\": [\n          {\n            \"text\": \"90 deg\",\n            \"x\": 82,\n            \"y\": 142\n          }\n        ],\n        \"measurements\": []\n      }\n    ],\n    \"proofSteps\": [\n      \"Reasoning step 1\",\n      \"Reasoning step 2\"\n    ],\n    \"commonMistakes\": [\n      {\n        \"mistake\": \"Common incorrect step\",\n        \"correction\": \"Correct method\",\n        \"example\": \"Short example\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"Main idea\",\n        \"explanation\": \"Comprehensive but student-friendly explanation\",\n        \"keyPoints\": [\n          \"Revision point\"\n        ],\n        \"examples\": [\n          \"Worked example or everyday example\"\n        ],\n        \"whyItMatters\": \"Why students should care about this concept\",\n        \"terminology\": [\n          \"Important term\"\n        ],\n        \"detailedExplanation\": \"A slightly deeper but student-friendly explanation\",\n        \"observedIn\": [\n          \"Where students observe it\"\n        ],\n        \"visualSupport\": [\n          \"Diagram or visual suggestion\"\n        ],\n        \"visualAssets\": [\n          {\n            \"prompt\": \"Image generation prompt\",\n            \"alt\": \"Student-friendly illustration alt text\",\n            \"imageDataUrl\": \"data:image/png;base64,...\",\n            \"mimeType\": \"image/png\",\n            \"model\": \"runtime image model\"\n          }\n        ],\n        \"importantNotes\": [\n          \"Exam point or caution note\"\n        ],\n        \"memoryTechniques\": [\n          \"Mnemonic or memory tip\"\n        ],\n        \"conceptSummary\": [\n          \"One-line takeaway\"\n        ]\n      }\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Key term\",\n        \"definition\": \"Clear definition\"\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Worked example title\",\n        \"problem\": \"Solve the problem clearly\",\n        \"diagramRef\": \"diagram-1\",\n        \"given\": [\n          \"Given value 1\",\n          \"Given value 2\"\n        ],\n        \"formula\": [\n          \"Required formula\"\n        ],\n        \"steps\": [\n          \"Step 1\",\n          \"Step 2\"\n        ],\n        \"solutionSteps\": [\n          \"Write formula\",\n          \"Substitute values\",\n          \"Simplify\",\n          \"State final answer\"\n        ],\n        \"reasoning\": [\n          \"Why this method applies\"\n        ],\n        \"explanation\": \"How this example works\",\n        \"finalAnswer\": \"Final answer with unit\",\n        \"latex\": \"x = y + z\",\n        \"displayLatex\": \"\\\\\\\\frac{a+b}{c}\"\n      }\n    ],\n    \"revisionSection\": {\n      \"definitions\": [\n        \"Important definition\"\n      ],\n      \"formulas\": [\n        \"Useful formula if applicable\"\n      ],\n      \"facts\": [\n        \"Important fact\"\n      ],\n      \"keywords\": [\n        \"Keyword\"\n      ],\n      \"conceptMap\": [\n        \"Concept map cue\"\n      ],\n      \"quickRecap\": [\n        \"Fast revision point\"\n      ]\n    },\n    \"selfCheckQuestions\": [\n      \"Question students can answer independently\"\n    ],\n    \"quickSummary\": [\n      \"Short summary point\"\n    ],\n    \"keyTerms\": [\n      \"Important keyword\"\n    ],\n    \"fillInTheBlanks\": [\n      {\n        \"prompt\": \"A ________ is the basic unit of life.\",\n        \"answer\": \"cell\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which organelle controls the cell?\",\n        \"options\": [\n          \"A. Ribosome\",\n          \"B. Nucleus\",\n          \"C. Vacuole\",\n          \"D. Cytoplasm\"\n        ],\n        \"answer\": \"B. Nucleus\"\n      }\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"What is a cell?\",\n        \"answer\": \"The basic structural and functional unit of life.\"\n      }\n    ],\n    \"didYouKnow\": [\n      \"Interesting supporting fact\"\n    ],\n    \"summary\": [\n      \"Short summary point\"\n    ],\n    \"quickRevision\": [\n      \"Revision cue\"\n    ],\n    \"rememberPoints\": [\n      \"Cell -> Basic Unit of Life\"\n    ]\n  },\n  \"learningOutcomes\": [\n    \"Specific action-oriented objectives\"\n  ],\n  \"introduction\": \"A exciting 3-5 minute hook, inquiry question, or classroom starter\",\n  \"theory\": {\n    \"overview\": \"Plain language conceptual summary\",\n    \"keyPoints\": [\n      \"3-5 fundamental bullet points\"\n    ],\n    \"detailedContent\": \"In-depth content discussion with examples\"\n  },\n  \"activities\": [\n    {\n      \"name\": \"Name of classroom task\",\n      \"instructions\": [\n        \"Step-by-step instructions for teachers & students\"\n      ],\n      \"durationMinutes\": 10\n    }\n  ],\n  \"materials\": {\n    \"ppt\": {\n      \"templateId\": \"kamalaniketan-session-12\",\n      \"templateName\": \"Kamalaniketan Session PPT Template\",\n      \"themeId\": \"kamalaniketan-modern\",\n      \"title\": \"Presentation title\",\n      \"presentationTitle\": \"Presentation title\",\n      \"presentationGoal\": \"What this PPT helps achieve in the session\",\n      \"audience\": \"Grade-specific classroom audience\",\n      \"theme\": \"Visual theme for the deck\",\n      \"themeTokens\": {\n        \"fonts\": {\n          \"heading\": \"Outfit\",\n          \"body\": \"Inter\"\n        },\n        \"colors\": {\n          \"primary\": \"#36ADAA\",\n          \"secondary\": \"#1EABDA\",\n          \"accent\": \"#DE8431\",\n          \"background\": \"#EEF4F7\",\n          \"surface\": \"#FFFFFF\",\n          \"text\": \"#0F172A\",\n          \"mutedText\": \"#64748B\"\n        },\n        \"visualStyle\": {\n          \"topBarStyle\": \"bold color band\",\n          \"cardStyle\": \"rounded modern educator cards\",\n          \"visualFrameStyle\": \"large clean visual panel\"\n        }\n      },\n      \"assetSearchPlan\": {\n        \"preferredSources\": [\n          \"Internal SVG\",\n          \"Ollama image model\"\n        ],\n        \"safeSearch\": true,\n        \"licensingNotes\": [\n          \"Use internally generated images and in-app SVG diagrams only.\"\n        ],\n        \"fallbackStrategy\": \"Prefer SVG diagrams for concept/process slides and the Ollama image model for all picture-based visuals.\"\n      },\n      \"licenseChecklist\": [\n        \"Review generated visuals for classroom accuracy before final export.\",\n        \"Verify reusable license before final export.\"\n      ],\n      \"presentationWarnings\": [\n        \"Do not include untaught future-session content.\",\n        \"Do not include untaught future-session content (e.g., Mole concept details).\"\n      ],\n      \"coverageSummary\": {\n        \"learningOutcomesCovered\": [\n          \"Learning outcome id or text\"\n        ],\n        \"topicsCovered\": [\n          \"Topic covered\"\n        ],\n        \"taughtConceptsCovered\": [\n          \"Concept covered\"\n        ],\n        \"omittedContent\": []\n      },\n      \"slides\": [\n        {\n          \"templateId\": \"kamalaniketan-session-12\",\n          \"templateSlideKey\": \"title_identity\",\n          \"templateSlideTitle\": \"Title / Session Identity\",\n          \"isOptionalSlotFilled\": true,\n          \"slideNumber\": 1,\n          \"slideType\": \"hook | concept | comparison | process | summary\",\n          \"slideTitle\": \"Slide title\",\n          \"learningOutcomeIds\": [\n            \"LO1\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"teacherIntent\": \"Why this slide exists\",\n          \"studentTakeaway\": \"What students should leave with\",\n          \"layout\": \"Title + 2-column visual explainer\",\n          \"bulletPoints\": [\n            \"Key point\"\n          ],\n          \"onSlideText\": [\n            \"Exact concise on-slide text\"\n          ],\n          \"speakerNotes\": [\n            \"Teacher delivery cue\"\n          ],\n          \"visualPlan\": \"What visual should appear and why\",\n          \"assets\": [\n            {\n              \"purpose\": \"Why this asset is needed\",\n              \"searchQuery\": \"ollama image prompt seed\",\n              \"sourceSite\": \"Ollama image model\",\n              \"sourceUrl\": \"\",\n              \"licenseType\": \"Internally generated\",\n              \"attributionText\": \"\",\n              \"altText\": \"Accessible description\",\n              \"placementHint\": \"Right panel / full bleed / inset\"\n            }\n          ],\n          \"svgDiagram\": {\n            \"title\": \"Diagram title\",\n            \"type\": \"flowchart | timeline | labelled diagram | comparison chart\",\n            \"instructions\": [\n              \"How the diagram should communicate the concept\"\n            ],\n            \"svgCode\": \"<svg><!-- optional compact svg --></svg>\"\n          },\n          \"animationHints\": [\n            \"Reveal arrows step-by-step\"\n          ],\n          \"timeEstimateMinutes\": 5\n        }\n      ]\n    },\n    \"pdf\": {\n      \"documentTitle\": \"Student PDF / revision document title\",\n      \"keyInformation\": [\n        \"Student-facing study note or revision point\"\n      ]\n    },\n    \"docx\": {\n      \"outlineTitle\": \"Teacher lesson note outline title\",\n      \"sections\": [\n        \"Teacher-facing section content\"\n      ]\n    }\n  },\n  \"homework\": {\n    \"task\": \"Interactive or practical homework task\",\n    \"estimatedTimeMinutes\": 30\n  },\n  \"assessment\": {\n    \"assessmentMeta\": {\n      \"assessmentType\": \"Mixed formative checks\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"preferredDifficulty\": \"Balanced\",\n      \"language\": \"English\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ],\n      \"instructions\": [\n        \"Answer all questions based only on the concepts taught in this session.\"\n      ]\n    },\n    \"blueprint\": {\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"MCQ\",\n          \"minutes\": 5\n        }\n      ]\n    },\n    \"mcq\": [\n      {\n        \"id\": \"q1\",\n        \"questionSubtype\": \"mcq\",\n        \"question\": \"MCQ question\",\n        \"options\": [\n          \"A. option\",\n          \"B. option\",\n          \"C. option\",\n          \"D. option\"\n        ],\n        \"answer\": \"Correct option\",\n        \"explanation\": \"Why this option is correct\",\n        \"marks\": 1,\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"easy\",\n        \"bloomsLevel\": \"understanding\"\n      }\n    ],\n    \"shortAnswer\": [\n      {\n        \"id\": \"q5\",\n        \"questionSubtype\": \"shortAnswer\",\n        \"question\": \"Short-answer question\",\n        \"answer\": \"Model short answer\",\n        \"expectedLength\": \"1-2 clear points\",\n        \"marks\": 2,\n        \"rubric\": [\n          \"1 mark for first correct point\",\n          \"1 mark for second correct point\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"medium\",\n        \"bloomsLevel\": \"application\"\n      }\n    ],\n    \"longAnswer\": [\n      {\n        \"id\": \"q7\",\n        \"questionSubtype\": \"longAnswer\",\n        \"question\": \"Long-answer question\",\n        \"answer\": \"Model long answer\",\n        \"expectedLength\": \"4-5 well-structured points with explanation\",\n        \"marks\": 5,\n        \"rubric\": [\n          \"Marks awarded point-wise\",\n          \"Credit explanation quality\",\n          \"Credit labelled example or diagram if relevant\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"hard\",\n        \"bloomsLevel\": \"analysis\"\n      }\n    ],\n    \"answerKey\": {\n      \"mcq\": [\n        {\n          \"answer\": \"Correct option\",\n          \"explanation\": \"Brief explanation\",\n          \"marks\": 1,\n          \"questionSubtype\": \"mcq\"\n        }\n      ],\n      \"shortAnswer\": [\n        {\n          \"answer\": \"Point-wise short answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\"\n          ],\n          \"marks\": 2,\n          \"questionSubtype\": \"shortAnswer\"\n        }\n      ],\n      \"longAnswer\": [\n        {\n          \"answer\": \"Structured long answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\",\n            \"Point 3\",\n            \"Point 4\",\n            \"Point 5\"\n          ],\n          \"marks\": 5,\n          \"questionSubtype\": \"longAnswer\"\n        }\n      ],\n      \"generalMarkingGuidance\": [\n        \"Award marks point-wise for each valid idea.\",\n        \"Accept equivalent scientific wording if the meaning is correct.\",\n        \"For long answers, reward structure, explanation, and relevant examples.\"\n      ]\n    }\n  },\n  \"assignment\": {\n    \"taskDescription\": \"Written assignment or project task\",\n    \"rubric\": [\n      \"Evaluation points/criteria\"\n    ],\n    \"answerKey\": \"Sample answer or response key for teacher reference\"\n  }\n}"
+    }
+  ]
+}

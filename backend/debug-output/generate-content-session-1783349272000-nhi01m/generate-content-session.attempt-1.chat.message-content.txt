@@ -1,0 +1,435 @@
+{
+  "id": "sess-math-ix-nosys-10",
+  "sessionNumber": 10,
+  "title": "Rational Numbers: Representation on the Number Line and Operations",
+  "duration": 45,
+  "teacherLessonNotes": {
+    "sessionOverview": "This session focuses on deepening the understanding of rational numbers by mastering their representation on the number line and performing basic operations (addition/subtraction) geometrically. It bridges the gap between abstract fractional concepts and concrete spatial visualization.",
+    "prerequisiteKnowledge": [
+      "Definition of integers and whole numbers",
+      "Concept of positive and negative numbers",
+      "Basic division and fraction notation",
+      "Previous session: Representation of Integers on Number Line"
+    ],
+    "previousSessionRecap": [
+      "Integers extend infinitely in both directions from zero.",
+      "Distance between consecutive integers is 1 unit.",
+      "Negative numbers are located to the left of zero."
+    ],
+    "learningOutcomes": [
+      "Students will be able to locate any rational number p/q on the number line using division of intervals.",
+      "Students will demonstrate the addition and subtraction of rational numbers geometrically on a number line.",
+      "Students will distinguish between terminating and non-terminating decimal representations of rational numbers."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Real-life analogy using a measuring tape or ruler to show 'in-between' values."
+      },
+      {
+        "minutes": 10,
+        "topic": "Representation of Rational Numbers",
+        "teachingStrategy": "Direct instruction with guided board work on dividing intervals."
+      },
+      {
+        "minutes": 15,
+        "topic": "Operations on Number Line",
+        "teachingStrategy": "Interactive demonstration where students move along the line to solve problems."
+      },
+      {
+        "minutes": 10,
+        "topic": "Practice & Consolidation",
+        "teachingStrategy": "Quick pair-check activity followed by a class summary."
+      }
+    ],
+    "lessonPurpose": [
+      "To visualize that between any two integers, there exist infinite rational numbers.",
+      "To develop spatial reasoning for arithmetic operations involving fractions.",
+      "To prepare students for the concept of irrational numbers in future sessions."
+    ],
+    "teachingSequence": [
+      "Recap integer representation on the number line (5 mins).",
+      "Introduce the concept of dividing a unit interval into 'q' equal parts to find 'p/q' (10 mins).",
+      "Demonstrate finding 3/4, -2/5, and 7/3 on the number line step-by-step (10 mins).",
+      "Show how adding a positive rational moves right and negative moves left (10 mins).",
+      "Conclude with a quick check for understanding and bridge to the next topic (10 mins)."
+    ],
+    "guidedPractice": [
+      "Ask students to identify the number line segment between 0 and 1.",
+      "Have students physically count 'quarters' on a drawn line.",
+      "Guide students to solve 2/3 + 1/3 visually before calculating algebraically."
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction",
+        "durationMinutes": 5,
+        "teacherPrompt": [
+          "If I have a chocolate bar and cut it into 4 pieces, how do I represent one piece on a line from 0 to 1?"
+        ],
+        "explanation": [
+          "Explain that integers are not the only numbers; we need 'fractions' to measure things precisely.",
+          "Connect the concept of 'cutting' a unit interval to finding rational numbers."
+        ],
+        "examples": [
+          "A ruler: The marks between 0 and 1 represent halves, quarters, etc."
+        ],
+        "boardWork": [
+          "Draw a number line from -2 to 2.",
+          "Mark integers clearly."
+        ],
+        "boardSteps": [
+          "Step 1: Draw horizontal line with arrow ends.",
+          "Step 2: Mark 0 in the center, then mark 1, 2, -1, -2 at equal distances."
+        ],
+        "solutionFlow": [
+          "State that the distance between 0 and 1 is '1 unit'.",
+          "Divide this unit into equal parts based on the denominator."
+        ],
+        "proofSteps": [
+          "If we divide a segment of length 1 into q parts, each part has length 1/q.",
+          "Counting p such parts gives us p/q."
+        ],
+        "geometryDiagrams": [
+          {
+            "id": "diag-intro-01",
+            "type": "numberLine",
+            "title": "Number Line with Integers",
+            "caption": "Standard number line showing integers -2 to 2",
+            "points": [
+              { "id": "A", "x": 50, "y": 150, "label": "-2" },
+              { "id": "B", "x": 150, "y": 150, "label": "-1" },
+              { "id": "C", "x": 250, "y": 150, "label": "0" },
+              { "id": "D", "x": 350, "y": 150, "label": "1" },
+              { "id": "E", "x": 450, "y": 150, "label": "2" }
+            ],
+            "lines": [
+              { "from": "A", "to": "E", "label": "Number Line", "highlight": true }
+            ],
+            "arcs": [],
+            "labels": [
+              { "text": "Unit Distance = 1", "x": 200, "y": 130 }
+            ],
+            "measurements": []
+          }
+        ],
+        "checkUnderstanding": [
+          "Where would you place the number 1/2 on this line?"
+        ],
+        "expectedAnswers": [
+          "Exactly in the middle between 0 and 1."
+        ],
+        "activity": [
+          "Quick mental check: 'Show me with your fingers where 3/4 is.'"
+        ]
+      },
+      {
+        "title": "Representation of Rational Numbers",
+        "durationMinutes": 15,
+        "teacherPrompt": [
+          "How do we find the exact spot for 2/3 if it's not an integer?"
+        ],
+        "explanation": [
+          "Explain the method: Divide the interval between two consecutive integers into 'q' equal parts.",
+          "Count 'p' parts from the starting integer in the positive direction (or negative)."
+        ],
+        "examples": [
+          "Finding 3/4: Divide 0 to 1 into 4 parts. Count 3 parts."
+        ],
+        "boardWork": [
+          "Draw interval 0 to 1.",
+          "Divide it into 4 equal segments.",
+          "Mark the 3rd point as 3/4."
+        ],
+        "boardSteps": [
+          "Step 1: Draw line from 0 to 1.",
+          "Step 2: Use a ruler to mark 3, 6, 9 units (if scaled) or visually divide into 4 equal gaps.",
+          "Step 3: Label the points 1/4, 2/4, 3/4."
+        ],
+        "solutionFlow": [
+          "Identify denominator q=4.",
+          "Divide unit interval into 4 parts.",
+          "Count numerator p=3 from 0."
+        ],
+        "proofSteps": [
+          "By definition, rational numbers are ratios of integers.",
+          "Geometrically, this corresponds to partitioning a segment."
+        ],
+        "geometryDiagrams": [
+          {
+            "id": "diag-rep-01",
+            "type": "numberLineSegment",
+            "title": "Dividing the Unit Interval",
+            "caption": "Visualizing 3/4 on the number line",
+            "points": [
+              { "id": "A", "x": 50, "y": 150, "label": "0" },
+              { "id": "B", "x": 250, "y": 150, "label": "1" }
+            ],
+            "lines": [
+              { "from": "A", "to": "B", "label": "Unit Interval", "highlight": true }
+            ],
+            "arcs": [],
+            "labels": [
+              { "text": "Divide into 4 parts", "x": 150, "y": 130 },
+              { "text": "3/4", "x": 200, "y": 160 }
+            ],
+            "measurements": []
+          }
+        ],
+        "checkUnderstanding": [
+          "Can you find -2/5 on the number line?"
+        ],
+        "expectedAnswers": [
+          "Divide 0 to -1 into 5 parts, count 2 parts to the left."
+        ],
+        "activity": [
+          "Pair work: One student draws a line for 3/5, the other marks it."
+        ]
+      },
+      {
+        "title": "Operations on Number Line",
+        "durationMinutes": 15,
+        "teacherPrompt": [
+          "If we are at 1/2 and add 1/4, where do we land?"
+        ],
+        "explanation": [
+          "Addition of positive rational numbers means moving to the right.",
+          "Subtraction or adding negative numbers means moving to the left.",
+          "The distance moved corresponds to the value being added/subtracted."
+        ],
+        "examples": [
+          "Start at 0, move 1/2 right, then move 1/4 right. Total = 3/4."
+        ],
+        "boardWork": [
+          "Draw number line.",
+          "Mark start point (e.g., 1/2).",
+          "Draw an arrow of length 1/4 to the right."
+        ],
+        "boardSteps": [
+          "Step 1: Locate 1/2 on the line.",
+          "Step 2: From 1/2, measure a distance equal to 1/4.",
+          "Step 3: Mark the new point as the sum."
+        ],
+        "solutionFlow": [
+          "Start at 0.",
+          "Move to 1/2.",
+          "Move further right by 1/4.",
+          "Final position is 3/4."
+        ],
+        "proofSteps": [
+          "Addition on the number line is defined as translation in the positive direction.",
+          "The magnitude of translation equals the addend."
+        ],
+        "geometryDiagrams": [
+          {
+            "id": "diag-op-01",
+            "type": "vectorLine",
+            "title": "Addition on Number Line",
+            "caption": "Visualizing 1/2 + 1/4",
+            "points": [
+              { "id": "A", "x": 50, "y": 150, "label": "0" },
+              { "id": "B", "x": 150, "y": 150, "label": "1/2" },
+              { "id": "C", "x": 200, "y": 150, "label": "3/4" }
+            ],
+            "lines": [
+              { "from": "A", "to": "B", "label": "Move 1/2", "highlight": true },
+              { "from": "B", "to": "C", "label": "Add 1/4", "highlight": true }
+            ],
+            "arcs": [],
+            "labels": [
+              { "text": "Result: 3/4", "x": 200, "y": 170 }
+            ],
+            "measurements": []
+          }
+        ],
+        "checkUnderstanding": [
+          "What happens if we subtract 1/4 from 1/2?"
+        ],
+        "expectedAnswers": [
+          "We move to the left by 1/4 distance."
+        ],
+        "activity": [
+          "Physical movement: Students stand at '0', take steps forward for addition, backward for subtraction."
+        ]
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Rational Numbers on Number Line",
+        "definition": "Any number expressible as p/q where q is not zero, represented by a specific point on the line.",
+        "coreExplanation": "To locate p/q, divide the interval between integers into q parts and count p steps.",
+        "importance": "It visualizes the density of rational numbers (infinite between any two points).",
+        "observedIn": [
+          "Measurement tools like rulers and scales.",
+          "Graphing data points."
+        ],
+        "whyStudyIt": "To understand that integers are just a subset of rational numbers and to prepare for irrational numbers.",
+        "relationshipWithPrevious": "Extends the integer number line concept to fractional intervals.",
+        "relationshipWithFuture": "Leads directly to the discovery of numbers that cannot be represented exactly (irrational numbers).",
+        "keywords": [
+          "Denominator",
+          "Numerator",
+          "Interval",
+          "Partition"
+        ],
+        "teacherMoves": [
+          "Emphasize that q determines the 'zoom level' of the line.",
+          "Use color coding for positive and negative movements."
+        ],
+        "examples": [
+          "Locating 5/3: It is between 1 and 2, specifically 2/3 of the way from 1 to 2."
+        ],
+        "visuals": [
+          "Zoomed-in number line showing subdivisions."
+        ],
+        "solutionFlow": [
+          "Identify integer bounds.",
+          "Divide interval.",
+          "Count steps."
+        ],
+        "proofSteps": [
+          "Definition of rational numbers implies they can be mapped to points on the line.",
+          "Euclidean geometry allows division of segments."
+        ],
+        "geometryDiagrams": []
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "Is there a largest rational number?",
+        "level": "Understanding",
+        "expectedResponse": "No, because we can always divide the interval further.",
+        "answerPoints": [
+          "Rational numbers are infinite.",
+          "Between any two rationals, another exists."
+        ]
+      },
+      {
+        "question": "How do you represent -3/4?",
+        "level": "Application",
+        "expectedResponse": "Divide 0 to -1 into 4 parts and count 3 parts left.",
+        "answerPoints": [
+          "Direction is negative (left).",
+          "Magnitude is 3/4."
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Students think rational numbers are only those with small denominators.",
+        "correction": "Clarify that any integer denominator (except 0) works; the line just gets more crowded."
+      },
+      {
+        "misconception": "Confusing the position of -2/3 with -3/2.",
+        "correction": "Remind students: Denominator tells you how many pieces, Numerator tells you how many to count. -3/2 is less than -1."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Use a physical string or tape measure for hands-on division.",
+        "Focus only on denominators 2, 4, and 5 first."
+      ],
+      "averageLearners": [
+        "Practice locating numbers with denominators up to 10.",
+        "Solve simple addition/subtraction problems visually."
+      ],
+      "advancedLearners": [
+        "Challenge them to find a rational number between two given rationals without calculating the average first.",
+        "Explore the concept of 'density' verbally."
+      ]
+    },
+    "teacherTips": [
+      "Always draw the number line horizontally for consistency.",
+      "Use arrows to clearly show direction of movement during operations.",
+      "Encourage students to estimate before marking precisely."
+    ],
+    "misconceptions": [
+      "Thinking that 0 is not a rational number.",
+      "Believing that there are no numbers between 0 and 1."
+    ],
+    "formativeChecks": [
+      "Ask: 'Show me the spot for 2/3.'",
+      "Observe if students divide intervals equally."
+    ],
+    "assessmentQuestions": [
+      "Locate 5/4 on the number line.",
+      "Represent -1/2 + 3/4 geometrically."
+    ],
+    "blackboardSummary": [
+      "Rational numbers p/q are found by dividing unit intervals into q parts.",
+      "Addition = Move Right; Subtraction = Move Left.",
+      "Infinite rational numbers exist between any two integers."
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap",
+        "minutes": 5,
+        "purpose": "Refresh integer representation"
+      },
+      {
+        "segment": "New Concept",
+        "minutes": 15,
+        "purpose": "Learn division of intervals"
+      },
+      {
+        "segment": "Practice",
+        "minutes": 20,
+        "purpose": "Apply to operations"
+      },
+      {
+        "segment": "Wrap-up",
+        "minutes": 5,
+        "purpose": "Summarize key takeaways"
+      }
+    ],
+    "sessionSummary": [
+      "We learned how to locate any fraction on the number line by dividing intervals and how to perform addition/subtraction by moving along the line."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "Today I understood that rational numbers are found by ________.",
+        "expectedAnswer": "dividing unit intervals into equal parts"
+      }
+    ],
+    "nextSessionBridge": [
+      "This leads to the question: What if a number cannot be represented exactly on this line? (Introduction to Irrational Numbers)."
+    ]
+  },
+  "learningOutcomes": [
+    "Locate rational numbers p/q on the number line by dividing intervals.",
+    "Perform addition and subtraction of rational numbers using the number line method.",
+    "Explain why there are infinite rational numbers between any two integers."
+  ],
+  "introduction": "Imagine you have a ruler that only shows whole numbers (0, 1, 2...). If you need to measure exactly half an inch or three-quarters of an inch, the ruler fails. Today, we will 'upgrade' our number line so it can show every possible fraction! We will learn how to cut the space between numbers into tiny pieces to find exact spots for fractions like 3/4 or -2/5.",
+  "theory": {
+    "overview": "Rational numbers are numbers that can be written as a fraction p/q where q is not zero. On the number line, every rational number corresponds to a unique point. To find this point, we divide the distance between two consecutive integers into 'q' equal parts and count 'p' steps.",
+    "keyPoints": [
+      "Rational numbers include integers, fractions, and terminating decimals.",
+      "Between any two integers, there are infinite rational numbers.",
+      "Addition moves right; subtraction moves left on the number line."
+    ],
+    "detailedContent": "To represent a rational number like 3/4: First, identify that it lies between 0 and 1. Divide the segment from 0 to 1 into 4 equal parts (since the denominator is 4). Count 3 parts from 0 towards 1. The point you land on is 3/4. For negative numbers like -2/5, divide the segment from 0 to -1 into 5 parts and count 2 parts to the left. When adding two rational numbers, say 1/2 + 1/4, start at 0, move to 1/2, then move another 1/4 distance to the right. The final position is the sum."
+  },
+  "activities": [
+    {
+      "name": "The Human Number Line",
+      "instructions": [
+        "Select 5 students to stand in a line representing integers -2, -1, 0, 1, 2.",
+        "Give the rest of the class cards with rational numbers (e.g., 1/2, -3/4, 5/3).",
+        "Students must physically divide the space between their 'integer' neighbors to find where they stand.",
+        "For operations, two students hold hands at a number, and a third student moves them forward or backward by the value of the second card."
+      ],
+      "durationMinutes": 15
+    },
+    {
+      "name": "Fraction Mapping Challenge",
+      "instructions": [
+        "Students draw a number line from -3 to 3 on their notebooks.",
+        "Teacher calls out 3 random rational numbers (e.g., 2/3, -4/5, 7/2).",
+        "Students must mark these points accurately using a ruler and divide intervals visually.",
+        "Peer check: Students swap notebooks and verify if the divisions look equal."
+      ],
+      "durationMinutes": 10
+    }
+  ]
+}

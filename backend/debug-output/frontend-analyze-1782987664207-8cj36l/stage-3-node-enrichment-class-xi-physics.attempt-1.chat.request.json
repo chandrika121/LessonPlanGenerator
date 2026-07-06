@@ -1,0 +1,61 @@
+{
+  "model": "qwen3.5:35b-mlx-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "units": [
+      {
+        "unit_id": "",
+        "chapters": [
+          {
+            "source_chapter_name": "",
+            "source_type": "explicit_chapter",
+            "node_type": "chapter",
+            "topics": [
+              ""
+            ],
+            "subtopics": [
+              ""
+            ],
+            "key_concepts": [
+              ""
+            ],
+            "assessment_status": "summative"
+          }
+        ]
+      }
+    ],
+    "formative_content_refs": [
+      {
+        "title": "",
+        "related_unit": "",
+        "related_chapter": "",
+        "assessment_status": "formative"
+      }
+    ],
+    "validation_report": {
+      "suspicious_chapter_names": [
+        ""
+      ],
+      "long_chapter_names_reclassified": [
+        ""
+      ],
+      "unit_count": 0,
+      "chapter_count": 0
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 3: Node Enrichment - Class XI - PHYSICS\nReturn compact JSON only.\nEnrich and label ONLY the existing document nodes for this class.\n\nOutput rules:\n- Use only the provided structure hierarchy\n- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report\n- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details\n- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units\n- source_text_excerpt is not allowed in this stage\n- max 5 topics per chapter\n- no explanations\n- no duplicated source text\n- do not repeat non-theory content\n- output chapter count must equal input chapter count\n\nNode rules:\n- Stage 3 may label or enrich nodes but must never create hierarchy\n- Preserve the provided hierarchy exactly\n- use unit_id from Stage 2 only\n- keep every chapter source_chapter_name exactly as provided\n- do not create new chapters\n- do not split chapters\n- do not merge chapters\n- do not rename chapters\n- do not reclassify chapters as topics\n- do not reclassify topics as chapters\n- the chapter list provided in input is the source of truth\n- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts\n- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback\n- never create new class names, subject names, unit names, or chapter names\n- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters\n- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented\n- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module\n- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units\n\nRaw class extraction:\n{\n  \"class_name\": \"Class XI\",\n  \"subject\": \"PHYSICS\",\n  \"part_or_section\": \"\",\n  \"units\": []\n}\n\nDocument structure hierarchy for this class:\n{\n  \"class_name\": \"Class XI\",\n  \"subject\": \"PHYSICS\",\n  \"part_or_section\": \"\",\n  \"units\": []\n}\n\nCurriculum source text:\n# Page 1\n\n## PHYSICS\nSubject Code – 042\n## Class XI-XII Class XI-XII (2026-27) (2025-26)\nSenior Secondary stage of school education is a stage of transition from general education\nto discipline-based focus on curriculum. The present updated syllabus keeps in view the\nrigor and depth of disciplinary approach as well as the comprehension level of learners.\nDue care has also been taken that the syllabus is comparable to the international\nstandards. Salient features of the syllabus include:\n Emphasis on basic conceptual understanding of the content.\n Emphasis on use of SI units, symbols, nomenclature of physical quantities and\nformulations as per international standards.\n Providing logical sequencing of units of the subject matter and proper placement\nof concepts with their linkage for better learning.\n Reducing the curriculum load by eliminating overlapping of concepts/content within the\ndiscipline and other disciplines.\n Promotion of process-skills, problem-solving abilities and applications of Physics\nconcepts.\n\n# Page 2\n\nPractical Examination for Visually Impaired\nStudents Class XI\nNote: Same Evaluation scheme and general guidelines for visually impaired students as given\nfor Class XII may be followed.\n- A. Items for Identification/Familiarity of the apparatus for assessment in practical’s\n(All experiments)\nSpherical ball, Cylindrical objects, vernier calipers, beaker, calorimeter, Screw gauge,\nwire, Beam balance, spring balance, weight box, gram and milligram weights, forceps,\nParallelogram law of vectors apparatus, pulleys and pans used in the same ‘weights’\nused, Bob and string used in a simple pendulum, meter scale, split cork, suspension\narrangement, stop clock/stop watch, Helical spring, suspension arrangement used,\nweights, arrangement used for measuring extension, Sonometer, Wedges, pan and\npulley used in it, ‘weights’ Tuning Fork, Meter scale, Beam balance, Weight box, gram\nand milligram weights, forceps, Resonance Tube, Tuning Fork, Meter scale,\nFlask/Beaker used for adding water.\n- B. List of Practicals\n- 1. To measure diameter of a small spherical/cylindrical body using vernier calipers.\n- 2. To measure the internal diameter and depth of a given beaker/calorimeter using\n\nNote: The above practicals may be carried out in an experiential manner rather than\nrecording observations.\nPrescribed Books:\n- 1. Physics Part-I, Textbook for Class XI, Published by NCERT\n- 2. Physics Part-II, Textbook for Class XI, Published by NCERT\n- 3. Laboratory Manual of Physics, Class XI Published by NCERT\n- 4. The list of other related books and manuals brought out\nby NCERT (consider multimedia also).\nNote:\nThe content indicated in NCERT textbooks as excluded for the year 2026-27 is not to\nbe tested by schools.\n\n---\n\n# Page 4\n\nPHYSICS (Code No. 042)\n## COURSE STRUCTURE\n## Class XI - 2026-27 (Theory)\nTime: 3 hrs. Max Marks: 70\n## UNIT CHAPTERS MARKS\n## Unit–I Physical World and Measurement\n## Chapter–1: Units and Measurements\n## Unit-II Kinematics\n## Chapter–2: Motion in a Straight Line\n23\n## Chapter–3: Motion in a Plane\n## Unit–III Laws of Motion\n## Chapter–4: Laws of Motion\n## Unit–IV Work, Energy and Power\n## Chapter–5: Work, Energy and Power\n## Unit–V Motion of System of Particles and Rigid Body\n17\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"units\": [\n    {\n      \"unit_id\": \"\",\n      \"chapters\": [\n        {\n          \"source_chapter_name\": \"\",\n          \"source_type\": \"explicit_chapter\",\n          \"node_type\": \"chapter\",\n          \"topics\": [\n            \"\"\n          ],\n          \"subtopics\": [\n            \"\"\n          ],\n          \"key_concepts\": [\n            \"\"\n          ],\n          \"assessment_status\": \"summative\"\n        }\n      ]\n    }\n  ],\n  \"formative_content_refs\": [\n    {\n      \"title\": \"\",\n      \"related_unit\": \"\",\n      \"related_chapter\": \"\",\n      \"assessment_status\": \"formative\"\n    }\n  ],\n  \"validation_report\": {\n    \"suspicious_chapter_names\": [\n      \"\"\n    ],\n    \"long_chapter_names_reclassified\": [\n      \"\"\n    ],\n    \"unit_count\": 0,\n    \"chapter_count\": 0\n  }\n}"
+    }
+  ]
+}

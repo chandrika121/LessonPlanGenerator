@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b-mlx-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\r\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: cbse_unit_topic\n- Expected structure type: unit_topic\n- Prefer unit -> topic when the source lists topics directly under a unit\n- Do not invent chapters from unit names in CBSE-style syllabi\r\n\r\nReturn JSON only.\r\nDisable reasoning and answer directly.\r\nExtract curriculum hierarchy faithfully from the source.\r\n\r\nCapture:\r\n- document_metadata\r\n- classes\r\n- units\r\n- chapters\r\n- topics\r\n- subtopics\r\n- key concepts\r\n- marks attached to units or chapters when explicit\r\n\r\nRules:\r\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\r\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\r\n- If a unit is followed directly by topic lists, keep that as unit -> topics\r\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\r\n- Never convert a unit into a chapter just because no deeper chapter heading exists\r\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\r\n- Never generate the complete curriculum content\r\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\r\n- If a chunk contains only partial information, return only what is visible in that chunk\r\n- Do not infer, estimate, explain, recommend, or analyze\r\n- Do not include any fields other than the requested schema\r\n\r\n\r\nCurriculum source text:\r\n# Page 1\n\nPHYSICS (Code No. 042)\n## COURSE STRUCTURE\n## Class XI - 2026-27 (Theory)\nTime: 3 hrs. Max Marks: 70\n## UNIT CHAPTERS MARKS\n## Unit–I Physical World and Measurement\n## Chapter–1: Units and Measurements\n## Unit-II Kinematics\n## Chapter–2: Motion in a Straight Line\n23\n## Chapter–3: Motion in a Plane\n## Unit–III Laws of Motion\n## Chapter–4: Laws of Motion\n## Unit–IV Work, Energy and Power\n## Chapter–5: Work, Energy and Power\n## Unit–V Motion of System of Particles and Rigid Body\n17\n## Chapter–6: System of Particles and Rotational Motion\n## Unit-VI Gravitation\n## Chapter–7: Gravitation\n## Unit–VII Properties of Bulk Matter\n## Chapter–8: Mechanical Properties of Solids\n## Chapter–9: Mechanical Properties of Fluids\n## Chapter–10: Thermal Properties of Matter\n## Unit–VIII Thermodynamics\n20\n## Chapter–11: Thermodynamics\n## Unit–IX Behaviour of Perfect Gases and Kinetic Theory of Gases\n## Chapter–12: Kinetic Theory\n## Unit–X Oscillations and Waves\n10\n## Chapter–13: Oscillations\n## Chapter–14: Waves\nTotal 70\n\n---\n\n# Page 2\n\n## Unit I: Physical World and Measurements\n## Chapter–1: Units and Measurements\nNeed for measurement: Units of measurement; systems of units; SI units, fundamental and\nderived units. significant figures, Determining the uncertainty in result . Dimensions of\nphysical quantities, dimensional analysis and its applications.\n## Unit II: Kinematics\n## Chapter–2: Motion in a Straight Line\nFrame of reference, Motion in a straight line, Elementary concepts of differentiation and\nintegration for describing motion, uniform and non- uniform motion, average speed and\naverage velocity and instantaneous velocity, uniformly accelerated motion, velocity - time\nand position-time graphs. Relations for uniformly accelerated motion (graphical and calculus\ntreatment).\n## Chapter–3: Motion in a Plane\nScalar and vector quantities; position and displacement vectors, general vectors and their\nnotations; equality of vectors, multiplication of vectors by a real number; addition and\nsubtraction of vectors, Unit vector; resolution of a vector in a plane, rectangular components,\nScalar and Vector product of vectors.\nMotion in a plane, cases of uniform velocity and uniform acceleration- projectile motion,\nuniform circular motion.\n## Unit III: Laws of Motion\n## Chapter–4: Laws of Motion\nIntuitive concept of force, Inertia, Newton's first law of motion; momentum and Newton's\nsecond law of motion; impulse; Newton's third law of motion.\nLaw of conservation of linear momentum and its applications.\nEquilibrium of concurrent forces, Static and kinetic friction, laws of friction, rolling friction,\nlubrication.\nDynamics of uniform circular motion: Centripetal force, examples of circular motion\n(vehicle on a level circular road, vehicle on a banked road).\n\n---\n\n# Page 3\n\n## Unit IV: Work, Energy and Power\n## Chapter– 5: Work, Energy and Power\nWork done by a constant force and a variable force; kinetic energy, work- energy theorem,\npower.\nNotion of potential energy, potential energy of a spring, conservative forces: non-conservative\nforces, motion in a vertical circle; elastic and inelastic collisions in one and two dimensions.\n## Unit V: Motion of System of Particles and Rigid Body\n## Chapter–6: System of Particles and Rotational Motion\nCentre of mass of a two-particle system, momentum conservation and Centre of mass motion.\nCentre of mass of a rigid body; centre of mass of a uniform rod. Moment of a force, torque,\nangular momentum, law of conservation of angular momentum and its applications.\nEquilibrium of rigid bodies, rigid body rotation and equations of rotational motion, comparison\nof linear and rotational motions.\nMoment of inertia, radius of gyration, values of moments of inertia for simple geometrical\nobjects (no derivation).\n## Unit VI: Gravitation\n## Chapter – 7: Gravitation\nKepler's laws of planetary motion, universal law of gravitation. Acceleration due to gravity and\nits variation with altitude and depth.\nGravitational potential energy and gravitational potential, escape speed, orbital velocity of a\nsatellite, energy of an orbiting satellite.\n## Unit VII: Properties of Bulk Matter\n## Chapter–8: Mechanical Properties of Solids\nElasticity, Stress-strain relationship, Hooke's law, Young’s modulus, bulk modulus, shear\nmodulus of rigidity (qualitative idea only), Poisson's ratio; elastic energy. Application of elastic\nbehavior of materials (qualitative idea only).\n\n---\n\n# Page 4\n\n## Chapter–9: Mechanical Properties of Fluids\nPressure due to a fluid column; Pascal's law and its applications (hydraulic lift and hydraulic\nbrakes), effect of gravity on fluid pressure.\nViscosity, Stokes' law, terminal velocity, streamline and turbulent flow, critical velocity,\nBernoulli's theorem and its simple applications (Torricelli's law and Dynamic lift).\nSurface energy and surface tension, angle of contact, excess of pressure across a curved\nsurface, application of surface tension ideas to drops, bubbles and capillary rise.\n## Chapter–10: Thermal Properties of Matter\nHeat, temperature, thermal expansion; thermal expansion of solids, liquids and gases,\nanomalous expansion of water; specific heat capacity; Cp, Cv - calorimetry; change of state\n- latent heat capacity.\nHeat transfer-conduction, convection and radiation, thermal conductivity, qualitative ideas of\nBlackbody radiation, Wein's displacement Law, Stefan's law.\n## Unit VIII: Thermodynamics\n## Chapter–11: Thermodynamics\nThermal equilibrium and definition of temperature, zeroth law of thermodynamics, heat, work\nand internal energy. First law of thermodynamics, Second law of thermodynamics:\nThermodynamic state variable and equation of state. Change of condition of gaseous state -\nisothermal, adiabatic, reversible, irreversible, and cyclic processes.\n## Unit IX: Behavior of Perfect Gases and Kinetic Theory of Gases\n## Chapter–12: Kinetic Theory\nEquation of state of a perfect gas, work done in compressing a gas.\nKinetic theory of gases - assumptions, concept of pressure. Kinetic interpretation of\ntemperature; rms speed of gas molecules; degrees of freedom, law of equi-partition of energy\n(statement only) and application to specific heat capacities of gases; concept of mean free\npath, Avogadro's number.\n\n---\n\n# Page 5\n\n## Unit X: Oscillations and Waves\n## Chapter–13: Oscillations\nPeriodic motion - time period, frequency, displacement as a function of time, periodic functions\nand their applications.\nSimple harmonic motion (S.H.M), uniform circular motion and its equations of motion; phase;\noscillations of a loaded spring- restoring force and force constant; energy in S.H.M.\nKinetic and potential energies; simple pendulum derivation of expression for its time period.\n## Chapter–14: Waves\nWave motion: Transverse and longitudinal waves, speed of travelling wave, displacement\nrelation for a progressive wave, principle of superposition of waves, reflection of waves,\nstanding waves in strings and organ pipes, fundamental mode and harmonics, Beats.\n\n---\n\n# Page 6\n\n## PRACTICALS\nThe record, to be submitted by the students, at the time of their annual examination, has\nto include:\n- Record of at least 8 Experiments [with 4 from each section], to be performed by the\nstudents.\n- Record of at least 6 Activities [with 3 each from section A and section B], to be\nperformed by the students.\n- Report of the project carried out by the students.\n## EVALUATION SCHEME\nTime 3 hours Max. Marks: 30\nTopic Marks\nTwo experiments one from each section 7+7\nPractical record (experiment and activities) 5\nOne activity from any section 3\nInvestigatory Project 3\nViva on experiments, activities and project 5\nTotal 30\n## SECTION–A\nExperiments\n- 1. To measure diameter of a small spherical/cylindrical body and to measure internal\ndiameter and depth of a given beaker/calorimeter using Vernier Callipers and hence\nfind its volume.\n- 2. To measure diameter of a given wire and thickness of a given sheet using screw\ngauge.\n- 3. To determine volume of an irregular lamina using screw gauge.\n- 4. To determine radius of curvature of a given spherical surface by a spherometer.\n- 5. To determine the mass of two different objects using a beam balance.\n- 6. To find the weight of a given body using parallelogram law of vectors.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

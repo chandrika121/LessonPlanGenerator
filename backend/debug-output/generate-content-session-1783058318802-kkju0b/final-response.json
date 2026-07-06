@@ -1,0 +1,254 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 6,
+      "totalQuestions": 4,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":6,\"totalQuestions\":4,\"questionTypes\":[{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "Time: 15 minutes. Total Marks: 6."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define a solution as a homogeneous mixture.",
+          "questionRefs": [
+            "q2",
+            "q1"
+          ]
+        },
+        {
+          "outcome": "Identify solute and solvent in common examples.",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Distinguish between solid, liquid, and gaseous solutions.",
+          "questionRefs": [
+            "q2",
+            "q1"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 50,
+        "medium": 40,
+        "hard": 10
+      },
+      "bloomsDistribution": {
+        "recall": 25,
+        "understanding": 37.5,
+        "application": 37.5,
+        "analysis": 0,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "veryShortAnswer": 2,
+        "shortAnswer": 4,
+        "mcq": 0,
+        "longAnswer": 0
+      },
+      "timeAllocation": [
+        {
+          "section": "Very Short Answer",
+          "minutes": 5
+        },
+        {
+          "section": "Short Answer",
+          "minutes": 10
+        }
+      ]
+    },
+    "veryShortAnswer": [
+      {
+        "id": "q1",
+        "questionSubtype": "veryShortAnswer",
+        "question": "In a solution of soda water (carbonated water), identify the solute and the solvent.",
+        "answer": "Solute: Carbon dioxide gas; Solvent: Water",
+        "expectedLength": "Identify both components correctly in one sentence or two short phrases.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Solute and Solvent Identification"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Name one example of a gaseous solution and state what acts as the solvent in it.",
+        "answer": "Example: Air; Solvent: Nitrogen (or Oxygen depending on context, but typically Nitrogen is considered the major component acting as solvent for other gases).",
+        "expectedLength": "Name one example and identify the primary solvent gas.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Types of Solutions (Gaseous)"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q1",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Define a solution. How does it differ from a general mixture, and what is the key characteristic that makes it 'homogeneous'?",
+        "answer": "A solution is a homogeneous mixture of two or more substances where one substance (solute) dissolves in another (solvent). It differs from other mixtures because it is uniform throughout at the molecular level; you cannot see separate parts with the naked eye, and particles do not settle out over time.",
+        "expectedLength": "2-3 clear points: Definition, distinction from general mixture, explanation of homogeneity.",
+        "marks": 1,
+        "rubric": [
+          "1 mark for correctly defining a solution as a homogeneous mixture where one substance dissolves in another.",
+          "1 mark for explaining that it is uniform throughout and particles do not settle (distinguishing from heterogeneous mixtures)."
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Definition of Solution",
+          "Homogeneous vs Heterogeneous Mixtures"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Consider the alloy Brass, which is a mixture of Copper and Zinc. Identify which component acts as the solvent and explain why based on their relative quantities.",
+        "answer": "In brass, Copper acts as the solvent because it is present in the larger quantity (the host), while Zinc is the solute as it is present in the smaller quantity (the guest).",
+        "expectedLength": "Identify Copper as solvent and provide the reasoning based on relative amount.",
+        "marks": 1,
+        "rubric": [
+          "1 mark for correctly identifying Copper as the solvent.",
+          "1 mark for explaining that the component present in larger quantity acts as the solvent."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Solute and Solvent Identification",
+          "Solid Solutions (Alloys)"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "question": "Short Answer 3: Answer based on the session content taught by the teacher.",
+        "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+        "rubric": [
+          "Covers the key concept taught in the session.",
+          "Uses accurate subject terminology."
+        ],
+        "marks": 2,
+        "id": "q3",
+        "questionSubtype": "shortAnswer"
+      },
+      {
+        "question": "Short Answer 4: Answer based on the session content taught by the teacher.",
+        "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+        "rubric": [
+          "Covers the key concept taught in the session.",
+          "Uses accurate subject terminology."
+        ],
+        "marks": 2,
+        "id": "q4",
+        "questionSubtype": "shortAnswer"
+      }
+    ],
+    "longAnswer": [],
+    "answerKey": {
+      "veryShortAnswer": [
+        {
+          "id": "q1",
+          "questionSubtype": "veryShortAnswer",
+          "answer": "Solute: Carbon dioxide; Solvent: Water.",
+          "marks": 1,
+          "explanation": "In soda water, CO2 is the gas dissolved (solute) and water is the liquid medium (solvent)."
+        },
+        {
+          "id": "q2",
+          "questionSubtype": "veryShortAnswer",
+          "answer": "Example: Air. Solvent: Nitrogen.",
+          "marks": 1,
+          "explanation": "Air is a gaseous solution where nitrogen (major component) acts as the solvent for other gases like oxygen."
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q1",
+          "answer": "A solution is a homogeneous mixture of two or more substances where one substance (solute) dissolves in another (solvent). It differs from other mixtures because it is uniform throughout at the molecular level; you cannot see separate parts with the naked eye, and particles do not settle out over time.",
+          "rubric": [
+            "1 mark for correctly defining a solution as a homogeneous mixture where one substance dissolves in another.",
+            "1 mark for explaining that it is uniform throughout and particles do not settle (distinguishing from heterogeneous mixtures)."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q2",
+          "answer": "In brass, Copper acts as the solvent because it is present in the larger quantity (the host), while Zinc is the solute as it is present in the smaller quantity (the guest).",
+          "rubric": [
+            "1 mark for correctly identifying Copper as the solvent.",
+            "1 mark for explaining that the component present in larger quantity acts as the solvent."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q3",
+          "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+          "rubric": [
+            "Covers the key concept taught in the session.",
+            "Uses accurate subject terminology."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q4",
+          "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+          "rubric": [
+            "Covers the key concept taught in the session.",
+            "Uses accurate subject terminology."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'uniform' vs 'same throughout').",
+        "For short answers, ensure both parts of the question are addressed to receive full credit."
+      ],
+      "mcq": []
+    },
+    "mcq": []
+  }
+}

@@ -73,7 +73,12 @@ import {
   TermRow,
 } from "./types";
 import {
+  buildPublishedArtifact,
+  getStudentPublicationKey,
+  removePublishedStudentArtifact,
   removePublishedArtifactsForCurriculumScope,
+  upsertPublishedStudentArtifact,
+  writeStudentPublicationFlags,
 } from "./utils/studentPublications";
 import type { StudentPublicationKind } from "./types/student-content";
 
@@ -292,6 +297,51 @@ const getOutlineSessionKey = (outlineItem?: { sessionNumber?: number; chapterNam
     outlineItem?.title
   );
 
+const findGeneratedSessionForOutline = (
+  generatedSessionsByKey: Record<string, SessionPlan>,
+  outlineItem?: {
+    id?: string;
+    sessionNumber?: number;
+    chapterName?: string;
+    title?: string;
+  } | null
+): SessionPlan | null => {
+  if (!outlineItem) return null;
+
+  const preferredKey = getOutlineSessionKey(outlineItem);
+  if (generatedSessionsByKey[preferredKey]) {
+    return generatedSessionsByKey[preferredKey];
+  }
+
+  const normalizedTitle = normalizeSessionIdentityText(outlineItem.title);
+  const normalizedChapter = normalizeSessionIdentityText(outlineItem.chapterName);
+
+  for (const [key, session] of Object.entries(generatedSessionsByKey)) {
+    if (!session) continue;
+
+    if (session.sessionKey === preferredKey || key === String(outlineItem.sessionNumber || "")) {
+      return session;
+    }
+
+    if (Number(session.sessionNumber || 0) !== Number(outlineItem.sessionNumber || 0)) {
+      continue;
+    }
+
+    const sessionTitle = normalizeSessionIdentityText(session.title);
+    const sessionChapter = normalizeSessionIdentityText((session as SessionPlan & { chapterName?: string }).chapterName);
+
+    if (
+      (!normalizedTitle || sessionTitle === normalizedTitle) ||
+      (!normalizedChapter || sessionChapter === normalizedChapter) ||
+      (!normalizedTitle && !normalizedChapter)
+    ) {
+      return session;
+    }
+  }
+
+  return null;
+};
+
 export default function App() {
   const LAST_CURRICULUM_ID_KEY = "lms:lastCurriculumId";
   const LAST_WORKSPACE_ID_KEY = "lms:lastWorkspaceId";
@@ -300,6 +350,12 @@ export default function App() {
   const API_BASE_URL =
     import.meta.env.VITE_API_BASE_URL ||
     `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+  const apiUrl = useCallback((path: string) => {
+    if (/^https?:\/\//i.test(path)) {
+      return path;
+    }
+    return `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+  }, [API_BASE_URL]);
   const authSession = useMemo(() => getAuthSession(), []);
   // Navigation & Step Management
   // 0: Dashboard, 1: Upload & Extract, 2: Term Planner, 3: Session Specs & Roadmap, 4: Lesson Plan Delivery Outlines, 5: Saved Curriculums
@@ -462,6 +518,107 @@ export default function App() {
         return "Content";
     }
   }, []);
+
+  const toggleStudentPublication = useCallback(async (session: SessionPlan, target: StudentPublicationKind) => {
+    if (!currentWorkspaceId) {
+      setErrorHeader("No planning workspace is attached to this session yet.");
+      return;
+    }
+
+    const sessionKey = String(session.sessionKey || "").trim() || getStudentPublicationKey(session, session.id);
+    const currentlyPublished = Boolean(getPublicationFlagsForSession(session)?.[target]);
+    const nextPublished = !currentlyPublished;
+
+    if (nextPublished) {
+      const artifact = buildPublishedArtifact(
+        target,
+        session,
+        activeWorkspace?.academicConfig?.subject || extractedData?.subject,
+        activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel,
+        {
+          schoolId: authSession?.schoolId || "",
+          classId: activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel || "",
+          className: activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel || "",
+        },
+      );
+      if (!artifact) {
+        setErrorHeader(`This session does not have publishable ${getPublicationLabel(target).toLowerCase()} content yet.`);
+        return;
+      }
+    }
+
+    try {
+      setErrorHeader(null);
+      const response = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/student-publications`), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildPlannerRequestPayload({
+          sessionKey,
+          kind: target,
+          published: nextPublished,
+        }, authSession)),
+      });
+      if (!response.ok) {
+        throw new Error(await readErrorFromResponse(response, "Failed to update student publication state."));
+      }
+
+      const data = await response.json();
+      const nextStudentPublications =
+        data?.studentPublications && typeof data.studentPublications === "object"
+          ? Object.fromEntries(
+              Object.entries(data.studentPublications as Record<string, Record<string, boolean | { published?: boolean }>>).map(([savedSessionKey, flags]) => [
+                savedSessionKey,
+                Object.fromEntries(
+                  Object.entries(flags || {}).map(([kind, value]) => [
+                    kind,
+                    typeof value === "object" ? Boolean((value as { published?: boolean })?.published) : Boolean(value),
+                  ]),
+                ),
+              ]),
+            )
+          : {};
+
+      setStudentPublications(nextStudentPublications);
+      writeStudentPublicationFlags(nextStudentPublications);
+
+      if (nextPublished) {
+        const artifact = buildPublishedArtifact(
+          target,
+          session,
+          activeWorkspace?.academicConfig?.subject || extractedData?.subject,
+          activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel,
+          {
+            schoolId: authSession?.schoolId || "",
+            classId: activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel || "",
+            className: activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel || "",
+          },
+        );
+        if (artifact) {
+          upsertPublishedStudentArtifact(artifact);
+        }
+        setPopupMessage(`${getPublicationLabel(target)} published for students.`);
+      } else {
+        removePublishedStudentArtifact(session.sessionNumber, target, session.id);
+        setPopupMessage(`${getPublicationLabel(target)} unpublished for students.`);
+      }
+    } catch (error: any) {
+      console.error("[Frontend] Student publication toggle failed", error);
+      setErrorHeader(error?.message || "Unable to update student publication state.");
+    }
+  }, [
+    activeWorkspace?.academicConfig?.className,
+    activeWorkspace?.academicConfig?.subject,
+    apiUrl,
+    authSession,
+    currentWorkspaceId,
+    activeWorkspace?.academicConfig?.className,
+    activeWorkspace?.academicConfig?.subject,
+    authSession?.schoolId,
+    extractedData?.gradeLevel,
+    extractedData?.subject,
+    getPublicationFlagsForSession,
+    getPublicationLabel,
+  ]);
 
   useEffect(() => {
     if (!isTeacherPlannerRoute) {
@@ -744,11 +901,11 @@ export default function App() {
   };
 
   const hasRequiredSessionSections = (
-    sessionPlan: Partial<SessionPlan> | undefined,
+    sessionPlan: Partial<SessionPlan> | null | undefined,
     requiredSections: SessionSectionKey[]
   ) =>
     requiredSections.every((section) =>
-      hasRenderableSessionSection((sessionPlan as Record<string, unknown> | undefined)?.[section])
+      hasRenderableSessionSection((sessionPlan as Record<string, unknown> | null | undefined)?.[section])
     );
 
   const getGeneratedSessionArtifactKeys = (workspace?: PlanningWorkspace | null) =>
@@ -2491,13 +2648,13 @@ export default function App() {
     preparationCards: TeacherTemplateListCard[];
     interactionCards: TeacherTemplateListCard[];
     supportCards: TeacherTemplateListCard[];
-    teachingPlan: NonNullable<SessionPlan["teacherLessonNotes"]>["teachingPlan"];
-    lessonBlocks: NonNullable<SessionPlan["teacherLessonNotes"]>["lessonBlocks"];
-    conceptFlow: NonNullable<SessionPlan["teacherLessonNotes"]>["conceptFlow"];
-    classroomQuestions: NonNullable<SessionPlan["teacherLessonNotes"]>["classroomQuestions"];
-    timePlan: NonNullable<SessionPlan["teacherLessonNotes"]>["timePlan"];
-    misconceptions: NonNullable<SessionPlan["teacherLessonNotes"]>["commonMisconceptionsDetailed"];
-    endOfClassRecap: NonNullable<SessionPlan["teacherLessonNotes"]>["endOfClassRecap"];
+    teachingPlan: NonNullable<NonNullable<SessionPlan["teacherLessonNotes"]>["teachingPlan"]>;
+    lessonBlocks: NonNullable<NonNullable<SessionPlan["teacherLessonNotes"]>["lessonBlocks"]>;
+    conceptFlow: NonNullable<NonNullable<SessionPlan["teacherLessonNotes"]>["conceptFlow"]>;
+    classroomQuestions: NonNullable<NonNullable<SessionPlan["teacherLessonNotes"]>["classroomQuestions"]>;
+    timePlan: NonNullable<NonNullable<SessionPlan["teacherLessonNotes"]>["timePlan"]>;
+    misconceptions: NonNullable<NonNullable<SessionPlan["teacherLessonNotes"]>["commonMisconceptionsDetailed"]>;
+    endOfClassRecap: NonNullable<NonNullable<SessionPlan["teacherLessonNotes"]>["endOfClassRecap"]>;
   };
 
   const buildTeacherNotesTemplate = (teacherNotes: NonNullable<SessionPlan["teacherLessonNotes"]>): TeacherNotesTemplate => {
@@ -5576,10 +5733,11 @@ export default function App() {
       let canvas = document.createElement("canvas");
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
-      let ctx = canvas.getContext("2d");
-      if (!ctx) {
+      const initialCtx = canvas.getContext("2d");
+      if (!initialCtx) {
         throw new Error("Unable to prepare curriculum export canvas.");
       }
+      let ctx: CanvasRenderingContext2D = initialCtx;
       let y = topMargin;
       let pageNumber = 1;
 
@@ -5619,8 +5777,9 @@ export default function App() {
       };
 
       const startPage = () => {
-        ctx = canvas.getContext("2d");
-        if (!ctx) throw new Error("Unable to prepare curriculum export canvas.");
+        const nextCtx = canvas.getContext("2d");
+        if (!nextCtx) throw new Error("Unable to prepare curriculum export canvas.");
+        ctx = nextCtx;
         ctx.fillStyle = theme.paper;
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         ctx.fillStyle = theme.accent;
@@ -6489,7 +6648,7 @@ export default function App() {
     }
 
     const generatedSessionPlans = sessionsOutline.map((outlineItem) => {
-      const generated = generatedSessionsByKey[getOutlineSessionKey(outlineItem)];
+      const generated = findGeneratedSessionForOutline(generatedSessionsByKey, outlineItem);
       return {
         sessionNumber: outlineItem.sessionNumber,
         title: outlineItem.title,
@@ -6608,7 +6767,8 @@ export default function App() {
     triggerDownload(htmlDocument, `${fileStem}.html`, "text/html;charset=utf-8");
   };
 
-  const handleExportPptSlidesPdf = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => {
+  const handleExportPptSlidesPdf = async (session: SessionPlan) => {
+    const ppt = session.materials?.ppt;
     const slides = getPptSlides(ppt);
     if (!ppt || slides.length === 0) {
       setErrorHeader("Generate PPT slides first before exporting a slide-only PDF.");
@@ -6896,7 +7056,14 @@ export default function App() {
     const query = new URLSearchParams({ sections: selectedSections.join(",") });
     const sessionKey = buildSessionStorageKey(sessionNum, outlineItem?.chapterName, outlineItem?.title);
     query.set("legacySessionKey", String(sessionNum));
-    const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/generated-sessions/${encodeURIComponent(sessionKey)}?${query.toString()}`);
+    query.set("roadmapSessionNumber", String(sessionNum));
+    if (outlineItem?.chapterName) {
+      query.set("chapterName", outlineItem.chapterName);
+    }
+    if (outlineItem?.title) {
+      query.set("sessionTitle", outlineItem.title);
+    }
+    const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/generated-sessions/${encodeURIComponent(sessionKey)}?${query.toString()}`));
     if (res.status === 404) {
       return null;
     }
@@ -6906,7 +7073,7 @@ export default function App() {
     const data = await res.json();
     const sessionPlan = data.sessionPlan as SessionPlan;
     setGeneratedSessionsByKey((prev) => {
-      const existingSession = prev[sessionKey];
+      const existingSession = prev[sessionKey] || findGeneratedSessionForOutline(prev, { sessionNumber: sessionNum, ...outlineItem }) || undefined;
       return {
         ...prev,
         [sessionKey]: {
@@ -7126,8 +7293,13 @@ export default function App() {
       .forEach((allocation) => {
         const chapterTotalSessions = Math.max(1, Number(allocation.estimatedSessions || 0));
         for (let chapterSessionNumber = 1; chapterSessionNumber <= chapterTotalSessions; chapterSessionNumber += 1) {
+          const outlineId = [
+            allocation.id || allocation.chapterName || "session",
+            allocation.sequence || globalSessionNumber,
+            chapterSessionNumber,
+          ].join("::");
           outline.push({
-            id: allocation.id || `${allocation.chapterName}-${allocation.sequence || globalSessionNumber}-${chapterSessionNumber}`,
+            id: outlineId,
             sessionNumber: globalSessionNumber,
             title:
               chapterTotalSessions === 1
@@ -7384,9 +7556,21 @@ export default function App() {
     syncTermRowsFromAllocations(sourceAllocations);
   };
 
+  type WorkspaceViewMode = "planning" | "content_generation" | "full";
+
+  const getWorkspaceRestoreView = (workspace?: PlanningWorkspace | null): WorkspaceViewMode => {
+    if (
+      workspace?.phase === "content_generation" ||
+      (Array.isArray(workspace?.generatedArtifacts) && workspace!.generatedArtifacts.length > 0)
+    ) {
+      return "content_generation";
+    }
+    return "planning";
+  };
+
   const loadPlanningWorkspaceById = async (
     workspaceId: string,
-    options?: { view?: "planning" | "full" }
+    options?: { view?: WorkspaceViewMode }
   ) => {
     if (!workspaceId) return null;
     const view = options?.view || "planning";
@@ -7406,7 +7590,7 @@ export default function App() {
 
   const ensurePlanningWorkspaceForCurriculum = async (
     curriculumId: string,
-    options?: { view?: "planning" | "full" }
+    options?: { view?: WorkspaceViewMode }
   ) => {
     if (!curriculumId) return null;
     const view = options?.view || "planning";
@@ -7457,7 +7641,7 @@ export default function App() {
 
     try {
       const [res, workspace] = await Promise.all([
-        fetchWithBootstrapRetry(apiUrl(`/api/curriculums/${curriculumId}`, undefined, "curriculum restore")),
+        fetchWithBootstrapRetry(apiUrl(`/api/curriculums/${curriculumId}`), undefined, "curriculum restore"),
         ensurePlanningWorkspaceForCurriculum(curriculumId, { view: "planning" }),
       ]);
       if (!res.ok) {
@@ -7560,7 +7744,7 @@ export default function App() {
         await savedCurriculumsPromise;
         const lastWorkspaceId = localStorage.getItem(LAST_WORKSPACE_ID_KEY);
         if (lastWorkspaceId) {
-          await loadPlanningWorkspaceById(lastWorkspaceId, { view: "planning" });
+          await loadPlanningWorkspaceById(lastWorkspaceId, { view: "content_generation" });
         }
       } catch (error: any) {
         console.error("[Frontend] Initial restore failed", error);
@@ -7571,6 +7755,24 @@ export default function App() {
   useEffect(() => {
     syncWorkspaceIntoCoursePlanState(activeWorkspace);
   }, [activeWorkspace]);
+
+  useEffect(() => {
+    if (!currentWorkspaceId || !activeWorkspace) {
+      return;
+    }
+    const hasGeneratedSessions =
+      activeWorkspace.generationScope &&
+      typeof activeWorkspace.generationScope === "object" &&
+      (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions &&
+      typeof (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions === "object";
+    if (hasGeneratedSessions) {
+      return;
+    }
+
+    void loadPlanningWorkspaceById(currentWorkspaceId, { view: "content_generation" }).catch((error: any) => {
+      console.error("[Frontend] Content-generation workspace refresh failed", error);
+    });
+  }, [activeWorkspace, currentWorkspaceId]);
 
   useEffect(() => {
     setSessionConfig(buildSessionConfigFromWorkspace(activeWorkspace));
@@ -7592,22 +7794,28 @@ export default function App() {
           )
         : {};
     setStudentPublications(workspaceStudentPublications);
-    const generatedFromWorkspace =
+    const generatedSessions =
       activeWorkspace?.generationScope &&
       typeof activeWorkspace.generationScope === "object" &&
       (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions &&
       typeof (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions === "object"
-        ? Object.fromEntries(
-            Object.entries((activeWorkspace.generationScope as Record<string, unknown>).generatedSessions as Record<string, SessionPlan>).map(([key, value]) => [
-              value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
-              {
-                ...value,
-                sessionKey: value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
-                sessionNumber: Number(value.sessionNumber || 0) || Number(key) || value.sessionNumber,
-              },
-            ])
-          )
-        : {};
+        ? (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions as Record<string, SessionPlan>
+        : null;
+
+    if (!generatedSessions) {
+      return;
+    }
+
+    const generatedFromWorkspace = Object.fromEntries(
+      Object.entries(generatedSessions).map(([key, value]) => [
+        value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
+        {
+          ...value,
+          sessionKey: value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
+          sessionNumber: Number(value.sessionNumber || 0) || Number(key) || value.sessionNumber,
+        },
+      ])
+    );
     setGeneratedSessionsByKey(generatedFromWorkspace || {});
   }, [activeWorkspace]);
 
@@ -7621,8 +7829,7 @@ export default function App() {
       return;
     }
     const requiredSections = getSectionsForTab(activeSubTab);
-    const targetSessionKey = getOutlineSessionKey(targetOutline);
-    const currentSession = generatedSessionsByKey[targetSessionKey];
+    const currentSession = findGeneratedSessionForOutline(generatedSessionsByKey, targetOutline);
     if (hasRequiredSessionSections(currentSession, requiredSections)) {
       return;
     }
@@ -8911,8 +9118,8 @@ export default function App() {
     const selectedSections = requestedSections.length ? requestedSections : allSessionSections;
 
     const previousOutlineItem = sessionsOutline.find((item) => item.sessionNumber === sessionNum - 1);
-    const previousGeneratedSession = previousOutlineItem ? generatedSessionsByKey[getOutlineSessionKey(previousOutlineItem)] : null;
-    const currentGeneratedSession = generatedSessionsByKey[getOutlineSessionKey(outlineItem)];
+    const previousGeneratedSession = previousOutlineItem ? findGeneratedSessionForOutline(generatedSessionsByKey, previousOutlineItem) : null;
+    const currentGeneratedSession = findGeneratedSessionForOutline(generatedSessionsByKey, outlineItem);
     const pptGenerationOptions = getPptGenerationOptions(sessionNum, currentGeneratedSession);
     const previousSessionContext = previousGeneratedSession
       ? `${previousGeneratedSession.title || `Session ${previousOutlineItem?.sessionNumber}`}: ${
@@ -9001,7 +9208,7 @@ export default function App() {
     const targetOutline = outlineItem || sessionsOutline.find((item) => item.sessionNumber === (sessionNum || activeSessionNumber));
     if (!targetOutline) return;
     const targetSessionNumber = sessionNum || targetOutline.sessionNumber;
-    const currentSession = generatedSessionsByKey[getOutlineSessionKey(targetOutline)];
+    const currentSession = findGeneratedSessionForOutline(generatedSessionsByKey, targetOutline);
     if (tabId === "assessments") {
       const customization = getAssessmentCustomization(targetSessionNumber);
       if (!hasAssessmentSourceContent(currentSession)) {
@@ -9036,7 +9243,7 @@ export default function App() {
       const itemSessionKey = getOutlineSessionKey(item);
       const isAlreadyGenerated =
         generatedSessionArtifactKeys.has(itemSessionKey) ||
-        Boolean(generatedSessionsByKey[itemSessionKey]);
+        Boolean(findGeneratedSessionForOutline(generatedSessionsByKey, item));
       if (!isAlreadyGenerated) {
         await handleGenerateFullSessionPack(item.sessionNumber, item);
       }
@@ -9770,7 +9977,7 @@ export default function App() {
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">Curriculum</span>
                   <h4 className="font-display font-black text-slate-800 text-sm">
-                    {extractedData?.units ? `${extractedData.units.length} Units` : "0 Units"}
+                    {canonicalUnitsCount ? `${canonicalUnitsCount} Units` : "0 Units"}
                   </h4>
                   <p className="text-[11px] text-slate-450 font-bold font-sans">
                     {extractedData?.gradeLevel || "Awaiting extraction"}
@@ -10346,11 +10553,27 @@ export default function App() {
               {dashboardTab === "curriculum" && (
                 <div className="space-y-4 animate-[fadeIn_0.3s_ease-out] font-sans">
                   {(() => {
-                    const activeUnits = extractedData?.units || [];
+                    const activeUnits: Array<{
+                      unitId: string | number;
+                      unitName: string;
+                      description: string;
+                      topics: string[];
+                    }> = normalizedUnits.length > 0
+                      ? normalizedUnits.map((unit: any, idx: number) => ({
+                          unitId: unit?.unit_id || unit?.unitId || idx + 1,
+                          unitName: unit?.unit_name || unit?.unitName || "",
+                          description: unit?.description || "",
+                          topics: Array.isArray(unit?.topics)
+                            ? unit.topics
+                            : Array.isArray(unit?.chapters)
+                              ? unit.chapters.flatMap((chapter: any) => Array.isArray(chapter?.topics) ? chapter.topics : [])
+                              : [],
+                        }))
+                      : (extractedData?.units || []);
 
                     return (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {activeUnits.map((chapterItem, idx) => (
+                        {activeUnits.map((chapterItem, idx: number) => (
                           <div key={idx} className="p-5 border-2 border-slate-50 bg-slate-50/20 rounded-2xl hover:border-teal-500/20 transition space-y-3">
                             <span className="text-[10px] font-black tracking-widest uppercase bg-slate-150 text-slate-800 px-2.5 py-0.5 rounded-full">
                               Unit {chapterItem.unitId || idx + 1}
@@ -10362,7 +10585,7 @@ export default function App() {
                               {chapterItem.description}
                             </p>
                             <div className="pt-2 border-t border-slate-100 flex flex-wrap gap-1.5">
-                              {chapterItem.topics?.map((topic, tIdx) => (
+                              {chapterItem.topics?.map((topic: string, tIdx: number) => (
                                 <span key={tIdx} className="px-2 py-1 bg-white border border-slate-150 rounded-lg text-[10px] font-bold text-slate-650">
                                   {topic}
                                 </span>
@@ -11937,9 +12160,9 @@ export default function App() {
                           const itemSessionKey = getOutlineSessionKey(item);
                           const hasDeepData =
                             generatedSessionArtifactKeys.has(itemSessionKey) ||
-                            Boolean(generatedSessionsByKey[itemSessionKey]);
+                            Boolean(findGeneratedSessionForOutline(generatedSessionsByKey, item));
                           return (
-                            <option key={item.id} value={item.sessionNumber}>
+                            <option key={itemSessionKey || item.id || item.sessionNumber} value={item.sessionNumber}>
                               {`Session ${item.sessionNumber} • ${item.title} • ${item.sessionKind === "strand_practice" ? "Practice" : "Lesson"} • ${hasDeepData ? "Ready" : "Pending"}`}
                             </option>
                           );
@@ -11970,9 +12193,10 @@ export default function App() {
                   (() => {
                     const outlineItem = sessionsOutline.find((item) => item.sessionNumber === activeSessionNumber)!;
                     const activeSessionKey = getOutlineSessionKey(outlineItem);
+                    const resolvedGeneratedSession = findGeneratedSessionForOutline(generatedSessionsByKey, outlineItem);
                     const session = {
                       ...outlineItem,
-                      ...generatedSessionsByKey[activeSessionKey],
+                      ...resolvedGeneratedSession,
                     } as SessionPlan & {
                       chapterName?: string;
                       chapterSessionNumber?: number;
@@ -11983,7 +12207,15 @@ export default function App() {
                     const publicationTargets = [
                       { id: "homework", label: "Homework", available: Boolean(session.homework) },
                       { id: "assessments", label: "Assessments", available: Boolean(session.assessment) },
-                      { id: "quizzes", label: "Quizzes", available: Boolean(session.assessment?.mcq?.length) },
+                      {
+                        id: "quizzes",
+                        label: "Quizzes",
+                        available: Boolean(
+                          session.assessment?.paper?.questions?.some(
+                            (question) => String(question?.type || question?.subtype || "").trim().toLowerCase() === "mcq",
+                          ),
+                        ),
+                      },
                       { id: "notes", label: "Notes", available: Boolean(session.studentLessonNotes) },
                     ] as const;
                     const publishedCount = publicationTargets.filter((target) => getPublicationFlagsForSession(session)?.[target.id]).length;

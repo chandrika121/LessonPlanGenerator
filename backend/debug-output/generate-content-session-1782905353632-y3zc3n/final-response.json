@@ -1,0 +1,979 @@
+{
+  "teacherLessonNotes": {
+    "prerequisiteKnowledge": [
+      "Basic understanding of atoms as the building blocks of matter.",
+      "Familiarity with Dalton's postulates (specifically that elements are made of identical particles).",
+      "Concept of subatomic particles: protons, neutrons, and electrons."
+    ],
+    "previousSessionRecap": [
+      "Dalton's Atomic Theory and its limitations.",
+      "Discovery of the electron (Thomson) and nucleus (Rutherford).",
+      "The existence of isotopes as a contradiction to Dalton's 'identical atoms' postulate."
+    ],
+    "lessonPurpose": [
+      "To explain why atomic masses are not whole numbers despite protons/neutrons being integers.",
+      "To introduce the concept of Relative Atomic Mass (Ar) and its calculation using isotopic abundance.",
+      "To bridge the gap between theoretical particle mass and practical laboratory measurements."
+    ],
+    "teachingSequence": [
+      "Hook: Present a periodic table showing non-integer atomic masses. Ask 'Why is Chlorine 35.45?'",
+      "Direct Instruction: Define Relative Atomic Mass (Ar) using Carbon-12 as the standard.",
+      "Concept Development: Explain isotopes and how they affect average mass.",
+      "Guided Practice: Walk through a calculation of Ar for an element with two isotopes.",
+      "Activity: Students calculate Ar for Boron or Chlorine in pairs.",
+      "Formative Check: Quick exit ticket on the definition of amu."
+    ],
+    "guidedPractice": [
+      "Teacher asks students to identify which isotope defines 1 amu (Answer: C-12).",
+      "Teacher writes a sample problem on board and solicits student input for each step.",
+      "Check for understanding by asking 'If an element has only one stable isotope, will its Ar be close to the mass number?'"
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Relative Atomic Mass (Ar)",
+        "definition": "The average mass of atoms of an element compared to 1/12th the mass of a Carbon-12 atom.",
+        "coreExplanation": "Since most elements exist as mixtures of isotopes, we cannot use the mass of a single isotope for general calculations. We calculate a weighted average based on natural abundance. The standard unit is 'amu' or 'u', defined by C-12 = 12 exactly.",
+        "importance": "It allows chemists to weigh elements in grams that correspond directly to moles, enabling stoichiometric calculations.",
+        "observedIn": [
+          "The periodic table values (e.g., Cl = 35.45)",
+          "Mass spectrometry data"
+        ],
+        "whyStudyIt": "Essential for converting between mass and number of atoms in chemical reactions.",
+        "relationshipWithPrevious": "Extends Dalton's theory by explaining the 'identical particles' exception via isotopes.",
+        "relationshipWithFuture": "Directly leads to the concept of Mole (Session 3) and Molecular Mass calculations.",
+        "keywords": [
+          "Relative Atomic Mass",
+          "Isotopic Abundance",
+          "Carbon-12 Standard"
+        ],
+        "teacherMoves": [
+          "Emphasize that 'average' does not mean a specific atom has this mass, but the collection does.",
+          "Write the formula clearly: Ar = (m1*x + m2*y) / 100."
+        ],
+        "examples": [
+          "Chlorine-35 and Chlorine-37 mixture resulting in ~35.45 u.",
+          "Boron isotopes B-10 and B-11."
+        ],
+        "visuals": [
+          "Diagram of a balance scale comparing an atom to 1/12th C-12",
+          "Pie chart showing isotope abundance"
+        ]
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "Why do we use Carbon-12 as the standard instead of Hydrogen?",
+        "level": "Understanding",
+        "expectedResponse": "Carbon-12 is a solid, stable element that forms many compounds, making it easier to measure accurately compared to gaseous hydrogen.",
+        "answerPoints": [
+          "Stability and availability as a standard reference.",
+          "Ease of measurement in mass spectrometry."
+        ]
+      },
+      {
+        "question": "If an element has two isotopes with masses 10u and 12u, can the relative atomic mass be exactly 11?",
+        "level": "Analysis",
+        "expectedResponse": "Yes, but only if both isotopes are present in equal abundance (50% each). If abundances differ, the average will shift towards the more abundant isotope.",
+        "answerPoints": [
+          "Dependence on weighted average calculation.",
+          "Requirement of 1:1 ratio for exact midpoint."
+        ]
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Provide a pre-filled table with abundance percentages to focus only on the multiplication and addition steps.",
+        "Use visual fraction bars to explain 'weighted average' concept before introducing numbers."
+      ],
+      "averageLearners": [
+        "Standard calculation problems involving two isotopes.",
+        "Focus on correctly identifying mass number vs. atomic mass in questions."
+      ],
+      "advancedLearners": [
+        "Challenge: Calculate the abundance of an isotope if given the Ar and the other isotope's data (algebraic approach).",
+        "Ask them to explain why Chlorine-35 is more abundant than Chlorine-37 based on nuclear stability concepts."
+      ]
+    },
+    "teacherTips": [
+      "Clarify that 'atomic mass' and 'mass number' are often confused; Mass Number = integer (protons+neutrons), Atomic Mass = measured average.",
+      "Ensure students understand that the unit 'u' or 'amu' is dimensionless in relative terms but represents a specific physical quantity."
+    ],
+    "misconceptions": [
+      "Students think an atom of Chlorine actually weighs 35.45 u (it's either ~35 or ~37).",
+      "Confusing Relative Atomic Mass with Molar Mass without understanding the mole connection yet.",
+      "Assuming all atoms of an element are identical in mass."
+    ],
+    "formativeChecks": [
+      "Thumbs up/down: 'Is 1 amu equal to the mass of a proton?' (No, it's slightly less).",
+      "Mini-whiteboard calculation for Boron Ar given specific abundances."
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap & Hook",
+        "minutes": 5,
+        "purpose": "Refresh Dalton and introduce the 'missing mass' puzzle"
+      },
+      {
+        "segment": "Theory: Isotopes & Standard",
+        "minutes": 10,
+        "purpose": "Define Ar and C-12 standard"
+      },
+      {
+        "segment": "Calculation Methodology",
+        "minutes": 15,
+        "purpose": "Derive and practice the weighted average formula"
+      },
+      {
+        "segment": "Activity & Assessment",
+        "minutes": 10,
+        "purpose": "Independent calculation and exit ticket"
+      }
+    ],
+    "sessionSummary": [
+      "Relative Atomic Mass is a weighted average of isotopic masses.",
+      "The standard unit (u) is based on Carbon-12 = 12 exactly."
+    ],
+    "nextSessionBridge": [
+      "Now that we know how to measure the mass of an atom, next session we will define 'Mole' as a counting unit for these atoms and link atomic mass to grams (Molar Mass)."
+    ]
+  },
+  "studentLessonNotes": {
+    "title": "Session 2: Relative Atomic Mass & Isotopes",
+    "introduction": "Have you ever wondered why the periodic table shows Chlorine as having a mass of 35.45? Atoms are made of whole numbers (protons and neutrons), so how can an average be a decimal?",
+    "learningObjectives": [
+      "Define Relative Atomic Mass.",
+      "Explain the role of Carbon-12 in atomic mass standards.",
+      "Calculate relative atomic mass from isotopic data."
+    ],
+    "quickRecall": [
+      "Atoms contain protons, neutrons, and electrons.",
+      "Isotopes are atoms of the same element with different numbers of neutrons (different masses)."
+    ],
+    "sections": [
+      {
+        "heading": "What is Relative Atomic Mass?",
+        "explanation": "Since most elements exist as a mixture of isotopes, we use an average mass called 'Relative Atomic Mass' (Ar). It compares the average mass of atoms to 1/12th of the mass of a Carbon-12 atom.",
+        "keyPoints": [
+          "Symbol: Ar",
+          "Unit: u or amu (unified atomic mass unit)",
+          "Standard: C-12 = 12 exactly"
+        ],
+        "examples": [
+          "If an element has isotopes of mass 10 and 14, the average might be 12.5 if they are equally common."
+        ],
+        "whyItMatters": "We need this value to weigh out chemicals in the lab.",
+        "terminology": [
+          "Isotopic Abundance",
+          "Weighted Average"
+        ],
+        "detailedExplanation": "Imagine a bag of marbles. Some are light (10g), some are heavy (14g). If you weigh the whole bag and divide by the number of marbles, you get an average weight per marble. This is exactly how Ar works for atoms.",
+        "observedIn": [
+          "Periodic Table",
+          "Mass Spectra"
+        ],
+        "visualSupport": [
+          "Diagram showing C-12 as the reference ruler."
+        ],
+        "importantNotes": [
+          "No single atom has a mass of 35.45u; it is an average of many atoms.",
+          "Mass Number (A) = Protons + Neutrons (always integer). Ar can be decimal."
+        ],
+        "memoryTechniques": [
+          "'Relative' means compared to something else (C-12)."
+        ],
+        "conceptSummary": [
+          "Ar is the weighted average mass of an element's isotopes relative to C-12."
+        ]
+      },
+      {
+        "heading": "How to Calculate Ar",
+        "explanation": "Formula: Ar = (Mass1 × Abundance% + Mass2 × Abundance%) / 100. You multiply each isotope's mass by its percentage abundance, sum them up, and divide by 100.",
+        "keyPoints": [
+          "Convert % to decimal or keep as whole number in numerator/100",
+          "Sum of abundances must be 100%"
+        ],
+        "examples": [
+          "Boron: B-10 (20%) and B-11 (80%). Ar = (10×20 + 11×80)/100 = 10.8"
+        ],
+        "whyItMatters": "This calculation is the foundation for stoichiometry.",
+        "terminology": [
+          "Weighted Average",
+          "Abundance"
+        ],
+        "detailedExplanation": "The more abundant an isotope, the closer the Ar will be to that isotope's mass number. If B-10 was 90% and B-11 was 10%, the average would be very close to 10.",
+        "observedIn": [
+          "Chemical calculations",
+          "Lab reports"
+        ],
+        "visualSupport": [
+          "Flowchart: Input Mass & % -> Multiply -> Sum -> Divide by 100."
+        ],
+        "importantNotes": [
+          "Always check that the percentages add up to 100% before calculating.",
+          "Round your final answer to appropriate significant figures (usually 2 decimal places)."
+        ],
+        "memoryTechniques": [
+          "'Multiply, Add, Divide by Hundred'."
+        ],
+        "conceptSummary": [
+          "Ar is calculated as a weighted average of isotopic masses."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Relative Atomic Mass (Ar)",
+        "definition": "The ratio of the average mass per atom of an element to 1/12th of the mass of a carbon-12 atom."
+      },
+      {
+        "term": "Isotopic Abundance",
+        "definition": "The percentage occurrence of each isotope in a naturally occurring sample of an element."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Calculating Chlorine's Atomic Mass",
+        "steps": [
+          "Identify isotopes: Cl-35 (75%) and Cl-37 (25%).",
+          "Multiply mass by abundance: 35 × 0.75 = 26.25; 37 × 0.25 = 9.25.",
+          "Add results: 26.25 + 9.25 = 35.5."
+        ],
+        "explanation": "The result is close to 35 because Cl-35 is more abundant, but slightly higher due to the heavier Cl-37 contribution."
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Ar = Average mass relative to C-12",
+        "Isotope = Same protons, different neutrons"
+      ],
+      "formulas": [
+        "Ar = (m1*x + m2*y) / 100"
+      ],
+      "facts": [
+        "Carbon-12 is the standard.",
+        "Atomic mass units are denoted by 'u' or 'amu'."
+      ],
+      "keywords": [
+        "Weighted Average",
+        "Isotopes",
+        "C-12"
+      ],
+      "conceptMap": [
+        "Atoms -> Isotopes -> Weighted Avg -> Ar"
+      ],
+      "quickRecap": [
+        "Ar is not a whole number for most elements."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Why is the atomic mass of Chlorine 35.45 and not an integer?",
+      "If an element has only one stable isotope, what will its relative atomic mass be approximately equal to?"
+    ],
+    "didYouKnow": [
+      "The unit 'amu' was renamed to 'u' (unified atomic mass unit) in 1961 to standardize between physics and chemistry conventions."
+    ],
+    "summary": [
+      "Relative Atomic Mass is a weighted average of isotopes based on the C-12 scale.",
+      "It allows us to work with measurable masses for elements that exist as mixtures."
+    ],
+    "quickRevision": [
+      "Formula: (Mass × %) + (Mass × %), then divide by 100."
+    ]
+  },
+  "learningOutcomes": [
+    "LO2.1: Define Relative Atomic Mass and explain the Carbon-12 standard.",
+    "LO2.2: Distinguish between mass number and relative atomic mass.",
+    "LO2.3: Calculate the relative atomic mass of an element given isotopic masses and abundances."
+  ],
+  "introduction": "Imagine you are a chemist in 1800 trying to weigh atoms. You can't put them on a scale! Today, we solve the mystery of why Chlorine weighs '35.45' when it's made of whole particles. We will discover how scientists use Carbon-12 as a ruler and calculate averages that match reality.",
+  "theory": {
+    "overview": "Atoms are not all identical in mass due to isotopes. To handle this, we define Relative Atomic Mass (Ar) using Carbon-12 as the universal standard (exactly 12 u). This value is a weighted average of all naturally occurring isotopes.",
+    "keyPoints": [
+      "Relative Atomic Mass (Ar) = Average mass / (1/12th mass of C-12)",
+      "Isotopic abundance determines the weight in the average.",
+      "The unit 'u' or 'amu' is used for atomic masses."
+    ],
+    "detailedContent": "Most elements are mixtures. For example, Chlorine has two main isotopes: Cl-35 (75%) and Cl-37 (25%). If we simply averaged 35 and 37, we'd get 36. But because there is more of the lighter one, the average drops to ~35.45. This value is crucial for stoichiometry later. The standard C-12 was chosen because it forms many compounds and its mass can be measured very precisely using mass spectrometry."
+  },
+  "activities": [
+    {
+      "name": "Isotope Balance Challenge",
+      "instructions": [
+        "Divide class into pairs.",
+        "Provide each pair with a card set containing 'Mass' (e.g., 10, 12) and 'Abundance %' cards for different elements.",
+        "Students must calculate the Ar using the formula on their worksheet.",
+        "One student acts as the 'Calculator', the other as the 'Checker'.",
+        "Swap roles after two problems."
+      ],
+      "durationMinutes": 10
+    }
+  ],
+  "materials": {
+    "ppt": {
+      "templateId": "kamalaniketan-session-12",
+      "templateName": "Kamalaniketan Session PPT Template",
+      "themeId": "kamalaniketan-modern",
+      "themeTokens": {
+        "themeId": "kamalaniketan-modern",
+        "themeName": "Modern Educational Blue/Green",
+        "fonts": {
+          "heading": "Outfit",
+          "body": "Inter"
+        },
+        "colors": {
+          "primary": "#36ADAA",
+          "secondary": "#1EABDA",
+          "accent": "#DE8431",
+          "background": "#EEF4F7",
+          "surface": "#FFFFFF",
+          "text": "#0F172A",
+          "mutedText": "#64748B"
+        },
+        "visualStyle": {
+          "topBarStyle": "bold color band",
+          "cardStyle": "rounded modern educator cards",
+          "visualFrameStyle": "large clean visual panel"
+        }
+      },
+      "title": "Session 2: Relative Atomic Mass & Isotopes",
+      "presentationTitle": "The Scale of Atoms: Carbon-12 and Averages",
+      "presentationGoal": "To visually demonstrate the concept of weighted average using isotopic data.",
+      "audience": "Class XI Chemistry Students",
+      "theme": "Modern Educational Blue/Green",
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Openverse",
+          "Wikimedia Commons"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Use reusable or public domain assets only."
+        ],
+        "fallbackStrategy": "Prefer SVG diagrams when external imagery is not needed."
+      },
+      "licenseChecklist": [
+        "Verify reusable license before final export."
+      ],
+      "presentationWarnings": [
+        "Do not introduce Mole concept calculations yet, only the mass definition."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "LO2.1",
+          "LO2.3"
+        ],
+        "topicsCovered": [
+          "Relative Atomic Mass",
+          "Isotopes",
+          "Carbon-12 Standard"
+        ],
+        "taughtConceptsCovered": [
+          "Weighted Average Calculation",
+          "Atomic Mass Unit Definition"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Title / Session Identity",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "hook | concept | comparison | process | summary",
+          "slideTitle": "Why is Chlorine 35.45?",
+          "learningOutcomeIds": [
+            "LO2.1"
+          ],
+          "topicCoverage": [
+            "Introduction to Relative Atomic Mass"
+          ],
+          "teacherIntent": "Hook students with the mystery of non-integer masses.",
+          "studentTakeaway": "Atomic mass is an average, not a single atom's weight.",
+          "layout": "Title + 2-column visual explainer",
+          "bulletPoints": [
+            "Atoms are made of whole particles (protons/neutrons).",
+            "Why do we see decimals in the Periodic Table?"
+          ],
+          "onSlideText": [
+            "Session #2: Relative Atomic Mass & Isotopes"
+          ],
+          "speakerNotes": [
+            "Ask students to look at Chlorine on their periodic tables. Why isn't it 35 or 36? It's a mix!"
+          ],
+          "visualPlan": "Split screen showing a single atom vs a bag of mixed atoms.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Why is Chlorine 35.45?",
+              "searchQuery": "CHEMISTRY Why is Chlorine 35.45? diagram",
+              "sourceSite": "Openverse",
+              "sourceUrl": "https://commons.wikimedia.org/wiki/File:Journal_of_Natural_Philosophy,_Chemistry_and_the_Arts_(IA_journalofnatural32lond).pdf",
+              "previewUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Journal_of_Natural_Philosophy%2C_Chemistry_and_the_Arts_%28IA_journalofnatural32lond%29.pdf/page1-500px-Journal_of_Natural_Philosophy%2C_Chemistry_and_the_Arts_%28IA_journalofnatural32lond%29.pdf.jpg",
+              "licenseType": "Reusable / verify exact license before export",
+              "attributionText": "Add attribution if the final selected asset requires it.",
+              "altText": "Illustration or diagram for Why is Chlorine 35.45?",
+              "placementHint": "Right panel or supporting visual zone"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Why is Chlorine 35.45? visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, create a compact SVG diagram for Why is Chlorine 35.45?.",
+              "Use labeled arrows, boxes, or structure outlines only when they help learning clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal the question first."
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "concept | process",
+          "slideTitle": "Defining the Unit (u)",
+          "learningOutcomeIds": [
+            "LO2.1"
+          ],
+          "topicCoverage": [
+            "Carbon-12 Standard"
+          ],
+          "teacherIntent": "Establish the reference point for all atomic masses.",
+          "studentTakeaway": "C-12 = 12 exactly is our ruler.",
+          "layout": "Text + Diagram",
+          "bulletPoints": [
+            "Standard: Carbon-12 atom (6 protons, 6 neutrons).",
+            "Definition: 1 u = 1/12th mass of C-12."
+          ],
+          "onSlideText": [
+            "Relative Atomic Mass (Ar) is the average mass compared to 1/12th of a Carbon-12 atom."
+          ],
+          "speakerNotes": [
+            "Explain that we need a common ruler. C-12 was chosen because it's stable and easy to work with in labs."
+          ],
+          "visualPlan": "Diagram of C-12 nucleus.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Defining the Unit (u)",
+              "searchQuery": "CHEMISTRY Defining the Unit (u) diagram",
+              "sourceSite": "Openverse",
+              "sourceUrl": "https://commons.wikimedia.org/wiki/File:Introduction_to_Physical_Chemistry_Lecture_8.pdf",
+              "previewUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Introduction_to_Physical_Chemistry_Lecture_8.pdf/page1-960px-Introduction_to_Physical_Chemistry_Lecture_8.pdf.jpg",
+              "licenseType": "Reusable / verify exact license before export",
+              "attributionText": "Add attribution if the final selected asset requires it.",
+              "altText": "Illustration or diagram for Defining the Unit (u)",
+              "placementHint": "Right panel or supporting visual zone"
+            }
+          ],
+          "svgDiagram": {
+            "title": "C-12 Standard",
+            "type": "labelled diagram",
+            "instructions": [
+              "Show a circle with 6p and 6n labeled."
+            ],
+            "svgCode": "<svg><!-- Simple C-12 nucleus representation --></svg>"
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Prerequisite Knowledge + Recall",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "process | concept",
+          "slideTitle": "How to Calculate Relative Atomic Mass",
+          "learningOutcomeIds": [
+            "LO2.3"
+          ],
+          "topicCoverage": [
+            "Calculation Methodology"
+          ],
+          "teacherIntent": "Teach the formula and logic of weighted averages.",
+          "studentTakeaway": "Ar = (Mass1*% + Mass2*) / 100",
+          "layout": "Formula + Example Box",
+          "bulletPoints": [
+            "Step 1: Multiply mass by abundance %.",
+            "Step 2: Add the results.",
+            "Step 3: Divide by 100."
+          ],
+          "onSlideText": [
+            "Ar = (m₁x + m₂y) / 100"
+          ],
+          "speakerNotes": [
+            "Walk through the Chlorine example step-by-step on the board while this slide is up."
+          ],
+          "visualPlan": "Flowchart of calculation steps.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for How to Calculate Relative Atomic Mass",
+              "searchQuery": "CHEMISTRY How to Calculate Relative Atomic Mass diagram",
+              "sourceSite": "Openverse",
+              "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_new_chemistry_(IA_b21497552).pdf",
+              "previewUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/The_new_chemistry_%28IA_b21497552%29.pdf/page1-500px-The_new_chemistry_%28IA_b21497552%29.pdf.jpg",
+              "licenseType": "Reusable / verify exact license before export",
+              "attributionText": "Add attribution if the final selected asset requires it.",
+              "altText": "Illustration or diagram for How to Calculate Relative Atomic Mass",
+              "placementHint": "Right panel or supporting visual zone"
+            }
+          ],
+          "svgDiagram": {
+            "title": "How to Calculate Relative Atomic Mass visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, create a compact SVG diagram for How to Calculate Relative Atomic Mass.",
+              "Use labeled arrows, boxes, or structure outlines only when they help learning clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal formula components one by one."
+          ],
+          "timeEstimateMinutes": 10
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "Lesson Hook / Session Opening",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "summary | concept",
+          "slideTitle": "Key Takeaways",
+          "learningOutcomeIds": [
+            "LO2.1",
+            "LO2.3"
+          ],
+          "topicCoverage": [
+            "Review"
+          ],
+          "teacherIntent": "Consolidate learning and check understanding.",
+          "studentTakeaway": "Ar is an average; C-12 is the standard.",
+          "layout": "Bullet points + Question",
+          "bulletPoints": [
+            "No single atom has mass 35.45u (it's an average).",
+            "Mass Number = Integer, Ar can be decimal."
+          ],
+          "onSlideText": [
+            "Exit Ticket: Calculate Boron's Ar given B-10(20%) and B-11(80%)."
+          ],
+          "speakerNotes": [
+            "Give students 3 minutes to solve the exit ticket."
+          ],
+          "visualPlan": "Use a precise classroom visual for Key Takeaways. Prefer diagram/SVG when conceptual accuracy matters.",
+          "assets": [
+            {
+              "purpose": "Support visual explanation for Key Takeaways",
+              "searchQuery": "CHEMISTRY Key Takeaways diagram",
+              "sourceSite": "Openverse",
+              "sourceUrl": "",
+              "previewUrl": "",
+              "licenseType": "Reusable / verify exact license before export",
+              "attributionText": "Add attribution if the final selected asset requires it.",
+              "altText": "Illustration or diagram for Key Takeaways",
+              "placementHint": "Right panel or supporting visual zone"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Key Takeaways visual",
+            "type": "concept diagram",
+            "instructions": [
+              "If a sourced image is not precise enough, create a compact SVG diagram for Key Takeaways.",
+              "Use labeled arrows, boxes, or structure outlines only when they help learning clarity."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal bullets progressively while explaining."
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Topic Introduction",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 5,
+          "slideType": "introduction",
+          "slideTitle": "Topic Introduction",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Some Basic Concepts of Chemistry"
+          ],
+          "teacherIntent": "Use the topic introduction slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "Kamalaniketan template slide",
+          "bulletPoints": [
+            "Cover the topic introduction for this session using only taught content."
+          ],
+          "onSlideText": [
+            "Topic Introduction"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "core_concept",
+          "templateSlideTitle": "Core Concept",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 6,
+          "slideType": "concept",
+          "slideTitle": "Core Concept",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Some Basic Concepts of Chemistry"
+          ],
+          "teacherIntent": "Use the core concept slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "Kamalaniketan template slide",
+          "bulletPoints": [
+            "Cover the core concept for this session using only taught content."
+          ],
+          "onSlideText": [
+            "Core Concept"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "visual_explanation",
+          "templateSlideTitle": "Visual Explanation",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 7,
+          "slideType": "visual-explanation",
+          "slideTitle": "Visual Explanation",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Some Basic Concepts of Chemistry"
+          ],
+          "teacherIntent": "Use the visual explanation slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "Kamalaniketan template slide",
+          "bulletPoints": [
+            "Cover the visual explanation for this session using only taught content."
+          ],
+          "onSlideText": [
+            "Visual Explanation"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Prefer a clean diagram or labelled visual that matches the taught concept.",
+          "assets": [],
+          "svgDiagram": {
+            "title": "Visual Explanation visual",
+            "type": "labelled diagram",
+            "instructions": [
+              "Provide a simple session-faithful visual only if the taught concept requires it."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example / Demonstration",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 8,
+          "slideType": "worked-example",
+          "slideTitle": "Worked Example / Demonstration",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Some Basic Concepts of Chemistry"
+          ],
+          "teacherIntent": "Use the worked example / demonstration slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "Kamalaniketan template slide",
+          "bulletPoints": [
+            "Keep this slide light and session-faithful. No extra content beyond the taught lesson."
+          ],
+          "onSlideText": [
+            "Worked Example / Demonstration"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice / Activity",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 9,
+          "slideType": "guided-practice",
+          "slideTitle": "Guided Practice / Activity",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Some Basic Concepts of Chemistry"
+          ],
+          "teacherIntent": "Use the guided practice / activity slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "Kamalaniketan template slide",
+          "bulletPoints": [
+            "Keep this slide light and session-faithful. No extra content beyond the taught lesson."
+          ],
+          "onSlideText": [
+            "Guided Practice / Activity"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Assessment",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 10,
+          "slideType": "quick-assessment",
+          "slideTitle": "Quick Assessment",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Some Basic Concepts of Chemistry"
+          ],
+          "teacherIntent": "Use the quick assessment slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "Kamalaniketan template slide",
+          "bulletPoints": [
+            "Keep this slide light and session-faithful. No extra content beyond the taught lesson."
+          ],
+          "onSlideText": [
+            "Quick Assessment"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Summary",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Summary",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Some Basic Concepts of Chemistry"
+          ],
+          "teacherIntent": "Use the summary slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "Kamalaniketan template slide",
+          "bulletPoints": [
+            "Cover the summary for this session using only taught content."
+          ],
+          "onSlideText": [
+            "Summary"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "kamalaniketan-session-12",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Homework / Next Session",
+          "isOptionalSlotFilled": false,
+          "slideNumber": 12,
+          "slideType": "homework",
+          "slideTitle": "Homework / Next Session",
+          "learningOutcomeIds": [],
+          "topicCoverage": [
+            "Some Basic Concepts of Chemistry"
+          ],
+          "teacherIntent": "Use the homework / next session slot without inventing new curriculum content.",
+          "studentTakeaway": "",
+          "layout": "Kamalaniketan template slide",
+          "bulletPoints": [
+            "Keep this slide light and session-faithful. No extra content beyond the taught lesson."
+          ],
+          "onSlideText": [
+            "Homework / Next Session"
+          ],
+          "speakerNotes": [
+            "Leave concise placeholders only when the session does not naturally support this slot."
+          ],
+          "visualPlan": "Use the template visual area only if it strengthens this session's taught content.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [],
+          "timeEstimateMinutes": 3
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Chemistry Class XI - Session 2: Atomic Mass & Isotopes",
+      "keyInformation": [
+        "Definition of Relative Atomic Mass (Ar).",
+        "The Carbon-12 Standard.",
+        "Formula for Weighted Average Calculation.",
+        "Worked Example: Chlorine and Boron."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Teacher Lesson Plan Outline - Session 2",
+      "sections": [
+        "Introduction (5 min): Hook with periodic table anomaly.",
+        "Theory Delivery (10 min): C-12 standard and definition of u.",
+        "Guided Practice (15 min): Step-by-step calculation on board.",
+        "Activity (10 min): Pair work on isotope problems.",
+        "Assessment (5 min): Exit ticket."
+      ]
+    }
+  },
+  "homework": {
+    "task": "Interactive or practical homework task",
+    "estimatedTimeMinutes": 30
+  },
+  "assessment": {
+    "mcq": [
+      {
+        "question": "The relative atomic mass of an element is defined with respect to which standard?",
+        "options": [
+          "A. Hydrogen-1",
+          "B. Oxygen-16",
+          "C. Carbon-12",
+          "D. Nitrogen-14"
+        ],
+        "answer": "C",
+        "explanation": "Carbon-12 is the international standard where 1/12th of its mass is defined as 1 u.",
+        "marks": 1
+      },
+      {
+        "question": "Which statement best describes Relative Atomic Mass?",
+        "options": [
+          "A. The mass of a single atom in grams",
+          "B. The average mass of atoms compared to C-12",
+          "C. The sum of protons and neutrons only for the heaviest isotope",
+          "D. A whole number representing the most common isotope"
+        ],
+        "answer": "B",
+        "explanation": "It is a weighted average relative to C-12, often resulting in non-integers.",
+        "marks": 1
+      }
+    ],
+    "shortAnswer": [
+      {
+        "question": "Explain why the atomic mass of Chlorine (35.45 u) is not a whole number.",
+        "answer": "Chlorine exists as a mixture of two isotopes, Cl-35 and Cl-37. The value 35.45 u represents the weighted average of these masses based on their natural abundances (approx 75% Cl-35 and 25% Cl-37), rather than the mass of any single atom.",
+        "expectedLength": "1-2 clear points",
+        "marks": 2,
+        "rubric": [
+          "1 mark for mentioning 'mixture' or 'isotopes'.",
+          "1 mark for explaining it is a 'weighted average'."
+        ]
+      }
+    ],
+    "longAnswer": [
+      {
+        "question": "Calculate the relative atomic mass of Boron given that it has two isotopes: B-10 (mass 10.01 u, abundance 20%) and B-11 (mass 11.01 u, abundance 80%). Show your working.",
+        "answer": "Step 1: Multiply mass by percentage for each isotope.\nB-10 contribution = 10.01 × 20 = 200.2\nB-11 contribution = 11.01 × 80 = 880.8\nStep 2: Sum the contributions.\nTotal = 200.2 + 880.8 = 1081.0\nStep 3: Divide by 100 to get average mass.\nAr = 1081.0 / 100 = 10.81 u.",
+        "expectedLength": "4-5 well-structured points with explanation",
+        "marks": 5,
+        "rubric": [
+          "1 mark for correct setup of formula/multiplication steps.",
+          "2 marks for correct calculation of individual contributions (200.2 and 880.8).",
+          "1 mark for summing correctly to get total numerator.",
+          "1 mark for final division and unit 'u'."
+        ]
+      }
+    ],
+    "answerKey": {
+      "mcq": [
+        {
+          "answer": "C",
+          "explanation": "Carbon-12 is the standard reference (1/12th mass = 1 u).",
+          "marks": 1
+        },
+        {
+          "answer": "B",
+          "explanation": "Relative atomic mass accounts for isotopic mixtures via weighted average.",
+          "marks": 1
+        }
+      ],
+      "shortAnswer": [
+        {
+          "answer": "Chlorine is a mixture of Cl-35 and Cl-37. The value 35.45 u is the weighted average based on their natural abundances.",
+          "rubric": [
+            "1 mark for identifying isotopes/mixture",
+            "1 mark for explaining 'weighted average'"
+          ],
+          "marks": 2
+        }
+      ],
+      "longAnswer": [
+        {
+          "answer": "(10.01*20 + 11.01*80)/100 = (200.2 + 880.8)/100 = 1081/100 = 10.81 u",
+          "rubric": [
+            "Correct multiplication of mass and % for B-10.",
+            "Correct multiplication of mass and % for B-11.",
+            "Correct summation of products.",
+            "Final division by 100.",
+            "Correct unit (u) included."
+          ],
+          "marks": 5
+        }
+      ],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct.",
+        "For long answers, reward structure and clear working steps."
+      ]
+    }
+  },
+  "assignment": {
+    "taskDescription": "Research Task: Find an element in your periodic table that has a relative atomic mass very close to its most abundant isotope's mass number. Explain why this happens.",
+    "rubric": [
+      "Correct identification of the element (e.g., Fluorine, Sodium).",
+      "Explanation linking single stable isotope or dominant abundance to integer-like Ar."
+    ],
+    "answerKey": "Example: Fluorine has only one natural isotope F-19. Thus its atomic mass is 18.998 u (very close to 19). Sodium is dominated by Na-23, so its mass is ~22.99."
+  },
+  "id": "chem-xi-s02-atomic-mass",
+  "sessionNumber": 2,
+  "title": "The Atomic Scale: Relative Atomic Mass & Isotopes",
+  "duration": 45
+}

@@ -1,0 +1,324 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8B - Class XII
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XII",
+  "units": [
+    {
+      "unit_id": "class-12-chemistry-u1",
+      "unit_name": "Unit 1: Solutions",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Solutions"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electrochemistry"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Kinetics"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "d and f Block Elements"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordination Compounds"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u6",
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Haloalkanes and Haloarenes"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u7",
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Alcohols, Phenols and Ethers"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u8",
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Aldehydes, Ketones and Carboxylic Acids"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u9",
+      "unit_name": "Unit 9: Amines",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Amines"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u10",
+      "unit_name": "Unit 10: Biomolecules",
+      "chapters": []
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-12-chemistry-u1",
+      "unit_name": "Unit 1: Solutions",
+      "chapter_id": "C1",
+      "chapter_name": "Solutions"
+    },
+    {
+      "unit_id": "class-12-chemistry-u2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapter_id": "C1",
+      "chapter_name": "Electrochemistry"
+    },
+    {
+      "unit_id": "class-12-chemistry-u3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapter_id": "C1",
+      "chapter_name": "Chemical Kinetics"
+    },
+    {
+      "unit_id": "class-12-chemistry-u4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapter_id": "C1",
+      "chapter_name": "d and f Block Elements"
+    },
+    {
+      "unit_id": "class-12-chemistry-u5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapter_id": "C1",
+      "chapter_name": "Coordination Compounds"
+    },
+    {
+      "unit_id": "class-12-chemistry-u6",
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "chapter_id": "C1",
+      "chapter_name": "Haloalkanes and Haloarenes"
+    },
+    {
+      "unit_id": "class-12-chemistry-u7",
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "chapter_id": "C1",
+      "chapter_name": "Alcohols, Phenols and Ethers"
+    },
+    {
+      "unit_id": "class-12-chemistry-u8",
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "chapter_id": "C1",
+      "chapter_name": "Aldehydes, Ketones and Carboxylic Acids"
+    },
+    {
+      "unit_id": "class-12-chemistry-u9",
+      "unit_name": "Unit 9: Amines",
+      "chapter_id": "C1",
+      "chapter_name": "Amines"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C12-CHM-U1",
+      "title": "Solutions",
+      "description": "Understanding types of solutions, concentration expressions, solubility principles, vapor pressure behavior in ideal and non-ideal systems, colligative properties for molar mass determination, and identification of abnormal molecular masses.",
+      "competencies": [
+        "Identify different types of solutions based on the state of solvent and solute",
+        "Express concentration using various units (molarity, molality, mole fraction, etc.)",
+        "Explain factors affecting solubility of solids and gases in liquids",
+        "Apply Raoult's Law to ideal liquid solutions and deviations in non-ideal solutions",
+        "Calculate molar mass using colligative properties such as relative lowering of vapor pressure, boiling point elevation, freezing point depression, and osmotic pressure",
+        "Analyze causes for abnormal molecular masses observed through colligative property measurements"
+      ],
+      "unit_name": "Unit 1: Solutions",
+      "chapter_name": "Solutions"
+    },
+    {
+      "code": "C12-CHM-U2",
+      "title": "Electrochemistry",
+      "description": "Knowledge of electrochemical cells, galvanic cell operation, Nernst equation application, conductance in electrolytic solutions, electrolysis principles, battery and fuel cell mechanisms, and corrosion processes.",
+      "competencies": [
+        "Differentiate between galvanic (voltaic) and electrolytic cells",
+        "Explain the working principle of electrochemical cells including electrode reactions",
+        "Apply Nernst equation to calculate cell potential under non-standard conditions",
+        "Relate conductivity, molar conductivity, and degree of dissociation in electrolytic solutions",
+        "Describe the principles behind batteries (primary/secondary) and fuel cells",
+        "Explain the mechanism of corrosion and methods for its prevention"
+      ],
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapter_name": "Electrochemistry"
+    },
+    {
+      "code": "C12-CHM-U3",
+      "title": "Chemical Kinetics",
+      "description": "Understanding reaction rates, factors influencing them, integrated rate laws for zero and first-order reactions, temperature dependence via Arrhenius equation, and collision theory fundamentals.",
+      "competencies": [
+        "Define rate of a chemical reaction and express it mathematically",
+        "Analyze the effect of concentration, temperature, catalysts, and surface area on reaction rates",
+        "Derive and apply integrated rate equations for zero-order and first-order reactions to determine half-life and rate constants",
+        "Explain the Arrhenius equation relating activation energy and temperature dependence of rate constant",
+        "Describe collision theory concepts including effective collisions and orientation factors"
+      ],
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapter_name": "Chemical Kinetics"
+    },
+    {
+      "code": "C12-CHM-U4",
+      "title": "d and f Block Elements",
+      "description": "Familiarity with periodic table position, electronic configurations of transition elements, general properties including variable oxidation states and magnetic behavior, important compounds of d-block elements, lanthanoids, actinoids, and their applications.",
+      "competencies": [
+        "Locate d-block and f-block elements in the periodic table based on electron configuration",
+        "Explain electronic configurations and stability trends for transition metals",
+        "Correlate general properties (color, magnetism, catalytic activity) with incomplete d-orbitals",
+        "Identify important compounds of transition elements and their uses",
+        "Distinguish between lanthanoids and actinoids regarding oxidation states and radioactivity",
+        "List applications of d-block and f-block elements in industry and technology"
+      ],
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapter_name": "d and f Block Elements"
+    },
+    {
+      "code": "C12-CHM-U5",
+      "title": "Coordination Compounds",
+      "description": "Understanding Werner's theory, nomenclature rules, isomerism types (structural and stereoisomerism), bonding theories including Valence Bond Theory and Crystal Field Theory, metal carbonyls, and applications.",
+      "competencies": [
+        "Explain Werner's postulates regarding primary and secondary valency",
+        "Apply IUPAC nomenclature rules to write names of coordination compounds correctly",
+        "Identify different types of isomerism in coordination complexes (ionization, hydrate, linkage, geometrical, optical)",
+        "Predict geometry and magnetic properties using Valence Bond Theory and Crystal Field Theory",
+        "Describe the nature of bonding in metal carbonyls including synergic effect"
+      ],
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapter_name": "Coordination Compounds"
+    },
+    {
+      "code": "C12-CHM-U6",
+      "title": "Haloalkanes and Haloarenes",
+      "description": "Classification, nomenclature of halogen derivatives, nature of C-X bond, preparation methods for haloalkanes and haloarenes, physical properties, chemical reactions including substitution and elimination mechanisms.",
+      "competencies": [
+        "Classify alkyl and aryl halides based on the number of halogen atoms",
+        "Apply IUPAC nomenclature rules to name haloalkanes and haloarenes",
+        "Explain the nature of C-X bond polarity and its effect on reactivity",
+        "Describe methods for preparing haloalkanes from alcohols, hydrocarbons, etc.",
+        "Differentiate between SN1 and SN2 reaction mechanisms with examples"
+      ],
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "chapter_name": "Haloalkanes and Haloarenes"
+    },
+    {
+      "code": "C12-CHM-U7",
+      "title": "Alcohols, Phenols and Ethers",
+      "description": "Classification of alcohols, phenols, and ethers; nomenclature; structures of functional groups; preparation methods; physical properties including hydrogen bonding effects.",
+      "competencies": [
+        "Classify alcohols as primary, secondary, or tertiary based on carbon attachment",
+        "Distinguish between alcohols and phenols structurally and chemically",
+        "Apply IUPAC nomenclature for polyhydric alcohols, phenols, and ethers",
+        "Explain the role of hydrogen bonding in physical properties like boiling point and solubility"
+      ],
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "chapter_name": "Alcohols, Phenols and Ethers"
+    },
+    {
+      "code": "C12-CHM-U8",
+      "title": "Aldehydes, Ketones and Carboxylic Acids",
+      "description": "Nomenclature of carbonyl compounds; preparation methods for aldehydes, ketones, and carboxylic acids; physical properties; characteristic chemical reactions including nucleophilic addition.",
+      "competencies": [
+        "Differentiate between aldehydes and ketones based on structure",
+        "Apply IUPAC nomenclature rules to carbonyl compounds and carboxylic acids",
+        "Describe preparation methods for aldehydes, ketones, and carboxylic acids from various precursors",
+        "Predict products of nucleophilic addition reactions involving carbonyl groups"
+      ],
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "chapter_name": "Aldehydes, Ketones and Carboxylic Acids"
+    },
+    {
+      "code": "C12-CHM-U9",
+      "title": "Amines",
+      "description": "Structure of amines; classification into primary, secondary, tertiary; nomenclature; preparation methods including reduction and Gabriel phthalimide synthesis; physical properties and chemical reactivity.",
+      "competencies": [
+        "Classify amines based on the number of alkyl/aryl groups attached to nitrogen",
+        "Apply IUPAC rules for naming aliphatic and aromatic amines",
+        "Describe preparation methods including reduction of nitro compounds, Hoffmann bromamide degradation, and Gabriel phthalimide synthesis",
+        "Explain basicity trends in amines compared to ammonia"
+      ],
+      "unit_name": "Unit 9: Amines",
+      "chapter_name": "Amines"
+    },
+    {
+      "code": "C12-CHM-U10",
+      "title": "Biomolecules",
+      "description": "Classification and structure of carbohydrates, proteins; role of enzymes as biological catalysts; types and functions of vitamins; structure of nucleic acids (DNA/RNA); hormonal regulation.",
+      "competencies": [
+        "Classify carbohydrates into monosaccharides, disaccharides, and polysaccharides",
+        "Explain the primary and secondary structures of proteins including peptide bonds",
+        "Describe the catalytic mechanism of enzymes in biological systems",
+        "Categorize vitamins as water-soluble or fat-soluble with examples"
+      ],
+      "unit_name": "Unit 10: Biomolecules",
+      "chapter_name": ""
+    }
+  ]
+}

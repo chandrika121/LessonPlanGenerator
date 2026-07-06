@@ -1,0 +1,371 @@
+{
+  "studentLessonNotes": {
+    "title": "Solutions - Session 1: Introduction & Concentration Terms",
+    "sessionOverview": "Welcome to the world of Solutions! In this first session, we will explore what makes a solution special and learn how scientists measure exactly 'how much' is dissolved in it using terms like Molarity and Molality.",
+    "introduction": "Have you ever wondered why sugar disappears when mixed with water? Or why adding salt to ice helps melt it faster? These are all properties of solutions! Today, we start our journey by understanding what a solution really is and how we can describe its strength using different mathematical terms. Get ready to become a chemistry detective!",
+    "learningObjectives": [
+      "After this lesson you will be able to define a solution and identify its components.",
+      "You will learn the difference between saturated, unsaturated, and supersaturated solutions.",
+      "You will master calculating concentration using Molarity (M) and Molality (m).",
+      "You will understand when to use each unit of concentration."
+    ],
+    "quickRecall": [
+      "Remember: A solute is the substance being dissolved, while a solvent is the medium doing the dissolving.",
+      "Previously known: Matter exists in solid, liquid, and gas states; solutions are usually homogeneous mixtures.",
+      "You already know: The formula for mass percent involves (mass of component / total mass) × 100."
+    ],
+    "easyToRemember": [
+      "Molarity changes with temperature because volume expands or contracts, but Molality stays constant because it depends on mass!"
+    ],
+    "comparisonTables": [
+      {
+        "title": "Saturated vs. Unsaturated Solutions",
+        "headers": [
+          "Feature",
+          "Unsaturated Solution",
+          "Saturated Solution"
+        ],
+        "rows": [
+          [
+            "Definition",
+            "Can dissolve more solute at that temperature.",
+            "Cannot dissolve any more solute; equilibrium is reached."
+          ],
+          [
+            "Rate of Dissolution vs. Crystallization",
+            "Dissolution rate > Crystallization rate (if adding more).",
+            "Dissolution rate = Crystallization rate (Dynamic Equilibrium)."
+          ],
+          [
+            "Visual Clue",
+            "Clear solution, no solid left at the bottom.",
+            "Solid may remain undissolved at the bottom."
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Molarity (M)",
+        "formula": {
+          "text": "M = moles of solute / Volume of solution in Liters",
+          "latex": "\\frac{n_{solute}}{V_{solution}(L)}"
+        },
+        "meaning": "It tells us how many moles of a substance are present in one liter of the entire mixture.",
+        "whenToUse": "Used when temperature is constant or volume measurements are precise, common in lab titrations."
+      },
+      {
+        "title": "Molality (m)",
+        "formula": {
+          "text": "m = moles of solute / Mass of solvent in kg",
+          "latex": "\\frac{n_{solute}}{mass_{solvent}(kg)}"
+        },
+        "meaning": "It tells us the ratio of particles to the weight of the liquid, unaffected by temperature changes.",
+        "whenToUse": "Used when studying properties that depend on temperature (like boiling point elevation) because mass doesn't change with heat."
+      }
+    ],
+    "geometryDiagrams": [],
+    "proofSteps": [
+      "Step 1: Identify the solute and solvent in the given problem.",
+      "Step 2: Convert all units to match (e.g., grams to moles, mL to Liters or kg).",
+      "Step 3: Apply the correct formula based on whether you need Molarity or Molality."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Using volume of solvent instead of solution for Molarity.",
+        "correction": "Always use TOTAL VOLUME OF SOLUTION (Solvent + Solute) in the denominator for Molarity.",
+        "example": "If you dissolve 10g salt in 50mL water, do not divide by 50. You must measure the final volume after mixing."
+      },
+      {
+        "mistake": "Confusing mass of solvent with mass of solution for Molality.",
+        "correction": "Molality uses ONLY the MASS OF SOLVENT (in kg), never the total mixture mass.",
+        "example": "If you have 10g solute in 90g water, use 0.09kg as the denominator."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "What is a Solution?",
+        "explanation": "A solution is a homogeneous mixture of two or more substances where one substance (the solute) is dissolved in another (the solvent). The particles are so small that they don't settle down and cannot be seen with the naked eye.",
+        "keyPoints": [
+          "Homogeneous: Uniform composition throughout.",
+          "Transparent: Light passes through, though it may scatter slightly if colloidal.",
+          "Stable: Solute does not separate from solvent over time."
+        ],
+        "examples": [
+          "Salt water (Sodium chloride dissolved in Water).",
+          "Air (A mixture of gases like Nitrogen and Oxygen).",
+          "Sugar syrup (Sugar dissolved in hot water)."
+        ],
+        "whyItMatters": "Understanding solutions is crucial for biology (blood plasma), industry (pharmaceuticals), and daily life (cooking, cleaning).",
+        "terminology": [
+          "Solute",
+          "Solvent",
+          "Homogeneous Mixture"
+        ],
+        "detailedExplanation": "Think of a solution like a crowd where everyone is mixed perfectly. If you take a spoonful from the top or bottom, it tastes exactly the same. The solute particles are surrounded by solvent molecules in a process called 'solvation' (or hydration if water is involved).",
+        "observedIn": [
+          "Dissolving sugar in tea.",
+          "Carbonated drinks (CO2 gas dissolved in liquid under pressure)."
+        ],
+        "visualSupport": [
+          "Imagine a beaker of blue water with tiny red dots scattered evenly throughout, representing salt ions."
+        ],
+        "importantNotes": [
+          "The solvent is usually present in the larger amount.",
+          "Solutions can be solid (alloys like brass), liquid (saltwater), or gaseous (air)."
+        ],
+        "memoryTechniques": [
+          "Solvent = The 'Host' that does the dissolving. Solute = The 'Guest' being dissolved."
+        ],
+        "conceptSummary": [
+          "A solution is a uniform mixture where solute particles are dispersed in a solvent at the molecular level."
+        ]
+      },
+      {
+        "heading": "Types of Solutions: Saturation",
+        "explanation": "Not all solutions can hold more dissolved stuff. Depending on how much solute has been added, we classify them as unsaturated, saturated, or supersaturated.",
+        "keyPoints": [
+          "Unsaturated: Can still dissolve more solute.",
+          "Saturated: Holds the maximum amount of solute at a specific temperature; any extra will settle.",
+          "Supersaturated: A special unstable state where more solute is dissolved than normally possible (usually by heating and cooling slowly)."
+        ],
+        "examples": [
+          "Unsaturated: Adding 1 spoon of sugar to water, it disappears completely.",
+          "Saturated: Stirring salt into water until no more dissolves and crystals sit at the bottom.",
+          "Supersaturated: A 'hot ice' experiment where sodium acetate crystallizes instantly upon disturbance."
+        ],
+        "whyItMatters": "This concept explains why we can't dissolve infinite sugar in tea, or how rock candy forms (supersaturation cooling).",
+        "terminology": [
+          "Solubility Limit",
+          "Dynamic Equilibrium"
+        ],
+        "detailedExplanation": "In a saturated solution, there is a balance. Molecules are dissolving into the liquid at the same rate that dissolved molecules are sticking back to the solid crystal (crystallization). This is called dynamic equilibrium.",
+        "observedIn": [
+          "Making rock candy.",
+          "Carbonated beverages losing fizz when opened."
+        ],
+        "visualSupport": [
+          "A diagram showing a beaker with undissolved crystals at the bottom, labeled 'Saturated', and an arrow pointing to it saying 'Max Capacity'."
+        ],
+        "importantNotes": [
+          "Solubility usually increases with temperature for solids.",
+          "For gases (like CO2), solubility decreases as temperature rises."
+        ],
+        "memoryTechniques": [
+          "'Sat-urated' sounds like 'Satisfied'. The solution is satisfied and won't take any more!"
+        ],
+        "conceptSummary": [
+          "A saturated solution holds the maximum amount of solute possible at a given temperature."
+        ]
+      },
+      {
+        "heading": "Expressing Concentration: Molarity vs. Molality",
+        "explanation": "How do we say 'strong' or 'weak'? We use concentration terms. The two most common are Molarity and Molality, but they measure different things!",
+        "keyPoints": [
+          "Molarity (M) depends on Volume of Solution.",
+          "Molality (m) depends on Mass of Solvent.",
+          "Temperature affects volume, so Molarity changes with heat; Molality does not."
+        ],
+        "examples": [
+          "A 1 M solution has 1 mole of solute in 1 Liter of total liquid.",
+          "A 1 m solution has 1 mole of solute mixed into exactly 1 kg of water (solvent)."
+        ],
+        "whyItMatters": "In precise chemistry experiments, especially those involving temperature changes (like boiling point elevation), Molality is preferred because it doesn't fluctuate with heat.",
+        "terminology": [
+          "Mole",
+          "Liter",
+          "Kilogram"
+        ],
+        "detailedExplanation": "Imagine you are making lemonade. Molarity asks: 'How much sugar in the whole pitcher?' Molality asks: 'How much sugar per kilogram of water used?'. If the sun heats up, the liquid expands (volume increases), so Molarity drops slightly. But the weight of the water stays exactly the same, so Molality remains constant.",
+        "observedIn": [
+          "Preparing standard solutions in a lab for titration (Molarity).",
+          "Calculating freezing point depression of antifreeze in cars (Molality)."
+        ],
+        "visualSupport": [
+          "A split diagram: Left side shows a beaker with 'Volume' label changing size. Right side shows a scale measuring 'Mass' staying constant."
+        ],
+        "importantNotes": [
+          "Always convert grams to moles using molar mass first.",
+          "For dilute aqueous solutions, Molarity and Molality are nearly equal because 1 L of water weighs ~1 kg.",
+          "Molality is denoted by a lowercase 'm', while Molarity uses uppercase 'M'."
+        ],
+        "memoryTechniques": [
+          "'Molar-ity' has an 'o' like 'Volume'. 'Mol-al-ity' has an 'a' like 'Mass' (or kg)."
+        ],
+        "conceptSummary": [
+          "Use Molarity for volume-based calculations and Molality when temperature stability is required."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Solute",
+        "definition": "The substance that gets dissolved in a solution, usually present in smaller quantity."
+      },
+      {
+        "term": "Solvent",
+        "definition": "The medium in which the solute dissolves, usually present in larger quantity (e.g., water)."
+      },
+      {
+        "term": "Molarity",
+        "definition": "The number of moles of solute dissolved per liter of solution."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Calculating Molarity from Mass",
+        "problem": "Calculate the molarity of a solution prepared by dissolving 5.85 g of NaCl in enough water to make 200 mL of solution.",
+        "diagramRef": null,
+        "given": [
+          "Mass of solute (NaCl) = 5.85 g",
+          "Volume of solution = 200 mL"
+        ],
+        "formula": [
+          "Molarity (M) = moles of solute / Volume in Liters"
+        ],
+        "steps": [
+          "Step 1: Calculate the molar mass of NaCl.",
+          "Step 2: Convert grams to moles.",
+          "Step 3: Convert mL to L and calculate Molarity."
+        ],
+        "solutionSteps": [
+          "Molar Mass of NaCl = 23 + 35.5 = 58.5 g/mol",
+          "Moles = 5.85 g / 58.5 g/mol = 0.1 mol",
+          "Volume in L = 200 mL / 1000 = 0.2 L",
+          "Molarity = 0.1 mol / 0.2 L = 0.5 M"
+        ],
+        "reasoning": [
+          "We need moles to use the molarity formula, so we divide mass by molar mass first."
+        ],
+        "explanation": "This example shows how to convert a physical measurement (grams) into chemical units (moles) and then relate it to volume.",
+        "finalAnswer": "0.5 M",
+        "latex": "\\frac{0.1}{0.2} = 0.5 \\, M",
+        "displayLatex": "\\\\text{Molarity} = \\\\frac{n}{V}"
+      },
+      {
+        "title": "Calculating Molality from Mass of Solvent",
+        "problem": "Find the molality of a solution containing 18 g of glucose (C6H12O6) dissolved in 500 g of water.",
+        "diagramRef": null,
+        "given": [
+          "Mass of solute = 18 g",
+          "Mass of solvent = 500 g"
+        ],
+        "formula": [
+          "Molality (m) = moles of solute / Mass of solvent in kg"
+        ],
+        "steps": [
+          "Step 1: Find molar mass of glucose.",
+          "Step 2: Convert grams to moles.",
+          "Step 3: Convert solvent mass to kg and calculate molality."
+        ],
+        "solutionSteps": [
+          "Molar Mass = (6×12) + (12×1) + (6×16) = 72 + 12 + 96 = 180 g/mol",
+          "Moles of glucose = 18 / 180 = 0.1 mol",
+          "Mass of solvent in kg = 500 g / 1000 = 0.5 kg",
+          "Molality = 0.1 mol / 0.5 kg = 0.2 m"
+        ],
+        "reasoning": [
+          "Notice we used the mass of water (solvent) only, not the total solution weight."
+        ],
+        "explanation": "This demonstrates that Molality is independent of volume changes and relies purely on mass ratios.",
+        "finalAnswer": "0.2 m",
+        "latex": "\\frac{0.1}{0.5} = 0.2 \\, m",
+        "displayLatex": "\\\\text{Molality} = \\\\frac{n_{solute}}{m_{solvent}}"
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Solution: Homogeneous mixture.",
+        "Saturated Solution: Maximum solute dissolved at a given temp."
+      ],
+      "formulas": [
+        "Molarity (M) = n / V(L)",
+        "Molality (m) = n / mass_solvent(kg)"
+      ],
+      "facts": [
+        "Solubility of solids generally increases with temperature.",
+        "Gas solubility decreases as temperature rises."
+      ],
+      "keywords": [
+        "Homogeneous",
+        "Solute",
+        "Molarity",
+        "Molality"
+      ],
+      "conceptMap": [
+        "Solution -> Components (Solute/Solvent) -> Types (Sat/Unsaturated) -> Concentration Terms (M/m)"
+      ],
+      "quickRecap": [
+        "Remember: Molarity changes with temp, Molality does not."
+      ]
+    },
+    "selfCheckQuestions": [
+      "If I heat a saturated solution of sugar in water and add more sugar, what happens?",
+      "Why is molality preferred over molarity for studying boiling point elevation?"
+    ],
+    "quickSummary": [
+      "Solutions are uniform mixtures; concentration can be measured by M (volume-based) or m (mass-based)."
+    ],
+    "keyTerms": [
+      "Molarity",
+      "Molality",
+      "Solubility"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A solution where no more solute can be dissolved at a given temperature is called ________.",
+        "answer": "saturated"
+      },
+      {
+        "prompt": "The unit of Molality is ________. (Hint: moles per kg)",
+        "answer": "mol/kg or m"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which factor affects the solubility of a gas in liquid?",
+        "options": [
+          "A. Temperature only",
+          "B. Pressure and Temperature",
+          "C. Volume of container",
+          "D. Color of solvent"
+        ],
+        "answer": "B. Pressure and Temperature"
+      },
+      {
+        "question": "Which concentration term is independent of temperature?",
+        "options": [
+          "A. Molarity (M)",
+          "B. Normality",
+          "C. Molality (m)",
+          "D. Volume percent"
+        ],
+        "answer": "C. Molality (m)"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "Define a saturated solution.",
+        "answer": "A solution that contains the maximum amount of solute dissolved at a specific temperature."
+      },
+      {
+        "question": "What is the difference between Molarity and Molality?",
+        "answer": "Molarity uses volume of solution (L), while Molality uses mass of solvent (kg)."
+      }
+    ],
+    "didYouKnow": [
+      "The human body contains about 60% water, making blood a complex biological solution essential for life!"
+    ],
+    "summary": [
+      "Today we learned that solutions are uniform mixtures and can be described by how much solute is dissolved using Molarity or Molality."
+    ],
+    "quickRevision": [
+      "M = moles/L, m = moles/kg. Saturated = max capacity."
+    ],
+    "rememberPoints": [
+      "Solute -> Guest",
+      "Solvent -> Host",
+      "Saturation -> Full House"
+    ]
+  }
+}

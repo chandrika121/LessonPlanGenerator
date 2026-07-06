@@ -1,0 +1,390 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 14,
+      "totalQuestions": 11,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":14,\"totalQuestions\":11,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":5,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":3,\"marksEach\":2}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 5,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 3,
+          "marksEach": 2
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "For MCQs, select the single best option. For descriptive answers, be concise and precise."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will be able to define a solution as a homogeneous mixture.",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Students will correctly identify the solute and solvent in common examples.",
+          "questionRefs": [
+            "q3",
+            "q4",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Students will distinguish between solid, liquid, and gaseous solutions.",
+          "questionRefs": [
+            "q6",
+            "q7",
+            "q8",
+            "q4",
+            "q5",
+            "q6"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 45,
+        "medium": 36,
+        "hard": 19
+      },
+      "bloomsDistribution": {
+        "recall": 27,
+        "understanding": 45,
+        "application": 18,
+        "analysis": 10,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 5,
+        "shortAnswer": 8,
+        "longAnswer": 0
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answers",
+          "minutes": 6
+        },
+        {
+          "section": "Short Answers",
+          "minutes": 5
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "mcq",
+        "question": "What is the term for a mixture that looks uniform throughout and does not separate on standing?",
+        "answer": "Solution (or Homogeneous Mixture)",
+        "expectedLength": "One word or short phrase",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Solution' or 'Homogeneous mixture'."
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Definition of Solution"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "mcq",
+        "question": "In a sugar solution, which component is the solute?",
+        "answer": "Sugar",
+        "expectedLength": "One word",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Sugar'."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Solute and Solvent Identification"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "Which component determines the physical state (solid, liquid, or gas) of a solution?",
+        "answer": "Solvent",
+        "expectedLength": "One word",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Solvent'."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Properties of Solutions"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Define 'Solution' in one sentence.",
+        "answer": "A solution is a homogeneous mixture of two or more substances where the components are uniformly distributed and do not separate on standing.",
+        "expectedLength": "1-2 sentences defining key terms (homogeneous, uniform).",
+        "marks": 1,
+        "rubric": [
+          "1 mark for correctly identifying it as a 'homogeneous mixture'.",
+          "1 mark for mentioning that components are uniformly distributed or do not separate."
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Definition of Solution"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Classify the following as homogeneous or heterogeneous: (i) Salt water, (ii) Sand in water.",
+        "answer": "(i) Homogeneous; (ii) Heterogeneous. Explanation: Salt water is uniform throughout, while sand settles and remains visible.",
+        "expectedLength": "Classification with brief reasoning for each.",
+        "marks": 1,
+        "rubric": [
+          "1 mark for correctly classifying both as Homogeneous/Heterogeneous respectively.",
+          "1 mark for providing a correct reason (e.g., uniformity vs settling/visibility)."
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Types of Solutions - Classification"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Explain the difference between a solute and a solvent, giving one example for each from salt water.",
+        "answer": "Solute is the substance dissolved (Salt), present in smaller quantity. Solvent is the medium doing the dissolving (Water), determining the state of solution.",
+        "expectedLength": "Clear distinction with specific examples.",
+        "marks": 1,
+        "rubric": [
+          "1 mark for correctly defining solute and identifying it as 'Salt' in salt water.",
+          "1 mark for correctly defining solvent (or mentioning larger quantity/state determination) and identifying it as 'Water'."
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Solute and Solvent Identification"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "question": "Very Short Answer 4: Answer based on the session content taught by the teacher.",
+        "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+        "rubric": [
+          "Covers the key concept taught in the session.",
+          "Uses accurate subject terminology."
+        ],
+        "marks": 1,
+        "id": "q7",
+        "questionSubtype": "veryShortAnswer"
+      },
+      {
+        "question": "Very Short Answer 5: Answer based on the session content taught by the teacher.",
+        "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+        "rubric": [
+          "Covers the key concept taught in the session.",
+          "Uses accurate subject terminology."
+        ],
+        "marks": 1,
+        "id": "q8",
+        "questionSubtype": "veryShortAnswer"
+      },
+      {
+        "question": "Short Answer 6: Answer based on the session content taught by the teacher.",
+        "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+        "rubric": [
+          "Covers the key concept taught in the session.",
+          "Uses accurate subject terminology."
+        ],
+        "marks": 2,
+        "id": "q9",
+        "questionSubtype": "shortAnswer"
+      },
+      {
+        "question": "Short Answer 7: Answer based on the session content taught by the teacher.",
+        "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+        "rubric": [
+          "Covers the key concept taught in the session.",
+          "Uses accurate subject terminology."
+        ],
+        "marks": 2,
+        "id": "q10",
+        "questionSubtype": "shortAnswer"
+      },
+      {
+        "question": "Short Answer 8: Answer based on the session content taught by the teacher.",
+        "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+        "rubric": [
+          "Covers the key concept taught in the session.",
+          "Uses accurate subject terminology."
+        ],
+        "marks": 2,
+        "id": "q11",
+        "questionSubtype": "shortAnswer"
+      }
+    ],
+    "longAnswer": [],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "q1",
+          "answer": "B. Salt water",
+          "explanation": "Salt (solid) dissolves in Water (liquid). Air is a gaseous solution, and Brass is a solid-solid mixture.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q2",
+          "answer": "B. Because the particles settle down and are visible (heterogeneous).",
+          "explanation": "A solution must be homogeneous. Sand in water separates on standing, making it a heterogeneous mixture.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q3",
+          "answer": "C. Water (or Milk)",
+          "explanation": "The solvent is the substance doing the dissolving and determines the state of the solution.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q4",
+          "answer": "A solution is a homogeneous mixture of two or more substances where the components are uniformly distributed and do not separate on standing.",
+          "rubric": [
+            "1 mark for correctly identifying it as a 'homogeneous mixture'.",
+            "1 mark for mentioning that components are uniformly distributed or do not separate."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q5",
+          "answer": "(i) Homogeneous; (ii) Heterogeneous. Explanation: Salt water is uniform throughout, while sand settles and remains visible.",
+          "rubric": [
+            "1 mark for correctly classifying both as Homogeneous/Heterogeneous respectively.",
+            "1 mark for providing a correct reason (e.g., uniformity vs settling/visibility)."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q6",
+          "answer": "Solute is the substance dissolved (Salt), present in smaller quantity. Solvent is the medium doing the dissolving (Water), determining the state of solution.",
+          "rubric": [
+            "1 mark for correctly defining solute and identifying it as 'Salt' in salt water.",
+            "1 mark for correctly defining solvent (or mentioning larger quantity/state determination) and identifying it as 'Water'."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q7",
+          "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+          "rubric": [
+            "Covers the key concept taught in the session.",
+            "Uses accurate subject terminology."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q8",
+          "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+          "rubric": [
+            "Covers the key concept taught in the session.",
+            "Uses accurate subject terminology."
+          ],
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "id": "q9",
+          "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+          "rubric": [
+            "Covers the key concept taught in the session.",
+            "Uses accurate subject terminology."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q10",
+          "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+          "rubric": [
+            "Covers the key concept taught in the session.",
+            "Uses accurate subject terminology."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q11",
+          "answer": "Placeholder answer generated because the model returned fewer questions than requested.",
+          "rubric": [
+            "Covers the key concept taught in the session.",
+            "Uses accurate subject terminology."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'uniform' vs 'homogeneous').",
+        "For short answers, ensure examples are specific to salt water or clearly stated."
+      ]
+    }
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\r\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: multi_class_board_syllabus\n- Expected structure type: multi_class_unit_topic\n- Preserve separate classes/grades when multiple classes appear in one document\n- Never merge Class XI and Class XII structures together\r\n\r\nReturn JSON only.\r\nDisable reasoning and answer directly.\r\nExtract curriculum hierarchy faithfully from the source.\r\n\r\nCapture:\r\n- document_metadata\r\n- classes\r\n- units\r\n- chapters\r\n- topics\r\n- subtopics\r\n- key concepts\r\n- marks attached to units or chapters when explicit\r\n\r\nRules:\r\n- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input\r\n- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose\r\n- If a unit is followed directly by topic lists, keep that as unit -> topics\r\n- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit\r\n- Never convert a unit into a chapter just because no deeper chapter heading exists\r\n- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section\r\n- Never generate the complete curriculum content\r\n- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks\r\n- If a chunk contains only partial information, return only what is visible in that chunk\r\n- Do not infer, estimate, explain, recommend, or analyze\r\n- Do not include any fields other than the requested schema\r\n- This is partial curriculum input for chunk 1 of 2; extract only what is present in this chunk\r\n\r\nCurriculum source text:\r\n# Page 2\n\n## Class XII\n- A. Items for Identification/ familiarity with the apparatus for assessment in\npracticals (All experiments)\nMeter scale, general shape of the voltmeter/ammeter, battery/power supply, connecting\nwires, standard resistances, connecting wires, voltmeter/ammeter, meter bridge, screw\ngauge, jockey Galvanometer, Resistance Box, standard Resistance, connecting wires,\nPotentiometer, jockey, Galvanometer, Lechlanche cell, Daniell cell [simple distinction\nbetween the two vis-à-vis their outer (glass and copper) containers], rheostat connecting\nwires, Galvanometer, resistance box, Plug-in and tapping keys, connecting wires\nbattery/power supply, Diode, Resistor (Wire-wound or carbon ones with two wires\nconnected to two ends), capacitors (one or two types), Inductors, Simple\nelectric/electronic bell, battery/power supply, Plug- in and tapping keys, Convex lens,\nconcave lens, convex mirror, concave mirror, Core/hollow wooden cylinder, insulated\nwire, ferromagnetic rod, Transformer core, insulated wire.\n- B. List of Practicals\n- 1. To determine the resistance per cm of a given wire by plotting a graph between\nvoltage and current.\n- 2. To verify the laws of combination (series/parallel combination) of resistances by\nOhm’s law.\n- 3. To find the resistance of a given wire / standard resistor using a meter bridge.\n- 4. To determine the resistance of a galvanometer by half deflection method.\n- 5. To identify a resistor, capacitor, inductor and diode from a mixed collection of such\nitems.\n- 6. To observe the difference between\n(i) a convex lens and a concave lens\n(ii) a convex mirror and a concave mirror and to estimate the likely difference\nbetween the power of two given convex /concave lenses.\n- 7. To design an inductor coil and to know the effect of\n(i) change in the number of turns\n(ii) Introduction of ferromagnetic material as its core material on the inductance of\nthe coil.\n- 8. To design a (i) step up (ii) step down transformer on a given core and know the\nrelation between its input and output voltages.\n\n# Page 3\n\nNote: The above practicals may be carried out in an experiential manner rather than recording\nobservations.\nPrescribed Books:\n\n- 1. Physics, Class XI, Part -I and II, Published by NCERT.\n- 2. Physics, Class XII, Part -I and II, Published by NCERT.\n- 3. Laboratory Manual of Physics for class XII Published by NCERT.\n- 4. The list of other related books and manuals brought out by NCERT (consider\nmultimedia also).\nNote:\nThe content indicated in NCERT textbooks as excluded for the year 2026-27 is not to\nbe tested by schools and will not be assessed in the Board examinations 2026-27.\n\n# Page 4\n\n## Unit I: Electrostatics\n## Chapter–1: Electric Charges and Fields\nElectric charges, Conservation of charge, Coulomb's law-force between two- point charges,\nforces between multiple charges; superposition principle and continuous charge distribution.\nElectric field, electric field due to a point charge, electric field lines, electric dipole, electric\nfield due to a dipole, torque on a dipole in uniform electric field.\nElectric flux, statement of Gauss's theorem and its applications to find field due to infinitely\nlong straight wire, uniformly charged infinite plane sheet and uniformly charged thin spherical\nshell (field inside and outside).\n## Chapter–2: Electrostatic Potential and Capacitance\nElectric potential, potential difference, electric potential due to a point charge, a dipole and\nsystem of charges; equipotential surfaces, electrical potential energy of a system of two-point\ncharges and of electric dipole in an electrostatic field.\nConductors and insulators, free charges and bound charges inside a conductor. Dielectrics\nand electric polarization, capacitors and capacitance, combination of capacitors in series and\nin parallel, capacitance of a parallel plate capacitor with and without dielectric medium\nbetween the plates, energy stored in a capacitor (no derivation, formulae only).\n## Unit II: Current Electricity\n## Chapter–3: Current Electricity\nElectric current, flow of electric charges in a metallic conductor, drift velocity, mobility and\ntheir relation with electric current; Ohm's law, V-I characteristics (linear and non-linear),\nelectrical energy and power, electrical resistivity and conductivity, temperature dependence\nof resistance, Internal resistance of a cell, potential difference and emf of a cell, combination\nof cells in series and in parallel, Kirchhoff's rules, Wheatstone bridge.\n## Unit III: Magnetic Effects of Current and Magnetism\n## Chapter–4: Moving Charges and Magnetism\nConcept of magnetic field, Oersted's experiment.\nBiot - Savart law and its application to current carrying circular loop.\nAmpere's law and its applications to infinitely long straight wire. Straight solenoid (only\nqualitative treatment), force on a moving charge in uniform magnetic and electric fields.\n\n# Page 5\n\nForce on a current-carrying conductor in a uniform magnetic field, force between two parallel\ncurrent-carrying conductors-definition of ampere, torque experienced by a current loop in\nuniform magnetic field; Current loop as a magnetic dipole and its magnetic dipole moment,\nmoving coil galvanometer- its current sensitivity and conversion to ammeter and voltmeter.\n## Chapter–5: Magnetism and Matter\nBar magnet, bar magnet as an equivalent solenoid (qualitative treatment only), magnetic field\nintensity due to a magnetic dipole (bar magnet) along its axis and perpendicular to its axis\n(qualitative treatment only), torque on a magnetic dipole (bar magnet) in a uniform magnetic\nfield (qualitative treatment only), magnetic field lines.\nMagnetic properties of materials- Para-, dia- and ferro – magnetic substances with examples,\nMagnetization of materials, effect of temperature on magnetic properties.\n## Unit IV: Electromagnetic Induction and Alternating Currents\n## Chapter–6: Electromagnetic Induction\nElectromagnetic induction; Faraday's laws, induced EMF and current; Lenz's Law, Self and\nmutual induction.\n## Chapter–7: Alternating Current\nAlternating currents, peak and RMS value of alternating current/voltage; reactance and\nimpedance; LCR series circuit (phasors only), resonance, power in AC circuits, power factor,\nwattless current. AC generator, Transformer.\n## Unit V: Electromagnetic waves\n## Chapter–8: Electromagnetic Waves\nBasic idea of displacement current, Electromagnetic waves, their characteristics, their\ntransverse nature (qualitative idea only).\nElectromagnetic spectrum (radio waves, microwaves, infrared, visible, ultraviolet, X-rays,\ngamma rays) including elementary facts about their uses.\n\n# Page 6\n\n## Unit VI: Optics\n## Chapter–9: Ray Optics and Optical Instruments\nRay Optics: Reflection of light, spherical mirrors, mirror formula, refraction of light, total\ninternal reflection and optical fibers, refraction at spherical surfaces, lenses, thin lens formula,\nlens maker’s formula, magnification, power of a lens, combination of thin lenses in contact,\nrefraction of light through a prism.\nOptical instruments: Microscopes and astronomical telescopes (reflecting and refracting)\nand their magnifying powers.\n## Chapter–10: Wave Optics\nWave optics: Wave front and Huygen’s principle, reflection and refraction of plane wave at\na plane surface using wave fronts. Proof of laws of reflection and refraction using Huygen’s\nprinciple. Interference, Young's double slit experiment and expression for fringe width (No\nderivation final expression only), coherent sources and sustained interference of light,\ndiffraction due to a single slit, width of central maxima (qualitative treatment only).\n## Unit VII: Dual Nature of Radiation and Matter\n## Chapter–11: Dual Nature of Radiation and Matter\nDual nature of radiation, Photoelectric effect, Hertz and Lenard's observations; Einstein's\nphotoelectric equation-particle nature of light.\nExperimental study of photoelectric effect\nMatter waves-wave nature of particles, de-Broglie relation.\n## Unit VIII: Atoms and Nuclei\n## Chapter–12: Atoms\nAlpha-particle scattering experiment; Rutherford's model of atom; Bohr model of hydrogen\natom, Expression for radius of nth possible orbit, velocity and energy of electron in nth orbit,\nhydrogen line spectra (qualitative treatment only).\n## Chapter–13: Nuclei\nComposition and size of nucleus, nuclear force\nMass-energy relation, mass defect; binding energy per nucleon and its variation with mass\nnumber; nuclear fission, nuclear fusion.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

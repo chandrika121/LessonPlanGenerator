@@ -1,0 +1,299 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "For MCQs, select the single best option. For descriptive answers, be concise and precise."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define a solution as a homogeneous mixture.",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Identify solute and solvent in common examples.",
+          "questionRefs": [
+            "q3",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Distinguish between solid, liquid, and gaseous solutions.",
+          "questionRefs": [
+            "q5",
+            "q6",
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 43,
+        "medium": 43,
+        "hard": 14
+      },
+      "bloomsDistribution": {
+        "recall": 29,
+        "understanding": 57,
+        "application": 14,
+        "analysis": 0,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "shortAnswer": 4
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 5
+        },
+        {
+          "section": "Very Short Answer & Short Answers",
+          "minutes": 10
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Define a solution in one sentence.",
+        "answer": "A homogeneous mixture of two or more substances where the composition is uniform throughout.",
+        "expectedLength": "One clear definition statement",
+        "marks": 1,
+        "rubric": [
+          "Mention 'homogeneous' and 'mixture'",
+          "Mention 'uniform composition'"
+        ],
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Definition of Solution",
+          "Homogeneity"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Name one example of a gaseous solution.",
+        "answer": "Air (or mixture of gases like Oxygen and Nitrogen).",
+        "expectedLength": "One specific example name",
+        "marks": 1,
+        "rubric": [
+          "Correctly identifies 'Air' or specifies components as a gaseous mix"
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Types of Solutions",
+          "Gaseous Solutions"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "mcq",
+        "question": "Which component is typically present in the larger quantity and determines the state of a solution?",
+        "options": [
+          "A. Solute",
+          "B. Solvent",
+          "C. Mixture",
+          "D. Precipitate"
+        ],
+        "answer": "B. Solvent",
+        "explanation": "The solvent is the component present in larger quantity and determines the physical state of the solution.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Solute vs Solvent",
+          "Solution Components"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q4",
+        "questionSubtype": "shortAnswer",
+        "question": "In a solution of soda water (carbonated water), identify the solute and the solvent.",
+        "answer": "Solute: Carbon dioxide gas; Solvent: Water.",
+        "expectedLength": "Identification of both components clearly",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly identifying CO2 as the solute",
+          "1 mark for correctly identifying water as the solvent"
+        ],
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Identifying Solute and Solvent",
+          "Liquid Solutions"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "shortAnswer",
+        "question": "Classify the following as a solid, liquid, or gaseous solution: Brass (an alloy of Copper and Zinc). Explain briefly why.",
+        "answer": "Solid Solution. Explanation: Both copper and zinc are solids at room temperature; in an alloy like brass, one metal dissolves into another to form a uniform solid mixture.",
+        "expectedLength": "Classification + brief reasoning",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly classifying as 'Solid Solution'",
+          "1 mark for correct explanation regarding the state of components (metals/solids)"
+        ],
+        "learningOutcomeIds": [
+          "LO3"
+        ],
+        "topicCoverage": [
+          "Types of Solutions",
+          "Solid Solutions/Alloys"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "mcq",
+        "question": "Why is muddy water NOT considered a solution?",
+        "options": [
+          "A. It contains two substances.",
+          "B. The particles settle down and it is not uniform (heterogeneous).",
+          "C. Water cannot dissolve mud.",
+          "D. It has no solute."
+        ],
+        "answer": "B. The particles settle down and it is not uniform (heterogeneous).",
+        "explanation": "A solution must be homogeneous; muddy water contains visible particles that do not mix uniformly and will eventually settle, making it a heterogeneous mixture.",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO1"
+        ],
+        "topicCoverage": [
+          "Definition of Solution",
+          "Homogeneous vs Heterogeneous"
+        ],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q7",
+        "questionSubtype": "mcq",
+        "question": "In a solution of salt water, which substance acts as the 'host' that provides the space for dissolving?",
+        "options": [
+          "A. Salt (Solute)",
+          "B. Water (Solvent)",
+          "C. The mixture itself",
+          "D. Both equally"
+        ],
+        "answer": "B. Water (Solvent)",
+        "explanation": "Using the 'Guest vs Host' analogy, water is the host (solvent) that provides the medium for the guest (salt/solute).",
+        "marks": 1,
+        "learningOutcomeIds": [
+          "LO2"
+        ],
+        "topicCoverage": [
+          "Solute and Solvent Roles",
+          "Terminology"
+        ],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "shortAnswer": [],
+    "longAnswer": [],
+    "answerKey": {
+      "mcq": [
+        {
+          "answer": "B. Solvent",
+          "explanation": "The solvent is the component present in larger quantity and determines the physical state of the solution.",
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "answer": "Air (or mixture of gases like Oxygen and Nitrogen).",
+          "explanation": "Air is a homogeneous mixture of gases where nitrogen acts as the solvent.",
+          "marks": 1,
+          "questionSubtype": "veryShortAnswer"
+        },
+        {
+          "answer": "B. Solvent",
+          "explanation": "The solvent is the component present in larger quantity and determines the physical state of the solution.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "answer": "Solute: Carbon dioxide gas; Solvent: Water.",
+          "explanation": "In soda water, CO2 is dissolved in water. The substance present in smaller amount (CO2) is the solute, and the one in larger amount (water) is the solvent.",
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "answer": "Solid Solution. Explanation: Both copper and zinc are solids at room temperature; in an alloy like brass, one metal dissolves into another to form a uniform solid mixture.",
+          "explanation": "Brass is classified as a solid solution because the components (metals) remain in the solid state within the homogeneous mixture.",
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "answer": "B. The particles settle down and it is not uniform (heterogeneous).",
+          "explanation": "A solution must be homogeneous; muddy water contains visible particles that do not mix uniformly and will eventually settle, making it a heterogeneous mixture.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "answer": "B. Water (Solvent)",
+          "explanation": "Using the 'Guest vs Host' analogy, water is the host (solvent) that provides the medium for the guest (salt/solute).",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [],
+      "longAnswer": [],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'uniform' vs 'same throughout').",
+        "For short answers, ensure both parts of a two-part question are addressed to receive full credit."
+      ]
+    }
+  }
+}

@@ -1,0 +1,187 @@
+{
+  "model": "qwen3.5:35b-mlx-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "assessmentMeta": {
+        "assessmentType": "Mixed formative checks",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "preferredDifficulty": "Balanced",
+        "language": "English",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ],
+        "instructions": [
+          "Answer all questions based only on the concepts taught in this session."
+        ]
+      },
+      "blueprint": {
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "MCQ",
+            "minutes": 5
+          }
+        ]
+      },
+      "mcq": [
+        {
+          "id": "q1",
+          "questionSubtype": "mcq",
+          "question": "MCQ question",
+          "options": [
+            "A. option",
+            "B. option",
+            "C. option",
+            "D. option"
+          ],
+          "answer": "Correct option",
+          "explanation": "Why this option is correct",
+          "marks": 1,
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "easy",
+          "bloomsLevel": "understanding"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q5",
+          "questionSubtype": "shortAnswer",
+          "question": "Short-answer question",
+          "answer": "Model short answer",
+          "expectedLength": "1-2 clear points",
+          "marks": 2,
+          "rubric": [
+            "1 mark for first correct point",
+            "1 mark for second correct point"
+          ],
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "medium",
+          "bloomsLevel": "application"
+        }
+      ],
+      "longAnswer": [
+        {
+          "id": "q7",
+          "questionSubtype": "longAnswer",
+          "question": "Long-answer question",
+          "answer": "Model long answer",
+          "expectedLength": "4-5 well-structured points with explanation",
+          "marks": 5,
+          "rubric": [
+            "Marks awarded point-wise",
+            "Credit explanation quality",
+            "Credit labelled example or diagram if relevant"
+          ],
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Topic"
+          ],
+          "difficulty": "hard",
+          "bloomsLevel": "analysis"
+        }
+      ],
+      "answerKey": {
+        "mcq": [
+          {
+            "answer": "Correct option",
+            "explanation": "Brief explanation",
+            "marks": 1,
+            "questionSubtype": "mcq"
+          }
+        ],
+        "shortAnswer": [
+          {
+            "answer": "Point-wise short answer",
+            "rubric": [
+              "Point 1",
+              "Point 2"
+            ],
+            "marks": 2,
+            "questionSubtype": "shortAnswer"
+          }
+        ],
+        "longAnswer": [
+          {
+            "answer": "Structured long answer",
+            "rubric": [
+              "Point 1",
+              "Point 2",
+              "Point 3",
+              "Point 4",
+              "Point 5"
+            ],
+            "marks": 5,
+            "questionSubtype": "longAnswer"
+          }
+        ],
+        "generalMarkingGuidance": [
+          "Award marks point-wise for each valid idea.",
+          "Accept equivalent scientific wording if the meaning is correct.",
+          "For long answers, reward structure, explanation, and relevant examples."
+        ]
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL ASSESSMENT GENERATION ENGINE\r\n\r\nROLE\r\nYou are an Expert Assessment Intelligence System, Professional Examination Designer, Curriculum Assessment Specialist, Instructional Evaluation Expert, Learning Measurement Architect, Educational Psychometric Designer, and Academic Question Paper Setter.\r\n\r\nYou are designing a complete, pedagogically sound, curriculum-aligned assessment that measures whether the student has achieved the intended learning outcomes of a single classroom session.\r\n\r\nPRIMARY OBJECTIVE\r\nGenerate the assessment block for one classroom session using only the information supplied in the session data.\r\n\r\nSession context:\r\n- Subject: Chemistry\r\n- Grade/Level: Class XII / 12\r\n- Session title: Solutions - Session 1\r\n- Session number: 1 of 20\r\n- Session duration: 45 minutes\r\n- Chapter scope: [\"Solutions\"]\r\n- Learning outcomes: []\r\n- Previous session context: No previous session context provided.\r\n- Learning pace: Balanced\r\n- Preferred difficulty: Balanced\r\n- Output language: English\r\n\r\nAssessment preferences:\r\n- Assessment type: Session assessment\r\n- Requested total marks: 6\r\n- Requested total questions: 4\r\n- Requested duration: 15 minutes\r\n- Assessment preference inputs: []\r\n- Target blooms emphasis: []\r\n- Requested question type mix: [{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]\r\n- Question paper objective: Not specified.\r\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 6,\n  \"totalQuestions\": 4,\n  \"questionTypes\": [\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    }\n  ]\n}\r\n\r\nSession JSON source of truth:\r\n{\n  \"id\": \"session-1\",\n  \"sessionNumber\": 1,\n  \"title\": \"Solutions - Session 1\",\n  \"duration\": 45,\n  \"learningOutcomes\": [],\n  \"introduction\": \"\",\n  \"theory\": null,\n  \"activities\": [],\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Introduction to Solutions: Defining solutions, solutes, and solvents using real-life examples. Students will learn to distinguish between different types of mixtures (homogeneous vs heterogeneous) and understand the basic terminology required for Class XII Chemistry.\",\n    \"prerequisiteKnowledge\": [\n      \"Basic definition of matter\",\n      \"Difference between pure substances and mixtures from Class IX/X\",\n      \"Concept of dissolving sugar in water\"\n    ],\n    \"learningOutcomes\": [\n      \"Define a solution as a homogeneous mixture.\",\n      \"Identify solute and solvent in common examples.\",\n      \"Distinguish between solid, liquid, and gaseous solutions.\"\n    ],\n    \"lessonPurpose\": [\n      \"To establish the fundamental language of solutions which is critical for calculating concentration later.\",\n      \"To help students visualize invisible molecular interactions through macroscopic examples.\"\n    ],\n    \"teachingSequence\": [\n      \"Ask students to recall what happens when salt disappears in water.\",\n      \"Define 'Solution' and contrast with 'Mixture'.\",\n      \"Introduce terms: Solute, Solvent, Solution.\",\n      \"Categorize solutions by state of matter (Solid/Liquid/Gas).\",\n      \"Check understanding through targeted questions.\"\n    ],\n    \"guidedPractice\": [\n      \"Teacher writes examples on board; students identify solute/solvent orally.\",\n      \"Students draw a simple diagram showing particles in a solution vs mixture.\"\n    ],\n    \"misconceptions\": [\n      \"Thinking all mixtures are solutions\",\n      \"Believing only water can be a solvent\"\n    ],\n    \"formativeChecks\": [\n      \"Ask students to hold up fingers: 1 for Solute, 2 for Solvent when you call out an example.\"\n    ],\n    \"assessmentQuestions\": [\n      \"Write one example of each type of solution (Solid in Liquid, Gas in Liquid, Solid in Solid).\"\n    ],\n    \"sessionSummary\": [\n      \"We learned that a solution is a uniform mixture where one substance dissolves in another.\"\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Solution\",\n        \"definition\": \"A homogeneous mixture of two or more substances.\",\n        \"coreExplanation\": \"Teacher-facing explanation: A solution is uniform at the molecular level. You cannot see separate parts with a naked eye, and particles do not settle out over time.\",\n        \"importance\": \"It forms the basis for all concentration calculations (Molarity, Molality) in this chapter.\",\n        \"keywords\": [\n          \"Homogeneous\",\n          \"Solute\",\n          \"Solvent\"\n        ],\n        \"examples\": [\n          \"Salt dissolved in water (NaCl + H2O)\"\n        ]\n      },\n      {\n        \"conceptName\": \"Solute and Solvent\",\n        \"definition\": \"The component present in smaller quantity is the solute; the one in larger quantity is the solvent.\",\n        \"coreExplanation\": \"Teacher-facing explanation: Use the 'Guest vs Host' analogy. The host (solvent) provides the space, the guest (solute) enters and spreads out.\",\n        \"importance\": \"Correct identification is crucial for writing chemical equations later.\",\n        \"keywords\": [\n          \"Dissolved substance\",\n          \"Medium\"\n        ],\n        \"examples\": [\n          \"In brass, Copper is solvent (solid), Zinc is solute.\",\n          \"In soda water, Water is solvent, CO2 is solute.\"\n        ]\n      }\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"explanation\": [\n          \"Explain that when sugar 'disappears' but is still there (sweet taste), it has formed a solution.\",\n          \"State clearly: A solution is not just any mixture; it must be uniform throughout.\"\n        ],\n        \"examples\": [\n          \"Salt water, Sugar in tea, Air we breathe.\"\n        ],\n        \"checkUnderstanding\": [\n          \"Is muddy water a solution? Why or why not?\"\n        ],\n        \"expectedAnswers\": [\n          \"No, because you can see the particles and they settle down.\"\n        ],\n        \"activity\": []\n      },\n      {\n        \"title\": \"Terminology & Types\",\n        \"durationMinutes\": 20,\n        \"explanation\": [\n          \"Define Solute: The substance present in smaller amount.\",\n          \"Define Solvent: The substance present in larger amount that does the dissolving.\",\n          \"Explain that water is often called the universal solvent.\"\n        ],\n        \"examples\": [\n          \"Soda (CO2 gas solute, liquid solvent)\",\n          \"Brass (Zinc solid solute, Copper solid solvent)\"\n        ],\n        \"checkUnderstanding\": [\n          \"What is the solute in air?\"\n        ],\n        \"expectedAnswers\": [\n          \"Oxygen/Nitrogen (depending on context, but usually Oxygen as minor component compared to Nitrogen)\"\n        ],\n        \"activity\": []\n      }\n    ]\n  },\n  \"studentLessonNotes\": {\n    \"title\": \"Solutions - Session 1: Introduction & Concentration Terms\",\n    \"sessionOverview\": \"Welcome to the world of Solutions! In this first session, we will explore what makes a solution special and learn how to measure exactly how much solute is dissolved in it using various concentration terms.\",\n    \"introduction\": \"Have you ever wondered why sugar disappears when mixed with water? Or how doctors know exactly how strong an IV drip should be? Today, we start our journey into 'Solutions'—the most common type of mixture around us. By the end of this session, you'll not only understand what a solution is but also master the language scientists use to describe them.\",\n    \"learningObjectives\": [\n      \"Define solutions and identify their components (solute & solvent).\",\n      \"Distinguish between saturated, unsaturated, and supersaturated solutions.\",\n      \"Calculate concentration using mass percentage.\",\n      \"Understand the concept of solubility and factors affecting it.\"\n    ],\n    \"keyTerms\": [\n      \"Homogeneous\",\n      \"Solubility\",\n      \"Mass Percentage\"\n    ],\n    \"quickSummary\": [\n      \"Solutions are uniform mixtures of solutes and solvents.\",\n      \"Saturation defines how much can dissolve at a specific temperature.\"\n    ],\n    \"summary\": [\n      \"We learned that solutions are uniform mixtures defined by their solute and solvent.\"\n    ],\n    \"rememberPoints\": [\n      \"Solvent is the 'host', solute is the 'guest'.\",\n      \"Saturation means no more can dissolve.\"\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Solute\",\n        \"definition\": \"The substance that gets dissolved in a solvent, usually present in the smaller amount.\"\n      },\n      {\n        \"term\": \"Solvent\",\n        \"definition\": \"The substance that dissolves the solute, usually present in the larger amount and determining the state of the solution.\"\n      },\n      {\n        \"term\": \"Saturated Solution\",\n        \"definition\": \"A solution in which no more solute can be dissolved at a given temperature; it contains the maximum possible concentration.\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"What is a Solution?\",\n        \"explanation\": \"A solution is a special type of homogeneous mixture. 'Homogeneous' means it looks the same throughout—you can't see separate parts with your naked eye. It consists of two main components: the solute (the substance being dissolved) and the solvent (the substance doing the dissolving).\",\n        \"keyPoints\": [\n          \"Solute is present in a smaller amount.\",\n          \"Solvent is present in a larger amount.\",\n          \"The mixture is uniform throughout.\"\n        ],\n        \"examples\": [\n          \"Salt water: Salt (solute) + Water (solvent).\",\n          \"Sugar solution: Sugar (solute) + Water (solvent).\",\n          \"Air: Oxygen/Nitrogen mixtures where Nitrogen acts as the solvent.\"\n        ],\n        \"importantNotes\": [\n          \"The state of the solution usually matches the state of the solvent.\",\n          \"Solutions can be solid, liquid, or gas (e.g., alloys are solid solutions).\"\n        ],\n        \"conceptSummary\": [\n          \"A solution is a uniform mixture where one substance dissolves in another.\"\n        ]\n      },\n      {\n        \"heading\": \"Saturation: How Much Can Dissolve?\",\n        \"explanation\": \"Not all substances dissolve infinitely. Every solvent has a limit to how much solute it can hold at a specific temperature. This leads us to three types of solutions based on saturation.\",\n        \"keyPoints\": [\n          \"Unsaturated: More solute can still be dissolved.\",\n          \"Saturated: No more solute can dissolve; equilibrium is reached.\",\n          \"Supersaturated: Contains more solute than normally possible (unstable).\"\n        ],\n        \"examples\": [\n          \"Adding a pinch of salt to water that already has some dissolving = Unsaturated.\",\n          \"Stirring until no more salt disappears and settles at the bottom = Saturated.\",\n          \"Heating saturated solution, adding extra sugar, then cooling slowly without disturbance = Supersaturated.\"\n        ],\n        \"importantNotes\": [\n          \"Solubility generally increases with temperature for solids in liquids.\",\n          \"For gases, solubility decreases as temperature rises (think warm soda going flat).\"\n        ],\n        \"conceptSummary\": [\n          \"Solutions are classified by how close they are to their maximum dissolving capacity.\"\n        ]\n      },\n      {\n        \"heading\": \"Expressing Concentration: Mass Percentage\",\n        \"explanation\": \"How do we say 'strong' or 'weak'? In chemistry, we use concentration. One of the simplest ways is mass percentage (% w/w). It tells us how many grams of solute are present in 100 grams of solution.\",\n        \"keyPoints\": [\n          \"Formula: (Mass Solute / Mass Solution) × 100\",\n          \"Always use total mass of solution, not just solvent.\",\n          \"Unitless percentage.\"\n        ],\n        \"examples\": [\n          \"If you dissolve 5g sugar in 95g water, the concentration is (5/100)*100 = 5%.\",\n          \"A saline IV drip might be 0.9% NaCl by mass.\"\n        ],\n        \"importantNotes\": [\n          \"Temperature can affect volume but mass remains constant, making % w/w reliable.\",\n          \"Do not confuse with molarity (moles per liter) which we will learn later.\"\n        ],\n        \"conceptSummary\": [\n          \"Mass percentage is a straightforward way to quantify how concentrated a solution is by weight.\"\n        ]\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Calculating Mass Percentage of Salt Water\",\n        \"steps\": [\n          \"Step 1: Calculate the total mass of the solution.\",\n          \"Step 2: Substitute values into the percentage formula.\"\n        ],\n        \"explanation\": \"First, we find out how heavy the entire mixture is. Since 15g of salt mixes with 85g of water, the total weight is 100g. Then, we see what fraction of that 100g is just the salt.\"\n      }\n    ],\n    \"selfCheckQuestions\": [\n      \"Can you explain the difference between a solute and a solvent in your own words?\",\n      \"If I add more sugar to a saturated solution, what happens? Why?\"\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"Define a saturated solution.\",\n        \"answer\": \"A solution that contains the maximum amount of solute dissolved at a given temperature.\"\n      },\n      {\n        \"question\": \"Name one example of a gaseous solution.\",\n        \"answer\": \"Air (mixture of gases).\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which component is typically present in the larger quantity in a solution?\",\n        \"answer\": \"B. Solvent\"\n      },\n      {\n        \"question\": \"What is the mass percentage of a solution containing 20g sugar in 80g water?\",\n        \"answer\": \"B. 25%\"\n      }\n    ]\n  },\n  \"topicCoverage\": []\n}\r\n\r\nABSOLUTE RULES\r\n1. Never hallucinate.\r\n2. Generate questions only from concepts explicitly present in the provided session information.\r\n3. Never introduce future chapters, future concepts, unseen formulas, unseen terminology, or external knowledge not taught in this session.\r\n4. Learning outcomes drive the assessment. Each learning outcome should be assessed by one or more suitable questions.\r\n5. Prefer conceptual understanding, application, interpretation, analysis, communication, problem solving, and conceptual clarity over trivial recall unless grade-appropriate.\r\n6. Questions must be fair, age appropriate, clear, grammatically correct, and educationally meaningful.\r\n7. Arrange questions from easier to more challenging whenever possible.\r\n8. The generated assessment must exactly match the requested total marks and requested duration.\r\n9. Follow the assessment type, teacher question-type mix, and the supplied preferences.\r\n10. Return valid JSON only.\r\n11. If the teacher requested very short answer questions, place them at the beginning of `shortAnswer` and make their `expectedLength` explicitly very short.\r\n12. If the teacher requested case study questions, place them inside `longAnswer` as case-based prompts and reflect that in the wording and rubric.\r\n13. Match the requested question counts and marks exactly. Do not improvise a different paper pattern.\r\n14. Keep the answer key aligned one-to-one with each generated question and the same marks.\r\n\r\nASSESSMENT OUTPUT REQUIREMENTS\r\n1. When this prompt is used inside a full session-generation prompt, generate only the `assessment` block according to the target schema.\r\n2. When this prompt is used for assessment-only generation, return an object with the `assessment` property matching the target schema.\r\n3. Preserve these sections:\r\n   - `assessmentMeta`\r\n   - `blueprint`\r\n   - `mcq`\r\n   - `shortAnswer`\r\n   - `longAnswer`\r\n   - `answerKey`\r\n4. `assessmentMeta` must clearly state the assessment type, marks, duration, difficulty, language, and student-facing instructions.\r\n5. `blueprint` must summarize:\r\n   - learning outcome coverage\r\n   - difficulty distribution\r\n   - blooms distribution\r\n   - question distribution\r\n   - time allocation\r\n6. Every question should include, where possible:\r\n   - `id`\r\n   - `questionSubtype`\r\n   - `learningOutcomeIds`\r\n   - `topicCoverage`\r\n   - `difficulty`\r\n   - `bloomsLevel`\r\n   - Use a single continuous assessment-wide id sequence: `q1`, `q2`, `q3`, ... Do not restart ids by section.\r\n7. Keep the question paper balanced and aligned with the full session.\r\n8. MCQ, short-answer, long-answer, and answer-key sections must remain consistent with one another.\r\n9. Use point-wise rubrics for short and long answers.\r\n10. Preserve the teacher-requested ordering inside `shortAnswer` and `longAnswer` so subtype mapping remains stable.\r\n11. Any `blueprint.learningOutcomeCoverage[].questionRefs` must reference those same continuous ids like `q1`, `q2`, `q3`.\r\n\r\nTarget schema:\r\n{\n  \"assessment\": {\n    \"assessmentMeta\": {\n      \"assessmentType\": \"Mixed formative checks\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"preferredDifficulty\": \"Balanced\",\n      \"language\": \"English\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ],\n      \"instructions\": [\n        \"Answer all questions based only on the concepts taught in this session.\"\n      ]\n    },\n    \"blueprint\": {\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"MCQ\",\n          \"minutes\": 5\n        }\n      ]\n    },\n    \"mcq\": [\n      {\n        \"id\": \"q1\",\n        \"questionSubtype\": \"mcq\",\n        \"question\": \"MCQ question\",\n        \"options\": [\n          \"A. option\",\n          \"B. option\",\n          \"C. option\",\n          \"D. option\"\n        ],\n        \"answer\": \"Correct option\",\n        \"explanation\": \"Why this option is correct\",\n        \"marks\": 1,\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"easy\",\n        \"bloomsLevel\": \"understanding\"\n      }\n    ],\n    \"shortAnswer\": [\n      {\n        \"id\": \"q5\",\n        \"questionSubtype\": \"shortAnswer\",\n        \"question\": \"Short-answer question\",\n        \"answer\": \"Model short answer\",\n        \"expectedLength\": \"1-2 clear points\",\n        \"marks\": 2,\n        \"rubric\": [\n          \"1 mark for first correct point\",\n          \"1 mark for second correct point\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"medium\",\n        \"bloomsLevel\": \"application\"\n      }\n    ],\n    \"longAnswer\": [\n      {\n        \"id\": \"q7\",\n        \"questionSubtype\": \"longAnswer\",\n        \"question\": \"Long-answer question\",\n        \"answer\": \"Model long answer\",\n        \"expectedLength\": \"4-5 well-structured points with explanation\",\n        \"marks\": 5,\n        \"rubric\": [\n          \"Marks awarded point-wise\",\n          \"Credit explanation quality\",\n          \"Credit labelled example or diagram if relevant\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"hard\",\n        \"bloomsLevel\": \"analysis\"\n      }\n    ],\n    \"answerKey\": {\n      \"mcq\": [\n        {\n          \"answer\": \"Correct option\",\n          \"explanation\": \"Brief explanation\",\n          \"marks\": 1,\n          \"questionSubtype\": \"mcq\"\n        }\n      ],\n      \"shortAnswer\": [\n        {\n          \"answer\": \"Point-wise short answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\"\n          ],\n          \"marks\": 2,\n          \"questionSubtype\": \"shortAnswer\"\n        }\n      ],\n      \"longAnswer\": [\n        {\n          \"answer\": \"Structured long answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\",\n            \"Point 3\",\n            \"Point 4\",\n            \"Point 5\"\n          ],\n          \"marks\": 5,\n          \"questionSubtype\": \"longAnswer\"\n        }\n      ],\n      \"generalMarkingGuidance\": [\n        \"Award marks point-wise for each valid idea.\",\n        \"Accept equivalent scientific wording if the meaning is correct.\",\n        \"For long answers, reward structure, explanation, and relevant examples.\"\n      ]\n    }\n  }\n}\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"assessmentMeta\": {\n      \"assessmentType\": \"Mixed formative checks\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"preferredDifficulty\": \"Balanced\",\n      \"language\": \"English\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ],\n      \"instructions\": [\n        \"Answer all questions based only on the concepts taught in this session.\"\n      ]\n    },\n    \"blueprint\": {\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"MCQ\",\n          \"minutes\": 5\n        }\n      ]\n    },\n    \"mcq\": [\n      {\n        \"id\": \"q1\",\n        \"questionSubtype\": \"mcq\",\n        \"question\": \"MCQ question\",\n        \"options\": [\n          \"A. option\",\n          \"B. option\",\n          \"C. option\",\n          \"D. option\"\n        ],\n        \"answer\": \"Correct option\",\n        \"explanation\": \"Why this option is correct\",\n        \"marks\": 1,\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"easy\",\n        \"bloomsLevel\": \"understanding\"\n      }\n    ],\n    \"shortAnswer\": [\n      {\n        \"id\": \"q5\",\n        \"questionSubtype\": \"shortAnswer\",\n        \"question\": \"Short-answer question\",\n        \"answer\": \"Model short answer\",\n        \"expectedLength\": \"1-2 clear points\",\n        \"marks\": 2,\n        \"rubric\": [\n          \"1 mark for first correct point\",\n          \"1 mark for second correct point\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"medium\",\n        \"bloomsLevel\": \"application\"\n      }\n    ],\n    \"longAnswer\": [\n      {\n        \"id\": \"q7\",\n        \"questionSubtype\": \"longAnswer\",\n        \"question\": \"Long-answer question\",\n        \"answer\": \"Model long answer\",\n        \"expectedLength\": \"4-5 well-structured points with explanation\",\n        \"marks\": 5,\n        \"rubric\": [\n          \"Marks awarded point-wise\",\n          \"Credit explanation quality\",\n          \"Credit labelled example or diagram if relevant\"\n        ],\n        \"learningOutcomeIds\": [\n          \"LO1\"\n        ],\n        \"topicCoverage\": [\n          \"Topic\"\n        ],\n        \"difficulty\": \"hard\",\n        \"bloomsLevel\": \"analysis\"\n      }\n    ],\n    \"answerKey\": {\n      \"mcq\": [\n        {\n          \"answer\": \"Correct option\",\n          \"explanation\": \"Brief explanation\",\n          \"marks\": 1,\n          \"questionSubtype\": \"mcq\"\n        }\n      ],\n      \"shortAnswer\": [\n        {\n          \"answer\": \"Point-wise short answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\"\n          ],\n          \"marks\": 2,\n          \"questionSubtype\": \"shortAnswer\"\n        }\n      ],\n      \"longAnswer\": [\n        {\n          \"answer\": \"Structured long answer\",\n          \"rubric\": [\n            \"Point 1\",\n            \"Point 2\",\n            \"Point 3\",\n            \"Point 4\",\n            \"Point 5\"\n          ],\n          \"marks\": 5,\n          \"questionSubtype\": \"longAnswer\"\n        }\n      ],\n      \"generalMarkingGuidance\": [\n        \"Award marks point-wise for each valid idea.\",\n        \"Accept equivalent scientific wording if the meaning is correct.\",\n        \"For long answers, reward structure, explanation, and relevant examples.\"\n      ]\n    }\n  }\n}"
+    }
+  ]
+}

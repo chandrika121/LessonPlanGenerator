@@ -3044,6 +3044,57 @@ function findMatchingGeneratedSessionEntry(
   return { key: preferredKey, sessionPlan: null };
 }
 
+function resolveStudentPublicationEntry(
+  studentPublications: Record<string, Record<string, boolean | { published?: boolean }>>,
+  generatedSessionKey: string,
+  session: any,
+) {
+  const exactKeys = [
+    String(generatedSessionKey || "").trim(),
+    String(session?.sessionKey || "").trim(),
+    String(session?.id || "").trim(),
+    String(session?.sessionNumber || "").trim(),
+  ].filter(Boolean);
+
+  for (const key of exactKeys) {
+    const entry = studentPublications[key];
+    if (entry && typeof entry === "object") {
+      return entry;
+    }
+  }
+
+  const sessionNumber = Number(session?.sessionNumber || 0);
+  const sessionTitle = normalizeSessionIdentityText(session?.title || session?.sessionTitle || "");
+  const generatedKeyPrefix = sessionNumber > 0 ? `session-${sessionNumber}__` : "";
+
+  for (const [savedKey, entry] of Object.entries(studentPublications || {})) {
+    const normalizedSavedKey = String(savedKey || "").trim();
+    if (!normalizedSavedKey || !entry || typeof entry !== "object") {
+      continue;
+    }
+
+    if (generatedKeyPrefix && normalizedSavedKey.startsWith(generatedKeyPrefix)) {
+      return entry;
+    }
+
+    if (!sessionTitle) {
+      continue;
+    }
+
+    const normalizedSavedTitle = normalizeSessionIdentityText(
+      normalizedSavedKey
+        .replace(/^session-\d+__/, "")
+        .replace(/-/g, " "),
+    );
+
+    if (normalizedSavedTitle && normalizedSavedTitle.includes(sessionTitle)) {
+      return entry;
+    }
+  }
+
+  return {};
+}
+
 function sessionPlanMatchesRequest(
   sessionPlan: any,
   request: {
@@ -6328,9 +6379,9 @@ function stripWorkspaceGeneratedSessions(workspace: any) {
 
 async function serializeWorkspaceForView(
   workspace: any,
-  view: "planning" | "full" = "planning"
+  view: "planning" | "content_generation" | "full" = "planning"
 ) {
-  if (view === "full") {
+  if (view === "full" || view === "content_generation") {
     return hydrateWorkspacePptMaterials(workspace);
   }
   return stripWorkspaceGeneratedSessions(workspace);
@@ -15451,7 +15502,12 @@ app.patch("/api/curriculums/:id", async (req, res) => {
 
 app.get("/api/planning-workspaces/:id", async (req, res) => {
   try {
-    const view = req.query.view === "full" ? "full" : "planning";
+    const view =
+      req.query.view === "full"
+        ? "full"
+        : req.query.view === "content_generation"
+          ? "content_generation"
+          : "planning";
     const workspace = await loadPlanningWorkspaceById(req.params.id);
     if (!workspace) {
       return res.status(404).json({ error: "Planning workspace not found." });
@@ -15465,7 +15521,12 @@ app.get("/api/planning-workspaces/:id", async (req, res) => {
 
 app.get("/api/planning-workspaces/by-curriculum/:curriculumId", async (req, res) => {
   try {
-    const view = req.query.view === "full" ? "full" : "planning";
+    const view =
+      req.query.view === "full"
+        ? "full"
+        : req.query.view === "content_generation"
+          ? "content_generation"
+          : "planning";
     await connectToMongo();
     const workspace = await PlanningWorkspaceModel.findOne({ curriculumId: req.params.curriculumId })
       .sort({ updatedAt: -1 })
@@ -15503,9 +15564,22 @@ app.get("/api/planning-workspaces/:id/generated-sessions/:sessionKey", async (re
         : {};
     const requestedSessionKey = String(req.params.sessionKey);
     const legacySessionKey = String(req.query.legacySessionKey || "");
+    const roadmapSessionNumber = Math.max(1, Number(req.query.roadmapSessionNumber || legacySessionKey || 1) || 1);
+    const chapterName = String(req.query.chapterName || "").trim();
+    const sessionTitle = String(req.query.sessionTitle || "").trim();
+    const matchedSessionEntry = findMatchingGeneratedSessionEntry(generatedSessions, {
+      requestedSessionKey,
+      roadmapSessionNumber,
+      chapterName,
+      sessionTitle,
+      subject: String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
+      gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || ""),
+      sessionNumber: roadmapSessionNumber,
+    });
     const sessionPlan =
       generatedSessions[requestedSessionKey] ||
-      (legacySessionKey ? generatedSessions[legacySessionKey] : null);
+      (legacySessionKey ? generatedSessions[legacySessionKey] : null) ||
+      matchedSessionEntry.sessionPlan;
 
     if (!sessionPlan) {
       return res.status(404).json({ error: "Saved generated session not found." });
@@ -21725,6 +21799,13 @@ app.get("/api/student/grades", async (req, res) => {
 
 app.get("/api/student/notes", async (req, res) => {
   try {
+    res.set({
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
+      "Surrogate-Control": "no-store",
+    });
+
     await connectToMongo();
     const userId = String(req.query.userId || "").trim();
     const schoolId = String(req.query.schoolId || "").trim();
@@ -21780,11 +21861,11 @@ app.get("/api/student/notes", async (req, res) => {
           : {};
 
       return generatedSessions.flatMap(([generatedSessionKey, session]: [string, any]) => {
-        const publicationEntry =
-          studentPublications[String(generatedSessionKey)] ||
-          studentPublications[String(session?.id || "")] ||
-          studentPublications[String(session?.sessionNumber || "")] ||
-          {};
+        const publicationEntry = resolveStudentPublicationEntry(
+          studentPublications,
+          String(generatedSessionKey || ""),
+          session,
+        );
         const notesPublished = typeof publicationEntry?.notes === "object"
           ? Boolean((publicationEntry.notes as { published?: boolean })?.published)
           : Boolean(publicationEntry?.notes);
@@ -21896,11 +21977,11 @@ app.get("/api/student/published-content", async (req, res) => {
           : {};
 
       return generatedSessions.flatMap(([generatedSessionKey, session]: [string, any]): any[] => {
-        const publicationEntry =
-          studentPublications[String(generatedSessionKey)] ||
-          studentPublications[String(session?.id || "")] ||
-          studentPublications[String(session?.sessionNumber || "")] ||
-          {};
+        const publicationEntry = resolveStudentPublicationEntry(
+          studentPublications,
+          String(generatedSessionKey || ""),
+          session,
+        );
         const targetPublished = typeof (publicationEntry as any)?.[kind] === "object"
           ? Boolean((publicationEntry as any)?.[kind]?.published)
           : Boolean((publicationEntry as any)?.[kind]);

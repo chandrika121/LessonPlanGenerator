@@ -1,0 +1,789 @@
+Stage 3: Node Enrichment - Class XII - Chemistry - Retry
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XII",
+  "subject": "Chemistry",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit 1: Solutions",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Types of Solutions",
+        "Expression of Concentration of Solutions",
+        "Solubility",
+        "Vapour Pressure of Liquid Solutions",
+        "Ideal and Non –Ideal Solutions",
+        "Colligative Properties and Determination of Molar Mass",
+        "Abnormal Molecular Masses"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Solutions",
+          "source_chapter_name": "Solutions",
+          "source_heading": "Solutions",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U1",
+      "unit_name": "Qualitative Analysis",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Determination of one anion and one cation in a given salt"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Qualitative Analysis",
+          "source_chapter_name": "Qualitative Analysis",
+          "source_heading": "Qualitative Analysis",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Electrochemical Cells",
+        "Galvanic Cells",
+        "Nernst Equation",
+        "Conductance of Electrolytic solutions",
+        "Electrolytic Cells and Electrolysis",
+        "Batteries",
+        "Fuel Cells",
+        "Corrosion"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electrochemistry",
+          "source_chapter_name": "Electrochemistry",
+          "source_heading": "Electrochemistry",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Rate of a Chemical reaction",
+        "factors influencing rate of reaction",
+        "integrated rate equations",
+        "Temperature Dependence of the rate of a reaction",
+        "Collision theory of Chemical Reactions"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Kinetics",
+          "source_chapter_name": "Chemical Kinetics",
+          "source_heading": "Chemical Kinetics",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Position in the Periodic Table",
+        "Electronic configuration of the d-Block Elements",
+        "General properties of the Transition Elements (d-Block)",
+        "Some Important Compounds of Transition Elements",
+        "The Lanthanoids",
+        "The Actinoids",
+        "Some Applications of d- and f- Block Elements"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "d and f Block Elements",
+          "source_chapter_name": "d and f Block Elements",
+          "source_heading": "d and f Block Elements",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Werner's Theory of Coordination Compound",
+        "Definition of Some important terms pertaining to Coordination Compounds",
+        "Nomenclature of Coordination Compounds.",
+        "Isomerism in Coordination Compounds",
+        "Bonding in coordination compounds",
+        "Bonding in Metal Carbonyls",
+        "Importance and Applications of Coordination Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordination Compounds",
+          "source_chapter_name": "Coordination Compounds",
+          "source_heading": "Coordination Compounds",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification",
+        "Nomenclature",
+        "Nature of C–X bond",
+        "Methods of Preparation of Haloalkanes",
+        "Preparation of Haloarenes",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Polyhalogen Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Haloalkanes and Haloarenes",
+          "source_chapter_name": "Haloalkanes and Haloarenes",
+          "source_heading": "Haloalkanes and Haloarenes",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification",
+        "Nomenclature",
+        "Structures of Functional Groups",
+        "Alcohols and Phenols",
+        "Some commercially Important Alcohols",
+        "Ethers"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Alcohols, Phenols and Ethers",
+          "source_chapter_name": "Alcohols, Phenols and Ethers",
+          "source_heading": "Alcohols, Phenols and Ethers",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Nomenclature and Structure of Carbonyl Group",
+        "Preparation of Aldehydes and Ketones",
+        "Physical Properties and Chemical Reactions",
+        "Uses of Aldehydes and Ketones",
+        "Nomenclature Structure of Carboxyl Group",
+        "Methods of Preparation of Carboxylic Acids",
+        "Uses of Carboxylic Acids"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_heading": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Unit 9: Amines",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Structure of Amines",
+        "Classification",
+        "Nomenclature",
+        "Preparation of Amines",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Methods of Preparation of Diazonium Salts",
+        "Physical Propeties",
+        "Chemical Reactions Importance of Diazonium Salts in Synthesis of Aromatic Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Amines",
+          "source_chapter_name": "Amines",
+          "source_heading": "Amines",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Unit 10: Biomolecules",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Carbohydrates.",
+        "Proteins",
+        "Enzymes",
+        "Vitamins Nucleic Acids",
+        "Hormones"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Biomolecules",
+          "source_chapter_name": "Biomolecules",
+          "source_heading": "Biomolecules",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U11",
+      "unit_name": "Surface Chemistry (Formative Assessment)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Adsorption - physisorption and chemisorption",
+        "factors affecting adsorption of gases on solids",
+        "colloidal state distinction between true solutions, colloids and suspension; lyophilic, lyophobic properties of colloids",
+        "coagulation",
+        "emulsion - types of emulsions"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    },
+    {
+      "unit_id": "U12",
+      "unit_name": "General Principles and Processes of Isolation (Formative Assessment)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XII",
+  "subject": "Chemistry",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "unit_name": "Unit 1: Solutions",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Types of Solutions",
+        "Expression of Concentration of Solutions",
+        "Solubility",
+        "Vapour Pressure of Liquid Solutions",
+        "Ideal and Non –Ideal Solutions",
+        "Colligative Properties and Determination of Molar Mass",
+        "Abnormal Molecular Masses"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Solutions",
+          "source_chapter_name": "Solutions",
+          "source_heading": "Solutions",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U1",
+      "unit_name": "Qualitative Analysis",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Determination of one anion and one cation in a given salt"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Qualitative Analysis",
+          "source_chapter_name": "Qualitative Analysis",
+          "source_heading": "Qualitative Analysis",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Electrochemical Cells",
+        "Galvanic Cells",
+        "Nernst Equation",
+        "Conductance of Electrolytic solutions",
+        "Electrolytic Cells and Electrolysis",
+        "Batteries",
+        "Fuel Cells",
+        "Corrosion"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electrochemistry",
+          "source_chapter_name": "Electrochemistry",
+          "source_heading": "Electrochemistry",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Rate of a Chemical reaction",
+        "factors influencing rate of reaction",
+        "integrated rate equations",
+        "Temperature Dependence of the rate of a reaction",
+        "Collision theory of Chemical Reactions"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Kinetics",
+          "source_chapter_name": "Chemical Kinetics",
+          "source_heading": "Chemical Kinetics",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Position in the Periodic Table",
+        "Electronic configuration of the d-Block Elements",
+        "General properties of the Transition Elements (d-Block)",
+        "Some Important Compounds of Transition Elements",
+        "The Lanthanoids",
+        "The Actinoids",
+        "Some Applications of d- and f- Block Elements"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "d and f Block Elements",
+          "source_chapter_name": "d and f Block Elements",
+          "source_heading": "d and f Block Elements",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Werner's Theory of Coordination Compound",
+        "Definition of Some important terms pertaining to Coordination Compounds",
+        "Nomenclature of Coordination Compounds.",
+        "Isomerism in Coordination Compounds",
+        "Bonding in coordination compounds",
+        "Bonding in Metal Carbonyls",
+        "Importance and Applications of Coordination Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordination Compounds",
+          "source_chapter_name": "Coordination Compounds",
+          "source_heading": "Coordination Compounds",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification",
+        "Nomenclature",
+        "Nature of C–X bond",
+        "Methods of Preparation of Haloalkanes",
+        "Preparation of Haloarenes",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Polyhalogen Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Haloalkanes and Haloarenes",
+          "source_chapter_name": "Haloalkanes and Haloarenes",
+          "source_heading": "Haloalkanes and Haloarenes",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification",
+        "Nomenclature",
+        "Structures of Functional Groups",
+        "Alcohols and Phenols",
+        "Some commercially Important Alcohols",
+        "Ethers"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Alcohols, Phenols and Ethers",
+          "source_chapter_name": "Alcohols, Phenols and Ethers",
+          "source_heading": "Alcohols, Phenols and Ethers",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Nomenclature and Structure of Carbonyl Group",
+        "Preparation of Aldehydes and Ketones",
+        "Physical Properties and Chemical Reactions",
+        "Uses of Aldehydes and Ketones",
+        "Nomenclature Structure of Carboxyl Group",
+        "Methods of Preparation of Carboxylic Acids",
+        "Uses of Carboxylic Acids"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_heading": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "unit_name": "Unit 9: Amines",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Structure of Amines",
+        "Classification",
+        "Nomenclature",
+        "Preparation of Amines",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Methods of Preparation of Diazonium Salts",
+        "Physical Propeties",
+        "Chemical Reactions Importance of Diazonium Salts in Synthesis of Aromatic Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Amines",
+          "source_chapter_name": "Amines",
+          "source_heading": "Amines",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "unit_name": "Unit 10: Biomolecules",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Carbohydrates.",
+        "Proteins",
+        "Enzymes",
+        "Vitamins Nucleic Acids",
+        "Hormones"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Biomolecules",
+          "source_chapter_name": "Biomolecules",
+          "source_heading": "Biomolecules",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U11",
+      "unit_name": "Surface Chemistry (Formative Assessment)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Adsorption - physisorption and chemisorption",
+        "factors affecting adsorption of gases on solids",
+        "colloidal state distinction between true solutions, colloids and suspension; lyophilic, lyophobic properties of colloids",
+        "coagulation",
+        "emulsion - types of emulsions"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    },
+    {
+      "unit_id": "U12",
+      "unit_name": "General Principles and Processes of Isolation (Formative Assessment)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    }
+  ]
+}
+
+Curriculum source text:
+Note: Any other investigatory project, which involves about 10 periods of work, can
+be chosen with the approval of the teacher.
+Practical Examination for Visually Challenged Students Class XI
+Note: Same Evaluation scheme and general guidelines for visually challenged
+students as given for Class XII may be followed.
+List of apparatus for identification for assessment in practicals (All experiments)
+Beaker, tripod stand, wire gauze, glass rod, funnel, filter paper, Bunsen
+burner, test tube, test tube stands, dropper, test tube holder, ignition tube,
+china dish, tongs, standard flask, pipette, burette, conical flask, clamp stand,
+dropper, wash bottle
+- Odor detection in qualitative analysis.
+- Procedure/Setup of the apparatus.
+List of Experiments
+- A. Characterization and Purification of Chemical Substances
+Crystallization of an impure sample of any one of the following:
+copper sulphate, benzoic acid.
+- B. Experiments based on pH
+- 1. Determination of pH of some solutions obtained from fruit juices, solutions of
+known and varied concentrations of acids, bases and salts using pH paper.
+
+# Page 8
+
+## COURSE STRUCTURE
+## CLASS XII
+## THEORY
+Time: 3 Hours Total Marks: 70
+- S. No. Title Marks
+1 Solutions 7
+2 Electrochemistry 9
+3 Chemical Kinetics 7
+4 d -and f -Block Elements 7
+5 Coordination Compounds 7
+6 Haloalkanes and Haloarenes 6
+7 Alcohols, Phenols and Ethers 6
+8 Aldehydes, Ketones and Carboxylic Acids 8
+9 Amines 6
+10 Biomolecules 7
+Total 70
+(Note: insoluble salts excluded)
+Note: The above practical may be carried out in an experiential manner rather
+than recording observations.
+Prescribed Books:
+- 1. Chemistry Part – I, Class-XII, Published by NCERT.
+- 2. Chemistry Part – II, Class-XII, Published by NCERT.
+- 3. Manual of Microscale Chemistry Laboratory Kit, Published by NCERT.
+14
+
+---
+
+# Page 15
+
+Links for NCERT textbooks:
+- 1. https://ncert.nic.in/textbook.php?lech1=0-5
+- 2. https://ncert.nic.in/textbook.php?lech2=0-5
+- 3. https://ncert.nic.in/division/dek/pdf/Manual_01.pdf
+## QUESTION PAPER DESIGN CLASSES XI & XII
+- S. No Domains Total %
+Marks

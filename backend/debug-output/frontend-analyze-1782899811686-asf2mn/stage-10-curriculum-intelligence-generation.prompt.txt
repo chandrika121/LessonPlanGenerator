@@ -1,0 +1,1317 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class XI",
+      "subject": "CHEMISTRY",
+      "units": [
+        {
+          "unit_id": "class-11-chemistry-u1",
+          "unit_name": "Some Basic Concepts of Chemistry",
+          "topics": [
+            "Importance of Chemistry",
+            "Nature of Matter",
+            "Properties of Matter and their Measurement",
+            "Uncertainty in Measurement",
+            "Laws of Chemical Combination",
+            "Dalton's Atomic Theory",
+            "Atomic and Molecular Masses",
+            "Mole Concept and Molar Masses",
+            "Percentage Composition",
+            "Stoichiometry and Stoichiometric Calculations"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Some Basic Concepts of Chemistry",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u2",
+          "unit_name": "Structure of Atom",
+          "topics": [
+            "Discovery of Sub-atomic Particles",
+            "Atomic Models",
+            "Developments Leading to the Bohr's Model of Atom",
+            "Bohr's Model for Hydrogen Atom",
+            "Towards Quantum Mechanical Model of the Atom",
+            "Quantum Mechanical Model of Atom"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Structure of Atom",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u3",
+          "unit_name": "Classification of Elements and Periodicity in Properties",
+          "topics": [
+            "Why we Need to Classify Elements?",
+            "Genesis of Periodic Classification",
+            "Modern Periodic Law and the Present Form of Periodic Table",
+            "Nomenclature of Elements with Atomic Number > 100",
+            "Electronic Configuration of Elements and the Periodic Table",
+            "Electronic Configuration of Elements and Types of Elements: s-, p-, d-, f- Blocks",
+            "Periodic Trends in Properties of Elements"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Classification of Elements and Periodicity in Properties",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u4",
+          "unit_name": "Chemical Bonding and Molecular Structure",
+          "topics": [
+            "Kossel-Lewis Approach to Chemical Bonding",
+            "Ionic or Electrovalent Bond",
+            "Bond Parameters",
+            "The Valence Shell Electron Pair Repulsion (VSEPR) Theory",
+            "Valence Bond Theory",
+            "Hybridisation",
+            "Molecular Orbital Theory",
+            "Bonding in Some Homonuclear Diatomic Molecules",
+            "Hydrogen Bonding"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Chemical Bonding and Molecular Structure",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u5",
+          "unit_name": "Thermodynamics",
+          "topics": [
+            "Thermodynamic Terms",
+            "Applications",
+            "Measurement of ∆U and ∆H: Calorimetry",
+            "Enthalpy Change",
+            "∆H of a Reaction – Reaction Enthalpy",
+            "Enthalpies for Different Types of Reactions",
+            "Spontaneity",
+            "Gibbs Energy Change and Equilibrium"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Thermodynamics",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u6",
+          "unit_name": "Equilibrium",
+          "topics": [
+            "Equilibrium in Physical Processes",
+            "Equilibrium in Chemical Processes – Dynamic Equilibrium",
+            "Law of Chemical Equilibrium and Equilibrium Constant",
+            "Homogeneous Equilibria",
+            "Heterogeneous Equilibria",
+            "Applications of Equilibrium Constants",
+            "Relationship between Equilibrium Constant K, Reaction Quotient Q and Gibbs Energy G",
+            "Factors Affecting Equilibria",
+            "Ionic Equilibrium in Solution",
+            "Acids, Bases and Salts",
+            "Ionization of Acids and Bases",
+            "Buffer Solutions",
+            "Solubility Equilibria of Sparingly Soluble Salts"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Equilibrium",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u7",
+          "unit_name": "Redox Reactions",
+          "topics": [
+            "Classical Idea of Redox Reactions – Oxidation and Reduction Reactions",
+            "Redox Reactions in Terms of Electron Transfer Reactions",
+            "Oxidation Number",
+            "Redox Reactions and Electrode Processes"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Redox Reactions",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u8",
+          "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+          "topics": [
+            "General Introduction",
+            "Tetravalence of Carbon: Shapes of Organic Compounds",
+            "Structural Representations of Organic Compounds",
+            "Classification of Organic Compounds",
+            "Nomenclature of Organic Compounds",
+            "Isomerism",
+            "Fundamental Concepts in Organic Reaction Mechanism",
+            "Methods of Purification of Organic Compounds",
+            "Qualitative Analysis of Organic Compounds",
+            "Quantitative Analysis"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Some basic Principles and Techniques",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-chemistry-u9",
+          "unit_name": "Hydrocarbons",
+          "topics": [
+            "Classification",
+            "Alkanes",
+            "Alkenes",
+            "Alkynes",
+            "Aromatic Hydrocarbon",
+            "Carcinogenic and Toxicity"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Hydrocarbons",
+              "topics": [
+                "Classification"
+              ],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "C1",
+      "title": "Some Basic Concepts of Chemistry",
+      "description": "Equip learners with tools to understand the working of chemistry, develop conceptual foundations for real-life application, and enable representation at macroscopic, molecular, and symbolic levels.",
+      "competencies": [
+        "Understand importance of chemistry and nature of matter",
+        "Measure properties of matter and handle uncertainty in measurement",
+        "Apply laws of chemical combination and Dalton's atomic theory",
+        "Calculate atomic and molecular masses using mole concept",
+        "Perform stoichiometric calculations and determine percentage composition"
+      ],
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "chapter_name": "Some Basic Concepts of Chemistry"
+    },
+    {
+      "code": "C2",
+      "title": "Structure of Atom",
+      "description": "Enable learners to identify patterns in atomic structure and form connections underlying chemical phenomena through understanding sub-atomic particles, models, and quantum mechanics.",
+      "competencies": [
+        "Trace the discovery of sub-atomic particles and evolution of atomic models",
+        "Explain Bohr's model for hydrogen atom and its developments",
+        "Understand the transition towards the quantum mechanical model"
+      ],
+      "unit_name": "Structure of Atom",
+      "chapter_name": "Structure of Atom"
+    },
+    {
+      "code": "C3",
+      "title": "Classification of Elements and Periodicity in Properties",
+      "description": "Prepare learners to classify elements, understand periodic trends, and recognize the interface between chemistry and other disciplines through electronic configurations.",
+      "competencies": [
+        "Justify the need for classification and trace the genesis of periodic tables",
+        "Apply modern periodic law and nomenclature rules (including atomic number > 100)",
+        "Correlate electronic configuration with element types (s, p, d, f blocks) and position in table"
+      ],
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "chapter_name": "Classification of Elements and Periodicity in Properties"
+    },
+    {
+      "code": "C4",
+      "title": "Chemical Bonding and Molecular Structure",
+      "description": "Develop ability to represent chemical phenomena at molecular levels by understanding bonding theories, hybridization, and intermolecular forces.",
+      "competencies": [
+        "Apply Kossel-Lewis approach to understand ionic bonding",
+        "Analyze bond parameters and apply VSEPR theory for molecular shapes",
+        "Utilize Valence Bond Theory and Molecular Orbital Theory concepts"
+      ],
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "chapter_name": "Chemical Bonding and Molecular Structure"
+    },
+    {
+      "code": "C5",
+      "title": "Thermodynamics",
+      "description": "Inculcate problem-solving skills to analyze energy changes, spontaneity, and equilibrium in chemical processes.",
+      "competencies": [
+        "Define thermodynamic terms and apply calorimetry for measurement of ∆U and ∆H",
+        "Calculate enthalpy change for various reaction types"
+      ],
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Chemical Thermodynamics"
+    },
+    {
+      "code": "C6",
+      "title": "Equilibrium",
+      "description": "Enable learners to identify patterns in dynamic equilibrium and apply the law of chemical equilibrium to physical and chemical processes.",
+      "competencies": [
+        "Distinguish between homogeneous and heterogeneous equilibria"
+      ],
+      "unit_name": "Equilibrium",
+      "chapter_name": "Equilibrium"
+    },
+    {
+      "code": "C7",
+      "title": "Redox Reactions",
+      "description": "Prepare learners to analyze electron transfer reactions and electrode processes through oxidation numbers.",
+      "competencies": [
+        "Classify redox reactions based on classical ideas and electron transfer"
+      ],
+      "unit_name": "Redox Reactions",
+      "chapter_name": "Redox Reactions"
+    },
+    {
+      "code": "C8",
+      "title": "Organic Chemistry: Some basic Principles and Techniques",
+      "description": "Equip learners with tools to understand organic compounds, their nomenclature, isomerism, reaction mechanisms, and purification techniques.",
+      "competencies": [
+        "Represent structural shapes of organic compounds (tetravalence of carbon)"
+      ],
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapter_name": "Some basic Principles and Techniques"
+    },
+    {
+      "code": "C9",
+      "title": "Hydrocarbons",
+      "description": "Develop conceptual foundations to classify hydrocarbons and understand their properties including carcinogenic effects.",
+      "competencies": [
+        "Classify alkanes, alkenes, alkynes, and aromatic hydrocarbons"
+      ],
+      "unit_name": "Hydrocarbons",
+      "chapter_name": "Hydrocarbons"
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      "Unit 1: Some Basic Concepts of Chemistry - 7 Marks",
+      "Unit 2: Structure of Atom - 9 Marks",
+      "Unit 3: Classification of Elements and Periodicity in Properties - 6 Marks",
+      "Unit 4: Chemical Bonding and Molecular Structure - 7 Marks",
+      "Unit 5: Thermodynamics - 9 Marks",
+      "Unit 6: Equilibrium - 7 Marks",
+      "Unit 7: Redox Reactions - 4 Marks",
+      "Unit 8: Organic Chemistry: Some basic Principles and Techniques - 11 Marks",
+      "Unit 9: Hydrocarbons - 10 Marks"
+    ],
+    "question_paper_design": [
+      "Theory Examination Time: 3 Hours",
+      "Total Theory Marks: 70",
+      "Note on Formative Assessment Topics (s & p Block Elements, The Gaseous State): Assessed only formatively to reinforce understanding without adding to summative assessments."
+    ],
+    "competency_weightage": [],
+    "bloom_levels": [],
+    "internal_assessment": [
+      "Class record and viva - 4 Marks"
+    ],
+    "practical_assessment": {
+      "evaluation_scheme": [
+        "Volumetric Analysis: 08 Marks",
+        "Salt Analysis: 08 Marks",
+        "Content Based Experiment: 06 Marks",
+        "Project Work (included in practical total): Refer to Project Assessment section for details, though listed as separate item in evaluation scheme context"
+      ],
+      "total_practical_marks": 30,
+      "components_breakdown": [
+        {
+          "component": "Volumetric Analysis",
+          "marks": 8
+        },
+        {
+          "component": "Salt Analysis",
+          "marks": 8
+        },
+        {
+          "component": "Content Based Experiment",
+          "marks": 6
+        },
+        {
+          "component": "Project Work",
+          "marks": 4,
+          "note": "Listed in evaluation scheme as separate item"
+        },
+        {
+          "component": "Class record and viva",
+          "marks": 4
+        }
+      ]
+    },
+    "project_assessment": [
+      "Project Work: 04 Marks",
+      "Nature of Projects: Scientific investigations involving laboratory testing and collecting information from other sources.",
+      "Duration Requirement: Any investigatory project chosen must involve about 10 periods of work with teacher approval."
+    ]
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Some Basic Concepts of Chemistry",
+      "chapter_name": "Some Basic Concepts of Chemistry",
+      "topic": "C1: Some Basic Concepts of Chemistry",
+      "outcomes": [
+        "Understand importance of chemistry and nature of matter",
+        "Measure properties of matter and handle uncertainty in measurement",
+        "Apply laws of chemical combination and Dalton's atomic theory",
+        "Calculate atomic and molecular masses using mole concept",
+        "Perform stoichiometric calculations and determine percentage composition"
+      ]
+    },
+    {
+      "unit_name": "Structure of Atom",
+      "chapter_name": "Structure of Atom",
+      "topic": "C2: Structure of Atom",
+      "outcomes": [
+        "Trace the discovery of sub-atomic particles and evolution of atomic models",
+        "Explain Bohr's model for hydrogen atom and its developments",
+        "Understand the transition towards the quantum mechanical model"
+      ]
+    },
+    {
+      "unit_name": "Classification of Elements and Periodicity in Properties",
+      "chapter_name": "Classification of Elements and Periodicity in Properties",
+      "topic": "C3: Classification of Elements and Periodicity in Properties",
+      "outcomes": [
+        "Justify the need for classification and trace the genesis of periodic tables",
+        "Apply modern periodic law and nomenclature rules (including atomic number > 100)",
+        "Correlate electronic configuration with element types (s, p, d, f blocks) and position in table"
+      ]
+    },
+    {
+      "unit_name": "Chemical Bonding and Molecular Structure",
+      "chapter_name": "Chemical Bonding and Molecular Structure",
+      "topic": "C4: Chemical Bonding and Molecular Structure",
+      "outcomes": [
+        "Apply Kossel-Lewis approach to understand ionic bonding",
+        "Analyze bond parameters and apply VSEPR theory for molecular shapes",
+        "Utilize Valence Bond Theory and Molecular Orbital Theory concepts"
+      ]
+    },
+    {
+      "unit_name": "Thermodynamics",
+      "chapter_name": "Chemical Thermodynamics",
+      "topic": "C5: Thermodynamics",
+      "outcomes": [
+        "Define thermodynamic terms and apply calorimetry for measurement of ∆U and ∆H",
+        "Calculate enthalpy change for various reaction types"
+      ]
+    },
+    {
+      "unit_name": "Equilibrium",
+      "chapter_name": "Equilibrium",
+      "topic": "C6: Equilibrium",
+      "outcomes": [
+        "Distinguish between homogeneous and heterogeneous equilibria"
+      ]
+    },
+    {
+      "unit_name": "Redox Reactions",
+      "chapter_name": "Redox Reactions",
+      "topic": "C7: Redox Reactions",
+      "outcomes": [
+        "Classify redox reactions based on classical ideas and electron transfer"
+      ]
+    },
+    {
+      "unit_name": "Organic Chemistry: Some basic Principles and Techniques",
+      "chapter_name": "Some basic Principles and Techniques",
+      "topic": "C8: Organic Chemistry: Some basic Principles and Techniques",
+      "outcomes": [
+        "Represent structural shapes of organic compounds (tetravalence of carbon)"
+      ]
+    },
+    {
+      "unit_name": "Hydrocarbons",
+      "chapter_name": "Hydrocarbons",
+      "topic": "C9: Hydrocarbons",
+      "outcomes": [
+        "Classify alkanes, alkenes, alkynes, and aromatic hydrocarbons"
+      ]
+    }
+  ]
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [],
+  "projects": [
+    {
+      "title": "Checking the bacterial contamination in drinking water by testing sulphide ion",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Scientific investigation involving laboratory testing and collecting information from other sources."
+    },
+    {
+      "title": "Study of the methods of purification of water",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Scientific investigation involving laboratory testing and collecting information from other sources."
+    },
+    {
+      "title": "Testing the hardness, presence of Iron, Fluoride, Chloride, etc., depending upon the regional variation in drinking water",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Scientific investigation involving laboratory testing and collecting information from other sources."
+    },
+    {
+      "title": "Investigation of the foaming capacity of different washing soaps and the effect of addition of Sodium carbonate on it",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Scientific investigation involving laboratory testing and collecting information from other sources."
+    },
+    {
+      "title": "Study the acidity of different samples of tea leaves",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Scientific investigation involving laboratory testing and collecting information from other sources."
+    },
+    {
+      "title": "Determination of the rate of evaporation of different liquids",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Scientific investigation involving laboratory testing and collecting information from other sources."
+    },
+    {
+      "title": "Study the effect of acids and bases on the tensile strength of fibers",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Scientific investigation involving laboratory testing and collecting information from other sources."
+    },
+    {
+      "title": "Study of acidity of fruit and vegetable juices",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Scientific investigation involving laboratory testing and collecting information from other sources."
+    }
+  ],
+  "practicals": [
+    {
+      "title": "Cutting glass tube and glass rod",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Basic Laboratory Technique"
+    },
+    {
+      "title": "Bending a glass tube",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Basic Laboratory Technique"
+    },
+    {
+      "title": "Drawing out a glass jet",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Basic Laboratory Technique"
+    },
+    {
+      "title": "Boring a cork",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Basic Laboratory Technique"
+    },
+    {
+      "title": "Determination of melting point of an organic compound",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Characterization and Purification of Chemical Substances"
+    },
+    {
+      "title": "Determination of boiling point of an organic compound",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Characterization and Purification of Chemical Substances"
+    },
+    {
+      "title": "Crystallization of Alum, Copper Sulphate, or Benzoic Acid",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Characterization and Purification of Chemical Substances"
+    },
+    {
+      "title": "Determination of pH using fruit juices, acids, bases, salts with universal indicator/pH paper",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Experiments based on pH"
+    },
+    {
+      "title": "Comparing the pH of solutions of strong and weak acids of same concentration",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Experiments based on pH"
+    },
+    {
+      "title": "Study the pH change in titration of a strong base using universal indicator",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Experiments based on pH"
+    },
+    {
+      "title": "Study the pH change by common-ion effect for weak acids and bases",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Experiments based on pH"
+    },
+    {
+      "title": "Shift in equilibrium between ferric ions and thiocyanate ions",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Chemical Equilibrium Experiment"
+    },
+    {
+      "title": "Shift in equilibrium between [Co(H2O)6] and chloride ions",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Chemical Equilibrium Experiment"
+    },
+    {
+      "title": "Preparation of standard solution of Oxalic acid",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Quantitative Estimation"
+    },
+    {
+      "title": "Determination of strength of Sodium hydroxide by titration against standard Oxalic acid",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Quantitative Estimation"
+    },
+    {
+      "title": "Preparation of standard solution of Sodium carbonate",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Quantitative Estimation"
+    },
+    {
+      "title": "Determination of strength of hydrochloric acid by titration against standard Sodium Carbonate",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Quantitative Estimation"
+    },
+    {
+      "title": "Volumetric Analysis (Titrimetry)",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Evaluation Scheme Component: 08 Marks"
+    },
+    {
+      "title": "Salt Analysis",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Qualitative analysis of one anion and one cation from specified lists; Detection of Nitrogen, Sulphur, Chlorine in organic compounds."
+    },
+    {
+      "title": "Content Based Experiment",
+      "unit_name": "",
+      "chapter_name": "",
+      "details": "Evaluation Scheme Component: 06 Marks"
+    }
+  ]
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

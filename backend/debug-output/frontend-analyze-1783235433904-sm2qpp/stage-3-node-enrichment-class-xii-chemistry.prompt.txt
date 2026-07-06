@@ -1,0 +1,628 @@
+Stage 3: Node Enrichment - Class XII - Chemistry
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XII",
+  "subject": "Chemistry",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U2",
+      "source_unit_id": "PROJECTS",
+      "unit_name": "PROJECTS",
+      "part_or_section": "",
+      "marks": 4,
+      "topics": [
+        "Study of the presence of oxalate ions in guava fruit",
+        "Study of quantity of casein present in different samples of milk",
+        "Preparation of soybean milk and its comparison with the natural milk",
+        "Study of the effect of Potassium Bisulphate as food preservative",
+        "Study of digestion of starch by salivary amylase",
+        "Comparative study of the rate of fermentation",
+        "Extraction of essential oils",
+        "Study of common food adulterants"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "PROJECTS",
+          "source_chapter_name": "PROJECTS",
+          "source_heading": "PROJECTS",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U1",
+      "unit_name": "SECTION A",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Surface Chemistry",
+        "Chromatography",
+        "Tests for the functional groups present in organic compounds",
+        "Characteristic tests of carbohydrates and proteins in the given foodstuffs",
+        "Preparation of Inorganic Compounds- Potash Alum"
+      ],
+      "subtopics": [
+        "Preparation of one lyophilic and one lyophobic sol",
+        "Lyophilic sol - starch, egg albumin and gum",
+        "Lyophobic sol – Ferric hydroxide",
+        "Separation of pigments from extracts of leaves and flowers by paper chromatography and determination of Rf values",
+        "Alcoholic and Carboxylic groups",
+        "Aldehyde and Kenotic groups"
+      ],
+      "key_concepts": [
+        "Surface Chemistry",
+        "Chromatography",
+        "Functional groups",
+        "Carbohydrates",
+        "Proteins",
+        "Inorganic Compounds"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "SECTION A",
+          "source_chapter_name": "SECTION A",
+          "source_heading": "SECTION A",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U3",
+      "unit_name": "QUESTION PAPER DESIGN CLASSES XI & XII",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Remembering and Understanding",
+        "Applying",
+        "Analysing, Evaluating and Creating"
+      ],
+      "subtopics": [
+        "Exhibit memory of previously learned material",
+        "Demonstrate understanding of facts and ideas",
+        "Solve problems to new situations",
+        "Examine and break information into parts",
+        "Make inferences and find evidence",
+        "Present and defend opinions"
+      ],
+      "key_concepts": [
+        "Remembering and Understanding",
+        "Applying",
+        "Analysing, Evaluating and Creating"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "QUESTION PAPER DESIGN CLASSES XI & XII",
+          "source_chapter_name": "QUESTION PAPER DESIGN CLASSES XI & XII",
+          "source_heading": "QUESTION PAPER DESIGN CLASSES XI & XII",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification",
+        "Nomenclature",
+        "Nature of C–X bond",
+        "Methods of Preparation of Haloalkanes",
+        "Preparation of Haloarenes",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Polyhalogen Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Haloalkanes and Haloarenes",
+          "source_chapter_name": "Haloalkanes and Haloarenes",
+          "source_heading": "Haloalkanes and Haloarenes",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U7",
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification",
+        "Nomenclature",
+        "Structures of Functional Groups",
+        "Alcohols and Phenols",
+        "Some commercially Important Alcohols",
+        "Ethers"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Alcohols, Phenols and Ethers",
+          "source_chapter_name": "Alcohols, Phenols and Ethers",
+          "source_heading": "Alcohols, Phenols and Ethers",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "source_unit_id": "U8",
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Nomenclature and Structure of Carbonyl Group",
+        "Preparation of Aldehydes and Ketones",
+        "Physical Properties and Chemical Reactions",
+        "Uses of Aldehydes and Ketones",
+        "Nomenclature Structure of Carboxyl Group",
+        "Methods of Preparation of Carboxylic Acids",
+        "Uses of Carboxylic Acids"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_heading": "Aldehydes, Ketones and Carboxylic Acids",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "source_unit_id": "U9",
+      "unit_name": "Unit 9: Amines",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Structure of Amines",
+        "Classification",
+        "Nomenclature",
+        "Preparation of Amines",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Methods of Preparation of Diazonium Salts",
+        "Physical Propeties",
+        "Chemical Reactions Importance of Diazonium Salts in Synthesis of Aromatic Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Amines",
+          "source_chapter_name": "Amines",
+          "source_heading": "Amines",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "source_unit_id": "U10",
+      "unit_name": "Unit 10: Biomolecules",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Carbohydrates",
+        "Proteins",
+        "Enzymes",
+        "Vitamins",
+        "Nucleic Acids",
+        "Hormones"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Biomolecules",
+          "source_chapter_name": "Biomolecules",
+          "source_heading": "Biomolecules",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XII",
+  "subject": "Chemistry",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U2",
+      "source_unit_id": "PROJECTS",
+      "unit_name": "PROJECTS",
+      "part_or_section": "",
+      "marks": 4,
+      "topics": [
+        "Study of the presence of oxalate ions in guava fruit",
+        "Study of quantity of casein present in different samples of milk",
+        "Preparation of soybean milk and its comparison with the natural milk",
+        "Study of the effect of Potassium Bisulphate as food preservative",
+        "Study of digestion of starch by salivary amylase",
+        "Comparative study of the rate of fermentation",
+        "Extraction of essential oils",
+        "Study of common food adulterants"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "PROJECTS",
+          "source_chapter_name": "PROJECTS",
+          "source_heading": "PROJECTS",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U1",
+      "unit_name": "SECTION A",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Surface Chemistry",
+        "Chromatography",
+        "Tests for the functional groups present in organic compounds",
+        "Characteristic tests of carbohydrates and proteins in the given foodstuffs",
+        "Preparation of Inorganic Compounds- Potash Alum"
+      ],
+      "subtopics": [
+        "Preparation of one lyophilic and one lyophobic sol",
+        "Lyophilic sol - starch, egg albumin and gum",
+        "Lyophobic sol – Ferric hydroxide",
+        "Separation of pigments from extracts of leaves and flowers by paper chromatography and determination of Rf values",
+        "Alcoholic and Carboxylic groups",
+        "Aldehyde and Kenotic groups"
+      ],
+      "key_concepts": [
+        "Surface Chemistry",
+        "Chromatography",
+        "Functional groups",
+        "Carbohydrates",
+        "Proteins",
+        "Inorganic Compounds"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "SECTION A",
+          "source_chapter_name": "SECTION A",
+          "source_heading": "SECTION A",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U3",
+      "unit_name": "QUESTION PAPER DESIGN CLASSES XI & XII",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Remembering and Understanding",
+        "Applying",
+        "Analysing, Evaluating and Creating"
+      ],
+      "subtopics": [
+        "Exhibit memory of previously learned material",
+        "Demonstrate understanding of facts and ideas",
+        "Solve problems to new situations",
+        "Examine and break information into parts",
+        "Make inferences and find evidence",
+        "Present and defend opinions"
+      ],
+      "key_concepts": [
+        "Remembering and Understanding",
+        "Applying",
+        "Analysing, Evaluating and Creating"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "QUESTION PAPER DESIGN CLASSES XI & XII",
+          "source_chapter_name": "QUESTION PAPER DESIGN CLASSES XI & XII",
+          "source_heading": "QUESTION PAPER DESIGN CLASSES XI & XII",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification",
+        "Nomenclature",
+        "Nature of C–X bond",
+        "Methods of Preparation of Haloalkanes",
+        "Preparation of Haloarenes",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Polyhalogen Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Haloalkanes and Haloarenes",
+          "source_chapter_name": "Haloalkanes and Haloarenes",
+          "source_heading": "Haloalkanes and Haloarenes",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U7",
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Classification",
+        "Nomenclature",
+        "Structures of Functional Groups",
+        "Alcohols and Phenols",
+        "Some commercially Important Alcohols",
+        "Ethers"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Alcohols, Phenols and Ethers",
+          "source_chapter_name": "Alcohols, Phenols and Ethers",
+          "source_heading": "Alcohols, Phenols and Ethers",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "source_unit_id": "U8",
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Nomenclature and Structure of Carbonyl Group",
+        "Preparation of Aldehydes and Ketones",
+        "Physical Properties and Chemical Reactions",
+        "Uses of Aldehydes and Ketones",
+        "Nomenclature Structure of Carboxyl Group",
+        "Methods of Preparation of Carboxylic Acids",
+        "Uses of Carboxylic Acids"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_chapter_name": "Aldehydes, Ketones and Carboxylic Acids",
+          "source_heading": "Aldehydes, Ketones and Carboxylic Acids",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "source_unit_id": "U9",
+      "unit_name": "Unit 9: Amines",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Structure of Amines",
+        "Classification",
+        "Nomenclature",
+        "Preparation of Amines",
+        "Physical Properties",
+        "Chemical Reactions",
+        "Methods of Preparation of Diazonium Salts",
+        "Physical Propeties",
+        "Chemical Reactions Importance of Diazonium Salts in Synthesis of Aromatic Compounds"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Amines",
+          "source_chapter_name": "Amines",
+          "source_heading": "Amines",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U10",
+      "source_unit_id": "U10",
+      "unit_name": "Unit 10: Biomolecules",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Carbohydrates",
+        "Proteins",
+        "Enzymes",
+        "Vitamins",
+        "Nucleic Acids",
+        "Hormones"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Biomolecules",
+          "source_chapter_name": "Biomolecules",
+          "source_heading": "Biomolecules",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+## CLASS XII
+## THEORY
+Time: 3 Hours Total Marks: 70
+- S. No. Title Marks
+1 Solutions 7
+2 Electrochemistry 9
+3 Chemical Kinetics 7
+4 d -and f -Block Elements 7
+5 Coordination Compounds 7
+6 Haloalkanes and Haloarenes 6
+7 Alcohols, Phenols and Ethers 6
+8 Aldehydes, Ketones and Carboxylic Acids 8
+9 Amines 6
+10 Biomolecules 7
+Total 70
+(Note: insoluble salts excluded)
+Note: The above practical may be carried out in an experiential manner rather
+than recording observations.
+Prescribed Books:
+- 1. Chemistry Part – I, Class-XII, Published by NCERT.
+- 2. Chemistry Part – II, Class-XII, Published by NCERT.
+- 3. Manual of Microscale Chemistry Laboratory Kit, Published by NCERT.
+14
+
+---
+
+# Page 8
+
+Links for NCERT textbooks:
+- 1. https://ncert.nic.in/textbook.php?lech1=0-5
+- 2. https://ncert.nic.in/textbook.php?lech2=0-5
+- 3. https://ncert.nic.in/division/dek/pdf/Manual_01.pdf
+## QUESTION PAPER DESIGN CLASSES XI & XII
+- S. No Domains Total %
+Marks

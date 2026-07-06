@@ -1,0 +1,999 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 16,
+      "totalQuestions": 12,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 5,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 4,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Students will define electric charge and distinguish between positive and negative types.",
+        "Students will explain the quantization of charge (q=ne) and conservation of charge.",
+        "Students will describe the concept of an electric field and draw field lines for point charges.",
+        "Students will differentiate between conductors and insulators based on charge mobility."
+      ],
+      "assessedConcepts": [
+        "Quantization of Charge",
+        "Conservation of Charge",
+        "Electric Field Lines",
+        "Conductors vs Insulators"
+      ],
+      "conceptCoveragePriorities": [
+        "Quantization of Charge (q=ne)",
+        "Conservation of Charge",
+        "Electric Field Line Properties"
+      ],
+      "misconceptionTargets": [
+        "Confusing electric field with magnetic field",
+        "Thinking neutral objects have no charge at all"
+      ],
+      "competencyFocus": [
+        "Understanding",
+        "Application",
+        "Analysis"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "title": "Theory: Max Marks 70, Time 3 hrs",
+          "marks": 16,
+          "questionCount": 12,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10",
+            "q11",
+            "q12"
+          ],
+          "focus": "Session-aligned assessment of Electric Charges and Fields"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Quantization of Charge",
+          "questionRefs": [
+            "q1",
+            "q4",
+            "q7"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Conservation of Charge",
+          "questionRefs": [
+            "q2",
+            "q8"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        },
+        {
+          "concept": "Electric Field Lines",
+          "questionRefs": [
+            "q3",
+            "q5",
+            "q9",
+            "q10"
+          ],
+          "competency": "Analysis",
+          "importance": "core"
+        },
+        {
+          "concept": "Conductors and Insulators",
+          "questionRefs": [
+            "q6",
+            "q11",
+            "q12"
+          ],
+          "competency": "Understanding",
+          "importance": "supporting"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will define electric charge and distinguish between positive and negative types.",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Students will explain the quantization of charge (q=ne) and conservation of charge.",
+          "questionRefs": [
+            "q2",
+            "q5",
+            "q8"
+          ]
+        },
+        {
+          "outcome": "Students will describe the concept of an electric field and draw field lines for point charges.",
+          "questionRefs": [
+            "q3",
+            "q6",
+            "q9",
+            "q10"
+          ]
+        },
+        {
+          "outcome": "Students will differentiate between conductors and insulators based on charge mobility.",
+          "questionRefs": [
+            "q7",
+            "q11",
+            "q12"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 25,
+        "understanding": 35,
+        "application": 25,
+        "analysis": 15,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 6,
+        "application": 4,
+        "analysis": 2
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 5,
+        "shortAnswer": 4
+      },
+      "timeAllocation": [
+        {
+          "section": "Theory: Max Marks 70, Time 3 hrs",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session.",
+        "Section A (MCQs): Select the correct option. (1 mark each)",
+        "Section B (Very Short Answer): Write a concise answer (1-2 sentences). (1 mark each)",
+        "Section C (Short Answer): Provide a brief explanation or calculation. (2 marks each)"
+      ],
+      "sections": [
+        {
+          "id": "section-theory-max-marks-70-time-3-hrs",
+          "title": "Theory: Max Marks 70, Time 3 hrs",
+          "marks": 16,
+          "questionCount": 12,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9",
+            "q10",
+            "q11",
+            "q12"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following statements correctly describes the nature of electric charge?",
+          "options": [
+            "A. Charge is continuous and can be divided infinitely.",
+            "B. Charge is quantized and exists in discrete packets.",
+            "C. Charge is a vector quantity with magnitude and direction.",
+            "D. Charge can be created but not destroyed."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will define electric charge and distinguish between positive and negative types."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Properties of Charge"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Charge is quantized (q=ne)"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "If a body has a net charge of -3e, what does this imply?",
+          "options": [
+            "A. It has lost 3 protons.",
+            "B. It has gained 3 electrons.",
+            "C. It has gained 3 protons.",
+            "D. It is electrically neutral."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will define electric charge and distinguish between positive and negative types."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Charge Types"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Conceptual application",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Negative charge implies extra electrons"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following is a correct property of electric field lines?",
+          "options": [
+            "A. They start from negative charges and end at positive charges.",
+            "B. They can cross each other at any point.",
+            "C. They are closer together where the field is stronger.",
+            "D. They form closed loops in electrostatics."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will describe the concept of an electric field and draw field lines for point charges."
+          ],
+          "conceptRefs": [
+            "Electric Field Lines"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Field Visualization"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Visual analysis",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Field lines start (+) end (-), density indicates strength"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "State the principle of conservation of charge.",
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Students will explain the quantization of charge (q=ne) and conservation of charge."
+          ],
+          "conceptRefs": [
+            "Conservation of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Fundamental Principles"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Definition recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Total charge in isolated system remains constant"
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "What is the value of the elementary charge (e) in Coulombs?",
+          "marks": 1,
+          "expectedLength": "Numerical value",
+          "learningOutcomeRefs": [
+            "Students will explain the quantization of charge (q=ne) and conservation of charge."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Elementary Charge"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Fact retrieval",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: e = 1.6 x 10^-19 C"
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Why do electric field lines never cross each other?",
+          "marks": 1,
+          "expectedLength": "One reason",
+          "learningOutcomeRefs": [
+            "Students will describe the concept of an electric field and draw field lines for point charges."
+          ],
+          "conceptRefs": [
+            "Electric Field Lines"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Field Properties"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Lines never cross"
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "If an atom loses one electron, what type of charge does it acquire?",
+          "marks": 1,
+          "expectedLength": "Positive/Negative",
+          "learningOutcomeRefs": [
+            "Students will define electric charge and distinguish between positive and negative types."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Charge Formation"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application of concept",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Losing electron -> positive charge"
+          ]
+        },
+        {
+          "id": "q8",
+          "questionNumber": 8,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Calculate the total charge if a body has 5 excess electrons.",
+          "marks": 1,
+          "expectedLength": "Numerical value with unit",
+          "learningOutcomeRefs": [
+            "Students will explain the quantization of charge (q=ne) and conservation of charge."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Charge Calculation"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Calculation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: q = ne, e = 1.6 x 10^-19 C"
+          ]
+        },
+        {
+          "id": "q9",
+          "questionNumber": 9,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Explain the difference between a conductor and an insulator based on charge mobility.",
+          "marks": 2,
+          "expectedLength": "2-3 sentences",
+          "learningOutcomeRefs": [
+            "Students will differentiate between conductors and insulators based on charge mobility."
+          ],
+          "conceptRefs": [
+            "Conductors and Insulators"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Material Properties"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Differentiation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Conductors allow charge flow; insulators do not"
+          ]
+        },
+        {
+          "id": "q10",
+          "questionNumber": 10,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Describe the direction of electric field lines for a single positive point charge.",
+          "marks": 2,
+          "expectedLength": "Description of direction",
+          "learningOutcomeRefs": [
+            "Students will describe the concept of an electric field and draw field lines for point charges."
+          ],
+          "conceptRefs": [
+            "Electric Field Lines"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Field Visualization"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Visualization",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Lines radiate outward from positive charge"
+          ]
+        },
+        {
+          "id": "q11",
+          "questionNumber": 11,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Why is the net charge of a neutral object not zero in terms of particle count?",
+          "marks": 2,
+          "expectedLength": "Explanation of internal structure",
+          "learningOutcomeRefs": [
+            "Students will define electric charge and distinguish between positive and negative types."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Neutral Objects"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Conceptual analysis",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: Neutral objects have balanced charges, not zero charge"
+          ]
+        },
+        {
+          "id": "q12",
+          "questionNumber": 12,
+          "sectionId": "section-theory-max-marks-70-time-3-hrs",
+          "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "State two properties of electric charge that make it a fundamental property of matter.",
+          "marks": 2,
+          "expectedLength": "Two distinct points",
+          "learningOutcomeRefs": [
+            "Students will explain the quantization of charge (q=ne) and conservation of charge."
+          ],
+          "conceptRefs": [
+            "Quantization of Charge",
+            "Conservation of Charge"
+          ],
+          "topicCoverage": [
+            "Electric Charges and Fields"
+          ],
+          "subtopicCoverage": [
+            "Fundamental Properties"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Synthesis",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Quantization and Conservation are key properties"
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "B. Charge is quantized and exists in discrete packets.",
+            "explanation": "Charge exists in integer multiples of the elementary charge (e), not continuously.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "B. It has gained 3 electrons.",
+            "explanation": "Negative charge (-3e) indicates an excess of 3 electrons (each -e).",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "C. They are closer together where the field is stronger.",
+            "explanation": "Field line density represents field strength; they start at positive and end at negative charges.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "The total electric charge in an isolated system remains constant over time.",
+            "explanation": "Charge can be transferred but not created or destroyed.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "1.6 x 10^-19 C",
+            "explanation": "This is the standard value for the elementary charge.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "Because the electric field has a unique direction at any point; crossing lines would imply two directions.",
+            "explanation": "Field lines represent the path of a test charge, which can only move in one direction at a time.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "Positive charge.",
+            "explanation": "Losing a negative electron leaves the atom with a net positive charge.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q8",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "-8.0 x 10^-19 C",
+            "explanation": "Total charge q = n * e = 5 * (-1.6 x 10^-19 C) = -8.0 x 10^-19 C.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q9",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "In conductors, charges (electrons) are free to move throughout the material. In insulators, charges are bound to atoms and cannot move freely.",
+            "explanation": "Conductors allow charge mobility; insulators restrict it.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q10",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "The field lines radiate outward from the positive charge in all directions.",
+            "explanation": "Field lines start from positive charges and end at negative charges.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q11",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "A neutral object contains equal numbers of positive (protons) and negative (electrons) charges. The net charge is zero because they cancel out, but the individual charges exist.",
+            "explanation": "Neutral means balanced charges, not absence of charge.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q12",
+            "sectionId": "section-theory-max-marks-70-time-3-hrs",
+            "sectionTitle": "Theory: Max Marks 70, Time 3 hrs",
+            "answer": "1. Quantization: Charge exists in discrete packets (multiples of e). 2. Conservation: Total charge in an isolated system is constant.",
+            "explanation": "These are the two fundamental properties defining charge behavior.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct statement of conservation principle",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if the student mentions charge remains constant in an isolated system."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct value (1.6 x 10^-19 C)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for the correct numerical value."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mention of unique direction at a point",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if the student explains that crossing lines imply two directions."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct answer (Positive)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for 'Positive'."
+            ]
+          },
+          {
+            "questionId": "q8",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct calculation (-8.0 x 10^-19 C)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for the correct value."
+            ]
+          },
+          {
+            "questionId": "q9",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Explanation of charge mobility in conductors",
+                "marks": 1
+              },
+              {
+                "criterion": "Explanation of restricted mobility in insulators",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for each distinct point regarding mobility."
+            ]
+          },
+          {
+            "questionId": "q10",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Mention of outward direction",
+                "marks": 1
+              },
+              {
+                "criterion": "Mention of radiating from the charge",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for describing the radial outward nature."
+            ]
+          },
+          {
+            "questionId": "q11",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Mention of equal positive and negative charges",
+                "marks": 1
+              },
+              {
+                "criterion": "Clarification that net is zero but individual charges exist",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for addressing the existence of internal charges."
+            ]
+          },
+          {
+            "questionId": "q12",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Mention of Quantization",
+                "marks": 1
+              },
+              {
+                "criterion": "Mention of Conservation",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for each correct property listed."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q9",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point (Conductor mobility)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point (Insulator restriction)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "In conductors, electrons move freely. In insulators, electrons are bound to atoms."
+          },
+          {
+            "questionId": "q10",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Direction specified (Outward)",
+                "marks": 1
+              },
+              {
+                "criterion": "Origin specified (From positive charge)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Lines radiate outward from the positive charge."
+          },
+          {
+            "questionId": "q11",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Mention of internal charges (protons/electrons)",
+                "marks": 1
+              },
+              {
+                "criterion": "Explanation of cancellation (net zero)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Neutral objects have equal numbers of protons and electrons, so the net charge is zero."
+          },
+          {
+            "questionId": "q12",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Quantization mentioned",
+                "marks": 1
+              },
+              {
+                "criterion": "Conservation mentioned",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Charge is quantized (q=ne) and conserved in isolated systems."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea.",
+        "For MCQs, only the correct option receives marks."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Accept equivalent phrasing for conceptual answers."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers.",
+        "Ensure 'Quantization' and 'Conservation' are clearly distinguished in short answers."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts including Quantization, Conservation, Field Lines, and Material properties."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier MCQs to more demanding short answers.",
+        "Questions cover all four learning outcomes equally."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (3 MCQs, 5 VSA, 4 SA)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total (16 marks)."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to a valid section (section-theory-max-marks-70-time-3-hrs)."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

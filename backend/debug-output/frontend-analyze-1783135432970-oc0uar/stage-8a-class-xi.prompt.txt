@@ -1,0 +1,178 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8A - Class XI
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "units": [
+    {
+      "unit_id": "class-11-physics-u1",
+      "unit_name": "Unit 1",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Units and Measurements"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-physics-u2",
+      "unit_name": "Unit 2",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Motion in a Straight Line"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Motion in a Plane"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-physics-u3",
+      "unit_name": "Unit 3",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Laws of Motion"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-physics-u4",
+      "unit_name": "Unit 4",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Work, Energy and Power"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-physics-u5",
+      "unit_name": "Unit 5",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Motion of System of Particles and Rigid Body"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-11-physics-u1",
+      "unit_name": "Unit 1",
+      "chapter_id": "C1",
+      "chapter_name": "Units and Measurements"
+    },
+    {
+      "unit_id": "class-11-physics-u2",
+      "unit_name": "Unit 2",
+      "chapter_id": "C1",
+      "chapter_name": "Motion in a Straight Line"
+    },
+    {
+      "unit_id": "class-11-physics-u2",
+      "unit_name": "Unit 2",
+      "chapter_id": "C2",
+      "chapter_name": "Motion in a Plane"
+    },
+    {
+      "unit_id": "class-11-physics-u3",
+      "unit_name": "Unit 3",
+      "chapter_id": "C1",
+      "chapter_name": "Laws of Motion"
+    },
+    {
+      "unit_id": "class-11-physics-u4",
+      "unit_name": "Unit 4",
+      "chapter_id": "C1",
+      "chapter_name": "Work, Energy and Power"
+    },
+    {
+      "unit_id": "class-11-physics-u5",
+      "unit_name": "Unit 5",
+      "chapter_id": "C1",
+      "chapter_name": "Motion of System of Particles and Rigid Body"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C1",
+      "title": "Physical World and Measurement",
+      "description": "Competencies related to units, measurements, significant figures, uncertainty determination, dimensional analysis, and dimensions of physical quantities.",
+      "competencies": [
+        "Understand the need for measurement and systems of units including SI fundamental and derived units.",
+        "Apply rules for significant figures and determine uncertainty in results.",
+        "Perform dimensional analysis and apply it to physical problems."
+      ],
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Units and Measurements"
+    },
+    {
+      "code": "C2",
+      "title": "Kinematics - Motion in a Straight Line",
+      "description": "Competencies related to frame of reference, motion description using calculus concepts, velocity-time graphs, and uniformly accelerated motion.",
+      "competencies": [
+        "Define frame of reference and describe motion in a straight line."
+      ],
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Straight Line"
+    },
+    {
+      "code": "C3",
+      "title": "Kinematics - Motion in a Plane",
+      "description": "Competencies related to vector operations, resolution of vectors, and motion in two dimensions including projectile and circular motion.",
+      "competencies": [
+        "Distinguish between scalar and vector quantities and perform vector addition/subtraction/multiplication."
+      ],
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Plane"
+    },
+    {
+      "code": "C4",
+      "title": "Laws of Motion",
+      "description": "Competencies related to Newton's laws, momentum conservation, friction types, and dynamics of circular motion.",
+      "competencies": [
+        "Explain intuitive concepts of force, inertia, and Newton's three laws."
+      ],
+      "unit_name": "Unit III: Laws of Motion",
+      "chapter_name": "Laws of Motion"
+    },
+    {
+      "code": "C5",
+      "title": "Work, Energy and Power",
+      "description": "Competencies related to work done by forces, kinetic/potential energy, conservation laws, collisions, and power.",
+      "competencies": [
+        "Calculate work done by constant and variable forces."
+      ],
+      "unit_name": "Unit IV: Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power"
+    }
+  ]
+}

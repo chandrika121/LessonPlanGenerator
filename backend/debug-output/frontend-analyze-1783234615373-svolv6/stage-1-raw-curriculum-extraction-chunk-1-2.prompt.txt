@@ -1,0 +1,85 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+- Detected curriculum profile: cbse_unit_chapter_topic
+- Expected structure type: unit_chapter_topic
+- Preserve explicit chapter headings only when they are clearly present
+- Keep unit -> chapter -> topic hierarchy for chapter-organized board syllabi
+
+Return JSON only.
+Disable reasoning and answer directly.
+Extract curriculum hierarchy faithfully from the source.
+
+Capture:
+- document_metadata
+- classes
+- units
+- chapters
+- topics
+- subtopics
+- key concepts
+- marks attached to units or chapters when explicit
+
+Rules:
+- Keep output concise, but include all visible units, chapters, topics, and subtopics in this input
+- Preserve official syllabus wording as closely as possible; do not summarize topic lists into generic prose
+- If a unit is followed directly by topic lists, keep that as unit -> topics
+- Only create chapters when the source clearly contains explicit chapter-like structure inside a unit
+- Never convert a unit into a chapter just because no deeper chapter heading exists
+- Include practical and assessment section names only when they appear as units or chapter-like structural entries tied to the visible class/section
+- Never generate the complete curriculum content
+- Only capture class names, subject, unit names, chapter names, topic lists, subtopic lists, section labels, and explicit marks
+- If a chunk contains only partial information, return only what is visible in that chunk
+- Do not infer, estimate, explain, recommend, or analyze
+- Do not include any fields other than the requested schema
+- This is partial curriculum input for chunk 1 of 2 retry 1.2/2 retry 2.2/2; extract only what is present in this chunk
+
+Curriculum source text:
+# Page 5
+
+## PROJECTS
+Scientific investigations involving laboratory testing and collecting information from
+other sources.
+A few suggested Projects
+a) Study of the presence of oxalate ions in guava fruit at different stages of
+ripening.
+b) Study of quantity of casein present in different samples of milk.
+c) Preparation of soybean milk and its comparison with the natural milk with
+respect to curd formation, effect of temperature, etc.
+d) Study of the effect of Potassium Bisulphate as food preservative under various
+conditions (temperature, concentration, time, etc.)
+e) Study of digestion of starch by salivary amylase and effect of pH and
+temperature on it.
+f) Comparative study of the rate of fermentation of following materials: wheat
+flour, gram flour, potato juice, carrot juice, etc.
+g) Extraction of essential oils present in Saunf (aniseed), Ajwain (carom), Illaichi
+(cardamom).
+h) Study of common food adulterants in fat, oil, butter, sugar, turmeric power, chili
+powder and pepper.
+Note: Any other investigatory project, which involves about 10 periods of work,
+can be chosen with the approval of the teacher.
+Practical Examination for Visually Challenged Learners Classes XI and XII
+Evaluation Scheme Marks
+Identification/Familiarity with the apparatus 5
+Written test (based on given/prescribed practical’s) 10
+Practical Record 5
+Viva 10
+Total 30
+12

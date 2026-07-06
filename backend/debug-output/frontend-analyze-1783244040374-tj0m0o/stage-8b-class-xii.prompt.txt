@@ -1,0 +1,384 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8B - Class XII
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XII",
+  "units": [
+    {
+      "unit_id": "class-12-physics-u1",
+      "unit_name": "Unit–I Electrostatics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electric Charges and Fields"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Electrostatic Potential and Capacitance"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u2",
+      "unit_name": "Unit-II Current Electricity",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Current Electricity"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Moving Charges and Magnetism"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Magnetism and Matter"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electromagnetic Induction"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Alternating Current"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u5",
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electromagnetic Waves"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u6",
+      "unit_name": "Unit–VI Optics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Ray Optics and Optical Instruments"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Wave Optics"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u7",
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Dual Nature of Radiation and Matter"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u8",
+      "unit_name": "Unit–VIII Atoms and Nuclei",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Atoms"
+        },
+        {
+          "chapter_id": "C2",
+          "chapter_name": "Nuclei"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u9",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Materials, Devices and Simple Circuits"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-12-physics-u1",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_id": "C1",
+      "chapter_name": "Electric Charges and Fields"
+    },
+    {
+      "unit_id": "class-12-physics-u1",
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_id": "C2",
+      "chapter_name": "Electrostatic Potential and Capacitance"
+    },
+    {
+      "unit_id": "class-12-physics-u2",
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_id": "C1",
+      "chapter_name": "Current Electricity"
+    },
+    {
+      "unit_id": "class-12-physics-u3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_id": "C1",
+      "chapter_name": "Moving Charges and Magnetism"
+    },
+    {
+      "unit_id": "class-12-physics-u3",
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_id": "C2",
+      "chapter_name": "Magnetism and Matter"
+    },
+    {
+      "unit_id": "class-12-physics-u4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_id": "C1",
+      "chapter_name": "Electromagnetic Induction"
+    },
+    {
+      "unit_id": "class-12-physics-u4",
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_id": "C2",
+      "chapter_name": "Alternating Current"
+    },
+    {
+      "unit_id": "class-12-physics-u5",
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_id": "C1",
+      "chapter_name": "Electromagnetic Waves"
+    },
+    {
+      "unit_id": "class-12-physics-u6",
+      "unit_name": "Unit–VI Optics",
+      "chapter_id": "C1",
+      "chapter_name": "Ray Optics and Optical Instruments"
+    },
+    {
+      "unit_id": "class-12-physics-u6",
+      "unit_name": "Unit–VI Optics",
+      "chapter_id": "C2",
+      "chapter_name": "Wave Optics"
+    },
+    {
+      "unit_id": "class-12-physics-u7",
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_id": "C1",
+      "chapter_name": "Dual Nature of Radiation and Matter"
+    },
+    {
+      "unit_id": "class-12-physics-u8",
+      "unit_name": "Unit–VIII Atoms and Nuclei",
+      "chapter_id": "C1",
+      "chapter_name": "Atoms"
+    },
+    {
+      "unit_id": "class-12-physics-u8",
+      "unit_name": "Unit–VIII Atoms and Nuclei",
+      "chapter_id": "C2",
+      "chapter_name": "Nuclei"
+    },
+    {
+      "unit_id": "class-12-physics-u9",
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_id": "C1",
+      "chapter_name": "Materials, Devices and Simple Circuits"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C12-PHY-001",
+      "title": "Electrostatics and Capacitance",
+      "description": "Understanding electric charges, fields, potential, and capacitance.",
+      "competencies": [
+        "Identify and describe electric charges and fields",
+        "Analyze electrostatic potential and capacitance"
+      ],
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electric Charges and Fields"
+    },
+    {
+      "code": "C12-PHY-002",
+      "title": "Electrostatic Potential and Capacitance",
+      "description": "Application of electrostatic potential concepts and capacitor systems.",
+      "competencies": [
+        "Evaluate electrostatic potential in various configurations",
+        "Calculate capacitance and energy storage"
+      ],
+      "unit_name": "Unit–I Electrostatics",
+      "chapter_name": "Electrostatic Potential and Capacitance"
+    },
+    {
+      "code": "C12-PHY-003",
+      "title": "Current Electricity",
+      "description": "Fundamentals of electric current, resistance, and Ohm's law.",
+      "competencies": [
+        "Explain the flow of electric current",
+        "Apply Ohm's law to circuit analysis"
+      ],
+      "unit_name": "Unit-II Current Electricity",
+      "chapter_name": "Current Electricity"
+    },
+    {
+      "code": "C12-PHY-004",
+      "title": "Magnetic Effects of Current and Magnetism",
+      "description": "Interaction between moving charges, currents, and magnetic fields.",
+      "competencies": [
+        "Determine magnetic effects of moving charges",
+        "Analyze magnetism in matter"
+      ],
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Moving Charges and Magnetism"
+    },
+    {
+      "code": "C12-PHY-005",
+      "title": "Magnetism and Matter",
+      "description": "Properties of magnetic materials and their behavior in fields.",
+      "competencies": [
+        "Classify magnetic materials based on properties",
+        "Describe magnetization processes"
+      ],
+      "unit_name": "Unit-III Magnetic Effects of Current and Magnetism",
+      "chapter_name": "Magnetism and Matter"
+    },
+    {
+      "code": "C12-PHY-006",
+      "title": "Electromagnetic Induction and AC",
+      "description": "Induction phenomena and alternating current circuits.",
+      "competencies": [
+        "Explain electromagnetic induction principles",
+        "Analyze alternating current behavior"
+      ],
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Electromagnetic Induction"
+    },
+    {
+      "code": "C12-PHY-007",
+      "title": "Alternating Current Systems",
+      "description": "Specific applications and characteristics of AC circuits.",
+      "competencies": [
+        "Evaluate AC circuit parameters",
+        "Understand resonance in AC circuits"
+      ],
+      "unit_name": "Unit-IV Electromagnetic Induction and Alternating Currents",
+      "chapter_name": "Alternating Current"
+    },
+    {
+      "code": "C12-PHY-008",
+      "title": "Electromagnetic Waves",
+      "description": "Generation, propagation, and properties of electromagnetic waves.",
+      "competencies": [
+        "Describe the nature of electromagnetic waves",
+        "Analyze wave propagation characteristics"
+      ],
+      "unit_name": "Unit–V Electromagnetic Waves",
+      "chapter_name": "Electromagnetic Waves"
+    },
+    {
+      "code": "C12-PHY-009",
+      "title": "Ray Optics and Optical Instruments",
+      "description": "Reflection, refraction, and optical instrument design.",
+      "competencies": [
+        "Apply laws of reflection and refraction",
+        "Design and analyze optical instruments"
+      ],
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Ray Optics and Optical Instruments"
+    },
+    {
+      "code": "C12-PHY-010",
+      "title": "Wave Optics",
+      "description": "Interference, diffraction, and polarization of light.",
+      "competencies": [
+        "Explain wave nature of light",
+        "Analyze interference and diffraction patterns"
+      ],
+      "unit_name": "Unit–VI Optics",
+      "chapter_name": "Wave Optics"
+    },
+    {
+      "code": "C12-PHY-011",
+      "title": "Dual Nature of Radiation and Matter",
+      "description": "Photoelectric effect and wave-particle duality.",
+      "competencies": [
+        "Explain the photoelectric effect",
+        "Analyze matter waves"
+      ],
+      "unit_name": "Unit–VII Dual Nature of Radiation and Matter",
+      "chapter_name": "Dual Nature of Radiation and Matter"
+    },
+    {
+      "code": "C12-PHY-012",
+      "title": "Atoms and Nuclei",
+      "description": "Atomic structure and nuclear properties.",
+      "competencies": [
+        "Describe atomic models",
+        "Analyze nuclear stability and reactions"
+      ],
+      "unit_name": "Unit–VIII Atoms and Nuclei",
+      "chapter_name": "Atoms"
+    },
+    {
+      "code": "C12-PHY-013",
+      "title": "Nuclear Physics",
+      "description": "Specific nuclear phenomena and applications.",
+      "competencies": [
+        "Explain nuclear decay processes",
+        "Analyze binding energy"
+      ],
+      "unit_name": "Unit–VIII Atoms and Nuclei",
+      "chapter_name": "Nuclei"
+    },
+    {
+      "code": "C12-PHY-014",
+      "title": "Electronic Devices",
+      "description": "Semiconductor materials, devices, and circuits.",
+      "competencies": [
+        "Identify semiconductor materials",
+        "Analyze simple electronic circuits"
+      ],
+      "unit_name": "Unit–IX Electronic Devices",
+      "chapter_name": "Materials, Devices and Simple Circuits"
+    }
+  ]
+}

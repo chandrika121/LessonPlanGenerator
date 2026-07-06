@@ -1,0 +1,379 @@
+{
+  "assessment": {
+    "assessmentMeta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 14,
+      "totalQuestions": 11,
+      "durationMinutes": 15,
+      "preferredDifficulty": "Balanced",
+      "language": "English",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 5,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 3,
+          "marksEach": 2
+        }
+      ],
+      "instructions": [
+        "Answer all questions based only on the concepts taught in this session.",
+        "For MCQs, select the single best option. For descriptive answers, be concise and precise."
+      ]
+    },
+    "blueprint": {
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will be able to define a solution as a homogeneous mixture.",
+          "questionRefs": ["q1", "q2"]
+        },
+        {
+          "outcome": "Students will correctly identify the solute and solvent in common examples.",
+          "questionRefs": ["q3", "q4", "q5"]
+        },
+        {
+          "outcome": "Students will distinguish between solid, liquid, and gaseous solutions.",
+          "questionRefs": ["q6", "q7", "q8", "q9", "q10", "q11"]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 45,
+        "medium": 36,
+        "hard": 19
+      },
+      "bloomsDistribution": {
+        "recall": 27,
+        "understanding": 45,
+        "application": 18,
+        "analysis": 10,
+        "evaluation": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 5,
+        "shortAnswer": 3
+      },
+      "timeAllocation": [
+        {
+          "section": "MCQs",
+          "minutes": 4
+        },
+        {
+          "section": "Very Short Answers",
+          "minutes": 6
+        },
+        {
+          "section": "Short Answers",
+          "minutes": 5
+        }
+      ]
+    },
+    "mcq": [
+      {
+        "id": "q1",
+        "questionSubtype": "veryShortAnswer",
+        "question": "What is the term for a mixture that looks uniform throughout and does not separate on standing?",
+        "answer": "Solution (or Homogeneous Mixture)",
+        "expectedLength": "One word or short phrase",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Solution' or 'Homogeneous mixture'."
+        ],
+        "learningOutcomeIds": ["LO1"],
+        "topicCoverage": ["Definition of Solution"],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q2",
+        "questionSubtype": "veryShortAnswer",
+        "question": "In a sugar solution, which component is the solute?",
+        "answer": "Sugar",
+        "expectedLength": "One word",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Sugar'."
+        ],
+        "learningOutcomeIds": ["LO2"],
+        "topicCoverage": ["Solute and Solvent Identification"],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q3",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Which component determines the physical state (solid, liquid, or gas) of a solution?",
+        "answer": "Solvent",
+        "expectedLength": "One word",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Solvent'."
+        ],
+        "learningOutcomeIds": ["LO2"],
+        "topicCoverage": ["Properties of Solutions"],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q4",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Name one example of a solid solution.",
+        "answer": "Brass (or Alloy, Gold jewelry)",
+        "expectedLength": "One word or short phrase",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for any valid solid solution like 'Brass', 'Alloy', 'Gold'.",
+          "Do not accept liquid/gas examples."
+        ],
+        "learningOutcomeIds": ["LO3"],
+        "topicCoverage": ["Types of Solutions - Solid"],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q5",
+        "questionSubtype": "veryShortAnswer",
+        "question": "Classify 'Air' as a homogeneous or heterogeneous mixture.",
+        "answer": "Homogeneous (or Solution)",
+        "expectedLength": "One word",
+        "marks": 1,
+        "rubric": [
+          "Award 1 mark for 'Homogeneous'."
+        ],
+        "learningOutcomeIds": ["LO3"],
+        "topicCoverage": ["Types of Solutions - Gaseous"],
+        "difficulty": "easy",
+        "bloomsLevel": "understanding"
+      },
+      {
+        "id": "q6",
+        "questionSubtype": "mcq",
+        "question": "Which of the following is an example of a solid solute dissolved in a liquid solvent?",
+        "options": [
+          "A. Air",
+          "B. Salt water",
+          "C. Brass",
+          "D. Soda water"
+        ],
+        "answer": "B. Salt water",
+        "explanation": "Salt (solid) dissolves in Water (liquid). Air is a gaseous solution, and Brass is a solid-solid mixture.",
+        "marks": 1,
+        "learningOutcomeIds": ["LO3"],
+        "topicCoverage": ["Types of Solutions - Liquid"],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q7",
+        "questionSubtype": "mcq",
+        "question": "Why is sand mixed with water NOT considered a solution?",
+        "options": [
+          "A. Because it contains two substances.",
+          "B. Because the particles settle down and are visible (heterogeneous).",
+          "C. Because sugar is not present in it.",
+          "D. Because water cannot dissolve sand."
+        ],
+        "answer": "B. Because the particles settle down and are visible (heterogeneous).",
+        "explanation": "A solution must be homogeneous. Sand in water separates on standing, making it a heterogeneous mixture.",
+        "marks": 1,
+        "learningOutcomeIds": ["LO1"],
+        "topicCoverage": ["Solution vs Mixture Distinction"],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q8",
+        "questionSubtype": "mcq",
+        "question": "In a cup of coffee with sugar, which component acts as the solvent?",
+        "options": [
+          "A. Sugar",
+          "B. Coffee powder",
+          "C. Water (or Milk)",
+          "D. The Cup"
+        ],
+        "answer": "C. Water (or Milk)",
+        "explanation": "The solvent is the substance doing the dissolving and determines the state of the solution.",
+        "marks": 1,
+        "learningOutcomeIds": ["LO2"],
+        "topicCoverage": ["Solute and Solvent Identification"],
+        "difficulty": "medium",
+        "bloomsLevel": "application"
+      },
+      {
+        "id": "q9",
+        "questionSubtype": "shortAnswer",
+        "question": "Define 'Solution' in one sentence.",
+        "answer": "A solution is a homogeneous mixture of two or more substances where the components are uniformly distributed and do not separate on standing.",
+        "expectedLength": "1-2 sentences defining key terms (homogeneous, uniform).",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly identifying it as a 'homogeneous mixture'.",
+          "1 mark for mentioning that components are uniformly distributed or do not separate."
+        ],
+        "learningOutcomeIds": ["LO1"],
+        "topicCoverage": ["Definition of Solution"],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q10",
+        "questionSubtype": "shortAnswer",
+        "question": "Classify the following as homogeneous or heterogeneous: (i) Salt water, (ii) Sand in water.",
+        "answer": "(i) Homogeneous; (ii) Heterogeneous. Explanation: Salt water is uniform throughout, while sand settles and remains visible.",
+        "expectedLength": "Classification with brief reasoning for each.",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly classifying both as Homogeneous/Heterogeneous respectively.",
+          "1 mark for providing a correct reason (e.g., uniformity vs settling/visibility)."
+        ],
+        "learningOutcomeIds": ["LO3"],
+        "topicCoverage": ["Types of Solutions - Classification"],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q11",
+        "questionSubtype": "shortAnswer",
+        "question": "Explain the difference between a solute and a solvent, giving one example for each from salt water.",
+        "answer": "Solute is the substance dissolved (Salt), present in smaller quantity. Solvent is the medium doing the dissolving (Water), determining the state of solution.",
+        "expectedLength": "Clear distinction with specific examples.",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly defining solute and identifying it as 'Salt' in salt water.",
+          "1 mark for correctly defining solvent (or mentioning larger quantity/state determination) and identifying it as 'Water'."
+        ],
+        "learningOutcomeIds": ["LO2"],
+        "topicCoverage": ["Solute and Solvent Identification"],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "shortAnswer": [
+      {
+        "id": "q9",
+        "questionSubtype": "shortAnswer",
+        "question": "Define 'Solution' in one sentence.",
+        "answer": "A solution is a homogeneous mixture of two or more substances where the components are uniformly distributed and do not separate on standing.",
+        "expectedLength": "1-2 sentences defining key terms (homogeneous, uniform).",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly identifying it as a 'homogeneous mixture'.",
+          "1 mark for mentioning that components are uniformly distributed or do not separate."
+        ],
+        "learningOutcomeIds": ["LO1"],
+        "topicCoverage": ["Definition of Solution"],
+        "difficulty": "easy",
+        "bloomsLevel": "recall"
+      },
+      {
+        "id": "q10",
+        "questionSubtype": "shortAnswer",
+        "question": "Classify the following as homogeneous or heterogeneous: (i) Salt water, (ii) Sand in water.",
+        "answer": "(i) Homogeneous; (ii) Heterogeneous. Explanation: Salt water is uniform throughout, while sand settles and remains visible.",
+        "expectedLength": "Classification with brief reasoning for each.",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly classifying both as Homogeneous/Heterogeneous respectively.",
+          "1 mark for providing a correct reason (e.g., uniformity vs settling/visibility)."
+        ],
+        "learningOutcomeIds": ["LO3"],
+        "topicCoverage": ["Types of Solutions - Classification"],
+        "difficulty": "medium",
+        "bloomsLevel": "analysis"
+      },
+      {
+        "id": "q11",
+        "questionSubtype": "shortAnswer",
+        "question": "Explain the difference between a solute and a solvent, giving one example for each from salt water.",
+        "answer": "Solute is the substance dissolved (Salt), present in smaller quantity. Solvent is the medium doing the dissolving (Water), determining the state of solution.",
+        "expectedLength": "Clear distinction with specific examples.",
+        "marks": 2,
+        "rubric": [
+          "1 mark for correctly defining solute and identifying it as 'Salt' in salt water.",
+          "1 mark for correctly defining solvent (or mentioning larger quantity/state determination) and identifying it as 'Water'."
+        ],
+        "learningOutcomeIds": ["LO2"],
+        "topicCoverage": ["Solute and Solvent Identification"],
+        "difficulty": "medium",
+        "bloomsLevel": "understanding"
+      }
+    ],
+    "longAnswer": [],
+    "answerKey": {
+      "mcq": [
+        {
+          "id": "q6",
+          "answer": "B. Salt water",
+          "explanation": "Salt (solid) dissolves in Water (liquid). Air is a gaseous solution, and Brass is a solid-solid mixture.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q7",
+          "answer": "B. Because the particles settle down and are visible (heterogeneous).",
+          "explanation": "A solution must be homogeneous. Sand in water separates on standing, making it a heterogeneous mixture.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        },
+        {
+          "id": "q8",
+          "answer": "C. Water (or Milk)",
+          "explanation": "The solvent is the substance doing the dissolving and determines the state of the solution.",
+          "marks": 1,
+          "questionSubtype": "mcq"
+        }
+      ],
+      "shortAnswer": [
+        {
+          "id": "q9",
+          "answer": "A solution is a homogeneous mixture of two or more substances where the components are uniformly distributed and do not separate on standing.",
+          "rubric": [
+            "1 mark for correctly identifying it as a 'homogeneous mixture'.",
+            "1 mark for mentioning that components are uniformly distributed or do not separate."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q10",
+          "answer": "(i) Homogeneous; (ii) Heterogeneous. Explanation: Salt water is uniform throughout, while sand settles and remains visible.",
+          "rubric": [
+            "1 mark for correctly classifying both as Homogeneous/Heterogeneous respectively.",
+            "1 mark for providing a correct reason (e.g., uniformity vs settling/visibility)."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        },
+        {
+          "id": "q11",
+          "answer": "Solute is the substance dissolved (Salt), present in smaller quantity. Solvent is the medium doing the dissolving (Water), determining the state of solution.",
+          "rubric": [
+            "1 mark for correctly defining solute and identifying it as 'Salt' in salt water.",
+            "1 mark for correctly defining solvent (or mentioning larger quantity/state determination) and identifying it as 'Water'."
+          ],
+          "marks": 2,
+          "questionSubtype": "shortAnswer"
+        }
+      ],
+      "longAnswer": [],
+      "generalMarkingGuidance": [
+        "Award marks point-wise for each valid idea.",
+        "Accept equivalent scientific wording if the meaning is correct (e.g., 'uniform' vs 'homogeneous').",
+        "For short answers, ensure examples are specific to salt water or clearly stated."
+      ]
+    }
+  }
+}

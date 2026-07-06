@@ -1,0 +1,225 @@
+Stage 3: Node Enrichment - Class XII - PHYSICS
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XII",
+  "subject": "PHYSICS",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U4",
+      "unit_name": "Activities",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "To study effect of intensity of light (by varying distance of the source) on an LDR.",
+        "To observe refraction and lateral deviation of a beam of light incident obliquely on a glass slab.",
+        "To observe diffraction of light due to a thin slit.",
+        "To study the nature and size of the image formed by a (i) convex lens, or (ii) concave mirror, on a screen by using a candle and a screen (for different distances of the candle from the lens/mirror).",
+        "To obtain a lens combination with the specified focal length by using two lenses from the given set of lenses."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Activities",
+          "source_chapter_name": "Activities",
+          "source_heading": "Activities",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Suggested Investigatory Projects",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "To study various factors on which the internal resistance/EMF of a cell depends.",
+        "To study the variations in current flowing in a circuit containing an LDR because of a variation in (a) the power of the incandescent lamp, used to 'illuminate' the LDR (keeping all the lamps at a fixed distance). (b) the distance of an incandescent lamp (of fixed power) used to 'illuminate' the LDR.",
+        "To find the refractive indices of (a) water (b) oil (transparent) using a plane mirror, an equiconvex lens (made from a glass of known refractive index) and an adjustable object needle.",
+        "To investigate the relation between the ratio of (i) output and input voltage and (ii) number of turns in the secondary coil and primary coil of a self-designed transformer.",
+        "To investigate the dependence of the angle of deviation on the angle of incidence using a hollow prism filled one by one, with different transparent fluids.",
+        "To estimate the charge induced on each one of the two identical Styrofoam (or pith) balls suspended in a vertical plane by making use of Coulomb's law.",
+        "To study the factor on which the self-inductance of a coil depends by observing the effect of this coil, when put in series with a resistor/(bulb) in a circuit fed up by an A.C. source of adjustable frequency.",
+        "To study the earth's magnetic field using a compass needle -bar magnet by plotting magnetic field lines and tangent galvanometer."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Suggested Investigatory Projects",
+          "source_chapter_name": "Suggested Investigatory Projects",
+          "source_heading": "Suggested Investigatory Projects",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XII",
+  "subject": "PHYSICS",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U4",
+      "unit_name": "Activities",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "To study effect of intensity of light (by varying distance of the source) on an LDR.",
+        "To observe refraction and lateral deviation of a beam of light incident obliquely on a glass slab.",
+        "To observe diffraction of light due to a thin slit.",
+        "To study the nature and size of the image formed by a (i) convex lens, or (ii) concave mirror, on a screen by using a candle and a screen (for different distances of the candle from the lens/mirror).",
+        "To obtain a lens combination with the specified focal length by using two lenses from the given set of lenses."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Activities",
+          "source_chapter_name": "Activities",
+          "source_heading": "Activities",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "unit_name": "Suggested Investigatory Projects",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "To study various factors on which the internal resistance/EMF of a cell depends.",
+        "To study the variations in current flowing in a circuit containing an LDR because of a variation in (a) the power of the incandescent lamp, used to 'illuminate' the LDR (keeping all the lamps at a fixed distance). (b) the distance of an incandescent lamp (of fixed power) used to 'illuminate' the LDR.",
+        "To find the refractive indices of (a) water (b) oil (transparent) using a plane mirror, an equiconvex lens (made from a glass of known refractive index) and an adjustable object needle.",
+        "To investigate the relation between the ratio of (i) output and input voltage and (ii) number of turns in the secondary coil and primary coil of a self-designed transformer.",
+        "To investigate the dependence of the angle of deviation on the angle of incidence using a hollow prism filled one by one, with different transparent fluids.",
+        "To estimate the charge induced on each one of the two identical Styrofoam (or pith) balls suspended in a vertical plane by making use of Coulomb's law.",
+        "To study the factor on which the self-inductance of a coil depends by observing the effect of this coil, when put in series with a resistor/(bulb) in a circuit fed up by an A.C. source of adjustable frequency.",
+        "To study the earth's magnetic field using a compass needle -bar magnet by plotting magnetic field lines and tangent galvanometer."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Suggested Investigatory Projects",
+          "source_chapter_name": "Suggested Investigatory Projects",
+          "source_heading": "Suggested Investigatory Projects",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+# Page 1
+
+## CLASS XII (2026-27)
+## PHYSICS (THEORY)
+Time: 3 hrs. Max Marks: 70
+## UNIT CHAPTERS MARKS
+## Unit–I Electrostatics
+## Chapter–1: Electric Charges and Fields
+## Chapter–2: Electrostatic Potential and Capacitance 16
+## Unit-II Current Electricity
+## Chapter–3: Current Electricity
+## Unit-III Magnetic Effects of Current and Magnetism
+## Chapter–4: Moving Charges and Magnetism
+## Chapter–5: Magnetism and Matter 17
+## Unit-IV Electromagnetic Induction and Alternating Currents
+## Chapter–6: Electromagnetic Induction
+## Chapter–7: Alternating Current
+---
+
+# Page 2
+
+## Class XII
+- A. Items for Identification/ familiarity with the apparatus for assessment in
+practicals (All experiments)
+Meter scale, general shape of the voltmeter/ammeter, battery/power supply, connecting
+wires, standard resistances, connecting wires, voltmeter/ammeter, meter bridge, screw
+gauge, jockey Galvanometer, Resistance Box, standard Resistance, connecting wires,
+Potentiometer, jockey, Galvanometer, Lechlanche cell, Daniell cell [simple distinction
+between the two vis-à-vis their outer (glass and copper) containers], rheostat connecting
+wires, Galvanometer, resistance box, Plug-in and tapping keys, connecting wires
+battery/power supply, Diode, Resistor (Wire-wound or carbon ones with two wires
+connected to two ends), capacitors (one or two types), Inductors, Simple
+electric/electronic bell, battery/power supply, Plug- in and tapping keys, Convex lens,
+concave lens, convex mirror, concave mirror, Core/hollow wooden cylinder, insulated
+wire, ferromagnetic rod, Transformer core, insulated wire.
+- B. List of Practicals
+Note: The above practicals may be carried out in an experiential manner rather than recording
+observations.
+Prescribed Books:
+- 1. Physics, Class XI, Part -I and II, Published by NCERT.
+- 2. Physics, Class XII, Part -I and II, Published by NCERT.
+- 3. Laboratory Manual of Physics for class XII Published by NCERT.
+- 4. The list of other related books and manuals brought out by NCERT (consider
+multimedia also).
+Note:
+The content indicated in NCERT textbooks as excluded for the year 2026-27 is not to
+be tested by schools and will not be assessed in the Board examinations 2026-27.
+
+---
+
+# Page 4
+
+## Unit I: Electrostatics
+## Chapter–1: Electric Charges and Fields
+Electric charges, Conservation of charge, Coulomb's law-force between two- point charges,
+forces between multiple charges; superposition principle and continuous charge distribution.

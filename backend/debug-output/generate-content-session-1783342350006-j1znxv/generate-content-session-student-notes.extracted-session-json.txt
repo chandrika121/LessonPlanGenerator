@@ -1,0 +1,373 @@
+{
+  "studentLessonNotes": {
+    "title": "Number System: Real Numbers and Their Representation",
+    "sessionOverview": "This session explores the Number System, focusing on rational and irrational numbers, their decimal expansions, and how to represent them geometrically on a number line.",
+    "introduction": "Welcome to the world of Numbers! You already know about natural numbers (1, 2, 3...) and integers. Today, we will dive deeper into Rational and Irrational numbers, understand their patterns in decimals, and learn how to 'see' them on a number line using geometry.",
+    "learningObjectives": [
+      "Distinguish between rational and irrational numbers based on decimal expansions.",
+      "Represent square roots of positive real numbers geometrically on the number line.",
+      "Apply the Pythagorean theorem to construct lengths like √2, √3, etc."
+    ],
+    "quickRecall": [
+      "A rational number can be written as p/q where q ≠ 0.",
+      "The decimal expansion of a rational number is either terminating or non-terminating repeating."
+    ],
+    "easyToRemember": [
+      "Terminating or Repeating = Rational; Non-Terminating Non-Repeating = Irrational."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Rational vs. Irrational Numbers",
+        "headers": [
+          "Feature",
+          "Rational Numbers",
+          "Irrational Numbers"
+        ],
+        "rows": [
+          [
+            "Decimal Expansion",
+            "Terminating or Repeating (e.g., 0.5, 0.333...)",
+            "Non-Terminating and Non-Repeating (e.g., √2 ≈ 1.414...)"
+          ],
+          [
+            "Representation",
+            "Can be written as p/q (q ≠ 0)",
+            "Cannot be written as p/q"
+          ],
+          [
+            "Examples",
+            "1/2, -3, 0.75",
+            "√2, √3, π"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Pythagorean Theorem",
+        "formula": {
+          "text": "Hypotenuse squared equals sum of squares of other two sides",
+          "latex": "c^2 = a^2 + b^2"
+        },
+        "meaning": "In a right-angled triangle, the square of the hypotenuse is equal to the sum of the squares of the base and height.",
+        "whenToUse": "When finding the length of a side in a right triangle or constructing a specific root length."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "sqrtNumberLineConstruction",
+        "template": "sqrtNumberLineConstruction",
+        "params": {
+          "baseLength": "1 unit",
+          "height": "1 unit",
+          "roots": [
+            2,
+            3
+          ],
+          "highlightRoot": 2
+        },
+        "title": "Constructing √2 on the Number Line",
+        "caption": "Step-by-step geometric construction of square root 2",
+        "points": [
+          {
+            "id": "O",
+            "x": 50,
+            "y": 150,
+            "label": "O"
+          },
+          {
+            "id": "A",
+            "x": 150,
+            "y": 150,
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "x": 150,
+            "y": 50,
+            "label": "B"
+          }
+        ],
+        "lines": [
+          {
+            "from": "O",
+            "to": "A",
+            "label": "Base (1 unit)"
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "Height (1 unit)"
+          },
+          {
+            "from": "O",
+            "to": "B",
+            "label": "Hypotenuse (√2)",
+            "highlight": true
+          }
+        ],
+        "arcs": [
+          {
+            "center": "O",
+            "radius": "OB",
+            "startAngle": 0,
+            "endAngle": -90,
+            "label": "Arc to mark √2"
+          }
+        ],
+        "labels": [
+          {
+            "text": "1 unit",
+            "x": 100,
+            "y": 165
+          },
+          {
+            "text": "90°",
+            "x": 145,
+            "y": 145
+          }
+        ],
+        "measurements": []
+      }
+    ],
+    "proofSteps": [
+      "To represent √n on the number line, construct a right triangle with base n-1 and height 1.",
+      "The hypotenuse will have length √n by the Pythagorean theorem: (√(n-1))^2 + 1^2 = n."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Thinking all non-terminating decimals are irrational.",
+        "correction": "Check if the decimal repeats. If it repeats (e.g., 0.333...), it is rational.",
+        "example": "1/3 = 0.333... is rational, but √2 = 1.414... is irrational."
+      },
+      {
+        "mistake": "Forgetting to use the hypotenuse as the radius when marking roots on the number line.",
+        "correction": "Always swing an arc from the origin using the hypotenuse length to mark the root.",
+        "example": "To mark √2, the hypotenuse must be the radius of the arc starting from 0."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "Rational and Irrational Numbers",
+        "explanation": "Numbers are divided into two main groups based on their decimal expansion. Rational numbers have decimals that either stop (terminate) or repeat a pattern. Irrational numbers go on forever without repeating.",
+        "keyPoints": [
+          "Terminating decimals are rational.",
+          "Non-terminating repeating decimals are rational.",
+          "Non-terminating non-repeating decimals are irrational."
+        ],
+        "examples": [
+          "0.5 is rational (terminates).",
+          "1/3 = 0.333... is rational (repeats).",
+          "√2 ≈ 1.414213... is irrational (never repeats)."
+        ],
+        "whyItMatters": "Understanding this distinction helps in simplifying expressions and solving equations accurately.",
+        "terminology": [
+          "Terminating Decimal",
+          "Recurring Decimal",
+          "Irrational Number"
+        ],
+        "detailedExplanation": "A number is rational if it can be expressed as a fraction p/q. If the division of p by q results in a remainder of 0, it terminates. If the remainder repeats, the decimal repeats. If neither happens, it's irrational.",
+        "observedIn": [
+          "Calculating square roots",
+          "Converting fractions to decimals"
+        ],
+        "visualSupport": [
+          "Number line showing rational points vs gaps for irrationals"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "π (pi) is a famous irrational number."
+        ],
+        "memoryTechniques": [
+          "Rational = Ratio (p/q). Irrational = No Ratio."
+        ],
+        "conceptSummary": [
+          "Rational numbers have patterns; irrational numbers do not."
+        ]
+      },
+      {
+        "heading": "Geometric Representation of Square Roots",
+        "explanation": "We can draw square roots on a number line using right-angled triangles. This method uses the Pythagorean theorem to find lengths that cannot be written as simple fractions.",
+        "keyPoints": [
+          "√2 is the hypotenuse of a triangle with sides 1 and 1.",
+          "√3 is the hypotenuse of a triangle with base √2 and height 1.",
+          "Each new root builds on the previous one."
+        ],
+        "examples": [
+          "Constructing √2: Base=1, Height=1 → Hypotenuse=√2.",
+          "Constructing √3: Base=√2, Height=1 → Hypotenuse=√3."
+        ],
+        "whyItMatters": "It proves that irrational numbers exist and have a specific location on the number line, even if we can't write them as exact fractions.",
+        "terminology": [
+          "Hypotenuse",
+          "Geometric Construction"
+        ],
+        "detailedExplanation": "By drawing a right triangle where one side is 1 unit and the other is the previous root (e.g., √2), the new hypotenuse becomes the next root (e.g., √3). This creates a spiral of roots.",
+        "observedIn": [
+          "Math competitions",
+          "Geometry proofs"
+        ],
+        "visualSupport": [
+          "diagram-1 showing the construction of √2"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "The arc must be drawn from the origin (0) to mark the root on the number line."
+        ],
+        "memoryTechniques": [
+          "Base is previous root, Height is 1, Hypotenuse is new root."
+        ],
+        "conceptSummary": [
+          "Use right triangles to 'build' square roots step-by-step."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Rational Number",
+        "definition": "A number that can be expressed in the form p/q where p and q are integers and q is not zero."
+      },
+      {
+        "term": "Irrational Number",
+        "definition": "A real number that cannot be written as a simple fraction; its decimal expansion is non-terminating and non-repeating."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Representing √2 on the Number Line",
+        "problem": "Construct √2 on the number line using geometric methods.",
+        "diagramRef": "diagram-1",
+        "given": [
+          "Base length = 1 unit",
+          "Height = 1 unit"
+        ],
+        "formula": [
+          "c^2 = a^2 + b^2"
+        ],
+        "steps": [
+          "Draw a number line and mark point O at 0 and A at 1.",
+          "Draw a perpendicular line at A with length 1 unit to point B.",
+          "Join O to B to form the hypotenuse."
+        ],
+        "solutionSteps": [
+          {
+            "text": "Apply Pythagorean theorem",
+            "displayLatex": "OB^2 = OA^2 + AB^2"
+          },
+          {
+            "text": "Substitute values (OA=1, AB=1)",
+            "displayLatex": "OB^2 = 1^2 + 1^2 = 2"
+          },
+          {
+            "text": "Find length of OB",
+            "displayLatex": "OB = \\sqrt{2}"
+          }
+        ],
+        "reasoning": [
+          "Since the triangle is right-angled, the hypotenuse represents the square root of the sum of squares."
+        ],
+        "explanation": "We construct a right triangle with legs of length 1. The hypotenuse will have a length of √2. We then use a compass to swing an arc from O with radius OB to mark √2 on the number line.",
+        "finalAnswer": {
+          "text": "The point marked on the number line represents √2",
+          "displayLatex": "\\sqrt{2}"
+        },
+        "latex": "c = \\sqrt{a^2 + b^2}",
+        "displayLatex": "\\sqrt{1^2 + 1^2} = \\sqrt{2}"
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Rational: p/q form",
+        "Irrational: Non-terminating non-repeating"
+      ],
+      "formulas": [
+        "c^2 = a^2 + b^2"
+      ],
+      "facts": [
+        "√2 ≈ 1.414",
+        "√3 ≈ 1.732"
+      ],
+      "keywords": [
+        "Decimal Expansion",
+        "Hypotenuse",
+        "Number Line"
+      ],
+      "conceptMap": [
+        "Rational/Irrational -> Decimal Types -> Geometric Construction"
+      ],
+      "quickRecap": [
+        "Terminating/Repeating = Rational; Non-Terminating Non-Repeating = Irrational."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Is 0.123456789... (continuing without pattern) rational or irrational?",
+      "What is the decimal expansion of 1/7?",
+      "If a right triangle has sides 3 and 4, what is the hypotenuse?"
+    ],
+    "quickSummary": [
+      "Rational numbers have repeating decimals; irrational numbers do not. We can draw square roots using right triangles."
+    ],
+    "keyTerms": [
+      "Rational",
+      "Irrational",
+      "Square Root",
+      "Hypotenuse"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A number with a non-terminating and non-repeating decimal expansion is called a ________ number.",
+        "answer": "irrational"
+      },
+      {
+        "prompt": "The hypotenuse of a right triangle with sides 1 and 1 is ________. ",
+        "answer": "\\sqrt{2}"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is an irrational number?",
+        "options": [
+          "A. 0.5",
+          "B. 1/3",
+          "C. √2",
+          "D. 0.75"
+        ],
+        "answer": "C. √2"
+      },
+      {
+        "question": "The decimal expansion of a rational number is:",
+        "options": [
+          "A. Always terminating",
+          "B. Always non-terminating repeating",
+          "C. Terminating or non-terminating repeating",
+          "D. Non-terminating non-repeating"
+        ],
+        "answer": "C. Terminating or non-terminating repeating"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "Is 0.333... rational or irrational?",
+        "answer": "Rational (it is 1/3)."
+      },
+      {
+        "question": "What is the length of the hypotenuse if base=2 and height=1?",
+        "answer": "\\sqrt{5}"
+      }
+    ],
+    "didYouKnow": [
+      "The number √2 was the first irrational number discovered by the ancient Greeks!"
+    ],
+    "summary": [
+      "We learned to classify numbers by their decimals and construct square roots geometrically."
+    ],
+    "quickRevision": [
+      "Rational = p/q; Irrational = No pattern in decimals."
+    ],
+    "rememberPoints": [
+      "√2 comes from a 1-1 triangle.",
+      "Arc radius = Hypotenuse length."
+    ]
+  }
+}

@@ -1,0 +1,180 @@
+# Page 1
+
+PHYSICS (Code No. 042)
+## COURSE STRUCTURE
+## Class XI - 2026-27 (Theory)
+Time: 3 hrs. Max Marks: 70
+## UNIT CHAPTERS MARKS
+## Unit–I Physical World and Measurement
+## Chapter–1: Units and Measurements
+## Unit-II Kinematics
+## Chapter–2: Motion in a Straight Line
+23
+## Chapter–3: Motion in a Plane
+## Unit–III Laws of Motion
+## Chapter–4: Laws of Motion
+## Unit–IV Work, Energy and Power
+## Chapter–5: Work, Energy and Power
+## Unit–V Motion of System of Particles and Rigid Body
+17
+## Chapter–6: System of Particles and Rotational Motion
+## Unit-VI Gravitation
+## Chapter–7: Gravitation
+## Unit–VII Properties of Bulk Matter
+## Chapter–8: Mechanical Properties of Solids
+## Chapter–9: Mechanical Properties of Fluids
+## Chapter–10: Thermal Properties of Matter
+## Unit–VIII Thermodynamics
+20
+## Chapter–11: Thermodynamics
+## Unit–IX Behaviour of Perfect Gases and Kinetic Theory of Gases
+## Chapter–12: Kinetic Theory
+## Unit–X Oscillations and Waves
+10
+## Chapter–13: Oscillations
+## Chapter–14: Waves
+Total 70
+
+---
+
+# Page 2
+
+## Unit I: Physical World and Measurements
+## Chapter–1: Units and Measurements
+Need for measurement: Units of measurement; systems of units; SI units, fundamental and
+derived units. significant figures, Determining the uncertainty in result . Dimensions of
+physical quantities, dimensional analysis and its applications.
+## Unit II: Kinematics
+## Chapter–2: Motion in a Straight Line
+Frame of reference, Motion in a straight line, Elementary concepts of differentiation and
+integration for describing motion, uniform and non- uniform motion, average speed and
+average velocity and instantaneous velocity, uniformly accelerated motion, velocity - time
+and position-time graphs. Relations for uniformly accelerated motion (graphical and calculus
+treatment).
+## Chapter–3: Motion in a Plane
+Scalar and vector quantities; position and displacement vectors, general vectors and their
+notations; equality of vectors, multiplication of vectors by a real number; addition and
+subtraction of vectors, Unit vector; resolution of a vector in a plane, rectangular components,
+Scalar and Vector product of vectors.
+Motion in a plane, cases of uniform velocity and uniform acceleration- projectile motion,
+uniform circular motion.
+## Unit III: Laws of Motion
+## Chapter–4: Laws of Motion
+Intuitive concept of force, Inertia, Newton's first law of motion; momentum and Newton's
+second law of motion; impulse; Newton's third law of motion.
+Law of conservation of linear momentum and its applications.
+Equilibrium of concurrent forces, Static and kinetic friction, laws of friction, rolling friction,
+lubrication.
+Dynamics of uniform circular motion: Centripetal force, examples of circular motion
+(vehicle on a level circular road, vehicle on a banked road).
+
+---
+
+# Page 3
+
+## Unit IV: Work, Energy and Power
+## Chapter– 5: Work, Energy and Power
+Work done by a constant force and a variable force; kinetic energy, work- energy theorem,
+power.
+Notion of potential energy, potential energy of a spring, conservative forces: non-conservative
+forces, motion in a vertical circle; elastic and inelastic collisions in one and two dimensions.
+## Unit V: Motion of System of Particles and Rigid Body
+## Chapter–6: System of Particles and Rotational Motion
+Centre of mass of a two-particle system, momentum conservation and Centre of mass motion.
+Centre of mass of a rigid body; centre of mass of a uniform rod. Moment of a force, torque,
+angular momentum, law of conservation of angular momentum and its applications.
+Equilibrium of rigid bodies, rigid body rotation and equations of rotational motion, comparison
+of linear and rotational motions.
+Moment of inertia, radius of gyration, values of moments of inertia for simple geometrical
+objects (no derivation).
+## Unit VI: Gravitation
+## Chapter – 7: Gravitation
+Kepler's laws of planetary motion, universal law of gravitation. Acceleration due to gravity and
+its variation with altitude and depth.
+Gravitational potential energy and gravitational potential, escape speed, orbital velocity of a
+satellite, energy of an orbiting satellite.
+## Unit VII: Properties of Bulk Matter
+## Chapter–8: Mechanical Properties of Solids
+Elasticity, Stress-strain relationship, Hooke's law, Young’s modulus, bulk modulus, shear
+modulus of rigidity (qualitative idea only), Poisson's ratio; elastic energy. Application of elastic
+behavior of materials (qualitative idea only).
+
+---
+
+# Page 4
+
+## Chapter–9: Mechanical Properties of Fluids
+Pressure due to a fluid column; Pascal's law and its applications (hydraulic lift and hydraulic
+brakes), effect of gravity on fluid pressure.
+Viscosity, Stokes' law, terminal velocity, streamline and turbulent flow, critical velocity,
+Bernoulli's theorem and its simple applications (Torricelli's law and Dynamic lift).
+Surface energy and surface tension, angle of contact, excess of pressure across a curved
+surface, application of surface tension ideas to drops, bubbles and capillary rise.
+## Chapter–10: Thermal Properties of Matter
+Heat, temperature, thermal expansion; thermal expansion of solids, liquids and gases,
+anomalous expansion of water; specific heat capacity; Cp, Cv - calorimetry; change of state
+- latent heat capacity.
+Heat transfer-conduction, convection and radiation, thermal conductivity, qualitative ideas of
+Blackbody radiation, Wein's displacement Law, Stefan's law.
+## Unit VIII: Thermodynamics
+## Chapter–11: Thermodynamics
+Thermal equilibrium and definition of temperature, zeroth law of thermodynamics, heat, work
+and internal energy. First law of thermodynamics, Second law of thermodynamics:
+Thermodynamic state variable and equation of state. Change of condition of gaseous state -
+isothermal, adiabatic, reversible, irreversible, and cyclic processes.
+## Unit IX: Behavior of Perfect Gases and Kinetic Theory of Gases
+## Chapter–12: Kinetic Theory
+Equation of state of a perfect gas, work done in compressing a gas.
+Kinetic theory of gases - assumptions, concept of pressure. Kinetic interpretation of
+temperature; rms speed of gas molecules; degrees of freedom, law of equi-partition of energy
+(statement only) and application to specific heat capacities of gases; concept of mean free
+path, Avogadro's number.
+
+---
+
+# Page 5
+
+## Unit X: Oscillations and Waves
+## Chapter–13: Oscillations
+Periodic motion - time period, frequency, displacement as a function of time, periodic functions
+and their applications.
+Simple harmonic motion (S.H.M), uniform circular motion and its equations of motion; phase;
+oscillations of a loaded spring- restoring force and force constant; energy in S.H.M.
+Kinetic and potential energies; simple pendulum derivation of expression for its time period.
+## Chapter–14: Waves
+Wave motion: Transverse and longitudinal waves, speed of travelling wave, displacement
+relation for a progressive wave, principle of superposition of waves, reflection of waves,
+standing waves in strings and organ pipes, fundamental mode and harmonics, Beats.
+
+---
+
+# Page 6
+
+## PRACTICALS
+The record, to be submitted by the students, at the time of their annual examination, has
+to include:
+- Record of at least 8 Experiments [with 4 from each section], to be performed by the
+students.
+- Record of at least 6 Activities [with 3 each from section A and section B], to be
+performed by the students.
+- Report of the project carried out by the students.
+## EVALUATION SCHEME
+Time 3 hours Max. Marks: 30
+Topic Marks
+Two experiments one from each section 7+7
+Practical record (experiment and activities) 5
+One activity from any section 3
+Investigatory Project 3
+Viva on experiments, activities and project 5
+Total 30
+## SECTION–A
+Experiments
+- 1. To measure diameter of a small spherical/cylindrical body and to measure internal
+diameter and depth of a given beaker/calorimeter using Vernier Callipers and hence
+find its volume.
+- 2. To measure diameter of a given wire and thickness of a given sheet using screw
+gauge.
+- 3. To determine volume of an irregular lamina using screw gauge.
+- 4. To determine radius of curvature of a given spherical surface by a spherometer.
+- 5. To determine the mass of two different objects using a beam balance.
+- 6. To find the weight of a given body using parallelogram law of vectors.

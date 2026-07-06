@@ -376,12 +376,25 @@ export interface CanonicalAssessmentValidationCheck {
 }
 
 export interface CanonicalAssessmentPackage {
+  assessmentMeta?: {
+    assessmentType?: string;
+    totalMarks?: number;
+    totalQuestions?: number;
+    durationMinutes?: number;
+    language?: string;
+    instructions?: RenderableMathText[];
+    preferredDifficulty?: string;
+    paperObjective?: RenderableMathText;
+    requestSignature?: string;
+    requestedQuestionTypes?: AssessmentQuestionTypeRequest[];
+  };
   meta?: {
     assessmentType?: string;
     totalMarks?: number;
     totalQuestions?: number;
     durationMinutes?: number;
     language?: string;
+    instructions?: RenderableMathText[];
     preferredDifficulty?: string;
     paperObjective?: RenderableMathText;
     requestSignature?: string;
@@ -431,6 +444,33 @@ export interface CanonicalAssessmentPackage {
     sections?: AssessmentSectionSummary[];
     questions?: CanonicalAssessmentQuestion[];
   };
+  mcq?: Array<{
+    question?: RenderableMathText;
+    options?: RenderableMathText[];
+    marks?: number;
+    questionSubtype?: RenderableMathText;
+    difficulty?: RenderableMathText;
+    bloomsLevel?: RenderableMathText;
+    expectedLength?: RenderableMathText;
+  }>;
+  shortAnswer?: Array<{
+    question?: RenderableMathText;
+    options?: RenderableMathText[];
+    marks?: number;
+    questionSubtype?: RenderableMathText;
+    difficulty?: RenderableMathText;
+    bloomsLevel?: RenderableMathText;
+    expectedLength?: RenderableMathText;
+  }>;
+  longAnswer?: Array<{
+    question?: RenderableMathText;
+    options?: RenderableMathText[];
+    marks?: number;
+    questionSubtype?: RenderableMathText;
+    difficulty?: RenderableMathText;
+    bloomsLevel?: RenderableMathText;
+    expectedLength?: RenderableMathText;
+  }>;
   evaluation?: {
     answerKey?: {
       items?: CanonicalAssessmentAnswerKeyItem[];

@@ -1,0 +1,101 @@
+{
+  "dependency_graph": [
+    {
+      "topic": "Units and Measurements",
+      "prerequisites": [],
+      "dependent_topics": ["Motion in a Straight Line"]
+    },
+    {
+      "topic": "Motion in a Straight Line",
+      "prerequisites": ["Units and Measurements"],
+      "dependent_topics": ["Motion in a Plane", "Laws of Motion"]
+    },
+    {
+      "topic": "Motion in a Plane",
+      "prerequisites": ["Motion in a Straight Line"],
+      "dependent_topics": ["Laws of Motion"]
+    },
+    {
+      "topic": "Laws of Motion",
+      "prerequisites": ["Motion in a Straight Line", "Motion in a Plane"],
+      "dependent_topics": ["Work, Energy and Power"]
+    },
+    {
+      "topic": "Work, Energy and Power",
+      "prerequisites": ["Laws of Motion"],
+      "dependent_topics": ["System of Particles and Rotational Motion"]
+    },
+    {
+      "topic": "Motion of System of Particles and Rigid Body",
+      "prerequisites": ["Work, Energy and Power"],
+      "dependent_topics": []
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "Unit I: Physical World and Measurements",
+      "chapter_name": "Units and Measurements",
+      "difficulty_level": "Low",
+      "concept_density": "Medium",
+      "estimated_teaching_hours": 12,
+      "estimated_sessions": 6,
+      "practical_requirement": "Vernier Callipers, Screw Gauge, Spherometer activities and experiments required.",
+      "assessment_requirement": "Significant figures rules, dimensional analysis problems."
+    },
+    {
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Straight Line",
+      "difficulty_level": "Medium",
+      "concept_density": "High",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Projectile motion study activity.",
+      "assessment_requirement": "Graphical analysis of motion, calculus-based relations."
+    },
+    {
+      "unit_name": "Unit II: Kinematics",
+      "chapter_name": "Motion in a Plane",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": 14,
+      "estimated_sessions": 7,
+      "practical_requirement": "Vector resolution activities.",
+      "assessment_requirement": "Projectile motion calculations, circular motion dynamics."
+    },
+    {
+      "unit_name": "Unit III: Laws of Motion",
+      "chapter_name": "Laws of Motion",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": 18,
+      "estimated_sessions": 9,
+      "practical_requirement": "Friction and inclined plane experiments.",
+      "assessment_requirement": "Newton's laws application, conservation of momentum problems."
+    },
+    {
+      "unit_name": "Unit IV: Work, Energy and Power",
+      "chapter_name": "Work, Energy and Power",
+      "difficulty_level": "Medium-High",
+      "concept_density": "High",
+      "estimated_teaching_hours": 16,
+      "estimated_sessions": 8,
+      "practical_requirement": "Energy conservation activity.",
+      "assessment_requirement": "Work-energy theorem applications, collision analysis."
+    },
+    {
+      "unit_name": "Unit V: Motion of System of Particles and Rigid Body",
+      "chapter_name": "System of Particles and Rotational Motion",
+      "difficulty_level": "High",
+      "concept_density": "Very High",
+      "estimated_teaching_hours": 20,
+      "estimated_sessions": 10,
+      "practical_requirement": "Center of mass determination.",
+      "assessment_requirement": "Torque and angular momentum conservation problems."
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [],
+    "invalid_chapter_names": []
+  }
+}

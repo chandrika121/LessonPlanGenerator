@@ -1,0 +1,137 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8B - Class XII
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XII",
+  "units": [
+    {
+      "unit_id": "class-12-physics-u2",
+      "unit_name": "QUESTION PAPER DESIGN Theory",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "QUESTION PAPER DESIGN Theory"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-physics-u3",
+      "unit_name": "QUESTION PAPER DESIGN Theory (Continued)",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "QUESTION PAPER DESIGN Theory (Continued)"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-12-physics-u2",
+      "unit_name": "QUESTION PAPER DESIGN Theory",
+      "chapter_id": "C1",
+      "chapter_name": "QUESTION PAPER DESIGN Theory"
+    },
+    {
+      "unit_id": "class-12-physics-u3",
+      "unit_name": "QUESTION PAPER DESIGN Theory (Continued)",
+      "chapter_id": "C1",
+      "chapter_name": "QUESTION PAPER DESIGN Theory (Continued)"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "CP-1",
+      "title": "Remembering and Understanding Competencies",
+      "description": "Exhibit memory of previously learned material by recalling facts, terms, basic concepts, and answers. Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas.",
+      "competencies": [
+        "Recall facts, terms, basic concepts, and answers related to Physics topics such as Electric Charges, Coulomb's Law, Gauss's Theorem, Ohm's Law, Kirchhoff's Rules, Biot-Savart Law, Ampere's Law, Faraday's Laws, Lenz's Law, Lens Maker's Formula, Photoelectric Effect, Bohr Model, and Nuclear Fission/Fusion.",
+        "Organize, compare, translate, interpret, give descriptions of physical phenomena including Electric Fields, Potential Difference, Capacitance, Current Electricity characteristics, Magnetic Effects of Current, Electromagnetic Induction, Optics principles (Reflection/Refraction), Wave Optics concepts, Dual Nature of Radiation, and Atomic/Nuclear structures.",
+        "State main ideas regarding the transverse nature of electromagnetic waves, properties of magnetic materials, behavior of semiconductors in p-n junctions, and characteristics of optical instruments."
+      ],
+      "unit_name": "QUESTION PAPER DESIGN Theory",
+      "chapter_name": "QUESTION PAPER DESIGN Theory"
+    },
+    {
+      "code": "CP-2",
+      "title": "Application Competencies",
+      "description": "Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way.",
+      "competencies": [
+        "Apply Coulomb's Law and superposition principle to calculate forces between multiple charges or continuous charge distributions.",
+        "Use Gauss's theorem to find electric fields for infinitely long straight wires, infinite plane sheets, and spherical shells.",
+        "Calculate electrical energy, power, resistivity, conductivity, and potential differences in circuits involving Ohm's law, internal resistance of cells, and combinations of cells/resistors (series/parallel).",
+        "Apply Biot-Savart Law and Ampere's Law to determine magnetic fields due to current-carrying loops and solenoids.",
+        "Calculate force on moving charges/currents in magnetic/electric fields, torque on dipoles, and sensitivity of galvanometers.",
+        "Analyze LCR circuits for resonance, impedance, reactance, power factor, and wattless currents.",
+        "Apply lens formulas (thin lens, mirror formula) to determine image properties, magnification, and focal lengths in optical instruments like microscopes and telescopes.",
+        "Use de-Broglie relation and Einstein's photoelectric equation for particle nature of light problems.",
+        "Calculate binding energy per nucleon variations and analyze nuclear fission/fusion processes."
+      ],
+      "unit_name": "QUESTION PAPER DESIGN Theory (Continued)",
+      "chapter_name": "QUESTION PAPER DESIGN Theory (Continued)"
+    },
+    {
+      "code": "CP-3",
+      "title": "Analysis Competencies",
+      "description": "Examine and break information into parts by identifying motives or causes. Make inferences and find evidence to support generalizations.",
+      "competencies": [
+        "Identify motives for charge distribution behaviors (e.g., free vs bound charges, dielectric polarization) based on material properties.",
+        "Infer the relationship between drift velocity, mobility, and electric current from microscopic models of conduction.",
+        "Analyze causes behind temperature dependence of resistance in conductors and semiconductors.",
+        "Examine evidence supporting generalizations about magnetic field lines for bar magnets versus solenoids.",
+        "Break down complex optical systems (lens combinations) to determine equivalent focal lengths and image formation characteristics.",
+        "Differentiate between para-, dia- and ferro-magnetic substances based on their response to external fields and temperature effects."
+      ],
+      "unit_name": "QUESTION PAPER DESIGN Theory",
+      "chapter_name": "QUESTION PAPER DESIGN Theory"
+    },
+    {
+      "code": "CP-4",
+      "title": "Evaluation Competencies",
+      "description": "Present and defend opinions by making judgments about information, validity of ideas, or quality of work based on a set of criteria.",
+      "competencies": [
+        "Evaluate the validity of experimental results in practicals (e.g., resistivity determination, focal length measurement) against theoretical expectations.",
+        "Judge the suitability of different optical instruments for specific applications based on magnifying power and design constraints.",
+        "Assess the quality of circuit designs involving rectifiers or transformers based on efficiency and component selection criteria."
+      ],
+      "unit_name": "QUESTION PAPER DESIGN Theory (Continued)",
+      "chapter_name": "QUESTION PAPER DESIGN Theory (Continued)"
+    },
+    {
+      "code": "CP-5",
+      "title": "Creation Competencies",
+      "description": "Compile information together in a different way by combining elements in a new pattern or proposing alternative solutions.",
+      "competencies": [
+        "Propose alternative experimental setups for determining physical constants (e.g., refractive index, internal resistance) using available apparatus.",
+        "Design circuits incorporating specific components (diodes, capacitors, inductors) to achieve desired functions like rectification or filtering.",
+        "Synthesize knowledge of electromagnetic spectrum characteristics to propose applications for different frequency bands."
+      ],
+      "unit_name": "QUESTION PAPER DESIGN Theory",
+      "chapter_name": "QUESTION PAPER DESIGN Theory"
+    }
+  ]
+}

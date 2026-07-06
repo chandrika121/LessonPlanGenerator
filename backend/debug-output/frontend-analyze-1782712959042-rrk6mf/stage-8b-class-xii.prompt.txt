@@ -1,0 +1,415 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8B - Class XII
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XII",
+  "units": [
+    {
+      "unit_id": "class-12-chemistry-u1",
+      "unit_name": "Unit 1: Solutions",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Solutions"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u1",
+      "unit_name": "Qualitative Analysis",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Qualitative Analysis"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Electrochemistry"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Chemical Kinetics"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "d and f Block Elements"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordination Compounds"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u6",
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Haloalkanes and Haloarenes"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u7",
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Alcohols, Phenols and Ethers"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u8",
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Aldehydes, Ketones and Carboxylic Acids"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u9",
+      "unit_name": "Unit 9: Amines",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Amines"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u10",
+      "unit_name": "Unit 10: Biomolecules",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Biomolecules"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u11",
+      "unit_name": "Surface Chemistry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Surface Chemistry"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-12-chemistry-u12",
+      "unit_name": "General Principles and Processes of Isolation",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "General Principles and Processes of Isolation"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-12-chemistry-u1",
+      "unit_name": "Unit 1: Solutions",
+      "chapter_id": "C1",
+      "chapter_name": "Solutions"
+    },
+    {
+      "unit_id": "class-12-chemistry-u1",
+      "unit_name": "Qualitative Analysis",
+      "chapter_id": "C1",
+      "chapter_name": "Qualitative Analysis"
+    },
+    {
+      "unit_id": "class-12-chemistry-u2",
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapter_id": "C1",
+      "chapter_name": "Electrochemistry"
+    },
+    {
+      "unit_id": "class-12-chemistry-u3",
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapter_id": "C1",
+      "chapter_name": "Chemical Kinetics"
+    },
+    {
+      "unit_id": "class-12-chemistry-u4",
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapter_id": "C1",
+      "chapter_name": "d and f Block Elements"
+    },
+    {
+      "unit_id": "class-12-chemistry-u5",
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapter_id": "C1",
+      "chapter_name": "Coordination Compounds"
+    },
+    {
+      "unit_id": "class-12-chemistry-u6",
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "chapter_id": "C1",
+      "chapter_name": "Haloalkanes and Haloarenes"
+    },
+    {
+      "unit_id": "class-12-chemistry-u7",
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "chapter_id": "C1",
+      "chapter_name": "Alcohols, Phenols and Ethers"
+    },
+    {
+      "unit_id": "class-12-chemistry-u8",
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "chapter_id": "C1",
+      "chapter_name": "Aldehydes, Ketones and Carboxylic Acids"
+    },
+    {
+      "unit_id": "class-12-chemistry-u9",
+      "unit_name": "Unit 9: Amines",
+      "chapter_id": "C1",
+      "chapter_name": "Amines"
+    },
+    {
+      "unit_id": "class-12-chemistry-u10",
+      "unit_name": "Unit 10: Biomolecules",
+      "chapter_id": "C1",
+      "chapter_name": "Biomolecules"
+    },
+    {
+      "unit_id": "class-12-chemistry-u11",
+      "unit_name": "Surface Chemistry",
+      "chapter_id": "C1",
+      "chapter_name": "Surface Chemistry"
+    },
+    {
+      "unit_id": "class-12-chemistry-u12",
+      "unit_name": "General Principles and Processes of Isolation",
+      "chapter_id": "C1",
+      "chapter_name": "General Principles and Processes of Isolation"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C12-U1-PartA",
+      "title": "Qualitative Analysis (Class XII)",
+      "description": "Identification techniques for ions in salts.",
+      "competencies": [
+        "Identify one anion and one cation from a given salt sample using standard tests."
+      ],
+      "unit_name": "Qualitative Analysis",
+      "chapter_name": "Qualitative Analysis"
+    },
+    {
+      "code": "C12-U2-PartA",
+      "title": "Electrochemistry (Class XII)",
+      "description": "Principles of electrochemical cells and energy conversion.",
+      "competencies": [
+        "Differentiate between galvanic and electrolytic cells.",
+        "Apply the Nernst equation to calculate cell potentials under non-standard conditions.",
+        "Analyze conductance properties in electrolytic solutions.",
+        "Explain mechanisms of batteries, fuel cells, and corrosion processes."
+      ],
+      "unit_name": "Unit 2: Electrochemistry",
+      "chapter_name": "Electrochemistry"
+    },
+    {
+      "code": "C12-U3-PartA",
+      "title": "Chemical Kinetics (Class XII)",
+      "description": "Study of reaction rates and influencing factors.",
+      "competencies": [
+        "Define rate of a chemical reaction and determine it experimentally.",
+        "Analyze factors influencing the rate of reactions including concentration, temperature, and catalysts.",
+        "Derive and apply integrated rate equations for zero and first-order reactions.",
+        "Explain collision theory in the context of molecular interactions."
+      ],
+      "unit_name": "Unit 3: Chemical Kinetics",
+      "chapter_name": "Chemical Kinetics"
+    },
+    {
+      "code": "C12-U4-PartA",
+      "title": "d and f Block Elements (Class XII)",
+      "description": "Properties and applications of transition and inner-transition elements.",
+      "competencies": [
+        "Correlate electronic configuration with position in the periodic table for d-block elements.",
+        "Describe general properties including oxidation states, magnetic behavior, and catalytic activity.",
+        "Explain characteristics of lanthanoids and actinoids.",
+        "Identify applications of transition metals in industrial processes."
+      ],
+      "unit_name": "Unit 4: d and f Block Elements",
+      "chapter_name": "d and f Block Elements"
+    },
+    {
+      "code": "C12-U5-PartA",
+      "title": "Coordination Compounds (Class XII)",
+      "description": "Structure, bonding, and isomerism in coordination chemistry.",
+      "competencies": [
+        "Apply Werner's theory to explain the structure of coordination compounds.",
+        "Use IUPAC nomenclature rules for naming complex ions.",
+        "Identify different types of isomerism (structural and stereoisomerism) in complexes.",
+        "Compare bonding theories including Valence Bond Theory, Crystal Field Theory, and Metal Carbonyl bonding."
+      ],
+      "unit_name": "Unit 5: Coordination Compounds",
+      "chapter_name": "Coordination Compounds"
+    },
+    {
+      "code": "C12-U6-PartA",
+      "title": "Haloalkanes and Haloarenes (Class XII)",
+      "description": "Properties, preparation, and reactions of halogenated hydrocarbons.",
+      "competencies": [
+        "Distinguish between haloalkanes and haloarenes based on structure and bonding.",
+        "Apply IUPAC nomenclature rules for polyhalogen compounds.",
+        "Predict products of substitution and elimination reactions in haloalkanes.",
+        "Analyze the nature of C-X bonds and their reactivity."
+      ],
+      "unit_name": "Unit 6: Haloalkanes and Haloarenes",
+      "chapter_name": "Haloalkanes and Haloarenes"
+    },
+    {
+      "code": "C12-U7-PartA",
+      "title": "Alcohols, Phenols and Ethers (Class XII)",
+      "description": "Classification and properties of oxygen-containing organic compounds.",
+      "competencies": [
+        "Differentiate between alcohols, phenols, and ethers based on functional groups.",
+        "Apply nomenclature rules for commercially important alcohols.",
+        "Analyze physical properties including boiling points and solubility trends."
+      ],
+      "unit_name": "Unit 7: Alcohols, Phenols and Ethers",
+      "chapter_name": "Alcohols, Phenols and Ethers"
+    },
+    {
+      "code": "C12-U8-PartA",
+      "title": "Aldehydes, Ketones and Carboxylic Acids (Class XII)",
+      "description": "Reactivity and synthesis of carbonyl compounds.",
+      "competencies": [
+        "Identify functional groups in aldehydes, ketones, and carboxylic acids.",
+        "Predict preparation methods for these compounds from precursors.",
+        "Analyze physical properties and chemical reactions including nucleophilic addition."
+      ],
+      "unit_name": "Unit 8: Aldehydes, Ketones and Carboxylic Acids",
+      "chapter_name": "Aldehydes, Ketones and Carboxylic Acids"
+    },
+    {
+      "code": "C12-U9-PartA",
+      "title": "Amines (Class XII)",
+      "description": "Structure, properties, and synthesis of nitrogen-containing compounds.",
+      "competencies": [
+        "Distinguish primary, secondary, and tertiary amines based on structure.",
+        "Apply nomenclature rules for substituted amines.",
+        "Predict preparation methods including reduction of nitro compounds and Hofmann bromamide reaction."
+      ],
+      "unit_name": "Unit 9: Amines",
+      "chapter_name": "Amines"
+    },
+    {
+      "code": "C12-U10-PartA",
+      "title": "Biomolecules (Class XII)",
+      "description": "Chemistry of carbohydrates, proteins, and nucleic acids.",
+      "competencies": [
+        "Classify biomolecules into carbohydrates, proteins, vitamins, hormones, and enzymes."
+      ],
+      "unit_name": "Unit 10: Biomolecules",
+      "chapter_name": "Biomolecules"
+    },
+    {
+      "code": "C12-U11-PartA",
+      "title": "Surface Chemistry (Class XII)",
+      "description": "Phenomena at interfaces and colloidal systems.",
+      "competencies": [
+        "Differentiate between physisorption and chemisorption mechanisms."
+      ],
+      "unit_name": "Surface Chemistry",
+      "chapter_name": "Surface Chemistry"
+    },
+    {
+      "code": "C12-U12-PartA",
+      "title": "General Principles of Isolation (Class XII)",
+      "description": "Methods for extraction and purification of elements.",
+      "competencies": [
+        "Explain principles of concentration, oxidation, reduction, electrolytic refining."
+      ],
+      "unit_name": "General Principles and Processes of Isolation",
+      "chapter_name": "General Principles and Processes of Isolation"
+    },
+    {
+      "code": "C12-U1-PartB",
+      "title": "Solutions (Class XII)",
+      "description": "Properties and concentration expressions.",
+      "competencies": [
+        "Calculate concentrations using various units."
+      ],
+      "unit_name": "Unit 1: Solutions",
+      "chapter_name": "Solutions"
+    },
+    {
+      "code": "C12-U4-PartB",
+      "title": "Surface Chemistry (Class XII)",
+      "description": "Colloidal systems and adsorption.",
+      "competencies": [
+        "Prepare lyophilic and lyophobic sols."
+      ],
+      "unit_name": "A. Surface Chemistry",
+      "chapter_name": "Surface Chemistry"
+    },
+    {
+      "code": "C12-U10-PartB",
+      "title": "Qualitative Analysis (Class XII)",
+      "description": "Advanced ion detection.",
+      "competencies": [
+        "Identify cations and anions in complex mixtures."
+      ],
+      "unit_name": "K. Qualitative analysis",
+      "chapter_name": "Qualitative Analysis"
+    }
+  ]
+}
