@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useDeferredValue, useEffect, useRef, useState, memo, useMemo } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import katexStyles from "katex/dist/katex.min.css?inline";
 import { motion } from "motion/react";
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   FileText,
   Upload,
@@ -42,6 +43,7 @@ import {
   Trash2,
   Database
 } from "lucide-react";
+import { ActionToast } from "./components/ActionToast";
 import {
   AcademicConfig,
   CurriculumClassOptionsResponse,
@@ -70,6 +72,10 @@ import {
   TeachingStrategy,
   TermRow,
 } from "./types";
+import {
+  removePublishedArtifactsForCurriculumScope,
+} from "./utils/studentPublications";
+import type { StudentPublicationKind } from "./types/student-content";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
@@ -200,6 +206,53 @@ type StudentNotesTemplate = {
   noteSections: StudentNoteSection[];
   summaryLines: StudentNoteRichLine[];
 };
+type PlannerStep = 0 | 1 | 2 | 3 | 4 | 5;
+const AUTH_STORAGE_KEY = "lms:auth-session";
+
+const plannerCanonicalPath = "/teacher/lesson-planner";
+
+function resolvePlannerStepFromSearch(search: string): PlannerStep {
+  const stepValue = new URLSearchParams(search).get("step");
+  const numericStep = Number(stepValue);
+  if (Number.isInteger(numericStep) && numericStep >= 0 && numericStep <= 5) {
+    return numericStep as PlannerStep;
+  }
+  return 0;
+}
+
+function buildPlannerSearch(step: PlannerStep) {
+  return step === 0 ? "" : `?step=${step}`;
+}
+
+function getAuthSession() {
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as { id?: string; schoolId?: string; role?: string };
+  } catch {
+    return null;
+  }
+}
+
+function buildPlannerRequestPayload<T extends Record<string, unknown>>(payload: T, session: { id?: string; schoolId?: string } | null) {
+  return {
+    ...payload,
+    userId: session?.id || "",
+    teacherId: session?.id || "",
+    schoolId: session?.schoolId || "",
+  };
+}
+
+const LoadingSpinner = memo(function LoadingSpinner() {
+  return (
+    <div className="flex items-center justify-center py-32">
+      <div className="flex items-center gap-3 rounded-2xl bg-white/90 px-6 py-4 shadow-lg">
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-[#36ADAA] border-t-transparent" />
+        <span className="text-sm font-semibold text-slate-600">Loading...</span>
+      </div>
+    </div>
+  );
+});
 
 const resolveWorkspaceOutputLanguage = (workspace?: PlanningWorkspace | null): string => {
   const requestedLanguage = String(
@@ -221,20 +274,33 @@ const resolveWorkspaceOutputLanguage = (workspace?: PlanningWorkspace | null): s
 export default function App() {
   const LAST_CURRICULUM_ID_KEY = "lms:lastCurriculumId";
   const LAST_WORKSPACE_ID_KEY = "lms:lastWorkspaceId";
+  const location = useLocation();
+  const navigate = useNavigate();
+  const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL ||
+    `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+  const authSession = useMemo(() => getAuthSession(), []);
   // Navigation & Step Management
   // 0: Dashboard, 1: Upload & Extract, 2: Term Planner, 3: Session Specs & Roadmap, 4: Lesson Plan Delivery Outlines, 5: Saved Curriculums
-  const [activeStep, setActiveStep] = useState<0 | 1 | 2 | 3 | 4 | 5>(1);
+  const isTeacherPlannerRoute = location.pathname === plannerCanonicalPath;
+  const [activeStep, setActiveStepState] = useState<PlannerStep>(() => resolvePlannerStepFromSearch(location.search));
+  const deferredActiveStep = useDeferredValue(activeStep);
+  const plannerStepPending = deferredActiveStep !== activeStep;
   const [dashboardTab, setDashboardTab] = useState<string>("curriculum");
 
   // Error and Loading indicators
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingMessage, setLoadingMessage] = useState<string>("");
   const [errorHeader, setErrorHeader] = useState<string | null>(null);
+  const [popupMessage, setPopupMessage] = useState<string>("");
 
   // Step 1 State: Input Curriculum
   const [inputText, setInputText] = useState<string>("");
   const [fileName, setFileName] = useState<string>("");
   const [fileSizeStr, setFileSizeStr] = useState<string>("");
+  const [showUploadedCurriculumMaterial, setShowUploadedCurriculumMaterial] = useState<boolean>(false);
+  const [showExtractionOutput, setShowExtractionOutput] = useState<boolean>(false);
+  const [showExtractionJsonViewer, setShowExtractionJsonViewer] = useState<boolean>(false);
   const [extractedData, setExtractedData] = useState<CurriculumExtraction | null>(null);
   const [currentCurriculumId, setCurrentCurriculumId] = useState<string>("");
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string>("");
@@ -292,7 +358,7 @@ export default function App() {
     includeIntroduction: true,
     includeTheory: true,
     includeAssessments: true,
-    includeAssignments: true,
+    includeAssignments: false,
     includeNotes: true,
     sessionCount: 5,
     durationMinutes: 45,
@@ -314,17 +380,42 @@ export default function App() {
   // Step 4 State: Deep Sessions Plans
   const [generatedSessions, setGeneratedSessions] = useState<Record<string, SessionPlan>>({});
   const [activeSessionNumber, setActiveSessionNumber] = useState<number>(1);
-  const [activeSubTab, setActiveSubTab] = useState<"teacherNotes" | "studentNotes" | "materials" | "homework" | "assessments" | "assignments">("teacherNotes");
+  const [activeSubTab, setActiveSubTab] = useState<"teacherNotes" | "studentNotes" | "materials" | "homework" | "assessments">("teacherNotes");
   const [activeMaterialTab, setActiveMaterialTab] = useState<"ppt" | "pdf" | "docx">("ppt");
   const [assessmentCustomizationBySession, setAssessmentCustomizationBySession] = useState<Record<number, SessionAssessmentCustomization>>({});
   const [pptGenerationOptionsBySession, setPptGenerationOptionsBySession] = useState<Record<number, SessionPptGenerationOptions>>({});
+  const [studentPublications, setStudentPublications] = useState<Record<string, Partial<Record<StudentPublicationKind, boolean>>>>({});
+  const getPublicationFlagsForSession = useCallback(
+    (session: Pick<SessionPlan, "id" | "sessionNumber">) => {
+      const sessionIdKey = String(session.id || "").trim();
+      const sessionNumberKey = String(session.sessionNumber || "").trim();
+      return (
+        (sessionIdKey ? studentPublications[sessionIdKey] : undefined) ||
+        (sessionNumberKey ? studentPublications[sessionNumberKey] : undefined) ||
+        {}
+      );
+    },
+    [studentPublications],
+  );
+  const [sessionSectionSelection, setSessionSectionSelection] = useState<Record<SessionSectionKey, boolean>>({
+    teacherLessonNotes: true,
+    studentLessonNotes: true,
+    learningOutcomes: true,
+    introduction: true,
+    theory: true,
+    activities: true,
+    materials: true,
+    homework: true,
+    assessment: true,
+    assignment: false,
+  });
 
   // File drag state
   const [dragActive, setDragActive] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const tamilIndexFileInputRef = useRef<HTMLInputElement>(null);
   const tamilStructureFileInputRef = useRef<HTMLInputElement>(null);
-  const groupedTerms = termsList.reduce<Record<string, Record<string, TermRow[]>>>((acc, row) => {
+  const groupedTerms = useMemo(() => termsList.reduce<Record<string, Record<string, TermRow[]>>>((acc, row) => {
     const classKey = row.className || "Curriculum";
     if (!acc[classKey]) {
       acc[classKey] = {};
@@ -334,8 +425,57 @@ export default function App() {
     }
     acc[classKey][row.term].push(row);
     return acc;
-  }, {});
-  const classTermGroups = Object.entries(groupedTerms).map(([className, terms]) => ({
+  }, {}), [termsList]);
+
+  const getPublicationLabel = useCallback((target: StudentPublicationKind) => {
+    switch (target) {
+      case "homework":
+        return "Homework";
+      case "assessments":
+        return "Assessments";
+      case "quizzes":
+        return "Quizzes";
+      case "notes":
+        return "Notes";
+      default:
+        return "Content";
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isTeacherPlannerRoute) {
+      return;
+    }
+
+    const nextStep = resolvePlannerStepFromSearch(location.search);
+    if (nextStep !== activeStep) {
+      setActiveStepState(nextStep);
+    }
+  }, [isTeacherPlannerRoute, location.search]);
+
+  const setActiveStep = useCallback(
+    (step: PlannerStep) => {
+      setActiveStepState(step);
+
+      if (!isTeacherPlannerRoute) {
+        return;
+      }
+
+      const nextSearch = buildPlannerSearch(step);
+      if (location.search !== nextSearch) {
+        navigate(
+          {
+            pathname: plannerCanonicalPath,
+            search: nextSearch,
+          },
+          { replace: true },
+        );
+      }
+    },
+    [isTeacherPlannerRoute, location.search, navigate],
+  );
+
+  const classTermGroups = useMemo(() => Object.entries(groupedTerms).map(([className, terms]) => ({
     className,
     termGroups: Object.entries(terms).map(([termName, rows]) => {
       const totalMarks = Number(rows.reduce((sum, row) => sum + row.marks, 0).toFixed(2));
@@ -362,7 +502,7 @@ export default function App() {
         summaryRow,
       };
     }),
-  }));
+  })), [groupedTerms]);
 
   const resetTamilIndexState = () => {
     setDetectedCurriculumSubject("");
@@ -387,6 +527,9 @@ export default function App() {
     setGeneratedSessions({});
     setFileName("");
     setFileSizeStr("");
+    setShowUploadedCurriculumMaterial(false);
+    setShowExtractionOutput(false);
+    setShowExtractionJsonViewer(false);
     setInputText("");
     setExtractedData(null);
     setEditingJsonText("");
@@ -476,7 +619,12 @@ export default function App() {
   };
 
   const fetchSavedCurriculums = async () => {
-    const res = await fetch("/api/curriculums");
+    const params = new URLSearchParams();
+    if (authSession?.id) params.set("userId", authSession.id);
+    if (authSession?.schoolId) params.set("schoolId", authSession.schoolId);
+    if (authSession?.role) params.set("role", authSession.role);
+    const queryString = params.toString();
+    const res = await fetch(apiUrl(`/api/curriculums${queryString ? `?${queryString}` : ""}`));
     if (!res.ok) {
       throw new Error(await readErrorFromResponse(res, "Failed to load saved curriculums."));
     }
@@ -3618,6 +3766,10 @@ export default function App() {
     const pageWidth = 595;
     const pageHeight = 842;
     const objects: Array<Array<string | Uint8Array>> = [];
+    const toBlobPart = (part: string | Uint8Array): BlobPart =>
+      typeof part === "string"
+        ? part
+        : new Uint8Array(part).buffer;
 
     const addObject = (parts: Array<string | Uint8Array>) => {
       objects.push(parts);
@@ -3647,7 +3799,7 @@ export default function App() {
     objects[pagesObjectNumber - 1] = [`<< /Type /Pages /Kids [${pageObjectNumbers.map((num) => `${num} 0 R`).join(" ")}] /Count ${pageObjectNumbers.length} >>`];
 
     const byteLength = (part: string | Uint8Array) => (typeof part === "string" ? encoder.encode(part).length : part.length);
-    const chunks: Array<string | Uint8Array> = ["%PDF-1.4\n"];
+    const chunks: BlobPart[] = ["%PDF-1.4\n"];
     const offsets: number[] = [0];
     let totalLength = encoder.encode("%PDF-1.4\n").length;
 
@@ -3658,7 +3810,7 @@ export default function App() {
       chunks.push(objectStart);
       totalLength += encoder.encode(objectStart).length;
       parts.forEach((part) => {
-        chunks.push(part);
+        chunks.push(toBlobPart(part));
         totalLength += byteLength(part);
       });
       chunks.push(objectEnd);
@@ -4373,13 +4525,18 @@ export default function App() {
       session.duration ? `${session.duration} minutes` : "",
     ].filter(Boolean).join("  •  ");
 
+    const getRequiredCanvasContext = (target: HTMLCanvasElement) => {
+      const context = target.getContext("2d");
+      if (!context) {
+        throw new Error("Unable to prepare PDF canvas.");
+      }
+      return context;
+    };
+
     let canvas = document.createElement("canvas");
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
-    let ctx = canvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("Unable to prepare PDF canvas.");
-    }
+    let ctx = getRequiredCanvasContext(canvas);
     let y = topMargin;
     let pageNumber = 1;
 
@@ -4451,8 +4608,7 @@ export default function App() {
     };
 
     const startPage = () => {
-      ctx = canvas.getContext("2d");
-      if (!ctx) throw new Error("Unable to prepare PDF canvas.");
+      ctx = getRequiredCanvasContext(canvas);
       ctx.fillStyle = theme.paper;
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       ctx.strokeStyle = theme.rule;
@@ -5071,7 +5227,7 @@ export default function App() {
           for (const [assetIndex, asset] of assets.entries()) {
             await drawImageFigure(
               formatRenderableText(section.heading) || `Concept ${index + 1} Visual ${assetIndex + 1}`,
-              asset.imageDataUrl,
+              asset.imageDataUrl || "",
               formatRenderableText(asset.alt || "AI-generated classroom visual"),
               getRenderableList(section.visualSupport)
             );
@@ -6398,8 +6554,7 @@ export default function App() {
     triggerDownload(htmlDocument, `${fileStem}.html`, "text/html;charset=utf-8");
   };
 
-  const handleExportPptSlidesPdf = async (session: SessionPlan) => {
-    const ppt = session.materials?.ppt;
+  const handleExportPptSlidesPdf = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => {
     const slides = getPptSlides(ppt);
     if (!ppt || slides.length === 0) {
       setErrorHeader("Generate PPT slides first before exporting a slide-only PDF.");
@@ -6642,7 +6797,6 @@ export default function App() {
     "materials",
     "homework",
     "assessment",
-    "assignment",
   ];
 
   const sessionTabDefinitions = [
@@ -6655,7 +6809,6 @@ export default function App() {
     { id: "materials", label: "Materials (PPT/PDF/DOC)", sections: ["materials"] as SessionSectionKey[] },
     { id: "homework", label: "Homework Draft", sections: ["homework"] as SessionSectionKey[] },
     { id: "assessments", label: "Assessments (Test + key)", sections: ["assessment"] as SessionSectionKey[] },
-    { id: "assignments", label: "Assignments + Key", sections: ["assignment"] as SessionSectionKey[] },
   ] as const;
 
   const assessmentQuestionTypeCatalog: { type: AssessmentQuestionType; label: string; defaultMarksEach: number }[] = [
@@ -7176,7 +7329,7 @@ export default function App() {
   ) => {
     if (!workspaceId) return null;
     const view = options?.view || "planning";
-    const res = await fetch(`/api/planning-workspaces/${workspaceId}?view=${view}`);
+    const res = await fetch(apiUrl(`/api/planning-workspaces/${workspaceId}?view=${view}`));
     if (!res.ok) {
       throw new Error(await readErrorFromResponse(res, "Failed to load planning workspace."));
     }
@@ -7193,16 +7346,27 @@ export default function App() {
     if (!curriculumId) return null;
     const view = options?.view || "planning";
 
-    const existingRes = await fetch(`/api/planning-workspaces/by-curriculum/${curriculumId}?view=${view}`);
+    const existingRes = await fetch(apiUrl(`/api/planning-workspaces/by-curriculum/${curriculumId}?view=${view}`));
     if (existingRes.ok) {
       const existingData = await existingRes.json();
       return existingData.workspace as PlanningWorkspace;
     }
+    if (existingRes.status !== 404) {
+      throw new Error(await readErrorFromResponse(existingRes, "Failed to load planning workspace."));
+    }
+    if (existingRes.status !== 404) {
+      throw new Error(await readErrorFromResponse(existingRes, "Failed to load planning workspace."));
+    }
 
-    const createRes = await fetch("/api/planning-workspaces", {
+    const createRes = await fetch(apiUrl("/api/planning-workspaces"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ curriculumId }),
+      body: JSON.stringify({
+        curriculumId,
+        userId: authSession?.id || "",
+        teacherId: authSession?.id || "",
+        schoolId: authSession?.schoolId || "",
+      }),
     });
     if (!createRes.ok) {
       throw new Error(await readErrorFromResponse(createRes, "Failed to create planning workspace."));
@@ -7212,9 +7376,10 @@ export default function App() {
     return createData.workspace as PlanningWorkspace;
   };
 
-  const restoreCurriculumById = async (curriculumId: string, options?: { silent?: boolean }) => {
+  const restoreCurriculumById = async (curriculumId: string, options?: { silent?: boolean; revealOutput?: boolean }) => {
     if (!curriculumId) return;
     const silent = options?.silent ?? false;
+    const revealOutput = options?.revealOutput ?? false;
 
     if (!silent) {
       setLoading(true);
@@ -7223,7 +7388,7 @@ export default function App() {
 
     try {
       const [res, workspace] = await Promise.all([
-        fetch(`/api/curriculums/${curriculumId}`),
+        fetch(apiUrl(`/api/curriculums/${curriculumId}`)),
         ensurePlanningWorkspaceForCurriculum(curriculumId, { view: "planning" }),
       ]);
       if (!res.ok) {
@@ -7234,6 +7399,10 @@ export default function App() {
       const curriculumRecord = data.curriculum as SavedCurriculumRecord;
       setCurrentCurriculumId(curriculumRecord._id);
       setFileName(curriculumRecord.fileName || "");
+      setFileSizeStr("");
+      setShowUploadedCurriculumMaterial(false);
+      setShowExtractionOutput(revealOutput);
+      setShowExtractionJsonViewer(revealOutput);
       setInputText(curriculumRecord.sourceText || "");
       setExtractedData(curriculumRecord.extractedCurriculum);
       setEditingJsonText("");
@@ -7242,6 +7411,22 @@ export default function App() {
         syncWorkspaceState(workspace);
       }
       setErrorHeader(null);
+      void fetchSavedCurriculums().catch((refreshError) => {
+        console.error("[Frontend] Saved curriculum refresh failed", refreshError);
+      });
+      try {
+        await ensurePlanningWorkspaceForCurriculum(curriculumRecord._id);
+      } catch (workspaceError: any) {
+        console.error("[Frontend] Restore curriculum workspace sync failed", workspaceError);
+        localStorage.removeItem(LAST_WORKSPACE_ID_KEY);
+        setCurrentWorkspaceId("");
+        setActiveWorkspace(null);
+        if (!silent) {
+          setErrorHeader(
+            `Curriculum opened, but the planning workspace could not be restored yet. ${workspaceError?.message || ""}`.trim()
+          );
+        }
+      }
     } catch (error: any) {
       console.error("[Frontend] Restore curriculum failed", error);
       localStorage.removeItem(LAST_CURRICULUM_ID_KEY);
@@ -7257,23 +7442,35 @@ export default function App() {
   };
 
   const handleOpenSavedCurriculum = async (curriculumId: string) => {
-    await restoreCurriculumById(curriculumId);
     setActiveStep(1);
+    await restoreCurriculumById(curriculumId, { revealOutput: true });
   };
 
   const handleDeleteSavedCurriculum = async (curriculumId: string) => {
     setErrorHeader(null);
     try {
-      const res = await fetch(`/api/curriculums/${curriculumId}`, { method: "DELETE" });
+      const curriculumToDelete = savedCurriculums.find((item) => item._id === curriculumId) || null;
+      const res = await fetch(apiUrl(`/api/curriculums/${curriculumId}`), { method: "DELETE" });
       if (!res.ok) {
         throw new Error(await readErrorFromResponse(res, "Failed to delete curriculum."));
       }
+
+      if (curriculumToDelete) {
+        removePublishedArtifactsForCurriculumScope({
+          subject: curriculumToDelete.subject,
+          gradeLevel: curriculumToDelete.gradeLevel,
+        });
+      }
+
+      setSavedCurriculums((current) => current.filter((item) => item._id !== curriculumId));
 
       if (currentCurriculumId === curriculumId) {
         clearCurriculumWorkspace();
       }
 
-      await fetchSavedCurriculums();
+      void fetchSavedCurriculums().catch((refreshError) => {
+        console.error("[Frontend] Saved curriculum refresh failed after delete", refreshError);
+      });
     } catch (error: any) {
       console.error("[Frontend] Delete curriculum failed", error);
       setErrorHeader(error.message || "Unable to delete the saved curriculum.");
@@ -7308,6 +7505,24 @@ export default function App() {
 
   useEffect(() => {
     setSessionConfig(buildSessionConfigFromWorkspace(activeWorkspace));
+    const workspaceStudentPublications =
+      activeWorkspace?.generationScope &&
+      typeof activeWorkspace.generationScope === "object" &&
+      (activeWorkspace.generationScope as Record<string, unknown>).studentPublications &&
+      typeof (activeWorkspace.generationScope as Record<string, unknown>).studentPublications === "object"
+        ? Object.fromEntries(
+            Object.entries((activeWorkspace.generationScope as Record<string, unknown>).studentPublications as Record<string, Record<string, boolean | { published?: boolean }>>).map(([sessionKey, flags]) => [
+              sessionKey,
+              Object.fromEntries(
+                Object.entries(flags || {}).map(([kind, value]) => [
+                  kind,
+                  typeof value === "object" ? Boolean((value as { published?: boolean })?.published) : Boolean(value),
+                ]),
+              ),
+            ]),
+          )
+        : {};
+    setStudentPublications(workspaceStudentPublications);
     const generatedFromWorkspace =
       activeWorkspace?.generationScope &&
       typeof activeWorkspace.generationScope === "object" &&
@@ -7499,21 +7714,30 @@ export default function App() {
 
   const extractCurriculumFileText = async (file: File) => {
     const lowerName = file.name.toLowerCase();
-    if (lowerName.endsWith(".pdf")) {
-      console.log(`[Frontend] PDF upload detected for "${file.name}". Converting to markdown before extraction.`);
-      const markdownText = await extractPdfText(file);
-      if (!markdownText.trim()) {
-        throw new Error("No readable text was extracted from the PDF.");
+    setFileName(file.name);
+    setFileSizeStr((file.size / 1024).toFixed(1) + " KB");
+    setShowUploadedCurriculumMaterial(true);
+    setErrorHeader(null);
+
+    try {
+      if (lowerName.endsWith(".pdf")) {
+        console.log(`[Frontend] PDF upload detected for "${file.name}". Converting to markdown before extraction.`);
+        const markdownText = await extractPdfText(file);
+        if (!markdownText.trim()) {
+          throw new Error("No readable text was extracted from the PDF.");
+        }
+        console.log(`[Frontend] PDF "${file.name}" converted to markdown and loaded into curriculum input.`);
+        return markdownText;
       }
-      console.log(`[Frontend] PDF "${file.name}" converted to markdown and loaded into curriculum input.`);
-      return markdownText;
-    }
 
-    if (lowerName.endsWith(".txt")) {
-      return readTextFile(file);
-    }
+      if (lowerName.endsWith(".txt")) {
+        return await readTextFile(file);
+      }
 
-    throw new Error("Only .txt and .pdf curriculum files are supported for extraction right now.");
+      throw new Error("Only .txt and .pdf curriculum files are supported for extraction right now.");
+    } catch (error) {
+      throw error;
+    }
   };
 
   const loadCurriculumFile = async (file: File) => {
@@ -7661,6 +7885,8 @@ export default function App() {
     setExtractedData(null);
     setEditingJsonText("");
     closePendingCurriculumSelection();
+    setShowExtractionOutput(false);
+    setShowExtractionJsonViewer(false);
     setLoading(true);
     setLoadingMessage("Checking the uploaded curriculum for class-specific sections...");
 
@@ -7790,7 +8016,7 @@ export default function App() {
 
       setLoading(true);
       setLoadingMessage("Saving edited curriculum and refreshing the planning workspace...");
-      const res = await fetch(`/api/curriculums/${currentCurriculumId}`, {
+      const res = await fetch(apiUrl(`/api/curriculums/${currentCurriculumId}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -7809,6 +8035,9 @@ export default function App() {
       setEditingJsonText(JSON.stringify(data.curriculum.extractedCurriculum, null, 2));
       setIsEditingJson(false);
       setErrorHeader(null);
+      setShowUploadedCurriculumMaterial(false);
+      setShowExtractionOutput(false);
+      setShowExtractionJsonViewer(false);
       if (data.workspaceId && data.workspace) {
         syncWorkspaceState(data.workspace as PlanningWorkspace);
       }
@@ -7835,7 +8064,7 @@ export default function App() {
     setLoadingMessage("Approving curriculum and unlocking course planning...");
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/approve-curriculum`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/approve-curriculum`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notes: "Approved from Step 1 review." }),
@@ -7889,12 +8118,12 @@ export default function App() {
     setLoadingMessage("Saving academic configuration for course planning...");
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           academicConfig: academicConfigDraft,
-        }),
+        }, authSession)),
       });
 
       if (!res.ok) {
@@ -7928,24 +8157,24 @@ export default function App() {
     setLoadingMessage("Building the approved course plan and balancing the curriculum into academic terms...");
 
     try {
-      const saveRes = await fetch(`/api/planning-workspaces/${currentWorkspaceId}`, {
+      const saveRes = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           academicConfig: academicConfigDraft,
-        }),
+        }, authSession)),
       });
 
       if (!saveRes.ok) {
         throw new Error(await readErrorFromResponse(saveRes, "Failed to save academic configuration before generating the course plan."));
       }
 
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/recommend-course-plan`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/recommend-course-plan`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           preferredTermCount,
-        }),
+        }, authSession)),
       });
 
       if (!res.ok) {
@@ -7982,17 +8211,17 @@ export default function App() {
     setLoadingMessage("Saving recommended course plan as the active term allocation...");
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           academicConfig: academicConfigDraft,
           termPlan: {
             ...(activeWorkspace.termPlan || {}),
             approved: false,
             allocations: activeWorkspace.termPlan.recommendations,
           },
-        }),
+        }, authSession)),
       });
 
       if (!res.ok) {
@@ -8079,17 +8308,17 @@ export default function App() {
     setLoadingMessage("Saving edited course plan allocations...");
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           academicConfig: academicConfigDraft,
           termPlan: {
             ...(activeWorkspace?.termPlan || {}),
             approved: false,
             allocations: coursePlanDraft,
           },
-        }),
+        }, authSession)),
       });
 
       if (!res.ok) {
@@ -8121,24 +8350,63 @@ export default function App() {
       return;
     }
 
-    if (coursePlanDraftDirty) {
-      setErrorHeader("Save the edited allocations before approving the course plan.");
-      return;
-    }
-
     if (!draftValidation.valid) {
       setErrorHeader(draftValidation.issues[0] || "Fix the course plan allocations before approval.");
       return;
     }
 
+    const hasAcademicSetupDraft = Boolean(
+      academicConfigDraft.academicYear ||
+      academicConfigDraft.school ||
+      academicConfigDraft.board ||
+      academicConfigDraft.subject ||
+      academicConfigDraft.className ||
+      extractedData?.subject ||
+      extractedData?.gradeLevel
+    );
+
+    if (!hasAcademicSetupDraft) {
+      setErrorHeader("Add the academic configuration before approving the course plan.");
+      return;
+    }
+
     setErrorHeader(null);
     setLoading(true);
-    setLoadingMessage("Approving course plan and unlocking session planning...");
+    setLoadingMessage("Saving course plan setup and unlocking session planning...");
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/approve-course-plan`, {
+      const saveRes = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}`), {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildPlannerRequestPayload({
+          academicConfig: {
+            ...academicConfigDraft,
+            subject: academicConfigDraft.subject || extractedData?.subject || activeWorkspace?.curriculumSnapshot?.subject || "",
+            className: academicConfigDraft.className || extractedData?.gradeLevel || activeWorkspace?.curriculumSnapshot?.gradeLevel || "",
+          },
+          termPlan: {
+            ...(activeWorkspace?.termPlan || {}),
+            approved: false,
+            allocations: coursePlanDraft,
+          },
+        }, authSession)),
+      });
+
+      if (!saveRes.ok) {
+        throw new Error(await readErrorFromResponse(saveRes, "Failed to save the academic configuration before approving the course plan."));
+      }
+
+      const saveData = await saveRes.json();
+      const savedWorkspace = saveData.workspace as PlanningWorkspace;
+      setCurrentWorkspaceId(savedWorkspace._id);
+      setActiveWorkspace(savedWorkspace);
+      setAcademicConfigDraft(savedWorkspace.academicConfig || {});
+      localStorage.setItem(LAST_WORKSPACE_ID_KEY, savedWorkspace._id);
+
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/approve-course-plan`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildPlannerRequestPayload({}, authSession)),
       });
 
       if (!res.ok) {
@@ -8222,13 +8490,13 @@ export default function App() {
     setLoadingMessage("Saving Phase 3 session planning setup...");
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/session-strategy`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/session-strategy`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           teachingStrategy: teachingStrategyDraft,
           sessionPlanningDefaults: sessionPlanningDefaultsDraft,
-        }),
+        }, authSession)),
       });
 
       if (!res.ok) {
@@ -8259,25 +8527,25 @@ export default function App() {
     setLoadingMessage("Building chapter-by-chapter session recommendations for the selected term...");
 
     try {
-      const strategyRes = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/session-strategy`, {
+      const strategyRes = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/session-strategy`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           teachingStrategy: teachingStrategyDraft,
           sessionPlanningDefaults: sessionPlanningDefaultsDraft,
-        }),
+        }, authSession)),
       });
 
       if (!strategyRes.ok) {
         throw new Error(await readErrorFromResponse(strategyRes, "Failed to save the session planning setup."));
       }
 
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/recommend-session-allocation`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/recommend-session-allocation`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           selectedTermKey: getSelectedTermKey(selectedTermRow),
-        }),
+        }, authSession)),
       });
 
       if (!res.ok) {
@@ -8315,10 +8583,10 @@ export default function App() {
     setLoadingMessage("Saving chapter session allocations...");
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/session-allocation`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/session-allocation`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           selectedTermKey: getSelectedTermKey(selectedTermRow),
           selectedTermSummary: {
             className: selectedTermRow.className || "Curriculum",
@@ -8337,7 +8605,7 @@ export default function App() {
               Number(allocation.estimatedSessions || 0) *
               Number(sessionPlanningDefaultsDraft.sessionDurationMinutes || academicConfigDraft.periodDurationMinutes || 45),
           })),
-        }),
+        }, authSession)),
       });
 
       if (!res.ok) {
@@ -8372,9 +8640,10 @@ export default function App() {
     setLoadingMessage("Approving Phase 3 session planning and unlocking content generation...");
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/approve-session-allocation`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/approve-session-allocation`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildPlannerRequestPayload({}, authSession)),
       });
 
       if (!res.ok) {
@@ -8590,10 +8859,10 @@ export default function App() {
     );
 
     try {
-      const res = await fetch(`/api/planning-workspaces/${currentWorkspaceId}/generate-content`, {
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/generate-content`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        body: JSON.stringify(buildPlannerRequestPayload({
           chapterName: outlineItem.chapterName || selectedTermRow.chapters[0],
           roadmapSessionNumber: sessionNum,
           sessionNumber: outlineItem.chapterSessionNumber || sessionNum,
@@ -8609,7 +8878,7 @@ export default function App() {
           assessmentCustomization: selectedSections.includes("assessment")
             ? buildAssessmentCustomizationPayload(sessionNum)
             : undefined,
-        }),
+        }, authSession)),
       });
 
       if (!res.ok) {
@@ -8702,6 +8971,7 @@ export default function App() {
 
   return (
       <div className="min-h-screen bg-[#FDFEFE] text-[#2B3437] font-sans antialiased selection:bg-[#9FCDD2] selection:text-teal-900 transition-all duration-300">
+      <ActionToast open={Boolean(popupMessage)} message={popupMessage} onClose={() => setPopupMessage("")} />
       
       {/* Dynamic Background Motifs (Montessori Inspired Playful Aesthetics) */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-radial from-[#9FCDD2]/10 to-transparent pointer-events-none rounded-full no-print" />
@@ -8732,7 +9002,7 @@ export default function App() {
               <span>Overview</span>
             </button>
             <div className="w-[1px] h-4 bg-slate-200 mx-0.5" />
-            {[
+            {[ 
               { num: 1, label: "Curriculum" },
               { num: 2, label: "Course Plan" },
               { num: 3, label: "Session Plan" },
@@ -8764,6 +9034,12 @@ export default function App() {
                 </button>
               );
             })}
+            {plannerStepPending ? (
+              <div className="ml-1 flex items-center gap-1 rounded-xl bg-white px-2 py-1 text-[10px] font-bold text-slate-500 shadow-sm">
+                <div className="h-2 w-2 animate-spin rounded-full border border-[#36ADAA] border-t-transparent" />
+                Updating
+              </div>
+            ) : null}
           </div>
         </div>
       </header>
@@ -9110,83 +9386,174 @@ export default function App() {
           </div>
         )}
 
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          
-          {/* Left Sidebar Placeholder (Clean & Static - No Functionality) */}
-          <aside className="w-full lg:w-64 shrink-0 space-y-6 no-print">
-            
-            {/* Elegant Main Placeholder Card */}
-            <div className="w-full bg-white rounded-3xl p-5 border-2 border-slate-100 shadow-xs space-y-5">
-              {/* App Status Indicator */}
-              <div className="flex items-center gap-2 pb-3.5 border-b border-slate-100">
-                <div className="w-2 h-2 rounded-full bg-[#1EABDA]" />
-                <span className="text-xs font-bold text-slate-700 font-display">Five-Phase Planner</span>
-                <span className="ml-auto text-[10px] bg-sky-50 text-[#1EABDA] px-2 py-0.5 rounded-full font-bold">
-                  Active
-                </span>
+        {showTamilIndexModal && !loading && (
+          <div className="fixed inset-0 z-40 bg-[#2B3437]/45 backdrop-blur-xs flex items-center justify-center p-4 no-print">
+            <div className="w-full max-w-2xl rounded-[28px] border-2 border-slate-200 bg-white shadow-2xl overflow-hidden">
+              <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#36ADAA]">Tamil Curriculum</div>
+                  <h3 className="mt-1 text-xl font-display font-black text-slate-900">Upload The Textbook Index</h3>
+                  <p className="mt-2 text-sm text-slate-600 max-w-xl">
+                    Tamil curriculum parsing needs the textbook index as a second source document so the extraction can preserve the official instructional sequence.
+                  </p>
+                </div>
+                <button
+                  onClick={closeTamilIndexModal}
+                  className="shrink-0 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                  aria-label="Close Tamil index upload"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
-              {/* Navigation Skeleton Placeholders (Disabled / Non-Functional) */}
-              <nav className="space-y-2">
-                {[
-                  { label: "Curriculum Setup", active: activeStep === 1 },
-                  { label: "Course Planning", active: activeStep === 2 },
-                  { label: "Session Planning", active: activeStep === 3 },
-                  { label: "Content Generation", active: activeStep === 4 },
-                  { label: "Assessment & Revision", active: activeStep === 5 },
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex items-center gap-2.5 p-2.5 rounded-2xl text-xs transition-all duration-200 cursor-not-allowed ${
-                      item.active
-                        ? "bg-slate-100 text-slate-800 font-bold"
-                        : "text-slate-400 font-medium hover:bg-slate-50/50"
-                    }`}
-                  >
-                    <div className={`w-1.5 h-1.5 rounded-full ${item.active ? "bg-[#36ADAA]" : "bg-slate-300"}`} />
-                    <span>{item.label}</span>
+              <div className="px-6 py-5 space-y-4">
+                <input
+                  ref={tamilIndexFileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept=".txt,.pdf"
+                  onChange={handleTamilIndexFileSelect}
+                />
+
+                <button
+                  onClick={() => tamilIndexFileInputRef.current?.click()}
+                  className="w-full rounded-3xl border-2 border-dashed border-slate-200 px-6 py-8 text-center transition hover:border-[#36ADAA] hover:bg-slate-50"
+                >
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#9FCDD2]/25">
+                    <BookOpen className="h-6 w-6 text-[#36ADAA]" />
                   </div>
-                ))}
-              </nav>
+                  <div className="text-sm font-semibold text-slate-700">Choose Tamil textbook index file</div>
+                  <div className="mt-1 text-xs text-slate-400">Supports `.txt` and `.pdf` files converted into extraction text.</div>
+                </button>
 
-              {/* Decorative Skeleton Segment */}
-              <div className="pt-3 border-t border-slate-100 space-y-2">
-                <div className="h-1.5 bg-slate-100 rounded-full w-2/3" />
-                <div className="h-1.5 bg-slate-100 rounded-full w-1/2" />
-              </div>
-            </div>
+                {tamilIndexFileName && (
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    <div className="font-bold text-slate-800">{tamilIndexFileName}</div>
+                    <div className="mt-1 text-xs text-slate-500">{tamilIndexFileSizeStr || "Ready for parsing"}</div>
+                  </div>
+                )}
 
-            {/* Visual Companion advice widget featuring our rotating penguin mascot */}
-            <div className="bg-[#E9CAB7]/7 border border-[#E9CAB7]/15 rounded-3xl p-4 flex gap-3 relative overflow-hidden font-sans">
-              <div className="shrink-0 flex items-center justify-center">
-                {/* Rotating miniature penguin mascot */}
-                <div className="w-10 h-10 rounded-full bg-white border border-[#9FCDD2] flex items-center justify-center overflow-hidden shrink-0 animate-bounce-subtle">
-                  <svg viewBox="0 0 100 120" className="w-6 h-6 animate-[spin_10s_linear_infinite]">
-                    <rect x="20" y="25" width="60" height="80" rx="30" fill="#2B3437" />
-                    <path d="M 50,30 C 32,30 32,55 32,65 C 32,85 40,100 50,100 C 60,100 68,85 68,65 C 68,55 68,30 50,30 Z" fill="#FFFFFF" />
-                    <circle cx="40" cy="48" r="4.5" fill="#2B3437" />
-                    <circle cx="60" cy="48" r="4.5" fill="#2B3437" />
-                    <path d="M 46,51 Q 50,56 54,51 Q 50,49 46,51 Z" fill="#FFAE19" />
-                  </svg>
+                <div className="rounded-2xl bg-amber-50 px-4 py-3 text-xs font-medium text-amber-800">
+                  We’ll continue the same analysis flow after this upload. Class selection, if needed, still appears after the index is accepted.
                 </div>
               </div>
-              <div className="space-y-0.5 min-w-0">
-                <span className="text-[10px] font-bold text-[#DE8431] block uppercase font-display">
-                  Mascot Tip
-                </span>
-                <p className="text-[11px] text-slate-500 leading-relaxed font-semibold">
-                  Workspace Active. Map school curriculum topics to terms seamlessly.
+
+              <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50">
+                <p className="text-xs text-slate-500">
+                  Required because the detected subject is <span className="font-bold text-slate-700">{detectedCurriculumSubject || (requiresTamilIndex ? "Tamil" : "curriculum")}</span>.
                 </p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={closeTamilIndexModal}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => void handleResumeTamilCurriculumAnalysis()}
+                    disabled={!tamilIndexText.trim()}
+                    className="rounded-2xl bg-[#36ADAA] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#2f9895] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Continue Analysis
+                  </button>
+                </div>
               </div>
             </div>
+          </div>
+        )}
 
-          </aside>
+        {pendingCurriculumSelection && !loading && (
+          <div className="fixed inset-0 z-40 bg-[#2B3437]/45 backdrop-blur-xs flex items-center justify-center p-4 no-print">
+            <div className="w-full max-w-3xl rounded-[28px] border-2 border-slate-200 bg-white shadow-2xl overflow-hidden">
+              <div className="px-6 py-5 border-b border-slate-100 flex items-start justify-between gap-4">
+                <div>
+                  <div className="text-[11px] font-bold uppercase tracking-[0.22em] text-[#36ADAA]">Multi-Class Curriculum</div>
+                  <h3 className="mt-1 text-xl font-display font-black text-slate-900">Choose Which Classes To Extract</h3>
+                  <p className="mt-2 text-sm text-slate-600 max-w-2xl">
+                    This syllabus contains multiple classes. Choose the class blocks we should extract, and the unselected class content will be skipped entirely.
+                  </p>
+                </div>
+                <button
+                  onClick={closePendingCurriculumSelection}
+                  className="shrink-0 rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                  aria-label="Close class selection"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
 
-          {/* Right Main Work Area */}
-          <div className="flex-1 w-full min-w-0">
+              <div className="px-6 py-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                {pendingCurriculumSelection.classSummaries.map((summary) => {
+                  const checked = selectedClassNamesToStore.includes(summary.className);
+                  return (
+                    <label
+                      key={summary.className}
+                      className={`flex items-start gap-4 rounded-3xl border p-4 transition-all cursor-pointer ${
+                        checked
+                          ? "border-[#36ADAA] bg-[#36ADAA]/5 shadow-sm"
+                          : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => {
+                          setSelectedClassNamesToStore((current) =>
+                            e.target.checked
+                              ? Array.from(new Set([...current, summary.className]))
+                              : current.filter((item) => item !== summary.className)
+                          );
+                        }}
+                        className="mt-1 h-4 w-4 rounded border-slate-300 text-[#36ADAA] focus:ring-[#36ADAA]"
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-base font-display font-black text-slate-900">{summary.className}</span>
+                          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-slate-500">
+                            {summary.pageRangeLabel || summary.subject || "Detected in source"}
+                          </span>
+                        </div>
+                        {summary.detectionSource && (
+                          <p className="mt-3 rounded-2xl bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600">
+                            Source match: <span className="font-bold text-slate-700">{summary.detectionSource}</span>
+                          </p>
+                        )}
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-slate-50">
+                <p className="text-xs text-slate-500">
+                  Selected: <span className="font-bold text-slate-700">{selectedClassNamesToStore.length}</span> of{" "}
+                  <span className="font-bold text-slate-700">{pendingCurriculumSelection.classSummaries.length}</span> classes
+                </p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={closePendingCurriculumSelection}
+                    className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => void handleStoreSelectedCurriculumClasses()}
+                    className="rounded-2xl bg-[#36ADAA] px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-[#2f9895] disabled:cursor-not-allowed disabled:opacity-50"
+                    disabled={selectedClassNamesToStore.length === 0}
+                  >
+                    Extract Selected Classes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="w-full">
+          <div className="w-full min-w-0">
 
         {/* -------------------- STEP 0: CLEAN DASHBOARD -------------------- */}
-        {activeStep === 0 && (
+        {deferredActiveStep === 0 && (
           <div className="space-y-8 animate-[fadeIn_0.5s_ease-out]">
             {/* Main Welcome Hero Banner Block */}
             <div className="p-8 md:p-10 bg-radial from-slate-900 to-slate-950 text-white rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
@@ -10110,7 +10477,7 @@ export default function App() {
           </div>
         )}
 
-        {activeStep === 5 && (
+        {deferredActiveStep === 5 && (
           <div className="space-y-8 animate-fadeIn">
             <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs">
               <div className="space-y-3">
@@ -10211,7 +10578,7 @@ export default function App() {
         )}
 
         {/* -------------------- STEP 1: LOAD & EXTRACT CURRICULUM -------------------- */}
-        {activeStep === 1 && (
+        {deferredActiveStep === 1 && (
           <div className="space-y-8 animate-fadeIn">
 
             {/* Step 1 header */}
@@ -10365,7 +10732,7 @@ export default function App() {
                   </p>
 
                   {/* Mock Upload Indicator */}
-                  {fileName && (
+                  {showUploadedCurriculumMaterial && fileName && (
                     <div className="mt-4 p-2 bg-slate-50 border border-slate-205 rounded-xl inline-flex items-center gap-2 text-xs text-slate-600" onClick={(e) => e.stopPropagation()}>
                       <FileText className="w-4 h-4 text-[#36ADAA]" />
                       <span className="font-bold max-w-[200px] truncate">{fileName}</span>
@@ -10375,11 +10742,15 @@ export default function App() {
                 </div>
 
                 {/* Run Extraction Button */}
+                {(() => {
+                  const normalizedInputText = typeof inputText === "string" ? inputText : "";
+                  const hasInputText = normalizedInputText.trim().length > 0;
+                  return (
                 <button
                   onClick={handleAnalyzeCurriculumText}
-                  disabled={!inputText.trim()}
+                  disabled={!hasInputText}
                   className={`w-full py-3 px-4 rounded-2xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
-                    inputText.trim()
+                    hasInputText
                       ? "bg-[#36ADAA] hover:bg-[#36ADAA]/90 text-white shadow-md hover:shadow-lg hover:shadow-teal-100"
                       : "bg-slate-200 text-slate-400 cursor-not-allowed"
                   }`}
@@ -10387,6 +10758,8 @@ export default function App() {
                   <Sparkles className="w-4 h-4 text-white animate-pulse" />
                   Start Analyze
                 </button>
+                  );
+                })()}
               </div>
 
               {/* Right panel: Extracted JSON output & validation */}
@@ -10399,7 +10772,7 @@ export default function App() {
                     </h3>
                   </div>
 
-                  {extractedData && (
+                  {extractedData && showExtractionJsonViewer && (
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setIsJsonCollapsed((prev) => !prev)}
@@ -10428,7 +10801,7 @@ export default function App() {
                   )}
                 </div>
 
-                {extractedData ? (
+                {extractedData && showExtractionOutput ? (
                   <div className="space-y-4 flex-1 flex flex-col justify-between">
                     <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
                       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -10556,61 +10929,61 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* Extracted JSON Editor/Viewer Container */}
-                    <div className={`bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden flex flex-col transition-all duration-300 ${
-                      isJsonCollapsed ? "flex-none" : "flex-1 min-h-[220px] max-h-[540px]"
-                    }`}>
-                      <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
-                        <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider">
-                          {isEditingJson ? "Active JSON Editor Drafts" : "Verified Structured Extraction"}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          {isJsonCollapsed && (
-                            <span className="text-[10px] font-semibold text-slate-400">Hidden</span>
-                          )}
-                          <span className="w-2.5 h-2.5 rounded-full bg-[#3CC583]" />
-                        </div>
-                      </div>
-
-                      {isJsonCollapsed ? (
-                        <div className="px-4 py-3 text-xs font-semibold text-slate-500">
-                          JSON output is hidden. Use the toggle button above to expand it.
-                        </div>
-                      ) : isEditingJson ? (
-                        <div className="flex flex-1 flex-col">
-                          <div className="border-b border-slate-200 bg-amber-50 px-4 py-2 text-[11px] font-semibold text-amber-800">
-                            Saving curriculum edits will reset approval and downstream planning recommendations so the workflow stays consistent.
+                    {showExtractionJsonViewer && (
+                      <div className={`bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden flex flex-col transition-all duration-300 ${
+                        isJsonCollapsed ? "flex-none" : "flex-1 min-h-[220px] max-h-[540px]"
+                      }`}>
+                        <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 flex justify-between items-center">
+                          <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider">
+                            {isEditingJson ? "Active JSON Editor Drafts" : "Verified Structured Extraction"}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            {isJsonCollapsed && (
+                              <span className="text-[10px] font-semibold text-slate-400">Hidden</span>
+                            )}
+                            <span className="w-2.5 h-2.5 rounded-full bg-[#3CC583]" />
                           </div>
-                          <textarea
-                            value={editingJsonText}
-                            onChange={(e) => setEditingJsonText(e.target.value)}
-                            className="w-full flex-1 min-h-[320px] p-3 font-mono text-xs bg-slate-900 text-[#3CC583] focus:outline-none overflow-y-auto resize-none"
-                          />
                         </div>
-                      ) : (
-                        <pre className="flex-1 overflow-auto p-4 text-xs font-mono text-slate-700 whitespace-pre-wrap break-words min-h-[320px]">
-                          {JSON.stringify(extractedData, null, 2)}
-                        </pre>
-                      )}
 
-                      {/* Edit controls footer if editing */}
-                      {isEditingJson && !isJsonCollapsed && (
-                        <div className="bg-slate-100 p-2 border-t border-slate-200 flex justify-end gap-2">
-                          <button
-                            onClick={() => setIsEditingJson(false)}
-                            className="bg-slate-200 hover:bg-slate-300 px-3 py-1 text-[11px] font-bold rounded-lg text-slate-700"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={handleSaveJsonEdit}
-                            className="bg-[#36ADAA] hover:bg-[#36ADAA]/90 px-3 py-1 text-[11px] font-bold rounded-lg text-white"
-                          >
-                            Save Changes
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                        {isJsonCollapsed ? (
+                          <div className="px-4 py-3 text-xs font-semibold text-slate-500">
+                            JSON output is hidden. Use the toggle button above to expand it.
+                          </div>
+                        ) : isEditingJson ? (
+                          <div className="flex flex-1 flex-col">
+                            <div className="border-b border-slate-200 bg-amber-50 px-4 py-2 text-[11px] font-semibold text-amber-800">
+                              Saving curriculum edits will reset approval and downstream planning recommendations so the workflow stays consistent.
+                            </div>
+                            <textarea
+                              value={editingJsonText}
+                              onChange={(e) => setEditingJsonText(e.target.value)}
+                              className="w-full flex-1 min-h-[320px] p-3 font-mono text-xs bg-slate-900 text-[#3CC583] focus:outline-none overflow-y-auto resize-none"
+                            />
+                          </div>
+                        ) : (
+                          <pre className="flex-1 overflow-auto p-4 text-xs font-mono text-slate-700 whitespace-pre-wrap break-words min-h-[320px]">
+                            {JSON.stringify(extractedData, null, 2)}
+                          </pre>
+                        )}
+
+                        {isEditingJson && !isJsonCollapsed && (
+                          <div className="bg-slate-100 p-2 border-t border-slate-200 flex justify-end gap-2">
+                            <button
+                              onClick={() => setIsEditingJson(false)}
+                              className="bg-slate-200 hover:bg-slate-300 px-3 py-1 text-[11px] font-bold rounded-lg text-slate-700"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={handleSaveJsonEdit}
+                              className="bg-[#36ADAA] hover:bg-[#36ADAA]/90 px-3 py-1 text-[11px] font-bold rounded-lg text-white"
+                            >
+                              Save Changes
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {/* Accept (Next Steps) or Regenerate controls */}
                     <div className="pt-3 border-t border-slate-100 flex items-center gap-2">
@@ -10662,7 +11035,7 @@ export default function App() {
         )}
 
         {/* -------------------- STEP 2: COURSE PLANNING -------------------- */}
-        {activeStep === 2 && (
+        {deferredActiveStep === 2 && (
           <div className="space-y-6 animate-fadeIn">
             {!curriculumApproved ? (
               <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
@@ -10932,7 +11305,7 @@ export default function App() {
         )}
 
         {/* -------------------- STEP 3: SESSION SPECS & RESOURCE CONFIG -------------------- */}
-        {activeStep === 3 && (
+        {deferredActiveStep === 3 && (
           <div className="space-y-6 animate-fadeIn">
             {!coursePlanApproved ? (
               <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
@@ -11320,7 +11693,7 @@ export default function App() {
         )}
 
         {/* -------------------- STEP 4: DELIVERABLE PLANS DISPLAY DASHBOARD -------------------- */}
-        {activeStep === 4 && (
+        {deferredActiveStep === 4 && (
           <div className="space-y-6 animate-fadeIn">
             {!sessionPlanApproved ? (
               <div className="bg-white p-12 rounded-3xl border-2 border-slate-100 text-center max-w-xl mx-auto space-y-6 shadow-sm my-8">
@@ -11524,6 +11897,13 @@ export default function App() {
                     };
                     const activeAssessmentCustomization = getAssessmentCustomization(activeSessionNumber);
                     const assessmentSectionGroups = buildAssessmentSectionGroups(session.assessment);
+                    const publicationTargets = [
+                      { id: "homework", label: "Homework", available: Boolean(session.homework) },
+                      { id: "assessments", label: "Assessments", available: Boolean(session.assessment) },
+                      { id: "quizzes", label: "Quizzes", available: Boolean(session.assessment?.mcq?.length) },
+                      { id: "notes", label: "Notes", available: Boolean(session.studentLessonNotes) },
+                    ] as const;
+                    const publishedCount = publicationTargets.filter((target) => getPublicationFlagsForSession(session)?.[target.id]).length;
                     return (
                       <div className="min-w-0 bg-white border-2 border-slate-100 rounded-3xl overflow-hidden shadow-xs space-y-6">
                         
@@ -11577,6 +11957,47 @@ export default function App() {
                               {t.label}
                             </button>
                           ))}
+                        </div>
+
+                        <div className="mx-6 rounded-3xl border border-[#36ADAA]/15 bg-[#36ADAA]/[0.06] p-4 no-print md:mx-8">
+                          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                            <div>
+                              <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#36ADAA]">Publish To Students</div>
+                              <div className="mt-1 text-sm font-bold text-slate-800">
+                                Publish individual session outputs after teacher review.
+                              </div>
+                              <div className="mt-1 text-xs text-slate-500">
+                                {publishedCount > 0
+                                  ? `${publishedCount} student-facing item${publishedCount === 1 ? "" : "s"} published from this session.`
+                                  : "Nothing from this session has been published to students yet."}
+                              </div>
+                            </div>
+                            <div className="flex flex-wrap gap-2">
+                            {publicationTargets.map((target) => {
+                                const published = Boolean(getPublicationFlagsForSession(session)?.[target.id]);
+                                return (
+                                  <button
+                                    key={target.id}
+                                    type="button"
+                                    disabled={!target.available}
+                                    onMouseDown={(e) => e.preventDefault()}
+                                    onClick={() => toggleStudentPublication(session, target.id)}
+                                    className={[
+                                      "inline-flex items-center gap-2 rounded-2xl border px-3 py-2 text-xs font-bold transition",
+                                      !target.available
+                                        ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                                        : published
+                                        ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                                        : "border-slate-200 bg-white text-slate-700 hover:border-[#36ADAA]/30 hover:text-[#36ADAA]",
+                                    ].join(" ")}
+                                  >
+                                    <CheckCircle2 className={`h-3.5 w-3.5 ${published ? "text-emerald-600" : ""}`} />
+                                    {published ? `${target.label} Published` : `Publish ${target.label}`}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
                         </div>
 
                         {/* DELIVERABLE TAB PANELS */}
@@ -12992,71 +13413,6 @@ export default function App() {
                                   "Assessment not generated yet",
                                   "Click the generate button in the session header to create this assessment using the paper settings above."
                                 )
-                              )}
-                            </div>
-                          )}
-
-                          {/* SUB TAB: Assignments */}
-                          {activeSubTab === "assignments" && (
-                            <div className="space-y-6 animate-fadeIn">
-                              {renderTabGeneratePanel(
-                                "assignments",
-                                activeSessionNumber,
-                                outlineItem,
-                                "Assignments",
-                                "Generate or refresh the assignment bundle for this session."
-                              )}
-                              {contentIncludesAssignments && session.assignment ? (
-                                <div className="space-y-5">
-                                  <div className="p-6 bg-slate-50 border border-slate-200 rounded-3xl space-y-4">
-                                    <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                                      <span className="text-[10px] font-black uppercase tracking-wider text-[#7F64EA] bg-[#7F64EA]/15 px-3 py-1 rounded-full">
-                                        Academic Assignment Sheet
-                                      </span>
-                                    </div>
-
-                                    <div className="bg-white p-4 rounded-2xl border border-slate-100 space-y-1 shadow-2xs">
-                                      <span className="text-[9px] text-slate-400 font-bold uppercase block tracking-wider">
-                                        Assignment Task description
-                                      </span>
-                                      <p className="text-xs text-slate-700 leading-relaxed font-medium">
-                                        {renderMixedMathLine(session.assignment.taskDescription)}
-                                      </p>
-                                    </div>
-
-                                    {/* Evaluation rubrics */}
-                                    {session.assignment.rubric && (
-                                      <div className="space-y-2">
-                                        <span className="text-[10px] text-slate-500 font-bold uppercase block tracking-wider">
-                                          Core Rubrics Guidelines (10 Points distribution)
-                                        </span>
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                        {session.assignment.rubric.map((rub, rIdx) => (
-                                            <div key={rIdx} className="bg-white p-3 rounded-xl border border-slate-100 text-[11px] text-slate-600">
-                                              {renderMixedMathLine(rub)}
-                                            </div>
-                                          ))}
-                                        </div>
-                                      </div>
-                                    )}
-
-                                    {/* Answer responses key */}
-                                    {session.assignment.answerKey && (
-                                      <div className="p-4 bg-[#3CC583]/5 border-2 border-dashed border-[#3CC583]/30 rounded-2xl space-y-1.5">
-                                        <span className="text-[10px] text-[#3CC583] font-black uppercase tracking-wider block">
-                                          Teacher Grading Answer Key reference
-                                        </span>
-                                        <p className="text-xs text-slate-700 font-mono leading-relaxed whitespace-pre-wrap">
-                                          {renderMixedMathLine(session.assignment.answerKey)}
-                                        </p>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              ) : (
-                                <div className="text-gray-400 text-center p-8 bg-slate-50 rounded-2xl">
-                                  Standalone assignment bundles are not part of the current Phase 4 session-pack flow.
-                                </div>
                               )}
                             </div>
                           )}

@@ -3,6 +3,14 @@ import mongoose, { Model, Schema } from "mongoose";
 const PlanningWorkspaceSchema = new Schema(
   {
     curriculumId: { type: Schema.Types.ObjectId, ref: "Curriculum", required: true, index: true },
+    schoolId: { type: String, default: "", index: true },
+    teacherId: { type: String, default: "", index: true },
+    createdBy: { type: String, default: "" },
+    classId: { type: String, default: "", index: true },
+    subjectId: { type: String, default: "" },
+    // Ownership fields for isolation
+    academicYear: { type: String, default: "", index: true },
+    sectionId: { type: String, default: "", index: true },
     phase: {
       type: String,
       enum: [
@@ -75,6 +83,12 @@ const PlanningWorkspaceSchema = new Schema(
 );
 
 PlanningWorkspaceSchema.index({ curriculumId: 1, updatedAt: -1 });
+
+// Composite index for teacher isolation
+PlanningWorkspaceSchema.index(
+  { schoolId: 1, teacherId: 1, academicYear: 1, classId: 1, sectionId: 1, subjectId: 1 },
+  { name: "workspace_teacher_isolation" }
+);
 
 export const PlanningWorkspaceModel: Model<any> =
   mongoose.models.PlanningWorkspace || mongoose.model("PlanningWorkspace", PlanningWorkspaceSchema);

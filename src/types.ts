@@ -948,6 +948,11 @@ export interface RevisionAction {
 export interface PlanningWorkspace {
   _id: string;
   curriculumId: string;
+  schoolId?: string;
+  teacherId?: string;
+  createdBy?: string;
+  classId?: string;
+  subjectId?: string;
   phase: PlanningWorkspacePhase;
   status: "draft" | "in_progress" | "approved";
   curriculumSnapshot: {

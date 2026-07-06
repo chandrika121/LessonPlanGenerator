@@ -13,6 +13,14 @@ import { SSEClientTransport } from "@modelcontextprotocol/sdk/client/sse.js";
 import { Agent } from "undici";
 import { CurriculumModel } from "./models/Curriculum";
 import { PlanningWorkspaceModel } from "./models/PlanningWorkspace";
+import { UserModel } from "./models/User";
+import { ClassModel } from "./models/Class";
+import { EvaluationModel } from "./models/Evaluation";
+import { EvaluationResultModel } from "./models/EvaluationResult";
+import { AssignmentSubmissionModel } from "./models/AssignmentSubmission";
+import { HomeworkSubmissionModel } from "./models/HomeworkSubmission";
+import { TeacherClassAllocationModel } from "./models/TeacherClassAssignment";
+import { ActivityLogModel } from "./models/ActivityLog";
 import { generateAiImage } from "./services/visual/ai-image-engine.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -825,7 +833,7 @@ function getCurriculumExtractionOllamaOverrides({
   }
 
   return {
-    baseUrl: process.env.OLLAMA_CURRICULUM_INDIC_BASE_URL || process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11435",
+    baseUrl: process.env.OLLAMA_CURRICULUM_INDIC_BASE_URL || process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11434",
     model: process.env.OLLAMA_CURRICULUM_INDIC_MODEL || INDIC_CURRICULUM_EXTRACTION_MODEL,
   };
 }
@@ -2135,7 +2143,7 @@ const PPT_TEMPLATE_PRESETS = {
     contentDensity: "light",
   },
 } as const;
-
+const DEFAULT_SCHOOL_ID = "kamala-niketan";
 const KAMALANIKETAN_TEMPLATE_SLIDES = [
   { key: "title_identity", label: "Title / Session Identity", slideType: "title", optional: false },
   { key: "learning_outcomes", label: "Learning Outcomes", slideType: "learning-outcomes", optional: false },
@@ -2228,6 +2236,565 @@ const PPT_THEME_PRESETS: Record<string, {
     },
   },
 };
+
+function getAcademicYearLabel(date = new Date()) {
+  const year = date.getFullYear();
+  return `${year}-${year + 1}`;
+}
+
+function normalizeClassKey(value: unknown) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const parsed = parseClassIdentity(raw);
+  if (parsed.classToken) {
+    return parsed.sectionToken
+      ? `${parsed.classToken}section${parsed.sectionToken.toLowerCase()}`
+      : parsed.classToken;
+  }
+
+  return raw.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function classKeysOverlap(left: unknown, right: unknown) {
+  const leftParsed = parseClassIdentity(left);
+  const rightParsed = parseClassIdentity(right);
+  if (leftParsed.classToken && rightParsed.classToken) {
+    if (leftParsed.classToken !== rightParsed.classToken) {
+      return false;
+    }
+    if (leftParsed.sectionToken && rightParsed.sectionToken) {
+      return leftParsed.sectionToken === rightParsed.sectionToken;
+    }
+    return true;
+  }
+
+  const leftKey = normalizeClassKey(left);
+  const rightKey = normalizeClassKey(right);
+  if (!leftKey || !rightKey) {
+    return false;
+  }
+  return leftKey === rightKey || leftKey.includes(rightKey) || rightKey.includes(leftKey);
+}
+
+function normalizeRomanNumeral(value: unknown) {
+  const normalized = String(value || "").trim().toLowerCase().replace(/\s+/g, "");
+  const romanToNumber: Record<string, string> = {
+    i: "1",
+    ii: "2",
+    iii: "3",
+    iv: "4",
+    v: "5",
+    vi: "6",
+    vii: "7",
+    viii: "8",
+    ix: "9",
+    x: "10",
+    xi: "11",
+    xii: "12",
+  };
+  return romanToNumber[normalized] || normalized;
+}
+
+function extractSectionToken(value: unknown) {
+  const normalized = String(value || "").trim().toLowerCase();
+  const sectionMatch = normalized.match(/section\s*([a-z0-9]+)/i) || normalized.match(/-\s*([a-z])$/i);
+  return sectionMatch?.[1]?.toUpperCase() || "";
+}
+
+function extractClassToken(value: unknown) {
+  const normalized = String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\bclass\b/g, " ")
+    .replace(/\bgrade\b/g, " ")
+    .replace(/\bstd\b/g, " ")
+    .replace(/\bstandard\b/g, " ")
+    .replace(/\bsection\b\s*[a-z0-9]+\b/g, " ")
+    .replace(/-/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const tokens = normalized.split(" ").filter(Boolean);
+  for (const token of tokens) {
+    const normalizedToken = normalizeRomanNumeral(token);
+    if (/^\d+$/.test(normalizedToken) && Number(normalizedToken) >= 1 && Number(normalizedToken) <= 12) {
+      return normalizedToken;
+    }
+  }
+
+  return "";
+}
+
+function parseClassIdentity(value: unknown) {
+  return {
+    classToken: extractClassToken(value),
+    sectionToken: extractSectionToken(value),
+  };
+}
+
+function getCanonicalClassLabel(value: unknown) {
+  const { classToken } = parseClassIdentity(value);
+  if (!classToken) return String(value || "").trim();
+
+  const numberToRoman: Record<string, string> = {
+    "1": "I",
+    "2": "II",
+    "3": "III",
+    "4": "IV",
+    "5": "V",
+    "6": "VI",
+    "7": "VII",
+    "8": "VIII",
+    "9": "IX",
+    "10": "X",
+    "11": "XI",
+    "12": "XII",
+  };
+
+  return numberToRoman[classToken] || classToken;
+}
+
+async function resolveTeacherAllocationContext(input: {
+  schoolId?: string;
+  teacherId?: string;
+  classId?: string;
+  section?: string;
+  subject?: string;
+}) {
+  const schoolId = String(input.schoolId || "").trim();
+  const teacherId = String(input.teacherId || "").trim();
+  const classId = String(input.classId || "").trim();
+  const section = String(input.section || "").trim();
+  const subject = String(input.subject || "").trim();
+
+  const classAliases = buildClassAliasKeys(classId, getCanonicalClassLabel(classId), section ? `${classId} - Section ${section}` : "");
+  const allocation = teacherId && schoolId
+    ? await TeacherClassAllocationModel.findOne({
+        schoolId,
+        teacherId,
+        status: "published",
+      }).lean()
+    : null;
+
+  const matchingAllocation = teacherId && schoolId
+    ? await TeacherClassAllocationModel.find({
+        schoolId,
+        teacherId,
+        status: "published",
+      }).lean().then((items) => items.find((item: any) => {
+        const classMatches = [item.classId, item.className, item.section ? `${item.className || item.classId} - Section ${item.section}` : ""]
+          .some((value) => matchesAnyClassAlias(value, classAliases));
+        const sectionMatches = !section || !String(item.section || "").trim() || String(item.section || "").trim().toLowerCase() === section.toLowerCase();
+        const subjectMatches = !subject || !(Array.isArray(item.subjects) && item.subjects.length > 0) || item.subjects.some((entry: unknown) => normalizeSubjectKey(entry) === normalizeSubjectKey(subject));
+        return classMatches && sectionMatches && subjectMatches;
+      }))
+    : allocation;
+
+  return {
+    classId: String(matchingAllocation?.classId || classId || "").trim(),
+    className: String(matchingAllocation?.className || getCanonicalClassLabel(classId) || "").trim(),
+    section: String(matchingAllocation?.section || section || "").trim(),
+    subject: String(
+      (Array.isArray(matchingAllocation?.subjects) && matchingAllocation.subjects[0]) ||
+      subject ||
+      ""
+    ).trim(),
+  };
+}
+
+async function findMatchingTeacherAllocationForWorkspace(workspace: any, overrides?: {
+  schoolId?: string;
+  teacherId?: string;
+  className?: string;
+  section?: string;
+  subject?: string;
+}) {
+  const schoolId = String(overrides?.schoolId || workspace?.schoolId || "").trim();
+  const teacherId = String(overrides?.teacherId || workspace?.teacherId || workspace?.createdBy || "").trim();
+  const className = String(
+    overrides?.className ||
+    workspace?.academicConfig?.className ||
+    workspace?.classId ||
+    workspace?.curriculumSnapshot?.gradeLevel ||
+    "",
+  ).trim();
+  const section = String(overrides?.section || workspace?.academicConfig?.section || "").trim();
+  const subject = String(
+    overrides?.subject ||
+    workspace?.academicConfig?.subject ||
+    workspace?.subjectId ||
+    workspace?.curriculumSnapshot?.subject ||
+    "",
+  ).trim();
+
+  if (!schoolId || !teacherId || !className || !subject) {
+    return null;
+  }
+
+  const classAliases = buildClassAliasKeys(
+    className,
+    getCanonicalClassLabel(className),
+    section ? `${className} - Section ${section}` : "",
+  );
+  const subjectAliases = buildSubjectAliases(subject);
+  const allocations = await TeacherClassAllocationModel.find({
+    schoolId,
+    teacherId,
+    status: "published",
+  }).lean();
+
+  return allocations.find((item: any) => {
+    const classMatches = [item.classId, item.className, item.section ? `${item.className || item.classId} - Section ${item.section}` : ""]
+      .some((value) => matchesAnyClassAlias(value, classAliases));
+    const sectionMatches = !section || !String(item.section || "").trim() || normalizeSectionKey(item.section) === normalizeSectionKey(section);
+    const subjectMatches = !(Array.isArray(item.subjects) && item.subjects.length > 0)
+      ? false
+      : item.subjects.some((entry: unknown) => matchesAnySubjectAlias(entry, subjectAliases));
+    return classMatches && sectionMatches && subjectMatches;
+  }) || null;
+}
+
+function syncWorkspaceIdentityFromRequest(workspace: any, req: express.Request) {
+  const schoolId = String(req.body?.schoolId || req.query.schoolId || workspace.schoolId || "").trim();
+  const teacherId = String(req.body?.teacherId || req.body?.userId || req.query.userId || workspace.teacherId || workspace.createdBy || "").trim();
+  const className = String(workspace?.academicConfig?.className || workspace?.classId || workspace?.curriculumSnapshot?.gradeLevel || "").trim();
+  const subject = String(workspace?.academicConfig?.subject || workspace?.subjectId || workspace?.curriculumSnapshot?.subject || "").trim();
+
+  workspace.schoolId = schoolId;
+  workspace.teacherId = teacherId;
+  workspace.createdBy = teacherId;
+  if (className) {
+    workspace.classId = className;
+  }
+  if (subject) {
+    workspace.subjectId = subject;
+  }
+}
+
+async function validateWorkspaceAgainstTeacherAllocations(workspace: any, req: express.Request) {
+  syncWorkspaceIdentityFromRequest(workspace, req);
+  const matchingAllocation = await findMatchingTeacherAllocationForWorkspace(workspace);
+  if (!matchingAllocation) {
+    return {
+      valid: false,
+      error: `Lesson Planner workspace class/section/subject does not match any published teacher allocation. Current workspace: ${String(workspace?.academicConfig?.className || workspace?.classId || "").trim() || "Unknown class"}${String(workspace?.academicConfig?.section || "").trim() ? ` / Section ${String(workspace.academicConfig.section).trim()}` : ""} / ${String(workspace?.academicConfig?.subject || workspace?.subjectId || "").trim() || "Unknown subject"}.`,
+    };
+  }
+  return { valid: true, allocation: matchingAllocation };
+}
+
+async function resolveStudentSubmissionContext(input: {
+  schoolId?: string;
+  studentId?: string;
+  teacherId?: string;
+  classId?: string;
+  subject?: string;
+}) {
+  const schoolId = String(input.schoolId || "").trim();
+  const studentId = String(input.studentId || "").trim();
+  const teacherId = String(input.teacherId || "").trim();
+  const requestedClassId = String(input.classId || "").trim();
+  const requestedSubject = String(input.subject || "").trim();
+
+  const student = schoolId && studentId
+    ? await UserModel.findOne({ schoolId, _id: studentId, role: "student" }).lean()
+    : null;
+  const resolvedClassId = String(student?.classId || requestedClassId || "").trim();
+  const resolvedSection = String(student?.section || "").trim();
+  const allocation = await resolveTeacherAllocationContext({
+    schoolId,
+    teacherId,
+    classId: resolvedClassId,
+    section: resolvedSection,
+    subject: requestedSubject,
+  });
+
+  return {
+    classId: allocation.classId || resolvedClassId,
+    className: allocation.className || getCanonicalClassLabel(resolvedClassId),
+    section: allocation.section || resolvedSection,
+    subject: allocation.subject || requestedSubject,
+  };
+}
+
+function buildClassAliasKeys(...values: unknown[]) {
+  return Array.from(new Set(values
+    .map((value) => String(value || "").trim())
+    .filter(Boolean)));
+}
+
+function matchesAnyClassAlias(value: unknown, aliases: unknown[]) {
+  const candidate = String(value || "").trim();
+  if (!candidate) {
+    return false;
+  }
+
+  return aliases.some((alias) => classKeysOverlap(candidate, alias));
+}
+
+function matchesAnyClassAliasFromSources(item: any, aliases: unknown[], fields: string[]) {
+  return fields.some((field) => {
+    const value = field.split(".").reduce<any>((current, key) => (current == null ? undefined : current[key]), item);
+    return matchesAnyClassAlias(value, aliases);
+  });
+}
+
+function getFieldValue(item: any, field: string) {
+  return field.split(".").reduce<any>((current, key) => (current == null ? undefined : current[key]), item);
+}
+
+function normalizeSubjectKey(value: unknown) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\b(theory|practical|practicals|lab|laboratory|pedagogy|lessonplanner|lesson planner)\b/g, " ")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function buildSubjectAliases(...values: unknown[]) {
+  return Array.from(new Set(values.flatMap((value) => {
+    if (Array.isArray(value)) {
+      return value.map((entry) => String(entry || "").trim()).filter(Boolean);
+    }
+    const normalized = String(value || "").trim();
+    return normalized ? [normalized] : [];
+  })));
+}
+
+function buildTeacherAliases(...values: unknown[]) {
+  return Array.from(new Set(values
+    .map((value) => String(value || "").trim())
+    .filter(Boolean)));
+}
+
+function normalizeSectionKey(value: unknown) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function normalizeStudentAssessmentPayloadForResponse(assessment: any) {
+  if (!assessment || typeof assessment !== "object") {
+    return assessment;
+  }
+
+  const paperQuestions = Array.isArray(assessment?.paper?.questions) ? assessment.paper.questions : [];
+  const normalizedQuestions = paperQuestions.map((question: any) => ({
+    question: question?.prompt,
+    options: Array.isArray(question?.options) ? question.options : [],
+    marks: question?.marks,
+    questionSubtype: question?.subtype || question?.type,
+    difficulty: question?.difficulty,
+    bloomsLevel: question?.bloomsLevel,
+    expectedLength: question?.expectedLength,
+  }));
+
+  const mcq = normalizedQuestions.filter((question: any) => String(question?.questionSubtype || "").trim().toLowerCase() === "mcq");
+  const shortAnswer = normalizedQuestions.filter((question: any) => {
+    const subtype = String(question?.questionSubtype || "").trim().toLowerCase();
+    return subtype === "shortanswer" || subtype === "veryshortanswer";
+  });
+  const longAnswer = normalizedQuestions.filter((question: any) => {
+    const subtype = String(question?.questionSubtype || "").trim().toLowerCase();
+    return subtype === "longanswer" || subtype === "casestudy";
+  });
+
+  return {
+    ...assessment,
+    assessmentMeta: assessment.assessmentMeta || assessment.meta || {},
+    mcq: Array.isArray(assessment?.mcq) && assessment.mcq.length > 0 ? assessment.mcq : mcq,
+    shortAnswer: Array.isArray(assessment?.shortAnswer) && assessment.shortAnswer.length > 0 ? assessment.shortAnswer : shortAnswer,
+    longAnswer: Array.isArray(assessment?.longAnswer) && assessment.longAnswer.length > 0 ? assessment.longAnswer : longAnswer,
+  };
+}
+
+function decodeRouteParamValue(value: unknown) {
+  let decoded = String(value || "").trim();
+  if (!decoded) return "";
+
+  for (let index = 0; index < 2; index += 1) {
+    try {
+      const next = decodeURIComponent(decoded);
+      if (next === decoded) {
+        break;
+      }
+      decoded = next;
+    } catch {
+      break;
+    }
+  }
+
+  return decoded.trim();
+}
+
+function buildTeacherMyClassRouteKey(input: {
+  classId?: unknown;
+  className?: unknown;
+  section?: unknown;
+  subject?: unknown;
+}) {
+  return [
+    normalizeClassKey(input.classId || input.className || ""),
+    normalizeSectionKey(input.section),
+    normalizeSubjectKey(input.subject),
+  ].join("::");
+}
+
+function matchesAnySubjectAlias(value: unknown, aliases: unknown[]) {
+  const candidate = normalizeSubjectKey(value);
+  if (!candidate) {
+    return false;
+  }
+  return aliases.some((alias) => {
+    const normalizedAlias = normalizeSubjectKey(alias);
+    if (!normalizedAlias) {
+      return false;
+    }
+    return (
+      normalizedAlias === candidate ||
+      normalizedAlias.includes(candidate) ||
+      candidate.includes(normalizedAlias)
+    );
+  });
+}
+
+function explainTeacherClassRecordMatch(item: any, options: {
+  classAliases: unknown[];
+  subjectAliases: unknown[];
+  teacherAliases: unknown[];
+  classFields: string[];
+  subjectFields: string[];
+  teacherFields: string[];
+}) {
+  const matchedClassField = options.classFields.find((field) => matchesAnyClassAlias(getFieldValue(item, field), options.classAliases)) || "";
+  const matchedTeacherField = options.teacherFields.find((field) => {
+    const value = String(getFieldValue(item, field) || "").trim();
+    return value && options.teacherAliases.includes(value);
+  }) || "";
+  const availableSubjectField = options.subjectFields.find((field) => String(getFieldValue(item, field) || "").trim()) || "";
+  const matchedSubjectField = options.subjectFields.find((field) => matchesAnySubjectAlias(getFieldValue(item, field), options.subjectAliases)) || "";
+  const classMatched = Boolean(matchedClassField);
+  const teacherMatched = matchedTeacherField ? true : !options.teacherFields.some((field) => String(getFieldValue(item, field) || "").trim());
+  const subjectMatched = availableSubjectField ? Boolean(matchedSubjectField) : true;
+
+  const matched = classMatched && teacherMatched && subjectMatched;
+  const reason = matched
+    ? `matched class via ${matchedClassField}${matchedTeacherField ? `, teacher via ${matchedTeacherField}` : ", teacher missing/optional"}${matchedSubjectField ? `, subject via ${matchedSubjectField}` : ", subject missing/optional"}`
+    : !classMatched
+      ? "class mismatch"
+      : !teacherMatched
+        ? "teacher mismatch"
+        : "subject mismatch";
+
+  return {
+    matched,
+    reason,
+    matchedClassField,
+    matchedTeacherField,
+    matchedSubjectField,
+  };
+}
+
+function filterTeacherClassRecords<T = any>(items: T[], options: {
+  classAliases: unknown[];
+  subjectAliases: unknown[];
+  teacherAliases: unknown[];
+  classFields: string[];
+  subjectFields: string[];
+  teacherFields: string[];
+  debugLabel?: string;
+  debugEnabled?: boolean;
+}) {
+  return items.filter((item: any) => {
+    const result = explainTeacherClassRecordMatch(item, options);
+    if (options.debugEnabled) {
+      console.log(`[MyClasses][${options.debugLabel}]`, {
+        classFields: Object.fromEntries(options.classFields.map((field) => [field, getFieldValue(item, field)])),
+        subjectFields: Object.fromEntries(options.subjectFields.map((field) => [field, getFieldValue(item, field)])),
+        teacherFields: Object.fromEntries(options.teacherFields.map((field) => [field, getFieldValue(item, field)])),
+        matched: result.matched,
+        reason: result.reason,
+      });
+    }
+    return result.matched;
+  });
+}
+
+function filterTeacherClassRecordsWithStudentFallback<T = any>(
+  items: T[],
+  options: Parameters<typeof filterTeacherClassRecords<T>>[1] & {
+    studentsById: Map<string, any>;
+  }
+) {
+  return items.filter((item: any) => {
+    const directMatch = explainTeacherClassRecordMatch(item, options);
+    let fallbackReason = "";
+    let fallbackMatched = false;
+
+    if (!directMatch.matched && directMatch.reason === "class mismatch") {
+      const student = options.studentsById.get(String(item?.studentId || "").trim());
+      if (student && matchesAnyClassAlias(student.classId, options.classAliases)) {
+        const subjectField = options.subjectFields.find((field) => String(getFieldValue(item, field) || "").trim()) || "";
+        const subjectMatched = subjectField ? matchesAnySubjectAlias(getFieldValue(item, subjectField), options.subjectAliases) : true;
+        const teacherField = options.teacherFields.find((field) => String(getFieldValue(item, field) || "").trim()) || "";
+        const teacherMatched = teacherField ? options.teacherAliases.includes(String(getFieldValue(item, teacherField) || "").trim()) : true;
+        fallbackMatched = subjectMatched && teacherMatched;
+        fallbackReason = fallbackMatched ? "matched via student.classId fallback" : !teacherMatched ? "teacher mismatch" : "subject mismatch";
+      }
+    }
+
+    const matched = directMatch.matched || fallbackMatched;
+    const reason = directMatch.matched ? directMatch.reason : (fallbackMatched ? fallbackReason : directMatch.reason);
+
+    if (options.debugEnabled) {
+      console.log(`[MyClasses][${options.debugLabel}]`, {
+        classFields: Object.fromEntries(options.classFields.map((field) => [field, getFieldValue(item, field)])),
+        subjectFields: Object.fromEntries(options.subjectFields.map((field) => [field, getFieldValue(item, field)])),
+        teacherFields: Object.fromEntries(options.teacherFields.map((field) => [field, getFieldValue(item, field)])),
+        studentId: String(item?.studentId || ""),
+        studentClassFallback: options.studentsById.get(String(item?.studentId || "").trim())?.classId || "",
+        matched,
+        reason,
+      });
+    }
+
+    return matched;
+  });
+}
+
+async function logActivity(entry: {
+  schoolId?: string;
+  userId?: string;
+  role?: string;
+  teacherId?: string;
+  studentId?: string;
+  classId?: string;
+  subjectId?: string;
+  academicYear?: string;
+  actionType: string;
+  actionLabel: string;
+  metadata?: Record<string, unknown>;
+  occurredAt?: Date | string;
+}) {
+  try {
+    await connectToMongo();
+    await ActivityLogModel.create({
+      schoolId: String(entry.schoolId || "").trim(),
+      userId: String(entry.userId || "").trim(),
+      role: String(entry.role || "").trim(),
+      teacherId: String(entry.teacherId || "").trim(),
+      studentId: String(entry.studentId || "").trim(),
+      classId: String(entry.classId || "").trim(),
+      subjectId: String(entry.subjectId || "").trim(),
+      academicYear: String(entry.academicYear || getAcademicYearLabel()).trim(),
+      actionType: entry.actionType,
+      actionLabel: entry.actionLabel,
+      metadata: entry.metadata || {},
+      occurredAt: entry.occurredAt ? new Date(entry.occurredAt) : new Date(),
+    });
+  } catch (error) {
+    console.error("[ActivityLog] Failed to persist activity:", error);
+  }
+}
 
 function normalizeSessionSections(value: unknown): SessionSectionKey[] {
   if (!Array.isArray(value)) {
@@ -3977,6 +4544,14 @@ function scoreReusableAsset(query: string, asset: {
 
   return score;
 }
+const pptAssetRateLimitCooldowns = new Map<string, number>();
+const pptAssetResolutionInFlight = new Map<string, Promise<any>>();
+const PPT_ASSET_RATE_LIMIT_COOLDOWN_MS = 15 * 60 * 1000;
+
+function isHttpRateLimitError(error: unknown) {
+  const message = String((error as any)?.message || "");
+  return message.includes("429");
+}
 
 async function resolveOpenverseImage(query: string) {
   const url = `https://api.openverse.org/v1/images/?q=${encodeURIComponent(query)}&page_size=5`;
@@ -4067,29 +4642,49 @@ async function resolveReusableImageAsset(query: string) {
   if (pptAssetResolutionCache.has(normalizedQuery)) {
     return pptAssetResolutionCache.get(normalizedQuery);
   }
+  if (pptAssetResolutionInFlight.has(normalizedQuery)) {
+    return pptAssetResolutionInFlight.get(normalizedQuery);
+  }
 
-  const candidates: any[] = [];
-  try {
-    const openverseResult = await resolveOpenverseImage(normalizedQuery);
-    if (openverseResult) {
+  const cooldownUntil = pptAssetRateLimitCooldowns.get(normalizedQuery) || 0;
+  if (cooldownUntil > Date.now()) {
+    return null;
+  }
+
+  const resolutionPromise = (async () => {
+    const candidates: any[] = [];
+    try {
+      const openverseResult = await resolveOpenverseImage(normalizedQuery);
+      if (openverseResult) {
       candidates.push(openverseResult);
     }
   } catch (error) {
-    console.warn(`[PPT Assets] Openverse lookup failed for "${normalizedQuery}":`, error);
-  }
+      console.warn(`[PPT Assets] Openverse lookup failed for "${normalizedQuery}":`, error);
+    }
 
-  try {
-    const wikimediaResult = await resolveWikimediaImage(normalizedQuery);
-    if (wikimediaResult) {
+      try {
+      const wikimediaResult = await resolveWikimediaImage(normalizedQuery);
+      if (wikimediaResult) {
       candidates.push(wikimediaResult);
     }
   } catch (error) {
-    console.warn(`[PPT Assets] Wikimedia lookup failed for "${normalizedQuery}":`, error);
-  }
+        if (isHttpRateLimitError(error)) {
+          pptAssetRateLimitCooldowns.set(normalizedQuery, Date.now() + PPT_ASSET_RATE_LIMIT_COOLDOWN_MS);
+        }
+      console.warn(`[PPT Assets] Wikimedia lookup failed for "${normalizedQuery}":`, error);
+      }
 
-  const resolved = candidates.sort((a, b) => scoreReusableAsset(normalizedQuery, b) - scoreReusableAsset(normalizedQuery, a))[0] || null;
+    const resolved = candidates.sort((a, b) => scoreReusableAsset(normalizedQuery, b) - scoreReusableAsset(normalizedQuery, a))[0] || null;
   pptAssetResolutionCache.set(normalizedQuery, resolved);
-  return resolved;
+    return resolved;
+  })();
+
+  pptAssetResolutionInFlight.set(normalizedQuery, resolutionPromise);
+  try {
+    return await resolutionPromise;
+  } finally {
+    pptAssetResolutionInFlight.delete(normalizedQuery);
+  }
 }
 
 function inferTemplateSlideKey(slide: any, index: number) {
@@ -4634,7 +5229,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     presentationWarnings: Array.isArray(ppt?.presentationWarnings) && ppt.presentationWarnings.length > 0
       ? ppt.presentationWarnings
       : [
-          "Do not extend beyond the taught session scope.",
+          "Do not include untaught future-session content (e.g., Mole concept details).",
           "Replace placeholder asset URLs with final selected reusable assets before export if needed.",
         ],
     coverageSummary: {
@@ -5396,7 +5991,10 @@ async function hydrateWorkspacePptMaterials(workspace: any) {
     await Promise.all(
       Object.entries(generatedSessions).map(async ([sessionKey, sessionPlan]) => [
         sessionKey,
-        await normalizeGeneratedSessionPlanPpt(sessionPlan, { subject, gradeLevel }),
+        await normalizeGeneratedSessionPlanPpt(sessionPlan, { subject, gradeLevel }).catch((error) => {
+          console.warn(`[PPT Assets] Failed to hydrate PPT materials for session "${sessionKey}":`, error);
+          return sessionPlan;
+        }),
       ])
     )
   );
@@ -5508,24 +6106,90 @@ function extractJsonText(raw: string): string {
 function escapeEmbeddedJsonStringValueByKey(raw: string, key: string) {
   const pattern = new RegExp(`(^\\s*"${key}"\\s*:\\s*")(.*)(")(\\s*,?$)`, "gm");
   return raw.replace(pattern, (_match, prefix: string, content: string, closingQuote: string, trailing: string) => {
-    let escapedContent = "";
-    let isEscaped = false;
+    return `${prefix}${escapeUnescapedQuotesInJsonStringContent(content)}${closingQuote}${trailing}`;
+  });
+}
 
-    for (const char of content) {
-      if (char === "\"" && !isEscaped) {
-        escapedContent += "\\\"";
-        continue;
-      }
+function escapeUnescapedQuotesInJsonStringContent(content: string) {
+  let escapedContent = "";
+  let isEscaped = false;
 
-      escapedContent += char;
-      isEscaped = char === "\\" && !isEscaped;
-      if (char !== "\\") {
-        isEscaped = false;
-      }
+  for (const char of content) {
+    if (char === "\"" && !isEscaped) {
+      escapedContent += "\\\"";
+      continue;
     }
 
-    return `${prefix}${escapedContent}${closingQuote}${trailing}`;
-  });
+    escapedContent += char;
+    isEscaped = char === "\\" && !isEscaped;
+    if (char !== "\\") {
+      isEscaped = false;
+    }
+  }
+
+  return escapedContent;
+}
+
+function escapeInlineJsonStringValues(raw: string) {
+  return raw
+    .split("\n")
+    .map((line) => {
+      const propertyMatch = line.match(/^(\s*"[^"]+"\s*:\s*")(.*)(")(\s*,?\s*)$/);
+      if (propertyMatch) {
+        const [, prefix, content, closingQuote, suffix] = propertyMatch;
+        return `${prefix}${escapeUnescapedQuotesInJsonStringContent(content)}${closingQuote}${suffix}`;
+      }
+
+      const arrayStringMatch = line.match(/^(\s*")(.*)(")(\s*,?\s*)$/);
+      if (arrayStringMatch) {
+        const [, prefix, content, closingQuote, suffix] = arrayStringMatch;
+        return `${prefix}${escapeUnescapedQuotesInJsonStringContent(content)}${closingQuote}${suffix}`;
+      }
+
+      return line;
+    })
+    .join("\n");
+}
+
+function removeStrayArrayClosersAfterScalarProperties(raw: string) {
+  const lines = raw.split("\n");
+  const cleaned: string[] = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const currentLine = lines[index];
+    const nextLine = lines[index + 1] || "";
+    const previousLine = cleaned[cleaned.length - 1] || "";
+
+    const currentIsStandaloneArrayCloser = /^\s*\],?\s*$/.test(currentLine);
+    const previousLooksLikeScalarProperty = /^\s*"[^"]+"\s*:\s*".*"\s*,?\s*$/.test(previousLine);
+    const nextLooksLikeObjectProperty = /^\s*"[^"]+"\s*:\s*/.test(nextLine);
+
+    if (currentIsStandaloneArrayCloser && previousLooksLikeScalarProperty && nextLooksLikeObjectProperty) {
+      continue;
+    }
+
+    cleaned.push(currentLine);
+  }
+
+  return cleaned.join("\n");
+}
+
+function insertMissingCommasBetweenObjectProperties(raw: string) {
+  const lines = raw.split("\n");
+  return lines.map((line, index) => {
+    const nextLine = lines[index + 1] || "";
+    const currentLine = line;
+    const nextLooksLikeProperty = /^\s*"[^"]+"\s*:\s*/.test(nextLine);
+    const currentEndsWithValue =
+      /"\s*$/.test(currentLine) ||
+      /}\s*$/.test(currentLine) ||
+      /]\s*$/.test(currentLine);
+    const currentAlreadyHasComma = /,\s*$/.test(currentLine);
+    if (nextLooksLikeProperty && currentEndsWithValue && !currentAlreadyHasComma) {
+      return `${currentLine},`;
+    }
+    return currentLine;
+  }).join("\n");
 }
 
 function escapeEmbeddedJsonStringValueByMultilineKey(raw: string, key: string) {
@@ -5582,6 +6246,24 @@ function sanitizeJsonText(raw: string): { text: string; changed: boolean; fixes:
       fixes.push(`escaped_embedded_quotes:${key}`);
     }
   });
+  const inlineStringsEscaped = escapeInlineJsonStringValues(source);
+  if (inlineStringsEscaped !== source) {
+    source = inlineStringsEscaped;
+    changed = true;
+    fixes.push("escaped_inline_string_quotes");
+  }
+  const strayClosersRemoved = removeStrayArrayClosersAfterScalarProperties(source);
+  if (strayClosersRemoved !== source) {
+    source = strayClosersRemoved;
+    changed = true;
+    fixes.push("removed_stray_array_closer_after_scalar_property");
+  }
+  const missingCommasInserted = insertMissingCommasBetweenObjectProperties(source);
+  if (missingCommasInserted !== source) {
+    source = missingCommasInserted;
+    changed = true;
+    fixes.push("inserted_missing_commas_between_object_properties");
+  }
 
   let output = "";
   let inString = false;
@@ -10679,9 +11361,14 @@ function buildCurriculumSnapshot(curriculum: any) {
   };
 }
 
-function createDefaultPlanningWorkspacePayload(curriculumId: string, curriculum: any) {
+function createDefaultPlanningWorkspacePayload(curriculumId: string, curriculum: any, overrides: Record<string, unknown> = {}) {
   return {
     curriculumId,
+    schoolId: String(overrides.schoolId || curriculum?.schoolId || ""),
+    teacherId: String(overrides.teacherId || curriculum?.teacherId || curriculum?.createdBy || ""),
+    createdBy: String(overrides.createdBy || curriculum?.createdBy || curriculum?.teacherId || ""),
+    classId: String(overrides.classId || curriculum?.classId || curriculum?.gradeLevel || ""),
+    subjectId: String(overrides.subjectId || curriculum?.subjectId || curriculum?.subject || ""),
     phase: "curriculum_setup",
     status: "draft",
     curriculumSnapshot: buildCurriculumSnapshot(curriculum),
@@ -10723,12 +11410,17 @@ function createDefaultPlanningWorkspacePayload(curriculumId: string, curriculum:
   };
 }
 
-async function ensurePlanningWorkspaceForCurriculum(curriculumId: string, curriculum: any) {
+async function ensurePlanningWorkspaceForCurriculum(curriculumId: string, curriculum: any, overrides: Record<string, unknown> = {}) {
   await connectToMongo();
   const existingWorkspace = await PlanningWorkspaceModel.findOne({ curriculumId })
     .sort({ updatedAt: -1 });
 
   if (existingWorkspace) {
+    existingWorkspace.schoolId = String(existingWorkspace.schoolId || overrides.schoolId || curriculum?.schoolId || "");
+    existingWorkspace.teacherId = String(existingWorkspace.teacherId || overrides.teacherId || curriculum?.teacherId || curriculum?.createdBy || "");
+    existingWorkspace.createdBy = String(existingWorkspace.createdBy || overrides.createdBy || curriculum?.createdBy || curriculum?.teacherId || "");
+    existingWorkspace.classId = String(existingWorkspace.classId || overrides.classId || curriculum?.classId || curriculum?.gradeLevel || "");
+    existingWorkspace.subjectId = String(existingWorkspace.subjectId || overrides.subjectId || curriculum?.subjectId || curriculum?.subject || "");
     existingWorkspace.curriculumSnapshot = buildCurriculumSnapshot(curriculum);
     if (existingWorkspace.curriculumApproval?.confidence == null) {
       existingWorkspace.curriculumApproval = {
@@ -10741,7 +11433,7 @@ async function ensurePlanningWorkspaceForCurriculum(curriculumId: string, curric
   }
 
   return PlanningWorkspaceModel.create(
-    createDefaultPlanningWorkspacePayload(curriculumId, curriculum)
+    createDefaultPlanningWorkspacePayload(curriculumId, curriculum, overrides)
   );
 }
 
@@ -11529,6 +12221,14 @@ function buildSavedTermGroups(allocations: any[] = []) {
     groups.get(key)?.push(allocation);
   });
   return groups;
+}
+
+function getWorkspaceTermAllocations(workspace: any) {
+  const savedAllocations = Array.isArray(workspace?.termPlan?.allocations) ? workspace.termPlan.allocations : [];
+  if (savedAllocations.length > 0) {
+    return savedAllocations;
+  }
+  return Array.isArray(workspace?.termPlan?.recommendations) ? workspace.termPlan.recommendations : [];
 }
 
 function findNormalizedChapterInsight(normalizedStructure: any, chapterName: string) {
@@ -12353,6 +13053,89 @@ function sanitizeStage3EnrichmentToSource(
   };
 }
 
+async function runStage3PerUnitFallback(
+  requestId: string,
+  debugDir: string,
+  classIndex: number,
+  rawClass: any,
+  sourceText: string,
+  schema: any,
+  stageName: string
+) {
+  const units = Array.isArray(rawClass?.units) ? rawClass.units : [];
+  if (units.length <= 1) {
+    throw new Error(`Stage 3 per-unit fallback was requested for ${stageName}, but there are not enough units to split.`);
+  }
+
+  console.warn(
+    `[Pipeline][${requestId}] ${stageName} truncated at class scope. Retrying Stage 3 with ${units.length} unit-scoped enrichment prompts.`
+  );
+
+  const unitResults: any[] = [];
+  const formativeContentRefs: any[] = [];
+  const suspiciousChapterNames = new Set<string>();
+  const longChapterNamesReclassified = new Set<string>();
+
+  for (let unitIndex = 0; unitIndex < units.length; unitIndex += 1) {
+    const unit = units[unitIndex];
+    const unitScopedClass = {
+      ...rawClass,
+      units: [unit],
+    };
+    const unitStageName = `${stageName} - Unit ${unitIndex + 1}`;
+    const unitSourceText = extractRelevantClassSourceText(sourceText, unitScopedClass, 4000);
+    const unitPrompt = renderPrompt("node-enrichment.md", {
+      STAGE_NAME: unitStageName,
+      RAW_CLASS_JSON: JSON.stringify(unitScopedClass, null, 2),
+      STRUCTURE_CLASS_JSON: JSON.stringify(unitScopedClass, null, 2),
+      SOURCE_TEXT: unitSourceText,
+    });
+
+    const unitResult = await runStage(
+      requestId,
+      debugDir,
+      unitStageName,
+      unitPrompt,
+      schema,
+      {
+        numPredict: Math.min(4096, OLLAMA_NUM_PREDICT),
+        timeoutMs: OLLAMA_TIMEOUT_MS,
+        retries: 2,
+      }
+    );
+
+    const normalizedUnitResult = sanitizeStage3EnrichmentToSource({
+      ...unitResult,
+      units: (unitResult?.units || []).filter((entry: any) => String(entry?.unit_id || "").trim()),
+    }, unitScopedClass, unitSourceText);
+
+    unitResults.push(...(normalizedUnitResult.units || []));
+    formativeContentRefs.push(...(normalizedUnitResult.formative_content_refs || []));
+
+    for (const value of normalizedUnitResult?.validation_report?.suspicious_chapter_names || []) {
+      if (value) suspiciousChapterNames.add(String(value));
+    }
+    for (const value of normalizedUnitResult?.validation_report?.long_chapter_names_reclassified || []) {
+      if (value) longChapterNamesReclassified.add(String(value));
+    }
+  }
+
+  return sanitizeStage3EnrichmentToSource(
+    {
+      units: unitResults,
+      formative_content_refs: formativeContentRefs,
+      validation_report: {
+        suspicious_chapter_names: Array.from(suspiciousChapterNames),
+        long_chapter_names_reclassified: Array.from(longChapterNamesReclassified),
+        unit_count: unitResults.length,
+        chapter_count: unitResults.reduce((sum: number, unit: any) => sum + (Array.isArray(unit?.chapters) ? unit.chapters.length : 0), 0),
+      },
+    },
+    rawClass,
+    sourceText
+  );
+}
+
 function buildDeterministicStage3FallbackFromApprovedClass(
   rawClass: any,
   options?: {
@@ -12873,7 +13656,7 @@ function normalizeSessionPptGenerationOptions(input: any): SessionPptGenerationO
 
 function getOllamaConfig(kind: OllamaGenerationKind): { baseUrl: string; model: string } {
   refreshRuntimeEnv();
-  const defaultBaseUrl = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11435";
+  const defaultBaseUrl = process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11434";
   const defaultModel = process.env.OLLAMA_MODEL || "qwen3.5:35b";
   const sessionContentBaseUrl = process.env.OLLAMA_SESSION_CONTENT_BASE_URL || defaultBaseUrl;
   const sessionContentModel = process.env.OLLAMA_SESSION_CONTENT_MODEL || defaultModel;
@@ -14462,7 +15245,14 @@ app.post("/api/planning-workspaces", async (req, res) => {
 
     const workspace = await ensurePlanningWorkspaceForCurriculum(
       String(curriculumRecord._id),
-      curriculumRecord.extractedCurriculum
+      curriculumRecord.extractedCurriculum,
+      {
+        schoolId: curriculumRecord.schoolId,
+        teacherId: curriculumRecord.teacherId,
+        createdBy: curriculumRecord.createdBy,
+        classId: curriculumRecord.gradeLevel,
+        subjectId: curriculumRecord.subject,
+      }
     );
     res.status(201).json({ success: true, workspaceId: String(workspace._id), workspace });
   } catch (error: any) {
@@ -14498,6 +15288,8 @@ app.patch("/api/planning-workspaces/:id", async (req, res) => {
       }
     }
 
+    syncWorkspaceIdentityFromRequest(workspace, req);
+
     await workspace.save();
     res.json({ success: true, workspace });
   } catch (error: any) {
@@ -14520,9 +15312,26 @@ app.post("/api/planning-workspaces/:id/approve-curriculum", async (req, res) => 
       approvedAt: new Date().toISOString(),
       notes,
     };
+    syncWorkspaceIdentityFromRequest(workspace, req);
     workspace.phase = "course_planning";
     workspace.status = "in_progress";
     await workspace.save();
+
+    await logActivity({
+      schoolId: workspace.schoolId,
+      userId: String(workspace.teacherId || workspace.createdBy || ""),
+      role: "teacher",
+      teacherId: String(workspace.teacherId || workspace.createdBy || ""),
+      classId: String(workspace.classId || ""),
+      subjectId: String(workspace.subjectId || workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
+      academicYear: String(workspace.academicConfig?.academicYear || getAcademicYearLabel()),
+      actionType: "curriculum_approved",
+      actionLabel: `Approved curriculum for ${String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || "curriculum")}`,
+      metadata: {
+        workspaceId: String(workspace._id),
+        curriculumId: String(workspace.curriculumId || ""),
+      },
+    });
 
     res.json({ success: true, workspace });
   } catch (error: any) {
@@ -14540,6 +15349,8 @@ app.post("/api/planning-workspaces/:id/recommend-course-plan", async (req, res) 
     if (!workspace.curriculumApproval?.approved) {
       return res.status(400).json({ error: "Approve the curriculum before requesting a course plan." });
     }
+
+    syncWorkspaceIdentityFromRequest(workspace, req);
 
     const normalizedStructure = workspace.curriculumSnapshot?.normalizedStructure;
     if (!normalizedStructure) {
@@ -14617,6 +15428,11 @@ app.post("/api/planning-workspaces/:id/approve-course-plan", async (req, res) =>
       return res.status(400).json({ error: "Approve the curriculum before approving the course plan." });
     }
 
+    const workspaceValidation = await validateWorkspaceAgainstTeacherAllocations(workspace, req);
+    if (!workspaceValidation.valid) {
+      return res.status(400).json({ error: workspaceValidation.error });
+    }
+
     const academicConfig = workspace.academicConfig || {};
     const hasAcademicSetup = Boolean(
       academicConfig.academicYear ||
@@ -14659,6 +15475,22 @@ app.post("/api/planning-workspaces/:id/approve-course-plan", async (req, res) =>
     workspace.status = "in_progress";
     await workspace.save();
 
+    await logActivity({
+      schoolId: workspace.schoolId,
+      userId: String(workspace.teacherId || workspace.createdBy || ""),
+      role: "teacher",
+      teacherId: String(workspace.teacherId || workspace.createdBy || ""),
+      classId: String(workspace.classId || ""),
+      subjectId: String(workspace.subjectId || workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
+      academicYear: String(workspace.academicConfig?.academicYear || getAcademicYearLabel()),
+      actionType: "term_plan_approved",
+      actionLabel: `Approved course plan for ${String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || "subject")}`,
+      metadata: {
+        workspaceId: String(workspace._id),
+        allocations: allocations.length,
+      },
+    });
+
     res.json({ success: true, workspace });
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Course plan approval failed:", error);
@@ -14675,6 +15507,7 @@ app.patch("/api/planning-workspaces/:id/session-strategy", async (req, res) => {
 
     workspace.teachingStrategy = req.body?.teachingStrategy || {};
     workspace.sessionPlanningDefaults = req.body?.sessionPlanningDefaults || {};
+    syncWorkspaceIdentityFromRequest(workspace, req);
     workspace.phase = "session_planning";
     workspace.status = "in_progress";
     await workspace.save();
@@ -14713,6 +15546,11 @@ app.post("/api/planning-workspaces/:id/recommend-session-allocation", async (req
     }
     if (!workspace.termPlan?.approved) {
       return res.status(400).json({ error: "Approve the course plan before generating session allocations." });
+    }
+
+    const workspaceValidation = await validateWorkspaceAgainstTeacherAllocations(workspace, req);
+    if (!workspaceValidation.valid) {
+      return res.status(400).json({ error: workspaceValidation.error });
     }
 
     const savedAllocations = Array.isArray(workspace.termPlan?.allocations) ? workspace.termPlan.allocations : [];
@@ -14815,6 +15653,7 @@ app.patch("/api/planning-workspaces/:id/session-allocation", async (req, res) =>
       allocations,
     });
 
+    syncWorkspaceIdentityFromRequest(workspace, req);
     workspace.phase = "session_planning";
     workspace.status = "in_progress";
     workspace.sessionAllocation = {
@@ -14842,6 +15681,11 @@ app.post("/api/planning-workspaces/:id/approve-session-allocation", async (req, 
       return res.status(404).json({ error: "Planning workspace not found." });
     }
 
+    const workspaceValidation = await validateWorkspaceAgainstTeacherAllocations(workspace, req);
+    if (!workspaceValidation.valid) {
+      return res.status(400).json({ error: workspaceValidation.error });
+    }
+
     const validation = validateSessionAllocationState(workspace);
     if (!validation.valid) {
       return res.status(400).json({
@@ -14860,6 +15704,22 @@ app.post("/api/planning-workspaces/:id/approve-session-allocation", async (req, 
     workspace.status = "in_progress";
     await workspace.save();
 
+    await logActivity({
+      schoolId: workspace.schoolId,
+      userId: String(workspace.teacherId || workspace.createdBy || ""),
+      role: "teacher",
+      teacherId: String(workspace.teacherId || workspace.createdBy || ""),
+      classId: String(workspace.classId || ""),
+      subjectId: String(workspace.subjectId || workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
+      academicYear: String(workspace.academicConfig?.academicYear || getAcademicYearLabel()),
+      actionType: "session_plan_approved",
+      actionLabel: `Approved session plan for ${String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || "subject")}`,
+      metadata: {
+        workspaceId: String(workspace._id),
+        selectedTermKey: String(workspace.sessionAllocation?.selectedTermKey || ""),
+      },
+    });
+
     res.json({ success: true, workspace, validation });
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Session allocation approval failed:", error);
@@ -14875,6 +15735,11 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     }
     if (!workspace.sessionAllocation?.approved) {
       return res.status(400).json({ error: "Approve the Phase 3 session allocation before generating content." });
+    }
+
+    const workspaceValidation = await validateWorkspaceAgainstTeacherAllocations(workspace, req);
+    if (!workspaceValidation.valid) {
+      return res.status(400).json({ error: workspaceValidation.error });
     }
 
     const sessionNumber = Math.max(1, toNumberOrZero(req.body?.sessionNumber) || 1);
@@ -14980,6 +15845,23 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     workspace.phase = "content_generation";
     workspace.status = "in_progress";
     await workspace.save();
+
+    await logActivity({
+      schoolId: workspace.schoolId,
+      userId: String(workspace.teacherId || workspace.createdBy || ""),
+      role: "teacher",
+      teacherId: String(workspace.teacherId || workspace.createdBy || ""),
+      classId: String(workspace.classId || ""),
+      subjectId: String(workspace.subjectId || workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
+      academicYear: String(workspace.academicConfig?.academicYear || getAcademicYearLabel()),
+      actionType: "lesson_plan_generated",
+      actionLabel: `Generated session content for ${chapterName}`,
+      metadata: {
+        workspaceId: String(workspace._id),
+        sessionNumber: roadmapSessionNumber,
+        sessionTitle: String(req.body?.sessionTitle || `${chapterName} - Session ${roadmapSessionNumber}`),
+      },
+    });
 
     const responseWorkspace = await serializeWorkspaceForView(workspace, "planning");
 
@@ -15114,6 +15996,22 @@ app.post("/api/curriculums", async (req, res) => {
   try {
     await connectToMongo();
     const curriculum = await CurriculumModel.create(req.body);
+    await logActivity({
+      schoolId: curriculum.schoolId,
+      userId: String(curriculum.teacherId || curriculum.createdBy || ""),
+      role: "teacher",
+      teacherId: String(curriculum.teacherId || curriculum.createdBy || ""),
+      classId: "",
+      subjectId: String(curriculum.subject || ""),
+      academicYear: getAcademicYearLabel(),
+      actionType: "curriculum_uploaded",
+      actionLabel: `Uploaded curriculum for ${String(curriculum.subject || "subject")}`,
+      metadata: {
+        curriculumId: String(curriculum._id),
+        gradeLevel: String(curriculum.gradeLevel || ""),
+        fileName: String(curriculum.fileName || ""),
+      },
+    });
     res.status(201).json({ success: true, curriculumId: curriculum._id, curriculum });
   } catch (error: any) {
     console.error("[Curriculums] Create failed:", error);
@@ -16447,6 +17345,31 @@ async function generateSessionDetailsArtifact({
     sourceSessionPlan,
   });
 
+  const mergeGeneratedSessionParts = (parts: any[]) => {
+    const merged = {
+      id: `session-${sessionNumber}`,
+      sessionNumber,
+      title: sessionTitle || `Session ${sessionNumber}`,
+      duration: durationMinutes,
+    } as any;
+
+    for (const part of parts) {
+      Object.assign(merged, part || {});
+    }
+
+    return merged;
+  };
+
+  const buildSessionSchemaForSections = (sections: SessionSectionKey[]) => {
+    if (sections.length === 1) {
+      const onlySection = sections[0];
+      if (onlySection in baseSchema) {
+        return { [onlySection]: (baseSchema as any)[onlySection] };
+      }
+    }
+    return baseSchema;
+  };
+
   const baseSchema = {
     id: "unique-session-id",
     sessionNumber,
@@ -16697,8 +17620,14 @@ async function generateSessionDetailsArtifact({
           licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
           fallbackStrategy: "Prefer SVG diagrams for concept/process slides and reusable web images for all picture-based visuals."
         },
-        licenseChecklist: ["Review generated visuals for classroom accuracy before final export."],
-        presentationWarnings: ["Do not include untaught future-session content."],
+        licenseChecklist: [
+          "Review generated visuals for classroom accuracy before final export.",
+          "Verify reusable license before final export."
+        ],
+        presentationWarnings: [
+          "Do not include untaught future-session content.",
+          "Do not include untaught future-session content (e.g., Mole concept details)."
+        ],
         coverageSummary: {
           learningOutcomesCovered: ["Learning outcome id or text"],
           topicsCovered: ["Topic covered"],
@@ -17346,6 +18275,52 @@ async function generateSessionDetailsArtifact({
       responseText = recoveredPptText;
       await writeDebugFile(debugDir, "truncated-ppt-recovery.json", responseText);
       console.warn(`[Ollama][${requestId}] Recovered truncated PPT response by trimming to the last complete slide boundary.`);
+    } else if (selectedSections.length > 1) {
+      const midpoint = Math.ceil(selectedSections.length / 2);
+      const firstSections = selectedSections.slice(0, midpoint);
+      const secondSections = selectedSections.slice(midpoint);
+      console.warn(
+        `[Ollama][${requestId}] Session content truncated for ${selectedSections.length} sections. Retrying in grouped section batches: ${JSON.stringify(firstSections)} and ${JSON.stringify(secondSections)}.`
+      );
+
+      const partialResults = [];
+      partialResults.push(await generateSessionDetailsArtifact({
+        subject,
+        gradeLevel,
+        selectedChapters,
+        sessionNumber,
+        totalSessions,
+        durationMinutes,
+        config,
+        selectedSections: firstSections,
+        sessionTitle,
+        learningOutcomes,
+        previousSessionContext,
+        teachingStrategy,
+        sessionPlanningDefaults,
+      }));
+
+      if (secondSections.length > 0) {
+        partialResults.push(await generateSessionDetailsArtifact({
+          subject,
+          gradeLevel,
+          selectedChapters,
+          sessionNumber,
+          totalSessions,
+          durationMinutes,
+          config,
+          selectedSections: secondSections,
+          sessionTitle,
+          learningOutcomes,
+          previousSessionContext,
+          teachingStrategy,
+          sessionPlanningDefaults,
+        }));
+      }
+
+      const mergedSession = mergeGeneratedSessionParts(partialResults);
+      await writeDebugFile(debugDir, "final-response.json", mergedSession);
+      return mergedSession;
     } else {
       throw new Error("Model output truncated during session content generation. Reduce session scope or increase num_predict.");
     }
@@ -17482,6 +18457,5063 @@ app.post("/api/generate-sessions-outline", async (req, res) => {
   } catch (error: any) {
     console.error(`[Request][${requestId}] Session outline generation failed:`, error);
     res.status(500).json({ error: error?.message || "Session outline generation failed." });
+  }
+});
+
+function buildSchoolMatch(schoolId?: string) {
+  return schoolId ? { schoolId } : {};
+}
+
+function toMonthLabel(date: Date) {
+  return date.toLocaleString("en-IN", { month: "short" });
+}
+
+function gradeFromPercentage(percentage: number) {
+  if (percentage >= 90) return "A+";
+  if (percentage >= 80) return "A";
+  if (percentage >= 70) return "B+";
+  if (percentage >= 60) return "B";
+  if (percentage >= 50) return "C";
+  return "D";
+}
+
+function getRequestedRole(req: express.Request) {
+  const queryRole = req.query.role;
+  if (Array.isArray(queryRole)) {
+    const normalized = queryRole.map((item) => String(item || "").trim().toLowerCase()).filter(Boolean);
+    if (normalized.includes("principal")) return "principal";
+    if (normalized.includes("teacher")) return "teacher";
+    if (normalized.includes("student")) return "student";
+    return normalized[0] || "";
+  }
+  return String(queryRole || req.headers["x-user-role"] || "").trim().toLowerCase();
+}
+
+function getRequestedUserId(req: express.Request) {
+  return String(req.query.userId || req.headers["x-user-id"] || "").trim();
+}
+
+function ensurePrincipalAccess(req: express.Request, res: express.Response) {
+  const role = getRequestedRole(req);
+  const userId = getRequestedUserId(req);
+  const schoolId = String(req.query.schoolId || "").trim();
+  if (role !== "principal" || !userId || !schoolId) {
+    res.status(403).json({ error: "Principal access required." });
+    return null;
+  }
+  return { role, userId, schoolId };
+}
+
+function getRequestedClassUserRole(req: express.Request) {
+  const queryRole = req.query.role;
+  const normalized = Array.isArray(queryRole)
+    ? queryRole.map((item) => String(item || "").trim().toLowerCase()).filter(Boolean)
+    : [String(queryRole || "").trim().toLowerCase()].filter(Boolean);
+
+  if (normalized.includes("teacher")) return "teacher";
+  if (normalized.includes("student")) return "student";
+  return "";
+}
+
+function ensureTeacherAccess(req: express.Request, res: express.Response) {
+  const role = getRequestedRole(req);
+  const userId = getRequestedUserId(req);
+  const schoolId = String(req.query.schoolId || "").trim();
+  if (role !== "teacher" || !userId || !schoolId) {
+    res.status(403).json({ error: "Teacher access required." });
+    return null;
+  }
+  return { role, userId, schoolId };
+}
+
+function serializeAuthUser(user: any) {
+  return {
+    id: String(user._id),
+    name: String(user.name || ""),
+    email: String(user.email || ""),
+    role: String(user.role || ""),
+    schoolId: String(user.schoolId || ""),
+    phone: String(user.phone || ""),
+    classId: String(user.classId || ""),
+    section: String(user.section || ""),
+    stream: String(user.stream || ""),
+    designation: String(user.designation || ""),
+    employeeId: String(user.employeeId || ""),
+    subjects: Array.isArray(user.subjects) ? user.subjects.map(String) : [],
+    assignedClasses: Array.isArray(user.assignedClasses) ? user.assignedClasses.map(String) : [],
+    assignedSections: Array.isArray(user.assignedSections) ? user.assignedSections.map(String) : [],
+    address: String(user.address || ""),
+    bio: String(user.bio || ""),
+    avatar: String(user.avatar || ""),
+    status: String(user.status || "active"),
+  };
+}
+
+function isSeniorClass(classId: string) {
+  const normalized = String(classId || "").trim().toUpperCase();
+  return normalized === "XI" || normalized === "XII" || normalized === "CLASS XI" || normalized === "CLASS XII";
+}
+
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validatePhone(phone: string) {
+  return /^[6-9]\d{9}$/.test(phone);
+}
+
+async function generateUserCode(role: string) {
+  const count = await UserModel.countDocuments({ role });
+  const nextNumber = count + 1;
+  const prefix = role === "teacher" ? "EMP" : role === "student" ? "STU" : "PRI";
+  return `${prefix}-${String(nextNumber).padStart(3, "0")}`;
+}
+
+app.post("/api/auth/login", async (req, res) => {
+  try {
+    await connectToMongo();
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    const password = String(req.body?.password || "").trim();
+
+    if (!email || !password) {
+      res.status(400).json({ error: "Email and password are required." });
+      return;
+    }
+
+    const user = await UserModel.findOne({ email }).lean();
+    if (!user || String(user.password || "") !== password) {
+      res.status(401).json({ error: "Invalid email or password." });
+      return;
+    }
+
+    await UserModel.updateOne(
+      { _id: user._id },
+      { $set: { lastLoginAt: new Date(), status: "active" } }
+    );
+
+    await logActivity({
+      schoolId: user.schoolId,
+      userId: String(user._id),
+      role: user.role,
+      teacherId: user.role === "teacher" ? String(user._id) : "",
+      studentId: user.role === "student" ? String(user._id) : "",
+      classId: user.classId || "",
+      academicYear: getAcademicYearLabel(),
+      actionType: `${user.role}_login`,
+      actionLabel: `${user.name} logged in`,
+      metadata: {
+        email: user.email,
+      },
+    });
+
+    res.json({
+      success: true,
+      user: serializeAuthUser({ ...user, status: "active" }),
+    });
+  } catch (error: any) {
+    console.error("[Auth] Login failed:", error);
+    res.status(500).json({ error: error?.message || "Login failed." });
+  }
+});
+
+app.post("/api/auth/register", async (req, res) => {
+  try {
+    await connectToMongo();
+    const role = String(req.body?.role || "").trim().toLowerCase();
+    const name = String(req.body?.name || "").trim();
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    const phone = String(req.body?.phone || "").trim();
+    const password = String(req.body?.password || "").trim();
+    const confirmPassword = String(req.body?.confirmPassword || "").trim();
+    const classId = String(req.body?.classId || "").trim();
+    const section = String(req.body?.section || "").trim();
+    const stream = String(req.body?.stream || "").trim();
+    const subject = String(req.body?.subject || "").trim();
+    const designation = String(req.body?.designation || "").trim();
+
+    if (!["student", "teacher", "principal"].includes(role)) {
+      res.status(400).json({ error: "Please select a valid role." });
+      return;
+    }
+    if (!name || !email || !phone || !password || !confirmPassword) {
+      res.status(400).json({ error: "Please fill in all required fields." });
+      return;
+    }
+    if (!validateEmail(email)) {
+      res.status(400).json({ error: "Please enter a valid email address." });
+      return;
+    }
+    if (!validatePhone(phone)) {
+      res.status(400).json({ error: "Please enter a valid 10-digit phone number." });
+      return;
+    }
+    if (password !== confirmPassword) {
+      res.status(400).json({ error: "Password and confirm password must match." });
+      return;
+    }
+
+    if (role === "student") {
+      if (!classId || !section) {
+        res.status(400).json({ error: "Class and section are required for student registration." });
+        return;
+      }
+      if (isSeniorClass(classId) && !stream) {
+        res.status(400).json({ error: "Stream is required for Class XI and XII students." });
+        return;
+      }
+    }
+
+    if (role === "teacher" && !subject) {
+      res.status(400).json({ error: "Subject is required for teacher registration." });
+      return;
+    }
+
+    const existingUser = await UserModel.findOne({ email }).lean();
+    if (existingUser) {
+      res.status(409).json({ error: "An account with this email already exists." });
+      return;
+    }
+
+    const created = await UserModel.create({
+      name,
+      email,
+      phone,
+      password,
+      role,
+      schoolId: DEFAULT_SCHOOL_ID,
+      classId: role === "student" ? classId : "",
+      section: role === "student" ? section : "",
+      stream: role === "student" && isSeniorClass(classId) ? stream : "",
+      subjects: role === "teacher" && subject ? [subject] : [],
+      subjectIds: role === "teacher" && subject ? [subject] : [],
+      designation: role === "principal" ? designation : "",
+      assignedClasses: [],
+      assignedSections: [],
+      status: "active",
+      lastLoginAt: null,
+    });
+
+    res.status(201).json({
+      success: true,
+      user: serializeAuthUser(created),
+    });
+  } catch (error: any) {
+    console.error("[Auth] Registration failed:", error);
+    res.status(500).json({ error: error?.message || "Registration failed." });
+  }
+});
+
+app.get("/api/profile", async (req, res) => {
+  try {
+    await connectToMongo();
+    const userId = String(req.query.userId || "").trim();
+    const schoolId = String(req.query.schoolId || "").trim();
+    if (!userId || !schoolId) {
+      res.status(400).json({ error: "userId and schoolId are required." });
+      return;
+    }
+    const user = await UserModel.findOne({ _id: userId, schoolId }).lean();
+    if (!user) {
+      res.status(404).json({ error: "User not found." });
+      return;
+    }
+    res.json({ success: true, user: serializeAuthUser(user) });
+  } catch (error: any) {
+    console.error("[Profile] Fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load profile." });
+  }
+});
+
+app.patch("/api/profile", async (req, res) => {
+  try {
+    await connectToMongo();
+    const userId = String(req.query.userId || "").trim();
+    const schoolId = String(req.query.schoolId || "").trim();
+    if (!userId || !schoolId) {
+      res.status(400).json({ error: "userId and schoolId are required." });
+      return;
+    }
+
+    const existing = await UserModel.findOne({ _id: userId, schoolId }).lean();
+    if (!existing) {
+      res.status(404).json({ error: "User not found." });
+      return;
+    }
+
+    const nextEmail = String(req.body?.email ?? existing.email).trim().toLowerCase();
+    const nextPhone = String(req.body?.phone ?? (existing.phone || "")).trim();
+    const nextClassId = String(req.body?.classId ?? (existing.classId || "")).trim();
+    const nextSection = String(req.body?.section ?? (existing.section || "")).trim();
+    const nextStream = String(req.body?.stream ?? (existing.stream || "")).trim();
+
+    if (!String(req.body?.name ?? existing.name).trim()) {
+      res.status(400).json({ error: "Full name is required." });
+      return;
+    }
+    if (!validateEmail(nextEmail)) {
+      res.status(400).json({ error: "Please enter a valid email address." });
+      return;
+    }
+    if (nextPhone && !validatePhone(nextPhone)) {
+      res.status(400).json({ error: "Please enter a valid 10-digit phone number." });
+      return;
+    }
+    if (existing.role === "student") {
+      if (!nextClassId || !nextSection) {
+        res.status(400).json({ error: "Class and section are required for student profile." });
+        return;
+      }
+      if (isSeniorClass(nextClassId) && !nextStream) {
+        res.status(400).json({ error: "Stream is required for Class XI and XII students." });
+        return;
+      }
+    }
+
+    const duplicateEmail = await UserModel.findOne({
+      email: nextEmail,
+      _id: { $ne: existing._id },
+    }).lean();
+    if (duplicateEmail) {
+      res.status(409).json({ error: "Another account already uses this email address." });
+      return;
+    }
+
+    const nextSubjects = Array.isArray(req.body?.subjects)
+      ? req.body.subjects.map(String).filter(Boolean)
+      : existing.subjects || [];
+    const nextAssignedClasses = Array.isArray(req.body?.assignedClasses)
+      ? req.body.assignedClasses.map(String).filter(Boolean)
+      : existing.assignedClasses || [];
+    const nextAssignedSections = Array.isArray(req.body?.assignedSections)
+      ? req.body.assignedSections.map(String).filter(Boolean)
+      : existing.assignedSections || [];
+
+    const updated = await UserModel.findOneAndUpdate(
+      { _id: userId, schoolId },
+      {
+        $set: {
+          name: String(req.body?.name ?? existing.name).trim(),
+          email: nextEmail,
+          phone: nextPhone,
+          address: String(req.body?.address ?? (existing.address || "")).trim(),
+          bio: String(req.body?.bio ?? (existing.bio || "")).trim(),
+          avatar: String(req.body?.avatar ?? (existing.avatar || "")).trim(),
+          classId: existing.role === "student" ? nextClassId : String(existing.classId || ""),
+          section: existing.role === "student" ? nextSection : String(existing.section || ""),
+          stream: existing.role === "student" && isSeniorClass(nextClassId) ? nextStream : "",
+          subjects: existing.role === "teacher" ? nextSubjects : existing.subjects || [],
+          subjectIds: existing.role === "teacher" ? nextSubjects : existing.subjectIds || [],
+          assignedClasses: existing.role === "teacher" ? nextAssignedClasses : existing.assignedClasses || [],
+          assignedSections: existing.role === "teacher" ? nextAssignedSections : existing.assignedSections || [],
+          designation: existing.role === "principal"
+            ? String(req.body?.designation ?? (existing.designation || "")).trim()
+            : String(existing.designation || ""),
+        },
+      },
+      { new: true }
+    ).lean();
+
+    res.json({ success: true, user: serializeAuthUser(updated) });
+  } catch (error: any) {
+    console.error("[Profile] Update failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to update profile." });
+  }
+});
+
+async function getPrincipalDashboardAnalytics(schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const classOptions = await getPrincipalAllocationClassOptions(schoolId);
+  const [users, classes, curriculums, workspaces, evaluations, evaluationResults, assignmentSubmissions, homeworkSubmissions, activityLogs] = await Promise.all([
+    UserModel.find(schoolMatch).lean(),
+    ClassModel.find(schoolMatch).lean(),
+    CurriculumModel.find(schoolMatch).lean(),
+    PlanningWorkspaceModel.find(schoolMatch).lean(),
+    EvaluationModel.find(schoolMatch).lean(),
+    EvaluationResultModel.find(schoolMatch).lean(),
+    AssignmentSubmissionModel.find(schoolMatch).lean(),
+    HomeworkSubmissionModel.find(schoolMatch).lean(),
+    ActivityLogModel.find(schoolMatch).sort({ occurredAt: -1 }).lean(),
+  ]);
+  const teachers = users.filter((item) => item.role === "teacher");
+  const students = users.filter((item) => item.role === "student");
+  const enrolledStudents = students.filter((item) => String(item?.classId || "").trim());
+  const userById = new Map(users.map((item) => [String(item._id), item] as const));
+
+  const lessonPlansBySubjectMap = new Map<string, number>();
+  const teacherActivityMap = new Map<string, { name: string; sessions: number }>();
+  const recentActivity: { teacherName: string; role: string; action: string; timeAgo: string; sortAt: number; actionType: string }[] = [];
+  let lessonPlansGenerated = 0;
+  let generatedSessionsCount = 0;
+
+  for (const workspace of workspaces) {
+    const subject =
+      String(workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "Unknown").trim() || "Unknown";
+    const generatedSessions = typeof workspace?.generationScope?.generatedSessions === "object" && workspace?.generationScope?.generatedSessions
+      ? Object.values(workspace.generationScope.generatedSessions)
+      : [];
+    const artifactCount = Array.isArray(workspace?.generatedArtifacts) ? workspace.generatedArtifacts.length : 0;
+    const lessonPlanIncrement = Math.max(generatedSessions.length, artifactCount, 0);
+    lessonPlansGenerated += lessonPlanIncrement;
+    generatedSessionsCount += generatedSessions.length;
+    lessonPlansBySubjectMap.set(subject, (lessonPlansBySubjectMap.get(subject) || 0) + lessonPlanIncrement);
+
+    const teacherId = String(workspace?.teacherId || workspace?.createdBy || "").trim();
+    if (teacherId) {
+      const teacher = teachers.find((entry) => String(entry._id) === teacherId || entry.id === teacherId);
+      const teacherName = teacher?.name || teacherId;
+      const current = teacherActivityMap.get(teacherId) || { name: teacherName, sessions: 0 };
+      current.sessions += lessonPlanIncrement;
+      teacherActivityMap.set(teacherId, current);
+    }
+
+    if (lessonPlanIncrement > 0 && teacherId) {
+      recentActivity.push({
+        teacherName: teacherActivityMap.get(teacherId)?.name || teacherId,
+        role: "Teacher",
+        action: `Generated ${lessonPlanIncrement} lesson plan${lessonPlanIncrement === 1 ? "" : "s"} for ${subject}`,
+        timeAgo: workspace.updatedAt ? toRelativeTime(workspace.updatedAt) : "Recently",
+        sortAt: workspace.updatedAt ? new Date(workspace.updatedAt).getTime() : Date.now(),
+        actionType: "lesson_plan_generated",
+      });
+    }
+  }
+
+  for (const evaluation of evaluations) {
+    if (String(evaluation.status).toLowerCase() === "completed" || String(evaluation.status).toLowerCase() === "saved") {
+      const teacherId = String(evaluation.teacherId || "").trim();
+      if (teacherId) {
+        const teacher = teachers.find((entry) => String(entry._id) === teacherId || entry.id === teacherId);
+        const teacherName = teacher?.name || teacherId;
+        const current = teacherActivityMap.get(teacherId) || { name: teacherName, sessions: 0 };
+        current.sessions += 1;
+        teacherActivityMap.set(teacherId, current);
+      }
+      if (teacherId) {
+        recentActivity.push({
+          teacherName: teacherActivityMap.get(teacherId)?.name || teacherId,
+          role: "Teacher",
+          action: `Completed evaluation${evaluation.title ? `: ${evaluation.title}` : ""}`,
+          timeAgo: evaluation.updatedAt ? toRelativeTime(evaluation.updatedAt) : "Recently",
+          sortAt: evaluation.updatedAt ? new Date(evaluation.updatedAt).getTime() : Date.now(),
+          actionType: "evaluation_completed",
+        });
+      }
+    }
+  }
+
+  for (const entry of activityLogs) {
+    const role = String(entry.role || "").trim().toLowerCase();
+    const actorId = String(entry.userId || entry.teacherId || entry.studentId || "").trim();
+    const actor = actorId ? userById.get(actorId) : null;
+    if (!actorId || !actor) {
+      continue;
+    }
+
+    if (role === "teacher" && /lesson_plan_generated|session_plan_approved|term_plan_approved|curriculum_approved|curriculum_uploaded|evaluation_saved|evaluation_completed|teacher_login/.test(String(entry.actionType || ""))) {
+      const current = teacherActivityMap.get(actorId) || { name: actor.name || actorId, sessions: 0 };
+      current.sessions += 1;
+      teacherActivityMap.set(actorId, current);
+    }
+
+    recentActivity.push({
+      teacherName: actor.name || actorId,
+      role: role === "principal" ? "Principal" : role === "student" ? "Student" : "Teacher",
+      action: String(entry.actionLabel || entry.actionType || "Updated activity"),
+      timeAgo: toRelativeTime(entry.occurredAt || entry.createdAt),
+      sortAt: new Date(String(entry.occurredAt || entry.createdAt || Date.now())).getTime(),
+      actionType: String(entry.actionType || "").trim() || "activity",
+    });
+  }
+
+  const prioritizedRecentActivity = (() => {
+    const meaningfulEntries = recentActivity.filter((item) => !/(teacher|student|principal)_login/.test(item.actionType));
+    const loginEntries = recentActivity.filter((item) => /(teacher|student|principal)_login/.test(item.actionType));
+    const uniqueLogins = new Map<string, { teacherName: string; role: string; action: string; timeAgo: string; sortAt: number; actionType: string }>();
+
+    for (const entry of loginEntries.sort((a, b) => b.sortAt - a.sortAt)) {
+      const key = `${entry.role}-${entry.teacherName}`;
+      if (!uniqueLogins.has(key)) {
+        uniqueLogins.set(key, entry);
+      }
+    }
+
+    return [
+      ...meaningfulEntries,
+      ...Array.from(uniqueLogins.values()),
+    ].sort((a, b) => b.sortAt - a.sortAt);
+  })();
+
+  const classNameById = new Map<string, string>();
+  for (const cls of classes) {
+    classNameById.set(String(cls._id), cls.name || cls.gradeLevel || String(cls._id));
+  }
+
+  const performanceMap = new Map<string, { total: number; count: number }>();
+  for (const result of evaluationResults) {
+    const classKey = String(result.classId || "").trim();
+    const label = classNameById.get(classKey) || classKey || "Unassigned";
+    const percentage = Number(result.percentage || 0);
+    const current = performanceMap.get(label) || { total: 0, count: 0 };
+    current.total += percentage;
+    current.count += 1;
+    performanceMap.set(label, current);
+  }
+
+  const currentYear = new Date().getFullYear();
+  const monthlyBuckets = new Map<string, number>();
+  for (let month = 0; month < 12; month += 1) {
+    monthlyBuckets.set(toMonthLabel(new Date(currentYear, month, 1)), 0);
+  }
+  const incrementMonthly = (value: unknown, amount = 1) => {
+    if (!value) return;
+    const date = new Date(String(value));
+    if (Number.isNaN(date.getTime())) return;
+    const label = toMonthLabel(date);
+    monthlyBuckets.set(label, (monthlyBuckets.get(label) || 0) + amount);
+  };
+  curriculums.forEach((item) => incrementMonthly(item.createdAt));
+  workspaces.forEach((item) => incrementMonthly(item.updatedAt, Math.max(Object.keys(item?.generationScope?.generatedSessions || {}).length, Array.isArray(item.generatedArtifacts) ? item.generatedArtifacts.length : 0, 1)));
+  evaluations.forEach((item) => incrementMonthly(item.completedAt || item.updatedAt));
+  evaluationResults.forEach((item) => incrementMonthly(item.updatedAt));
+  assignmentSubmissions.forEach((item) => incrementMonthly(item.createdAt));
+  homeworkSubmissions.forEach((item) => incrementMonthly(item.createdAt));
+  activityLogs.forEach((item) => incrementMonthly(item.occurredAt || item.createdAt));
+  const maxMonthlyActivity = Math.max(...Array.from(monthlyBuckets.values()), 1);
+
+  const totalEvaluationsCompleted = evaluations.filter((item) => ["completed", "saved"].includes(String(item.status).toLowerCase())).length;
+
+  return {
+    summary: {
+      totalTeachers: teachers.length,
+      totalClasses: classOptions.length,
+      totalStudents: enrolledStudents.length,
+      lessonPlansGenerated,
+      evaluationsCompleted: totalEvaluationsCompleted,
+    },
+    lessonPlansBySubject: Array.from(lessonPlansBySubjectMap.entries())
+      .map(([subject, count]) => ({ subject, count }))
+      .sort((a, b) => b.count - a.count),
+    evaluationPerformance: Array.from(performanceMap.entries())
+      .map(([label, value]) => ({ label, score: value.count > 0 ? Number((value.total / value.count).toFixed(1)) : 0 }))
+      .sort((a, b) => b.score - a.score),
+    teacherActivity: Array.from(teacherActivityMap.values()).sort((a, b) => b.sessions - a.sessions),
+    monthlyProgress: Array.from(monthlyBuckets.entries()).map(([month, rawValue]) => ({
+      month,
+      value: Number(((rawValue / maxMonthlyActivity) * 100).toFixed(1)),
+    })),
+    recentActivity: prioritizedRecentActivity
+      .slice(0, 8)
+      .map(({ teacherName, role, action, timeAgo }) => ({ teacherName, role, action, timeAgo })),
+    analytics: {
+      curriculumCompletion: curriculums.length > 0 ? Number(((workspaces.filter((item) => item.curriculumApproval?.approved).length / curriculums.length) * 100).toFixed(1)) : 0,
+      lessonPlanGeneration: workspaces.length > 0 ? Number(((workspaces.filter((item) => Object.keys(item?.generationScope?.generatedSessions || {}).length > 0 || (Array.isArray(item.generatedArtifacts) && item.generatedArtifacts.length > 0)).length / workspaces.length) * 100).toFixed(1)) : 0,
+      evaluationCompletion: totalEvaluationsCompleted > 0 ? 100 : 0,
+      averageStudentPerformance: evaluationResults.length > 0 ? Number((evaluationResults.reduce((sum, item) => sum + Number(item.percentage || 0), 0) / evaluationResults.length).toFixed(1)) : 0,
+      teacherProductivity: teachers.length > 0 ? Number((((lessonPlansGenerated + totalEvaluationsCompleted) / teachers.length) * 10).toFixed(1)) : 0,
+      homeworkCompletion: homeworkSubmissions.length,
+      assessmentCompletion: assignmentSubmissions.length,
+      monthlyTrend: Array.from(monthlyBuckets.entries()).map(([month, rawValue]) => ({
+        month,
+        curriculum: Number(((curriculums.filter((item) => toMonthLabel(new Date(item.createdAt)) === month).length / maxMonthlyActivity) * 100).toFixed(1)),
+        evaluation: Number((((evaluations.filter((item) => toMonthLabel(new Date(item.completedAt || item.updatedAt)) === month).length) / maxMonthlyActivity) * 100).toFixed(1)),
+        performance: Number(((rawValue / maxMonthlyActivity) * 100).toFixed(1)),
+      })),
+      subjectPerformance: Array.from(lessonPlansBySubjectMap.entries()).map(([subject, count]) => ({
+        subject,
+        score: lessonPlansGenerated > 0 ? Number(((count / lessonPlansGenerated) * 100).toFixed(1)) : 0,
+      })),
+      gradePie: (() => {
+        const gradeCounts = new Map<string, number>();
+        for (const result of evaluationResults) {
+          const grade = String(result.grade || gradeFromPercentage(Number(result.percentage || 0)));
+          gradeCounts.set(grade, (gradeCounts.get(grade) || 0) + 1);
+        }
+        return Array.from(gradeCounts.entries()).map(([grade, count]) => ({ grade, count }));
+      })(),
+    },
+  };
+}
+
+function toRelativeTime(value: unknown) {
+  if (!value) return "Recently";
+  const date = new Date(String(value));
+  if (Number.isNaN(date.getTime())) return "Recently";
+  const diffMs = Date.now() - date.getTime();
+  const diffMinutes = Math.max(1, Math.round(diffMs / 60000));
+  if (diffMinutes < 60) return `${diffMinutes} min ago`;
+  const diffHours = Math.round(diffMinutes / 60);
+  if (diffHours < 24) return `${diffHours} hr ago`;
+  const diffDays = Math.round(diffHours / 24);
+  return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+}
+
+function getPlannedSessionCount(workspace: any) {
+  const allocations = Array.isArray(workspace?.sessionAllocation?.allocations)
+    ? workspace.sessionAllocation.allocations
+    : [];
+  const total = allocations.reduce((sum: number, item: any) => {
+    const count =
+      toNumberOrZero(item?.recommendedSessions) ||
+      toNumberOrZero(item?.allocatedSessions) ||
+      toNumberOrZero(item?.sessionCount) ||
+      toNumberOrZero(item?.estimatedSessions) ||
+      toNumberOrZero(item?.sessions);
+    return sum + Math.max(0, count);
+  }, 0);
+  return Math.max(1, total);
+}
+
+function getWorkspaceCurriculumProgress(workspace: any) {
+  let progress = 0;
+  if (workspace?.curriculumApproval?.approved) {
+    progress += 35;
+  } else if (workspace?.curriculumSnapshot?.normalizedStructure || workspace?.curriculumSnapshot?.gradeLevel) {
+    progress += 15;
+  }
+
+  const hasTermPlan = getWorkspaceTermCount(workspace) > 0 || Array.isArray(workspace?.termPlan?.recommendations) && workspace.termPlan.recommendations.length > 0;
+  if (workspace?.termPlan?.approved) {
+    progress += 25;
+  } else if (hasTermPlan) {
+    progress += 15;
+  }
+
+  const hasSessionPlan = getWorkspacePlannedSessionCount(workspace) > 0 || Array.isArray(workspace?.sessionAllocation?.recommendations) && workspace.sessionAllocation.recommendations.length > 0;
+  if (workspace?.sessionAllocation?.approved) {
+    progress += 20;
+  } else if (hasSessionPlan) {
+    progress += 15;
+  }
+
+  const plannedSessions = getWorkspacePlannedSessionCount(workspace);
+  const generatedSessions = Object.keys(workspace?.generationScope?.generatedSessions || {}).length;
+  const generatedProgress = plannedSessions > 0
+    ? Math.min(20, Math.round((generatedSessions / plannedSessions) * 20))
+    : 0;
+  progress += generatedProgress;
+
+  return Math.max(0, Math.min(100, progress));
+}
+
+function getGeneratedSessionEntries(workspace: any) {
+  const generatedSessions = workspace?.generationScope?.generatedSessions;
+  if (!generatedSessions || typeof generatedSessions !== "object") {
+    return [];
+  }
+
+  return Object.entries(generatedSessions);
+}
+
+function getWorkspaceGeneratedSessionCount(workspace: any) {
+  return getGeneratedSessionEntries(workspace).length;
+}
+
+function getWorkspaceLessonPlanCount(workspace: any) {
+  const generatedSessions = getWorkspaceGeneratedSessionCount(workspace);
+  const artifactCount = Array.isArray(workspace?.generatedArtifacts) ? workspace.generatedArtifacts.length : 0;
+  return Math.max(generatedSessions, artifactCount, 0);
+}
+
+function getWorkspaceTermCount(workspace: any) {
+  const termAllocations = getWorkspaceTermAllocations(workspace);
+  const savedTermCount = buildSavedTermGroups(termAllocations).size;
+  if (savedTermCount > 0) {
+    return savedTermCount;
+  }
+  return Math.max(0, toNumberOrZero(workspace?.termPlan?.recommendedTermCount));
+}
+
+function getWorkspacePlannedSessionCount(workspace: any) {
+  const savedAllocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
+  const recommendedAllocations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
+  const allocations = savedAllocations.length > 0 ? savedAllocations : recommendedAllocations;
+  const plannedFromAllocations = allocations.reduce((sum: number, item: any) => {
+    return sum + Math.max(
+      0,
+      toNumberOrZero(item?.allocatedSessions) ||
+      toNumberOrZero(item?.recommendedSessions) ||
+      toNumberOrZero(item?.sessionCount) ||
+      toNumberOrZero(item?.estimatedSessions) ||
+      toNumberOrZero(item?.sessions)
+    );
+  }, 0);
+
+  return Math.max(plannedFromAllocations, getPlannedSessionCount(workspace));
+}
+
+function getWorkspaceTermItems(workspace: any) {
+  const termAllocations = getWorkspaceTermAllocations(workspace);
+  const savedGroups = Array.from(buildSavedTermGroups(termAllocations).keys());
+  if (savedGroups.length > 0) {
+    return savedGroups.map((key, index) => {
+      const [termClassName, termName, termNumber] = String(key).split("::");
+      const primaryLabel = String(termName || "").trim() || `Term ${termNumber || index + 1}`;
+      return {
+        id: `${workspace._id}:term:${index}`,
+        title: primaryLabel || termClassName || "Term",
+        updatedAt: workspace.updatedAt ? new Date(workspace.updatedAt).toISOString() : "",
+      };
+    });
+  }
+
+  const fallbackCount = getWorkspaceTermCount(workspace);
+  return Array.from({ length: fallbackCount }, (_, index) => ({
+    id: `${workspace._id}:term:fallback:${index}`,
+    title: `Term ${index + 1}`,
+    updatedAt: workspace.updatedAt ? new Date(workspace.updatedAt).toISOString() : "",
+  }));
+}
+
+function getWorkspaceSessionItems(workspace: any) {
+  const generatedItems = getGeneratedSessionEntries(workspace).map(([key, value]) => ({
+    id: `${workspace._id}:${key}`,
+    title: String((value as any)?.title || key),
+    status: "Generated",
+  }));
+  if (generatedItems.length > 0) {
+    return generatedItems;
+  }
+
+  const savedAllocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
+  const recommendedAllocations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
+  const allocations = savedAllocations.length > 0 ? savedAllocations : recommendedAllocations;
+  return allocations.map((allocation: any, index: number) => ({
+    id: `${workspace._id}:planned:${index}`,
+    title: String(allocation?.chapterName || allocation?.chapter || allocation?.unitName || allocation?.termName || `Session Plan ${index + 1}`),
+    status: String(workspace?.sessionAllocation?.approved ? "Planned" : "Draft"),
+  }));
+}
+
+function buildSubjectSessionOptions(workspaces: any[]) {
+  const optionMap = new Map<string, { sessionId: string; sessionNumber: number; title: string }>();
+
+  workspaces.forEach((workspace: any) => {
+    const generatedEntries = getGeneratedSessionEntries(workspace);
+    const generatedSessionNumbers = generatedEntries
+      .map(([, value]) => Number((value as any)?.sessionNumber || 0))
+      .filter((value) => Number.isFinite(value) && value > 0);
+    const nextSessionNumber = generatedSessionNumbers.length > 0 ? Math.max(...generatedSessionNumbers) + 1 : 1;
+
+    generatedEntries.forEach(([key, value]) => {
+      const session = value as any;
+      const sessionId = String(session?.id || key || `${workspace._id}:${session?.sessionNumber || 0}`).trim();
+      const sessionNumber = Number(session?.sessionNumber || 0);
+      const title = `Session ${sessionNumber || 1}`;
+      if (!sessionId || optionMap.has(sessionId)) return;
+      optionMap.set(sessionId, {
+        sessionId,
+        sessionNumber: Number.isFinite(sessionNumber) && sessionNumber > 0 ? sessionNumber : optionMap.size + 1,
+        title,
+      });
+    });
+
+    const savedAllocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
+    const recommendedAllocations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
+    const allocations = savedAllocations.length > 0 ? savedAllocations : recommendedAllocations;
+
+    allocations.forEach((allocation: any, index: number) => {
+      const sessionId = `${workspace._id}:planned:${index}`;
+      const sessionNumber = nextSessionNumber + index;
+      const title = `Session ${sessionNumber}`;
+      if (optionMap.has(sessionId)) return;
+      optionMap.set(sessionId, {
+        sessionId,
+        sessionNumber,
+        title,
+      });
+    });
+  });
+
+  return Array.from(optionMap.values()).sort((left, right) => left.sessionNumber - right.sessionNumber || left.title.localeCompare(right.title));
+}
+
+function dedupeTermItems(items: Array<{ id: string; title: string; updatedAt: string }>) {
+  const deduped = new Map<string, { id: string; title: string; updatedAt: string }>();
+
+  for (const item of items) {
+    const key = String(item?.title || "").trim().toLowerCase() || String(item?.id || "").trim().toLowerCase();
+    if (!key) continue;
+
+    const existing = deduped.get(key);
+    if (!existing) {
+      deduped.set(key, item);
+      continue;
+    }
+
+    const existingTime = existing.updatedAt ? new Date(existing.updatedAt).getTime() : 0;
+    const nextTime = item.updatedAt ? new Date(item.updatedAt).getTime() : 0;
+    if (nextTime > existingTime) {
+      deduped.set(key, item);
+    }
+  }
+
+  return Array.from(deduped.values()).sort((left, right) => left.title.localeCompare(right.title));
+}
+
+function dedupeWorkspacesByTeachingScope(workspaces: any[]) {
+  const deduped = new Map<string, any>();
+
+  for (const workspace of Array.isArray(workspaces) ? workspaces : []) {
+    const key = [
+      normalizeClassKey(workspace?.classId || workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || ""),
+      normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || ""),
+      normalizeSubjectKey(workspace?.subjectId || workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || ""),
+      String(workspace?.teacherId || workspace?.createdBy || "").trim(),
+    ].join("::");
+
+    if (!key.replace(/::/g, "").trim()) {
+      continue;
+    }
+
+    const existing = deduped.get(key);
+    if (!existing) {
+      deduped.set(key, workspace);
+      continue;
+    }
+
+    const existingTime = new Date(String(existing?.updatedAt || existing?.createdAt || 0)).getTime();
+    const nextTime = new Date(String(workspace?.updatedAt || workspace?.createdAt || 0)).getTime();
+    if (nextTime >= existingTime) {
+      deduped.set(key, workspace);
+    }
+  }
+
+  return Array.from(deduped.values());
+}
+
+function getSessionAssignmentCount(session: any) {
+  return session?.assignment || (Array.isArray(session?.assignments) && session.assignments.length > 0) ? 1 : 0;
+}
+
+function getSessionHomeworkCount(session: any) {
+  return session?.homework || (Array.isArray(session?.homework?.homework) && session.homework.homework.length > 0) ? 1 : 0;
+}
+
+function getSessionAssessmentCount(session: any) {
+  return session?.assessment ||
+    (Array.isArray(session?.assessment?.mcq) && session.assessment.mcq.length > 0) ||
+    (Array.isArray(session?.assessment?.shortAnswer) && session.assessment.shortAnswer.length > 0) ||
+    (Array.isArray(session?.assessment?.longAnswer) && session.assessment.longAnswer.length > 0)
+    ? 1
+    : 0;
+}
+
+function buildWorkspaceSessionCounts(workspaces: any[]) {
+  let totalTerms = 0;
+  let totalSessions = 0;
+  let totalAssignments = 0;
+  let totalAssessments = 0;
+  let totalHomework = 0;
+  const sessions: Array<{
+    sessionId: string;
+    sessionTitle: string;
+    sessionNumber: number;
+    assignments: number;
+    assessments: number;
+    homework: number;
+  }> = [];
+
+  for (const workspace of workspaces) {
+    totalTerms += getWorkspaceTermCount(workspace);
+
+    for (const [key, value] of getGeneratedSessionEntries(workspace)) {
+      const session = value as any;
+      const assignments = getSessionAssignmentCount(session);
+      const homework = getSessionHomeworkCount(session);
+      const assessments = getSessionAssessmentCount(session);
+      const sessionNumber = toNumberOrZero(session?.sessionNumber);
+
+      totalSessions += 1;
+      totalAssignments += assignments;
+      totalHomework += homework;
+      totalAssessments += assessments;
+
+      sessions.push({
+        sessionId: String(session?.id || key || `${workspace._id}:${sessionNumber || totalSessions}`),
+        sessionTitle: String(session?.title || session?.sessionTitle || `Session ${sessionNumber || totalSessions}`),
+        sessionNumber,
+        assignments,
+        assessments,
+        homework,
+      });
+    }
+  }
+
+  sessions.sort((left, right) => {
+    if (left.sessionNumber !== right.sessionNumber) {
+      return left.sessionNumber - right.sessionNumber;
+    }
+    return left.sessionTitle.localeCompare(right.sessionTitle);
+  });
+
+  return {
+    totalTerms,
+    totalSessions,
+    totalAssignments,
+    totalAssessments,
+    totalHomework,
+    sessions,
+  };
+}
+
+function getWorkspaceExpectedCompletionDays(workspace: any) {
+  const plannedSessions = getPlannedSessionCount(workspace);
+  return Math.max(10, Math.min(30, 7 + plannedSessions));
+}
+
+async function getPrincipalAlerts(schoolId: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [users, classes, workspaces, activityLogs] = await Promise.all([
+    UserModel.find(schoolMatch).lean(),
+    ClassModel.find(schoolMatch).lean(),
+    PlanningWorkspaceModel.find(schoolMatch).lean(),
+    ActivityLogModel.find(schoolMatch).sort({ occurredAt: -1 }).lean(),
+  ]);
+
+  const teachers = users.filter((item) => item.role === "teacher");
+  const classById = new Map(classes.map((item) => [String(item._id), item] as const));
+  const relevantTeacherActivity = activityLogs.filter((entry) =>
+    String(entry.role || "").trim().toLowerCase() === "teacher" &&
+    /teacher_login|lesson_plan_generated|evaluation_saved|evaluation_completed|curriculum_uploaded|curriculum_approved|session_plan_approved|term_plan_approved|assignment|homework/.test(String(entry.actionType || ""))
+  );
+
+  const latestTeacherActivityMap = new Map<string, Date>();
+  for (const entry of relevantTeacherActivity) {
+    const teacherId = String(entry.userId || entry.teacherId || "").trim();
+    const occurredAt = new Date(String(entry.occurredAt || entry.createdAt || Date.now()));
+    if (!teacherId || Number.isNaN(occurredAt.getTime())) continue;
+    if (!latestTeacherActivityMap.has(teacherId)) {
+      latestTeacherActivityMap.set(teacherId, occurredAt);
+    }
+  }
+
+  const now = Date.now();
+  const items: any[] = [];
+
+  for (const teacher of teachers) {
+    const teacherId = String(teacher._id);
+    const activityAt = latestTeacherActivityMap.get(teacherId) || (teacher.lastLoginAt ? new Date(teacher.lastLoginAt) : null);
+    if (!activityAt || Number.isNaN(activityAt.getTime())) {
+      continue;
+    }
+    const daysInactive = Math.floor((now - activityAt.getTime()) / (1000 * 60 * 60 * 24));
+    if (daysInactive < 2) {
+      continue;
+    }
+
+    items.push({
+      id: `teacher_inactive:${teacherId}:${daysInactive}`,
+      type: "teacher_inactive",
+      severity: daysInactive >= 3 ? "danger" : "warning",
+      title: daysInactive >= 3 ? "Teacher Inactivity Alert" : "Teacher Activity Warning",
+      message: `Teacher ${teacher.name} has been inactive for ${daysInactive} day${daysInactive === 1 ? "" : "s"}.`,
+      teacherId,
+      teacherName: teacher.name,
+      daysInactive,
+      createdAt: activityAt.toISOString(),
+    });
+  }
+
+  for (const workspace of workspaces) {
+    const progress = getWorkspaceCurriculumProgress(workspace);
+    if (progress >= 100) {
+      continue;
+    }
+
+    const createdAt = new Date(String(workspace.createdAt || workspace.updatedAt || Date.now()));
+    const updatedAt = new Date(String(workspace.updatedAt || workspace.createdAt || Date.now()));
+    const anchorDate = updatedAt.getTime() > createdAt.getTime() ? updatedAt : createdAt;
+    const expectedDays = getWorkspaceExpectedCompletionDays(workspace);
+    const elapsedDays = Math.floor((now - anchorDate.getTime()) / (1000 * 60 * 60 * 24));
+    const overdueDays = elapsedDays - expectedDays;
+    if (overdueDays < 0) {
+      continue;
+    }
+
+    const teacherId = String(workspace.teacherId || workspace.createdBy || "").trim();
+    const teacher = teacherId ? teachers.find((item) => String(item._id) === teacherId) : null;
+    const matchedClass = classById.get(String(workspace.classId || "").trim());
+    const className = String(
+      matchedClass?.name ||
+      matchedClass?.gradeLevel ||
+      workspace.curriculumSnapshot?.gradeLevel ||
+      workspace.academicConfig?.className ||
+      workspace.classId ||
+      ""
+    ).trim();
+    const subject = String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || workspace.subjectId || "").trim();
+
+    items.push({
+      id: `curriculum_delay:${String(workspace._id)}`,
+      type: "curriculum_delay",
+      severity: overdueDays >= 3 ? "danger" : "warning",
+      title: overdueDays >= 3 ? "Curriculum Delay Alert" : "Curriculum Delay Warning",
+      message: `${className || "Class"}${subject ? ` ${subject}` : ""} curriculum is delayed. Current progress is ${progress}%.`,
+      teacherId: teacher ? String(teacher._id) : "",
+      teacherName: teacher?.name || "",
+      className,
+      subject,
+      curriculumProgress: progress,
+      createdAt: anchorDate.toISOString(),
+    });
+  }
+
+  return items.sort((left, right) => {
+    const severityScore = (value: string) => value === "danger" ? 2 : 1;
+    return severityScore(String(right.severity || "")) - severityScore(String(left.severity || "")) ||
+      new Date(String(right.createdAt || 0)).getTime() - new Date(String(left.createdAt || 0)).getTime();
+  });
+}
+
+async function getPrincipalTeachers(schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [teachers, classes, workspaces, evaluations, assignmentSubmissions] = await Promise.all([
+    UserModel.find({ ...schoolMatch, role: "teacher" }).lean(),
+    ClassModel.find(schoolMatch).lean(),
+    PlanningWorkspaceModel.find(schoolMatch).lean(),
+    EvaluationModel.find(schoolMatch).lean(),
+    AssignmentSubmissionModel.find(schoolMatch).lean(),
+  ]);
+
+  return teachers.map((teacher) => {
+    const teacherId = String(teacher._id);
+    const teacherWorkspaces = workspaces.filter((item) => String(item.teacherId || item.createdBy || "") === teacherId);
+    const teacherEvaluations = evaluations.filter((item) => String(item.teacherId || "") === teacherId);
+    const teacherClasses = classes.filter((item) => Array.isArray(item.teacherIds) && item.teacherIds.some((entry: unknown) => String(entry) === teacherId));
+    const assignedClasses = teacherClasses.map((item) => String(item.gradeLevel || item.name || "").replace(/^Class\s+/i, "").trim()).filter(Boolean);
+    const subjects = Array.from(new Set(
+      teacherWorkspaces
+        .map((item) => String(item.subjectId || item.curriculumSnapshot?.subject || item.academicConfig?.subject || "").trim())
+        .filter(Boolean)
+    ));
+    const lessonPlansGenerated = teacherWorkspaces.reduce((sum, item) => (
+      sum + Math.max(
+        Object.keys(item?.generationScope?.generatedSessions || {}).length,
+        Array.isArray(item.generatedArtifacts) ? item.generatedArtifacts.length : 0,
+        0
+      )
+    ), 0);
+    const homeworkGenerated = teacherWorkspaces.reduce((sum, item) => (
+      sum + (Array.isArray(item.generatedArtifacts)
+        ? item.generatedArtifacts.filter((artifact: any) => /homework/i.test(String(artifact?.type || artifact?.kind || artifact?.title || ""))).length
+        : 0)
+    ), 0) + assignmentSubmissions.filter((item) => String(item.teacherId || "") === teacherId && String(item.submissionType || "") === "homework").length;
+    const assessmentsGenerated = teacherEvaluations.length;
+
+    return {
+      id: teacherId,
+      name: teacher.name || "Teacher",
+      employeeId: teacher.employeeId || teacherId.slice(-6).toUpperCase(),
+      assignedClasses,
+      subjects,
+      lessonPlansGenerated,
+      homeworkGenerated,
+      assessmentsGenerated,
+      lastLogin: teacher.lastLoginAt ? new Date(teacher.lastLoginAt).toISOString() : new Date(teacher.updatedAt || teacher.createdAt || Date.now()).toISOString(),
+      status: teacher.lastLoginAt && Date.now() - new Date(teacher.lastLoginAt).getTime() < 7 * 24 * 60 * 60 * 1000 ? "Active" : "Offline",
+    };
+  });
+}
+
+async function getPrincipalTeacherDetail(id: string, schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [teacher, classes, workspaces, evaluations, assignmentSubmissions] = await Promise.all([
+    UserModel.findOne({ ...schoolMatch, _id: id, role: "teacher" }).lean(),
+    ClassModel.find(schoolMatch).lean(),
+    PlanningWorkspaceModel.find(schoolMatch).lean(),
+    EvaluationModel.find(schoolMatch).lean(),
+    AssignmentSubmissionModel.find(schoolMatch).lean(),
+  ]);
+  if (!teacher) return null;
+
+  const teacherId = String(teacher._id);
+  const summary = (await getPrincipalTeachers(schoolId)).find((item) => item.id === teacherId);
+  const teacherClasses = classes.filter((item) => Array.isArray(item.teacherIds) && item.teacherIds.some((entry: unknown) => String(entry) === teacherId));
+  const teacherWorkspaces = workspaces.filter((item) => String(item.teacherId || item.createdBy || "") === teacherId);
+  const teacherEvaluations = evaluations.filter((item) => String(item.teacherId || "") === teacherId);
+
+  return {
+    ...(summary || {
+      id: teacherId,
+      name: teacher.name || "Teacher",
+      employeeId: teacher.employeeId || teacherId.slice(-6).toUpperCase(),
+      assignedClasses: [],
+      subjects: [],
+      lessonPlansGenerated: 0,
+      homeworkGenerated: 0,
+      assessmentsGenerated: 0,
+      lastLogin: teacher.lastLoginAt ? new Date(teacher.lastLoginAt).toISOString() : new Date().toISOString(),
+      status: "Offline" as const,
+    }),
+    email: teacher.email || "",
+    phone: "",
+    joinedDate: teacher.createdAt ? new Date(teacher.createdAt).toISOString() : new Date().toISOString(),
+    classes: teacherClasses.map((item) => {
+      const related = teacherWorkspaces.filter((workspace) => String(workspace.classId || "") === String(item._id));
+      const approvedCount = related.filter((workspace) => workspace.curriculumApproval?.approved).length;
+      const curriculumProgress = related.length > 0 ? Number(((approvedCount / related.length) * 100).toFixed(1)) : 0;
+      return {
+        className: item.name || item.gradeLevel || "Class",
+        subject: related[0]?.subjectId || related[0]?.curriculumSnapshot?.subject || related[0]?.academicConfig?.subject || "General",
+        studentCount: Number(item.studentCount || 0),
+        curriculumProgress,
+      };
+    }),
+    recentActivity: [
+      ...teacherWorkspaces
+        .filter((item) => item.updatedAt)
+        .map((item) => ({
+          action: `Updated ${item.subjectId || item.curriculumSnapshot?.subject || item.academicConfig?.subject || "lesson plan"} workspace`,
+          time: toRelativeTime(item.updatedAt),
+        })),
+      ...teacherEvaluations
+        .filter((item) => item.updatedAt)
+        .map((item) => ({
+          action: `Completed evaluation${item.title ? `: ${item.title}` : ""}`,
+          time: toRelativeTime(item.updatedAt),
+        })),
+      ...assignmentSubmissions
+        .filter((item) => String(item.teacherId || "") === teacherId && item.createdAt)
+        .map((item) => ({
+          action: `Received ${String(item.submissionType || "assignment")} submission`,
+          time: toRelativeTime(item.createdAt),
+        })),
+    ]
+      .sort((a, b) => a.time.localeCompare(b.time))
+      .slice(0, 8),
+  };
+}
+
+async function getPrincipalClasses(schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [classes, users, workspaces, evaluationResults, allocations, classOptions] = await Promise.all([
+    ClassModel.find(schoolMatch).lean(),
+    UserModel.find(schoolMatch).lean(),
+    PlanningWorkspaceModel.find(schoolMatch).lean(),
+    EvaluationResultModel.find(schoolMatch).lean(),
+    TeacherClassAllocationModel.find(schoolMatch).lean(),
+    getPrincipalAllocationClassOptions(schoolId),
+  ]);
+
+  return classOptions.map((option) => {
+    const normalizedSection = normalizeSectionKey(option.section);
+    const matchingClassDocs = classes.filter((item: any) =>
+      classKeysOverlap(item?.name || item?.gradeLevel || "", option.className)
+      && normalizeSectionKey(item?.section || "") === normalizedSection
+    );
+    const matchingStudents = users.filter((user: any) =>
+      String(user?.role || "").trim().toLowerCase() === "student"
+      && classKeysOverlap(user?.classId || "", option.className)
+      && normalizeSectionKey(user?.section || "") === normalizedSection
+    );
+    const matchingAllocations = allocations.filter((allocation: any) =>
+      classKeysOverlap(allocation?.className || allocation?.classId || "", option.className)
+      && normalizeSectionKey(allocation?.section || "") === normalizedSection
+    );
+    const matchingWorkspaces = dedupeWorkspacesByTeachingScope(workspaces.filter((workspace: any) =>
+      classKeysOverlap(
+        workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || workspace?.classId || "",
+        option.className,
+      )
+      && normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") === normalizedSection
+    ));
+    const matchingResults = evaluationResults.filter((result: any) =>
+      matchingWorkspaces.some((workspace: any) =>
+        String(result?.classId || "").trim() === String(workspace?._id || "").trim()
+        || classKeysOverlap(result?.classId || "", option.className)
+      )
+    );
+
+    const subjectSet = new Set<string>([
+      ...(option.subjects || []),
+      ...matchingAllocations.flatMap((item: any) => Array.isArray(item?.subjects) ? item.subjects.map(String) : []),
+      ...matchingWorkspaces.map((workspace: any) => String(workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "").trim()),
+      ...matchingClassDocs.flatMap((item: any) => Array.isArray(item?.subjectIds) ? item.subjectIds.map(String) : []),
+    ].filter(Boolean));
+
+    const teacherIds = new Set<string>([
+      ...matchingAllocations.map((item: any) => String(item?.teacherId || "").trim()),
+      ...matchingClassDocs.flatMap((item: any) => Array.isArray(item?.teacherIds) ? item.teacherIds.map(String) : []),
+    ].filter(Boolean));
+
+    const publishedAllocation = matchingAllocations.find((item: any) => String(item?.status || "").trim() === "published") || matchingAllocations[0];
+    const classTeacher = publishedAllocation
+      ? users.find((user: any) => String(user?._id || "") === String(publishedAllocation.teacherId || ""))?.name || "Not assigned"
+      : "Not assigned";
+
+    const totalTerms = matchingWorkspaces.reduce((sum: number, workspace: any) => sum + getWorkspaceTermCount(workspace), 0);
+    const sessionsGenerated = matchingWorkspaces.reduce((sum: number, workspace: any) => sum + getWorkspaceGeneratedSessionCount(workspace), 0);
+    const plannedSessions = matchingWorkspaces.reduce((sum: number, workspace: any) => sum + getWorkspacePlannedSessionCount(workspace), 0);
+    const pendingSessions = Math.max(0, plannedSessions - sessionsGenerated);
+    const totalSessionTarget = Math.max(plannedSessions, sessionsGenerated);
+    const curriculumProgress = totalSessionTarget > 0
+      ? Number(((Math.min(sessionsGenerated, totalSessionTarget) / totalSessionTarget) * 100).toFixed(1))
+      : 0;
+    const sessionCounts = buildWorkspaceSessionCounts(matchingWorkspaces);
+    const lastActivity = matchingWorkspaces
+      .map((workspace: any) => String(workspace?.updatedAt || workspace?.createdAt || "").trim())
+      .filter(Boolean)
+      .sort()
+      .slice(-1)[0] || "";
+    const averageClassPerformance = matchingResults.length > 0
+      ? Number((matchingResults.reduce((sum: number, result: any) => sum + Number(result.percentage || 0), 0) / matchingResults.length).toFixed(1))
+      : 0;
+
+    return {
+      classKey: option.classKey,
+      classId: option.classKey,
+      className: option.className,
+      section: option.section,
+      academicYear: String(publishedAllocation?.academicYear || "").trim(),
+      classTeacher,
+      subjects: subjectSet.size,
+      teachers: teacherIds.size,
+      students: matchingStudents.length || matchingClassDocs.reduce((sum: number, item: any) => sum + Number(item?.studentCount || 0), 0),
+      curriculumProgress,
+      totalTerms,
+      sessionsGenerated,
+      sessionsCompleted: sessionCounts.totalSessions,
+      pendingSessions,
+      assignments: sessionCounts.totalAssignments,
+      homework: sessionCounts.totalHomework,
+      assessments: sessionCounts.totalAssessments,
+      evaluations: matchingResults.length,
+      submissionRate: 0,
+      averageClassPerformance,
+      lastActivity,
+      status: "active",
+      evaluationCompletion: averageClassPerformance,
+    };
+  });
+}
+
+async function getPrincipalAllocationClassOptions(schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [curriculums, classes, users, allocations, workspaces] = await Promise.all([
+    CurriculumModel.find(schoolMatch).lean(),
+    ClassModel.find(schoolMatch).lean(),
+    UserModel.find(schoolMatch).lean(),
+    TeacherClassAllocationModel.find(schoolMatch).lean(),
+    PlanningWorkspaceModel.find(schoolMatch).lean(),
+  ]);
+
+  const optionMap = new Map<string, { className: string; section: string; subjects: Set<string> }>();
+
+  const upsertOption = (classNameRaw: unknown, sectionRaw?: unknown, subjects: string[] = []) => {
+    const className = canonicalizeClassName(String(classNameRaw || "").trim()) || String(classNameRaw || "").trim();
+    if (!className) return;
+    const section = String(sectionRaw || "").trim().toUpperCase();
+    const classKey = buildCanonicalClassKey(className);
+    if (!classKey) return;
+    const optionKey = `${classKey}::${normalizeSectionKey(section)}`;
+    const existing = optionMap.get(optionKey) || { className, section, subjects: new Set<string>() };
+    subjects.filter(Boolean).forEach((subject) => existing.subjects.add(String(subject).trim()));
+    optionMap.set(optionKey, existing);
+  };
+
+  curriculums.forEach((curriculum: any) => {
+    const summarizedClasses = summarizeCurriculumClasses(curriculum?.extractedCurriculum || {});
+    if (summarizedClasses.length) {
+      summarizedClasses.forEach((entry: any) => {
+        upsertOption(entry.className, curriculum?.sectionId || "", entry.subject ? [entry.subject] : []);
+      });
+      return;
+    }
+    upsertOption(curriculum?.gradeLevel || curriculum?.classId || "", curriculum?.sectionId || "", [
+      canonicalizeSubjectName(curriculum?.subject || curriculum?.subjectId || ""),
+    ].filter(Boolean));
+  });
+
+  classes.forEach((item: any) => {
+    upsertOption(item?.name || item?.gradeLevel || "", item?.section || "", Array.isArray(item?.subjectIds) ? item.subjectIds.map(String) : []);
+  });
+
+  users.forEach((item: any) => {
+    if (String(item?.role || "").trim().toLowerCase() !== "student") return;
+    upsertOption(item?.classId || "", item?.section || "");
+  });
+
+  allocations.forEach((item: any) => {
+    upsertOption(item?.className || item?.classId || "", item?.section || "", Array.isArray(item?.subjects) ? item.subjects.map(String) : []);
+  });
+
+  workspaces.forEach((item: any) => {
+    upsertOption(
+      item?.academicConfig?.className || item?.curriculumSnapshot?.gradeLevel || item?.classId || "",
+      item?.academicConfig?.section || item?.sectionId || "",
+      [String(item?.academicConfig?.subject || item?.curriculumSnapshot?.subject || item?.subjectId || "").trim()].filter(Boolean)
+    );
+  });
+
+  return Array.from(optionMap.entries())
+    .map(([classKey, option]) => ({
+      classKey,
+      className: option.className,
+      section: option.section,
+      subjects: Array.from(option.subjects).sort((left, right) => left.localeCompare(right)),
+    }))
+    .sort((left, right) => formatClassLabelForSort(left.className, left.section).localeCompare(formatClassLabelForSort(right.className, right.section)));
+}
+
+function formatClassLabelForSort(className: string, section: string) {
+  return `${canonicalizeClassName(className || "") || String(className || "").trim()}::${String(section || "").trim().toUpperCase()}`;
+}
+
+async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [classes, users, workspaces, evaluationResults, allocations, assignmentSubmissions, homeworkSubmissions] = await Promise.all([
+    ClassModel.find(schoolMatch).lean(),
+    UserModel.find(schoolMatch).lean(),
+    PlanningWorkspaceModel.find(schoolMatch).lean(),
+    EvaluationResultModel.find(schoolMatch).lean(),
+    TeacherClassAllocationModel.find(schoolMatch).lean(),
+    AssignmentSubmissionModel.find(schoolMatch).lean(),
+    HomeworkSubmissionModel.find(schoolMatch).lean(),
+  ]);
+  const requestedValue = decodeRouteParamValue(classKeyOrName);
+  const [requestedClassKeyRaw, requestedSectionRaw = ""] = requestedValue.split("::");
+  const requestedSection = normalizeSectionKey(requestedSectionRaw);
+  const requestedCanonicalKey = buildCanonicalClassKey(requestedClassKeyRaw || requestedValue);
+  const classSummaries = await getPrincipalClasses(schoolId);
+  const summary = classSummaries.find((item) => item.classKey === requestedValue)
+    || classSummaries.find((item) => {
+      const itemClassKey = buildCanonicalClassKey(item.className || "");
+      return requestedCanonicalKey
+        && itemClassKey === requestedCanonicalKey
+        && normalizeSectionKey(item.section || "") === requestedSection;
+    });
+  const resolvedClassName = String(summary?.className || "").trim() || decodeRouteParamValue(requestedClassKeyRaw || requestedValue);
+  const resolvedSection = String(summary?.section || requestedSectionRaw || "").trim();
+  const normalizedSection = normalizeSectionKey(resolvedSection);
+
+  const matchingClassDocs = classes.filter((item: any) =>
+    classKeysOverlap(item?.name || item?.gradeLevel || "", resolvedClassName || requestedCanonicalKey)
+    && normalizeSectionKey(item?.section || "") === normalizedSection
+  );
+  const matchingStudents = users.filter((user: any) =>
+    String(user?.role || "").trim().toLowerCase() === "student"
+    && classKeysOverlap(user?.classId || "", resolvedClassName || requestedCanonicalKey)
+    && normalizeSectionKey(user?.section || "") === normalizedSection
+  );
+  const matchingAllocations = allocations.filter((allocation: any) =>
+    classKeysOverlap(allocation?.className || allocation?.classId || "", resolvedClassName || requestedCanonicalKey)
+    && normalizeSectionKey(allocation?.section || "") === normalizedSection
+  );
+  const matchingWorkspaces = dedupeWorkspacesByTeachingScope(workspaces.filter((workspace: any) =>
+    classKeysOverlap(
+      workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || workspace?.classId || "",
+      resolvedClassName || requestedCanonicalKey,
+    )
+    && normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") === normalizedSection
+  ));
+  const matchingResults = evaluationResults.filter((result: any) =>
+    matchingWorkspaces.some((workspace: any) =>
+      String(result?.classId || "").trim() === String(workspace?._id || "").trim()
+      || classKeysOverlap(result?.classId || "", resolvedClassName || requestedCanonicalKey)
+    )
+  );
+
+  if (!summary && !matchingClassDocs.length && !matchingStudents.length && !matchingAllocations.length && !matchingWorkspaces.length) {
+    return null;
+  }
+
+  const teacherIds = new Set<string>([
+    ...matchingAllocations.map((item: any) => String(item?.teacherId || "").trim()),
+    ...matchingClassDocs.flatMap((item: any) => Array.isArray(item?.teacherIds) ? item.teacherIds.map(String) : []),
+  ].filter(Boolean));
+  const teacherRoster = Array.from(teacherIds).map((teacherId) => {
+    const teacher = users.find((user: any) => String(user?._id || "") === teacherId);
+    const teacherSubjects = new Set<string>(
+      matchingAllocations
+        .filter((item: any) => String(item?.teacherId || "").trim() === teacherId)
+        .flatMap((item: any) => Array.isArray(item?.subjects) ? item.subjects.map(String) : [])
+        .filter(Boolean)
+    );
+
+    return {
+      id: teacherId,
+      name: String(teacher?.name || "Teacher").trim(),
+      email: String(teacher?.email || "").trim(),
+      employeeId: String(teacher?.employeeId || "").trim(),
+      subjects: Array.from(teacherSubjects),
+      section: resolvedSection,
+      status: String(teacher?.status || "active").trim(),
+      currentClass: resolvedClassName,
+    };
+  });
+  const studentRoster = matchingStudents.map((student: any) => ({
+    id: String(student?._id || "").trim(),
+    name: String(student?.name || "Student").trim(),
+    email: String(student?.email || "").trim(),
+    rollNo: String(student?.rollNo || "").trim(),
+    section: String(student?.section || resolvedSection).trim(),
+    status: String(student?.status || "active").trim(),
+    currentClass: resolvedClassName,
+  }));
+  const classStudentIds = new Set(studentRoster.map((student) => String(student.id || "").trim()).filter(Boolean));
+  const classAssignmentSubmissions = assignmentSubmissions.filter((item: any) =>
+    (String(item?.studentId || "").trim() ? classStudentIds.has(String(item.studentId || "").trim()) : true)
+  );
+  const classHomeworkSubmissions = homeworkSubmissions.filter((item: any) =>
+    (String(item?.studentId || "").trim() ? classStudentIds.has(String(item.studentId || "").trim()) : true)
+  );
+
+  const normalizeArtifactIdentityPart = (value: unknown) =>
+    String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+  const buildPublishedArtifactIdForSubject = (kind: "homework" | "assessments", workspace: any, session: any) => {
+    const sessionIdentity = normalizeArtifactIdentityPart(session?.id || `session-${session?.sessionNumber || 0}`) || `session-${Number(session?.sessionNumber || 0)}`;
+    const teacherIdentity = normalizeArtifactIdentityPart(workspace?.teacherId || workspace?.createdBy || "") || "teacher";
+    const classIdentity = normalizeArtifactIdentityPart(workspace?.classId || workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || "") || "class";
+    const subjectIdentity = normalizeArtifactIdentityPart(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || workspace?.subjectId || "") || "subject";
+    return `${kind}-${teacherIdentity}-${classIdentity}-${subjectIdentity}-${sessionIdentity}`;
+  };
+
+  const buildPublishedArtifactSuffixForSubject = (workspace: any, session: any) => {
+    const classIdentity = normalizeArtifactIdentityPart(workspace?.classId || workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || "") || "class";
+    const subjectIdentity = normalizeArtifactIdentityPart(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || workspace?.subjectId || "") || "subject";
+    const sessionIdentity = normalizeArtifactIdentityPart(session?.id || `session-${session?.sessionNumber || 0}`) || `session-${Number(session?.sessionNumber || 0)}`;
+    return `-${classIdentity}-${subjectIdentity}-${sessionIdentity}`;
+  };
+
+  const matchesLegacyPublishedArtifactId = (itemId: string, kind: "homework" | "assessments", suffixes: Set<string>) => {
+    if (!itemId.startsWith(`${kind}-`)) {
+      return false;
+    }
+    for (const suffix of suffixes) {
+      if (suffix && itemId.endsWith(suffix)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const getWorkspaceHomeworkItems = (workspace: any) =>
+    getGeneratedSessionEntries(workspace)
+      .filter(([, value]) => Boolean((value as any)?.homework))
+      .map(([key, value]) => ({
+        id: `${workspace._id}:${key}:homework`,
+        artifactId: buildPublishedArtifactIdForSubject("homework", workspace, value as any),
+        artifactSuffix: buildPublishedArtifactSuffixForSubject(workspace, value as any),
+      }));
+
+  const getWorkspaceAssessmentItems = (workspace: any) =>
+    getGeneratedSessionEntries(workspace)
+      .filter(([, value]) => Boolean((value as any)?.assessment))
+      .map(([key, value]) => ({
+        id: `${workspace._id}:${key}:assessment`,
+        artifactId: buildPublishedArtifactIdForSubject("assessments", workspace, value as any),
+        artifactSuffix: buildPublishedArtifactSuffixForSubject(workspace, value as any),
+      }));
+
+  const subjectMap = new Map<string, {
+    subjectKey: string;
+    subject: string;
+    teacherId: string;
+    teacher: string;
+    studentCount: number;
+    curriculumProgress: number;
+    terms: number;
+    sessionsGenerated: number;
+    sessionsCompleted: number;
+    pendingSessions: number;
+    assignments: number;
+    homework: number;
+    assessments: number;
+    evaluationCount: number;
+    evaluationCompletion: number;
+    submissionPercentage: number;
+    averageMarks: number;
+    lastUpdated: string;
+    assignedSince: string;
+  }>();
+
+  const subjectCandidates = new Set<string>([
+    ...matchingAllocations.flatMap((item: any) => Array.isArray(item?.subjects) ? item.subjects.map(String) : []),
+    ...matchingWorkspaces.map((workspace: any) => String(workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "").trim()),
+    ...matchingClassDocs.flatMap((item: any) => Array.isArray(item?.subjectIds) ? item.subjectIds.map(String) : []),
+  ].filter(Boolean));
+
+  for (const subject of subjectCandidates) {
+    const normalizedSubject = String(subject || "").trim() || "General";
+    const subjectAllocations = matchingAllocations.filter((item: any) =>
+      Array.isArray(item?.subjects) ? item.subjects.map(String).includes(normalizedSubject) : false
+    );
+    const subjectWorkspaces = matchingWorkspaces.filter((workspace: any) =>
+      String(workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "").trim() === normalizedSubject
+    );
+    const workspaceHomeworkItems = subjectWorkspaces.flatMap((workspace: any) => getWorkspaceHomeworkItems(workspace));
+    const workspaceAssessmentItems = subjectWorkspaces.flatMap((workspace: any) => getWorkspaceAssessmentItems(workspace));
+    const workspaceHomeworkIds = new Set(workspaceHomeworkItems.map((item: any) => String(item?.id || "").trim()).filter(Boolean));
+    const workspaceHomeworkArtifactIds = new Set(workspaceHomeworkItems.map((item: any) => String(item?.artifactId || "").trim()).filter(Boolean));
+    const workspaceHomeworkArtifactSuffixes = new Set(workspaceHomeworkItems.map((item: any) => String(item?.artifactSuffix || "").trim()).filter(Boolean));
+    const workspaceAssessmentIds = new Set(workspaceAssessmentItems.map((item: any) => String(item?.id || "").trim()).filter(Boolean));
+    const workspaceAssessmentArtifactIds = new Set(workspaceAssessmentItems.map((item: any) => String(item?.artifactId || "").trim()).filter(Boolean));
+    const workspaceAssessmentArtifactSuffixes = new Set(workspaceAssessmentItems.map((item: any) => String(item?.artifactSuffix || "").trim()).filter(Boolean));
+    const primaryTeacherId = String(
+      subjectWorkspaces[0]?.teacherId
+      || subjectWorkspaces[0]?.createdBy
+      || subjectAllocations[0]?.teacherId
+      || ""
+    ).trim();
+    const teacher = users.find((user: any) => String(user?._id || "") === primaryTeacherId);
+    const subjectResults = matchingResults.filter((result: any) => String(result?.subjectId || "").trim() === normalizedSubject || !result?.subjectId);
+    const subjectHomeworkSubmissions = classHomeworkSubmissions.filter((item: any) => {
+      const itemSubjectKey = normalizeSubjectKey(item?.subjectId || item?.subject || "");
+      const itemHomeworkId = String(item?.homeworkId || "").trim();
+      if (itemSubjectKey && itemSubjectKey === normalizeSubjectKey(normalizedSubject)) {
+        return true;
+      }
+      if (subjectWorkspaces.length === 0) {
+        return false;
+      }
+      return workspaceHomeworkIds.has(itemHomeworkId)
+        || workspaceHomeworkArtifactIds.has(itemHomeworkId)
+        || matchesLegacyPublishedArtifactId(itemHomeworkId, "homework", workspaceHomeworkArtifactSuffixes);
+    });
+    const subjectAssessmentSubmissions = classAssignmentSubmissions.filter((item: any) => {
+      const itemSubjectKey = normalizeSubjectKey(item?.subjectId || item?.subject || "");
+      const itemAssignmentId = String(item?.assignmentId || "").trim();
+      const isAssessment = String(item?.submissionType || "").trim().toLowerCase() === "assessment";
+      if (!isAssessment) {
+        return false;
+      }
+      if (itemSubjectKey && itemSubjectKey === normalizeSubjectKey(normalizedSubject)) {
+        return true;
+      }
+      if (subjectWorkspaces.length === 0) {
+        return false;
+      }
+      return workspaceAssessmentIds.has(itemAssignmentId)
+        || workspaceAssessmentArtifactIds.has(itemAssignmentId)
+        || matchesLegacyPublishedArtifactId(itemAssignmentId, "assessments", workspaceAssessmentArtifactSuffixes);
+    });
+    const entry = subjectMap.get(subject) || {
+      subjectKey: normalizeSubjectKey(normalizedSubject),
+      subject: normalizedSubject,
+      teacherId: primaryTeacherId,
+      teacher: teacher?.name || "Unassigned",
+      studentCount: studentRoster.length || Number(summary?.students || 0),
+      curriculumProgress: 0,
+      terms: 0,
+      sessionsGenerated: 0,
+      sessionsCompleted: 0,
+      pendingSessions: 0,
+      assignments: 0,
+      homework: 0,
+      assessments: 0,
+      evaluationCount: subjectResults.length,
+      evaluationCompletion: 0,
+      submissionPercentage: 0,
+      averageMarks: 0,
+      lastUpdated: "",
+      assignedSince: String(subjectAllocations[0]?.createdAt || "").trim(),
+    };
+    entry.homework = workspaceHomeworkItems.length;
+    entry.assessments = workspaceAssessmentItems.length;
+    entry.assignments = workspaceAssessmentItems.length;
+    entry.sessionsGenerated = subjectWorkspaces.reduce((sum: number, workspace: any) => sum + Object.keys(workspace?.generationScope?.generatedSessions || {}).length, 0);
+    entry.sessionsCompleted = subjectWorkspaces.reduce((sum: number, workspace: any) => sum + (Array.isArray(workspace?.generatedArtifacts) ? workspace.generatedArtifacts.length : 0), 0);
+    entry.pendingSessions = Math.max(0, subjectWorkspaces.reduce((sum: number, workspace: any) => (
+      sum + Math.max(0, getWorkspacePlannedSessionCount(workspace) - getWorkspaceGeneratedSessionCount(workspace))
+    ), 0));
+    entry.curriculumProgress = 0;
+    if (entry.sessionsGenerated > 0) {
+      const totalPlannedSessions = subjectWorkspaces.reduce((sum: number, workspace: any) => {
+        return sum + getWorkspacePlannedSessionCount(workspace);
+      }, 0);
+      const totalTarget = Math.max(entry.sessionsGenerated, totalPlannedSessions);
+      entry.curriculumProgress = totalTarget > 0
+        ? Number(((Math.min(entry.sessionsGenerated, totalTarget) / totalTarget) * 100).toFixed(1))
+        : 0;
+    }
+    entry.evaluationCompletion = subjectResults.length > 0
+      ? Number((subjectResults.reduce((sum: number, result: any) => sum + Number(result?.percentage || 0), 0) / subjectResults.length).toFixed(1))
+      : 0;
+    entry.averageMarks = entry.evaluationCompletion;
+    const expectedHomeworkSubmissions = entry.homework * entry.studentCount;
+    const expectedAssessmentSubmissions = entry.assessments * entry.studentCount;
+    const totalExpectedSubmissions = expectedHomeworkSubmissions + expectedAssessmentSubmissions;
+    const totalActualSubmissions = subjectHomeworkSubmissions.length + subjectAssessmentSubmissions.length;
+    entry.submissionPercentage = totalExpectedSubmissions > 0
+      ? Number(((Math.min(totalActualSubmissions, totalExpectedSubmissions) / totalExpectedSubmissions) * 100).toFixed(1))
+      : 0;
+    entry.lastUpdated = String(
+      subjectWorkspaces
+        .map((workspace: any) => String(workspace?.updatedAt || "").trim())
+        .filter(Boolean)
+        .sort()
+        .slice(-1)[0] || ""
+    );
+    subjectMap.set(subject, entry);
+  }
+
+  const subjectDetails = Array.from(subjectMap.values());
+  const aggregateGeneratedSessions = subjectDetails.reduce((sum, item) => sum + Number(item.sessionsGenerated || 0), 0);
+  const aggregateCompletedSessions = subjectDetails.reduce((sum, item) => sum + Number(item.sessionsCompleted || 0), 0);
+  const aggregatePendingSessions = subjectDetails.reduce((sum, item) => sum + Number(item.pendingSessions || 0), 0);
+  const aggregateHomework = subjectDetails.reduce((sum, item) => sum + Number(item.homework || 0), 0);
+  const aggregateAssessments = subjectDetails.reduce((sum, item) => sum + Number(item.assessments || 0), 0);
+  const aggregateEvaluations = subjectDetails.reduce((sum, item) => sum + Number(item.evaluationCount || 0), 0);
+  const aggregateSubmissionRate = subjectDetails.length > 0
+    ? Number((subjectDetails.reduce((sum, item) => sum + Number(item.submissionPercentage || 0), 0) / subjectDetails.length).toFixed(1))
+    : 0;
+  const aggregateAveragePerformance = subjectDetails.length > 0
+    ? Number((subjectDetails.reduce((sum, item) => sum + Number(item.averageMarks || 0), 0) / subjectDetails.length).toFixed(1))
+    : 0;
+  const aggregateCurriculumProgress = subjectDetails.length > 0
+    ? Number((subjectDetails.reduce((sum, item) => sum + Number(item.curriculumProgress || 0), 0) / subjectDetails.length).toFixed(1))
+    : 0;
+  const aggregateTerms = subjectDetails.reduce((max, item) => Math.max(max, Number(item.terms || 0)), 0);
+  const latestActivity = subjectDetails
+    .map((item) => String(item.lastUpdated || "").trim())
+    .filter(Boolean)
+    .sort()
+    .slice(-1)[0] || "";
+
+  return {
+    ...(summary || {
+      classKey: requestedValue || `${requestedCanonicalKey}::${requestedSection}`,
+      classId: requestedValue || `${requestedCanonicalKey}::${requestedSection}`,
+      className: resolvedClassName,
+      section: resolvedSection,
+      academicYear: "",
+      classTeacher: "Not assigned",
+      subjects: subjectMap.size,
+      teachers: teacherRoster.length,
+      students: studentRoster.length || matchingClassDocs.reduce((sum: number, item: any) => sum + Number(item?.studentCount || 0), 0),
+      curriculumProgress: 0,
+      totalTerms: 0,
+      sessionsGenerated: 0,
+      sessionsCompleted: 0,
+      pendingSessions: 0,
+      assignments: 0,
+      homework: 0,
+      assessments: 0,
+      evaluations: 0,
+      submissionRate: 0,
+      averageClassPerformance: 0,
+      lastActivity: "",
+      status: "active",
+      evaluationCompletion: 0,
+    }),
+    subjects: subjectDetails.length,
+    totalTerms: aggregateTerms,
+    sessionsGenerated: aggregateGeneratedSessions,
+    sessionsCompleted: aggregateCompletedSessions,
+    pendingSessions: aggregatePendingSessions,
+    homework: aggregateHomework,
+    assignments: aggregateAssessments,
+    assessments: aggregateAssessments,
+    evaluations: aggregateEvaluations,
+    submissionRate: aggregateSubmissionRate,
+    averageClassPerformance: aggregateAveragePerformance,
+    curriculumProgress: aggregateCurriculumProgress,
+    lastActivity: latestActivity,
+    totalTeachers: teacherRoster.length,
+    teacherRoster,
+    studentRoster,
+    subjectDetails,
+  };
+}
+
+async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrName: string, schoolId?: string, sessionId?: string) {
+  const classDetail = await getPrincipalClassDetail(classKeyOrName, schoolId);
+  if (!classDetail) return null;
+
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [users, workspaces, evaluationResults, assignmentSubmissions, homeworkSubmissions] = await Promise.all([
+    UserModel.find(schoolMatch).lean(),
+    PlanningWorkspaceModel.find(schoolMatch).lean(),
+    EvaluationResultModel.find(schoolMatch).lean(),
+    AssignmentSubmissionModel.find(schoolMatch).lean(),
+    HomeworkSubmissionModel.find(schoolMatch).lean(),
+  ]);
+
+  const requestedSubjectKey = normalizeSubjectKey(decodeRouteParamValue(subjectKeyOrName));
+  const subjectSummary = (classDetail.subjectDetails || []).find((item) =>
+    normalizeSubjectKey(item.subjectKey || item.subject || "") === requestedSubjectKey
+  );
+  if (!subjectSummary) return null;
+
+  const normalizedSection = normalizeSectionKey(classDetail.section || "");
+  const subjectTeacherId = String(subjectSummary.teacherId || "").trim();
+  const matchingWorkspaces = dedupeWorkspacesByTeachingScope(workspaces.filter((workspace: any) =>
+    classKeysOverlap(
+      workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || workspace?.classId || "",
+      classDetail.className || classDetail.classKey || "",
+    )
+    && normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") === normalizedSection
+    && normalizeSubjectKey(workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "") === requestedSubjectKey
+    && (!subjectTeacherId || String(workspace?.teacherId || workspace?.createdBy || "").trim() === subjectTeacherId)
+  ));
+
+  const subjectTeacher = users.find((user: any) => String(user?._id || "") === subjectTeacherId);
+  const classStudentIds = new Set((classDetail.studentRoster || []).map((student) => String(student.id || "").trim()).filter(Boolean));
+  const requestedSessionId = String(sessionId || "").trim();
+  const requestedSessionAliases = new Set<string>();
+
+  const appendSessionAlias = (aliases: Set<string>, value: unknown) => {
+    const normalized = String(value || "").trim();
+    if (normalized) {
+      aliases.add(normalized);
+    }
+  };
+
+  const collectWorkspaceSessionAliases = (workspace: any, key: string, session: any) => {
+    const aliases = new Set<string>();
+    const normalizedKey = String(key || "").trim();
+    const sessionNumber = Number(session?.sessionNumber || normalizedKey || 0);
+    const workspaceId = String(workspace?._id || "").trim();
+
+    appendSessionAlias(aliases, session?.id);
+    appendSessionAlias(aliases, normalizedKey);
+    appendSessionAlias(aliases, sessionNumber > 0 ? String(sessionNumber) : "");
+    appendSessionAlias(aliases, sessionNumber > 0 ? `session-${sessionNumber}` : "");
+
+    if (workspaceId) {
+      appendSessionAlias(aliases, normalizedKey ? `${workspaceId}-${normalizedKey}` : "");
+      appendSessionAlias(aliases, normalizedKey ? `${workspaceId}:${normalizedKey}` : "");
+      appendSessionAlias(aliases, sessionNumber > 0 ? `${workspaceId}-${sessionNumber}` : "");
+      appendSessionAlias(aliases, sessionNumber > 0 ? `${workspaceId}:${sessionNumber}` : "");
+    }
+
+    return aliases;
+  };
+
+  if (requestedSessionId) {
+    appendSessionAlias(requestedSessionAliases, requestedSessionId);
+
+    matchingWorkspaces.forEach((workspace: any) => {
+      getGeneratedSessionEntries(workspace).forEach(([key, value]) => {
+        const aliases = collectWorkspaceSessionAliases(workspace, String(key || "").trim(), value as any);
+        if (aliases.has(requestedSessionId)) {
+          aliases.forEach((alias) => requestedSessionAliases.add(alias));
+        }
+      });
+    });
+  }
+
+  const sessionMatchesRequest = (item: any) => {
+    if (!requestedSessionId) return true;
+    const itemSessionId = String(item?.sessionId || "").trim();
+    if (!itemSessionId) return false;
+    return requestedSessionAliases.has(itemSessionId);
+  };
+
+  const resolveSubmissionSessionMeta = (rawSessionId: unknown) => {
+    const normalizedSessionId = String(rawSessionId || "").trim();
+    if (!normalizedSessionId) {
+      return { sessionNumber: 0, sessionTitle: "" };
+    }
+
+    for (const workspace of matchingWorkspaces) {
+      for (const [key, value] of getGeneratedSessionEntries(workspace)) {
+        const session = value as any;
+        const aliases = collectWorkspaceSessionAliases(workspace, String(key || "").trim(), session);
+        if (aliases.has(normalizedSessionId)) {
+          return {
+            sessionNumber: Number(key || session?.sessionNumber || 0),
+            sessionTitle: String(session?.title || session?.sessionTitle || "").trim(),
+          };
+        }
+      }
+    }
+
+    const fallbackMatch = normalizedSessionId.match(/(?:^|[-:])(\d+)$/);
+    return {
+      sessionNumber: fallbackMatch ? Number(fallbackMatch[1] || 0) : 0,
+      sessionTitle: "",
+    };
+  };
+
+  const buildSubmissionLabel = (item: any) => {
+    const meta = resolveSubmissionSessionMeta(item?.sessionId);
+    const sessionLabel = meta.sessionNumber > 0 ? `Session ${meta.sessionNumber}` : "";
+    const title = String(item?.title || "").trim() || meta.sessionTitle || "Submission";
+    return [sessionLabel, title].filter(Boolean).join(" • ");
+  };
+
+  const subjectResults = evaluationResults.filter((result: any) =>
+    (String(result?.studentId || "").trim() ? classStudentIds.has(String(result.studentId || "").trim()) : true)
+    && normalizeSubjectKey(result?.subjectId || "") === requestedSubjectKey
+    && sessionMatchesRequest(result)
+  );
+  const classAssignmentSubmissions = assignmentSubmissions.filter((item: any) =>
+    (String(item?.studentId || "").trim() ? classStudentIds.has(String(item.studentId || "").trim()) : true)
+    && sessionMatchesRequest(item)
+  );
+  const classHomeworkSubmissions = homeworkSubmissions.filter((item: any) =>
+    (String(item?.studentId || "").trim() ? classStudentIds.has(String(item.studentId || "").trim()) : true)
+    && sessionMatchesRequest(item)
+  );
+
+  const normalizeArtifactIdentityPart = (value: unknown) =>
+    String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+  const buildPublishedArtifactIdForSubject = (kind: "homework" | "assessments", workspace: any, session: any) => {
+    const sessionIdentity = normalizeArtifactIdentityPart(session?.id || `session-${session?.sessionNumber || 0}`) || `session-${Number(session?.sessionNumber || 0)}`;
+    const teacherIdentity = normalizeArtifactIdentityPart(workspace?.teacherId || workspace?.createdBy || "") || "teacher";
+    const classIdentity = normalizeArtifactIdentityPart(workspace?.classId || workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || "") || "class";
+    const subjectIdentity = normalizeArtifactIdentityPart(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || workspace?.subjectId || "") || "subject";
+    return `${kind}-${teacherIdentity}-${classIdentity}-${subjectIdentity}-${sessionIdentity}`;
+  };
+
+  const buildPublishedArtifactSuffixForSubject = (workspace: any, session: any) => {
+    const classIdentity = normalizeArtifactIdentityPart(workspace?.classId || workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || "") || "class";
+    const subjectIdentity = normalizeArtifactIdentityPart(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || workspace?.subjectId || "") || "subject";
+    const sessionIdentity = normalizeArtifactIdentityPart(session?.id || `session-${session?.sessionNumber || 0}`) || `session-${Number(session?.sessionNumber || 0)}`;
+    return `-${classIdentity}-${subjectIdentity}-${sessionIdentity}`;
+  };
+
+  const matchesLegacyPublishedArtifactId = (itemId: string, kind: "homework" | "assessments", suffixes: Set<string>) => {
+    if (!itemId.startsWith(`${kind}-`)) {
+      return false;
+    }
+    for (const suffix of suffixes) {
+      if (suffix && itemId.endsWith(suffix)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const getWorkspaceHomeworkItems = (workspace: any) =>
+    getGeneratedSessionEntries(workspace)
+      .filter(([, value]) => Boolean((value as any)?.homework))
+      .map(([key, value]) => ({
+        id: `${workspace._id}:${key}:homework`,
+        artifactId: buildPublishedArtifactIdForSubject("homework", workspace, value as any),
+        artifactSuffix: buildPublishedArtifactSuffixForSubject(workspace, value as any),
+        title: String((value as any)?.homework?.task || (value as any)?.title || "Homework"),
+        status: "Generated",
+      }));
+
+  const getWorkspaceAssessmentItems = (workspace: any) =>
+    getGeneratedSessionEntries(workspace)
+      .filter(([, value]) => Boolean((value as any)?.assessment))
+      .map(([key, value]) => ({
+        id: `${workspace._id}:${key}:assessment`,
+        artifactId: buildPublishedArtifactIdForSubject("assessments", workspace, value as any),
+        artifactSuffix: buildPublishedArtifactSuffixForSubject(workspace, value as any),
+        title: String((value as any)?.title || "Assessment"),
+        status: "Generated",
+      }));
+
+  const sessionItems = matchingWorkspaces.flatMap((workspace: any) => getWorkspaceSessionItems(workspace));
+  const termItems = dedupeTermItems(matchingWorkspaces.flatMap((workspace: any) => getWorkspaceTermItems(workspace)));
+  const sessionOptions = buildSubjectSessionOptions(matchingWorkspaces);
+  const workspaceHomeworkItems = matchingWorkspaces.flatMap((workspace: any) => getWorkspaceHomeworkItems(workspace));
+  const workspaceAssessmentItems = matchingWorkspaces.flatMap((workspace: any) => getWorkspaceAssessmentItems(workspace));
+  const generatedSessionCount = matchingWorkspaces.reduce((sum: number, workspace: any) => sum + getWorkspaceGeneratedSessionCount(workspace), 0);
+  const plannedSessionCount = matchingWorkspaces.reduce((sum: number, workspace: any) => {
+    return sum + getWorkspacePlannedSessionCount(workspace);
+  }, 0);
+  const summaryPendingSessions = Number(subjectSummary?.pendingSessions || 0);
+  const totalSessionTarget = Math.max(plannedSessionCount, generatedSessionCount + summaryPendingSessions, generatedSessionCount, sessionItems.length);
+  const remainingSessionCount = Math.max(summaryPendingSessions, Math.max(0, totalSessionTarget - generatedSessionCount));
+  const lessonPlannerProgress = totalSessionTarget > 0
+    ? Number(((Math.min(generatedSessionCount, totalSessionTarget) / totalSessionTarget) * 100).toFixed(1))
+    : 0;
+  const workspaceHomeworkIds = new Set(workspaceHomeworkItems.map((item: any) => String(item?.id || "").trim()).filter(Boolean));
+  const workspaceHomeworkArtifactIds = new Set(workspaceHomeworkItems.map((item: any) => String(item?.artifactId || "").trim()).filter(Boolean));
+  const workspaceHomeworkArtifactSuffixes = new Set(workspaceHomeworkItems.map((item: any) => String(item?.artifactSuffix || "").trim()).filter(Boolean));
+  const workspaceAssessmentIds = new Set(workspaceAssessmentItems.map((item: any) => String(item?.id || "").trim()).filter(Boolean));
+  const workspaceAssessmentArtifactIds = new Set(workspaceAssessmentItems.map((item: any) => String(item?.artifactId || "").trim()).filter(Boolean));
+  const workspaceAssessmentArtifactSuffixes = new Set(workspaceAssessmentItems.map((item: any) => String(item?.artifactSuffix || "").trim()).filter(Boolean));
+  const unitSet = new Set<string>();
+  const chapterSet = new Set<string>();
+
+  const subjectAssignmentSubmissions = classAssignmentSubmissions.filter((item: any) => {
+    const itemSubjectKey = normalizeSubjectKey(item?.subjectId || item?.subject || "");
+    const itemAssignmentId = String(item?.assignmentId || "").trim();
+    const isAssessment = String(item?.submissionType || "").trim().toLowerCase() === "assessment";
+    const isAssignment = String(item?.submissionType || "").trim().toLowerCase() === "assignment";
+    // Include if subject matches
+    if (itemSubjectKey && itemSubjectKey === requestedSubjectKey) {
+      return true;
+    }
+    // Include if there are no workspaces yet (submission arrived before workspace was created/stored differently)
+    if (matchingWorkspaces.length === 0) {
+      return isAssessment || isAssignment;
+    }
+    // For assessments, check workspace IDs and artifact IDs
+    if (isAssessment) {
+      return workspaceAssessmentIds.has(itemAssignmentId)
+        || workspaceAssessmentArtifactIds.has(itemAssignmentId)
+        || matchesLegacyPublishedArtifactId(itemAssignmentId, "assessments", workspaceAssessmentArtifactSuffixes);
+    }
+    // For regular assignments, include if we can't match workspace IDs (covers submissions from imported or older data)
+    if (isAssignment && matchingWorkspaces.length > 0) {
+      return workspaceHomeworkIds.has(itemAssignmentId)
+        || workspaceAssessmentIds.has(itemAssignmentId)
+        || true; // Default to include for assignments when subject match fails
+    }
+    return false;
+  });
+  const subjectHomeworkSubmissions = classHomeworkSubmissions.filter((item: any) => {
+    const itemSubjectKey = normalizeSubjectKey(item?.subjectId || item?.subject || "");
+    const itemHomeworkId = String(item?.homeworkId || "").trim();
+    // Include if subject matches
+    if (itemSubjectKey && itemSubjectKey === requestedSubjectKey) {
+      return true;
+    }
+    // Include if there are no workspaces yet (submission arrived before workspace was created/stored differently)
+    if (matchingWorkspaces.length === 0) {
+      return true;
+    }
+    // Check workspace IDs and artifact IDs
+    return workspaceHomeworkIds.has(itemHomeworkId)
+      || workspaceHomeworkArtifactIds.has(itemHomeworkId)
+      || matchesLegacyPublishedArtifactId(itemHomeworkId, "homework", workspaceHomeworkArtifactSuffixes);
+  });
+
+  matchingWorkspaces.forEach((workspace: any) => {
+    const structure = workspace?.curriculumSnapshot?.normalizedStructure || {};
+    const terms = Array.isArray(structure?.terms) ? structure.terms : [];
+    terms.forEach((term: any) => {
+      const units = Array.isArray(term?.units) ? term.units : [];
+      units.forEach((unit: any) => {
+        const unitName = String(unit?.unitName || unit?.title || unit?.name || "").trim();
+        if (unitName) unitSet.add(unitName);
+        const chapters = Array.isArray(unit?.chapters) ? unit.chapters : [];
+        chapters.forEach((chapter: any) => {
+          const chapterName = String(chapter?.chapterName || chapter?.title || chapter?.name || "").trim();
+          if (chapterName) chapterSet.add(chapterName);
+        });
+      });
+    });
+
+    const allocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
+    const recommendations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
+    [...allocations, ...recommendations].forEach((item: any) => {
+      const unitName = String(item?.unitName || item?.unit || "").trim();
+      const chapterName = String(item?.chapterName || item?.chapter || "").trim();
+      if (unitName) unitSet.add(unitName);
+      if (chapterName) chapterSet.add(chapterName);
+    });
+  });
+
+  const homeworkById = new Map<string, {
+    id: string;
+    name: string;
+    submissionStatus: string;
+    pendingCount: number;
+    studentSubmissions: {
+      studentId: string;
+      studentName: string;
+      status: string;
+      submittedDate?: string;
+      fileName?: string;
+    }[];
+  }>();
+  subjectHomeworkSubmissions.forEach((item: any) => {
+    const id = String(item?.homeworkId || item?._id || "").trim();
+    if (!id) return;
+    const student = users.find((user: any) => String(user?._id || "") === String(item?.studentId || ""));
+    const existing = homeworkById.get(id) || {
+      id,
+      name: String(item?.title || item?.homeworkId || "Homework").trim(),
+      submissionStatus: String(item?.status || "submitted").trim().toLowerCase() === "reviewed" ? "reviewed" : "uploaded",
+      pendingCount: 0,
+      studentSubmissions: [],
+    };
+    existing.studentSubmissions.push({
+      studentId: String(item?.studentId || "").trim(),
+      studentName: String(student?.name || "Student").trim(),
+      status: String(item?.status || "submitted").trim().toLowerCase() === "reviewed" ? "reviewed" : "uploaded",
+      submittedDate: item?.updatedAt || item?.createdAt || "",
+      fileName: String(item?.fileName || "").trim(),
+    });
+    homeworkById.set(id, existing);
+  });
+  workspaceHomeworkItems.forEach((item: any) => {
+    if (!homeworkById.has(String(item.id || "").trim())) {
+      homeworkById.set(String(item.id || "").trim(), {
+        id: String(item.id || "").trim(),
+        name: String(item.title || "Homework").trim(),
+        submissionStatus: "generated",
+        pendingCount: Math.max(0, classStudentIds.size - subjectHomeworkSubmissions.length),
+        studentSubmissions: [],
+      });
+    }
+  });
+
+  const assessmentById = new Map<string, {
+    id: string;
+    name: string;
+    totalStudentsAttempted: number;
+    pendingStudents: number;
+    averageScore: number;
+    studentSubmissions: {
+      studentId: string;
+      studentName: string;
+      status: string;
+      submittedDate?: string;
+      fileName?: string;
+    }[];
+  }>();
+  subjectAssignmentSubmissions
+    .filter((item: any) => String(item?.submissionType || "").trim().toLowerCase() === "assessment")
+    .forEach((item: any) => {
+      const id = String(item?.assignmentId || item?._id || "").trim();
+      if (!id) return;
+      const student = users.find((user: any) => String(user?._id || "") === String(item?.studentId || ""));
+      const existing = assessmentById.get(id) || {
+        id,
+        name: String(item?.title || item?.assignmentId || "Assessment").trim(),
+        totalStudentsAttempted: 0,
+        pendingStudents: 0,
+        averageScore: 0,
+        studentSubmissions: [],
+      };
+      existing.totalStudentsAttempted += 1;
+      existing.studentSubmissions.push({
+        studentId: String(item?.studentId || "").trim(),
+        studentName: String(student?.name || "Student").trim(),
+        status: String(item?.status || "submitted").trim().toLowerCase() === "reviewed" ? "reviewed" : "uploaded",
+        submittedDate: item?.updatedAt || item?.createdAt || "",
+        fileName: String(item?.fileName || "").trim(),
+      });
+      assessmentById.set(id, existing);
+    });
+  workspaceAssessmentItems.forEach((item: any) => {
+    const id = String(item?.id || "").trim();
+    if (!id) return;
+    if (!assessmentById.has(id)) {
+      assessmentById.set(id, {
+        id,
+        name: String(item?.title || "Assessment").trim(),
+        totalStudentsAttempted: 0,
+        pendingStudents: classStudentIds.size,
+        averageScore: 0,
+        studentSubmissions: [],
+      });
+    }
+  });
+
+  const assignmentById = new Map<string, {
+    id: string;
+    name: string;
+    dueDate: string;
+    totalSubmissions: number;
+    pendingStudents: number;
+    status: string;
+  }>();
+  subjectAssignmentSubmissions
+      .filter((item: any) => String(item?.submissionType || "assignment").trim().toLowerCase() !== "assessment")
+      .forEach((item: any) => {
+        const id = String(item?.assignmentId || item?._id || "").trim();
+        if (!id) return;
+        const existing = assignmentById.get(id) || {
+          id,
+          name: String(item?.title || item?.assignmentId || "Assignment").trim(),
+          dueDate: "",
+          totalSubmissions: 0,
+          pendingStudents: 0,
+          status: "submitted",
+        };
+        existing.totalSubmissions += 1;
+        assignmentById.set(id, existing);
+      });
+
+  const submissionPercentage = classStudentIds.size > 0
+    ? Number(((
+      new Set([
+        ...subjectHomeworkSubmissions.map((s: any) => String(s?.studentId || "")),
+        ...subjectAssignmentSubmissions.map((s: any) => String(s?.studentId || "")),
+      ].filter(Boolean)).size / classStudentIds.size
+    ) * 100).toFixed(1))
+    : 0;
+
+  const students = (classDetail.studentRoster || []).flatMap((student) => {
+    const studentId = String(student.id || "").trim();
+    const studentHomework = subjectHomeworkSubmissions.filter((item: any) => String(item?.studentId || "").trim() === studentId);
+    const studentAssignments = subjectAssignmentSubmissions.filter((item: any) => String(item?.studentId || "").trim() === studentId);
+    const studentEvaluations = subjectResults.filter((item: any) => String(item?.studentId || "").trim() === studentId);
+    const studentAssessmentSubmissions = studentAssignments.filter((item: any) => String(item?.submissionType || "").trim().toLowerCase() === "assessment");
+    const averageEvaluation = studentEvaluations.length > 0
+      ? Number((studentEvaluations.reduce((sum: number, item: any) => sum + Number(item?.percentage || 0), 0) / studentEvaluations.length).toFixed(1))
+      : 0;
+
+    const studentSessionIds = Array.from(
+      new Set(
+        [
+          ...studentHomework.map((item: any) => String(item?.sessionId || "").trim()).filter(Boolean),
+          ...studentAssignments.map((item: any) => String(item?.sessionId || "").trim()).filter(Boolean),
+          ...studentEvaluations.map((item: any) => String(item?.sessionId || "").trim()).filter(Boolean),
+        ]
+      )
+    );
+
+    if (studentSessionIds.length === 0) {
+      return [{
+        id: studentId,
+        name: String(student.name || "Student").trim(),
+        rollNo: String(student.rollNo || "").trim(),
+        email: String(student.email || "").trim(),
+        assignmentStatus: studentAssignments.some((item: any) => String(item?.submissionType || "").trim().toLowerCase() !== "assessment") ? "Uploaded" : "Pending",
+        homeworkStatus: "Pending",
+        assessmentStatus: "Pending",
+        submissionCount: 0,
+        submissionLabel: "No submission yet",
+        evaluationResult: studentEvaluations[0]?.grade ? `${studentEvaluations[0].grade} (${Number(studentEvaluations[0].percentage || 0)}%)` : "Pending",
+        attendance: "N/A",
+        overallProgress: averageEvaluation,
+        sessionId: "",
+        sessionIds: [],
+      }];
+    }
+
+    return studentSessionIds.map((sessionId) => {
+      const sessionHomework = studentHomework.filter((item: any) => String(item?.sessionId || "").trim() === sessionId);
+      const sessionAssessmentSubmissions = studentAssessmentSubmissions.filter((item: any) => String(item?.sessionId || "").trim() === sessionId);
+      const sessionEvaluations = studentEvaluations.filter((item: any) => String(item?.sessionId || "").trim() === sessionId);
+      const latestSubmission = [...sessionHomework, ...sessionAssessmentSubmissions]
+        .sort((left: any, right: any) => {
+          const leftTime = new Date(String(left?.updatedAt || left?.createdAt || 0)).getTime();
+          const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
+          return rightTime - leftTime;
+        })[0] || null;
+
+      return {
+        id: `${studentId}:${sessionId || "no-session"}`,
+        name: String(student.name || "Student").trim(),
+        rollNo: String(student.rollNo || "").trim(),
+        email: String(student.email || "").trim(),
+        assignmentStatus: studentAssignments.some((item: any) => String(item?.submissionType || "").trim().toLowerCase() !== "assessment") ? "Uploaded" : "Pending",
+        homeworkStatus: sessionHomework.length > 0 ? "Uploaded" : "Pending",
+        assessmentStatus: sessionAssessmentSubmissions.length > 0 ? "Uploaded" : "Pending",
+        submissionCount: sessionHomework.length + sessionAssessmentSubmissions.length,
+        submissionLabel: latestSubmission ? buildSubmissionLabel(latestSubmission) : "No submission yet",
+        evaluationResult: sessionEvaluations[0]?.grade ? `${sessionEvaluations[0].grade} (${Number(sessionEvaluations[0].percentage || 0)}%)` : "Pending",
+        attendance: "N/A",
+        overallProgress: averageEvaluation,
+        sessionId,
+        sessionIds: [sessionId],
+      };
+    });
+  });
+
+  return {
+    ...subjectSummary,
+    teacherInfo: {
+      id: String(subjectTeacher?._id || subjectSummary.teacherId || "").trim(),
+      name: String(subjectTeacher?.name || subjectSummary.teacher || "Unassigned").trim(),
+      email: String(subjectTeacher?.email || "").trim(),
+      assignedSince: String(subjectSummary.assignedSince || "").trim(),
+      curriculumProgress: lessonPlannerProgress,
+      lessonPlanProgress: lessonPlannerProgress,
+      terms: termItems.length,
+      sessions: generatedSessionCount,
+      pendingSessions: remainingSessionCount,
+      assignmentsCreated: 0,
+      homeworkCreated: workspaceHomeworkItems.length,
+      assessmentsCreated: workspaceAssessmentItems.length,
+      evaluationsCompleted: subjectResults.length,
+    },
+    students,
+    curriculum: {
+      units: Array.from(unitSet),
+      chapters: Array.from(chapterSet),
+      terms: termItems.map((item: any) => String(item?.title || "").trim()).filter(Boolean),
+      sessions: sessionOptions,
+      sessionProgress: {
+        generated: Number(subjectSummary.sessionsGenerated || 0),
+        completed: Math.min(Number(subjectSummary.sessionsCompleted || 0), Number(subjectSummary.sessionsGenerated || 0)),
+        pending: Math.max(0, plannedSessionCount - Number(subjectSummary.sessionsGenerated || 0)),
+      },
+    },
+    assignments: Array.from(assignmentById.values()),
+    homeworkRecords: Array.from(homeworkById.values()),
+    assessments: Array.from(assessmentById.values()),
+    evaluations: subjectResults.map((item: any) => {
+      const student = users.find((user: any) => String(user?._id || "") === String(item?.studentId || ""));
+      return {
+        id: String(item?._id || "").trim(),
+        studentName: String(student?.name || "Student").trim(),
+        marks: Number(item?.totalMarks || 0),
+        percentage: Number(item?.percentage || 0),
+        grade: String(item?.grade || "").trim(),
+        status: String(item?.status || "saved").trim(),
+      };
+    }),
+  };
+}
+
+async function getPrincipalEvaluationReport(schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [classes, teachers, students, evaluations, results] = await Promise.all([
+    ClassModel.find(schoolMatch).lean(),
+    UserModel.find({ ...schoolMatch, role: "teacher" }).lean(),
+    UserModel.find({ ...schoolMatch, role: "student" }).lean(),
+    EvaluationModel.find(schoolMatch).lean(),
+    EvaluationResultModel.find(schoolMatch).lean(),
+  ]);
+
+  const classNameById = new Map(classes.map((item) => [String(item._id), item.name || item.gradeLevel || "Class"]));
+  const teacherNameById = new Map(teachers.map((item) => [String(item._id), item.name || "Teacher"]));
+  const studentNameById = new Map(students.map((item) => [String(item._id), item.name || "Student"]));
+
+  const classWise = new Map<string, { total: number; count: number; highest: number; lowest: number }>();
+  const subjectWise = new Map<string, { total: number; count: number; highest: number; lowest: number }>();
+  const teacherWise = new Map<string, { teacher: string; total: number; count: number }>();
+  const studentWise = results.map((item) => {
+    const marks = Number(item.totalMarks || item.percentage || 0);
+    return {
+      student: studentNameById.get(String(item.studentId || "")) || "Student",
+      className: classNameById.get(String(item.classId || "")) || "Unassigned",
+      marks,
+      grade: String(item.grade || gradeFromPercentage(Number(item.percentage || 0))),
+    };
+  }).sort((a, b) => b.marks - a.marks);
+
+  for (const result of results) {
+    const marks = Number(result.totalMarks || result.percentage || 0);
+    const percentage = Number(result.percentage || 0);
+    const className = classNameById.get(String(result.classId || "")) || "Unassigned";
+    const subject = String(result.subjectId || "General");
+    const teacherName = teacherNameById.get(String(result.teacherId || "")) || "Teacher";
+
+    const classEntry = classWise.get(className) || { total: 0, count: 0, highest: 0, lowest: 100 };
+    classEntry.total += percentage;
+    classEntry.count += 1;
+    classEntry.highest = Math.max(classEntry.highest, marks);
+    classEntry.lowest = Math.min(classEntry.lowest, marks);
+    classWise.set(className, classEntry);
+
+    const subjectEntry = subjectWise.get(subject) || { total: 0, count: 0, highest: 0, lowest: 100 };
+    subjectEntry.total += percentage;
+    subjectEntry.count += 1;
+    subjectEntry.highest = Math.max(subjectEntry.highest, marks);
+    subjectEntry.lowest = Math.min(subjectEntry.lowest, marks);
+    subjectWise.set(subject, subjectEntry);
+
+    const teacherEntry = teacherWise.get(teacherName) || { teacher: teacherName, total: 0, count: 0 };
+    teacherEntry.total += percentage;
+    teacherEntry.count += 1;
+    teacherWise.set(teacherName, teacherEntry);
+  }
+
+  const gradeCounts = new Map<string, number>();
+  for (const item of studentWise) {
+    gradeCounts.set(item.grade, (gradeCounts.get(item.grade) || 0) + 1);
+  }
+
+  const averageMarks = results.length > 0 ? Number((results.reduce((sum, item) => sum + Number(item.totalMarks || item.percentage || 0), 0) / results.length).toFixed(1)) : 0;
+  const highestMarks = results.length > 0 ? Math.max(...results.map((item) => Number(item.totalMarks || item.percentage || 0))) : 0;
+  const lowestMarks = results.length > 0 ? Math.min(...results.map((item) => Number(item.totalMarks || item.percentage || 0))) : 0;
+
+  const subjectAverages = Array.from(subjectWise.entries()).map(([topic, value]) => ({
+    topic,
+    avgScore: value.count > 0 ? Number((value.total / value.count).toFixed(1)) : 0,
+  })).sort((a, b) => a.avgScore - b.avgScore);
+
+  return {
+    classWise: Array.from(classWise.entries()).map(([className, value]) => ({
+      className,
+      average: value.count > 0 ? Number((value.total / value.count).toFixed(1)) : 0,
+      highest: value.highest,
+      lowest: value.lowest === 100 ? 0 : value.lowest,
+    })),
+    subjectWise: Array.from(subjectWise.entries()).map(([subject, value]) => ({
+      subject,
+      average: value.count > 0 ? Number((value.total / value.count).toFixed(1)) : 0,
+      highest: value.highest,
+      lowest: value.lowest === 100 ? 0 : value.lowest,
+    })),
+    teacherWise: Array.from(teacherWise.values()).map((value) => ({
+      teacher: value.teacher,
+      average: value.count > 0 ? Number((value.total / value.count).toFixed(1)) : 0,
+      totalEvaluated: value.count,
+    })),
+    studentWise: studentWise.slice(0, 20),
+    averageMarks,
+    highestMarks,
+    lowestMarks,
+    gradeDistribution: Array.from(gradeCounts.entries()).map(([grade, count]) => ({ grade, count })),
+    weakTopics: subjectAverages.slice(0, 4),
+    strongTopics: [...subjectAverages].reverse().slice(0, 4),
+  };
+}
+
+async function getPrincipalReports(schoolId?: string) {
+  const analytics = await getPrincipalDashboardAnalytics(schoolId);
+  const teachers = await getPrincipalTeachers(schoolId);
+  const classes = await getPrincipalClasses(schoolId);
+  const evaluationReport = await getPrincipalEvaluationReport(schoolId);
+
+  return {
+    teacherReport: {
+      generated: new Date().toISOString().split("T")[0],
+      teachers: teachers.length,
+      active: teachers.filter((item) => item.status === "Active").length,
+      offline: teachers.filter((item) => item.status === "Offline").length,
+    },
+    classReport: {
+      classrooms: classes.length,
+      totalStudents: analytics.summary.totalStudents,
+      averageSize: classes.length > 0 ? Number((analytics.summary.totalStudents / classes.length).toFixed(1)) : 0,
+    },
+    evaluationReport: {
+      totalEvaluations: analytics.summary.evaluationsCompleted,
+      averageScore: evaluationReport.averageMarks,
+      highestClass: evaluationReport.classWise.sort((a, b) => b.average - a.average)[0]?.className || "N/A",
+    },
+    schoolPerformanceReport: {
+      overall: analytics.analytics.averageStudentPerformance,
+      curriculum: analytics.analytics.curriculumCompletion,
+      evaluation: analytics.analytics.evaluationCompletion,
+      performance: analytics.analytics.teacherProductivity,
+    },
+    studentPerformanceReport: {
+      toppers: evaluationReport.studentWise.filter((item) => item.grade === "A+").length,
+      average: analytics.analytics.averageStudentPerformance,
+      needsImprovement: evaluationReport.studentWise.filter((item) => ["C", "D"].includes(item.grade)).length,
+    },
+  };
+}
+
+async function getTeacherClasses(teacherId: string, schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  // Include workspaces with empty schoolId as fallback
+  const workspaceQuery = schoolId
+    ? { $or: [schoolMatch, { schoolId: { $in: ["", null] } }] }
+    : schoolMatch;
+  const [teacher, assignments, classes, students, workspaces] = await Promise.all([
+    UserModel.findOne({ ...schoolMatch, _id: teacherId, role: "teacher" }).lean(),
+    TeacherClassAllocationModel.find({ ...schoolMatch, teacherId, status: "published" }).sort({ updatedAt: -1 }).lean(),
+    ClassModel.find(schoolMatch).lean(),
+    UserModel.find({ ...schoolMatch, role: "student" }).lean(),
+    PlanningWorkspaceModel.find(workspaceQuery).lean(),
+  ]);
+
+  const allocationSubjects = assignments.flatMap((assignment: any) => {
+    const subjects = Array.isArray(assignment.subjects) && assignment.subjects.length > 0
+      ? assignment.subjects.map((item: unknown) => String(item || "").trim()).filter(Boolean)
+      : [String(assignment.subject || assignment.subjectId || "").trim()].filter(Boolean);
+
+    const scopedSubjects = subjects.length > 0 ? subjects : [""];
+    return scopedSubjects.map((subject: string) => ({
+      ...assignment,
+      scopedSubject: subject,
+    }));
+  });
+
+  const uniqueAssignments = allocationSubjects.filter((assignment: any, index: number, current: any[]) => {
+    const assignmentKey = [
+      String(assignment.teacherId || "").trim(),
+      normalizeClassKey(assignment.classId),
+      normalizeClassKey(assignment.className),
+      normalizeSectionKey(assignment.section),
+      normalizeSubjectKey(assignment.scopedSubject),
+    ].join("::");
+    return current.findIndex((item: any) => [
+      String(item.teacherId || "").trim(),
+      normalizeClassKey(item.classId),
+      normalizeClassKey(item.className),
+      normalizeSectionKey(item.section),
+      normalizeSubjectKey(item.scopedSubject),
+    ].join("::") === assignmentKey) === index;
+  });
+
+  const buildUniqueActivityItems = (items: any[], options: { idKey: string; fallbackLabel: string }) => {
+    const seen = new Set<string>();
+    return items.filter((item) => {
+      const explicitId = String(item?.[options.idKey] || "").trim();
+      const title = String(item?.title || "").trim().toLowerCase();
+      const normalizedClass = normalizeClassKey(item?.classId || item?.className || "");
+      const key = explicitId || [normalizedClass, title || options.fallbackLabel].join("::");
+      if (!key || seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+  };
+
+  const getWorkspaceAssignmentItems = (workspace: any) =>
+    getGeneratedSessionEntries(workspace)
+      .filter(([, value]) => Boolean((value as any)?.assignment))
+      .map(([key, value]) => ({
+        id: `${workspace._id}:${key}:assignment`,
+        title: String((value as any)?.assignment?.taskDescription || (value as any)?.title || "Assignment"),
+        status: "Generated",
+      }));
+
+  const getWorkspaceHomeworkItems = (workspace: any) =>
+    getGeneratedSessionEntries(workspace)
+      .filter(([, value]) => Boolean((value as any)?.homework))
+      .map(([key, value]) => ({
+        id: `${workspace._id}:${key}:homework`,
+        title: String((value as any)?.homework?.task || (value as any)?.title || "Homework"),
+        status: "Generated",
+      }));
+
+  const getWorkspaceAssessmentItems = (workspace: any) =>
+    getGeneratedSessionEntries(workspace)
+      .filter(([, value]) => Boolean((value as any)?.assessment))
+      .map(([key, value]) => ({
+        id: `${workspace._id}:${key}:assessment`,
+        title: String((value as any)?.title || "Assessment"),
+        status: "Generated",
+      }));
+
+  return uniqueAssignments.map((assignment) => {
+    const classId = String(assignment.classId || "").trim();
+    const normalizedClassId = normalizeClassKey(classId || assignment.className || "");
+    const matchedClass = classes.find((item) => {
+      return [
+        item._id,
+        item.name,
+        item.gradeLevel,
+      ].some((value) => classKeysOverlap(value, normalizedClassId));
+    });
+    const classAliases = buildClassAliasKeys(
+      classId,
+      assignment.className,
+      matchedClass?._id,
+      matchedClass?.name,
+      matchedClass?.gradeLevel,
+      assignment.section ? `${assignment.className || classId} - Section ${assignment.section}` : "",
+      matchedClass?.section ? `${matchedClass?.name || matchedClass?.gradeLevel || matchedClass?._id} - Section ${matchedClass.section}` : ""
+    );
+    const className = assignment.className || matchedClass?.name || matchedClass?.gradeLevel || "Class";
+    const scopedSubject = String(assignment.scopedSubject || "").trim();
+    const subjects = scopedSubject
+      ? [scopedSubject]
+      : (Array.isArray(assignment.subjects) && assignment.subjects.length > 0
+        ? assignment.subjects.map((item: unknown) => String(item)).filter(Boolean)
+        : (matchedClass?.subjectIds || []).map((item: unknown) => String(item)).filter(Boolean));
+    const subjectAliases = buildSubjectAliases(
+      subjects,
+      scopedSubject,
+      scopedSubject ? [scopedSubject] : assignment.subjects
+    );
+    const teacherAliases = buildTeacherAliases(
+      teacherId,
+      teacher?._id,
+      assignment.teacherId
+    );
+    const debugClassNine = classAliases.some((alias) => parseClassIdentity(alias).classToken === "9");
+    const isClassTwelve = classAliases.some((alias) => {
+      const token = parseClassIdentity(alias).classToken;
+      return token === "12" || token === "xii" || alias.toUpperCase().includes("XII");
+    });
+
+    if (debugClassNine) {
+      console.log("[MyClasses][Class9][assignment]", assignment);
+      console.log("[MyClasses][Class9][aliases]", { classAliases, subjectAliases, teacherAliases });
+    }
+
+    // DEBUG: Log ALL workspaces and why they match/don't match for class 9
+    if (debugClassNine) {
+      console.log("[MyClasses][Class9][workspace-debug]", {
+        totalWorkspaces: workspaces.length,
+        workspaceIds: workspaces.map(w => w._id),
+        workspaceClassNames: workspaces.map(w => w.academicConfig?.className || w.curriculumSnapshot?.gradeLevel),
+        workspaceSubjects: workspaces.map(w => w.academicConfig?.subject || w.curriculumSnapshot?.subject),
+        workspaceSchoolIds: workspaces.map(w => w.schoolId),
+        workspaceTeacherIds: workspaces.map(w => w.teacherId),
+        workspaceClassIds: workspaces.map(w => w.classId),
+      });
+    }
+    
+    if (isClassTwelve) {
+      console.log("[MyClasses][ClassXII][debug]", {
+        assignment,
+        classAliases,
+        subjectAliases,
+        teacherAliases,
+        totalWorkspaces: workspaces.length,
+        workspaceIds: workspaces.map(w => w._id),
+        workspaceClassNames: workspaces.map(w => w.academicConfig?.className || w.curriculumSnapshot?.gradeLevel),
+        workspaceClassIds: workspaces.map(w => w.classId),
+        workspaceSubjects: workspaces.map(w => w.academicConfig?.subject || w.curriculumSnapshot?.subject),
+        workspaceTeacherIds: workspaces.map(w => w.teacherId),
+        workspaceSchoolIds: workspaces.map(w => w.schoolId),
+      });
+    }
+
+    const routeKey = buildTeacherMyClassRouteKey({
+      classId,
+      className,
+      section: assignment.section || matchedClass?.section || "",
+      subject: subjects[0] || "",
+    });
+    const classStudents = students.filter((student) => matchesAnyClassAlias(student.classId, classAliases));
+    const expectedSection = normalizeSectionKey(assignment.section || matchedClass?.section || "");
+    const sectionMatchesWorkspace = (workspace: any) => {
+      const workspaceSection = normalizeSectionKey(workspace?.academicConfig?.section || "");
+      if (!expectedSection || !workspaceSection) {
+        return true;
+      }
+      return workspaceSection === expectedSection;
+    };
+    // Also include workspaces that have empty identity fields but match via academicConfig
+    const matchedByFilter = filterTeacherClassRecords(workspaces, {
+      classAliases,
+      subjectAliases,
+      teacherAliases,
+      classFields: ["classId", "academicConfig.className", "curriculumSnapshot.gradeLevel"],
+      subjectFields: ["subjectId", "academicConfig.subject", "curriculumSnapshot.subject"],
+      teacherFields: ["teacherId", "createdBy"],
+      debugLabel: "Class9-Workspace",
+      debugEnabled: debugClassNine,
+    }).filter(sectionMatchesWorkspace);
+    const fallbackMatches = workspaces.filter((w: any) => {
+      if (w.schoolId || w.teacherId || w.classId) return false; // already handled above
+      const classMatch = matchesAnyClassAlias(w.academicConfig?.className || w.curriculumSnapshot?.gradeLevel || "", classAliases);
+      const subjectMatch = matchesAnySubjectAlias(w.academicConfig?.subject || w.curriculumSnapshot?.subject || w.subjectId || "", subjectAliases);
+      return classMatch && subjectMatch && sectionMatchesWorkspace(w);
+    });
+    const classWorkspaces = dedupeWorkspacesByTeachingScope(matchedByFilter.concat(fallbackMatches));
+    if (debugClassNine) {
+      console.log("[MyClasses][Class9][workspace-match-result]", {
+        matchedByFilterCount: matchedByFilter.length,
+        fallbackMatchesCount: fallbackMatches.length,
+        totalClassWorkspaces: classWorkspaces.length,
+        classWorkspaceIds: classWorkspaces.map(w => w._id),
+        classWorkspaceClassNames: classWorkspaces.map(w => w.academicConfig?.className || w.curriculumSnapshot?.gradeLevel),
+        classWorkspaceSubjects: classWorkspaces.map(w => w.academicConfig?.subject || w.curriculumSnapshot?.subject),
+      });
+    }
+    if (debugClassNine && classWorkspaces.length === 0) {
+      console.log("[MyClasses][Class9][global-record-counts]", {
+        workspaces: workspaces.length,
+        workspacesWithSessions: workspaces.filter((item) => getWorkspaceGeneratedSessionCount(item) > 0 || getWorkspaceLessonPlanCount(item) > 0).length,
+      });
+    }
+
+    const lessonPlanItems = dedupeTermItems(classWorkspaces.flatMap((item) => getWorkspaceTermItems(item)));
+    const sessionItems = classWorkspaces.flatMap((item) => getWorkspaceSessionItems(item));
+    const assignmentItems = classWorkspaces.flatMap((item) => getWorkspaceAssignmentItems(item));
+    const homeworkItems = classWorkspaces.flatMap((item) => getWorkspaceHomeworkItems(item));
+    const assessmentItems = classWorkspaces.flatMap((item) => getWorkspaceAssessmentItems(item));
+    const rawSessionCounts = buildWorkspaceSessionCounts(classWorkspaces);
+    const sessionCounts = {
+      ...rawSessionCounts,
+      totalTerms: lessonPlanItems.length,
+    };
+    const evaluationResultItems: Array<{ id: string; studentName: string; marks: number; percentage: number; grade: string }> = [];
+    const plannedSessions = classWorkspaces.reduce((sum, item) => sum + getWorkspacePlannedSessionCount(item), 0);
+    const generatedSessions = classWorkspaces.reduce((sum, item) => sum + getWorkspaceGeneratedSessionCount(item), 0);
+    const sessionsGenerated = generatedSessions > 0 ? generatedSessions : sessionCounts.totalSessions;
+    const lessonPlans = sessionCounts.totalTerms > 0 ? sessionCounts.totalTerms : lessonPlanItems.length;
+    const uniqueAssignmentActivities = buildUniqueActivityItems(assignmentItems, { idKey: "id", fallbackLabel: "assignment" });
+    const uniqueHomeworkActivities = buildUniqueActivityItems(homeworkItems, { idKey: "id", fallbackLabel: "homework" });
+    const uniqueAssessmentActivities = buildUniqueActivityItems(assessmentItems, { idKey: "id", fallbackLabel: "assessment" });
+    const assignmentsCount = sessionCounts.totalAssignments > 0 ? sessionCounts.totalAssignments : uniqueAssignmentActivities.length;
+    const homeworkCount = sessionCounts.totalHomework > 0 ? sessionCounts.totalHomework : uniqueHomeworkActivities.length;
+    const assessmentsCount = sessionCounts.totalAssessments > 0 ? sessionCounts.totalAssessments : uniqueAssessmentActivities.length;
+    const evaluationsCompleted = 0;
+    const totalSessions = plannedSessions > 0 ? plannedSessions : Math.max(generatedSessions, sessionCounts.totalSessions, 0);
+    const remainingSessions = Math.max(0, totalSessions - generatedSessions);
+    const curriculumProgress = totalSessions > 0
+      ? Number(((Math.min(generatedSessions, totalSessions) / totalSessions) * 100).toFixed(1))
+      : 0;
+    const timestamps = [
+      ...classWorkspaces.map((item) => item.updatedAt),
+    ].filter(Boolean);
+    const lastActivityDate = timestamps.length > 0
+      ? new Date(Math.max(...timestamps.map((item) => new Date(String(item)).getTime())))
+      : null;
+
+    return {
+      id: `${teacherId}:${routeKey}`,
+      routeKey,
+      classId,
+      className,
+      section: assignment.section || matchedClass?.section || "",
+      subjects,
+      totalStudents: matchedClass?.studentCount || classStudents.length,
+      curriculumProgress,
+      sessionsGenerated,
+      remainingSessions,
+      lessonPlans,
+      assignments: assignmentsCount,
+      homework: homeworkCount,
+      assessments: assessmentsCount,
+      evaluationsCompleted,
+      lastActivity: lastActivityDate ? lastActivityDate.toISOString() : "",
+      students: classStudents.map((student) => ({
+        id: String(student._id),
+        name: student.name || "Student",
+        rollNo: student.rollNo || "",
+        email: student.email || "",
+      })),
+      lessonPlanItems,
+      sessionItems,
+      sessionCounts,
+      assignmentItems,
+      homeworkItems,
+      assessmentItems,
+      evaluationResults: evaluationResultItems,
+    };
+  });
+}
+
+async function getStudentGrades(studentId: string, schoolId?: string) {
+  const schoolMatch = buildSchoolMatch(schoolId);
+  const [student, results, teachers] = await Promise.all([
+    UserModel.findOne({ ...schoolMatch, _id: studentId, role: "student" }).lean(),
+    EvaluationResultModel.find({ ...schoolMatch, studentId }).sort({ updatedAt: -1 }).lean(),
+    UserModel.find({ ...schoolMatch, role: "teacher" }).lean(),
+  ]);
+
+  if (!student) {
+    return [];
+  }
+
+  type StudentGradeGroup = {
+    subject: string;
+    teacher: string;
+    term: string;
+    maxMarks: number;
+    totalMarks: number;
+    percentage: number;
+    grade: string;
+    exams: Array<{ name: string; maxMarks: number; scoredMarks: number; date: string }>;
+  };
+
+  const grouped = new Map<string, StudentGradeGroup>();
+
+  for (const result of results) {
+    const subject = String(result.subjectId || "General");
+    const teacher = teachers.find((item) => String(item._id) === String(result.teacherId || ""));
+    const group = grouped.get(subject) || {
+      subject,
+      teacher: teacher?.name || "Teacher",
+      term: "Current Term",
+      maxMarks: 0,
+      totalMarks: 0,
+      percentage: 0,
+      grade: "",
+      exams: [] as StudentGradeGroup["exams"],
+    };
+
+    const scoredMarks = Number(result.totalMarks || 0);
+    const maxMarks = Number(result.maxMarks || 0);
+    group.maxMarks = Math.max(group.maxMarks, maxMarks);
+    group.totalMarks = Math.max(group.totalMarks, scoredMarks);
+    group.percentage = Math.max(group.percentage, Number(result.percentage || 0));
+    group.grade = String(result.grade || gradeFromPercentage(Number(result.percentage || 0)));
+    group.exams.push({
+      name: String(result.status || "Evaluation"),
+      maxMarks,
+      scoredMarks,
+      date: new Date(result.updatedAt || result.createdAt || Date.now()).toISOString().split("T")[0],
+    });
+    grouped.set(subject, group);
+  }
+
+  return Array.from(grouped.values());
+}
+
+async function getPrincipalClassAllocations(schoolId: string) {
+  return TeacherClassAllocationModel.find({ schoolId }).sort({ updatedAt: -1 }).lean();
+}
+
+app.post("/api/activity-log", async (req, res) => {
+  try {
+    await logActivity({
+      schoolId: String(req.body?.schoolId || req.query.schoolId || "").trim(),
+      userId: String(req.body?.userId || req.query.userId || "").trim(),
+      role: String(req.body?.role || req.query.role || "").trim(),
+      teacherId: String(req.body?.teacherId || "").trim(),
+      studentId: String(req.body?.studentId || "").trim(),
+      classId: String(req.body?.classId || "").trim(),
+      subjectId: String(req.body?.subjectId || "").trim(),
+      academicYear: String(req.body?.academicYear || getAcademicYearLabel()).trim(),
+      actionType: String(req.body?.actionType || "activity"),
+      actionLabel: String(req.body?.actionLabel || req.body?.actionType || "Activity updated"),
+      metadata: req.body?.metadata || {},
+    });
+    res.status(201).json({ success: true });
+  } catch (error: any) {
+    console.error("[ActivityLog] Create failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to save activity log." });
+  }
+});
+
+app.post("/api/evaluations", async (req, res) => {
+  try {
+    await connectToMongo();
+    const evaluationContext = await resolveTeacherAllocationContext({
+      schoolId: String(req.body?.schoolId || ""),
+      teacherId: String(req.body?.teacherId || ""),
+      classId: String(req.body?.classId || ""),
+      section: String(req.body?.section || ""),
+      subject: String(req.body?.subjectId || ""),
+    });
+
+    const evaluation = await EvaluationModel.create({
+      title: String(req.body?.title || ""),
+      schoolId: String(req.body?.schoolId || ""),
+      teacherId: String(req.body?.teacherId || ""),
+      classId: String(evaluationContext.classId || req.body?.classId || ""),
+      subjectId: String(evaluationContext.subject || req.body?.subjectId || ""),
+      evaluationMode: String(req.body?.evaluationMode || ""),
+      status: "completed",
+      totalMarks: Number(req.body?.totalMarks || 0),
+      completedAt: new Date(),
+    });
+
+    await logActivity({
+      schoolId: evaluation.schoolId,
+      userId: evaluation.teacherId,
+      role: "teacher",
+      teacherId: evaluation.teacherId,
+      classId: evaluation.classId,
+      subjectId: evaluation.subjectId,
+      academicYear: String(req.body?.academicYear || getAcademicYearLabel()),
+      actionType: "evaluation_started",
+      actionLabel: `Started evaluation${evaluation.title ? `: ${evaluation.title}` : ""}`,
+      metadata: {
+        evaluationId: String(evaluation._id),
+        evaluationMode: evaluation.evaluationMode,
+      },
+    });
+
+    res.status(201).json({ success: true, evaluationId: String(evaluation._id), evaluation });
+  } catch (error: any) {
+    console.error("[Evaluations] Create failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to create evaluation." });
+  }
+});
+
+app.post("/api/evaluations/:id/save-results", async (req, res) => {
+  try {
+    await connectToMongo();
+    const evaluation = await EvaluationModel.findById(req.params.id);
+    if (!evaluation) {
+      return res.status(404).json({ error: "Evaluation not found." });
+    }
+
+    const results = Array.isArray(req.body?.results) ? req.body.results : [];
+    await EvaluationResultModel.deleteMany({ evaluationId: evaluation._id });
+    const savedResults = [];
+    for (const item of results) {
+      const result = await EvaluationResultModel.create({
+        evaluationId: evaluation._id,
+        schoolId: String(req.body?.schoolId || evaluation.schoolId || ""),
+        teacherId: String(req.body?.teacherId || evaluation.teacherId || ""),
+        studentId: String(item?.studentId || ""),
+        classId: String(evaluation.classId || req.body?.classId || ""),
+        subjectId: String(evaluation.subjectId || req.body?.subjectId || ""),
+        totalMarks: Number(item?.totalMarks || 0),
+        maxMarks: Number(item?.maxMarks || 0),
+        percentage: Number(item?.percentage || 0),
+        grade: String(item?.grade || gradeFromPercentage(Number(item?.percentage || 0))),
+        status: "saved",
+      });
+      savedResults.push(result);
+    }
+
+    evaluation.status = "saved";
+    evaluation.completedAt = new Date();
+    await evaluation.save();
+
+    await logActivity({
+      schoolId: evaluation.schoolId,
+      userId: evaluation.teacherId,
+      role: "teacher",
+      teacherId: evaluation.teacherId,
+      classId: evaluation.classId,
+      subjectId: evaluation.subjectId,
+      academicYear: String(req.body?.academicYear || getAcademicYearLabel()),
+      actionType: "evaluation_completed",
+      actionLabel: `Completed evaluation${evaluation.title ? `: ${evaluation.title}` : ""}`,
+      metadata: {
+        evaluationId: String(evaluation._id),
+        resultsCount: savedResults.length,
+      },
+    });
+
+    await logActivity({
+      schoolId: evaluation.schoolId,
+      userId: evaluation.teacherId,
+      role: "teacher",
+      teacherId: evaluation.teacherId,
+      classId: evaluation.classId,
+      subjectId: evaluation.subjectId,
+      academicYear: String(req.body?.academicYear || getAcademicYearLabel()),
+      actionType: "evaluation_saved",
+      actionLabel: `Saved ${savedResults.length} evaluation result${savedResults.length === 1 ? "" : "s"}`,
+      metadata: {
+        evaluationId: String(evaluation._id),
+      },
+    });
+
+    res.json({ success: true, savedAt: new Date().toISOString(), count: savedResults.length });
+  } catch (error: any) {
+    console.error("[Evaluations] Save results failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to save evaluation results." });
+  }
+});
+
+app.get("/api/student/grades", async (req, res) => {
+  try {
+    await connectToMongo();
+    const studentId = String(req.query.userId || req.query.studentId || "").trim();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    if (!studentId) {
+      return res.status(400).json({ error: "studentId or userId is required." });
+    }
+
+    const grades = await getStudentGrades(studentId, schoolId);
+
+    await logActivity({
+      schoolId,
+      userId: studentId,
+      role: "student",
+      studentId,
+      academicYear: getAcademicYearLabel(),
+      actionType: "grades_viewed",
+      actionLabel: "Viewed grades",
+      metadata: {
+        subjectCount: grades.length,
+      },
+    });
+
+    res.json({ success: true, grades });
+  } catch (error: any) {
+    console.error("[Student] Grades fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load grades." });
+  }
+});
+
+app.get("/api/student/notes", async (req, res) => {
+  try {
+    await connectToMongo();
+    const userId = String(req.query.userId || "").trim();
+    const schoolId = String(req.query.schoolId || "").trim();
+
+    if (!userId || !schoolId) {
+      res.status(400).json({ error: "userId and schoolId are required." });
+      return;
+    }
+
+    const student = await UserModel.findOne({ _id: userId, schoolId, role: "student" }).lean();
+    if (!student) {
+      res.status(404).json({ error: "Student not found." });
+      return;
+    }
+
+    const classAliases = buildClassAliasKeys(
+      student.classId,
+      getCanonicalClassLabel(student.classId),
+      student.section ? `${student.classId} - Section ${student.section}` : "",
+    );
+    const sectionKey = normalizeSectionKey(student.section || "");
+
+    const workspaces = await PlanningWorkspaceModel.find({ schoolId }).lean();
+    const items = workspaces.flatMap((workspace: any) => {
+      const workspaceClassAliases = [
+        workspace.classId,
+        workspace.academicConfig?.className,
+        workspace.curriculumSnapshot?.gradeLevel,
+        workspace.academicConfig?.section && workspace.academicConfig?.className
+          ? `${workspace.academicConfig.className} - Section ${workspace.academicConfig.section}`
+          : "",
+      ].filter(Boolean);
+
+      const classMatches =
+        workspaceClassAliases.length === 0 ||
+        workspaceClassAliases.some((value) => matchesAnyClassAlias(value, classAliases));
+      const workspaceSectionKey = normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "");
+      const sectionMatches = !sectionKey || !workspaceSectionKey || workspaceSectionKey === sectionKey;
+
+      if (!classMatches || !sectionMatches) {
+        return [];
+      }
+
+      const generatedSessions =
+        workspace.generationScope?.generatedSessions &&
+        typeof workspace.generationScope.generatedSessions === "object"
+          ? Object.entries(workspace.generationScope.generatedSessions as Record<string, any>)
+          : [];
+      const studentPublications =
+        workspace.generationScope?.studentPublications &&
+        typeof workspace.generationScope.studentPublications === "object"
+          ? workspace.generationScope.studentPublications as Record<string, Record<string, boolean | { published?: boolean }>>
+          : {};
+
+      return generatedSessions.flatMap(([generatedSessionKey, session]: [string, any]) => {
+        const publicationEntry =
+          studentPublications[String(generatedSessionKey)] ||
+          studentPublications[String(session?.id || "")] ||
+          studentPublications[String(session?.sessionNumber || "")] ||
+          {};
+        const notesPublished = typeof publicationEntry?.notes === "object"
+          ? Boolean((publicationEntry.notes as { published?: boolean })?.published)
+          : Boolean(publicationEntry?.notes);
+
+        if (!notesPublished || !session?.studentLessonNotes) {
+          return [];
+        }
+
+        const sessionNumber = Number(generatedSessionKey || session?.sessionNumber || 0);
+        const sessionId = `${workspace._id}-${generatedSessionKey || sessionNumber}`;
+
+        return [{
+          id: `notes-${sessionId}`,
+          kind: "notes",
+          sessionId,
+          sessionNumber,
+          sessionTitle: String(session.title || session.sessionTitle || "Session Notes"),
+          teacherId: String(workspace.teacherId || workspace.createdBy || ""),
+          teacherName: "",
+          classId: String(workspace.classId || workspace.curriculumSnapshot?.gradeLevel || student.classId || ""),
+          className: String(workspace.academicConfig?.className || workspace.curriculumSnapshot?.gradeLevel || student.classId || ""),
+          subject: String(workspace.academicConfig?.subject || workspace.curriculumSnapshot?.subject || ""),
+          gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || student.classId || ""),
+          duration: Number(session.duration || 0),
+          publishedAt: new Date(workspace.updatedAt || workspace.createdAt || Date.now()).toISOString(),
+          payload: {
+            studentLessonNotes: session.studentLessonNotes,
+          },
+        }];
+      });
+    });
+
+    const dedupedItems = Array.from(
+      new Map(
+        items.map((item: any) => [
+          `${String(item?.kind || "").toLowerCase()}::${String(item?.subject || "").toLowerCase()}::${String(item?.sessionId || "").toLowerCase()}::${String(item?.classId || "").toLowerCase()}::${String(item?.section || "").toLowerCase()}`,
+          item,
+        ]),
+      ).values(),
+    ).sort((left: any, right: any) => Number(left?.sessionNumber || 0) - Number(right?.sessionNumber || 0));
+
+    res.json({ success: true, items: dedupedItems });
+  } catch (error: any) {
+    console.error("[Student] Notes fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load student notes." });
+  }
+});
+
+app.get("/api/student/published-content", async (req, res) => {
+  try {
+    await connectToMongo();
+    const userId = String(req.query.userId || "").trim();
+    const schoolId = String(req.query.schoolId || "").trim();
+    const kind = String(req.query.kind || "").trim().toLowerCase();
+
+    if (!userId || !schoolId) {
+      res.status(400).json({ error: "userId and schoolId are required." });
+      return;
+    }
+
+    if (kind !== "homework" && kind !== "assessments") {
+      res.status(400).json({ error: "kind must be homework or assessments." });
+      return;
+    }
+
+    const student = await UserModel.findOne({ _id: userId, schoolId, role: "student" }).lean();
+    if (!student) {
+      res.status(404).json({ error: "Student not found." });
+      return;
+    }
+
+    const classAliases = buildClassAliasKeys(
+      student.classId,
+      getCanonicalClassLabel(student.classId),
+      student.section ? `${student.classId} - Section ${student.section}` : "",
+    );
+    const sectionKey = normalizeSectionKey(student.section || "");
+
+    const workspaces = await PlanningWorkspaceModel.find({ schoolId }).lean();
+    const items = workspaces.flatMap((workspace: any) => {
+      const workspaceClassAliases = [
+        workspace.classId,
+        workspace.academicConfig?.className,
+        workspace.curriculumSnapshot?.gradeLevel,
+        workspace.academicConfig?.section && workspace.academicConfig?.className
+          ? `${workspace.academicConfig.className} - Section ${workspace.academicConfig.section}`
+          : "",
+      ].filter(Boolean);
+
+      const classMatches =
+        workspaceClassAliases.length === 0 ||
+        workspaceClassAliases.some((value) => matchesAnyClassAlias(value, classAliases));
+      const workspaceSectionKey = normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "");
+      const sectionMatches = !sectionKey || !workspaceSectionKey || workspaceSectionKey === sectionKey;
+
+      if (!classMatches || !sectionMatches) {
+        return [];
+      }
+
+      const generatedSessions =
+        workspace.generationScope?.generatedSessions &&
+        typeof workspace.generationScope.generatedSessions === "object"
+          ? Object.entries(workspace.generationScope.generatedSessions as Record<string, any>)
+          : [];
+      const studentPublications =
+        workspace.generationScope?.studentPublications &&
+        typeof workspace.generationScope.studentPublications === "object"
+          ? workspace.generationScope.studentPublications as Record<string, Record<string, boolean | { published?: boolean }>>
+          : {};
+
+      return generatedSessions.flatMap(([generatedSessionKey, session]: [string, any]): any[] => {
+        const publicationEntry =
+          studentPublications[String(generatedSessionKey)] ||
+          studentPublications[String(session?.id || "")] ||
+          studentPublications[String(session?.sessionNumber || "")] ||
+          {};
+        const targetPublished = typeof (publicationEntry as any)?.[kind] === "object"
+          ? Boolean((publicationEntry as any)?.[kind]?.published)
+          : Boolean((publicationEntry as any)?.[kind]);
+        if (!targetPublished) {
+          return [];
+        }
+
+        const fallbackSessionNumber = Number(generatedSessionKey || 0);
+        const sessionNumber = Number(generatedSessionKey || session?.sessionNumber || fallbackSessionNumber || 0);
+        const sessionId = `${workspace._id}-${generatedSessionKey || sessionNumber || ""}`;
+        const sessionTitle = String(session?.title || session?.sessionTitle || "Session").trim() || "Session";
+        const teacherId = String(workspace?.teacherId || workspace?.createdBy || "").trim();
+        const classId = String(workspace?.classId || workspace?.curriculumSnapshot?.gradeLevel || student.classId || "").trim();
+        const className = String(workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || student.classId || "").trim();
+        const subject = String(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || "").trim();
+        const gradeLevel = String(workspace?.curriculumSnapshot?.gradeLevel || workspace?.academicConfig?.className || student.classId || "").trim();
+        const publishedAt = new Date(workspace?.updatedAt || workspace?.createdAt || Date.now()).toISOString();
+        const artifactId = `${kind}-${String(teacherId || "teacher").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "teacher"}-${String(classId || gradeLevel || "class").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "class"}-${String(subject || "subject").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "subject"}-${String(sessionId || `session-${sessionNumber}`).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || `session-${sessionNumber}`}`;
+
+        if (kind === "homework" && session?.homework) {
+          return [{
+            id: artifactId,
+            kind: "homework",
+            sessionId,
+            sessionNumber,
+            sessionTitle,
+            teacherId,
+            teacherName: "",
+            classId,
+            className,
+            section: String(workspace?.academicConfig?.section || student.section || "").trim(),
+            subject,
+            gradeLevel,
+            duration: Number(session?.duration || 0),
+            schoolId,
+            publishedAt,
+            payload: {
+              homework: session.homework,
+            },
+          }];
+        }
+
+        if (kind === "assessments" && session?.assessment) {
+          return [{
+            id: artifactId,
+            kind: "assessments",
+            sessionId,
+            sessionNumber,
+            sessionTitle,
+            teacherId,
+            teacherName: "",
+            classId,
+            className,
+            section: String(workspace?.academicConfig?.section || student.section || "").trim(),
+            subject,
+            gradeLevel,
+            duration: Number(session?.duration || 0),
+            schoolId,
+            publishedAt,
+            payload: {
+              assessment: normalizeStudentAssessmentPayloadForResponse(session.assessment),
+            },
+          }];
+        }
+
+        return [];
+      });
+    });
+
+    const dedupedItems = Array.from(
+      new Map(
+        items.map((item: any) => [
+          [
+            String(item?.kind || "").trim().toLowerCase(),
+            String(item?.teacherId || "").trim().toLowerCase(),
+            String(item?.classId || item?.className || item?.gradeLevel || "").trim().toLowerCase(),
+            String(item?.section || "").trim().toLowerCase(),
+            String(item?.subject || "").trim().toLowerCase(),
+            String(item?.sessionId || "").trim().toLowerCase() || `session-${Number(item?.sessionNumber || 0)}`,
+            String(item?.sessionTitle || "").trim().toLowerCase(),
+          ].join("::"),
+          item,
+        ]),
+      ).values(),
+    ).sort((left: any, right: any) => {
+      const sessionDelta = Number(left?.sessionNumber || 0) - Number(right?.sessionNumber || 0);
+      if (sessionDelta !== 0) {
+        return sessionDelta;
+      }
+      return String(left?.sessionTitle || "").localeCompare(String(right?.sessionTitle || ""));
+    });
+
+    res.json({ success: true, items: dedupedItems });
+  } catch (error: any) {
+    console.error("[Student] Published content fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load published student content." });
+  }
+});
+
+app.patch("/api/planning-workspaces/:id/student-publications", async (req, res) => {
+  try {
+    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    if (!workspace) {
+      return res.status(404).json({ error: "Planning workspace not found." });
+    }
+
+    const sessionKey = String(req.body?.sessionKey || "").trim();
+    const kind = String(req.body?.kind || "").trim();
+    const published = Boolean(req.body?.published);
+    if (!sessionKey || !["homework", "assessments", "quizzes", "notes"].includes(kind)) {
+      return res.status(400).json({ error: "sessionKey and valid kind are required." });
+    }
+
+    const nextGenerationScope =
+      workspace.generationScope && typeof workspace.generationScope === "object"
+        ? { ...workspace.generationScope }
+        : {};
+    const nextStudentPublications =
+      nextGenerationScope.studentPublications && typeof nextGenerationScope.studentPublications === "object"
+        ? { ...nextGenerationScope.studentPublications }
+        : {};
+    const currentFlags =
+      nextStudentPublications[sessionKey] && typeof nextStudentPublications[sessionKey] === "object"
+        ? { ...nextStudentPublications[sessionKey] }
+        : {};
+
+    currentFlags[kind] = published
+      ? { published: true, publishedAt: new Date().toISOString() }
+      : { published: false, publishedAt: null };
+
+    nextStudentPublications[sessionKey] = currentFlags;
+    nextGenerationScope.studentPublications = nextStudentPublications;
+    workspace.generationScope = nextGenerationScope;
+
+    await workspace.save();
+    res.json({ success: true, studentPublications: nextStudentPublications });
+  } catch (error: any) {
+    console.error("[PlanningWorkspaces] Student publication update failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to update student publication state." });
+  }
+});
+
+app.get("/api/student/subjects", async (req, res) => {
+  try {
+    await connectToMongo();
+    const userId = String(req.query.userId || "").trim();
+    const schoolId = String(req.query.schoolId || "").trim();
+
+    if (!userId || !schoolId) {
+      res.status(400).json({ error: "userId and schoolId are required." });
+      return;
+    }
+
+    const student = await UserModel.findOne({ _id: userId, schoolId, role: "student" }).lean();
+    if (!student) {
+      res.status(404).json({ error: "Student not found." });
+      return;
+    }
+
+    const classAliases = buildClassAliasKeys(
+      student.classId,
+      getCanonicalClassLabel(student.classId),
+      student.section ? `${student.classId} - Section ${student.section}` : "",
+    );
+    const sectionKey = normalizeSectionKey(student.section || "");
+
+    const [workspaces, allocations] = await Promise.all([
+      PlanningWorkspaceModel.find({ schoolId }).lean(),
+      TeacherClassAllocationModel.find({ schoolId, status: "published" }).lean(),
+    ]);
+
+    const subjectSet = new Set<string>();
+
+    workspaces.forEach((workspace: any) => {
+      const workspaceClassAliases = [
+        workspace.classId,
+        workspace.academicConfig?.className,
+        workspace.curriculumSnapshot?.gradeLevel,
+        workspace.academicConfig?.section && workspace.academicConfig?.className
+          ? `${workspace.academicConfig.className} - Section ${workspace.academicConfig.section}`
+          : "",
+      ].filter(Boolean);
+      const classMatches = workspaceClassAliases.some((value) => matchesAnyClassAlias(value, classAliases));
+      const sectionMatches = !sectionKey || !normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") || normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") === sectionKey;
+      if (!classMatches || !sectionMatches) return;
+
+      const subject = String(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || workspace?.subjectId || "").trim();
+      if (subject) subjectSet.add(subject);
+    });
+
+    allocations.forEach((allocation: any) => {
+      const classMatches = matchesAnyClassAlias(allocation?.className || allocation?.classId || "", classAliases);
+      const sectionMatches = !sectionKey || !normalizeSectionKey(allocation?.section || "") || normalizeSectionKey(allocation?.section || "") === sectionKey;
+      if (!classMatches || !sectionMatches) return;
+      (Array.isArray(allocation?.subjects) ? allocation.subjects : []).forEach((subject: unknown) => {
+        const value = String(subject || "").trim();
+        if (value) subjectSet.add(value);
+      });
+    });
+
+    res.json({ success: true, subjects: Array.from(subjectSet).sort((left, right) => left.localeCompare(right)) });
+  } catch (error: any) {
+    console.error("[Student] Subjects fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load student subjects." });
+  }
+});
+
+app.get("/api/student/submissions", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim();
+    const studentId = String(req.query.userId || req.query.studentId || "").trim();
+    const kind = String(req.query.kind || "").trim().toLowerCase();
+
+    if (!studentId) {
+      return res.status(400).json({ error: "studentId is required." });
+    }
+
+    if (kind !== "homework" && kind !== "assessments") {
+      return res.status(400).json({ error: "kind must be homework or assessments." });
+    }
+
+    if (kind === "homework") {
+      const submissions = await HomeworkSubmissionModel.find({
+        schoolId,
+        studentId,
+        status: "submitted",
+      })
+        .sort({ updatedAt: -1 })
+        .lean();
+
+      return res.json({
+        success: true,
+        submissions: submissions.map((item: any) => ({
+          itemId: String(item?.homeworkId || "").trim(),
+          status: String(item?.status || "").trim(),
+          updatedAt: item?.updatedAt || item?.createdAt || null,
+        })).filter((item: { itemId: string }) => item.itemId),
+      });
+    }
+
+    const submissions = await AssignmentSubmissionModel.find({
+      schoolId,
+      studentId,
+      submissionType: "assessment",
+      status: "submitted",
+    })
+      .sort({ updatedAt: -1 })
+      .lean();
+
+    return res.json({
+      success: true,
+      submissions: submissions.map((item: any) => ({
+        itemId: String(item?.assignmentId || "").trim(),
+        status: String(item?.status || "").trim(),
+        updatedAt: item?.updatedAt || item?.createdAt || null,
+      })).filter((item: { itemId: string }) => item.itemId),
+    });
+  } catch (error: any) {
+    console.error("[Student] Submission list fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load student submissions." });
+  }
+});
+
+app.post("/api/student/assignments/:id/submit", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.body?.schoolId || req.query.schoolId || "").trim();
+    const studentId = String(req.body?.studentId || req.query.userId || "").trim();
+    const teacherId = String(req.body?.teacherId || "").trim();
+    const subjectId = String(req.body?.subjectId || req.body?.subject || "").trim();
+    const sessionId = String(req.body?.sessionId || "").trim();
+    const fileName = String(req.body?.fileName || "").trim();
+    const mimeType = String(req.body?.mimeType || "").trim();
+    const fileDataUrl = String(req.body?.fileDataUrl || "").trim();
+    const title = String(req.body?.title || "Assignment").trim();
+    if (!studentId) {
+      return res.status(400).json({ error: "studentId is required." });
+    }
+
+    const submissionContext = await resolveStudentSubmissionContext({
+      schoolId,
+      studentId,
+      teacherId,
+      classId: String(req.body?.classId || "").trim(),
+      subject: String(req.body?.subjectId || req.body?.subject || "").trim(),
+    });
+
+    const submission = await AssignmentSubmissionModel.findOneAndUpdate(
+      { schoolId, studentId, assignmentId: req.params.id, submissionType: "assignment" },
+      {
+        $set: {
+          schoolId,
+          studentId,
+          classId: submissionContext.classId,
+          teacherId,
+          assignmentId: req.params.id,
+          subject: subjectId,
+          subjectId,
+          sessionId,
+          submissionType: "assignment",
+          status: "submitted",
+          fileName,
+          mimeType,
+          fileDataUrl,
+          title,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    await logActivity({
+      schoolId,
+      userId: studentId,
+      role: "student",
+      studentId,
+      teacherId,
+      classId: submissionContext.classId,
+      academicYear: getAcademicYearLabel(),
+      actionType: "assignment_submitted",
+      actionLabel: `Submitted assignment: ${title}`,
+      metadata: { assignmentId: req.params.id, fileName },
+    });
+
+    res.status(201).json({ success: true, submission });
+  } catch (error: any) {
+    console.error("[Student] Assignment submit failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to submit assignment." });
+  }
+});
+
+app.post("/api/student/homework/:id/submit", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.body?.schoolId || req.query.schoolId || "").trim();
+    const studentId = String(req.body?.studentId || req.query.userId || "").trim();
+    const teacherId = String(req.body?.teacherId || "").trim();
+    const subjectId = String(req.body?.subjectId || req.body?.subject || "").trim();
+    const sessionId = String(req.body?.sessionId || "").trim();
+    const fileName = String(req.body?.fileName || "").trim();
+    const mimeType = String(req.body?.mimeType || "").trim();
+    const fileDataUrl = String(req.body?.fileDataUrl || "").trim();
+    const title = String(req.body?.title || "Homework").trim();
+    if (!studentId) {
+      return res.status(400).json({ error: "studentId is required." });
+    }
+
+    const submissionContext = await resolveStudentSubmissionContext({
+      schoolId,
+      studentId,
+      teacherId,
+      classId: String(req.body?.classId || "").trim(),
+      subject: String(req.body?.subjectId || req.body?.subject || "").trim(),
+    });
+
+    const submission = await HomeworkSubmissionModel.findOneAndUpdate(
+      { schoolId, studentId, homeworkId: req.params.id },
+      {
+        $set: {
+          schoolId,
+          studentId,
+          classId: submissionContext.classId,
+          teacherId,
+          homeworkId: req.params.id,
+          subject: subjectId,
+          subjectId,
+          sessionId,
+          status: "submitted",
+          fileName,
+          mimeType,
+          fileDataUrl,
+          title,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    await logActivity({
+      schoolId,
+      userId: studentId,
+      role: "student",
+      studentId,
+      teacherId,
+      classId: submissionContext.classId,
+      academicYear: getAcademicYearLabel(),
+      actionType: "homework_submitted",
+      actionLabel: `Submitted homework: ${title}`,
+      metadata: { homeworkId: req.params.id, fileName },
+    });
+
+    res.status(201).json({ success: true, submission });
+  } catch (error: any) {
+    console.error("[Student] Homework submit failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to submit homework." });
+  }
+});
+
+app.post("/api/student/assessments/:id/attempt", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.body?.schoolId || req.query.schoolId || "").trim();
+    const studentId = String(req.body?.studentId || req.query.userId || "").trim();
+    const classId = String(req.body?.classId || "").trim();
+    const teacherId = String(req.body?.teacherId || "").trim();
+    const subjectId = String(req.body?.subjectId || req.body?.subject || "").trim();
+    const sessionId = String(req.body?.sessionId || "").trim();
+    const fileName = String(req.body?.fileName || "").trim();
+    const mimeType = String(req.body?.mimeType || "").trim();
+    const fileDataUrl = String(req.body?.fileDataUrl || "").trim();
+    const title = String(req.body?.title || "Assessment").trim();
+    if (!studentId) {
+      return res.status(400).json({ error: "studentId is required." });
+    }
+
+    const submission = await AssignmentSubmissionModel.findOneAndUpdate(
+      { schoolId, studentId, assignmentId: req.params.id, submissionType: "assessment" },
+      {
+        $set: {
+          schoolId,
+          studentId,
+          classId,
+          teacherId,
+          assignmentId: req.params.id,
+          subject: subjectId,
+          subjectId,
+          sessionId,
+          submissionType: "assessment",
+          status: "submitted",
+          fileName,
+          mimeType,
+          fileDataUrl,
+          title,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    await logActivity({
+      schoolId,
+      userId: studentId,
+      role: "student",
+      studentId,
+      teacherId,
+      classId,
+      academicYear: getAcademicYearLabel(),
+      actionType: "assessment_completed",
+      actionLabel: `Submitted assessment: ${title}`,
+      metadata: { assessmentId: req.params.id, fileName },
+    });
+
+    res.status(201).json({ success: true, submission });
+  } catch (error: any) {
+    console.error("[Student] Assessment attempt failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to submit assessment." });
+  }
+});
+
+app.get("/api/teacher/submissions", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim();
+    const teacherId = String(req.query.userId || req.query.teacherId || "").trim();
+    const type = String(req.query.type || "").trim().toLowerCase();
+    const schoolMatch = buildSchoolMatch(schoolId);
+    const workspaceQuery = schoolId
+      ? { $or: [schoolMatch, { schoolId: { $in: ["", null] } }] }
+      : schoolMatch;
+    const [assignmentSubmissions, homeworkSubmissions, students, allocations, teacher, workspaces] = await Promise.all([
+      AssignmentSubmissionModel.find({ schoolId }).sort({ updatedAt: -1 }).lean(),
+      HomeworkSubmissionModel.find({ schoolId }).sort({ updatedAt: -1 }).lean(),
+      UserModel.find({ schoolId, role: "student" }).lean(),
+      TeacherClassAllocationModel.find({
+        schoolId,
+        teacherId,
+        status: "published",
+      }).sort({ updatedAt: -1 }).lean(),
+      UserModel.findOne({ _id: teacherId, schoolId, role: "teacher" }).lean(),
+      PlanningWorkspaceModel.find(workspaceQuery).lean(),
+    ]);
+
+    // Build sessions per class+subject combination from workspaces
+    const sessionsByClassAndSubject = new Map<string, Map<string, { sessionId: string; sessionNumber: number; title: string }>>();
+    const sessionCatalogByClassAndSubject = new Map<string, Array<{ sessionId: string; sessionNumber: number; title: string; aliases: Set<string> }>>();
+
+    const addAlias = (aliases: Set<string>, value: unknown) => {
+      const normalized = String(value || "").trim();
+      if (normalized) {
+        aliases.add(normalized);
+      }
+    };
+
+    const buildSessionAliases = (workspace: any, session: any, key: string, sessionNumber: number, canonicalSessionId: string) => {
+      const aliases = new Set<string>();
+      const workspaceId = String(workspace?._id || "").trim();
+      const normalizedKey = String(key || "").trim();
+
+      addAlias(aliases, canonicalSessionId);
+      addAlias(aliases, session?.id);
+      addAlias(aliases, normalizedKey);
+      addAlias(aliases, sessionNumber > 0 ? String(sessionNumber) : "");
+      addAlias(aliases, sessionNumber > 0 ? `session-${sessionNumber}` : "");
+      addAlias(aliases, sessionNumber > 0 ? `generated:${sessionNumber}` : "");
+      addAlias(aliases, sessionNumber > 0 ? `planned:${sessionNumber}` : "");
+
+      if (workspaceId) {
+        addAlias(aliases, normalizedKey ? `${workspaceId}-${normalizedKey}` : "");
+        addAlias(aliases, normalizedKey ? `${workspaceId}:${normalizedKey}` : "");
+        addAlias(aliases, sessionNumber > 0 ? `${workspaceId}-${sessionNumber}` : "");
+        addAlias(aliases, sessionNumber > 0 ? `${workspaceId}:${sessionNumber}` : "");
+      }
+
+      return aliases;
+    };
+
+    workspaces.forEach((workspace: any) => {
+      // Only include workspaces for this teacher
+      if (String(workspace?.teacherId || workspace?.createdBy || "").trim() !== teacherId) {
+        return;
+      }
+
+      const className = String(
+        workspace?.academicConfig?.className ||
+        workspace?.curriculumSnapshot?.gradeLevel ||
+        workspace?.classId ||
+        "Unknown Class"
+      ).trim();
+
+      // Extract SINGLE subject - use first available source only to avoid mixing
+      let subject = "";
+      if (workspace?.academicConfig?.subject) {
+        subject = String(workspace.academicConfig.subject).trim();
+      } else if (workspace?.curriculumSnapshot?.subject) {
+        subject = String(workspace.curriculumSnapshot.subject).trim();
+      } else if (workspace?.subjectId) {
+        subject = String(workspace.subjectId).trim();
+      } else {
+        subject = "Unknown";
+      }
+
+      // Create key as "ClassName:Subject"
+      const classSubjectKey = `${className}:${subject}`;
+
+      if (!sessionsByClassAndSubject.has(classSubjectKey)) {
+        sessionsByClassAndSubject.set(classSubjectKey, new Map());
+      }
+      if (!sessionCatalogByClassAndSubject.has(classSubjectKey)) {
+        sessionCatalogByClassAndSubject.set(classSubjectKey, []);
+      }
+
+      const classSubjectSessions = sessionsByClassAndSubject.get(classSubjectKey)!;
+      const classSubjectCatalog = sessionCatalogByClassAndSubject.get(classSubjectKey)!;
+
+      const generatedEntries = getGeneratedSessionEntries(workspace);
+      const generatedSessionNumbers = generatedEntries
+        .map(([, value]) => Number((value as any)?.sessionNumber || 0))
+        .filter((value) => Number.isFinite(value) && value > 0);
+      const nextSessionNumber = generatedSessionNumbers.length > 0 ? Math.max(...generatedSessionNumbers) + 1 : 1;
+
+      generatedEntries.forEach(([key, value]) => {
+        const session = value as any;
+        const sessionNumber = Number(session?.sessionNumber || 0);
+        const title = `Session ${sessionNumber || 1}`;
+        // Use sessionNumber as key
+        const dedupeKey = `generated:${sessionNumber}`;
+        if (!classSubjectSessions.has(dedupeKey)) {
+          classSubjectSessions.set(dedupeKey, {
+            sessionId: dedupeKey,
+            sessionNumber: Number.isFinite(sessionNumber) && sessionNumber > 0 ? sessionNumber : classSubjectSessions.size + 1,
+            title,
+          });
+          classSubjectCatalog.push({
+            sessionId: dedupeKey,
+            sessionNumber: Number.isFinite(sessionNumber) && sessionNumber > 0 ? sessionNumber : classSubjectSessions.size,
+            title,
+            aliases: buildSessionAliases(workspace, session, String(key || "").trim(), sessionNumber, dedupeKey),
+          });
+        }
+      });
+
+      const savedAllocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
+      const recommendedAllocations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
+      const allocations = savedAllocations.length > 0 ? savedAllocations : recommendedAllocations;
+
+      allocations.forEach((allocation: any, index: number) => {
+        const sessionNumber = nextSessionNumber + index;
+        const title = `Session ${sessionNumber}`;
+        // Use sessionNumber as key
+        const dedupeKey = `planned:${sessionNumber}`;
+        if (!classSubjectSessions.has(dedupeKey)) {
+          classSubjectSessions.set(dedupeKey, {
+            sessionId: dedupeKey,
+            sessionNumber,
+            title,
+          });
+          classSubjectCatalog.push({
+            sessionId: dedupeKey,
+            sessionNumber,
+            title,
+            aliases: buildSessionAliases(workspace, allocation, String(index), sessionNumber, dedupeKey),
+          });
+        }
+      });
+    });
+
+    // Convert to format for response
+    const sessionsByClassAndSubjectForResponse: Record<string, Array<{ sessionId: string; sessionNumber: number; title: string }>> = {};
+    sessionsByClassAndSubject.forEach((sessionsMap, classSubjectKey) => {
+      sessionsByClassAndSubjectForResponse[classSubjectKey] = Array.from(sessionsMap.values()).sort((left, right) => 
+        left.sessionNumber - right.sessionNumber || left.title.localeCompare(right.title)
+      );
+    });
+
+    const studentById = new Map(students.map((student) => [String(student._id), student]));
+    const resolveSubmissionSession = (className: string, subject: string, rawSessionId: unknown) => {
+      const normalizedSessionId = String(rawSessionId || "").trim();
+      if (!normalizedSessionId) {
+        return { sessionId: "", sessionTitle: "" };
+      }
+
+      for (const [classSubjectKey, sessions] of sessionCatalogByClassAndSubject.entries()) {
+        const separatorIndex = classSubjectKey.indexOf(":");
+        const workspaceClassName = separatorIndex >= 0 ? classSubjectKey.slice(0, separatorIndex).trim() : classSubjectKey.trim();
+        const workspaceSubject = separatorIndex >= 0 ? classSubjectKey.slice(separatorIndex + 1).trim() : "";
+        if (!classKeysOverlap(workspaceClassName, className)) {
+          continue;
+        }
+        if (subject && normalizeSubjectKey(workspaceSubject) !== normalizeSubjectKey(subject)) {
+          continue;
+        }
+
+        const matched = sessions.find((session) => session.aliases.has(normalizedSessionId));
+        if (matched) {
+          return { sessionId: matched.sessionId, sessionTitle: matched.title };
+        }
+      }
+
+      const fallbackMatch = normalizedSessionId.match(/(?:^|[-:])(\d+)$/);
+      if (fallbackMatch) {
+        const sessionNumber = Number(fallbackMatch[1] || 0);
+        if (sessionNumber > 0) {
+          return {
+            sessionId: `generated:${sessionNumber}`,
+            sessionTitle: `Session ${sessionNumber}`,
+          };
+        }
+      }
+
+      return { sessionId: normalizedSessionId, sessionTitle: normalizedSessionId };
+    };
+    const inferSubmissionSubject = (item: any, student: any) => {
+      const explicitSubject = String(item?.subjectId || item?.subject || "").trim();
+      if (explicitSubject) {
+        return explicitSubject;
+      }
+
+      const identityText = [
+        String(item?.assignmentId || "").trim(),
+        String(item?.homeworkId || "").trim(),
+        String(item?.title || "").trim(),
+      ].join(" ").toLowerCase();
+
+      const allocationSubjects = allocations
+        .filter((allocation: any) => {
+          const classMatches = classKeysOverlap(
+            allocation?.classId || allocation?.className || "",
+            student?.classId || item?.classId || "",
+          );
+          if (!classMatches) {
+            return false;
+          }
+          const allocationSection = normalizeSectionKey(allocation?.section || "");
+          const studentSection = normalizeSectionKey(student?.section || "");
+          if (allocationSection && studentSection) {
+            return allocationSection === studentSection;
+          }
+          return true;
+        })
+        .flatMap((allocation: any) => Array.isArray(allocation?.subjects) ? allocation.subjects.map(String) : [])
+        .map((subject: string) => subject.trim())
+        .filter(Boolean);
+
+      for (const subject of allocationSubjects) {
+        const normalizedSubject = subject.toLowerCase().replace(/\s+/g, "-");
+        if (
+          identityText.includes(subject.toLowerCase()) ||
+          identityText.includes(normalizedSubject)
+        ) {
+          return subject;
+        }
+      }
+
+      return allocationSubjects.length === 1 ? allocationSubjects[0] : "";
+    };
+    const allocationScopes = allocations.map((item: any) => ({
+      classAliases: buildClassAliasKeys(
+        item.classId,
+        item.className,
+        item.section ? `${item.className || item.classId} - Section ${item.section}` : "",
+      ),
+      sectionKey: normalizeSectionKey(item.section),
+    }));
+    const allowedClassKeys = Array.from(new Set(
+      [
+        ...allocations.flatMap((item: any) => [
+          String(item.classId || "").trim(),
+          String(item.className || "").trim(),
+        ]),
+        ...(Array.isArray(teacher?.assignedClasses) ? teacher.assignedClasses.map((item: unknown) => String(item || "").trim()) : []),
+        String(teacher?.classId || "").trim(),
+      ].filter(Boolean)
+    ));
+    const matchesPublishedAllocation = (student: any, item: any) => {
+      if (!student) {
+        return false;
+      }
+
+      const studentSectionKey = normalizeSectionKey(student.section);
+      const itemClassAliases = buildClassAliasKeys(
+        student.classId,
+        item.classId,
+        student.section ? `${student.classId} - Section ${student.section}` : "",
+      );
+
+      return allocationScopes.some((scope) => {
+        const classMatches = scope.classAliases.some((alias: string) => matchesAnyClassAlias(alias, itemClassAliases));
+        if (!classMatches) {
+          return false;
+        }
+        if (scope.sectionKey && studentSectionKey) {
+          return scope.sectionKey === studentSectionKey;
+        }
+        if (scope.sectionKey) {
+          return false;
+        }
+        return true;
+      });
+    };
+    const matchesTeacherScope = (item: any) => {
+      const itemTeacherId = String(item.teacherId || "").trim();
+      const itemClassId = String(item.classId || "").trim();
+      const student = studentById.get(String(item.studentId || ""));
+      if (allocationScopes.length > 0) {
+        return itemTeacherId === teacherId || matchesPublishedAllocation(student, item);
+      }
+      return itemTeacherId === teacherId || allowedClassKeys.some((allowedClass) => classKeysOverlap(allowedClass, itemClassId));
+    };
+    const assignmentItems = assignmentSubmissions
+      .filter((item: any) => matchesTeacherScope(item))
+      .filter((item: any) => (!type || type === "assignments") ? String(item.submissionType || "assignment") === "assignment" : true)
+      .map((item: any) => {
+        const student = studentById.get(String(item.studentId || ""));
+        const subject = inferSubmissionSubject(item, student);
+        const sessionMeta = resolveSubmissionSession(student?.classId || item.classId || "", subject, item?.sessionId);
+        return {
+          id: String(item._id),
+          studentName: student?.name || "Student",
+          rollNo: student?.rollNo || "",
+          className: student?.classId || item.classId || "",
+          subject,
+          title: String(item.title || item.assignmentId || "Assignment"),
+          sessionId: sessionMeta.sessionId,
+          sessionTitle: sessionMeta.sessionTitle,
+          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "uploaded",
+          uploadedAt: item.updatedAt || item.createdAt,
+          source: "student_upload",
+          fileName: String(item.fileName || ""),
+          fileDataUrl: String(item.fileDataUrl || ""),
+        };
+      });
+    const assessmentItems = assignmentSubmissions
+      .filter((item: any) => matchesTeacherScope(item))
+      .filter((item: any) => (!type || type === "assessments") ? String(item.submissionType || "") === "assessment" : true)
+      .map((item: any) => {
+        const student = studentById.get(String(item.studentId || ""));
+        const subject = inferSubmissionSubject(item, student);
+        const sessionMeta = resolveSubmissionSession(student?.classId || item.classId || "", subject, item?.sessionId);
+        return {
+          id: String(item._id),
+          studentName: student?.name || "Student",
+          rollNo: student?.rollNo || "",
+          className: student?.classId || item.classId || "",
+          subject,
+          title: String(item.title || item.assignmentId || "Assessment"),
+          sessionId: sessionMeta.sessionId,
+          sessionTitle: sessionMeta.sessionTitle,
+          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "uploaded",
+          uploadedAt: item.updatedAt || item.createdAt,
+          source: "student_upload",
+          fileName: String(item.fileName || ""),
+          fileDataUrl: String(item.fileDataUrl || ""),
+        };
+      });
+    const homeworkItems = homeworkSubmissions
+      .filter((item: any) => matchesTeacherScope(item))
+      .filter(() => !type || type === "homework")
+      .map((item: any) => {
+        const student = studentById.get(String(item.studentId || ""));
+        const subject = inferSubmissionSubject(item, student);
+        const sessionMeta = resolveSubmissionSession(student?.classId || item.classId || "", subject, item?.sessionId);
+        return {
+          id: String(item._id),
+          studentName: student?.name || "Student",
+          rollNo: student?.rollNo || "",
+          className: student?.classId || item.classId || "",
+          subject,
+          title: String(item.title || item.homeworkId || "Homework"),
+          sessionId: sessionMeta.sessionId,
+          sessionTitle: sessionMeta.sessionTitle,
+          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "uploaded",
+          uploadedAt: item.updatedAt || item.createdAt,
+          source: "student_upload",
+          fileName: String(item.fileName || ""),
+          fileDataUrl: String(item.fileDataUrl || ""),
+        };
+      });
+
+    res.json({
+      success: true,
+      assignments: assignmentItems,
+      homework: homeworkItems,
+      assessments: assessmentItems,
+      sessionsByClassAndSubject: sessionsByClassAndSubjectForResponse,
+    });
+  } catch (error: any) {
+    console.error("[Teacher] Submissions fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load submissions." });
+  }
+});
+
+app.delete("/api/teacher/submissions/:type/:id", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim();
+    const teacherId = String(req.query.userId || req.query.teacherId || "").trim();
+    const submissionType = String(req.params.type || "").trim().toLowerCase();
+    const submissionId = String(req.params.id || "").trim();
+
+    if (!schoolId || !teacherId || !submissionId) {
+      res.status(400).json({ error: "schoolId, userId, and submission id are required." });
+      return;
+    }
+
+    const [allocations, teacher] = await Promise.all([
+      TeacherClassAllocationModel.find({
+        schoolId,
+        teacherId,
+        status: "published",
+      }).sort({ updatedAt: -1 }).lean(),
+      UserModel.findOne({ _id: teacherId, schoolId, role: "teacher" }).lean(),
+    ]);
+
+    const allocationScopes = allocations.map((item: any) => ({
+      classAliases: buildClassAliasKeys(
+        item.classId,
+        item.className,
+        item.section ? `${item.className || item.classId} - Section ${item.section}` : "",
+      ),
+      sectionKey: normalizeSectionKey(item.section),
+    }));
+    const allowedClassKeys = Array.from(new Set(
+      [
+        ...allocations.flatMap((item: any) => [
+          String(item.classId || "").trim(),
+          String(item.className || "").trim(),
+        ]),
+        ...(Array.isArray(teacher?.assignedClasses) ? teacher.assignedClasses.map((item: unknown) => String(item || "").trim()) : []),
+        String(teacher?.classId || "").trim(),
+      ].filter(Boolean)
+    ));
+
+    const matchesTeacherScope = async (item: any) => {
+      const itemTeacherId = String(item?.teacherId || "").trim();
+      const itemClassId = String(item?.classId || "").trim();
+      if (itemTeacherId && itemTeacherId === teacherId) {
+        return true;
+      }
+      if (allocationScopes.length > 0) {
+        const student = await UserModel.findOne({
+          _id: String(item?.studentId || "").trim(),
+          schoolId,
+          role: "student",
+        }).lean();
+        if (!student) {
+          return false;
+        }
+
+        const studentSectionKey = normalizeSectionKey(student.section);
+        const itemClassAliases = buildClassAliasKeys(
+          student.classId,
+          item?.classId,
+          student.section ? `${student.classId} - Section ${student.section}` : "",
+        );
+        const matchesAllocation = allocationScopes.some((scope) => {
+          const classMatches = scope.classAliases.some((alias: string) => matchesAnyClassAlias(alias, itemClassAliases));
+          if (!classMatches) {
+            return false;
+          }
+          if (scope.sectionKey && studentSectionKey) {
+            return scope.sectionKey === studentSectionKey;
+          }
+          if (scope.sectionKey) {
+            return false;
+          }
+          return true;
+        });
+        return matchesAllocation;
+      }
+      return itemTeacherId === teacherId || allowedClassKeys.some((allowedClass) => classKeysOverlap(allowedClass, itemClassId));
+    };
+
+    if (submissionType === "homework") {
+      const existing = await HomeworkSubmissionModel.findOne({ _id: submissionId, schoolId }).lean();
+      if (!existing) {
+        res.status(404).json({ error: "Submission not found." });
+        return;
+      }
+      if (!(await matchesTeacherScope(existing))) {
+        res.status(403).json({ error: "You can only delete submissions from your assigned classes." });
+        return;
+      }
+      await HomeworkSubmissionModel.deleteOne({ _id: submissionId, schoolId });
+      res.json({ success: true });
+      return;
+    }
+
+    if (submissionType === "assignments" || submissionType === "assessments") {
+      const expectedSubmissionType = submissionType === "assessments" ? "assessment" : "assignment";
+      const existing = await AssignmentSubmissionModel.findOne({
+        _id: submissionId,
+        schoolId,
+        submissionType: expectedSubmissionType,
+      }).lean();
+      if (!existing) {
+        res.status(404).json({ error: "Submission not found." });
+        return;
+      }
+      if (!(await matchesTeacherScope(existing))) {
+        res.status(403).json({ error: "You can only delete submissions from your assigned classes." });
+        return;
+      }
+      await AssignmentSubmissionModel.deleteOne({
+        _id: submissionId,
+        schoolId,
+        submissionType: expectedSubmissionType,
+      });
+      res.json({ success: true });
+      return;
+    }
+
+    res.status(400).json({ error: "Unsupported submission type." });
+  } catch (error: any) {
+    console.error("[Teacher] Delete submission failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to delete submission." });
+  }
+});
+
+app.get("/api/principal/dashboard-summary", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const analytics = await getPrincipalDashboardAnalytics(schoolId);
+    res.json({ success: true, ...analytics.summary, recentActivity: analytics.recentActivity });
+  } catch (error: any) {
+    console.error("[Principal] Dashboard summary failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load dashboard summary." });
+  }
+});
+
+app.get("/api/principal/lesson-plans-by-subject", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const analytics = await getPrincipalDashboardAnalytics(schoolId);
+    res.json({ success: true, items: analytics.lessonPlansBySubject });
+  } catch (error: any) {
+    console.error("[Principal] Lesson plans by subject failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load lesson plans by subject." });
+  }
+});
+
+app.get("/api/principal/evaluation-performance", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const analytics = await getPrincipalDashboardAnalytics(schoolId);
+    res.json({ success: true, items: analytics.evaluationPerformance });
+  } catch (error: any) {
+    console.error("[Principal] Evaluation performance failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load evaluation performance." });
+  }
+});
+
+app.get("/api/principal/teacher-activity", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const analytics = await getPrincipalDashboardAnalytics(schoolId);
+    res.json({ success: true, items: analytics.teacherActivity });
+  } catch (error: any) {
+    console.error("[Principal] Teacher activity failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load teacher activity." });
+  }
+});
+
+app.get("/api/principal/monthly-progress", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const analytics = await getPrincipalDashboardAnalytics(schoolId);
+    res.json({ success: true, items: analytics.monthlyProgress, analytics: analytics.analytics });
+  } catch (error: any) {
+    console.error("[Principal] Monthly progress failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load monthly progress." });
+  }
+});
+
+app.get("/api/principal/alerts", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+    const items = await getPrincipalAlerts(access.schoolId);
+    res.json({ success: true, items });
+  } catch (error: any) {
+    console.error("[Principal] Alerts fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load alerts." });
+  }
+});
+
+app.get("/api/principal/teachers", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const items = await getPrincipalTeachers(schoolId);
+    res.json({ success: true, items });
+  } catch (error: any) {
+    console.error("[Principal] Teachers fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load teachers." });
+  }
+});
+
+app.get("/api/principal/teachers/:id", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const item = await getPrincipalTeacherDetail(String(req.params.id || ""), schoolId);
+    if (!item) {
+      res.status(404).json({ error: "Teacher not found." });
+      return;
+    }
+    res.json({ success: true, item });
+  } catch (error: any) {
+    console.error("[Principal] Teacher detail fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load teacher details." });
+  }
+});
+
+app.get("/api/principal/users", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+
+    const users = await UserModel.find({
+      schoolId: access.schoolId,
+      role: { $in: ["teacher", "student"] },
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({
+      success: true,
+      items: users.map((user: any) => serializeAuthUser(user)),
+    });
+  } catch (error: any) {
+    console.error("[Principal] Users fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load users." });
+  }
+});
+
+app.post("/api/principal/users", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+
+    const role = String(req.body?.role || "").trim().toLowerCase();
+    const name = String(req.body?.name || "").trim();
+    const email = String(req.body?.email || "").trim().toLowerCase();
+    const phone = String(req.body?.phone || "").trim();
+    const password = String(req.body?.password || "").trim();
+    const confirmPassword = String(req.body?.confirmPassword || "").trim();
+    const classId = String(req.body?.classId || "").trim();
+    const section = String(req.body?.section || "").trim();
+    const stream = String(req.body?.stream || "").trim();
+    const subject = String(req.body?.subject || "").trim();
+
+    if (!["student", "teacher"].includes(role)) {
+      res.status(400).json({ error: "Principals can create only student or teacher accounts." });
+      return;
+    }
+    if (!name || !email || !phone || !password || !confirmPassword) {
+      res.status(400).json({ error: "Please fill in all required fields." });
+      return;
+    }
+    if (!validateEmail(email)) {
+      res.status(400).json({ error: "Please enter a valid email address." });
+      return;
+    }
+    if (!validatePhone(phone)) {
+      res.status(400).json({ error: "Please enter a valid 10-digit phone number." });
+      return;
+    }
+    if (password !== confirmPassword) {
+      res.status(400).json({ error: "Password and confirm password must match." });
+      return;
+    }
+    if (role === "student") {
+      if (!classId || !section) {
+        res.status(400).json({ error: "Class and section are required for student registration." });
+        return;
+      }
+      if (isSeniorClass(classId) && !stream) {
+        res.status(400).json({ error: "Stream is required for Class XI and XII students." });
+        return;
+      }
+    }
+    if (role === "teacher" && !subject) {
+      res.status(400).json({ error: "Subject is required for teacher registration." });
+      return;
+    }
+
+    const existingUser = await UserModel.findOne({ email }).lean();
+    if (existingUser) {
+      res.status(409).json({ error: "An account with this email already exists." });
+      return;
+    }
+
+    const generatedCode = await generateUserCode(role);
+    const created = await UserModel.create({
+      name,
+      email,
+      phone,
+      password,
+      role,
+      schoolId: access.schoolId,
+      classId: role === "student" ? classId : "",
+      section: role === "student" ? section : "",
+      stream: role === "student" && isSeniorClass(classId) ? stream : "",
+      subjects: role === "teacher" && subject ? [subject] : [],
+      subjectIds: role === "teacher" && subject ? [subject] : [],
+      employeeId: role === "teacher" ? generatedCode : "",
+      rollNo: role === "student" ? generatedCode : "",
+      assignedClasses: [],
+      assignedSections: [],
+      status: "active",
+      lastLoginAt: null,
+    });
+
+    res.status(201).json({
+      success: true,
+      user: serializeAuthUser(created),
+    });
+  } catch (error: any) {
+    console.error("[Principal] User create failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to create user." });
+  }
+});
+
+app.delete("/api/principal/users/:id", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+
+    const targetUserId = String(req.params.id || "").trim();
+    if (!targetUserId) {
+      res.status(400).json({ error: "User id is required." });
+      return;
+    }
+
+    const targetUser = await UserModel.findOne({
+      _id: targetUserId,
+      schoolId: access.schoolId,
+    }).lean();
+
+    if (!targetUser) {
+      res.status(404).json({ error: "User not found." });
+      return;
+    }
+
+    const targetRole = String(targetUser.role || "").trim().toLowerCase();
+    if (targetRole === "principal") {
+      res.status(403).json({ error: "Principal accounts cannot be removed here." });
+      return;
+    }
+
+    await UserModel.deleteOne({ _id: targetUserId, schoolId: access.schoolId });
+
+    if (targetRole === "teacher") {
+      await Promise.all([
+        TeacherClassAllocationModel.deleteMany({ schoolId: access.schoolId, teacherId: targetUserId }),
+        PlanningWorkspaceModel.deleteMany({
+          schoolId: access.schoolId,
+          $or: [{ teacherId: targetUserId }, { createdBy: targetUserId }],
+        }),
+        EvaluationModel.deleteMany({ schoolId: access.schoolId, teacherId: targetUserId }),
+        EvaluationResultModel.deleteMany({ schoolId: access.schoolId, teacherId: targetUserId }),
+        AssignmentSubmissionModel.deleteMany({ schoolId: access.schoolId, teacherId: targetUserId }),
+        HomeworkSubmissionModel.deleteMany({ schoolId: access.schoolId, teacherId: targetUserId }),
+        ActivityLogModel.deleteMany({
+          schoolId: access.schoolId,
+          $or: [{ userId: targetUserId }, { teacherId: targetUserId }],
+        }),
+      ]);
+    }
+
+    if (targetRole === "student") {
+      await Promise.all([
+        EvaluationResultModel.deleteMany({ schoolId: access.schoolId, studentId: targetUserId }),
+        AssignmentSubmissionModel.deleteMany({ schoolId: access.schoolId, studentId: targetUserId }),
+        HomeworkSubmissionModel.deleteMany({ schoolId: access.schoolId, studentId: targetUserId }),
+        ActivityLogModel.deleteMany({
+          schoolId: access.schoolId,
+          $or: [{ userId: targetUserId }, { studentId: targetUserId }],
+        }),
+      ]);
+    }
+
+    res.json({ success: true, deletedUserId: targetUserId, role: targetRole });
+  } catch (error: any) {
+    console.error("[Principal] User delete failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to remove user." });
+  }
+});
+
+app.get("/api/principal/classes", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const items = await getPrincipalClasses(schoolId);
+    res.json({ success: true, items });
+  } catch (error: any) {
+    console.error("[Principal] Classes fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load classes." });
+  }
+});
+
+app.get("/api/principal/allocation-class-options", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+    const items = await getPrincipalAllocationClassOptions(access.schoolId);
+    res.json({ success: true, items });
+  } catch (error: any) {
+    console.error("[Principal] Allocation class options fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load allocation class options." });
+  }
+});
+
+app.get("/api/principal/classes/:className", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const item = await getPrincipalClassDetail(String(req.params.className || ""), schoolId);
+    if (!item) {
+      res.status(404).json({ error: "Class not found." });
+      return;
+    }
+    res.json({ success: true, item });
+  } catch (error: any) {
+    console.error("[Principal] Class detail fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load class details." });
+  }
+});
+
+app.get("/api/principal/classes/:className/subjects/:subjectKey", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const sessionId = String(req.query.sessionId || "").trim() || undefined;
+    const item = await getPrincipalSubjectDetail(
+      String(req.params.className || ""),
+      String(req.params.subjectKey || ""),
+      schoolId,
+      sessionId,
+    );
+    if (!item) {
+      res.status(404).json({ error: "Subject not found." });
+      return;
+    }
+    res.json({ success: true, item });
+  } catch (error: any) {
+    console.error("[Principal] Subject detail fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load subject details." });
+  }
+});
+
+app.get("/api/principal/classes/:className/users/search", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+
+    const classDetail = await getPrincipalClassDetail(String(req.params.className || ""), access.schoolId);
+    if (!classDetail) {
+      res.status(404).json({ error: "Class not found." });
+      return;
+    }
+
+    const targetRole = getRequestedClassUserRole(req);
+    const query = String(req.query.q || "").trim().toLowerCase();
+    const normalizedSection = normalizeSectionKey(classDetail.section || "");
+    const existingTeacherIds = new Set((classDetail.teacherRoster || []).map((item) => String(item.id || "").trim()));
+    const existingStudentIds = new Set((classDetail.studentRoster || []).map((item) => String(item.id || "").trim()));
+
+    const users = await UserModel.find({
+      schoolId: access.schoolId,
+      role: targetRole === "teacher" || targetRole === "student" ? targetRole : { $in: ["teacher", "student"] },
+      status: "active",
+    }).sort({ name: 1 }).lean();
+
+    const items = users
+      .filter((user: any) => {
+        const userId = String(user?._id || "").trim();
+        const role = String(user?.role || "").trim().toLowerCase();
+        if (role === "teacher" && existingTeacherIds.has(userId)) return false;
+        if (role === "student" && existingStudentIds.has(userId)) return false;
+        return true;
+      })
+      .filter((user: any) => {
+        if (!query) return true;
+        return [
+          user?.name,
+          user?.email,
+          user?.employeeId,
+          user?.rollNo,
+        ].some((value) => String(value || "").toLowerCase().includes(query));
+      })
+      .map((user: any) => {
+        const role = String(user?.role || "").trim().toLowerCase();
+        const currentClass = role === "student"
+          ? [String(user?.classId || "").trim(), String(user?.section || "").trim() ? `Section ${String(user.section || "").trim()}` : ""].filter(Boolean).join(" - ")
+          : [String(user?.assignedClasses?.[0] || "").trim(), normalizeSectionKey(user?.assignedSections?.[0] || "") || normalizedSection ? `Section ${String(user?.assignedSections?.[0] || "").trim()}` : ""].filter(Boolean).join(" - ");
+
+        return {
+          id: String(user?._id || "").trim(),
+          name: String(user?.name || "").trim(),
+          email: String(user?.email || "").trim(),
+          role,
+          employeeId: String(user?.employeeId || "").trim(),
+          rollNo: String(user?.rollNo || "").trim(),
+          currentClass,
+        };
+      });
+
+    res.json({ success: true, items });
+  } catch (error: any) {
+    console.error("[Principal] Class user search failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to search class users." });
+  }
+});
+
+app.post("/api/principal/classes/:className/users/assign", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+
+    const classKey = String(req.params.className || req.body?.classKey || "").trim();
+    const role = String(req.body?.role || "").trim().toLowerCase();
+    const userIds = Array.isArray(req.body?.userIds) ? req.body.userIds.map((item: unknown) => String(item || "").trim()).filter(Boolean) : [];
+    const requestedSubjects = Array.isArray(req.body?.subjects)
+      ? req.body.subjects.map((item: unknown) => String(item || "").trim()).filter(Boolean)
+      : [];
+    const subject = String(req.body?.subject || "").trim();
+
+    if (!classKey || !["student", "teacher"].includes(role) || userIds.length === 0) {
+      res.status(400).json({ error: "classKey, role, and at least one userId are required." });
+      return;
+    }
+
+    const classDetail = await getPrincipalClassDetail(classKey, access.schoolId);
+    if (!classDetail) {
+      res.status(404).json({ error: "Class not found." });
+      return;
+    }
+
+    const normalizedClassName = String(classDetail.className || "").trim();
+    const normalizedSection = String(classDetail.section || "").trim();
+
+    const users = await UserModel.find({
+      schoolId: access.schoolId,
+      _id: { $in: userIds },
+      role,
+    }).lean();
+
+    if (users.length === 0) {
+      res.status(404).json({ error: `No ${role} users found for assignment.` });
+      return;
+    }
+
+    if (role === "student") {
+      await Promise.all(users.map((user: any) =>
+        UserModel.updateOne(
+          { _id: user._id, schoolId: access.schoolId },
+          {
+            $set: {
+              classId: normalizedClassName,
+              section: normalizedSection,
+            },
+          },
+        )
+      ));
+    } else {
+      const subjects = Array.from(new Set([
+        ...requestedSubjects,
+        subject,
+      ].filter(Boolean)));
+      const nextSubjects = subjects.length > 0
+        ? subjects
+        : [String(classDetail.subjectDetails?.[0]?.subject || "").trim()].filter(Boolean);
+
+      await Promise.all(users.map((user: any) =>
+        UserModel.updateOne(
+          { _id: user._id, schoolId: access.schoolId },
+          {
+            $addToSet: {
+              assignedClasses: normalizedClassName,
+              assignedSections: normalizedSection,
+              subjects: { $each: nextSubjects },
+              subjectIds: { $each: nextSubjects },
+            },
+          },
+        )
+      ));
+
+      await Promise.all(users.map((user: any) =>
+        TeacherClassAllocationModel.findOneAndUpdate(
+          {
+            schoolId: access.schoolId,
+            teacherId: String(user._id),
+            classId: classKey,
+            section: normalizedSection,
+            academicYear: String(classDetail.academicYear || getAcademicYearLabel()).trim(),
+          },
+          {
+            $set: {
+              className: normalizedClassName,
+              subjects: nextSubjects,
+              subjectIds: nextSubjects,
+              status: "published",
+              publishedAt: new Date(),
+              publishedBy: access.userId,
+            },
+          },
+          { upsert: true, new: true, setDefaultsOnInsert: true },
+        )
+      ));
+    }
+
+    const updated = await getPrincipalClassDetail(classKey, access.schoolId);
+    res.json({ success: true, item: updated });
+  } catch (error: any) {
+    console.error("[Principal] Class user assign failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to assign users to class." });
+  }
+});
+
+app.patch("/api/principal/classes/:className/teachers/:teacherId", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+
+    const classKey = String(req.params.className || "").trim();
+    const teacherId = String(req.params.teacherId || "").trim();
+    const subjects = Array.isArray(req.body?.subjects)
+      ? Array.from(new Set(req.body.subjects.map((item: unknown) => String(item || "").trim()).filter(Boolean)))
+      : [];
+
+    if (!classKey || !teacherId) {
+      res.status(400).json({ error: "Class key and teacher id are required." });
+      return;
+    }
+
+    const classDetail = await getPrincipalClassDetail(classKey, access.schoolId);
+    if (!classDetail) {
+      res.status(404).json({ error: "Class not found." });
+      return;
+    }
+
+    const teacher = await UserModel.findOne({
+      _id: teacherId,
+      schoolId: access.schoolId,
+      role: "teacher",
+    }).lean();
+
+    if (!teacher) {
+      res.status(404).json({ error: "Teacher not found." });
+      return;
+    }
+
+    const normalizedClassName = String(classDetail.className || "").trim();
+    const normalizedSection = String(classDetail.section || "").trim();
+    const nextSubjects = subjects.length > 0
+      ? subjects
+      : [String(classDetail.subjectDetails?.[0]?.subject || "").trim()].filter(Boolean);
+
+    await UserModel.updateOne(
+      { _id: teacherId, schoolId: access.schoolId, role: "teacher" },
+      {
+        $addToSet: {
+          assignedClasses: normalizedClassName,
+          assignedSections: normalizedSection,
+          subjects: { $each: nextSubjects },
+          subjectIds: { $each: nextSubjects },
+        },
+      },
+    );
+
+    await TeacherClassAllocationModel.findOneAndUpdate(
+      {
+        schoolId: access.schoolId,
+        teacherId,
+        classId: classKey,
+        section: normalizedSection,
+        academicYear: String(classDetail.academicYear || getAcademicYearLabel()).trim(),
+      },
+      {
+        $set: {
+          className: normalizedClassName,
+          subjects: nextSubjects,
+          subjectIds: nextSubjects,
+          status: "published",
+          publishedAt: new Date(),
+          publishedBy: access.userId,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+
+    const updated = await getPrincipalClassDetail(classKey, access.schoolId);
+    res.json({ success: true, classDetail: updated });
+  } catch (error: any) {
+    console.error("[Principal] Update class teacher assignment failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to update teacher subjects." });
+  }
+});
+
+app.delete("/api/principal/classes/:className/students/:studentId", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+
+    const classKey = String(req.params.className || "").trim();
+    const studentId = String(req.params.studentId || "").trim();
+    if (!classKey || !studentId) {
+      res.status(400).json({ error: "Class key and student id are required." });
+      return;
+    }
+
+    const classDetail = await getPrincipalClassDetail(classKey, access.schoolId);
+    if (!classDetail) {
+      res.status(404).json({ error: "Class not found." });
+      return;
+    }
+
+    const existingStudent = await UserModel.findOne({
+      _id: studentId,
+      schoolId: access.schoolId,
+      role: "student",
+    }).lean();
+
+    if (!existingStudent) {
+      res.status(404).json({ error: "Student not found." });
+      return;
+    }
+
+    await UserModel.updateOne(
+      { _id: studentId, schoolId: access.schoolId, role: "student" },
+      {
+        $set: {
+          classId: "",
+          section: "",
+          stream: "",
+        },
+      },
+    );
+
+    const updated = await getPrincipalClassDetail(classKey, access.schoolId);
+    res.json({ success: true, item: updated });
+  } catch (error: any) {
+    console.error("[Principal] Remove student from class failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to remove student from class." });
+  }
+});
+
+app.delete("/api/principal/classes/:className/teachers/:teacherId", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+
+    const classKey = String(req.params.className || "").trim();
+    const teacherId = String(req.params.teacherId || "").trim();
+    if (!classKey || !teacherId) {
+      res.status(400).json({ error: "Class key and teacher id are required." });
+      return;
+    }
+
+    const classDetail = await getPrincipalClassDetail(classKey, access.schoolId);
+    if (!classDetail) {
+      res.status(404).json({ error: "Class not found." });
+      return;
+    }
+
+    const existingTeacher = await UserModel.findOne({
+      _id: teacherId,
+      schoolId: access.schoolId,
+      role: "teacher",
+    }).lean();
+
+    if (!existingTeacher) {
+      res.status(404).json({ error: "Teacher not found." });
+      return;
+    }
+
+    const normalizedClassName = String(classDetail.className || "").trim();
+    const normalizedSection = String(classDetail.section || "").trim();
+    const existingAssignedClasses = Array.isArray(existingTeacher?.assignedClasses) ? existingTeacher.assignedClasses.map(String) : [];
+    const existingAssignedSections = Array.isArray(existingTeacher?.assignedSections) ? existingTeacher.assignedSections.map(String) : [];
+
+    await UserModel.updateOne(
+      { _id: teacherId, schoolId: access.schoolId, role: "teacher" },
+      {
+        $set: {
+          assignedClasses: existingAssignedClasses.filter((value: string) => !classKeysOverlap(value, normalizedClassName)),
+          assignedSections: existingAssignedSections.filter((value: string) => normalizeSectionKey(value) !== normalizeSectionKey(normalizedSection)),
+        },
+      },
+    );
+
+    await TeacherClassAllocationModel.deleteMany({
+      schoolId: access.schoolId,
+      teacherId,
+      $or: [
+        { classId: classKey },
+        { classId: normalizedClassName },
+        { className: normalizedClassName },
+      ],
+      section: normalizedSection,
+    });
+
+    const updated = await getPrincipalClassDetail(classKey, access.schoolId);
+    res.json({ success: true, item: updated });
+  } catch (error: any) {
+    console.error("[Principal] Remove teacher from class failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to remove teacher from class." });
+  }
+});
+
+app.get("/api/principal/evaluation-reports", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const report = await getPrincipalEvaluationReport(schoolId);
+    res.json({ success: true, report });
+  } catch (error: any) {
+    console.error("[Principal] Evaluation reports fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load evaluation reports." });
+  }
+});
+
+app.get("/api/principal/reports", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const reports = await getPrincipalReports(schoolId);
+    res.json({ success: true, reports });
+  } catch (error: any) {
+    console.error("[Principal] Reports fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load reports." });
+  }
+});
+
+app.post("/api/principal/class-allocations", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+    const {
+      teacherId,
+      classId,
+      className,
+      section,
+      subjectIds,
+      subjects,
+      academicYear,
+      status,
+    } = req.body || {};
+
+    if (!teacherId || !classId || !academicYear) {
+      res.status(400).json({ error: "teacherId, classId, and academicYear are required." });
+      return;
+    }
+
+    const nextStatus = status === "published" ? "published" : "draft";
+    const nextSubjects = Array.from(new Set([
+      ...(Array.isArray(subjectIds) ? subjectIds.map(String) : []),
+      ...(Array.isArray(subjects) ? subjects.map(String) : []),
+    ].map((item) => String(item || "").trim()).filter(Boolean)));
+    const existing = await TeacherClassAllocationModel.findOne({
+      schoolId: access.schoolId,
+      teacherId: String(teacherId),
+      classId: String(classId),
+      section: String(section || ""),
+      academicYear: String(academicYear),
+    }).lean();
+    const mergedSubjects = Array.from(new Set([
+      ...(Array.isArray(existing?.subjectIds) ? existing.subjectIds.map(String) : []),
+      ...(Array.isArray(existing?.subjects) ? existing.subjects.map(String) : []),
+      ...nextSubjects,
+    ].map((item) => String(item || "").trim()).filter(Boolean)));
+    const update: Record<string, unknown> = {
+      schoolId: access.schoolId,
+      teacherId: String(teacherId),
+      classId: String(classId),
+      className: String(className || ""),
+      section: String(section || ""),
+      subjectIds: mergedSubjects,
+      subjects: mergedSubjects,
+      academicYear: String(academicYear),
+      status: nextStatus === "published" || String(existing?.status || "").trim() === "published" ? "published" : nextStatus,
+      publishedAt: nextStatus === "published" ? new Date() : existing?.publishedAt || null,
+      publishedBy: nextStatus === "published" ? access.userId : existing?.publishedBy || "",
+    };
+
+    const item = await TeacherClassAllocationModel.findOneAndUpdate(
+      {
+        schoolId: access.schoolId,
+        teacherId: String(teacherId),
+        classId: String(classId),
+        section: String(section || ""),
+        academicYear: String(academicYear),
+      },
+      { $set: update },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    ).lean();
+
+    await UserModel.updateOne(
+      { _id: String(teacherId), schoolId: access.schoolId, role: "teacher" },
+      {
+        $addToSet: {
+          assignedClasses: String(className || classId || "").trim(),
+          assignedSections: String(section || "").trim(),
+          subjects: { $each: mergedSubjects },
+          subjectIds: { $each: mergedSubjects },
+        },
+      },
+    );
+
+    res.json({ success: true, item });
+  } catch (error: any) {
+    console.error("[Principal] Create class allocation failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to save class allocation." });
+  }
+});
+
+app.get("/api/principal/class-allocations", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+    const items = await getPrincipalClassAllocations(access.schoolId);
+    res.json({ success: true, items });
+  } catch (error: any) {
+    console.error("[Principal] Class allocations fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load class allocations." });
+  }
+});
+
+app.patch("/api/principal/class-allocations/:id", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+    const existing = await TeacherClassAllocationModel.findOne({ _id: req.params.id, schoolId: access.schoolId }).lean();
+    if (!existing) {
+      res.status(404).json({ error: "Allocation not found." });
+      return;
+    }
+
+    const payload = req.body || {};
+    const item = await TeacherClassAllocationModel.findOneAndUpdate(
+      { _id: req.params.id, schoolId: access.schoolId },
+      {
+        $set: {
+          teacherId: payload.teacherId ?? existing.teacherId,
+          classId: payload.classId ?? existing.classId,
+          className: payload.className ?? existing.className,
+          section: payload.section ?? existing.section,
+          subjectIds: Array.isArray(payload.subjectIds) ? payload.subjectIds.map(String) : existing.subjectIds,
+          subjects: Array.isArray(payload.subjects) ? payload.subjects.map(String) : existing.subjects,
+          academicYear: payload.academicYear ?? existing.academicYear,
+          status: payload.status === "published" ? "published" : payload.status === "draft" ? "draft" : existing.status,
+          publishedAt: payload.status === "published" ? new Date() : payload.status === "draft" ? null : existing.publishedAt,
+          publishedBy: payload.status === "published" ? access.userId : payload.status === "draft" ? "" : existing.publishedBy,
+        },
+      },
+      { new: true }
+    ).lean();
+
+    res.json({ success: true, item });
+  } catch (error: any) {
+    console.error("[Principal] Update class allocation failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to update class allocation." });
+  }
+});
+
+app.post("/api/principal/class-allocations/:id/publish", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+    const item = await TeacherClassAllocationModel.findOneAndUpdate(
+      { _id: req.params.id, schoolId: access.schoolId },
+      {
+        $set: {
+          status: "published",
+          publishedAt: new Date(),
+          publishedBy: access.userId,
+        },
+      },
+      { new: true }
+    ).lean();
+    if (!item) {
+      res.status(404).json({ error: "Allocation not found." });
+      return;
+    }
+    res.json({ success: true, item });
+  } catch (error: any) {
+    console.error("[Principal] Publish class allocation failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to publish class allocation." });
+  }
+});
+
+app.delete("/api/principal/class-allocations/:id", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensurePrincipalAccess(req, res);
+    if (!access) return;
+    const deleted = await TeacherClassAllocationModel.findOneAndDelete({ _id: req.params.id, schoolId: access.schoolId }).lean();
+    if (!deleted) {
+      res.status(404).json({ error: "Allocation not found." });
+      return;
+    }
+    res.json({ success: true });
+  } catch (error: any) {
+    console.error("[Principal] Delete class allocation failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to delete class allocation." });
+  }
+});
+
+// ======== DEBUG ENDPOINT: Inspect ALL workspace structures ========
+app.get("/api/debug/workspaces", async (req, res) => {
+  try {
+    await connectToMongo();
+    const allWorkspaces = await PlanningWorkspaceModel.find({}).lean();
+    
+    const debugInfo = allWorkspaces.map((w: any) => ({
+      _id: w._id,
+      schoolId: w.schoolId,
+      teacherId: w.teacherId,
+      createdBy: w.createdBy,
+      classId: w.classId,
+      subjectId: w.subjectId,
+      className: w.academicConfig?.className || w.curriculumSnapshot?.gradeLevel || "",
+      subject: w.academicConfig?.subject || w.curriculumSnapshot?.subject || w.subjectId || "",
+      academicConfig: w.academicConfig || {},
+      curriculumSnapshot: {
+        subject: w.curriculumSnapshot?.subject,
+        gradeLevel: w.curriculumSnapshot?.gradeLevel,
+        hasNormalizedStructure: Boolean(w.curriculumSnapshot?.normalizedStructure),
+        normalizedStructureClasses: w.curriculumSnapshot?.normalizedStructure?.classes?.length || 0,
+      },
+      // Check ALL possible term/session fields
+      hasTermsField: Array.isArray((w as any).terms),
+      termsFieldLength: Array.isArray((w as any).terms) ? (w as any).terms.length : 0,
+      hasTermPlanTerms: Array.isArray(w.termPlan?.terms),
+      termPlanTermsLength: Array.isArray(w.termPlan?.terms) ? w.termPlan.terms.length : 0,
+      termPlanAllocations: Array.isArray(w.termPlan?.allocations) ? w.termPlan.allocations.length : 0,
+      termPlanRecommendations: Array.isArray(w.termPlan?.recommendations) ? w.termPlan.recommendations.length : 0,
+      hasTermDivision: Boolean((w as any).termDivision),
+      termDivisionTerms: Array.isArray((w as any).termDivision?.terms) ? (w as any).termDivision.terms.length : 0,
+      hasTermPlanner: Boolean((w as any).termPlanner),
+      termPlannerTerms: Array.isArray((w as any).termPlanner?.terms) ? (w as any).termPlanner.terms.length : 0,
+      hasPlanner: Boolean((w as any).planner),
+      plannerTerms: Array.isArray((w as any).planner?.terms) ? (w as any).planner.terms.length : 0,
+      hasCurriculumPlan: Boolean((w as any).curriculumPlan),
+      curriculumPlanTerms: Array.isArray((w as any).curriculumPlan?.terms) ? (w as any).curriculumPlan.terms.length : 0,
+      // Sessions
+      hasSessionsField: Array.isArray((w as any).sessions),
+      sessionsFieldLength: Array.isArray((w as any).sessions) ? (w as any).sessions.length : 0,
+      hasSessionPlan: Boolean((w as any).sessionPlan),
+      sessionPlanSessions: Array.isArray((w as any).sessionPlan?.sessions) ? (w as any).sessionPlan.sessions.length : 0,
+      hasSessionPlanner: Boolean((w as any).sessionPlanner),
+      sessionPlannerSessions: Array.isArray((w as any).sessionPlanner?.sessions) ? (w as any).sessionPlanner.sessions.length : 0,
+      generatedSessions: Object.keys(w.generationScope?.generatedSessions || {}).length,
+      sessionRecommendations: Array.isArray((w as any).sessionRecommendations) ? (w as any).sessionRecommendations.length : 0,
+      sessionAllocationAllocations: Array.isArray(w.sessionAllocation?.allocations) ? w.sessionAllocation.allocations.length : 0,
+      sessionAllocationRecommendations: Array.isArray(w.sessionAllocation?.recommendations) ? w.sessionAllocation.recommendations.length : 0,
+      // Phase and status
+      phase: w.phase,
+      status: w.status,
+      curriculumApproved: w.curriculumApproval?.approved,
+      termPlanApproved: w.termPlan?.approved,
+      sessionAllocationApproved: w.sessionAllocation?.approved,
+      createdAt: w.createdAt,
+      updatedAt: w.updatedAt,
+    }));
+
+    res.json({
+      success: true,
+      totalWorkspaces: allWorkspaces.length,
+      debugInfo,
+    });
+  } catch (error: any) {
+    console.error("[Debug] Workspace inspection failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to inspect workspaces." });
+  }
+});
+
+ app.get("/api/teacher/my-classes", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensureTeacherAccess(req, res);
+    if (!access) return;
+    const items = await getTeacherClasses(access.userId, access.schoolId);
+    res.json({ success: true, items });
+  } catch (error: any) {
+    console.error("[Teacher] My classes fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load teacher classes." });
+  }
+});
+
+app.get("/api/teacher/my-classes/:classId", async (req, res) => {
+  try {
+    await connectToMongo();
+    const access = ensureTeacherAccess(req, res);
+    if (!access) return;
+    const classes = await getTeacherClasses(access.userId, access.schoolId);
+    const requestedKey = String(req.params.classId || "").trim();
+    const item = classes.find((entry: any) =>
+      String(entry.routeKey || "") === requestedKey ||
+      String(entry.id || "") === requestedKey ||
+      entry.classId === requestedKey
+    );
+    if (!item) {
+      res.status(404).json({ error: "Assigned class not found." });
+      return;
+    }
+    res.json({ success: true, item });
+  } catch (error: any) {
+    console.error("[Teacher] My class detail fetch failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to load class details." });
+  }
+});
+
+// ======== REPORT DOWNLOAD ENDPOINTS ========
+app.get("/api/reports/download/:reportKey/:format", async (req, res) => {
+  const { reportKey, format } = req.params;
+
+  const validKeys = [
+    "teacherReport",
+    "classReport",
+    "evaluationReport",
+    "schoolPerformanceReport",
+    "studentPerformanceReport",
+  ];
+  const validFormats = ["xlsx", "pdf"];
+
+  if (!validKeys.includes(reportKey)) {
+    res.status(400).json({ error: `Invalid report key: ${reportKey}` });
+    return;
+  }
+  if (!validFormats.includes(format)) {
+    res.status(400).json({ error: `Invalid format: ${format}. Supported: xlsx, pdf` });
+    return;
+  }
+
+  try {
+    await connectToMongo();
+    const schoolId = String(req.query.schoolId || "").trim() || undefined;
+    const reports = await getPrincipalReports(schoolId);
+    const reportRowsByKey: Record<string, Record<string, unknown>> = {
+      teacherReport: reports.teacherReport,
+      classReport: reports.classReport,
+      evaluationReport: reports.evaluationReport,
+      schoolPerformanceReport: reports.schoolPerformanceReport,
+      studentPerformanceReport: reports.studentPerformanceReport,
+    };
+    const selectedReport = reportRowsByKey[reportKey];
+    let buffer: Buffer;
+    const titleMap: Record<string, string> = {
+      teacherReport: "Teacher_Report",
+      classReport: "Class_Report",
+      evaluationReport: "Evaluation_Report",
+      schoolPerformanceReport: "School_Performance_Report",
+      studentPerformanceReport: "Student_Performance_Report",
+    };
+    const filename = `${titleMap[reportKey] || reportKey}`;
+    const displayTitle = filename.replace(/_/g, " ");
+    const meta = {
+      title: displayTitle,
+      subtitle: `Generated on ${new Date().toLocaleDateString("en-IN")}`,
+      columns: [
+        { header: "Metric", key: "metric", width: 30 },
+        { header: "Value", key: "value", width: 20 },
+      ],
+      rows: Object.entries(selectedReport || {}).map(([metric, value]) => ({
+        metric: metric.replace(/([A-Z])/g, " $1").trim(),
+        value: value == null ? "" : String(value),
+      })),
+    };
+
+    if (format === "xlsx") {
+      const { generateExcel } = await import("./reportGenerator.js");
+      buffer = await generateExcel(reportKey, meta);
+      res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}.xlsx"`);
+    } else {
+      const { generatePDF } = await import("./reportGenerator.js");
+      buffer = await generatePDF(reportKey, meta);
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}.pdf"`);
+    }
+
+    res.setHeader("Content-Length", buffer.length);
+    res.end(buffer);
+  } catch (error: any) {
+    console.error(`[Reports] Failed to generate ${format} report for ${reportKey}:`, error);
+    res.status(500).json({ error: `Failed to generate report: ${error?.message || "Unknown error"}` });
   }
 });
 
