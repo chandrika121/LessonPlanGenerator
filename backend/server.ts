@@ -5730,9 +5730,9 @@ function stripWorkspaceGeneratedSessions(workspace: any) {
 
 async function serializeWorkspaceForView(
   workspace: any,
-  view: "planning" | "full" = "planning"
+  view: "planning" | "content_generation" | "full" = "planning"
 ) {
-  if (view === "full") {
+  if (view === "full" || view === "content_generation") {
     return hydrateWorkspacePptMaterials(workspace);
   }
   return stripWorkspaceGeneratedSessions(workspace);
@@ -14668,7 +14668,12 @@ app.patch("/api/curriculums/:id", async (req, res) => {
 
 app.get("/api/planning-workspaces/:id", async (req, res) => {
   try {
-    const view = req.query.view === "full" ? "full" : "planning";
+    const view =
+      req.query.view === "full"
+        ? "full"
+        : req.query.view === "content_generation"
+          ? "content_generation"
+          : "planning";
     const workspace = await loadPlanningWorkspaceById(req.params.id);
     if (!workspace) {
       return res.status(404).json({ error: "Planning workspace not found." });
@@ -14682,7 +14687,12 @@ app.get("/api/planning-workspaces/:id", async (req, res) => {
 
 app.get("/api/planning-workspaces/by-curriculum/:curriculumId", async (req, res) => {
   try {
-    const view = req.query.view === "full" ? "full" : "planning";
+    const view =
+      req.query.view === "full"
+        ? "full"
+        : req.query.view === "content_generation"
+          ? "content_generation"
+          : "planning";
     await connectToMongo();
     const workspace = await PlanningWorkspaceModel.findOne({ curriculumId: req.params.curriculumId })
       .sort({ updatedAt: -1 })

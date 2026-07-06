@@ -1,0 +1,696 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "textbook-clean",
+      "templateName": "Textbook Clean Layout",
+      "themeId": "cbse-academic-blue",
+      "title": "Number System - Session 1: Introduction to Real Numbers",
+      "presentationTitle": "The World of Number Systems",
+      "presentationGoal": "To introduce the classification of numbers, distinguishing between rational and irrational numbers through visual examples and real-world contexts.",
+      "audience": "Grade 9 Mathematics Students",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab",
+          "body": "Open Sans"
+        },
+        "colors": {
+          "primary": "#1a4d80",
+          "secondary": "#2c7da0",
+          "accent": "#e6b925",
+          "background": "#f8f9fa",
+          "surface": "#ffffff",
+          "text": "#333333",
+          "mutedText": "#666666"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary",
+          "cardStyle": "shadow-elevation-2",
+          "visualFrameStyle": "rounded-corners-accent-border"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons",
+          "Khan Academy Visuals",
+          "Math is Fun Diagrams"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all images are CC0 or Creative Commons Attribution licensed for educational use."
+        ],
+        "fallbackStrategy": "Use generated SVG diagrams where external image sourcing fails to ensure clarity and copyright compliance."
+      },
+      "licenseChecklist": [
+        "Verify no copyrighted textbook figures are used directly.",
+        "Ensure all mathematical symbols follow standard LaTeX rendering rules.",
+        "Confirm teacher notes do not contain proprietary curriculum secrets."
+      ],
+      "presentationWarnings": [
+        "Do not introduce concepts from Session 2 (Euclid's Division Lemma) in this presentation.",
+        "Avoid complex proofs involving infinite decimal expansions beyond the scope of introduction.",
+        "Ensure all visual representations of number lines are accurate to scale where possible."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define and classify natural numbers, whole numbers, integers, rational numbers, and irrational numbers.",
+          "Distinguish between terminating and non-terminating recurring decimals as properties of rational numbers.",
+          "Identify examples of irrational numbers on the number line."
+        ],
+        "topicsCovered": [
+          "Classification of Real Numbers",
+          "Rational vs Irrational Numbers",
+          "Decimal Expansions"
+        ],
+        "taughtConceptsCovered": [
+          "Set relationships (N, W, Z, Q)",
+          "Definition of Rational Numbers (p/q form)",
+          "Properties of Decimal Expansions",
+          "Visualizing Irrational Numbers on the Number Line"
+        ],
+        "omittedContent": [
+          "Detailed proofs of irrationality for specific numbers like sqrt(2) beyond visual representation.",
+          "Operations with real numbers (addition/subtraction rules).",
+          "Euclid's Division Lemma."
+        ]
+      },
+      "slides": [
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Lesson Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "The Number System: Real Numbers",
+          "learningOutcomeIds": [
+            "LO-Intro"
+          ],
+          "topicCoverage": [
+            "Introduction to Chapter 1",
+            "Session Overview"
+          ],
+          "teacherIntent": "Set the stage for the lesson, establish authority on the topic, and create curiosity about the 'missing' numbers.",
+          "studentTakeaway": "I am starting a journey into understanding all types of numbers, including those that cannot be written as simple fractions.",
+          "layout": "hero-image-left",
+          "bulletPoints": [
+            "Subject: Mathematics - Class 9",
+            "Chapter: Number System (Session 1)",
+            "Focus: Rational & Irrational Numbers",
+            "Essential Question: Are all numbers rational?"
+          ],
+          "onSlideText": [
+            "The World of Real Numbers",
+            "Classifying the Infinite"
+          ],
+          "speakerNotes": [
+            "Welcome students to Session 1. Ask them what they know about 'numbers'.",
+            "Pose the essential question: 'We use fractions for everything, but are there numbers that cannot be written as a fraction?'",
+            "Explain that today we will explore the complete set of Real Numbers.",
+            "Transition: Let's look at exactly what you will learn by the end of this class."
+          ],
+          "visualAttribution": {
+            "visualPlan": "A stylized number line extending infinitely in both directions, with a magnifying glass highlighting specific points labeled 'Rational' and 'Irrational'.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Hero visual showing an infinite number line with distinct markers for integers, fractions, and non-repeating decimals.",
+          "assets": [
+            {
+              "purpose": "Visual hook to represent the concept of infinity in numbers",
+              "searchQuery": "infinite number line illustration math education",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 4.0",
+              "attributionText": "Number Line Concept by Math Educators Collective",
+              "altText": "A visual representation of an infinite number line with highlighted rational and irrational points.",
+              "placementHint": "Left side, occupying 50% of slide width"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in title",
+            "Slide up essential question text"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes & Success Criteria",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "learning_outcomes",
+          "slideTitle": "What We Will Learn Today",
+          "learningOutcomeIds": [
+            "LO-1-Classify",
+            "LO-2-Distinguish",
+            "LO-3-Identify"
+          ],
+          "topicCoverage": [
+            "Learning Objectives",
+            "Success Criteria"
+          ],
+          "teacherIntent": "Ensure students know exactly what they will be able to do by the end of the session.",
+          "studentTakeaway": "I can classify numbers, distinguish between rational and irrational decimals, and locate irrationals on a line.",
+          "layout": "split-screen",
+          "bulletPoints": [
+            "Classify N, W, Z, Q within Real Numbers",
+            "Distinguish terminating vs recurring decimals",
+            "Identify examples of Irrational numbers"
+          ],
+          "onSlideText": [
+            "1. Classify Number Sets",
+            "2. Analyze Decimal Expansions",
+            "3. Locate Irrationals on Line"
+          ],
+          "speakerNotes": [
+            "Read through the three outcomes clearly.",
+            "Outcome 1: We will revisit sets like Natural numbers and Integers to see where they fit in Real Numbers.",
+            "Outcome 2: You must learn that a fraction always results in either a terminating or repeating decimal. If it doesn't, it's not rational!",
+            "Outcome 3: This is the new skill—seeing irrational numbers as physical points on a line.",
+            "Transition: Before we dive into definitions, let's recall what we already know."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Bullet points appear one by one"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Recall: Number Sets & Properties",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "prerequisite_knowledge",
+          "slideTitle": "What Do We Already Know?",
+          "learningOutcomeIds": [
+            "LO-1-Classify"
+          ],
+          "topicCoverage": [
+            "Natural Numbers",
+            "Whole Numbers",
+            "Integers",
+            "Rational Numbers Definition"
+          ],
+          "teacherIntent": "Activate prior knowledge of number sets to build the foundation for Real Numbers.",
+          "studentTakeaway": "I remember that Natural numbers are a subset of Whole numbers, which are subsets of Integers.",
+          "layout": "text-heavy-list",
+          "bulletPoints": [
+            "Natural (N): 1, 2, 3...",
+            "Whole (W): 0, 1, 2...",
+            "Integers (Z): ..., -2, -1, 0, 1, ...",
+            "Rational: Can be written as p/q"
+          ],
+          "onSlideText": [
+            "N ⊂ W ⊂ Z ⊂ Q",
+            "Recall the hierarchy of numbers."
+          ],
+          "speakerNotes": [
+            "Ask students to name a number that is not an integer (e.g., 1/2).",
+            "Review the definition: A rational number is any number expressible as p/q where q ≠ 0.",
+            "Emphasize that integers are also rational because they can be written as n/1.",
+            "Transition: Now, let's use this knowledge to hook our curiosity about numbers we haven't fully explored yet."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in sets one by one"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "The Mystery of the Missing Number",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "lesson_hook",
+          "slideTitle": "Is Every Number Rational?",
+          "learningOutcomeIds": [
+            "LO-3-Identify"
+          ],
+          "topicCoverage": [
+            "Irrational Numbers Introduction",
+            "The Gap in the Number Line"
+          ],
+          "teacherIntent": "Create a cognitive conflict to motivate learning about irrational numbers.",
+          "studentTakeaway": "There are gaps on the number line that fractions cannot fill, leading us to new types of numbers.",
+          "layout": "problem-statement",
+          "bulletPoints": [
+            "Can we find x such that x² = 2?",
+            "Is there a fraction for √2?",
+            "What happens if decimals never repeat?"
+          ],
+          "onSlideText": [
+            "The Square Root of 2",
+            "A Number That Defies Fractions"
+          ],
+          "speakerNotes": [
+            "Pose the problem: 'If I ask you for a number that, when multiplied by itself equals 2, what is it?' (Answer: √2).",
+            "Ask: 'Can we write this as a fraction p/q? Try to find one.'",
+            "Explain historically how mathematicians were shocked to discover numbers like √2 could not be expressed as fractions.",
+            "Transition: This leads us directly into our first major concept definition."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal question text sequentially"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Defining Rational and Irrational Numbers",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "topic_introduction",
+          "slideTitle": "Rational vs. Irrational: The Definitions",
+          "learningOutcomeIds": [
+            "LO-1-Classify"
+          ],
+          "topicCoverage": [
+            "Definition of Rational Numbers",
+            "Definition of Irrational Numbers"
+          ],
+          "teacherIntent": "Provide precise, formal definitions for the two main categories of Real numbers.",
+          "studentTakeaway": "Rational numbers have p/q forms and repeating decimals; irrational numbers do not repeat or terminate.",
+          "layout": "comparison-table",
+          "bulletPoints": [
+            "Rational: Form p/q (q≠0)",
+            "Irrational: Cannot be written as p/q",
+            "Real Numbers = Rational + Irrational"
+          ],
+          "onSlideText": [
+            "Q: Terminating or Recurring Decimals",
+            "Non-Q: Non-Terminating, Non-Recurring"
+          ],
+          "speakerNotes": [
+            "Define Rational numbers formally: Any number that can be written as a fraction of two integers.",
+            "Contrast with Irrational numbers: Numbers that cannot be expressed this way. They are 'unruly' decimals.",
+            "Key distinction: The decimal expansion is the tell-tale sign. If it stops or repeats, it's rational. If it goes on forever without a pattern, it's irrational.",
+            "Transition: Let's look at how these definitions manifest visually and in their properties."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Split screen reveal for definitions"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "core_concept_a_visual",
+          "templateSlideTitle": "Visualizing the Number Line Gaps",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "core_concept_b_visual",
+          "slideTitle": "The Real Number Line: Filling the Gaps",
+          "learningOutcomeIds": [
+            "LO-3-Identify"
+          ],
+          "topicCoverage": [
+            "Number Line Representation",
+            "Density of Rational Numbers"
+          ],
+          "teacherIntent": "Use a visual to demonstrate that rational numbers are dense but do not fill the entire line.",
+          "studentTakeaway": "The number line is continuous; irrational numbers fill the gaps between rationals.",
+          "layout": "diagram-focused",
+          "bulletPoints": [
+            "Rational points are everywhere...",
+            "...but there are still holes!",
+            "Irrationals fill every gap."
+          ],
+          "onSlideText": [
+            "Q is Dense in R",
+            "Every point on the line corresponds to a Real Number"
+          ],
+          "speakerNotes": [
+            "Draw or display a number line. Mark integers, then fractions.",
+            "Explain that between any two rational numbers, there are infinitely many others (density).",
+            "Crucial Point: Even with infinite rationals, the line is not complete until we add irrationals like √2 and π.",
+            "Transition: Now let's see how to actually locate these tricky irrational points on a physical number line."
+          ],
+          "visualAttribution": {
+            "visualPlan": "A detailed diagram of a number line showing rational numbers as dots, with 'gaps' highlighted where irrationals reside.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Concept map connecting Rational Numbers and Irrational Numbers to form the complete Real Number Line.",
+          "assets": [
+            {
+              "purpose": "Visual aid for number line density",
+              "searchQuery": "rational numbers dense on real line diagram",
+              "sourceSite": "Math is Fun",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Number Line Density Concept",
+              "altText": "Diagram showing rational points densely packed but with gaps filled by irrational numbers.",
+              "placementHint": "Center of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate dots appearing on line",
+            "Highlight gaps in red"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example: Locating √2 on the Number Line",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "core_concept_b_visual",
+          "slideTitle": "Locating Irrational Numbers Geometrically",
+          "learningOutcomeIds": [
+            "LO-3-Identify"
+          ],
+          "topicCoverage": [
+            "Geometric Construction of √2",
+            "Pythagorean Theorem Application"
+          ],
+          "teacherIntent": "Demonstrate the geometric method to locate an irrational number on a line.",
+          "studentTakeaway": "I can use a right-angled triangle with sides 1 and 1 to find the length √2, then transfer it to the number line.",
+          "layout": "step-by-step-diagram",
+          "bulletPoints": [
+            "Construct unit square (side=1)",
+            "Diagonal = hypotenuse of right triangle",
+            "Use compass to mark on number line"
+          ],
+          "onSlideText": [
+            "Step 1: Right Triangle with legs 1, 1",
+            "Step 2: Hypotenuse length is √(1²+1²) = √2",
+            "Step 3: Transfer to number line"
+          ],
+          "speakerNotes": [
+            "Walk through the construction step-by-step.",
+            "Explain that by Pythagoras theorem, a triangle with legs of length 1 has a hypotenuse of √2.",
+            "Show how we use a compass centered at 0 to mark this distance on the number line.",
+            "Emphasize: This proves √2 exists as a physical point even though it's not a fraction.",
+            "Transition: Now you will try to apply this logic yourself."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "Construction of √2",
+            "type": "geometric-construction",
+            "instructions": [
+              "Draw a right triangle with vertices at (0,0), (1,0), and (1,1).",
+              "Label the hypotenuse as '√2'.",
+              "Show an arc from origin to point on x-axis."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'><rect width='100%' height='100%' fill='#f8f9fa'/><line x1='50' y1='250' x2='350' y2='250' stroke='#333' stroke-width='2'/><text x='60' y='270'>0</text><text x='140' y='270'>1</text><polygon points='50,250 150,250 150,150' fill='#e6b925' stroke='#333'/><line x1='50' y1='250' x2='150' y2='150' stroke='#d4a017' stroke-width='3'/><text x='80' y='265'>1</text><text x='155' y='200'>1</text><path d='M 50,250 A 141.4 141.4 0 0 1 191.4,250' fill='none' stroke='#d4a017' stroke-width='3'/></svg>"
+          },
+          "animationHints": [
+            "Draw triangle first",
+            "Highlight hypotenuse",
+            "Show compass arc"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice: Classifying Numbers",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "worked_example",
+          "slideTitle": "Classify These Numbers",
+          "learningOutcomeIds": [
+            "LO-1-Classify"
+          ],
+          "topicCoverage": [
+            "Classification Practice",
+            "Decimal Expansion Analysis"
+          ],
+          "teacherIntent": "Have students actively classify numbers and justify their reasoning.",
+          "studentTakeaway": "I can look at a number's form or decimal expansion to determine if it is rational or irrational.",
+          "layout": "interactive-list",
+          "bulletPoints": [
+            "Is 0.375 Rational?",
+            "Is √12 Irrational?",
+            "Is π Rational?"
+          ],
+          "onSlideText": [
+            "Task: Classify and Justify",
+            "A) 0.375 (Terminating)",
+            "B) √12 (Simplify first)"
+          ],
+          "speakerNotes": [
+            "Present the numbers one by one.",
+            "For A: Ask 'Does it terminate?' Yes, so Rational.",
+            "For B: Simplify to 2√3. Since √3 is irrational, product is irrational.",
+            "Encourage students to shout out answers and explain why (e.g., 'It doesn't repeat').",
+            "Transition: Let's check your understanding with a quick quiz."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal questions one by one"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Assessment: Check Your Understanding",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "guided_practice",
+          "slideTitle": "Exit Ticket Questions",
+          "learningOutcomeIds": [
+            "LO-2-Distinguish"
+          ],
+          "topicCoverage": [
+            "Formative Assessment",
+            "Concept Check"
+          ],
+          "teacherIntent": "Evaluate individual student understanding of the core concepts.",
+          "studentTakeaway": "I can correctly identify rational vs irrational numbers and explain why.",
+          "layout": "assessment-grid",
+          "bulletPoints": [
+            "1. Is 0.5 Rational?",
+            "2. Can √3 be written as p/q?",
+            "3. What is the decimal type for Irrationals?"
+          ],
+          "onSlideText": [
+            "True/False & Short Answer",
+            "Time: 3 Minutes"
+          ],
+          "speakerNotes": [
+            "Ask students to write answers on a slip of paper or raise hands.",
+            "Q1: True. Terminating decimal is rational.",
+            "Q2: False. It cannot be written as p/q.",
+            "Q3: Non-terminating and non-recurring.",
+            "Transition: Let's wrap up the key ideas we've covered today."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in questions"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Summary: Key Takeaways",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "quick_assessment",
+          "slideTitle": "What We Learned Today",
+          "learningOutcomeIds": [
+            "LO-3-Identify"
+          ],
+          "topicCoverage": [
+            "Lesson Recap",
+            "Key Definitions"
+          ],
+          "teacherIntent": "Synthesize the lesson and reinforce the main distinctions.",
+          "studentTakeaway": "Real numbers include both rational (fractions) and irrational (non-repeating decimals), filling every point on the number line.",
+          "layout": "bullet-summary",
+          "bulletPoints": [
+            "Rational: p/q form, terminating/recurring decimals",
+            "Irrational: Non-terminating, non-recurring",
+            "Real Numbers = Rational + Irrational"
+          ],
+          "onSlideText": [
+            "1. Classification Hierarchy",
+            "2. Decimal Properties",
+            "3. Geometric Location of √n"
+          ],
+          "speakerNotes": [
+            "Recap the three main points.",
+            "Remind them that 'Real' means it exists on the number line physically.",
+            "Highlight that irrational numbers are not rare; they make up most of the real number line!",
+            "Transition: Now, let's prepare for what comes next."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Bullet points appear sequentially"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Homework & Next Session Preview",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Practice and Looking Ahead",
+          "learningOutcomeIds": [
+            "LO-3-Identify"
+          ],
+          "topicCoverage": [
+            "Homework Assignment",
+            "Session Preview"
+          ],
+          "teacherIntent": "Assign practice tasks to reinforce learning and preview the next session's content.",
+          "studentTakeaway": "I have specific problems to solve at home, and I know we will explore Euclid's Division Lemma next time.",
+          "layout": "text-block",
+          "bulletPoints": [
+            "Homework: Classify 10 numbers (p.25)",
+            "Locate √3 on number line",
+            "Next Session: Euclid's Division Lemma"
+          ],
+          "onSlideText": [
+            "Assignment Due Tomorrow",
+            "Preview: The Algorithm of Numbers"
+          ],
+          "speakerNotes": [
+            "Assign the textbook exercises focusing on classification and geometric location.",
+            "Ask students to try locating √3 using a similar method to √2 (hypotenuse of 1, sqrt(2) triangle).",
+            "Preview: 'Tomorrow we will learn how Euclid's Division Lemma helps us find HCF.'",
+            "Closing: Thank you for your participation."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in homework details"
+          ],
+          "timeEstimateMinutes": 3
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Number System - Session 1: Introduction to Real Numbers",
+      "keyInformation": [
+        "Session covers classification of numbers and introduction to irrational numbers.",
+        "Focus on rational vs. irrational decimal expansions.",
+        "Includes geometric construction for locating √2."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Plan: Number System - Session 1",
+      "sections": [
+        "Introduction and Learning Outcomes",
+        "Prerequisite Knowledge Review",
+        "Hook: The Mystery of Missing Numbers",
+        "Core Concepts: Rational vs. Irrational Definitions",
+        "Visualizing the Real Number Line",
+        "Worked Example: Locating √2",
+        "Guided Practice and Assessment",
+        "Summary and Homework Assignment"
+      ]
+    }
+  }
+}

@@ -6973,8 +6973,13 @@ export default function App() {
       .forEach((allocation) => {
         const chapterTotalSessions = Math.max(1, Number(allocation.estimatedSessions || 0));
         for (let chapterSessionNumber = 1; chapterSessionNumber <= chapterTotalSessions; chapterSessionNumber += 1) {
+          const outlineId = [
+            allocation.id || allocation.chapterName || "session",
+            allocation.sequence || globalSessionNumber,
+            chapterSessionNumber,
+          ].join("::");
           outline.push({
-            id: allocation.id || `${allocation.chapterName}-${allocation.sequence || globalSessionNumber}-${chapterSessionNumber}`,
+            id: outlineId,
             sessionNumber: globalSessionNumber,
             title:
               chapterTotalSessions === 1
@@ -7231,9 +7236,21 @@ export default function App() {
     syncTermRowsFromAllocations(sourceAllocations);
   };
 
+  type WorkspaceViewMode = "planning" | "content_generation" | "full";
+
+  const getWorkspaceRestoreView = (workspace?: PlanningWorkspace | null): WorkspaceViewMode => {
+    if (
+      workspace?.phase === "content_generation" ||
+      (Array.isArray(workspace?.generatedArtifacts) && workspace!.generatedArtifacts.length > 0)
+    ) {
+      return "content_generation";
+    }
+    return "planning";
+  };
+
   const loadPlanningWorkspaceById = async (
     workspaceId: string,
-    options?: { view?: "planning" | "full" }
+    options?: { view?: WorkspaceViewMode }
   ) => {
     if (!workspaceId) return null;
     const view = options?.view || "planning";
@@ -7253,7 +7270,7 @@ export default function App() {
 
   const ensurePlanningWorkspaceForCurriculum = async (
     curriculumId: string,
-    options?: { view?: "planning" | "full" }
+    options?: { view?: WorkspaceViewMode }
   ) => {
     if (!curriculumId) return null;
     const view = options?.view || "planning";
@@ -7293,7 +7310,7 @@ export default function App() {
     try {
       const [res, workspace] = await Promise.all([
         fetchWithBootstrapRetry(`/api/curriculums/${curriculumId}`, undefined, "curriculum restore"),
-        ensurePlanningWorkspaceForCurriculum(curriculumId, { view: "planning" }),
+        ensurePlanningWorkspaceForCurriculum(curriculumId, { view: "content_generation" }),
       ]);
       if (!res.ok) {
         throw new Error(await readErrorFromResponse(res, "Failed to restore curriculum."));
@@ -7363,7 +7380,7 @@ export default function App() {
         await savedCurriculumsPromise;
         const lastWorkspaceId = localStorage.getItem(LAST_WORKSPACE_ID_KEY);
         if (lastWorkspaceId) {
-          await loadPlanningWorkspaceById(lastWorkspaceId, { view: "planning" });
+          await loadPlanningWorkspaceById(lastWorkspaceId, { view: "content_generation" });
         }
       } catch (error: any) {
         console.error("[Frontend] Initial restore failed", error);
@@ -7376,23 +7393,50 @@ export default function App() {
   }, [activeWorkspace]);
 
   useEffect(() => {
+    if (!currentWorkspaceId || !activeWorkspace) {
+      return;
+    }
+    if (getWorkspaceRestoreView(activeWorkspace) !== "content_generation") {
+      return;
+    }
+    const hasGeneratedSessions =
+      activeWorkspace.generationScope &&
+      typeof activeWorkspace.generationScope === "object" &&
+      (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions &&
+      typeof (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions === "object";
+    if (hasGeneratedSessions) {
+      return;
+    }
+
+    void loadPlanningWorkspaceById(currentWorkspaceId, { view: "content_generation" }).catch((error: any) => {
+      console.error("[Frontend] Content-generation workspace refresh failed", error);
+    });
+  }, [activeWorkspace, currentWorkspaceId]);
+
+  useEffect(() => {
     setSessionConfig(buildSessionConfigFromWorkspace(activeWorkspace));
-    const generatedFromWorkspace =
+    const generatedSessions =
       activeWorkspace?.generationScope &&
       typeof activeWorkspace.generationScope === "object" &&
       (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions &&
       typeof (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions === "object"
-        ? Object.fromEntries(
-            Object.entries((activeWorkspace.generationScope as Record<string, unknown>).generatedSessions as Record<string, SessionPlan>).map(([key, value]) => [
-              value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
-              {
-                ...value,
-                sessionKey: value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
-                sessionNumber: Number(value.sessionNumber || 0) || Number(key) || value.sessionNumber,
-              },
-            ])
-          )
-        : {};
+        ? (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions as Record<string, SessionPlan>
+        : null;
+
+    if (!generatedSessions) {
+      return;
+    }
+
+    const generatedFromWorkspace = Object.fromEntries(
+      Object.entries(generatedSessions).map(([key, value]) => [
+        value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
+        {
+          ...value,
+          sessionKey: value.sessionKey || key || getOutlineSessionKey({ sessionNumber: value.sessionNumber, title: value.title }),
+          sessionNumber: Number(value.sessionNumber || 0) || Number(key) || value.sessionNumber,
+        },
+      ])
+    );
     setGeneratedSessionsByKey(generatedFromWorkspace || {});
   }, [activeWorkspace]);
 
@@ -9403,7 +9447,7 @@ export default function App() {
                 <div>
                   <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider font-sans">Curriculum</span>
                   <h4 className="font-display font-black text-slate-800 text-sm">
-                    {extractedData?.units ? `${extractedData.units.length} Units` : "0 Units"}
+                    {canonicalUnitsCount ? `${canonicalUnitsCount} Units` : "0 Units"}
                   </h4>
                   <p className="text-[11px] text-slate-450 font-bold font-sans">
                     {extractedData?.gradeLevel || "Awaiting extraction"}
@@ -9979,7 +10023,18 @@ export default function App() {
               {dashboardTab === "curriculum" && (
                 <div className="space-y-4 animate-[fadeIn_0.3s_ease-out] font-sans">
                   {(() => {
-                    const activeUnits = extractedData?.units || [];
+                    const activeUnits = normalizedUnits.length > 0
+                      ? normalizedUnits.map((unit: any, idx: number) => ({
+                          unitId: unit?.unit_id || unit?.unitId || idx + 1,
+                          unitName: unit?.unit_name || unit?.unitName || "",
+                          description: unit?.description || "",
+                          topics: Array.isArray(unit?.topics)
+                            ? unit.topics
+                            : Array.isArray(unit?.chapters)
+                              ? unit.chapters.flatMap((chapter: any) => Array.isArray(chapter?.topics) ? chapter.topics : [])
+                              : [],
+                        }))
+                      : (extractedData?.units || []);
 
                     return (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -11566,7 +11621,7 @@ export default function App() {
                             generatedSessionArtifactKeys.has(itemSessionKey) ||
                             Boolean(generatedSessionsByKey[itemSessionKey]);
                           return (
-                            <option key={item.id} value={item.sessionNumber}>
+                            <option key={itemSessionKey || item.id || item.sessionNumber} value={item.sessionNumber}>
                               {`Session ${item.sessionNumber} • ${item.title} • ${item.sessionKind === "strand_practice" ? "Practice" : "Lesson"} • ${hasDeepData ? "Ready" : "Pending"}`}
                             </option>
                           );
