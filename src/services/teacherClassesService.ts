@@ -42,10 +42,9 @@ export interface TeacherClassDetail extends TeacherClassCard {
   evaluationResults: { id: string; studentName: string; marks: number; percentage: number; grade: string }[];
 }
 
+import { buildApiUrl } from "../utils/apiBaseUrl";
+
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 function getAuthSession() {
   try {
@@ -69,7 +68,7 @@ function buildTeacherScopedPath(path: string) {
 }
 
 async function fetchJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${BACKEND_URL}${buildTeacherScopedPath(path)}`);
+  const response = await fetch(buildApiUrl(buildTeacherScopedPath(path)));
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
     throw new Error(errorData?.error || `Request failed with HTTP ${response.status}`);

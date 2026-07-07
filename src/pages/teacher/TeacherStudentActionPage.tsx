@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getTeacherClasses } from "../../services/teacherClassesService";
 import { endDevTimer, startDevTimer } from "../../utils/devTiming";
+import { buildApiUrl } from "../../utils/apiBaseUrl";
 
 type StudentActionType = "homework" | "assessments";
 
@@ -56,9 +57,6 @@ const sectionConfig: Record<StudentActionType, { label: string }> = {
 };
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 function getSession() {
   try {
@@ -365,7 +363,7 @@ export function TeacherStudentActionPage() {
   const loadSubmissions = () => {
     const session = getSession();
     if (!session?.id) return Promise.resolve();
-    return fetch(`${BACKEND_URL}/api/teacher/submissions?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId || "")}`)
+    return fetch(buildApiUrl(`/api/teacher/submissions?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId || "")}`))
       .then(async (response) => {
         if (!response.ok) {
           const errorData = await response.json().catch(() => null);
@@ -552,7 +550,7 @@ export function TeacherStudentActionPage() {
     setDeletingId(submissionId);
     try {
       const response = await fetch(
-        `${BACKEND_URL}/api/teacher/submissions/${encodeURIComponent(type)}/${encodeURIComponent(submissionId)}?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId || "")}`,
+        buildApiUrl(`/api/teacher/submissions/${encodeURIComponent(type)}/${encodeURIComponent(submissionId)}?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId || "")}`),
         { method: "DELETE" },
       );
       if (!response.ok) {

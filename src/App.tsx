@@ -44,6 +44,7 @@ import {
   Database
 } from "lucide-react";
 import { ActionToast } from "./components/ActionToast";
+import { buildApiUrl } from "./utils/apiBaseUrl";
 import {
   AcademicConfig,
   CurriculumClassOptionsResponse,
@@ -347,15 +348,12 @@ export default function App() {
   const LAST_WORKSPACE_ID_KEY = "lms:lastWorkspaceId";
   const location = useLocation();
   const navigate = useNavigate();
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL ||
-    `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
   const apiUrl = useCallback((path: string) => {
     if (/^https?:\/\//i.test(path)) {
       return path;
     }
-    return `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
-  }, [API_BASE_URL]);
+    return buildApiUrl(path);
+  }, []);
   const authSession = useMemo(() => getAuthSession(), []);
   // Navigation & Step Management
   // 0: Dashboard, 1: Upload & Extract, 2: Term Planner, 3: Session Specs & Roadmap, 4: Lesson Plan Delivery Outlines, 5: Saved Curriculums
@@ -3809,6 +3807,117 @@ export default function App() {
   };
 
   const buildSimplePdfBlob = (title: string, text: string) => {
+    const containsNonAscii = /[^\u0000-\u00ff]/.test(text);
+    if (containsNonAscii) {
+      // Render Unicode text (e.g., Hindi) onto canvases and embed as images in PDF
+      const pageWidth = 612;
+      const pageHeight = 792;
+      const marginX = 54;
+      const topY = 54;
+      const bottomY = 56;
+      const titleFontSize = 18;
+      const bodyFontSize = 11;
+
+      const renderPages = (): Array<HTMLCanvasElement> => {
+        const canvases: HTMLCanvasElement[] = [];
+        let canvas = document.createElement("canvas");
+        canvas.width = pageWidth;
+        canvas.height = pageHeight;
+        let ctx = canvas.getContext("2d")!;
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, pageWidth, pageHeight);
+        ctx.fillStyle = "#000000";
+        ctx.textBaseline = "top";
+
+        const maxWidth = pageWidth - marginX * 2;
+        let cursorY = topY;
+
+        // draw title
+        ctx.font = `700 ${titleFontSize}px Noto Sans, Noto Sans Devanagari, Arial`;
+        const titleLines = (title || "").split(/\r?\n/);
+        for (const line of titleLines) {
+          const words = line.split(/\s+/);
+          let current = "";
+          for (const word of words) {
+            const candidate = current ? `${current} ${word}` : word;
+            const width = ctx.measureText(candidate).width;
+            if (width <= maxWidth) {
+              current = candidate;
+            } else {
+              ctx.fillText(current, marginX, cursorY);
+              cursorY += Math.ceil(titleFontSize * 1.3);
+              current = word;
+            }
+          }
+          if (current) {
+            ctx.fillText(current, marginX, cursorY);
+            cursorY += Math.ceil(titleFontSize * 1.3);
+          }
+        }
+        cursorY += 8;
+
+        // draw body
+        ctx.font = `${bodyFontSize}px Noto Sans, Noto Sans Devanagari, Arial`;
+        const paragraphs = text.split(/\r?\n/);
+        for (const para of paragraphs) {
+          if (!para) {
+            cursorY += Math.ceil(bodyFontSize * 0.8);
+            continue;
+          }
+          const words = para.split(/\s+/);
+          let current = "";
+          for (const word of words) {
+            const candidate = current ? `${current} ${word}` : word;
+            const width = ctx.measureText(candidate).width;
+            if (width <= maxWidth) {
+              current = candidate;
+            } else {
+              if (cursorY + bodyFontSize > pageHeight - bottomY) {
+                canvases.push(canvas);
+                canvas = document.createElement("canvas");
+                canvas.width = pageWidth;
+                canvas.height = pageHeight;
+                ctx = canvas.getContext("2d")!;
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, pageWidth, pageHeight);
+                ctx.fillStyle = "#000000";
+                ctx.textBaseline = "top";
+                ctx.font = `${bodyFontSize}px Noto Sans, Noto Sans Devanagari, Arial`;
+                cursorY = topY;
+              }
+              ctx.fillText(current, marginX, cursorY);
+              cursorY += Math.ceil(bodyFontSize * 1.25);
+              current = word;
+            }
+          }
+          if (current) {
+            if (cursorY + bodyFontSize > pageHeight - bottomY) {
+              canvases.push(canvas);
+              canvas = document.createElement("canvas");
+              canvas.width = pageWidth;
+              canvas.height = pageHeight;
+              ctx = canvas.getContext("2d")!;
+              ctx.fillStyle = "#ffffff";
+              ctx.fillRect(0, 0, pageWidth, pageHeight);
+              ctx.fillStyle = "#000000";
+              ctx.textBaseline = "top";
+              ctx.font = `${bodyFontSize}px Noto Sans, Noto Sans Devanagari, Arial`;
+              cursorY = topY;
+            }
+            ctx.fillText(current, marginX, cursorY);
+            cursorY += Math.ceil(bodyFontSize * 1.25);
+          }
+          cursorY += Math.ceil(bodyFontSize * 0.8);
+        }
+
+        canvases.push(canvas);
+        return canvases;
+      };
+
+      const canvases = renderPages();
+      const images = canvases.map((c) => ({ bytes: imageDataUrlToJpegBytes(c.toDataURL("image/jpeg", 0.94)), width: c.width, height: c.height }));
+      return buildImagePdfBlob(images);
+    }
     const pageWidth = 612;
     const pageHeight = 792;
     const marginX = 54;
@@ -7071,20 +7180,21 @@ export default function App() {
       throw new Error(await readErrorFromResponse(res, "Failed to load saved session content."));
     }
     const data = await res.json();
-    const sessionPlan = data.sessionPlan as SessionPlan;
+    const sessionPlan = data.sessionPlan as SessionPlan | null;
     setGeneratedSessionsByKey((prev) => {
       const existingSession = prev[sessionKey] || findGeneratedSessionForOutline(prev, { sessionNumber: sessionNum, ...outlineItem }) || undefined;
+      const sessionObj = sessionPlan || {} as SessionPlan;
       return {
         ...prev,
         [sessionKey]: {
           ...existingSession,
           ...(outlineItem || {}),
-          ...sessionPlan,
-          id: sessionPlan.id || outlineItem?.id || existingSession?.id || `session-${sessionNum}`,
-          sessionKey: sessionPlan.sessionKey || sessionKey,
-          title: sessionPlan.title || outlineItem?.title || existingSession?.title || `Session ${sessionNum}`,
-          duration: sessionPlan.duration || outlineItem?.duration || existingSession?.duration || 45,
-          sessionNumber: Number(sessionPlan.sessionNumber || sessionNum),
+          ...sessionObj,
+          id: sessionObj.id || outlineItem?.id || existingSession?.id || `session-${sessionNum}`,
+          sessionKey: sessionObj.sessionKey || sessionKey,
+          title: sessionObj.title || outlineItem?.title || existingSession?.title || `Session ${sessionNum}`,
+          duration: sessionObj.duration || outlineItem?.duration || existingSession?.duration || 45,
+          sessionNumber: Number(sessionObj.sessionNumber || sessionNum),
         },
       };
     });
@@ -9208,13 +9318,8 @@ export default function App() {
     const targetOutline = outlineItem || sessionsOutline.find((item) => item.sessionNumber === (sessionNum || activeSessionNumber));
     if (!targetOutline) return;
     const targetSessionNumber = sessionNum || targetOutline.sessionNumber;
-    const currentSession = findGeneratedSessionForOutline(generatedSessionsByKey, targetOutline);
     if (tabId === "assessments") {
       const customization = getAssessmentCustomization(targetSessionNumber);
-      if (!hasAssessmentSourceContent(currentSession)) {
-        setErrorHeader("Generate session teaching content first before creating the assessment.");
-        return;
-      }
       if (!customization.questionTypes?.length || !customization.totalMarks || !customization.totalQuestions) {
         setErrorHeader("Add at least one assessment question type with marks before generating the assessment.");
         return;

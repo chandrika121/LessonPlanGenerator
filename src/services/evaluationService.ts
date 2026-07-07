@@ -1,8 +1,7 @@
+import { buildApiUrl } from "../utils/apiBaseUrl";
+
 export type EvaluationType = "session" | "lesson" | "term";
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 export interface EvaluationAssessment {
   id: string;
@@ -245,7 +244,7 @@ export async function startEvaluation(_payload: {
 }) {
   await wait(300);
   const session = getSession();
-  const response = await fetch(`${BACKEND_URL}/api/evaluations`, {
+  const response = await fetch(buildApiUrl("/api/evaluations"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -337,7 +336,7 @@ export async function saveEvaluation(payload: {
       status: "saved" as const,
     };
   }
-  const response = await fetch(`${BACKEND_URL}/api/evaluations/${payload.evaluationId}/save-results`, {
+  const response = await fetch(buildApiUrl(`/api/evaluations/${payload.evaluationId}/save-results`), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

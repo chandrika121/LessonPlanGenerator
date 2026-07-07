@@ -168,14 +168,13 @@ function getTeachersDetail(id: string): TeacherDetail {
 
 // ─── Helper ─────────────────────────────────────────────────────────────────
 
+import { buildApiUrl } from "../utils/apiBaseUrl";
+
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 const delay = 300;
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 async function fetchJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${BACKEND_URL}${path}`);
+  const response = await fetch(buildApiUrl(path));
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
     throw new Error(errorData?.error || `Request failed with HTTP ${response.status}`);
@@ -341,7 +340,7 @@ export async function getReports(): Promise<ReportData> {
 // ─── Report Download (Real API) ──────────────────────────────────────────
 
 export async function downloadReport(reportKey: string, format: "pdf" | "xlsx"): Promise<Blob> {
-  const url = `${BACKEND_URL}/api/reports/download/${reportKey}/${format}`;
+  const url = buildApiUrl(`/api/reports/download/${reportKey}/${format}`);
   const response = await fetch(url);
 
   if (!response.ok) {

@@ -1,0 +1,724 @@
+{
+  "assessment": {
+  "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 10,
+      "totalQuestions": 8,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 4,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+  "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Define Social Science and its constituent disciplines.",
+        "Distinguish between the aims of different social science branches."
+      ],
+      "assessedConcepts": [
+        "Definition of Social Science",
+        "Disciplines: History, Geography, Political Science, Economics",
+        "Interdisciplinary nature of Social Sciences"
+      ],
+      "conceptCoveragePriorities": [
+        "Understanding the scope and definition of Social Science as a collective field."
+      ],
+      "misconceptionTargets": [
+        "Confusing specific social science disciplines with the overarching subject.",
+        "Believing Social Science is only about memorizing dates or facts without understanding societal patterns."
+      ],
+      "competencyFocus": [
+        "Application",
+        "Evaluation"
+      ]
+    },
+  "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-assessment",
+          "title": "Assessment",
+          "marks": 10,
+          "questionCount": 8,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8"
+          ],
+          "focus": "Session-aligned assessment focus on definitions and disciplinary distinctions."
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Definition of Social Science",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Disciplines and their focus",
+          "questionRefs": [
+            "q3",
+            "q4",
+            "q5"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        },
+        {
+          "concept": "Interdisciplinary connections",
+          "questionRefs": [
+            "q6",
+            "q7",
+            "q8"
+          ],
+          "competency": "Evaluation/Creation",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define Social Science and its constituent disciplines.",
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3"
+          ]
+        },
+        {
+          "outcome": "Distinguish between the aims of different social science branches.",
+          "questionRefs": [
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 37.5,
+        "medium": 50,
+        "hard": 12.5
+      },
+      "bloomsDistribution": {
+        "recall": 25,
+        "understanding": 37.5,
+        "application": 25,
+        "analysis": 6.25,
+        "evaluation": 6.25
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 3,
+        "evaluation": 1
+      },
+      "questionDistribution": {
+        "mcq": 4,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Assessment",
+          "minutes": 15
+        }
+      ]
+    },
+  "paper": {
+      "instructions": [
+        "Attempt all questions.",
+        "Answer based strictly on the concepts taught in Session 1: Understanding Social Science.",
+        "Write answers clearly and concisely."
+      ],
+      "sections": [
+        {
+          "id": "section-assessment",
+          "title": "Assessment",
+          "marks": 10,
+          "questionCount": 8,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8"
+          ],
+          "source": "fallback"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following best defines Social Science?",
+          "options": [
+            "A. The study of natural phenomena and physical laws.",
+            "B. The collective study of human society, social relationships, and institutions.",
+            "C. A branch of science dealing exclusively with biological organisms.",
+            "D. The mathematical analysis of economic data only."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Definition of Social Science"
+          ],
+          "topicCoverage": [
+            "Understanding Social Science"
+          ],
+          "subtopicCoverage": [
+            "Scope and Definition"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Introduction to Social Science"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Social Science is often described as an interdisciplinary field. What does this imply?",
+          "options": [
+            "A. It relies solely on historical facts.",
+            "B. It integrates knowledge from various disciplines like History, Geography, and Economics to understand society.",
+            "C. It excludes the study of political systems.",
+            "D. It is a single subject with no sub-disciplines."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Interdisciplinary nature of Social Sciences"
+          ],
+          "topicCoverage": [
+            "Understanding Social Science"
+          ],
+          "subtopicCoverage": [
+            "Disciplinary Integration"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Structure of Social Science"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which discipline within Social Science primarily focuses on the study of past events and human actions over time?",
+          "options": [
+            "A. Geography",
+            "B. Economics",
+            "C. History",
+            "D. Political Science"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Disciplines: History, Geography, Political Science, Economics"
+          ],
+          "topicCoverage": [
+            "Understanding Social Science"
+          ],
+          "subtopicCoverage": [
+            "History Focus"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Disciplinary knowledge",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Branches of Social Science"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "A student wants to study how government policies affect the distribution of wealth in a country. Which branch is most relevant?",
+          "options": [
+            "A. History and Geography only.",
+            "B. Economics, as it studies production, consumption, and distribution of resources.",
+            "C. Political Science alone, without economic context.",
+            "D. Biology."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Disciplines: Economics focus"
+          ],
+          "topicCoverage": [
+            "Understanding Social Science"
+          ],
+          "subtopicCoverage": [
+            "Application of Disciplines"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Real-world application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session 1: Application of Economics"
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "veryShortAnswer",
+          "subtype": "short_answer",
+          "prompt": "Name the two main branches of Social Science that deal with 'space' and 'time'.",
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Disciplines: Geography and History"
+          ],
+          "topicCoverage": [
+            "Understanding Social Science"
+          ],
+          "subtopicCoverage": [
+            "Core Disciplines"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Terminology accuracy",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Core Branches"
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "veryShortAnswer",
+          "subtype": "short_answer",
+          "prompt": "Why is it important to study Social Science in the context of 'Understanding Society'?",
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Purpose of Social Science"
+          ],
+          "topicCoverage": [
+            "Understanding Social Science"
+          ],
+          "subtopicCoverage": [
+            "Relevance to Society"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Scientific communication",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session 1: Importance of Social Science"
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "short_answer",
+          "prompt": "Evaluate the statement: 'Social Science is just a collection of facts.' Do you agree or disagree? Justify your answer with one reason.",
+          "marks": 2,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Nature of Social Science Inquiry"
+          ],
+          "topicCoverage": [
+            "Understanding Social Science"
+          ],
+          "subtopicCoverage": [
+            "Critical Thinking about the Subject"
+          ],
+          "bloomsLevel": "evaluation",
+          "competencyTag": "Evaluation and Reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session 1: Methodology of Social Science"
+          ]
+        },
+        {
+          "id": "q8",
+          "questionNumber": 8,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "short_answer",
+          "prompt": "Create a brief scenario where you would need to use knowledge from both History and Geography together to solve a problem.",
+          "marks": 2,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Interdisciplinary connections"
+          ],
+          "topicCoverage": [
+            "Understanding Social Science"
+          ],
+          "subtopicCoverage": [
+            "Integration of Disciplines"
+          ],
+          "bloomsLevel": "create",
+          "competencyTag": "Creation and Synthesis",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Session 1: Interdisciplinary Nature"
+          ]
+        }
+      ]
+    },
+  "evaluation": {
+      "answerKey": {
+  "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. The collective study of human society, social relationships, and institutions.",
+            "explanation": "Social Science is defined as the systematic study of human society and social relationships, distinguishing it from natural sciences.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. It integrates knowledge from various disciplines like History, Geography, and Economics to understand society.",
+            "explanation": "Interdisciplinary means combining insights from multiple fields (History, Geo, Econ) rather than studying them in isolation.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "C. History",
+            "explanation": "History is the specific discipline dedicated to studying past events and human actions over time.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. Economics, as it studies production, consumption, and distribution of resources.",
+            "explanation": "Economics is the branch that specifically deals with resource allocation, wealth distribution, and policy impacts on economy.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "Geography (space) and History (time).",
+            "explanation": "These are the two foundational branches often cited for their focus on spatial distribution and temporal sequence respectively.",
+            "marks": 1,
+            "subtype": "short_answer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "It helps us understand how societies function, interact, and evolve over time.",
+            "explanation": "Social Science provides the framework to analyze social structures, behaviors, and changes within a community or nation.",
+            "marks": 1,
+            "subtype": "short_answer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "Disagree. Social Science involves analyzing patterns and relationships, not just memorizing facts.",
+            "explanation": "Social Science requires critical thinking to understand cause-and-effect in society, moving beyond rote fact collection.",
+            "marks": 2,
+            "subtype": "short_answer"
+          },
+          {
+            "questionId": "q8",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "Example: Planning a migration route for refugees requires understanding historical conflicts (History) and the terrain/climate of potential routes (Geography).",
+            "explanation": "The answer demonstrates how combining temporal context with spatial analysis solves complex real-world problems.",
+            "marks": 2,
+            "subtype": "short_answer"
+          }
+        ]
+},
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (C)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct identification of Geography and History.",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if both disciplines are named correctly in relation to space/time."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Valid reason explaining the importance of Social Science.",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for any valid point regarding understanding society or social interactions."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Clear stance (Agree/Disagree) with justification.",
+                "marks": 1
+              },
+              {
+                "criterion": "Valid reasoning regarding patterns vs. facts.",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for a clear position and logical argument supporting it."
+            ]
+          },
+          {
+            "questionId": "q8",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Scenario involves both History (time/past) and Geography (space/place).",
+                "marks": 1
+              },
+              {
+                "criterion": "The scenario logically requires the integration of these two fields.",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for a coherent, realistic example showing interdisciplinary application."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Student clearly states a position (Agree/Disagree).",
+                "marks": 1
+              },
+              {
+                "criterion": "Student provides a logical reason distinguishing Social Science from mere fact-memorization.",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "I disagree. Social science is about analyzing patterns and relationships in society, not just memorizing dates or names."
+          },
+          {
+            "questionId": "q8",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Scenario explicitly uses a historical element (e.g., past events, trends).",
+                "marks": 1
+              },
+              {
+                "criterion": "Scenario explicitly uses a geographical element (e.g., location, terrain, climate) and shows how they connect.",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "To plan where to build a new city after an earthquake: History tells us about past settlement patterns in the region, while Geography helps analyze current soil stability and water sources."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea.",
+        "For MCQs, only the correct option is accepted.",
+        "Accept synonyms that convey the same meaning as the sample answer."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Ensure students are not penalized for minor spelling errors if the term is recognizable.",
+        "Focus on the logic of the argument in short answers rather than exact wording."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers regarding interdisciplinary examples.",
+        "If a student provides an example that blends History and Geography but uses different terminology, award marks based on conceptual understanding."
+      ]
+    },
+  "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts including definitions, disciplines, and interdisciplinary applications.",
+        "Questions progress from basic recall to higher-order evaluation and creation tasks."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier MCQs to more demanding short answer questions requiring synthesis of ideas."
+      ]
+    },
+  "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (4 MCQs, 2 VSA, 2 SA)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total of 10."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to a valid section (Assessment)."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included. All questions relate to 'Understanding Social Science' session 1 concepts."
+        ]
+      }
+    }
+}
+}

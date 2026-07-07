@@ -1,0 +1,731 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":9,\"totalQuestions\":7,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Students will construct the point representing √n on a number line for small integers n.",
+        "Students will explain how geometric length corresponds to an irrational value."
+      ],
+      "assessedConcepts": [
+        "Geometric Representation of Irrational Numbers",
+        "Pythagorean Theorem application",
+        "Spiral of Theodorus construction method"
+      ],
+      "conceptCoveragePriorities": [
+        "Construction of √2 and √3 on the number line",
+        "Relationship between leg lengths and hypotenuse in right triangles"
+      ],
+      "misconceptionTargets": [
+        "Confusing addition of lengths with geometric hypotenuse calculation",
+        "Believing irrational numbers cannot be located on a line"
+      ],
+      "competencyFocus": [
+        "Application",
+        "Analysis"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Geometric construction of irrational numbers and Pythagorean theorem application"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Geometric Representation of Irrational Numbers",
+          "questionRefs": [
+            "q1",
+            {
+              "text": "",
+              "latex": "q^2",
+              "displayLatex": ""
+            },
+            {
+              "text": "",
+              "latex": "q^3",
+              "displayLatex": ""
+            },
+            "q4"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Pythagorean Theorem application",
+          "questionRefs": [
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will construct the point representing √n on a number line for small integers n.",
+          "questionRefs": [
+            {
+              "text": "",
+              "latex": "q^3",
+              "displayLatex": ""
+            },
+            "q5",
+            "q7"
+          ]
+        },
+        {
+          "outcome": "Students will explain how geometric length corresponds to an irrational value.",
+          "questionRefs": [
+            "q1",
+            "q4",
+            "q6"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 30,
+        "application": 35,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 3,
+        "application": 4,
+        "analysis": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Unit I: Number System",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session regarding the geometric representation of irrational numbers.",
+        "For construction-based questions, show your steps clearly."
+      ],
+      "sections": [
+        {
+          "id": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "What is the length of the hypotenuse of a right-angled triangle where both legs are of length 1?",
+          "options": [
+            "A. 1",
+            {
+              "text": "",
+              "latex": "B. \\sqrt{2}",
+              "displayLatex": ""
+            },
+            "C. 2",
+            {
+              "text": "",
+              "latex": "D. \\sqrt{3}",
+              "displayLatex": ""
+            }
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will construct the point representing √n on a number line for small integers n."
+          ],
+          "conceptRefs": [
+            "Geometric Representation of Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Irrational Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Introduction to Pythagoras Theorem"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "In the construction of √3 using the Spiral of Theodorus, what is the length of the new leg added to the hypotenuse of √2?",
+          "options": [
+            "A. 1",
+            {
+              "text": "",
+              "latex": "B. \\sqrt{2}",
+              "displayLatex": ""
+            },
+            "C. 2",
+            {
+              "text": "",
+              "latex": "D. \\sqrt{3}",
+              "displayLatex": ""
+            }
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will construct the point representing √n on a number line for small integers n."
+          ],
+          "conceptRefs": [
+            "Spiral of Theodorus construction method"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Irrational Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Core Explanation of Spiral Method"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following statements correctly describes why we use geometry to locate √2 on a number line?",
+          "options": [
+            "A. Because √2 is a rational number.",
+            "B. Because geometric construction provides an exact position even if the decimal value is infinite.",
+            "C. Because rulers can measure √2 exactly.",
+            "D. Because √2 is equal to 1.4."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will explain how geometric length corresponds to an irrational value."
+          ],
+          "conceptRefs": [
+            "Geometric Representation of Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Irrational Numbers"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Importance of geometric proof"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "State the value of √2 rounded to two decimal places.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One number",
+          "learningOutcomeRefs": [
+            "Students will construct the point representing √n on a number line for small integers n."
+          ],
+          "conceptRefs": [
+            "Geometric Representation of Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Irrational Numbers"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Numerical accuracy",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Examples of irrational values"
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Explain in one sentence why we cannot measure the length of √2 exactly with a standard ruler.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Students will explain how geometric length corresponds to an irrational value."
+          ],
+          "conceptRefs": [
+            "Geometric Representation of Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Irrational Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Misconceptions about measurement"
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Draw and label the construction of √5 on your number line. Show the calculation used to find its length.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Diagram and calculation",
+          "learningOutcomeRefs": [
+            "Students will construct the point representing √n on a number line for small integers n."
+          ],
+          "conceptRefs": [
+            "Pythagorean Theorem application"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Irrational Numbers"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Guided Practice and Session Summary"
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Calculate the hypotenuse length if one leg is 2 and the other leg is 1. Explain how this relates to constructing √5.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Calculation and explanation",
+          "learningOutcomeRefs": [
+            "Students will construct the point representing √n on a number line for small integers n."
+          ],
+          "conceptRefs": [
+            "Pythagorean Theorem application"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Irrational Numbers"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            {
+              "text": "Teacher notes concept reference:",
+              "latex": "Examples of constructing \\sqrt{5}",
+              "displayLatex": ""
+            }
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": {
+              "text": "",
+              "latex": "B. \\sqrt{2}",
+              "displayLatex": ""
+            },
+            "explanation": {
+              "text": "Using Pythagoras theorem:",
+              "latex": "1² + 1² = 2, so hypotenuse is \\sqrt{2}.",
+              "displayLatex": "1² + 1² = 2, so hypotenuse is \\sqrt{2}."
+            },
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "A. 1",
+            "explanation": "To get √3, we build a new right triangle using the hypotenuse of √2 as one leg and adding a perpendicular unit length (1).",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "B. Because geometric construction provides an exact position even if the decimal value is infinite.",
+            "explanation": "Geometry allows us to locate irrational numbers precisely on a line, proving they are not just imaginary.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "1.41",
+            "explanation": "The value of √2 is approximately 1.4142...",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Because it is an irrational number; the decimal goes on forever without repeating.",
+            "explanation": "Standard rulers have finite precision and cannot represent infinite non-repeating decimals exactly.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": {
+              "text": "Construction:",
+              "latex": "Draw a right triangle with legs 2 and 1. Hypotenuse = √(2² + 1²) = \\sqrt{5}.",
+              "displayLatex": "Draw a right triangle with legs 2 and 1. Hypotenuse = √(2² + 1²) = \\sqrt{5}."
+            },
+            "explanation": "The student must show the diagram of the triangle on the number line and correctly calculate the hypotenuse as √5.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Hypotenuse = √(2² + 1²) = √5. This relates to constructing √5 by using legs of length 2 and 1.",
+            "explanation": "The calculation confirms that a triangle with sides 2 and 1 results in a hypotenuse of √5.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct value (1.41)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for the correct rounded value."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mentioning irrational nature or infinite decimal",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if the student identifies that the number cannot be measured exactly due to its irrational nature."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct diagram showing legs 2 and 1",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct calculation (√5)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for the correct geometric construction and 1 mark for the correct algebraic result."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct calculation (√5)",
+                "marks": 1
+              },
+              {
+                "criterion": "Clear explanation linking to √5 construction",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for correct math and logical connection."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "First valid point",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Draw a right triangle with base 2 and height 1. Label the hypotenuse as √5."
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "First valid point",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Hypotenuse = √(2² + 1²) = √5. This shows that a triangle with sides 2 and 1 creates the length √5."
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Draw a right triangle with base 2 and height 1. Label the hypotenuse as √5."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Hypotenuse = √(2² + 1²) = √5. This shows that a triangle with sides 2 and 1 creates the length √5."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts focusing on geometric construction and Pythagorean application."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier to more demanding questions."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Requested questions: 7",
+          "Generated questions: 7"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Requested marks: 9",
+          "Generated marks: 9"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Unit I: Number System: 7 question(s), 9 mark(s)"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Answer key items: 7",
+          "Marking scheme items: 7",
+          "Rubric-linked questions: 4"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

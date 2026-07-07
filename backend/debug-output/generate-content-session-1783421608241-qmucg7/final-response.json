@@ -1,0 +1,692 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "Hindi",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":9,\"totalQuestions\":7,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "श्रवण कौशल के मूल सिद्धांतों को पहचानना",
+        "सुने गए संदेश का सार तैयार करना"
+      ],
+      "assessedConcepts": [
+        "श्रवण की परिभाषा और महत्व",
+        "ध्यान केंद्रित करने के तरीके",
+        "मुख्य बिंदुओं को नोट करना",
+        "संदेश का सार निकालना"
+      ],
+      "conceptCoveragePriorities": [
+        "श्रवण की प्रक्रिया और अवरोधक तत्वों की पहचान"
+      ],
+      "misconceptionTargets": [
+        "केवल शब्द सुनने को 'सुनना' समझना, जबकि अर्थ निकालना ही वास्तविक श्रवण है",
+        "ध्यान भटकाने वाले कारकों की पहचान न कर पाना"
+      ],
+      "competencyFocus": [
+        "Application"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "title": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ]
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "श्रवण की परिभाषा और महत्व",
+          "questionRefs": [
+            "q1"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "मुख्य बिंदुओं को नोट करना",
+          "questionRefs": [
+            "q2",
+            "q5"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        },
+        {
+          "concept": "संदेश का सार निकालना",
+          "questionRefs": [
+            "q3",
+            "q6"
+          ],
+          "competency": "Analysis",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "श्रवण कौशल के मूल सिद्धांतों को पहचानना",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "सुने गए संदेश का सार तैयार करना",
+          "questionRefs": [
+            "q3",
+            "q6"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 30,
+        "application": 30,
+        "analysis": 15,
+        "evaluation": 10
+      },
+      "competencyDistribution": {
+        "understanding": 2,
+        "application": 4,
+        "analysis": 1
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Assessment",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "निर्देश: इस परीक्षण में सभी प्रश्न अनिवार्य हैं। दिए गए श्रवण कौशल (Listening Skills) के सिद्धांतों का उपयोग करके उत्तर दें।",
+        "प्रश्नों को ध्यान से पढ़ें और समय सीमा का पालन करें।"
+      ],
+      "sections": [
+        {
+          "id": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "title": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "'श्रवण' (Listening) की सही परिभाषा कौन सी है?",
+          "options": [
+            "A. केवल सुने गए शब्दों को याद रखना",
+            "B. ध्यान से सुनकर अर्थ निकालना और समझना",
+            "C. किसी की बात को बिना रुकावट के पूरा सुन लेना",
+            "D. लिखित पाठ का पढ़ा जाना"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "श्रवण की परिभाषा और महत्व"
+          ],
+          "topicCoverage": [
+            "Listening Skills (श्रवण कौशल)"
+          ],
+          "subtopicCoverage": [
+            "Definition of Listening"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session concept: Active listening involves comprehension."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "श्रवण प्रक्रिया में 'अवरोधक तत्व' (Barriers) का उदाहरण कौन सा है?",
+          "options": [
+            "A. ध्यान केंद्रित करना",
+            "B. नोट्स बनाना",
+            "C. बाहरी शोर या मानसिक चिंता",
+            "D. प्रश्नों का उत्तर देना"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "श्रवण की प्रक्रिया और अवरोधक तत्वों की पहचान"
+          ],
+          "topicCoverage": [
+            "Listening Skills (श्रवण कौशल)"
+          ],
+          "subtopicCoverage": [
+            "Barriers to Listening"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session concept: External noise and mental distraction are barriers."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "सुने गए संदेश का सार (Summary) तैयार करते समय सबसे महत्वपूर्ण कौन सा चरण है?",
+          "options": [
+            "A. प्रत्येक शब्द को लिखना",
+            "B. केवल अंत में सुनी गई बातों पर ध्यान देना",
+            "C. मुख्य विचारों और बिंदुओं की पहचान करना",
+            "D. अपनी राय जोड़ना"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "संदेश का सार निकालना"
+          ],
+          "topicCoverage": [
+            "Listening Skills (श्रवण कौशल)"
+          ],
+          "subtopicCoverage": [
+            "Summarizing Content"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session concept: Summarization requires identifying key ideas."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "श्रवण कौशल (Listening Skills) का एक मुख्य उद्देश्य लिखें।",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "श्रवण की परिभाषा और महत्व"
+          ],
+          "topicCoverage": [
+            "Listening Skills (श्रवण कौशल)"
+          ],
+          "subtopicCoverage": [
+            "Purpose of Listening"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Understanding",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session concept: Purpose is to understand and interpret."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "सुने गए संदेश को याद रखने में 'नोट्स' (Notes) बनाने का क्या लाभ है?",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "मुख्य बिंदुओं को नोट करना"
+          ],
+          "topicCoverage": [
+            "Listening Skills (श्रवण कौशल)"
+          ],
+          "subtopicCoverage": [
+            "Note-taking Techniques"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session concept: Notes help in retention and summarization."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "सुने गए संदेश का सार तैयार करते समय किन दो बातों पर विशेष ध्यान देना चाहिए? स्पष्ट करें।",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Two points with brief explanation",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "संदेश का सार निकालना"
+          ],
+          "topicCoverage": [
+            "Listening Skills (श्रवण कौशल)"
+          ],
+          "subtopicCoverage": [
+            "Summarization Techniques"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Analysis",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session concept: Focus on main ideas and omit trivial details."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+          "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "श्रवण प्रक्रिया में 'ध्यान केंद्रित' (Focus) करने के दो व्यावहारिक तरीके बताएं।",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Two practical methods",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "श्रवण की प्रक्रिया और अवरोधक तत्वों की पहचान"
+          ],
+          "topicCoverage": [
+            "Listening Skills (श्रवण कौशल)"
+          ],
+          "subtopicCoverage": [
+            "Focus Techniques"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Session concept: Strategies to overcome distractions."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+            "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+            "answer": "B. ध्यान से सुनकर अर्थ निकालना और समझना",
+            "explanation": "श्रवण केवल शब्दों को सुनने तक सीमित नहीं है, बल्कि इसमें अर्थ की व्याख्या शामिल है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+            "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+            "answer": "C. बाहरी शोर या मानसिक चिंता",
+            "explanation": "शोर और मन की भटकन सुने गए संदेश को समझने में रुकावट डालते हैं।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+            "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+            "answer": "C. मुख्य विचारों और बिंदुओं की पहचान करना",
+            "explanation": "सार तैयार करने के लिए प्रासंगिक जानकारी को अलग करके मुख्य बिंदुओं पर ध्यान देना आवश्यक है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+            "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+            "answer": "सुने गए संदेश का सही अर्थ निकालना और समझना। (या: जानकारी प्राप्त करना)",
+            "explanation": "श्रवण कौशल का मुख्य उद्देश्य अंतर्दृष्टि हासिल करना है।",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+            "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+            "answer": "यह संदेश को याद रखने में मदद करता है और मुख्य बिंदुओं की पहचान करने में सहायक होता है।",
+            "explanation": "नोट्स लेना श्रवण प्रक्रिया का एक महत्वपूर्ण हिस्सा है जो स्मृति को सुधारता है।",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+            "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+            "answer": "1. मुख्य विचारों की पहचान करना (मुख्य बिंदुओं पर ध्यान देना)। 2. अनावश्यक या तथ्यात्मक विवरण को हटाना और केवल सार रहने देना।",
+            "explanation": "सार में संक्षिप्तता बनाए रखते हुए मूल भाव को बरकरार रखा जाना चाहिए।",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-total-marks-100-80-board-exam-20-internal-assessment",
+            "sectionTitle": "Total Marks: 100 (80 Board Exam + 20 Internal Assessment)",
+            "answer": "1. बाहरी शोर (जैसे फोन, टेलीविजन) को बंद करना या कम कर देना। 2. मन में अन्य विचारों की अनुमति न देकर केवल वक्ता पर ध्यान केंद्रित रखना।",
+            "explanation": "ध्यान केंद्रित करने से अवरोधक तत्वों का प्रभाव कम होता है और श्रवण दक्षता बढ़ती है।",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (B) चुना गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (C) चुना गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (C) चुना गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सुने गए संदेश का सही अर्थ निकालना या जानकारी प्राप्त करना।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "यदि उत्तर में 'अर्थ समझना' या 'जानकारी प्राप्ति' स्पष्ट है तो पूर्ण अंक दें।"
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "याद रखने में सहायता या मुख्य बिंदुओं की पहचान।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "नोट्स के लाभ (स्मृति/पहचान) का उल्लेख करने पर अंक दें।"
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "मुख्य विचारों की पहचान करना (1 अंक)",
+                "marks": 1
+              },
+              {
+                "criterion": "अनावश्यक जानकारी को हटाना या संक्षिप्तता बनाए रखना (1 अंक)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "प्रत्येक वैध बिंदु के लिए 1-1 अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "बाहरी शोर/पर्यावरण को नियंत्रित करना (1 अंक)",
+                "marks": 1
+              },
+              {
+                "criterion": "मानसिक ध्यान केंद्रित रखना या मन की भटकन रोकना (1 अंक)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "प्रत्येक वैध व्यावहारिक तरीके के लिए 1-1 अंक प्रदान करें।"
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "मुख्य बिंदुओं की पहचान का उल्लेख किया गया है।",
+                "marks": 1
+              },
+              {
+                "criterion": "अनावश्यक विवरणों को छोड़ने या सार के लिए संक्षिप्तता बनाए रखने का उल्लेख किया गया है।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "सार तैयार करते समय मुख्य बिंदुओं पर ध्यान देना चाहिए और अनावश्यक विवरणों को हटाना चाहिए ताकि संदेश स्पष्ट रहे।"
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "बाहरी शोर या पर्यावरणीय अवरोधकों को दूर करने का उल्लेख।",
+                "marks": 1
+              },
+              {
+                "criterion": "मन की भटकन रोककर ध्यान केंद्रित रखने का उल्लेख।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "ध्यान केंद्रित करने के लिए शोर को बंद करना चाहिए और मन में अन्य विचारों की अनुमति न देकर वक्ता पर ध्यान देना चाहिए।"
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "मुख्य बिंदुओं की पहचान का उल्लेख किया गया है।",
+                "marks": 1
+              },
+              {
+                "criterion": "अनावश्यक विवरणों को छोड़ने या सार के लिए संक्षिप्तता बनाए रखने का उल्लेख किया गया है।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "सार तैयार करते समय मुख्य बिंदुओं पर ध्यान देना चाहिए और अनावश्यक विवरणों को हटाना चाहिए ताकि संदेश स्पष्ट रहे।"
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "बाहरी शोर या पर्यावरणीय अवरोधकों को दूर करने का उल्लेख।",
+                "marks": 1
+              },
+              {
+                "criterion": "मन की भटकन रोककर ध्यान केंद्रित रखने का उल्लेख।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "ध्यान केंद्रित करने के लिए शोर को बंद करना चाहिए और मन में अन्य विचारों की अनुमति न देकर वक्ता पर ध्यान देना चाहिए।"
+          }
+        ]
+      },
+      "generalInstructions": [
+        "प्रत्येक वैध बिंदु के लिए 1-1 अंक प्रदान करें।",
+        "अन्य समतुल्य उत्तरों को भी स्वीकार किया जाए यदि वे सही अवधारणा दर्शाते हैं।"
+      ],
+      "evaluatorInstructions": [
+        "विद्यार्थी के उत्तर का मूल्यांकन करते समय केवल इस सत्र में पढ़ाए गए श्रवण कौशल (Listening Skills) के सिद्धांतों का उपयोग करें।",
+        "अस्पष्ट या अर्थहीन उत्तरों पर कोई अंक न दें।"
+      ],
+      "moderationNotes": [
+        "समानार्थी उत्तरों में सुसंगतता बनाए रखें।",
+        "यदि विद्यार्थी ने सही अवधारणा को अपने शब्दों में समझाया है, तो उसे पूर्ण अंक दें भले ही वह नमूना उत्तर से थोड़ा भिन्न हो।"
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "श्रवण कौशल (Listening Skills) के सिद्धांतों, अवरोधकों और सार तैयार करने की तकनीकों का संतुलित आवरण।"
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "पत्र आसान प्रश्नों से शुरू होकर अधिक कठिन विश्लेषणात्मक प्रश्नों पर समाप्त होता है।",
+        "प्रश्न प्रकारों का मिश्रण (MCQ, अतिलघु उत्तर, लघु उत्तर) मांगे गए पैटर्न के अनुरूप है।"
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Requested questions: 7",
+          "Generated questions: 7"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Requested marks: 9",
+          "Generated marks: 9"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Total Marks: 100 (80 Board Exam + 20 Internal Assessment): 7 question(s), 9 mark(s)"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Answer key items: 7",
+          "Marking scheme items: 7",
+          "Rubric-linked questions: 4"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "कोई भी अनपढ़ाया या भविष्य की सत्रों का सामग्री शामिल नहीं है; केवल 'श्रवण कौशल' पर ध्यान दिया गया है।"
+        ]
+      }
+    }
+  }
+}

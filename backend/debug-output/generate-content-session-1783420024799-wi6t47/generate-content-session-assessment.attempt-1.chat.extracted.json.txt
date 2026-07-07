@@ -1,0 +1,439 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 6,
+      "totalQuestions": 4,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 2,
+          "marksEach": 1
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Identify chemical and physical changes.",
+        "Distinguish between acids, bases, and salts based on properties."
+      ],
+      "assessedConcepts": [
+        "Chemical Substances",
+        "Physical vs Chemical Changes",
+        "Properties of Acids and Bases"
+      ],
+      "conceptCoveragePriorities": [
+        "Differentiation between physical and chemical changes",
+        "Identification of acidic/basic nature using indicators"
+      ],
+      "misconceptionTargets": [
+        "Confusing reversible physical changes with irreversible chemical ones.",
+        "Assuming all sour substances are acids regardless of context."
+      ],
+      "competencyFocus": [
+        "Application",
+        "Analysis"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "title": "Unit I: Chemical Substances - Nature and Behaviour",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "focus": "Session-aligned assessment focus on chemical substances and their properties."
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Physical vs Chemical Changes",
+          "questionRefs": [
+            "q1",
+            "q3"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Properties of Acids and Bases",
+          "questionRefs": [
+            "q2",
+            "q4"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Identify chemical and physical changes.",
+          "questionRefs": [
+            "q1",
+            "q3"
+          ]
+        },
+        {
+          "outcome": "Distinguish between acids, bases, and salts based on properties.",
+          "questionRefs": [
+            "q2",
+            "q4"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 50,
+        "medium": 37.5,
+        "hard": 12.5
+      },
+      "bloomsDistribution": {
+        "recall": 25,
+        "understanding": 40,
+        "application": 25,
+        "analysis": 10,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 3,
+        "application": 1
+      },
+      "questionDistribution": {
+        "mcq": 2,
+        "shortAnswer": 2,
+        "longAnswer": 0
+      },
+      "timeAllocation": [
+        {
+          "section": "Unit I: Chemical Substances - Nature and Behaviour",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session.",
+        "All questions are compulsory."
+      ],
+      "sections": [
+        {
+          "id": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "title": "Unit I: Chemical Substances - Nature and Behaviour",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following is a chemical change?",
+          "options": [
+            "A. Melting of ice",
+            "B. Rusting of iron",
+            "C. Dissolving sugar in water",
+            "D. Breaking of glass"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Identify chemical and physical changes."
+          ],
+          "conceptRefs": [
+            "Physical vs Chemical Changes"
+          ],
+          "topicCoverage": [
+            "Chemical Substances"
+          ],
+          "subtopicCoverage": [
+            "Nature of Matter"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Chemical Substances and Their Properties - Distinction between physical and chemical changes."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which substance turns red litmus paper blue?",
+          "options": [
+            "A. Lemon juice",
+            "B. Vinegar",
+            "C. Soap solution",
+            "D. Carbonated drink"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Distinguish between acids, bases, and salts based on properties."
+          ],
+          "conceptRefs": [
+            "Properties of Acids and Bases"
+          ],
+          "topicCoverage": [
+            "Chemical Substances"
+          ],
+          "subtopicCoverage": [
+            "Acid-Base Properties"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Scientific terminology",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Chemical Substances and Their Properties - Indicators."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "State one key difference between a physical change and a chemical change.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Identify chemical and physical changes."
+          ],
+          "conceptRefs": [
+            "Physical vs Chemical Changes"
+          ],
+          "topicCoverage": [
+            "Chemical Substances"
+          ],
+          "subtopicCoverage": [
+            "Nature of Matter"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Scientific communication",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Chemical Substances and Their Properties - Definitions."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Why is the neutralization reaction between an acid and a base considered a chemical change?",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence with reasoning",
+          "learningOutcomeRefs": [
+            "Distinguish between acids, bases, and salts based on properties."
+          ],
+          "conceptRefs": [
+            "Properties of Acids and Bases"
+          ],
+          "topicCoverage": [
+            "Chemical Substances"
+          ],
+          "subtopicCoverage": [
+            "Neutralization"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session 1: Chemical Substances and Their Properties - Neutralization process."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+            "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+            "answer": "B. Rusting of iron",
+            "explanation": "Rusting involves the formation of a new substance (iron oxide) with different properties, which is characteristic of a chemical change.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+            "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+            "answer": "C. Soap solution",
+            "explanation": "Bases turn red litmus paper blue; soap solutions are basic in nature.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+            "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+            "answer": "In a physical change, no new substance is formed, whereas in a chemical change, a new substance with different properties is formed.",
+            "explanation": "The key distinction lies in the formation of a new substance.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+            "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+            "answer": "Because it results in the formation of new substances (salt and water) with properties different from the reactants.",
+            "explanation": "The irreversible change to distinct products defines a chemical reaction.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (C)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mentions 'no new substance' or 'reversible'",
+                "marks": 0.5
+              },
+              {
+                "criterion": "Contrasts with chemical change (new substance formed)",
+                "marks": 0.5
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks if the distinction regarding new substances is clear."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mentions formation of new substance (salt/water)",
+                "marks": 0.5
+              },
+              {
+                "criterion": "States properties are different from reactants",
+                "marks": 0.5
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks if the reasoning links new substance formation to chemical change."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": []
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea in short answer questions.",
+        "For MCQs, only the selected option is evaluated."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Accept equivalent phrasing that conveys the same scientific meaning (e.g., 'new substance' vs 'product')."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers regarding physical/chemical distinctions."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts including identification of changes and acid-base properties."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier recall questions to application-based reasoning."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (2 MCQs, 2 Short Answers)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total of 6."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to a valid section (Unit I)."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

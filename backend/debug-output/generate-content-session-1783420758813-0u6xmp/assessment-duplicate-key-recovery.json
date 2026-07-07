@@ -1,0 +1,658 @@
+{
+  "assessment": {
+  "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "Hindi",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+  "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "श्रवण कौशल के माध्यम से दी गई जानकारी को समझना",
+        "सुनी हुई बातों का सारांश तैयार करना"
+      ],
+      "assessedConcepts": [
+        "श्रवण कौशल की परिभाषा और महत्व",
+        "ध्यानपूर्वक सुनने के सिद्धांत",
+        "सुनी गई जानकारी का विश्लेषण",
+        "मुख्य बिंदुओं को पहचानना"
+      ],
+      "conceptCoveragePriorities": [
+        "श्रवण कौशल की प्रक्रिया और महत्व"
+      ],
+      "misconceptionTargets": [
+        "सिर्फ शब्दों को सुनने और वास्तविक अर्थ समझने में भ्रम",
+        "मुख्य विचार और उप-विचार के बीच का अंतर न कर पाना"
+      ],
+      "competencyFocus": [
+        "Application"
+      ]
+    },
+  "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-assessment",
+          "title": "Assessment",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Session-aligned assessment focus on Listening Skills (श्रवण कौशल)"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Listening Skills Definition and Importance",
+          "questionRefs": [
+            "q1"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Analyzing Spoken Information",
+          "questionRefs": [
+            "q2",
+            "q3"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        },
+        {
+          "concept": "Identifying Key Points",
+          "questionRefs": [
+            "q4",
+            "q5"
+          ],
+          "competency": "Analysis",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "श्रवण कौशल के माध्यम से दी गई जानकारी को समझना",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "सुनी हुई बातों का सारांश तैयार करना",
+          "questionRefs": [
+            "q5",
+            "q6"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 43,
+        "medium": 43,
+        "hard": 14
+      },
+      "bloomsDistribution": {
+        "recall": 20,
+        "understanding": 35,
+        "application": 28,
+        "analysis": 17,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 2,
+        "analysis": 1
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Assessment",
+          "minutes": 15
+        }
+      ]
+    },
+  "paper": {
+      "instructions": [
+        "इस परीक्षा में सभी प्रश्न अनिवार्य हैं।",
+        "केवल इस सत्र (Listening Skills) के अंतर्गत सिखाए गए अवधारणाओं का उपयोग करें।",
+        "प्रत्येक प्रश्न के लिए दिए गए मार्क्स को ध्यान से पढ़ें और उत्तर दें।"
+      ],
+      "sections": [
+        {
+          "id": "section-assessment",
+          "title": "Assessment",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "fallback"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "'श्रवण कौशल' (Listening Skills) का मुख्य उद्देश्य क्या है?",
+          "options": [
+            "A. केवल शब्दों को याद करना",
+            "B. सुनी गई बातों की गहराई से व्याख्या और अर्थ निकालना",
+            "C. तेजी से बोलने वाले व्यक्ति का अनुकरण करना",
+            "D. लिखित पाठ को पढ़कर समझना"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Listening Skills Definition and Importance"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल (Listening Skills)"
+          ],
+          "subtopicCoverage": [
+            "परिभाषा और उद्देश्य"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session content on Listening Skills definition"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "एक प्रभावी श्रोता (Listener) को सुनते समय सबसे पहले क्या करना चाहिए?",
+          "options": [
+            "A. तुरंत उत्तर लिखना शुरू करना",
+            "B. बोलने वाले के चेहरे पर ध्यान देना और बाधाओं से मुक्त होकर सुनना",
+            "C. अपने विचारों को दूसरों की बात में मिला देना",
+            "D. शब्दों का अर्थ निकालने के लिए रुक जाना"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Analyzing Spoken Information"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल (Listening Skills)"
+          ],
+          "subtopicCoverage": [
+            "सुनने की प्रक्रिया"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Application of listening skills",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session content on effective listening techniques"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "यदि किसी वक्ता ने 'पर्यावरण संरक्षण' के बारे में बात की, तो श्रोता को मुख्य रूप से क्या पहचानना चाहिए?",
+          "options": [
+            "A. वक्ता का नाम और उम्र",
+            "B. बोलने वाले के आवाज स्वर (Tone) का विश्लेषण",
+            "C. वाक्य की व्याकरणिक संरचना",
+            "D. मुख्य विचार, तर्क और निष्कर्ष"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Analyzing Spoken Information"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल (Listening Skills)"
+          ],
+          "subtopicCoverage": [
+            "मुख्य बिंदुओं की पहचान"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Information analysis",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session content on identifying key points in speech"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "veryShortAnswer",
+          "subtype": "short-answer-1-mark",
+          "prompt": "'श्रवण कौशल' (Listening Skills) की परिभाषा एक वाक्य में लिखें।",
+          "marks": 1,
+          "expectedLength": "One sentence definition",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Listening Skills Definition and Importance"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल (Listening Skills)"
+          ],
+          "subtopicCoverage": [
+            "परिभाषा"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Definition recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session content on Listening Skills definition"
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "veryShortAnswer",
+          "subtype": "short-answer-1-mark",
+          "prompt": "सुनी गई जानकारी को समझने में 'ध्यानपूर्वक सुनना' (Active Listening) का क्या महत्व है?",
+          "marks": 1,
+          "expectedLength": "One sentence explanation of importance",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Identifying Key Points"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल (Listening Skills)"
+          ],
+          "subtopicCoverage": [
+            "सुनने की प्रक्रिया और महत्व"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Understanding importance of active listening",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session content on Active Listening techniques"
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "short-answer-2-marks",
+          "prompt": "किसी भाषण या संवाद के दौरान 'मुख्य बिंदु' (Key Points) और 'सहायक विवरण' (Supporting Details) में क्या अंतर होता है? दो उदाहरणों सहित समझाएं।",
+          "marks": 2,
+          "expectedLength": "Brief explanation with examples",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Identifying Key Points"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल (Listening Skills)"
+          ],
+          "subtopicCoverage": [
+            "विचारों का विश्लेषण"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Distinguishing main ideas from details",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session content on analyzing speech structure"
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "short-answer-2-marks",
+          "prompt": "यदि आप किसी वक्ता की बात सुन रहे हैं और उसे समझने में कठिनाई हो रही है, तो श्रोता को किन दो कार्यों का ध्यान रखना चाहिए ताकि सही अर्थ निकाला जा सके?",
+          "marks": 2,
+          "expectedLength": "Two points with brief explanation",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Analyzing Spoken Information"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल (Listening Skills)"
+          ],
+          "subtopicCoverage": [
+            "समझने में बाधाओं का समाधान"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Problem-solving in listening",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Session content on overcoming listening barriers"
+          ]
+        }
+      ]
+    },
+  "evaluation": {
+      "answerKey": {
+  "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. सुनी गई बातों की गहराई से व्याख्या और अर्थ निकालना",
+            "explanation": "श्रवण कौशल का मुख्य उद्देश्य केवल शब्द नहीं, बल्कि उनके पीछे छिपे अर्थ को समझना है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. बोलने वाले के चेहरे पर ध्यान देना और बाधाओं से मुक्त होकर सुनना",
+            "explanation": "प्रभावी श्रोता होने के लिए बाधाओं (शोर, मन की भटकन) को दूर करना आवश्यक है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "D. मुख्य विचार, तर्क और निष्कर्ष",
+            "explanation": "श्रवण कौशल में वक्ता के संदेश का सार निकालना (मुख्य बिंदु) सबसे महत्वपूर्ण है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "श्रवण कौशल वह क्षमता है जिसके द्वारा व्यक्ति सुनी गई भाषा को ध्यानपूर्वक समझकर उसका अर्थ निकालता है।",
+            "explanation": "परिभाषा में 'सुनना', 'ध्यान' और 'अर्थ निकालना' शामिल होना चाहिए।",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "ध्यानपूर्वक सुनने से श्रोता वक्ता के भाव और संदेश को गहराई तक समझ पाता है, जिससे भ्रम दूर होता है।",
+            "explanation": "उत्तर में 'गहरी समझ' या 'भ्रम निवारण' का उल्लेख होना चाहिए।",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "मुख्य बिंदु वह मूल विचार है जो संदेश का सार होता है (जैसे: पर्यावरण बचाना जरूरी है), जबकि सहायक विवरण उसका समर्थन करते हैं (जैसे: प्लास्टिक कम उपयोग करें)।",
+            "explanation": "उत्तर में दोनों अवधारणाओं का अंतर और उदाहरण स्पष्ट होना चाहिए।",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "1. श्रोता को ध्यान केंद्रित करना चाहिए और बाधाओं (शोर, भटकन) से मुक्त होना चाहिए। 2. संदर्भ के आधार पर अनुमान लगाना चाहिए या वक्ता की भाषा/टोन का विश्लेषण करके अर्थ निकालना चाहिए।",
+            "explanation": "उत्तर में 'ध्यान केंद्रित करना' और 'संदर्भ/विश्लेषण' के दो बिंदु होने चाहिए।",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+},
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (B) चयनित किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प पर पूर्ण अंक दिए जाएं।"
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (B) चयनित किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प पर पूर्ण अंक दिए जाएं।"
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (D) चयनित किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प पर पूर्ण अंक दिए जाएं।"
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "'श्रवण कौशल' की सही परिभाषा दी गई है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "परिभाषा में 'सुनना', 'ध्यान' और 'अर्थ निकालना' का उल्लेख होना चाहिए।"
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "'ध्यानपूर्वक सुनने' के महत्व का सही उल्लेख किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "उत्तर में 'गहरी समझ', 'संदेश की स्पष्टता' या 'भ्रम निवारण' का अर्थ होना चाहिए।"
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "'मुख्य बिंदु' और 'सहायक विवरण' के बीच का अंतर स्पष्ट किया गया है।",
+                "marks": 1
+              },
+              {
+                "criterion": "प्रत्येक अवधारणा के लिए उदाहरण दिए गए हैं (कुल दो या एक संतुलित)।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "अंतर स्पष्ट होना चाहिए और उदाहरण संबंधित होने चाहिए।"
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "'ध्यान केंद्रित करना' या 'बाधाओं को दूर करना' का उल्लेख।",
+                "marks": 1
+              },
+              {
+                "criterion": "सही अर्थ निकालने के लिए दूसरा उपाय (जैसे: संदर्भ, टोन विश्लेषण) दिया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "दोनों बिंदु स्वतंत्र और वैध होने चाहिए।"
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "'मुख्य बिंदु' और 'सहायक विवरण' के बीच का अंतर स्पष्ट किया गया है।",
+                "marks": 1
+              },
+              {
+                "criterion": "प्रत्येक अवधारणा के लिए उदाहरण दिए गए हैं (कुल दो या एक संतुलित)।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "मुख्य बिंदु वह मूल विचार है जो संदेश का सार होता है, जबकि सहायक विवरण उसका समर्थन करते हैं। उदाहरण: 'पर्यावरण बचाना जरूरी है' (मुख्य) बनाम 'प्लास्टिक कम उपयोग करें' (सहायक)।"
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "'ध्यान केंद्रित करना' या 'बाधाओं को दूर करना' का उल्लेख।",
+                "marks": 1
+              },
+              {
+                "criterion": "सही अर्थ निकालने के लिए दूसरा उपाय (जैसे: संदर्भ, टोन विश्लेषण) दिया गया है।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "श्रोता को ध्यान केंद्रित करना चाहिए और बाधाओं से मुक्त होना चाहिए। साथ ही, वक्ता की भाषा या टोन का विश्लेषण करके अर्थ निकालना चाहिए।"
+          }
+        ]
+      },
+      "generalInstructions": [
+        "प्रत्येक वैध विचार के लिए बिंदु-वार अंक दिए जाएं।",
+        "MCQ में केवल सही विकल्प पर ही पूर्ण अंक दिए जाएं।",
+        "उत्तर की भाषा स्पष्ट और हिंदी में होनी चाहिए।"
+      ],
+      "evaluatorInstructions": [
+        "केवल इस सत्र (Listening Skills) के अंतर्गत सिखाए गए अवधारणाओं का उपयोग करके उत्तरों का मूल्यांकन करें।",
+        "विद्यार्थी द्वारा दी गई व्याख्या में त्रुटि होने पर भी यदि मुख्य बिंदु समझा गया है तो आंशिक अंक दें।"
+      ],
+      "moderationNotes": [
+        "समान उत्तरों के लिए सुसंगतता बनाए रखें।",
+        "यदि विद्यार्थी उदाहरण देते हैं जो सत्र में सीधे नहीं थे लेकिन अवधारणा को सही ढंग से दर्शाते हैं, तो उन्हें स्वीकार करें।"
+      ]
+    },
+  "summary": {
+      "coverageSummary": [
+        "सुनाई गई जानकारी के विश्लेषण और मुख्य बिंदुओं की पहचान पर संतुलित कवरेज।",
+        "श्रवण कौशल की परिभाषा से लेकर व्यावहारिक अनुप्रयोग तक का क्रमबद्ध मूल्यांकन।"
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "पत्र आसान प्रश्नों (MCQ) से शुरू होकर अधिक मांग करने वाले प्रश्नों (Short Answer) की ओर बढ़ता है।",
+        "मार्क्स का वितरण कठिनाई के स्तर और अवधारणाओं के महत्व के अनुसार किया गया है।"
+      ]
+    },
+  "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "प्रश्न पैटर्न अनुरोधित ब्लूप्रिंट (3 MCQs, 2 VSA, 2 SA) से मेल खाता है।"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "कुल अंक अनुरोधित कुल 9 के बराबर हैं (3x1 + 2x1 + 2x2 = 9)।"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "प्रत्येक प्रश्न एक वैध खंड 'Assessment' (section-assessment) में सौंपा गया है।"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "परीक्षा पत्र, उत्तर कुंजी और अंकन योजना पूरी तरह से सुसंगत हैं।"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "कोई भी अनशिक्षित या भविष्य की सत्रों का सामग्री शामिल नहीं है; केवल 'Listening Skills' पर केंद्रित।"
+        ]
+      }
+    }
+}
+}

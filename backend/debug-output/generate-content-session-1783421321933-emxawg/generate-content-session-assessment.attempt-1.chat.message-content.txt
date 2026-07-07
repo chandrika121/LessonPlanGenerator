@@ -1,0 +1,478 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 6,
+      "totalQuestions": 4,
+      "durationMinutes": 15,
+      "language": "Hindi",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "केवल इस सत्र में पढ़ाए गए सामग्री का मूल्यांकन करें।",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "बहुविकल्पीय प्रश्न (MCQs)",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "लघु उत्तरीय प्रश्न",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "रासायनिक पदार्थों के गुणों की पहचान करना",
+        "धातुओं और अधातुओं में अंतर समझना"
+      ],
+      "assessedConcepts": [
+        "धातुओं के भौतिक गुण (उदाहरण: चमक, आघावर्यता)",
+        "अधातु की प्रकृति",
+        "लवणीय ऑक्साइड और अम्लीय ऑक्साइड"
+      ],
+      "conceptCoveragePriorities": [
+        "धातुओं के भौतिक गुणों का वर्गीकरण",
+        "ऑक्सीजन के साथ अभिक्रिया से बने ऑक्साइड की प्रकृति"
+      ],
+      "misconceptionTargets": [
+        "सभी धातुओं का कठोर होना (जैसे सोडियम नरम होता है)",
+        "अधातुओं के सभी भौतिक गुणों को समझने में गलती"
+      ],
+      "competencyFocus": [
+        "संज्ञानात्मक स्पष्टता",
+        "वर्गीकरण कौशल"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "title": "Section C (Textbook & Supplementary Reader)",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "focus": "सत्र में पढ़ाए गए पाठ्यपुस्तक के अवधारणाओं पर आधारित मूल्यांकन।"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "धातुओं और अधातुओं की भौतिक प्रकृति",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ],
+          "competency": "समझना",
+          "importance": "core"
+        },
+        {
+          "concept": "रासायनिक अभिक्रिया और ऑक्साइड की प्रकृति",
+          "questionRefs": [
+            "q3",
+            "q4"
+          ],
+          "competency": "प्रयोग करना",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "रासायनिक पदार्थों के गुणों की पहचान करना",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "ऑक्सीजन के साथ अभिक्रिया से बने ऑक्साइड का वर्गीकरण",
+          "questionRefs": [
+            "q3",
+            "q4"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 50,
+        "medium": 25,
+        "hard": 25
+      },
+      "bloomsDistribution": {
+        "recall": 30,
+        "understanding": 40,
+        "application": 20,
+        "analysis": 10,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 2,
+        "application": 2,
+        "analysis": 0
+      },
+      "questionDistribution": {
+        "mcq": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Section C (Textbook & Supplementary Reader)",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "सभी प्रश्न उत्तर दें।",
+        "केवल इस सत्र में पढ़ाए गए अवधारणाओं का उपयोग करें।"
+      ],
+      "sections": [
+        {
+          "id": "section-section-c-textbook-supplementary-reader",
+          "title": "Section C (Textbook & Supplementary Reader)",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "निम्नलिखित में से कौन सा धातु का भौतिक गुण नहीं है?",
+          "options": [
+            "A. चमकदार (Ductile)",
+            "B. आघावर्यता (Malleable)",
+            "C. विद्युत् सुचालक",
+            "D. नरम और काटने योग्य"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "धातुओं के भौतिक गुण"
+          ],
+          "topicCoverage": [
+            "Chemical Substances and Their Properties"
+          ],
+          "subtopicCoverage": [
+            "Physical properties of metals"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session notes on metal luster and malleability"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "सोडियम धातु को सुरक्षित रखने के लिए उसे किसमें रखा जाता है?",
+          "options": [
+            "A. पानी में",
+            "B. खनिज तेल (Kerosene) में",
+            "C. अल्कोहल में",
+            "D. एसीटोन में"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "धातुओं की प्रतिक्रियाशीलता और सुरक्षा"
+          ],
+          "topicCoverage": [
+            "Chemical Substances and Their Properties"
+          ],
+          "subtopicCoverage": [
+            "Reactivity of sodium"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Safety knowledge",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session notes on storage of reactive metals"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "क्या सभी धातुएं कठोर होती हैं? एक उदाहरण के साथ स्पष्ट करें।",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "1-2 वाक्य",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "धातुओं की कठोरता में भिन्नता"
+          ],
+          "topicCoverage": [
+            "Chemical Substances and Their Properties"
+          ],
+          "subtopicCoverage": [
+            "Physical properties variation in metals"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Application of concepts",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session notes on softness of sodium/potassium"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "जब कोई धातु ऑक्सीजन के साथ अभिक्रिया करती है, तो कौन सा पदार्थ बनता है और उसका प्रकृति क्या होती है?",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "1-2 वाक्य",
+          "learningOutcomeRefs": [
+            "LO4"
+          ],
+          "conceptRefs": [
+            "ऑक्साइड की प्रकृति"
+          ],
+          "topicCoverage": [
+            "Chemical Substances and Their Properties"
+          ],
+          "subtopicCoverage": [
+            "Basic nature of metal oxides"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Conceptual application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session notes on formation and basicity of metal oxides"
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-section-c-textbook-supplementary-reader",
+            "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+            "answer": "D. नरम और काटने योग्य",
+            "explanation": "धातुएं आमतौर पर कठोर होती हैं, लेकिन सोडियम और पोटैशियम जैसे धातुएं नरम होती हैं। 'नरम' एक सामान्य गुण नहीं है जो सभी धातुओं के लिए लागू हो।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-section-c-textbook-supplementary-reader",
+            "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+            "answer": "B. खनिज तेल (Kerosene) में",
+            "explanation": "सोडियम अत्यधिक प्रतिक्रियाशील होता है और हवा के ऑक्सीजन या पानी से तेजी से अभिक्रिया करता है, इसलिए इसे सुरक्षित रखने के लिए खनिज तेल में रखा जाता है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-section-c-textbook-supplementary-reader",
+            "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+            "answer": "नहीं, सभी धातुएं कठोर नहीं होती हैं। उदाहरण के लिए, सोडियम और पोटैशियम नरम होते हैं जिन्हें चाकू से काटा जा सकता है।",
+            "explanation": "उत्तर में 'नहीं' होना चाहिए और एक सही उदाहरण (सोडियम/पोटैशियम) दिया जाना चाहिए।",
+            "marks": 2,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-section-c-textbook-supplementary-reader",
+            "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+            "answer": "धातु ऑक्सीजन के साथ अभिक्रिया करके धातु का ऑक्साइड बनाती है। ये ऑक्साइड सामान्यतः क्षारीय (basic) प्रकृति के होते हैं।",
+            "explanation": "उत्तर में 'ऑक्साइड' और 'क्षारीय/बेसिक प्रकृति' दोनों का उल्लेख होना चाहिए।",
+            "marks": 2,
+            "subtype": "veryShortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प चुना गया (D)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प चुना गया (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "स्पष्टीकरण: 'नहीं' का उल्लेख और धातुओं की कठोरता में भिन्नता समझना।",
+                "marks": 1
+              },
+              {
+                "criterion": "उदाहरण: सोडियम या पोटैशियम का सही उल्लेख करना।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "प्रत्येक मान्य बिंदु के लिए अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "उत्पाद का नाम: धातु ऑक्साइड (Metal Oxide)।",
+                "marks": 1
+              },
+              {
+                "criterion": "प्रकृति का वर्णन: क्षारीय या बेसिक प्रकृति।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "प्रत्येक मान्य बिंदु के लिए अंक प्रदान करें।"
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q3",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "पहला मान्य बिंदु: धातुओं की कठोरता में भिन्नता का स्वीकार करना (नहीं सभी कठोर हैं)।",
+                "marks": 1
+              },
+              {
+                "criterion": "दूसरा मान्य बिंदु: सोडियम या पोटैशियम जैसे नरम धातुओं का उदाहरण देना।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "नहीं, सभी धातुएं कठोर नहीं होती हैं। सोडियम और पोटैशियम जैसे कुछ धातुएं नरम होती हैं जिन्हें चाकू से काटा जा सकता है।"
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "पहला मान्य बिंदु: धातु ऑक्साइड के निर्माण का उल्लेख।",
+                "marks": 1
+              },
+              {
+                "criterion": "दूसरा मान्य बिंदु: ऑक्साइड की क्षारीय (basic) प्रकृति का वर्णन करना।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "धातु ऑक्सीजन के साथ अभिक्रिया करके धातु ऑक्साइड बनाती है, जो क्षारीय (basic) प्रकृति का होता है।"
+          }
+        ]
+      },
+      "generalInstructions": [
+        "प्रत्येक मान्य विचार के लिए अंक-वार अंक प्रदान करें।",
+        "उत्तरों में स्पष्टता और सटीकता पर ध्यान दें।"
+      ],
+      "evaluatorInstructions": [
+        "मूल्यांकन करते समय केवल इस सत्र में पढ़ाए गए सामग्री का उपयोग करें।",
+        "समान उत्तरों को समान रूप से अंक प्रदान करें।"
+      ],
+      "moderationNotes": [
+        "यदि छात्र सोडियम या पोटैशियम के स्थान पर किसी अन्य नरम धातु का उल्लेख करता है, तो उसे स्वीकार किया जाए यदि वह सही संदर्भ में हो।"
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "सत्र में पढ़ाए गए अवधारणाओं (धातु/अधातु गुण और ऑक्साइड प्रकृति) का संतुलित कवरेज।"
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "प्रश्न पत्र आसान से शुरू होकर थोड़ा अधिक चुनौतीपूर्ण प्रश्नों की ओर बढ़ता है।"
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "प्रश्न पैटर्न अनुरोधित ब्लूप्रिंट से मेल खाता है (2 MCQs + 2 Short Answers)।"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "durationMinutes": 15,
+        "details": [
+          "कुल अंक अनुरोधित कुल अंकों (6) से मेल खाते हैं।",
+          "समय सीमा (15 मिनट) सत्र के लिए उपयुक्त है।"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "प्रत्येक प्रश्न एक मान्य खंड ID और शीर्षक (Section C) से जुड़ा हुआ है।"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "प्रश्न पत्र, उत्तर कुंजी और अंक विभाजन एक-दूसरे के साथ संरेखित हैं।"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "कोई भी अनपढ़ाया या भविष्य की सत्रों से संबंधित सामग्री शामिल नहीं है।"
+        ]
+      }
+    }
+  }
+}

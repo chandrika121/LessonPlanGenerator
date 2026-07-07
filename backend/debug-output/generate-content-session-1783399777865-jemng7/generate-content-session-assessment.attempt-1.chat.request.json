@@ -1,0 +1,287 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "meta": {
+        "assessmentType": "Session assessment",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "language": "English",
+        "preferredDifficulty": "Balanced",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ]
+      },
+      "sessionAnalysis": {
+        "assessedLearningOutcomes": [
+          "Learning outcome text"
+        ],
+        "assessedConcepts": [
+          "Concept from the session"
+        ],
+        "conceptCoveragePriorities": [
+          "High-emphasis taught concept"
+        ],
+        "misconceptionTargets": [
+          "Likely misconception to check"
+        ],
+        "competencyFocus": [
+          "Application"
+        ]
+      },
+      "blueprint": {
+        "sectionPlan": [
+          {
+            "sectionId": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "focus": "Session-aligned assessment focus"
+          }
+        ],
+        "conceptDistribution": [
+          {
+            "concept": "Concept from the session",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ],
+            "competency": "Understanding",
+            "importance": "core"
+          }
+        ],
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "competencyDistribution": {
+          "understanding": 2,
+          "application": 3,
+          "analysis": 2
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "Assessment",
+            "minutes": 15
+          }
+        ]
+      },
+      "paper": {
+        "instructions": [
+          "Answer all questions using only the concepts taught in this session."
+        ],
+        "sections": [
+          {
+            "id": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "source": "fallback"
+          }
+        ],
+        "questions": [
+          {
+            "id": "q1",
+            "questionNumber": 1,
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "type": "mcq",
+            "subtype": "mcq",
+            "prompt": "MCQ question",
+            "options": [
+              "A. option",
+              "B. option",
+              "C. option",
+              "D. option"
+            ],
+            "marks": 1,
+            "expectedLength": "",
+            "learningOutcomeRefs": [
+              "LO1"
+            ],
+            "conceptRefs": [
+              "Concept"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "subtopicCoverage": [
+              "Subtopic"
+            ],
+            "bloomsLevel": "understanding",
+            "competencyTag": "Conceptual clarity",
+            "difficulty": "easy",
+            "sourceEvidence": [
+              "Teacher notes concept reference"
+            ]
+          }
+        ]
+      },
+      "evaluation": {
+        "answerKey": {
+          "items": [
+            {
+              "questionId": "q1",
+              "sectionId": "section-assessment",
+              "sectionTitle": "Assessment",
+              "answer": "Correct option",
+              "explanation": "Brief explanation",
+              "marks": 1,
+              "subtype": "mcq"
+            }
+          ]
+        },
+        "markingScheme": {
+          "items": [
+            {
+              "questionId": "q1",
+              "totalMarks": 1,
+              "markBreakdown": [
+                {
+                  "criterion": "Correct answer selected",
+                  "marks": 1
+                }
+              ],
+              "awardGuidance": [
+                "Award full marks only for the correct option."
+              ]
+            }
+          ]
+        },
+        "rubrics": {
+          "items": [
+            {
+              "questionId": "q5",
+              "totalMarks": 2,
+              "criteria": [
+                {
+                  "criterion": "First valid point",
+                  "marks": 1
+                },
+                {
+                  "criterion": "Second valid point",
+                  "marks": 1
+                }
+              ],
+              "sampleAnswer": "Point-wise short answer"
+            }
+          ]
+        },
+        "generalInstructions": [
+          "Award marks point-wise for each valid idea."
+        ],
+        "evaluatorInstructions": [
+          "Use only the taught session content when evaluating student responses."
+        ],
+        "moderationNotes": [
+          "Maintain consistency across equivalent answers."
+        ]
+      },
+      "summary": {
+        "coverageSummary": [
+          "Balanced coverage of the taught session concepts."
+        ],
+        "omittedContent": [],
+        "balanceNotes": [
+          "Paper progresses from easier to more demanding questions."
+        ]
+      },
+      "validation": {
+        "exactPatternChecks": {
+          "passed": true,
+          "details": [
+            "Question pattern matches the requested blueprint."
+          ]
+        },
+        "marksChecks": {
+          "passed": true,
+          "details": [
+            "Marks match the requested total."
+          ]
+        },
+        "sectionChecks": {
+          "passed": true,
+          "details": [
+            "Each question is assigned to a valid section."
+          ]
+        },
+        "alignmentChecks": {
+          "passed": true,
+          "details": [
+            "Question paper, answer key, and marking scheme are aligned."
+          ]
+        },
+        "scopeBoundaryChecks": {
+          "passed": true,
+          "details": [
+            "No untaught or future-session content included."
+          ]
+        }
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL ASSESSMENT & EVALUATION INTELLIGENCE ENGINE\r\n\r\nROLE\r\nYou are an Enterprise Assessment & Evaluation Intelligence Engine.\r\nYou function like a professional examination committee made up of a curriculum assessment specialist, paper setter, head examiner, subject expert, psychometric reviewer, and marking-scheme designer.\r\n\r\nYou are not a simple question generator.\r\nYou are responsible for designing a complete, session-bounded examination package that is immediately usable by a teacher or school.\r\n\r\nPRIMARY OBJECTIVE\r\nGenerate a complete assessment package for one classroom session only.\r\n\r\nSession context:\r\n- Subject: Mathematics\r\n- Grade/Level: Class IX\r\n- Session title: Number System - Session 1\r\n- Session number: 1 of 15\r\n- Session duration: 45 minutes\r\n- Chapter scope: [\"Number System\"]\r\n- Learning outcomes: []\r\n- Previous session context: No previous session context provided.\r\n- Learning pace: Balanced\r\n- Preferred difficulty: Balanced\r\n- Output language: English\r\n- Language execution rule: Write every natural-language value in English. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when English is required.\r\n\r\nAssessment preferences:\r\n- Assessment type: Session assessment\r\n- Requested total marks: 9\r\n- Requested total questions: 7\r\n- Requested duration: 15 minutes\r\n- Assessment preference inputs: []\r\n- Target blooms emphasis: [\"Apply + Analyze\"]\r\n- Requested question type mix: [{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]\r\n- Allowed assessment sections: [\n  {\n    \"id\": \"section-unit-i-number-system\",\n    \"title\": \"Unit I: Number System\",\n    \"marks\": 7,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-ii-algebra\",\n    \"title\": \"Unit II: Algebra\",\n    \"marks\": 20,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-iii-coordinate-geometry\",\n    \"title\": \"Unit III: Coordinate Geometry\",\n    \"marks\": 4,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-iv-geometry\",\n    \"title\": \"Unit IV: Geometry\",\n    \"marks\": 25,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-v-mensuration\",\n    \"title\": \"Unit V: Mensuration\",\n    \"marks\": 14,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-vi-statistics-and-probability\",\n    \"title\": \"Unit VI: Statistics and Probability\",\n    \"marks\": 10,\n    \"source\": \"assessment_framework\"\n  }\n]\r\n- Question paper objective: Not specified.\r\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 9,\n  \"totalQuestions\": 7,\n  \"questionTypes\": [\n    {\n      \"type\": \"mcq\",\n      \"label\": \"MCQs\",\n      \"questionCount\": 3,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    }\n  ]\n}\r\n\r\nSession JSON source of truth:\r\n{\n  \"id\": \"session-1\",\n  \"sessionNumber\": 1,\n  \"title\": \"Number System - Session 1\",\n  \"duration\": 45,\n  \"learningOutcomes\": [],\n  \"introduction\": \"\",\n  \"theory\": null,\n  \"activities\": [],\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Introduction to Number Systems, focusing on defining real numbers and distinguishing between rational and irrational numbers through visual representation.\",\n    \"prerequisiteKnowledge\": [\n      \"Basic arithmetic operations (addition, subtraction, multiplication, division)\",\n      \"Understanding of integers and fractions\",\n      \"Concept of square roots for perfect squares\"\n    ],\n    \"learningOutcomes\": [\n      \"Students will define the set of Real Numbers.\",\n      \"Students will differentiate between Rational and Irrational numbers based on decimal expansions.\",\n      \"Students will identify examples of both types in real-life contexts.\"\n    ],\n    \"lessonPurpose\": [\n      \"To expand the number system from Integers to Real Numbers.\",\n      \"To resolve the gap where numbers like √2 do not fit into fractions.\"\n    ],\n    \"teachingSequence\": [\n      \"Review integers and simple fractions (Rational).\",\n      \"Introduce non-terminating, non-repeating decimals as a new category.\",\n      \"Define Irrational Numbers using geometric examples (√2 on number line).\",\n      \"Combine both sets to form Real Numbers.\",\n      \"Classify given numbers into Rational or Irrational.\"\n    ],\n    \"guidedPractice\": [\n      \"Teacher writes 3/4, -5, √9, and √2 on board. Ask students to classify immediately.\",\n      \"Ask a student to explain why √9 is rational while √2 is not.\",\n      \"Have the class chant definitions of Rational vs Irrational.\"\n    ],\n    \"misconceptions\": [\n      \"Thinking all decimals are rational\",\n      \"Confusing √25 (rational) with √24 (irrational)\"\n    ],\n    \"formativeChecks\": [\n      \"Thumbs up/down for classification of numbers on the board.\",\n      \"Exit ticket: Write one example each of a Rational and Irrational number.\"\n    ],\n    \"assessmentQuestions\": [\n      \"Classify √7, 0.123456..., and -9 as Rational or Irrational with reasons.\",\n      \"Is the statement 'All real numbers are rational' true? Justify your answer.\"\n    ],\n    \"sessionSummary\": [\n      \"We expanded our number system to include Irrational numbers. Real Numbers encompass both Rational (p/q) and Irrational (non-repeating decimals).\"\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Real Numbers\",\n        \"definition\": \"The set of all rational and irrational numbers.\",\n        \"coreExplanation\": \"Teacher-facing explanation: This is the complete number system used in geometry and algebra. It fills every gap on the continuous line.\",\n        \"importance\": \"Essential for measuring physical quantities like length, area, and time accurately.\",\n        \"keywords\": [\n          \"Rational\",\n          \"Irrational\",\n          \"Real Numbers\",\n          \"Non-terminating\"\n        ],\n        \"examples\": [\n          \"√2, √3, π are irrational; 1/2, -4 are rational.\"\n        ]\n      }\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"explanation\": [\n          \"We know integers and fractions. But geometry shows us lengths that don't fit perfectly into fractions.\",\n          \"Today, we expand our number family to include these 'missing' numbers.\"\n        ],\n        \"examples\": [\n          \"The diagonal of a square with side 1cm is √2 cm (approx 1.414...).\"\n        ],\n        \"checkUnderstanding\": [\n          \"Raise your hand if you think √2 can be written exactly as a fraction.\"\n        ],\n        \"expectedAnswers\": [\n          \"Some will say yes, some no. This creates the cognitive conflict needed for learning.\",\n          \"Correct realization: No exact fraction exists.\"\n        ],\n        \"activity\": []\n      },\n      {\n        \"title\": \"Rational Numbers Review\",\n        \"durationMinutes\": 10,\n        \"explanation\": [\n          \"A number is Rational if it can be written as p/q where q ≠ 0 and p, q are integers.\",\n          \"Terminating decimals (like 0.25) and repeating decimals (like 0.333...) are rational.\"\n        ],\n        \"examples\": [\n          \"1/4 = 0.25\",\n          \"-7 = -7/1\"\n        ],\n        \"checkUnderstanding\": [\n          \"Is the number 5 rational? How do you write it as a fraction?\"\n        ],\n        \"expectedAnswers\": [\n          \"Yes, because 5 = 5/1.\"\n        ],\n        \"activity\": []\n      },\n      {\n        \"title\": \"Irrational Numbers\",\n        \"durationMinutes\": 15,\n        \"explanation\": [\n          \"Irrational numbers cannot be written in p/q form.\",\n          \"Their decimal expansions are non-terminating and non-repeating (e.g., 1.4142135...).\"\n        ],\n        \"examples\": [\n          \"√2 ≈ 1.414...\",\n          \"π ≈ 3.14159...\"\n        ],\n        \"checkUnderstanding\": [\n          \"Is √2 rational or irrational? Give one reason.\"\n        ],\n        \"expectedAnswers\": [\n          \"Irrational because its decimal goes on forever without a repeating pattern and cannot be expressed as a simple fraction.\",\n          \"Because it is the square root of 2, which is not a perfect square.\"\n        ],\n        \"activity\": []\n      },\n      {\n        \"title\": \"Real Numbers & Classification\",\n        \"durationMinutes\": 10,\n        \"explanation\": [\n          \"The union of Rational and Irrational sets is called Real Numbers (R).\",\n          \"Every point on a number line corresponds to exactly one real number.\"\n        ],\n        \"examples\": [\n          \"Real Number Line: -2, 0, √2, π\"\n        ],\n        \"checkUnderstanding\": [\n          \"Classify these: -√5, 0.75, √16.\"\n        ],\n        \"expectedAnswers\": [\n          \"-√5 (Irrational), 0.75 (Rational), √16 = 4 (Rational).\"\n        ],\n        \"activity\": []\n      }\n    ]\n  },\n  \"studentLessonNotes\": {\n    \"title\": \"Number System - Session 1: The World of Numbers\",\n    \"sessionOverview\": \"In this session, we explore the foundation of mathematics by understanding different types of numbers. You will learn to distinguish between Natural and Whole numbers, discover what makes a number Rational or Irrational, and see how they all fit together on the Number Line.\",\n    \"introduction\": \"Welcome! Imagine you are building a house; before you can build walls or a roof, you need a solid foundation. In Mathematics, that foundation is 'The Number System'. Today, we aren't just memorizing rules; we are going to meet all the different characters in our mathematical world and understand exactly who they are.\",\n    \"learningObjectives\": [\n      \"After this lesson you will be able to classify numbers into Natural, Whole, Integers, Rational, and Irrational categories.\",\n      \"You will learn how to identify if a number is rational or irrational based on its decimal expansion.\",\n      \"You will understand the concept of density in real numbers (how many numbers exist between any two points).\",\n      \"You will be able to locate these different types of numbers accurately on a Number Line.\"\n    ],\n    \"keyTerms\": [\n      \"Decimal Expansion\",\n      \"Fraction p/q\",\n      \"Real Numbers\"\n    ],\n    \"quickSummary\": [\n      \"Numbers are classified based on their properties, primarily how they behave as decimals.\",\n      \"Rational numbers include fractions and integers; Irrational numbers fill the gaps with infinite non-repeating decimals.\"\n    ],\n    \"summary\": [\n      \"Today we built the foundation of math by understanding that numbers are not just counting tools but a complex system including fractions and infinite decimals.\"\n    ],\n    \"rememberPoints\": [\n      \"Natural -> Starts at 1\",\n      \"Whole -> Includes 0\",\n      \"Real Line -> No gaps\"\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Rational Number\",\n        \"definition\": \"A number that can be expressed in the form p/q where p and q are integers and q is not equal to zero.\"\n      },\n      {\n        \"term\": \"Irrational Number\",\n        \"definition\": \"A real number whose decimal expansion is non-terminating and non-repeating, meaning it cannot be written as a simple fraction.\"\n      },\n      {\n        \"term\": \"Natural Numbers\",\n        \"definition\": \"The set of positive integers starting from 1 (ℕ = {1, 2, 3...}).\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"The Family of Numbers: Natural & Whole\",\n        \"explanation\": \"Let's start with the most basic numbers we use every day. When you count apples, fingers, or steps, you are using 'Natural Numbers'. These are your friends from 1 onwards. But what if there are no apples? We need a number for that! That is where 'Whole Numbers' come in—they include all Natural numbers plus the speci...\",\n        \"keyPoints\": [\n          \"Natural Numbers (ℕ) = {1, 2, 3, ...}\",\n          \"Whole Numbers (𝑊) = {0, 1, 2, 3, ...}\",\n          \"Every Natural number is a Whole number, but not every Whole number is a Natural number.\",\n          \"Zero is the only whole number that is NOT natural.\"\n        ],\n        \"examples\": [\n          \"Counting students in your class: You count 1, 2, 3... (Natural).\",\n          \"A bank account balance of $0 means you have no money yet. This uses Whole numbers.\",\n          \"The number of fingers on one hand is a Natural number.\"\n        ],\n        \"importantNotes\": [\n          \"Exam Tip: Always check if the question asks for 'Natural' or 'Whole'. If it says Natural, do not include 0.\",\n          \"Caution: Zero is neither positive nor negative.\"\n        ],\n        \"conceptSummary\": [\n          \"Natural numbers start from 1; Whole numbers include Zero.\"\n        ]\n      },\n      {\n        \"heading\": \"The Great Divide: Rational vs. Irrational Numbers\",\n        \"explanation\": \"This is the most exciting part of our session! We split all real numbers into two groups based on how they look when written as decimals.\",\n        \"keyPoints\": [\n          \"Rational numbers can be written as a fraction p/q (where q ≠ 0).\",\n          \"Irrational numbers cannot be written as simple fractions.\",\n          \"The key difference is in their decimal expansion: Rational = Terminating or Repeating; Irrational = Non-terminating and Non-repeating.\"\n        ],\n        \"examples\": [\n          \"Rational Example 1: 0.5 (Terminates). This is 1/2.\",\n          \"Rational Example 2: 0.333... (Repeats). This is 1/3.\",\n          \"Irrational Example: √2 = 1.41421356... It goes on forever without a pattern.\"\n        ],\n        \"importantNotes\": [\n          \"Exam Tip: π (Pi) is irrational! Do not use 3.14 as the exact value in proofs.\",\n          \"Common Mistake: Thinking all decimals are rational. Only those with a repeating pattern or ending are rational.\"\n        ],\n        \"conceptSummary\": [\n          \"If it ends or repeats, it's Rational. If it goes on forever without repeating, it's Irrational.\"\n        ]\n      },\n      {\n        \"heading\": \"The Infinite Line: Real Numbers\",\n        \"explanation\": \"When we combine all the numbers we've met—Natural, Whole, Integers (positive and negative whole numbers), Rational, and Irrational—we get 'Real Numbers'. They fill up every single spot on a number line.\",\n        \"keyPoints\": [\n          \"Every point on the Number Line represents a Real Number.\",\n          \"There are infinitely many real numbers between any two points.\",\n          \"The set of Real Numbers (ℝ) includes both Rational and Irrational numbers.\"\n        ],\n        \"examples\": [\n          \"-5 is an integer, which is also rational (-5/1).\",\n          \"√9 = 3, so it's a whole number (and thus real), but √2 is irrational.\",\n          \"Between 0 and 1, there are infinite numbers like 0.1, 0.01, 0.001...\"\n        ],\n        \"importantNotes\": [\n          \"Exam Tip: Remember √(-4) is NOT a real number (it's imaginary). Real numbers must be positive or negative roots of non-negative numbers.\",\n          \"Key Distinction: All integers are rational, but not all rationals are integers.\"\n        ],\n        \"conceptSummary\": [\n          \"The Real Number Line is a continuous strip containing every possible number we use for measurement.\"\n        ]\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Classifying a Number: Is it Rational or Irrational?\",\n        \"steps\": [\n          \"Step 1: Look at the number. Let's take √5.\",\n          \"Step 2: Check if it can be simplified to an integer. √4 = 2, but √5 is not a perfect square.\",\n          \"Step 3: Recall that roots of non-perfect squares are always irrational.\",\n          \"Step 4: Conclusion: Since √5 cannot be written as p/q and its decimal (approx 2.236...) never repeats or ends, it is Irrational.\"\n        ],\n        \"explanation\": \"We use the property that perfect square roots result in integers (which are rational), while non-perfect square roots result in irrational numbers.\"\n      },\n      {\n        \"title\": \"Finding a Rational Number Between Two Numbers\",\n        \"steps\": [\n          \"Step 1: Identify two numbers, say 0.5 and 0.6.\",\n          \"Step 2: To find a rational number between them, simply take the average (add them and divide by 2).\",\n          \"Step 3: Calculation: (0.5 + 0.6) / 2 = 1.1 / 2 = 0.55.\",\n          \"Step 4: Verification: Is 0.55 between 0.5 and 0.6? Yes.\"\n        ],\n        \"explanation\": \"This method works because the average of two rational numbers is always a rational number, proving there are infinite rationals between any two points.\"\n      }\n    ],\n    \"selfCheckQuestions\": [\n      \"Is -7 a rational number? Why or why not?\",\n      \"Can you name an irrational number that is less than 2?\",\n      \"What is the difference between Natural and Whole numbers?\"\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"Is 0 a rational number?\",\n        \"answer\": \"Yes, because it can be written as 0/1.\"\n      },\n      {\n        \"question\": \"Give one example of an irrational number.\",\n        \"answer\": \"√2 or π\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which of the following is an irrational number?\",\n        \"answer\": \"C. π (Pi)\"\n      },\n      {\n        \"question\": \"Which set includes the number zero?\",\n        \"answer\": \"B. Whole Numbers\"\n      }\n    ]\n  },\n  \"topicCoverage\": []\n}\r\n\r\nTARGET JSON SHAPE\r\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}\r\n\r\nABSOLUTE RULES\r\n1. This assessment is for ONE SESSION ONLY.\r\n2. Use only content that is explicitly present in the supplied session information.\r\n3. Never introduce future chapters, untaught formulas, external textbook knowledge, or assumed content.\r\n4. Learning outcomes guide coverage, but questions must originate from taught concepts, not from repetitive learning-outcome wording.\r\n5. Every question must measure real learning: understanding, application, reasoning, analysis, interpretation, communication, competency, or conceptual clarity.\r\n6. Match the requested marks, duration, question counts, and section structure exactly.\r\n7. If allowed assessment sections are supplied, every question must use one valid sectionId and sectionTitle from that list.\r\n8. Keep the paper professional, board-style, fair, age appropriate, and free from repetitive AI patterns.\r\n9. Return valid JSON only.\r\n\r\nINTERNAL WORKFLOW\r\nFollow this reasoning process before writing the final JSON:\r\n\r\nPHASE 1 - SESSION INTELLIGENCE\r\n- Identify what students learned in this session.\r\n- Extract taught concepts, skills, vocabulary, examples, activities, practical work, and likely misconceptions.\r\n- Distinguish high-emphasis concepts from supporting concepts.\r\n\r\nPHASE 2 - CONCEPT INTELLIGENCE\r\n- Build an internal concept graph from the taught session.\r\n- Map each learning outcome to the concepts actually taught.\r\n- Identify concept importance, dependency, applications, likely misconceptions, and assessment opportunities.\r\n\r\nPHASE 3 - BLUEPRINT-FIRST DESIGN\r\n- Design the full paper before writing questions.\r\n- Decide section allocation, marks per section, question progression, blooms balance, competency balance, and time allocation.\r\n- Distribute questions across important taught concepts rather than over-testing one idea.\r\n\r\nPHASE 4 - PROFESSIONAL QUESTION PAPER\r\n- Generate a student-facing paper with ordered questions.\r\n- Use continuous ids: q1, q2, q3, ...\r\n- Keep wording precise and board-like.\r\n- Preserve the requested subtype mix such as mcq, veryShortAnswer, shortAnswer, longAnswer, and caseStudy.\r\n\r\nPHASE 5 - EVALUATION PACKAGE\r\n- Generate a complete linked evaluation package:\r\n  - answer key\r\n  - marking scheme\r\n  - rubric package\r\n  - evaluator instructions\r\n  - moderation notes\r\n- Every evaluation item must link to the same question id as the paper.\r\n- For non-MCQ questions, provide point-wise criteria and mark allocation.\r\n\r\nPHASE 6 - VALIDATION\r\n- Confirm the final output matches requested marks, requested counts, requested duration, and valid sections.\r\n- Confirm each question has aligned answer-key and marking-scheme coverage.\r\n- Confirm the paper stays within the session boundary.\r\n\r\nOUTPUT REQUIREMENTS\r\n1. Output the canonical assessment package only.\r\n2. Put student-facing instructions in `paper.instructions`.\r\n3. Put the ordered question paper in `paper.questions`.\r\n4. Put answer keys in `evaluation.answerKey.items`.\r\n5. Put mark splits in `evaluation.markingScheme.items`.\r\n6. Put rubric criteria in `evaluation.rubrics.items`.\r\n7. Put summary notes in `summary`.\r\n8. Put validation status in `validation`.\r\n9. Use the exact section ids and titles supplied or derived from the session context.\r\n10. Keep question metadata, evaluation metadata, and blueprint references aligned to the same continuous ids.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}"
+    }
+  ]
+}
