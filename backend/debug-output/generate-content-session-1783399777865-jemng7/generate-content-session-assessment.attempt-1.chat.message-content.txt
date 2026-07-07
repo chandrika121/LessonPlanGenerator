@@ -1,0 +1,666 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Students will define the set of Real Numbers.",
+        "Students will differentiate between Rational and Irrational numbers based on decimal expansions.",
+        "Students will identify examples of both types in real-life contexts."
+      ],
+      "assessedConcepts": [
+        "Rational Numbers",
+        "Irrational Numbers",
+        "Real Numbers",
+        "Decimal Expansions"
+      ],
+      "conceptCoveragePriorities": [
+        "Differentiation between Rational and Irrational numbers based on decimal expansion",
+        "Classification of specific numbers (e.g., roots, integers)"
+      ],
+      "misconceptionTargets": [
+        "Thinking all decimals are rational",
+        "Confusing √25 (rational) with √24 (irrational)"
+      ],
+      "competencyFocus": [
+        "Application",
+        "Analysis"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Session-aligned assessment on Number System concepts"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Rational Numbers",
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q4"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Irrational Numbers",
+          "questionRefs": [
+            "q3",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will define the set of Real Numbers.",
+          "questionRefs": [
+            "q1",
+            "q3"
+          ]
+        },
+        {
+          "outcome": "Students will differentiate between Rational and Irrational numbers based on decimal expansions.",
+          "questionRefs": [
+            "q2",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ]
+        },
+        {
+          "outcome": "Students will identify examples of both types in real-life contexts.",
+          "questionRefs": [
+            "q3",
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 30,
+        "application": 35,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 3,
+        "application": 3,
+        "analysis": 1
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Unit I: Number System",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session.",
+        "Section: Unit I: Number System. Total Marks: 9. Time: 15 Minutes."
+      ],
+      "sections": [
+        {
+          "id": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following numbers is irrational?",
+          "options": [
+            "A. 0.5",
+            "B. √4",
+            "C. π",
+            "D. -3"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will define the set of Real Numbers."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Irrational numbers cannot be written as simple fractions."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "The decimal expansion of the number √2 is:",
+          "options": [
+            "A. Terminating",
+            "B. Non-terminating and repeating",
+            "C. Non-terminating and non-repeating",
+            "D. Finite"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will differentiate between Rational and Irrational numbers based on decimal expansions."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers",
+            "Decimal Expansions"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Irrational numbers have non-terminating and non-repeating decimal expansions."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following is a rational number?",
+          "options": [
+            "A. √5",
+            "B. 0.123456...",
+            "C. -9",
+            "D. π"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Students will identify examples of both types in real-life contexts."
+          ],
+          "conceptRefs": [
+            "Rational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Classification",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Rational numbers can be written as p/q."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Is 0 a rational number? Justify your answer in one sentence.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Students will differentiate between Rational and Irrational numbers based on decimal expansions."
+          ],
+          "conceptRefs": [
+            "Rational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Justification",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: 0 can be written as 0/1."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Give one example of an irrational number.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One example",
+          "learningOutcomeRefs": [
+            "Students will identify examples of both types in real-life contexts."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Identification",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Examples include √2, π."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Classify √7 and -9 as Rational or Irrational. Provide a reason for each classification.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Short paragraph with reasons",
+          "learningOutcomeRefs": [
+            "Students will differentiate between Rational and Irrational numbers based on decimal expansions."
+          ],
+          "conceptRefs": [
+            "Rational Numbers",
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Classification and Reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Roots of non-perfect squares are irrational; integers are rational."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Is the statement 'All real numbers are rational' true? Justify your answer with a counter-example.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Short paragraph with justification",
+          "learningOutcomeRefs": [
+            "Students will define the set of Real Numbers."
+          ],
+          "conceptRefs": [
+            "Real Numbers",
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Evaluation and Justification",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Real numbers include both rational and irrational numbers."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. π",
+            "explanation": "π is a non-terminating, non-repeating decimal and cannot be expressed as p/q.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. Non-terminating and non-repeating",
+            "explanation": "√2 is an irrational number, characterized by a decimal expansion that goes on forever without repeating.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. -9",
+            "explanation": "-9 is an integer and can be written as -9/1, making it rational.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Yes, because it can be written as 0/1.",
+            "explanation": "Any integer n can be written as n/1. Since 0 is an integer, it is rational.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "√2 or π",
+            "explanation": "These numbers have non-terminating, non-repeating decimal expansions.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "√7 is irrational (non-perfect square root); -9 is rational (can be written as -9/1).",
+            "explanation": "Roots of non-perfect squares are irrational. Integers are rational.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "False. Real numbers include irrational numbers like √2.",
+            "explanation": "The set of Real Numbers is the union of Rational and Irrational numbers. Since irrational numbers exist, not all real numbers are rational.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct answer (Yes) with valid reason (0/1)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks if the student states Yes and provides the fraction form."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct example given",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for any valid irrational number (e.g., √2, π)."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct classification of √7 with reason",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct classification of -9 with reason",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for each correct classification and reason."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct statement (False)",
+                "marks": 1
+              },
+              {
+                "criterion": "Valid counter-example provided",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for the correct judgment and 1 mark for a valid example like √2."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point (Classification of √7)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point (Classification of -9)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "√7 is irrational because it cannot be written as p/q. -9 is rational because it equals -9/1."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point (Statement is False)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point (Counter-example provided)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "False. Real numbers include irrational numbers like √2 which are not rational."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of Rational, Irrational, and Real Numbers concepts."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier to more demanding questions."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (3 MCQs, 2 VSA, 2 SA)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total (9 marks)."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to a valid section (section-unit-i-number-system)."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}
