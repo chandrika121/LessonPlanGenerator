@@ -1,0 +1,470 @@
+{
+  "assessment": {
+  "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 6,
+      "totalQuestions": 4,
+      "durationMinutes": 15,
+      "language": "Hindi",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "केवल इस सत्र में पढ़ाए गए सामग्री का मूल्यांकन करें।",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "बहुविकल्पीय प्रश्न (MCQs)",
+          "questionCount": 2,
+          "marksEach": 1
+        }
+      ]
+    },
+  "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "रासायनिक पदार्थों के गुणों की पहचान करना",
+        "धातुओं और अधातुओं में अंतर समझना"
+      ],
+      "assessedConcepts": [
+        "धातुओं के भौतिक गुण (उदाहरण: चमक, लचीलापन)",
+        "अधातुओं की प्रकृति",
+        "रासायनिक अभिक्रिया में धातु और अधातु का व्यवहार"
+      ],
+      "conceptCoveragePriorities": [
+        "धातुओं के भौतिक गुणों की पहचान (उच्च प्राथमिकता)",
+        "अधातुओं की तुलनात्मक विश्लेषण"
+      ],
+      "misconceptionTargets": [
+        "सभी धातुओं का कठोर होना",
+        "ध्वनि उत्पन्न करने वाली सभी सामग्रियों के रूप में अधातु को समझना"
+      ],
+      "competencyFocus": [
+        "अवलोकन और वर्गीकरण"
+      ]
+    },
+  "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "title": "Section C (Textbook & Supplementary Reader)",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "focus": "सत्र में पढ़ाए गए रासायनिक पदार्थों के गुणों पर आधारित मूल्यांकन।"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "धातुओं और अधातुओं की भौतिक विशेषताएं",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "रासायनिक गुणों की पहचान",
+          "questionRefs": [
+            "q3",
+            "q4"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "रासायनिक पदार्थों के गुणों की पहचान करना",
+          "questionRefs": [
+            "q1",
+            "q3"
+          ]
+        },
+        {
+          "outcome": "धातुओं और अधातुओं में अंतर समझना",
+          "questionRefs": [
+            "q2",
+            "q4"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 50,
+        "medium": 37.5,
+        "hard": 12.5
+      },
+      "bloomsDistribution": {
+        "recall": 25,
+        "understanding": 40,
+        "application": 25,
+        "analysis": 10,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 3,
+        "application": 1
+      },
+      "questionDistribution": {
+        "mcq": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Section C (Textbook & Supplementary Reader)",
+          "minutes": 15
+        }
+      ]
+    },
+  "paper": {
+      "instructions": [
+        "सभी प्रश्न उत्तर दें।",
+        "केवल इस सत्र में पढ़ाए गए अवधारणाओं का उपयोग करें।"
+      ],
+      "sections": [
+        {
+          "id": "section-section-c-textbook-supplementary-reader",
+          "title": "Section C (Textbook & Supplementary Reader)",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "निम्नलिखित में से कौन सा धातु का भौतिक गुण है?",
+          "options": [
+            "A. यह विद्युत् की कुचालक होती है",
+            "B. इसमें चमक (लस्टर) होती है",
+            "C. यह टूटने पर धूल बन जाती है",
+            "D. इसका गलनांक बहुत कम होता है"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "धातुओं के भौतिक गुण"
+          ],
+          "topicCoverage": [
+            "Chemical Substances and Their Properties"
+          ],
+          "subtopicCoverage": [
+            "Physical properties of metals"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session notes on metal luster and conductivity"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "अधातुओं की सामान्य प्रकृति क्या है?",
+          "options": [
+            "A. वे विद्युत् के सुचालक होते हैं",
+            "B. वे आघातवर्धनीय (malleable) और तन्य (ductile) होते हैं",
+            "C. वे टूटने पर धूल या कण बन जाती हैं",
+            "D. इनमें उच्च गलनांक होता है"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "अधातुओं की प्रकृति"
+          ],
+          "topicCoverage": [
+            "Chemical Substances and Their Properties"
+          ],
+          "subtopicCoverage": [
+            "Physical properties of non-metals"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session notes on brittleness of non-metals"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "क्या सभी धातुएं कठोर होती हैं? एक उदाहरण के साथ स्पष्ट करें।",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "1-2 वाक्य",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "धातुओं के भौतिक गुणों में अपवाद"
+          ],
+          "topicCoverage": [
+            "Chemical Substances and Their Properties"
+          ],
+          "subtopicCoverage": [
+            "Softness of metals like Sodium/Potassium"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Critical thinking",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session discussion on soft metals (Na, K)"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-section-c-textbook-supplementary-reader",
+          "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "धातुओं और अधातुओं के बीच एक प्रमुख भौतिक अंतर लिखें।",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "1-2 वाक्य",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "धातु और अधातु की तुलना"
+          ],
+          "topicCoverage": [
+            "Chemical Substances and Their Properties"
+          ],
+          "subtopicCoverage": [
+            "Comparison of physical properties"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Differentiation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session comparison table of metals and non-metals"
+          ]
+        }
+      ]
+    },
+  "evaluation": {
+      "answerKey": {
+  "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-section-c-textbook-supplementary-reader",
+            "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+            "answer": "B. इसमें चमक (लस्टर) होती है",
+            "explanation": "धातुओं की सबसे प्रमुख भौतिक विशेषता उनकी धात्विक चमक या लस्टर होना है। अन्य विकल्प अधातुओं के गुण हैं।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-section-c-textbook-supplementary-reader",
+            "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+            "answer": "C. वे टूटने पर धूल या कण बन जाती हैं",
+            "explanation": "अधातुएं आघातवर्धनीय नहीं होतीं; जब इन्हें हथौड़े से पीटा जाता है तो ये चूर-चूर होकर धूल या कण बना देती हैं।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-section-c-textbook-supplementary-reader",
+            "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+            "answer": "नहीं, सभी धातुएं कठोर नहीं होतीं। उदाहरण के लिए, सोडियम (Na) और पोटैशियम (K) इतने नरम होते हैं कि उन्हें चाकू से काटा जा सकता है।",
+            "explanation": "उत्तर में 'नहीं' स्पष्ट होना चाहिए और एक उचित उदाहरण (सोडियम/पोटैशियम) दिया जाना चाहिए जो धातु होने के बावजूद नरम होता है।",
+            "marks": 2,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-section-c-textbook-supplementary-reader",
+            "sectionTitle": "Section C (Textbook & Supplementary Reader)",
+            "answer": "धातुएं विद्युत् की सुचालक होती हैं जबकि अधातु कुचालक होते हैं। अथवा, धातुएं आघातवर्धनीय और तन्य होती हैं जबकि अधातु नहीं।",
+            "explanation": "उत्तर में कोई भी एक प्रमुख भौतिक अंतर (विद्युत् चालकता या लचीलापन/चूर-चुर होना) स्पष्ट रूप से बताया जाना चाहिए।",
+            "marks": 2,
+            "subtype": "veryShortAnswer"
+          }
+        ]
+},
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (B) का चयन किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (C) का चयन किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "स्पष्टीकरण कि सभी धातुएं कठोर नहीं होतीं (नहीं)।",
+                "marks": 1
+              },
+              {
+                "criterion": "सोडियम या पोटैशियम जैसे सही उदाहरण का प्रयोग किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "प्रत्येक मान्य बिंदु के लिए अंक दें।"
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "धातु और अधातु का कोई एक सही भौतिक अंतर दिया गया है।",
+                "marks": 1
+              },
+              {
+                "criterion": "अंतर स्पष्ट रूप से परिभाषित किया गया है (जैसे चालकता या लचीलापन)।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "प्रत्येक मान्य बिंदु के लिए अंक दें।"
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q3",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "पहला मान्य बिंदु: धातुओं के नरम होने का उल्लेख (नहीं)।",
+                "marks": 1
+              },
+              {
+                "criterion": "दूसरा मान्य बिंदु: सोडियम या पोटैशियम जैसे सही उदाहरण की पहचान।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "नहीं, सभी धातुएं कठोर नहीं होतीं। सोडियम (Na) एक नरम धातु है जिसे चाकू से काटा जा सकता है।"
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "पहला मान्य बिंदु: विद्युत् चालकता या आघातवर्धनीयता में अंतर।",
+                "marks": 1
+              },
+              {
+                "criterion": "दूसरा मान्य बिंदु: उदाहरण के साथ स्पष्टीकरण।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "धातुएं विद्युत् की सुचालक होती हैं, जबकि अधातु कुचालक होते हैं।"
+          }
+        ]
+      },
+      "generalInstructions": [
+        "प्रत्येक मान्य विचार के लिए बिंदु-वार अंक प्रदान करें।",
+        "उत्तरों में स्पष्टता और सटीकता पर ध्यान दें।"
+      ],
+      "evaluatorInstructions": [
+        "मूल्यांकन करते समय केवल इसी सत्र में पढ़ाई गई सामग्री का उपयोग करें।",
+        "सोडियम या पोटैशियम जैसे उदाहरणों को स्वीकार्य मानें, भले ही छात्र ने अन्य नरम धातुओं का संकेत दिया हो (यदि सही है)।"
+      ],
+      "moderationNotes": [
+        "समान उत्तरों के बीच सुसंगति बनाए रखें।",
+        "अगर कोई छात्र 'लीथियम' जैसे अन्य नरम धातु का उदाहरण देता है, तो उसे स्वीकार करें यदि वह सही संदर्भ में हो।"
+      ]
+    },
+  "summary": {
+      "coverageSummary": [
+        "सत्र में पढ़ाए गए रासायनिक पदार्थों के गुणों का संतुलित कवरेज, विशेष रूप से धातुओं और अधातुओं की भौतिक विशेषताएं।"
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "पत्र आसान प्रश्नों (MCQ) से शुरू होकर अधिक मांग करने वाले संक्षिप्त उत्तरों पर जाता है।"
+      ]
+    },
+  "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "प्रश्न पैटर्न अनुरोधित ब्लूप्रिंट से मेल खाता है (2 MCQs और 2 संक्षिप्त उत्तर)।"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "कुल अंक अनुरोधित कुल 6 के बराबर हैं।"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "durationMinutes": 15,
+        "details": [
+          "प्रत्येक प्रश्न एक मान्य खंड (Section C) में सौंपा गया है।"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "प्रश्न पत्र, उत्तर कुंजी और अंक विभाजन सुसंगत हैं।"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "कोई भी अनपढ़ाया या भविष्य की सत्र सामग्री शामिल नहीं है।"
+        ]
+      }
+    }
+}
+}

@@ -1,5 +1,7 @@
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import net from "node:net";
+import path from "node:path";
 
 const FRONTEND_PORT = Number(process.env.FRONTEND_PORT || 4173);
 const BACKEND_PORT = Number(process.env.BACKEND_PORT || 3002);
@@ -24,16 +26,26 @@ function isPortInUse(port) {
   });
 }
 
+function resolveLocalExecutable(command, cwd) {
+  const binDir = path.join(cwd, "node_modules", ".bin");
+  const candidate = process.platform === "win32" ? `${command}.cmd` : command;
+  const localBinary = path.join(binDir, candidate);
+
+  return existsSync(localBinary) ? localBinary : command;
+}
+
 function createCommand(command, args, cwd) {
+  const executable = resolveLocalExecutable(command, cwd);
+
   if (process.platform === "win32") {
-    return spawn(command, args, {
+    return spawn(executable, args, {
       cwd,
       stdio: "inherit",
       shell: true,
     });
   }
 
-  return spawn(command, args, {
+  return spawn(executable, args, {
     cwd,
     stdio: "inherit",
     shell: false,
@@ -41,8 +53,8 @@ function createCommand(command, args, cwd) {
 }
 
 function startDevServers() {
-  const frontendProcess = createCommand("npx", ["vite"], process.cwd());
-  const backendProcess = createCommand("npx", ["tsx", "watch", "server.ts"], `${process.cwd()}\\backend`);
+  const frontendProcess = createCommand("vite", [], process.cwd());
+  const backendProcess = createCommand("tsx", ["watch", "server.ts"], path.join(process.cwd(), "backend"));
 
   const shutdown = () => {
     frontendProcess.kill();

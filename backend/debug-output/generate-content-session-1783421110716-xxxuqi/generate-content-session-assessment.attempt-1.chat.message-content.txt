@@ -1,0 +1,475 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 6,
+      "totalQuestions": 4,
+      "durationMinutes": 15,
+      "language": "Hindi",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "केवल इस सत्र में पढ़ाए गए सामग्री का मूल्यांकन करें।",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "बहुविकल्पीय प्रश्न (MCQs)",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "लघु उत्तरीय प्रश्न",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "रासायनिक पदार्थों के गुणों की पहचान करना",
+        "धातुओं और अधातुओं में अंतर समझना"
+      ],
+      "assessedConcepts": [
+        "धातुओं के भौतिक गुण (उदाहरण: चमक, आघावर्यता)",
+        "अधातु की प्रकृति",
+        "रासायनिक अभिक्रिया में धातु और अधातु का व्यवहार"
+      ],
+      "conceptCoveragePriorities": [
+        "धातुओं के भौतिक गुणों की पहचान",
+        "अधातुओं की विषमता (brittleness)"
+      ],
+      "misconceptionTargets": [
+        "सभी धातुओं का कठोर होना और सभी अधातुओं के नरम होने का भ्रम"
+      ],
+      "competencyFocus": [
+        "अवलोकन",
+        "वर्गीकरण"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-assessment",
+          "title": "मूल्यांकन (Session Assessment)",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "focus": "सत्र 'रासायनिक पदार्थ और उनके गुण' के आधारित मूल्यांकन"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "धातुओं की चमक",
+          "questionRefs": [
+            "q1"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "अधातु का आघावर्यता गुण",
+          "questionRefs": [
+            "q2"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "रासायनिक पदार्थों के गुणों की पहचान करना",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "धातुओं और अधातुओं में अंतर समझना",
+          "questionRefs": [
+            "q3",
+            "q4"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 50,
+        "medium": 25,
+        "hard": 25
+      },
+      "bloomsDistribution": {
+        "recall": 30,
+        "understanding": 40,
+        "application": 30,
+        "analysis": 0,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 2,
+        "application": 1,
+        "recall": 1
+      },
+      "questionDistribution": {
+        "mcq": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "मूल्यांकन (Session Assessment)",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "सभी प्रश्नों का उत्तर दें।",
+        "केवल इस सत्र में पढ़ाए गए अवधारणाओं का उपयोग करें।"
+      ],
+      "sections": [
+        {
+          "id": "section-assessment",
+          "title": "मूल्यांकन (Session Assessment)",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "source": "fallback"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-assessment",
+          "sectionTitle": "मूल्यांकन (Session Assessment)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "निम्नलिखित में से कौन सा गुण धातुओं की पहचान के लिए सबसे विशिष्ट है?",
+          "options": [
+            "A. अधिकांश धातुएं कमरे के तापमान पर द्रव होती हैं",
+            "B. धातुएँ आघावर्य (malleable) और तन्य (ductile) होती हैं",
+            "C. सभी धातुें विद्युत् का कुचालक होते हैं",
+            "D. अधिकांश धातुएं नरम होती हैं"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "धातुओं की भौतिक प्रकृति"
+          ],
+          "topicCoverage": [
+            "रासायनिक पदार्थ और उनके गुण"
+          ],
+          "subtopicCoverage": [
+            "धातुओं के विशेष गुण"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session notes on metallic properties: luster, malleability."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-assessment",
+          "sectionTitle": "मूल्यांकन (Session Assessment)",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "अधातुओं के बारे में निम्नलिखित कथनों में से कौन सा सत्य है?",
+          "options": [
+            "A. अधातुएँ आघावर्य होती हैं और लोहे की तरह बारीक तार बनाई जा सकती हैं",
+            "B. अधातुओं के टुकड़े को हथौड़े से पीटने पर वे चूर-चूर हो जाती हैं (भंगुर)",
+            "C. सभी अधातुएँ विद्युत् का सुचालक होती हैं",
+            "D. अधातुएं ध्वनि उत्पन्न करती हैं जब उन्हें हथौड़े से पीटा जाता है"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "अधातु की प्रकृति"
+          ],
+          "topicCoverage": [
+            "रासायनिक पदार्थ और उनके गुण"
+          ],
+          "subtopicCoverage": [
+            "अधातुओं के भौतिक गुण"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Factual knowledge",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session notes on non-metallic properties: brittleness."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-assessment",
+          "sectionTitle": "मूल्यांकन (Session Assessment)",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "धातुओं और अधातुओं के बीच एक प्रमुख भौतिक अंतर लिखें।",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "1-2 वाक्य",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "धातु बनाम अधातु तुलना"
+          ],
+          "topicCoverage": [
+            "रासायनिक पदार्थ और उनके गुण"
+          ],
+          "subtopicCoverage": [
+            "भौतिक गुणों की तुलना"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Comparison and contrast",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session comparison table of metals vs non-metals."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-assessment",
+          "sectionTitle": "मूल्यांकन (Session Assessment)",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "क्या कोई धातु है जो कमरे के तापमान पर द्रव अवस्था में होती है? यदि हाँ, तो उसका नाम लिखें।",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "1-2 वाक्य",
+          "learningOutcomeRefs": [
+            "LO4"
+          ],
+          "conceptRefs": [
+            "असाधारण धातु के गुण"
+          ],
+          "topicCoverage": [
+            "रासायनिक पदार्थ और उनके गुण"
+          ],
+          "subtopicCoverage": [
+            "पारा (Mercury) का विशेष स्थिति"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Specific knowledge application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session note on Mercury as a liquid metal."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-assessment",
+            "sectionTitle": "मूल्यांकन (Session Assessment)",
+            "answer": "B. धातुएँ आघावर्य (malleable) और तन्य (ductile) होती हैं",
+            "explanation": "धातुओं की मुख्य विशेषताएं चमक, आघावर्यता (पत्ती बनाने योग्य), और तन्यता (तार बनाए जाने योग्य) हैं। अन्य विकल्प गलत हैं क्योंकि अधिकांश धातुें ठोस होती हैं और विद्युत् के सुचालक होते हैं।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-assessment",
+            "sectionTitle": "मूल्यांकन (Session Assessment)",
+            "answer": "B. अधातुओं के टुकड़े को हथौड़े से पीटने पर वे चूर-चूर हो जाती हैं (भंगुर)",
+            "explanation": "अधातुएं आघावर्य नहीं होतीं; वे भंगुर (brittle) होती हैं और उन्हें पीटने पर तोड़ दी जाती हैं।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-assessment",
+            "sectionTitle": "मूल्यांकन (Session Assessment)",
+            "answer": "धातुएं आघावर्य और तन्य होती हैं जबकि अधातुएं भंगुर होती हैं। अथवा, धातुओं में चमक होती है लेकिन अधिकांश अधातुओं में नहीं।",
+            "explanation": "उत्तर में किसी एक प्रमुख भौतिक गुण (जैसे आघावर्यता या चमक) का उल्लेख होना चाहिए जो दोनों के बीच अंतर करता है।",
+            "marks": 2,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-assessment",
+            "sectionTitle": "मूल्यांकन (Session Assessment)",
+            "answer": "हाँ, पारा (Mercury)।",
+            "explanation": "पारा एकमात्र धातु है जो कमरे के तापमान पर द्रव अवस्था में पाई जाती है।",
+            "marks": 2,
+            "subtype": "veryShortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (B) का चयन किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (B) का चयन किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प के लिए पूर्ण अंक प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "आघावर्यता/तन्य बनाम भंगुर का उल्लेख (1 अंक)",
+                "marks": 1
+              },
+              {
+                "criterion": "चमक या विद्युत् चालकता में अंतर का सही वर्णन (1 अंक)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "यदि छात्र ने केवल एक गुण बताया है तो 1 अंक दें। यदि दो भिन्न गुणों की तुलना सही ढंग से बताई गई है, तो पूर्ण अंक (2) प्रदान करें।"
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "'हाँ' या हाँ का संकेत दिया गया है (1 अंक)",
+                "marks": 1
+              },
+              {
+                "criterion": "धातु का सही नाम 'पारा' लिखा गया है (1 अंक)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "'हाँ' और 'पारा' दोनों के लिए पूर्ण अंक प्रदान करें। यदि छात्र ने पारे का रासायनिक संकेतक (Hg) लिखा है, तो भी उसे स्वीकार किया जाए।"
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q3",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "आघावर्यता बनाम भंगुर का उल्लेख किया गया है।",
+                "marks": 1
+              },
+              {
+                "criterion": "चमक या विद्युत् चालकता में अंतर स्पष्ट रूप से बताया गया है।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "धातुएं आघावर्य होती हैं जबकि अधातुएं भंगुर होती हैं। धातुओं में चमक होती है लेकिन अधिकांश अधातुओं में नहीं।"
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "परावर्ती उत्तर (हाँ) दिया गया है।",
+                "marks": 1
+              },
+              {
+                "criterion": "सही धातु का नाम 'पारा' लिखा गया है।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "हाँ, पारा (Mercury) कमरे के तापमान पर द्रव अवस्था में होती है।"
+          }
+        ]
+      },
+      "generalInstructions": [
+        "प्रत्येक मान्य विचार के लिए बिंदु-वार अंक प्रदान करें।",
+        "MCQs में केवल चिह्नित विकल्प पर ही अंक दें, स्पष्टीकरण की आवश्यकता नहीं है।"
+      ],
+      "evaluatorInstructions": [
+        "मूल्यांकन करते समय केवल इस सत्र में पढ़ाए गए सामग्री का उपयोग करें।",
+        "'पारा' को 'Mercury' या 'Hg' लिखने पर भी अंक दें।"
+      ],
+      "moderationNotes": [
+        "समान उत्तरों के लिए सुसंगतता बनाए रखें। यदि छात्र ने आघावर्यता का उल्लेख नहीं किया है लेकिन चमक और विद्युत् चालकता की तुलना सही ढंग से बताई है, तो पूर्ण अंक प्रदान करें।"
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "सत्र 'रासायनिक पदार्थ और उनके गुण' के मुख्य अवधारणाओं का संतुलित कवरेज, जिसमें धातुओं की चमक/आघावर्यता और अधातुओं की भंगुरता शामिल है।"
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "पत्र आसान प्रश्नों (MCQs) से शुरू होकर थोड़े अधिक चुनौतीपूर्ण लघु उत्तरीय प्रश्नों की ओर बढ़ता है।"
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "प्रश्न पैटर्न अनुरोधित ब्लूप्रिंट (2 MCQs + 2 Short Answers) से मेल खाता है।"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "durationMinutes": 15,
+        "details": [
+          "कुल अंक अनुरोधित कुल (6) के बराबर हैं।",
+          "अनुमानित अवधि 15 मिनट है जो सत्र की आवश्यकताओं से मेल खाती है।"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "प्रत्येक प्रश्न एक मान्य अनुभाग (मूल्यांकन) में नियत किया गया है।"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "प्रश्न पत्र, उत्तर कुंजी और अंक विभाजन सुसंगत हैं।"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "कोई भी अनपढ़ाया या भविष्य की सत्र सामग्री शामिल नहीं है; केवल 'रासायनिक पदार्थ और उनके गुण' पर केंद्रित।"
+        ]
+      }
+    }
+  }
+}

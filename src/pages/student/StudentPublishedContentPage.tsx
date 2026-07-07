@@ -3,11 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { ActionToast } from "../../components/ActionToast";
 import { ExpandableCard } from "../../components/ExpandableCard";
 import type { PublishedStudentArtifact, StudentPublicationKind } from "../../types/student-content";
+import { buildApiUrl } from "../../utils/apiBaseUrl";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 function getSession() {
   try {
@@ -444,8 +442,8 @@ export function StudentPublishedContentPage({
       try {
         const endpoint =
           kind === "notes"
-            ? `${BACKEND_URL}/api/student/notes?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId)}`
-            : `${BACKEND_URL}/api/student/published-content?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId)}&kind=${encodeURIComponent(kind)}`;
+            ? buildApiUrl(`/api/student/notes?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId)}`)
+            : buildApiUrl(`/api/student/published-content?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId)}&kind=${encodeURIComponent(kind)}`);
         const response = await fetch(endpoint, kind === "notes" ? { cache: "no-store" } : undefined);
         if (!response.ok) {
           throw new Error(`Failed to load published content (HTTP ${response.status})`);
@@ -485,7 +483,7 @@ export function StudentPublishedContentPage({
     const loadSubmittedIds = async () => {
       try {
         const response = await fetch(
-          `${BACKEND_URL}/api/student/submissions?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId || "")}&kind=${encodeURIComponent(kind)}`,
+          buildApiUrl(`/api/student/submissions?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId || "")}&kind=${encodeURIComponent(kind)}`),
         );
         if (!response.ok) {
           throw new Error(`Failed to load submissions (HTTP ${response.status})`);
@@ -535,7 +533,7 @@ export function StudentPublishedContentPage({
     setSubmittingId(itemId);
     try {
       const fileDataUrl = await readFileAsDataUrl(file);
-      const response = await fetch(`${BACKEND_URL}${endpoint}`, {
+      const response = await fetch(buildApiUrl(endpoint), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

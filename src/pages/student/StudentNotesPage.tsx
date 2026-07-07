@@ -3,11 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { AuthUser } from "../../types/auth";
 import type { PublishedStudentArtifact } from "../../types/student-content";
+import { buildApiUrl } from "../../utils/apiBaseUrl";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 function getCurrentUser(): AuthUser | null {
   try {
@@ -74,7 +72,7 @@ function StudentNotesPage() {
 
     let cancelled = false;
     void fetch(
-      `${BACKEND_URL}/api/student/notes?userId=${encodeURIComponent(currentUser.id)}&schoolId=${encodeURIComponent(currentUser.schoolId)}`,
+      buildApiUrl(`/api/student/notes?userId=${encodeURIComponent(currentUser.id)}&schoolId=${encodeURIComponent(currentUser.schoolId)}`),
       { cache: "no-store" },
     )
       .then(async (response) => {
@@ -107,7 +105,7 @@ function StudentNotesPage() {
 
     let cancelled = false;
     void fetch(
-      `${BACKEND_URL}/api/student/subjects?userId=${encodeURIComponent(currentUser.id)}&schoolId=${encodeURIComponent(currentUser.schoolId)}`,
+      buildApiUrl(`/api/student/subjects?userId=${encodeURIComponent(currentUser.id)}&schoolId=${encodeURIComponent(currentUser.schoolId)}`),
     )
       .then(async (response) => {
         if (!response.ok) {

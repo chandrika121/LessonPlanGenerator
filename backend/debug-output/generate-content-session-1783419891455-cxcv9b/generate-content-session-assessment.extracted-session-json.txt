@@ -1,0 +1,428 @@
+{
+  "assessment": {
+  "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 6,
+      "totalQuestions": 4,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 2,
+          "marksEach": 1
+        }
+      ]
+    },
+  "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Identify and classify chemical substances as acids or bases based on their properties.",
+        "Understand the concept of neutralization reactions."
+      ],
+      "assessedConcepts": [
+        "Properties of Acids",
+        "Properties of Bases",
+        "Neutralization Reaction"
+      ],
+      "conceptCoveragePriorities": [
+        "Distinguishing acids from bases using sensory and chemical properties.",
+        "Understanding the formation of salt and water in neutralization."
+      ],
+      "misconceptionTargets": [
+        "Confusing all sour substances as safe to taste",
+        "Believing only strong acids react with metals"
+      ],
+      "competencyFocus": [
+        "Application",
+        "Understanding"
+      ]
+    },
+  "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "title": "Unit I: Chemical Substances - Nature and Behaviour",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "focus": "Session-aligned assessment on chemical properties and neutralization."
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Properties of Acids and Bases",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Neutralization Reaction",
+          "questionRefs": [
+            "q3",
+            "q4"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Identify and classify chemical substances as acids or bases based on their properties.",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Understand the concept of neutralization reactions.",
+          "questionRefs": [
+            "q3",
+            "q4"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 50,
+        "medium": 25,
+        "hard": 25
+      },
+      "bloomsDistribution": {
+        "recall": 25,
+        "understanding": 37.5,
+        "application": 25,
+        "analysis": 12.5,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 2,
+        "application": 2
+      },
+      "questionDistribution": {
+        "mcq": 2,
+        "shortAnswer": 1,
+        "veryShortAnswer": 1
+      },
+      "timeAllocation": [
+        {
+          "section": "Unit I: Chemical Substances - Nature and Behaviour",
+          "minutes": 15
+        }
+      ]
+    },
+  "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session.",
+        "All questions are compulsory."
+      ],
+      "sections": [
+        {
+          "id": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "title": "Unit I: Chemical Substances - Nature and Behaviour",
+          "marks": 6,
+          "questionCount": 4,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following substances turns red litmus paper blue?",
+          "options": [
+            "A. Lemon juice",
+            "B. Vinegar",
+            "C. Soap solution",
+            "D. Hydrochloric acid"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Identify and classify chemical substances as acids or bases based on their properties."
+          ],
+          "conceptRefs": [
+            "Properties of Bases"
+          ],
+          "topicCoverage": [
+            "Chemical Substances - Nature and Behaviour"
+          ],
+          "subtopicCoverage": [
+            "Acids and Bases Properties"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Chemical Substances and Their Properties - Basic properties of bases."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "When an acid reacts with a base, the products formed are:",
+          "options": [
+            "A. Salt only",
+            "B. Water only",
+            "C. Salt and water",
+            "D. Hydrogen gas"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Understand the concept of neutralization reactions."
+          ],
+          "conceptRefs": [
+            "Neutralization Reaction"
+          ],
+          "topicCoverage": [
+            "Chemical Substances - Nature and Behaviour"
+          ],
+          "subtopicCoverage": [
+            "Acid-Base Reactions"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Chemical Substances and Their Properties - Definition of neutralization."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Name one natural indicator that can be used to distinguish between an acid and a base.",
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Identify and classify chemical substances as acids or bases based on their properties."
+          ],
+          "conceptRefs": [
+            "Natural Indicators"
+          ],
+          "topicCoverage": [
+            "Chemical Substances - Nature and Behaviour"
+          ],
+          "subtopicCoverage": [
+            "Indicators"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Scientific communication",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session 1: Chemical Substances and Their Properties - Natural indicators like litmus, turmeric."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+          "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Why is it recommended to apply a basic substance like baking soda paste on an ant bite?",
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Understand the concept of neutralization reactions."
+          ],
+          "conceptRefs": [
+            "Neutralization Reaction"
+          ],
+          "topicCoverage": [
+            "Chemical Substances - Nature and Behaviour"
+          ],
+          "subtopicCoverage": [
+            "Real-world Application"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Problem solving",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session 1: Chemical Substances and Their Properties - Neutralization in daily life."
+          ]
+        }
+      ]
+    },
+  "evaluation": {
+      "answerKey": {
+  "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+            "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+            "answer": "C. Soap solution",
+            "explanation": "Bases turn red litmus paper blue, while acids do not.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+            "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+            "answer": "C. Salt and water",
+            "explanation": "The reaction between an acid and a base is called neutralization, producing salt and water.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+            "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+            "answer": "Litmus (or Turmeric/China rose)",
+            "explanation": "Natural indicators like litmus, turmeric, or china rose change color in the presence of acids or bases.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-unit-i-chemical-substances-nature-and-behaviour",
+            "sectionTitle": "Unit I: Chemical Substances - Nature and Behaviour",
+            "answer": "Ant bites inject acidic venom. Baking soda is basic, so it neutralizes the acid to relieve pain.",
+            "explanation": "This applies the concept of neutralization where a base cancels out an acid in real-life scenarios.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          }
+        ]
+},
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (C)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (C)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct name of a natural indicator (e.g., Litmus)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for any valid natural indicator mentioned."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mentioning that ant venom is acidic and baking soda is basic/neutralizes it.",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks if the student correctly identifies the acid-base neutralization principle."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": []
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea in short answer questions.",
+        "For MCQs, only the selected option is evaluated."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses. Do not penalize students for using synonyms if they convey the correct scientific meaning (e.g., 'neutralizes' vs 'cancels out')."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers regarding natural indicators."
+      ]
+    },
+  "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts including properties, neutralization, and real-world application."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier recall questions to a slightly more demanding application question regarding ant bites."
+      ]
+    },
+  "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (2 MCQs, 1 short answer, 1 very short answer)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total of 6."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to a valid section (Unit I)."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included. All questions relate to 'Chemical Substances and Their Properties' session 1."
+        ]
+      }
+    }
+}
+}

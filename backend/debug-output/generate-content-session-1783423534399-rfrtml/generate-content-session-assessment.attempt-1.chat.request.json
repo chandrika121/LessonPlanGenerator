@@ -1,0 +1,287 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "meta": {
+        "assessmentType": "Session assessment",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "language": "English",
+        "preferredDifficulty": "Balanced",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ]
+      },
+      "sessionAnalysis": {
+        "assessedLearningOutcomes": [
+          "Learning outcome text"
+        ],
+        "assessedConcepts": [
+          "Concept from the session"
+        ],
+        "conceptCoveragePriorities": [
+          "High-emphasis taught concept"
+        ],
+        "misconceptionTargets": [
+          "Likely misconception to check"
+        ],
+        "competencyFocus": [
+          "Application"
+        ]
+      },
+      "blueprint": {
+        "sectionPlan": [
+          {
+            "sectionId": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "focus": "Session-aligned assessment focus"
+          }
+        ],
+        "conceptDistribution": [
+          {
+            "concept": "Concept from the session",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ],
+            "competency": "Understanding",
+            "importance": "core"
+          }
+        ],
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "competencyDistribution": {
+          "understanding": 2,
+          "application": 3,
+          "analysis": 2
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "Assessment",
+            "minutes": 15
+          }
+        ]
+      },
+      "paper": {
+        "instructions": [
+          "Answer all questions using only the concepts taught in this session."
+        ],
+        "sections": [
+          {
+            "id": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "source": "fallback"
+          }
+        ],
+        "questions": [
+          {
+            "id": "q1",
+            "questionNumber": 1,
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "type": "mcq",
+            "subtype": "mcq",
+            "prompt": "MCQ question",
+            "options": [
+              "A. option",
+              "B. option",
+              "C. option",
+              "D. option"
+            ],
+            "marks": 1,
+            "expectedLength": "",
+            "learningOutcomeRefs": [
+              "LO1"
+            ],
+            "conceptRefs": [
+              "Concept"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "subtopicCoverage": [
+              "Subtopic"
+            ],
+            "bloomsLevel": "understanding",
+            "competencyTag": "Conceptual clarity",
+            "difficulty": "easy",
+            "sourceEvidence": [
+              "Teacher notes concept reference"
+            ]
+          }
+        ]
+      },
+      "evaluation": {
+        "answerKey": {
+          "items": [
+            {
+              "questionId": "q1",
+              "sectionId": "section-assessment",
+              "sectionTitle": "Assessment",
+              "answer": "Correct option",
+              "explanation": "Brief explanation",
+              "marks": 1,
+              "subtype": "mcq"
+            }
+          ]
+        },
+        "markingScheme": {
+          "items": [
+            {
+              "questionId": "q1",
+              "totalMarks": 1,
+              "markBreakdown": [
+                {
+                  "criterion": "Correct answer selected",
+                  "marks": 1
+                }
+              ],
+              "awardGuidance": [
+                "Award full marks only for the correct option."
+              ]
+            }
+          ]
+        },
+        "rubrics": {
+          "items": [
+            {
+              "questionId": "q5",
+              "totalMarks": 2,
+              "criteria": [
+                {
+                  "criterion": "First valid point",
+                  "marks": 1
+                },
+                {
+                  "criterion": "Second valid point",
+                  "marks": 1
+                }
+              ],
+              "sampleAnswer": "Point-wise short answer"
+            }
+          ]
+        },
+        "generalInstructions": [
+          "Award marks point-wise for each valid idea."
+        ],
+        "evaluatorInstructions": [
+          "Use only the taught session content when evaluating student responses."
+        ],
+        "moderationNotes": [
+          "Maintain consistency across equivalent answers."
+        ]
+      },
+      "summary": {
+        "coverageSummary": [
+          "Balanced coverage of the taught session concepts."
+        ],
+        "omittedContent": [],
+        "balanceNotes": [
+          "Paper progresses from easier to more demanding questions."
+        ]
+      },
+      "validation": {
+        "exactPatternChecks": {
+          "passed": true,
+          "details": [
+            "Question pattern matches the requested blueprint."
+          ]
+        },
+        "marksChecks": {
+          "passed": true,
+          "details": [
+            "Marks match the requested total."
+          ]
+        },
+        "sectionChecks": {
+          "passed": true,
+          "details": [
+            "Each question is assigned to a valid section."
+          ]
+        },
+        "alignmentChecks": {
+          "passed": true,
+          "details": [
+            "Question paper, answer key, and marking scheme are aligned."
+          ]
+        },
+        "scopeBoundaryChecks": {
+          "passed": true,
+          "details": [
+            "No untaught or future-session content included."
+          ]
+        }
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL ASSESSMENT & EVALUATION INTELLIGENCE ENGINE\n\nROLE\nYou are an Enterprise Assessment & Evaluation Intelligence Engine.\nYou function like a professional examination committee made up of a curriculum assessment specialist, paper setter, head examiner, subject expert, psychometric reviewer, and marking-scheme designer.\n\nYou are not a simple question generator.\nYou are responsible for designing a complete, session-bounded examination package that is immediately usable by a teacher or school.\n\nPRIMARY OBJECTIVE\nGenerate a complete assessment package for one classroom session only.\n\nSession context:\n- Subject: Hindi\n- Grade/Level: Class X / X\n- Session title: Listening Skills (श्रवण कौशल)\n- Session number: 1 of 1\n- Session duration: 45 minutes\n- Chapter scope: [\"Listening Skills (श्रवण कौशल)\"]\n- Learning outcomes: []\n- Previous session context: Listening Skills (श्रवण कौशल)\n- Learning pace: Balanced\n- Preferred difficulty: Balanced\n- Output language: Hindi\n- Language execution rule: Write every natural-language value in Hindi. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when Hindi is required.\n\nAssessment preferences:\n- Assessment type: Session assessment\n- Requested total marks: 9\n- Requested total questions: 7\n- Requested duration: 15 minutes\n- Assessment preference inputs: []\n- Target blooms emphasis: []\n- Requested question type mix: [{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]\n- Allowed assessment sections: [\n  {\n    \"id\": \"section-total-marks-100-80-board-exam-20-internal-assessment\",\n    \"title\": \"Total Marks: 100 (80 Board Exam + 20 Internal Assessment)\",\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-section-a-unseen-prose-poetry\",\n    \"title\": \"Section A (Unseen Prose & Poetry)\",\n    \"marks\": 14,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-section-b-grammar\",\n    \"title\": \"Section B (Grammar)\",\n    \"marks\": 16,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-section-c-textbook-supplementary-reader\",\n    \"title\": \"Section C (Textbook & Supplementary Reader)\",\n    \"marks\": 30,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-section-d-creative-writing\",\n    \"title\": \"Section D (Creative Writing)\",\n    \"marks\": 20,\n    \"source\": \"assessment_framework\"\n  }\n]\n- Question paper objective: Not specified.\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 9,\n  \"totalQuestions\": 7,\n  \"questionTypes\": [\n    {\n      \"type\": \"mcq\",\n      \"label\": \"MCQs\",\n      \"questionCount\": 3,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    }\n  ]\n}\n\nSession JSON source of truth:\n{\n  \"id\": \"session-1\",\n  \"sessionNumber\": 1,\n  \"title\": \"Listening Skills (श्रवण कौशल)\",\n  \"duration\": 45,\n  \"learningOutcomes\": []\n}\n\nTARGET JSON SHAPE\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}\n\nABSOLUTE RULES\n1. This assessment is for ONE SESSION ONLY.\n2. Use only content that is explicitly present in the supplied session information.\n3. Never introduce future chapters, untaught formulas, external textbook knowledge, or assumed content.\n4. Learning outcomes guide coverage, but questions must originate from taught concepts, not from repetitive learning-outcome wording.\n5. Every question must measure real learning: understanding, application, reasoning, analysis, interpretation, communication, competency, or conceptual clarity.\n6. Match the requested marks, duration, question counts, and section structure exactly.\n7. If allowed assessment sections are supplied, every question must use one valid sectionId and sectionTitle from that list.\n8. Keep the paper professional, board-style, fair, age appropriate, and free from repetitive AI patterns.\n9. Return valid JSON only.\n\nINTERNAL WORKFLOW\nFollow this reasoning process before writing the final JSON:\n\nPHASE 1 - SESSION INTELLIGENCE\n- Identify what students learned in this session.\n- Extract taught concepts, skills, vocabulary, examples, activities, practical work, and likely misconceptions.\n- Distinguish high-emphasis concepts from supporting concepts.\n\nPHASE 2 - CONCEPT INTELLIGENCE\n- Build an internal concept graph from the taught session.\n- Map each learning outcome to the concepts actually taught.\n- Identify concept importance, dependency, applications, likely misconceptions, and assessment opportunities.\n\nPHASE 3 - BLUEPRINT-FIRST DESIGN\n- Design the full paper before writing questions.\n- Decide section allocation, marks per section, question progression, blooms balance, competency balance, and time allocation.\n- Distribute questions across important taught concepts rather than over-testing one idea.\n\nPHASE 4 - PROFESSIONAL QUESTION PAPER\n- Generate a student-facing paper with ordered questions.\n- Use continuous ids: q1, q2, q3, ...\n- Keep wording precise and board-like.\n- Preserve the requested subtype mix such as mcq, veryShortAnswer, shortAnswer, longAnswer, and caseStudy.\n\nPHASE 5 - EVALUATION PACKAGE\n- Generate a complete linked evaluation package:\n  - answer key\n  - marking scheme\n  - rubric package\n  - evaluator instructions\n  - moderation notes\n- Every evaluation item must link to the same question id as the paper.\n- For non-MCQ questions, provide point-wise criteria and mark allocation.\n\nPHASE 6 - VALIDATION\n- Confirm the final output matches requested marks, requested counts, requested duration, and valid sections.\n- Confirm each question has aligned answer-key and marking-scheme coverage.\n- Confirm the paper stays within the session boundary.\n\nOUTPUT REQUIREMENTS\n1. Output the canonical assessment package only.\n2. Put student-facing instructions in `paper.instructions`.\n3. Put the ordered question paper in `paper.questions`.\n4. Put answer keys in `evaluation.answerKey.items`.\n5. Put mark splits in `evaluation.markingScheme.items`.\n6. Put rubric criteria in `evaluation.rubrics.items`.\n7. Put summary notes in `summary`.\n8. Put validation status in `validation`.\n9. Use the exact section ids and titles supplied or derived from the session context.\n10. Keep question metadata, evaluation metadata, and blueprint references aligned to the same continuous ids.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}"
+    }
+  ]
+}

@@ -1,0 +1,668 @@
+{
+  "assessment": {
+  "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "Hindi",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+  "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "श्रवण कौशल के माध्यम से दी गई जानकारी को समझना",
+        "सुनी हुई बातों का सारांश तैयार करना"
+      ],
+      "assessedConcepts": [
+        "मुख्य विचार की पहचान (Identifying main ideas)",
+        "विस्तृत जानकारी और उप-विवरण (Details and sub-details)",
+        "संदर्भ के आधार पर निष्कर्ष निकालना"
+      ],
+      "conceptCoveragePriorities": [
+        "श्रवण कौशल में मुख्य विचारों की पहचान करना",
+        "दी गई ध्वनि/बोलने वाली सामग्री से तथ्यात्मक जानकारी प्राप्त करना"
+      ],
+      "misconceptionTargets": [
+        "सुनी हुई बात को शब्दशः याद करने के बजाय अर्थ समझना",
+        "वैकल्पिक उत्तरों में भ्रमित न होकर मुख्य विचार पर ध्यान केंद्रित करना"
+      ],
+      "competencyFocus": [
+        "Application"
+      ]
+    },
+  "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-assessment",
+          "title": "Assessment",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Session-aligned assessment focus on Listening Skills (श्रवण कौशल)"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "मुख्य विचार की पहचान",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "विस्तृत जानकारी और निष्कर्ष",
+          "questionRefs": [
+            "q3",
+            "q4",
+            "q5"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        },
+        {
+          "concept": "सारांश तैयार करना",
+          "questionRefs": [
+            "q6",
+            "q7"
+          ],
+          "competency": "Analysis",
+          "importance": "high"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "श्रवण कौशल के माध्यम से दी गई जानकारी को समझना",
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3"
+          ]
+        },
+        {
+          "outcome": "सुनी हुई बातों का सारांश तैयार करना",
+          "questionRefs": [
+            "q6",
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 43,
+        "medium": 43,
+        "hard": 14
+      },
+      "bloomsDistribution": {
+        "recall": 20,
+        "understanding": 35,
+        "application": 28,
+        "analysis": 17,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 2,
+        "analysis": 1
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Assessment",
+          "minutes": 15
+        }
+      ]
+    },
+  "paper": {
+      "instructions": [
+        "इस परीक्षा में सभी प्रश्न अनिवार्य हैं।",
+        "प्रत्येक भाग के निर्देशों का ध्यानपूर्वक पालन करें।",
+        "उत्तर स्पष्ट और संक्षिप्त लिखें।"
+      ],
+      "sections": [
+        {
+          "id": "section-assessment",
+          "title": "Assessment",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "fallback"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "श्रवण कौशल (Listening Skills) का मुख्य उद्देश्य क्या है?",
+          "options": [
+            "A. केवल शब्दों को याद करना",
+            "B. सुनी गई बात की सही व्याख्या और अर्थ समझना",
+            "C. तेज बोलने वाले वक्ता का अनुकरण करना",
+            "D. लिखित पाठ्यपुस्तक से प्रश्न हल करना"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "मुख्य विचार की पहचान"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल"
+          ],
+          "subtopicCoverage": [
+            "मूल अवधारणा"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session concept: Listening Skills definition"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "किसी भाषण या संवाद में 'मुख्य विचार' (Main Idea) को पहचानने के लिए सबसे महत्वपूर्ण कौशल क्या है?",
+          "options": [
+            "A. शब्दों की गिनती करना",
+            "B. वक्ता का चेहरा देखना",
+            "C. संदर्भ और पुनरावृत्ति को समझना",
+            "D. ध्वनि के स्वर (Pitch) को बदलना"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "मुख्य विचार की पहचान"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल"
+          ],
+          "subtopicCoverage": [
+            "विश्लेषणात्मक दृष्टिकोण"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Analytical skill",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session concept: Identifying main ideas through context"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "यदि एक वक्ता बार-बार 'पर्यावरण संरक्षण' की बात करता है और अंत में समाधान सुझाता है, तो उसका मुख्य उद्देश्य क्या हो सकता है?",
+          "options": [
+            "A. केवल समस्या बता रहा है",
+            "B. जागरूकता फैलाने और समाधान प्रस्तावित कर रहा है",
+            "C. पर्यावरण की आलोचना कर रहा है",
+            "D. किसी अन्य विषय का उल्लेख कर रहा है"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "संदर्भ के आधार पर निष्कर्ष निकालना"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल"
+          ],
+          "subtopicCoverage": [
+            "निष्कर्ष निकालना"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Inference making",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session concept: Drawing conclusions from context"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "veryShortAnswer",
+          "subtype": "short-answer-1-mark",
+          "prompt": "श्रवण कौशल में 'सक्रिय श्रोता' (Active Listener) का क्या अर्थ है?",
+          "marks": 1,
+          "expectedLength": "One sentence definition.",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "विस्तृत जानकारी और उप-विवरण"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल"
+          ],
+          "subtopicCoverage": [
+            "सक्रिय श्रोता का भूमिका"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Definition recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Session concept: Active listening definition"
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "veryShortAnswer",
+          "subtype": "short-answer-1-mark",
+          "prompt": "सुनी गई जानकारी में 'विस्तार' (Details) और 'मुख्य विचार' के बीच क्या अंतर है?",
+          "marks": 1,
+          "expectedLength": "One sentence distinction.",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "विस्तृत जानकारी और उप-विवरण"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल"
+          ],
+          "subtopicCoverage": [
+            "तथ्य बनाम मुख्य विचार"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Differentiation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session concept: Distinguishing details from main ideas"
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "short-answer-2-marks",
+          "prompt": "किसी भाषण या संवाद का सारांश (Summary) तैयार करते समय किन दो बातों पर विशेष ध्यान देना चाहिए?",
+          "marks": 2,
+          "expectedLength": "Two points with brief explanation.",
+          "learningOutcomeRefs": [
+            "LO4"
+          ],
+          "conceptRefs": [
+            "सारांश तैयार करना"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल"
+          ],
+          "subtopicCoverage": [
+            "सार-लेखन तकनीकें"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Synthesis skill",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Session concept: Summary writing techniques"
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "short-answer-2-marks",
+          "prompt": "यदि आप किसी वक्ता की बात सुन रहे हैं और उसे समझने में कठिनाई हो रही है, तो श्रवण कौशल के संदर्भ में क्या उपाय अपनाए जा सकते हैं?",
+          "marks": 2,
+          "expectedLength": "Two practical suggestions.",
+          "learningOutcomeRefs": [
+            "LO5"
+          ],
+          "conceptRefs": [
+            "संदर्भ के आधार पर निष्कर्ष निकालना"
+          ],
+          "topicCoverage": [
+            "श्रवण कौशल"
+          ],
+          "subtopicCoverage": [
+            "अवरुद्धताओं का समाधान"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Problem solving",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Session concept: Overcoming listening barriers"
+          ]
+        }
+      ]
+    },
+  "evaluation": {
+      "answerKey": {
+  "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. सुनी गई बात की सही व्याख्या और अर्थ समझना",
+            "explanation": "श्रवण कौशल का मुख्य उद्देश्य केवल शब्दों को याद करना नहीं, बल्कि उनके अर्थ और संदर्भ को समझना है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "C. संदर्भ और पुनरावृत्ति को समझना",
+            "explanation": "मुख्य विचार की पहचान के लिए वक्ता द्वारा दोहराए गए बिंदुओं और पूरे संवाद के संदर्भ का विश्लेषण आवश्यक है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. जागरूकता फैलाने और समाधान प्रस्तावित कर रहा है",
+            "explanation": "समस्या बताना और उसके बाद समाधान सुझाना, वक्ता के उद्देश्य को स्पष्ट करता है।",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "सक्रिय श्रोता वह व्यक्ति है जो वक्ता की बात को ध्यान से सुनता है, प्रश्न पूछता है और अर्थ समझने का प्रयास करता है।",
+            "explanation": "उत्तर में 'ध्यानपूर्वक सुनना' या 'अर्थ समझना' जैसे तत्व होने चाहिए।",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "मुख्य विचार वह मूल संदेश है जो पूरे भाषण को समेटे रखता है, जबकि विस्तार उस मुख्य विचार का समर्थन करने वाले छोटे तथ्य या उदाहरण हैं।",
+            "explanation": "उत्तर में 'मूल संदेश' बनाम 'सहायक तथ्यों' के अंतर को स्पष्ट करना आवश्यक है।",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "सारांश तैयार करते समय: 1. केवल मुख्य विचारों को शामिल करें और अनावश्यक उदाहरण हटाएं। 2. वक्ता की अपनी शब्दचयन (wording) का उपयोग न करके अपने शब्दों में लिखें।",
+            "explanation": "प्रत्येक बिंदु के लिए आधा-आधा अंक दिया जाएगा। मुख्य विचार पर ध्यान और स्वकीय भाषा का प्रयोग दो महत्वपूर्ण मानदंड हैं।",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "1. वक्ता की भाषा या गति को धीमा करने का अनुरोध करना। 2. संदर्भ के आधार पर अनुमान लगाने (Inference) और प्रश्न पूछने से समझ बढ़ानी चाहिए। अन्य उपाय: नोट्स लेना, पुनरावृत्त सुनना।",
+            "explanation": "उपयोगकर्ता द्वारा दिए गए दो व्यावहारिक समाधानों पर आधारित उत्तर स्वीकार्य है। मुख्य बिंदु 'संवाद' और 'अनुमान लगाना' होना चाहिए।",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+},
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (B) चयनित किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प पर पूर्ण अंक दिए जाएं।"
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (C) चयनित किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प पर पूर्ण अंक दिए जाएं।"
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "सही विकल्प (B) चयनित किया गया है।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "केवल सही विकल्प पर पूर्ण अंक दिए जाएं।"
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "'ध्यानपूर्वक सुनना' या 'सक्रिय भागीदारी' का उल्लेख।",
+                "marks": 0.5
+              },
+              {
+                "criterion": "'अर्थ समझने की कोशिश' या 'प्रश्न पूछना' का उल्लेख।",
+                "marks": 0.5
+              }
+            ],
+            "awardGuidance": [
+              "उत्तर में सक्रिय श्रोता के गुणों का संक्षिप्त वर्णन होना चाहिए।"
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "'मुख्य विचार' की परिभाषा (मूल संदेश) दी गई है।",
+                "marks": 0.5
+              },
+              {
+                "criterion": "'विस्तार' को सहायक तथ्यों/उदाहरणों के रूप में वर्णित किया गया है।",
+                "marks": 0.5
+              }
+            ],
+            "awardGuidance": [
+              "दोनों अवधारणाओं के बीच का अंतर स्पष्ट होना चाहिए।"
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "मुख्य विचारों पर ध्यान केंद्रित करने और अनावश्यक तथ्यों को हटाने का उल्लेख।",
+                "marks": 1
+              },
+              {
+                "criterion": "वक्ता की शब्दचयन के बजाय अपने शब्दों में लिखने (Paraphrasing) का उल्लेख।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "प्रत्येक मानदंड पर आधा-आधा अंक दिया जाए यदि उत्तर सही है।"
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "वक्ता की गति या भाषा को समायोजित करने का सुझाव।",
+                "marks": 1
+              },
+              {
+                "criterion": "संदर्भ से अनुमान लगाने (Inference) या प्रश्न पूछने का उल्लेख।",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "व्यावहारिक समाधानों पर आधारित उत्तर स्वीकार्य है।"
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "मुख्य विचारों को अलग करना और सारांश में शामिल करना।",
+                "marks": 1
+              },
+              {
+                "criterion": "अपनी भाषा का प्रयोग करके पुनर्लेखन (Paraphrasing) करना।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "सारांश तैयार करते समय: 1. केवल मुख्य बिंदुओं को शामिल करें और उदाहरण हटाएं। 2. वक्ता की शब्दों का उपयोग न करके अपने शब्दों में लिखें।"
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "वक्ता की गति या स्पष्टता को सुधारने का उपाय (जैसे धीमा बोलना)।",
+                "marks": 1
+              },
+              {
+                "criterion": "संदर्भ से अनुमान लगाने या प्रश्न पूछकर समझ बढ़ाना।",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "उपाय: 1. वक्ता को धीरे बोलने का अनुरोध करें। 2. संदर्भ से अनुमान लगाएं या स्पष्टीकरण के लिए प्रश्न पूछें।"
+          }
+        ]
+      },
+      "generalInstructions": [
+        "प्रत्येक मानदंड पर आधारित अंक दिए जाएं।",
+        "समकक्ष उत्तरों को समान रूप से मूल्यांकन किया जाएगा।"
+      ],
+      "evaluatorInstructions": [
+        "केवल इस सत्र में पढ़ाए गए श्रवण कौशल के सिद्धांतों का उपयोग करके छात्रों के उत्तरों का मूल्यांकन करें।",
+        "MCQs के लिए विकल्प की शुद्धता पर ध्यान दें, जबकि लघु/दीर्घ उत्तरों में तार्किक स्पष्टता और सटीकता को प्राथमिकता दें।"
+      ],
+      "moderationNotes": [
+        "समान अर्थ वाले उत्तरों के लिए समान अंक दिए जाएं।",
+        "यदि छात्र 'अनुमान लगाना' या 'प्रश्न पूछना' जैसे उपाय बताता है, तो उसे पूर्ण अंक दिया जाना चाहिए।"
+      ]
+    },
+  "summary": {
+      "coverageSummary": [
+        "श्रवण कौशल की मुख्य अवधारणाओं और उनके अनुप्रयोगों का संतुलित आवरण किया गया है।",
+        "MCQs, लघु उत्तर और दीर्घ उत्तर प्रश्नों के मिश्रण से सभी स्तरों को शामिल किया गया है।"
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "पत्र आसान प्रश्नों से शुरू होकर अधिक चुनौतीपूर्ण प्रश्नों की ओर बढ़ता है।",
+        "मूल्यांकन में समझ, अनुप्रयोग और विश्लेषण कौशल का संतुलित मिश्रण शामिल है।"
+      ]
+    },
+  "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "प्रश्न पैटर्न अनुरोधित ब्लूप्रिंट से मेल खाता है (3 MCQs, 2 VSA, 2 SA)।"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "कुल अंक अनुरोधित कुल 9 के बराबर हैं।"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "प्रत्येक प्रश्न एक वैध खंड (Assessment) में सौंपा गया है।"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "परीक्षा पत्र, उत्तर कुंजी और अंक विभाजन सुसंगत हैं।"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "कोई भी अनियंत्रित या भविष्य की सत्र सामग्री शामिल नहीं है; केवल 'श्रवण कौशल' पर ध्यान केंद्रित किया गया है।"
+        ]
+      }
+    }
+}
+}

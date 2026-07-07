@@ -304,10 +304,9 @@ export interface PrincipalAllocationClassOption {
   subjects?: string[];
 }
 
+import { buildApiUrl } from "../utils/apiBaseUrl";
+
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 function getSession() {
   try {
@@ -336,7 +335,7 @@ function withSchoolScope(path: string): string {
 }
 
 async function fetchJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${BACKEND_URL}${withSchoolScope(path)}`);
+  const response = await fetch(buildApiUrl(withSchoolScope(path)));
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
     throw new Error(errorData?.error || `Request failed with HTTP ${response.status}`);
@@ -345,7 +344,7 @@ async function fetchJson<T>(path: string): Promise<T> {
 }
 
 async function mutateJson<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${BACKEND_URL}${withSchoolScope(path)}`, init);
+  const response = await fetch(buildApiUrl(withSchoolScope(path)), init);
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
     throw new Error(errorData?.error || `Request failed with HTTP ${response.status}`);
@@ -540,7 +539,7 @@ export async function getReports(): Promise<ReportData> {
 }
 
 export async function downloadReport(reportKey: string, format: "pdf" | "xlsx"): Promise<Blob> {
-  const url = `${BACKEND_URL}${withSchoolScope(`/api/reports/download/${reportKey}/${format}`)}`;
+  const url = buildApiUrl(withSchoolScope(`/api/reports/download/${reportKey}/${format}`));
   const response = await fetch(url);
 
   if (!response.ok) {

@@ -4,11 +4,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ActionToast } from "../../components/ActionToast";
 import { ExpandableCard } from "../../components/ExpandableCard";
 import type { PublishedStudentArtifact } from "../../types/student-content";
+import { buildApiUrl } from "../../utils/apiBaseUrl";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 function getSession() {
   try {
@@ -49,7 +47,7 @@ function SubjectNotesPage() {
 
     let cancelled = false;
     void fetch(
-      `${BACKEND_URL}/api/student/notes?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId)}`,
+      buildApiUrl(`/api/student/notes?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId)}`),
     )
       .then(async (response) => {
         if (!response.ok) {

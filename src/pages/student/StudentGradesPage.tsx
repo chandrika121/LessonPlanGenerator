@@ -1,5 +1,6 @@
 import { Award, BookOpen, Calendar, ChevronDown, ChevronUp, FileText, TrendingUp, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { buildApiUrl } from "../../utils/apiBaseUrl";
 
 interface SubjectGrade {
   subject: string;
@@ -18,9 +19,6 @@ interface SubjectGrade {
 }
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
 
 function getSession() {
   try {
@@ -55,7 +53,7 @@ export function StudentGradesPage() {
       return;
     }
 
-    fetch(`${BACKEND_URL}/api/student/grades?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId || "")}`)
+    fetch(buildApiUrl(`/api/student/grades?userId=${encodeURIComponent(session.id)}&schoolId=${encodeURIComponent(session.schoolId || "")}`))
       .then(async (response) => {
         if (!response.ok) {
           const errorData = await response.json().catch(() => null);
