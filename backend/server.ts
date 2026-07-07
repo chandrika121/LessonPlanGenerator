@@ -15543,9 +15543,24 @@ app.get("/api/planning-workspaces/by-curriculum/:curriculumId", async (req, res)
 
 app.get("/api/planning-workspaces/:id/generated-sessions/:sessionKey", async (req, res) => {
   try {
-    const workspace = await loadPlanningWorkspaceById(req.params.id);
+    const workspaceId = req.params.id;
+    let workspace = await loadPlanningWorkspaceById(workspaceId);
+
+    // Resilient fallback: if the workspace lookup by id misses (e.g. a stale or
+    // non-ObjectId reference), try resolving via curriculumId so the request does
+    // not hard-fail with a 404 loop.
     if (!workspace) {
-      return res.status(404).json({ error: "Planning workspace not found." });
+      const curriculumIdFallback = String(req.query.curriculumId || "").trim();
+      if (curriculumIdFallback) {
+        await connectToMongo();
+        workspace = await PlanningWorkspaceModel.findOne({ curriculumId: curriculumIdFallback })
+          .sort({ updatedAt: -1 })
+          .lean();
+      }
+    }
+
+    if (!workspace) {
+      return res.status(404).json({ exists: false, status: "not_generated", message: "Planning workspace not found." });
     }
 
     const rawSections =
@@ -15567,6 +15582,13 @@ app.get("/api/planning-workspaces/:id/generated-sessions/:sessionKey", async (re
     const roadmapSessionNumber = Math.max(1, Number(req.query.roadmapSessionNumber || legacySessionKey || 1) || 1);
     const chapterName = String(req.query.chapterName || "").trim();
     const sessionTitle = String(req.query.sessionTitle || "").trim();
+
+    const fallbackKey = buildGeneratedSessionStorageKey({
+      roadmapSessionNumber,
+      chapterName,
+      sessionTitle,
+    });
+
     const matchedSessionEntry = findMatchingGeneratedSessionEntry(generatedSessions, {
       requestedSessionKey,
       roadmapSessionNumber,
@@ -15576,13 +15598,41 @@ app.get("/api/planning-workspaces/:id/generated-sessions/:sessionKey", async (re
       gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || ""),
       sessionNumber: roadmapSessionNumber,
     });
+
     const sessionPlan =
       generatedSessions[requestedSessionKey] ||
+      generatedSessions[fallbackKey] ||
       (legacySessionKey ? generatedSessions[legacySessionKey] : null) ||
       matchedSessionEntry.sessionPlan;
 
+    console.log("[GeneratedSessionLookup]", {
+      workspaceId,
+      sessionSlug: requestedSessionKey,
+      fallbackKey,
+      legacySessionKey,
+      roadmapSessionNumber,
+      chapterName,
+      sessionTitle,
+      availableKeys: Object.keys(generatedSessions || {}),
+      foundBy: sessionPlan
+        ? generatedSessions[requestedSessionKey]
+          ? "exactSessionSlug"
+          : generatedSessions[fallbackKey]
+            ? "fallbackSlug"
+            : legacySessionKey && generatedSessions[legacySessionKey]
+              ? "legacySessionKey"
+              : matchedSessionEntry.sessionPlan
+                ? "fuzzyMatch"
+                : "unknown"
+        : "notFound",
+    });
+
     if (!sessionPlan) {
-      return res.status(404).json({ error: "Saved generated session not found." });
+      return res.status(404).json({
+        exists: false,
+        status: "not_generated",
+        message: "Session content has not been generated yet",
+      });
     }
 
     const serializedSession = await serializeGeneratedSessionForSections(sessionPlan, selectedSections, {
@@ -20883,24 +20933,43 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
   });
 
   matchingWorkspaces.forEach((workspace: any) => {
+    // Extract units and chapters from the actual curriculum normalized structure
+    // (classes[].units[].chapters[]), NOT from a non-existent structure.terms field.
     const structure = workspace?.curriculumSnapshot?.normalizedStructure || {};
-    const terms = Array.isArray(structure?.terms) ? structure.terms : [];
-    terms.forEach((term: any) => {
-      const units = Array.isArray(term?.units) ? term.units : [];
+    const classes = Array.isArray(structure?.classes) ? structure.classes : [];
+    classes.forEach((cls: any) => {
+      const units = Array.isArray(cls?.units) ? cls.units : [];
       units.forEach((unit: any) => {
-        const unitName = String(unit?.unitName || unit?.title || unit?.name || "").trim();
+        const unitName = String(unit?.unit_name || unit?.unitName || unit?.title || unit?.name || "").trim();
         if (unitName) unitSet.add(unitName);
         const chapters = Array.isArray(unit?.chapters) ? unit.chapters : [];
         chapters.forEach((chapter: any) => {
-          const chapterName = String(chapter?.chapterName || chapter?.title || chapter?.name || "").trim();
+          const chapterName = String(chapter?.chapter_name || chapter?.chapterName || chapter?.title || chapter?.name || "").trim();
           if (chapterName) chapterSet.add(chapterName);
         });
       });
     });
 
-    const allocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
-    const recommendations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
-    [...allocations, ...recommendations].forEach((item: any) => {
+    // Also extract from term plan allocations/recommendations (which contain unitName/chapterName)
+    const termAllocations = Array.isArray(workspace?.termPlan?.allocations) ? workspace.termPlan.allocations : [];
+    const termRecommendations = Array.isArray(workspace?.termPlan?.recommendations) ? workspace.termPlan.recommendations : [];
+    [...termAllocations, ...termRecommendations].forEach((item: any) => {
+      const unitName = String(item?.unitName || item?.unit || "").trim();
+      const chapterName = String(item?.chapterName || item?.chapter || "").trim();
+      if (unitName) unitSet.add(unitName);
+      if (chapterName) chapterSet.add(chapterName);
+      // Also extract chapters from the chapters array if present
+      const chapters = Array.isArray(item?.chapters) ? item.chapters : [];
+      chapters.forEach((ch: any) => {
+        const chName = String(typeof ch === "string" ? ch : (ch?.chapterName || ch?.chapter || ch?.title || ch?.name || "")).trim();
+        if (chName) chapterSet.add(chName);
+      });
+    });
+
+    // Also extract from session allocation allocations/recommendations
+    const sessionAllocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
+    const sessionRecommendations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
+    [...sessionAllocations, ...sessionRecommendations].forEach((item: any) => {
       const unitName = String(item?.unitName || item?.unit || "").trim();
       const chapterName = String(item?.chapterName || item?.chapter || "").trim();
       if (unitName) unitSet.add(unitName);
