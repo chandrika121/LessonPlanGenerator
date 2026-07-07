@@ -25,24 +25,17 @@ function isPortInUse(port) {
 }
 
 function createCommand(command, args, cwd) {
-  if (process.platform === "win32") {
-    return spawn(command, args, {
-      cwd,
-      stdio: "inherit",
-      shell: true,
-    });
-  }
-
+  // Use shell: true on all platforms to ensure npx and other binaries are found in PATH
   return spawn(command, args, {
     cwd,
     stdio: "inherit",
-    shell: false,
+    shell: true,
   });
 }
 
 function startDevServers() {
   const frontendProcess = createCommand("npx", ["vite"], process.cwd());
-  const backendProcess = createCommand("npx", ["tsx", "watch", "server.ts"], `${process.cwd()}\\backend`);
+  const backendProcess = createCommand("npx", ["tsx", "watch", "server.ts"], `${process.cwd()}/backend`);
 
   const shutdown = () => {
     frontendProcess.kill();
