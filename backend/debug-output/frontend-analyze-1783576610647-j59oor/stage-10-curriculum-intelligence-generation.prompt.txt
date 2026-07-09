@@ -1,0 +1,1294 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class IX",
+      "subject": "Mathematics",
+      "units": [
+        {
+          "unit_id": "class-9-mathematics-u1",
+          "unit_name": "Number System",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [
+            "Introduction to rational numbers",
+            "Representation of rational numbers on number line",
+            "Density of rational numbers and its proof",
+            "Finding rational numbers between any two rational numbers",
+            "Decimal representation of rational numbers",
+            "Introduction to irrational numbers",
+            "Proof of irrationality",
+            "Proof of irrationality of √2 and √3",
+            "The square root spiral"
+          ],
+          "key_concepts": [
+            "Understand the concept of a rational number.",
+            "Represent rational numbers on the number line.",
+            "Understand the properties of rational numbers.",
+            "Explain the concept of density of rational numbers.",
+            "Compute decimal representation of rational numbers.",
+            "Understand the concept of irrational numbers.",
+            "Prove the irrationality.",
+            "Construct the square root spiral.",
+            "Apply computational thinking to represent rational and irrational"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Number System",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-mathematics-u2",
+          "unit_name": "Algebra",
+          "part_or_section": "",
+          "topics": [
+            "Introduction to Polynomials",
+            "Sequences and Progressions",
+            "Exploring Algebraic Identities",
+            "Linear Equations in Two Variables"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Algebra",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-mathematics-u3",
+          "unit_name": "Coordinate Geometry",
+          "part_or_section": "",
+          "topics": [
+            "Coordinate Geometry"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Coordinate Geometry",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-mathematics-u4",
+          "unit_name": "Geometry",
+          "part_or_section": "",
+          "topics": [
+            "Introduction to Euclid's Geometry: Axioms and Postulates",
+            "Lines and Angles",
+            "Triangles – Congruence Theorems",
+            "4 - gons (Quadrilaterals)",
+            "Circles"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Geometry",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-mathematics-u5",
+          "unit_name": "Mensuration",
+          "part_or_section": "",
+          "topics": [
+            "Area and Perimeter",
+            "Surface Area and Volume"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Mensuration",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-mathematics-u6",
+          "unit_name": "Statistics and Probability",
+          "part_or_section": "",
+          "topics": [
+            "Statistics",
+            "Introduction to Probability"
+          ],
+          "subtopics": [
+            "Graphical representation of data (stacked bar graphs)",
+            "Measures of central tendency (mean, median, mode)",
+            "Weighted average application",
+            "Computational thinking for statistical analysis and decision-making"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Statistics and Probability",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-mathematics-u7",
+          "unit_name": "Mensuration: Surface Area and Volume",
+          "part_or_section": "",
+          "topics": [
+            "Area of shapes (rectangles, parallelograms, triangles)",
+            "Heron's formula",
+            "Squaring a rectangle",
+            "Area of a circle",
+            "Area of the sector of a circle",
+            "Brahmagupta's formula for area of cyclic 4-gon"
+          ],
+          "subtopics": [
+            "List historical approximations to π (Archimedes, Aryabhata, Zu Chongzhi)",
+            "Compute circumference and length of an arc",
+            "Apply ideas of circle perimeter and arc-length to real-world contexts",
+            "Explain why a median divides triangle into two equal areas",
+            "Use Heron's formula to compute area from sides",
+            "Explain squaring problem",
+            "Explain ancient civilisations' approximations for circle area",
+            "Compute area of circle using formula",
+            "State and use Brahmagupta's formula",
+            "Explain special case/generalisation concepts"
+          ],
+          "key_concepts": [
+            "Computational thinking in geometry",
+            "Generalisation and special cases",
+            "Step-by-step calculation methods"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-mathematics-u8",
+          "unit_name": "Mensuration: Surface Area and Volume (Continued)",
+          "part_or_section": "",
+          "topics": [
+            "Surface areas and volumes of 3-D shapes"
+          ],
+          "subtopics": [
+            "Recognise cuboids and cubes",
+            "Compute surface area/volume of a cuboid",
+            "Describe right circular cylinder (radius/height)",
+            "Compute surface area/volume of a cylinder",
+            "Recognise cones, describe using radius/height",
+            "Compute surface area/volume of a cone",
+            "Recognise pyramids, identify base/apex",
+            "Compute surface area/volume of a pyramid",
+            "Recognise spheres in real-life situations",
+            "Compute surface area/volume of sphere (including hemispheres)"
+          ],
+          "key_concepts": [
+            "Computational thinking for 3-D shapes",
+            "Pattern recognition across dimensions"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Cuboids, Cylinders, Cones, Pyramids, Spheres",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-9-mathematics-u9",
+          "unit_name": "UNIT VI: STATISTICS AND PROBABILITY (Continued)",
+          "part_or_section": "",
+          "topics": [
+            "Introduction to Probability"
+          ],
+          "subtopics": [
+            "Concept of probability and randomness",
+            "The probability scale",
+            "Empirical probability from statistical data/experiments",
+            "Theoretical probability (sample space/events)",
+            "Representing probability through tree diagrams and tables"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Statistics and Probability Concepts",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class X",
+      "subject": "Mathematics",
+      "units": []
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "CG-1",
+      "title": "Understands numbers and number sets",
+      "description": "Develops understanding of numbers, including the set of real numbers and its properties.",
+      "competencies": [
+        "C-1.1: Develops understanding of numbers, including the set of real numbers and its properties."
+      ],
+      "unit_name": "Number System",
+      "chapter_name": "Number System"
+    },
+    {
+      "code": "CG-2",
+      "title": "Builds deductive and inductive logic for proofs",
+      "description": "Understands powers (radical powers) and exponents.",
+      "competencies": [
+        "C-2.1: Understanding of powers (radical powers) and exponents."
+      ],
+      "unit_name": "Number System",
+      "chapter_name": "Number System"
+    },
+    {
+      "code": "CG-3",
+      "title": "Discovers algebraic identities and models real-life situations",
+      "description": "States and proves remainder theorem, factor theorem, division algorithm; models contextualised problems using equations.",
+      "competencies": [
+        "C-3.1: States and proves remainder theorem, factor theorem, and division algorithm.",
+        "C-3.2: Models and solves contextualised problems using equations (for example, simultaneous linear equations in two variables or single polynomial equations), and draws conclusions about a situation being modelled."
+      ],
+      "unit_name": "Algebra",
+      "chapter_name": "Introduction to Polynomials"
+    },
+    {
+      "code": "CG-4",
+      "title": "Analyses characteristics of 2D geometric shapes and develops arguments",
+      "description": "Describes relationships including congruence; proves theorems using Euclid's axioms for triangles, quadrilaterals, circles.",
+      "competencies": [
+        "C-4.1: Describes relationships including congruence of two-dimensional geometric shapes (such as lines, angles, triangles) to make and test conjectures and solve problems.",
+        "C-4.2: Proves theorems using Euclid's axioms and postulates for triangles and quadrilaterals, and applies them to solve geometric problems."
+      ],
+      "unit_name": "Geometry",
+      "chapter_name": "Introduction to Euclid's Geometry"
+    },
+    {
+      "code": "CG-5",
+      "title": "Derives and uses formulae for areas, surface area, and volumes",
+      "description": "Visualises Heron's formula; visualises mathematical thinking to discover formulae for solid objects.",
+      "competencies": [
+        "C-5.1: Visualises, represents, and calculates the area of a triangle using Heron's formula and its generalisation to cyclic quadrilaterals given by Brahmagupta's formula."
+      ],
+      "unit_name": "Mensuration",
+      "chapter_name": "Area of shapes"
+    },
+    {
+      "code": "CG-6",
+      "title": "Analyses and interprets data using statistical concepts and probability",
+      "description": "Applies measures of central tendencies; applies concepts from probability to solve problems.",
+      "competencies": [
+        "C-6.1: Applies measures of central tendencies, such as mean, median, and mode."
+      ],
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Statistics"
+    },
+    {
+      "code": "CG-7",
+      "title": "Perceives the axiomatic structure of Mathematics",
+      "description": "Proves mathematical statements; visualises geometric proofs for algebraic identities.",
+      "competencies": [
+        "C-7.1: Proves mathematical statements and carries out geometric constructions using stated assumptions, axioms, postulates, definitions, and mathematics vocabulary."
+      ],
+      "unit_name": "Geometry",
+      "chapter_name": "Introduction to Euclid's Geometry"
+    },
+    {
+      "code": "CG-8",
+      "title": "Builds skills in visualisation, optimisation, representation, and modelling",
+      "description": "Models daily-life phenomena; uses 2D representations of 3D objects.",
+      "competencies": [
+        "C-8.1: Models daily-life phenomena and uses representations, such as graphs, tables, and equations to draw conclusions."
+      ],
+      "unit_name": "Algebra",
+      "chapter_name": "Introduction to Polynomials"
+    },
+    {
+      "code": "CG-9",
+      "title": "Develops computational thinking",
+      "description": "Decomposes problems; describes sequences of instructions.",
+      "competencies": [
+        "C-9.1: Decomposes a problem into sub-problems."
+      ],
+      "unit_name": "Number System",
+      "chapter_name": "Number System"
+    },
+    {
+      "code": "CG-10",
+      "title": "Knows and appreciates contributions of mathematicians from India and around the world",
+      "description": "Recognises important contributions made by mathematicians in the field.",
+      "competencies": [
+        "C-10.1: Recognises the important contributions made by mathematicians (Indian and others) in the field of Mathematics."
+      ],
+      "unit_name": "Geometry",
+      "chapter_name": "Introduction to Euclid's Geometry"
+    },
+    {
+      "code": "CG-11",
+      "title": "Explores connections of Mathematics with other subjects",
+      "description": "Applies mathematical knowledge and tools to analyse problems in multiple subjects.",
+      "competencies": [
+        "C-11.1: Applies mathematical knowledge and tools to analyse problems or situations in multiple subjects across Science, Social Science, Visual Arts, Music, Vocational Education, and Sports."
+      ],
+      "unit_name": "Algebra",
+      "chapter_name": "Sequences and Progressions"
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      "Unit I (Number System): 07 Marks",
+      "Unit II (Algebra): 20 Marks",
+      "Unit III (Coordinate Geometry): 04 Marks",
+      "Unit IV (Geometry): 25 Marks",
+      "Unit V (Mensuration): 14 Marks",
+      "Unit VI (Statistics and Probability): 10 Marks"
+    ],
+    "question_paper_design": [
+      {
+        "typology": "Remembering",
+        "description": "Exhibit memory of previously learned material by recalling facts, terms, basic concepts, and answers.",
+        "weightage_percent": 43,
+        "marks_approximate": 54
+      },
+      {
+        "typology": "Understanding",
+        "description": "Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas.",
+        "weightage_percent": null,
+        "marks_approximate": null
+      },
+      {
+        "typology": "Applying",
+        "description": "Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way.",
+        "weightage_percent": 19,
+        "marks_approximate": 24
+      },
+      {
+        "typology": "Analysing",
+        "description": "Examine and break information into parts by identifying motives or causes. Make inferences and find evidence to support generalizations.",
+        "weightage_percent": null,
+        "marks_approximate": null
+      },
+      {
+        "typology": "Evaluating",
+        "description": "Present and defend opinions by making judgments about information, validity of ideas, or quality of work based on a set of criteria.",
+        "weightage_percent": 18,
+        "marks_approximate": 22
+      },
+      {
+        "typology": "Creating",
+        "description": "Compile information together in a different way by combining elements in a new pattern or proposing alternative solutions.",
+        "weightage_percent": null,
+        "marks_approximate": null
+      }
+    ],
+    "competency_weightage": [
+      "Competencies are integrated across all units (CG-1 to CG-11) with specific focus on computational thinking, logical reasoning, and real-life application.",
+      "No explicit numerical weightage per competency is provided in the source text; assessment focuses on holistic competency development."
+    ],
+    "bloom_levels": [
+      {
+        "level_name": "Remembering",
+        "weightage_percent": 43,
+        "marks_approximate": 54
+      },
+      {
+        "level_name": "Understanding",
+        "description": "Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas"
+      },
+      {
+        "level_name": "Applying",
+        "weightage_percent": 19,
+        "marks_approximate": 24
+      },
+      {
+        "level_name": "Analysing",
+        "description": "Examine and break information into parts by identifying motives or causes. Make inferences and find evidence to support generalizations"
+      },
+      {
+        "level_name": "Evaluating",
+        "weightage_percent": 18,
+        "marks_approximate": 22
+      },
+      {
+        "level_name": "Creating",
+        "description": "Compile information together in a different way by combining elements in a new pattern or proposing alternative solutions"
+      }
+    ],
+    "internal_assessment": [
+      "Total Internal Assessment Marks: 20",
+      "Pen Paper Test and Multiple Assessment (5+5): 10 Marks",
+      "Portfolio: 05 Marks"
+    ],
+    "practical_assessment": [
+      {
+        "type": "Lab Practical",
+        "description": "Lab activities to be done from the prescribed books.",
+        "marks": 5,
+        "prescribed_books": [
+          "Mathematics - Textbook for class IX - NCERT Publication",
+          "Guidelines for Mathematics Laboratory in Schools, class IX - CBSE Publication",
+          "Laboratory Manual - Mathematics, secondary stage - NCERT Publication"
+        ]
+      }
+    ],
+    "project_assessment": [
+      {
+        "type": "Portfolio",
+        "description": "Continuous and holistic assessment through projects, activities, and investigations.",
+        "marks": 5
+      },
+      {
+        "type": "Project/Activity Integration",
+        "description": "Integral part of the learning process moving beyond summative examinations."
+      }
+    ]
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": []
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [
+    {
+      "type": "activity",
+      "title": "Construct the Square Root Spiral",
+      "unit_name": "Number System",
+      "chapter_name": "Number System",
+      "details": "Construct the square root spiral to represent rational and irrational numbers through visual models."
+    },
+    {
+      "type": "activity",
+      "title": "Tower of Hanoi Puzzle",
+      "unit_name": "Algebra",
+      "chapter_name": "Sequences and Progressions",
+      "details": "Solve the Tower of Hanoi puzzle to model patterns in sequences using computational thinking."
+    },
+    {
+      "type": "activity",
+      "title": "Visualise Algebraic Identities with Geometric Models",
+      "unit_name": "Algebra",
+      "chapter_name": "Exploring Algebraic Identities",
+      "details": "Determine factors of algebraic expressions using geometric models and visualising identities."
+    },
+    {
+      "type": "activity",
+      "title": "Floor Plan on a Grid",
+      "unit_name": "Coordinate Geometry",
+      "chapter_name": "Coordinate Geometry",
+      "details": "Represent a floor plan on a grid using coordinates to specify locations and positions."
+    },
+    {
+      "type": "activity",
+      "title": "Discovering Euclid's Definitions via Sulbasutras",
+      "unit_name": "Geometry",
+      "chapter_name": "Introduction to Euclid's Geometry: Axioms and Postulates",
+      "details": "Describe contributions of India, Egypt, and Greece; explain the construction of a square as described in Baudhayana's Sulbasutras."
+    },
+    {
+      "type": "activity",
+      "title": "Paper Manipulation for Geometric Patterns",
+      "unit_name": "Geometry",
+      "chapter_name": "4-gons (Quadrilaterals)",
+      "details": "Engage in drawing, measurement and paper manipulation activities to discover geometric patterns involving triangles and 4-gons."
+    },
+    {
+      "type": "activity",
+      "title": "Cultural Motifs Involving Circles",
+      "unit_name": "Geometry",
+      "chapter_name": "Circles",
+      "details": "Identify cultural motifs involving circles, such as the Dharmachakra, Ashoka Chakra, and Sudarshan Chakra."
+    },
+    {
+      "type": "activity",
+      "title": "Squaring a Rectangle Proof Activity",
+      "unit_name": "Mensuration",
+      "chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+      "details": "Explain the classical problem of 'squaring' a given shape using proof from Baudhayana's Sulbasutras."
+    },
+    {
+      "type": "activity",
+      "title": "Real-life Data Analysis and Graphical Representation",
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Statistics",
+      "details": "Collect, organise, visualise data to answer a statistical investigative question; read stacked bar graphs."
+    },
+    {
+      "type": "activity",
+      "title": "Randomness Simulation Experiments",
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Introduction to Probability",
+      "details": "Use computational thinking strategies, such as pattern recognition and simulation, to model random experiments."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Historical Approximations of Pi",
+      "unit_name": "Mensuration",
+      "chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+      "details": "List historical approximations to π from Archimedes, Aryabhata, and Zu Chongzhi; explain ancient civilisations' methods for circle area."
+    },
+    {
+      "title": "Applications of Circles in Transport and Technology",
+      "unit_name": "Geometry",
+      "chapter_name": "Circles",
+      "details": "Explain how circular wheels have influenced transport, farming, building, and technology; identify cultural motifs."
+    },
+    {
+      "title": "Statistical Investigation Project",
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Statistics",
+      "details": "Apply computational thinking strategies to analyse real-life data, create appropriate graphical representations (stacked bar graphs), and interpret mean, median, mode for decision-making."
+    }
+  ],
+  "practicals": [
+    {
+      "title": "Mathematics Laboratory Activities",
+      "unit_name": "Number System",
+      "chapter_name": "Number System",
+      "details": "Lab activities to be done from prescribed books (NCERT/CBSE) covering representation of rational numbers on number line and density proofs."
+    },
+    {
+      "title": "Geometric Constructions Lab",
+      "unit_name": "Geometry",
+      "chapter_name": "Introduction to Euclid's Geometry: Axioms and Postulates",
+      "details": "Construct geometrical shapes like bisectors of line segments, angles, triangles, and other polygons satisfying given constraints using stated axioms."
+    },
+    {
+      "title": "3-D Shapes Surface Area and Volume Lab",
+      "unit_name": "Mensuration",
+      "chapter_name": "Cuboids, Cylinders, Cones, Pyramids, Spheres",
+      "details": "Compute surface area/volume of cuboids, cylinders, cones, pyramids, spheres (including hemispheres) using computational thinking."
+    },
+    {
+      "title": "Prescribed Laboratory Manual Activities",
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Introduction to Probability",
+      "details": "Lab activities from 'Guidelines for Mathematics Laboratory in Schools' covering empirical probability experiments and theoretical probability concepts."
+    }
+  ]
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

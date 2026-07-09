@@ -23,16 +23,17 @@ export function StudentDashboard() {
   const currentUser = useMemo(() => getCurrentUser(), []);
   const [subjectCount, setSubjectCount] = useState<number | null>(null);
   const [backendItems, setBackendItems] = useState<PublishedStudentArtifact[]>([]);
+  const [localNotes, setLocalNotes] = useState<PublishedStudentArtifact[]>([]);
   const publishedItems = useMemo(
     () => Array.from(
       new Map(
         [
           ...backendItems,
-          ...getPublishedArtifactsForStudent("notes", currentUser),
+          ...localNotes,
         ].map((item) => [`${item.kind}:${item.sessionId}:${item.subject || ""}:${item.classId || item.className || item.gradeLevel || ""}`, item]),
       ).values(),
     ),
-    [backendItems, currentUser],
+    [backendItems, localNotes],
   );
   const announcements = readAnnouncements().slice(0, 3);
   const homework = publishedItems.filter((item) => item.kind === "homework").length;
@@ -115,6 +116,31 @@ export function StudentDashboard() {
       cancelled = true;
     };
   }, [currentUser?.id, currentUser?.schoolId]);
+
+  useEffect(() => {
+    if (!currentUser?.id || !currentUser.schoolId) {
+      setLocalNotes([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    void getPublishedArtifactsForStudent("notes", currentUser)
+      .then((items) => {
+        if (!cancelled) {
+          setLocalNotes(items);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLocalNotes([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentUser]);
 
   return (
     <div className="space-y-6">

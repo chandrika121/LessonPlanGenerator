@@ -1,0 +1,331 @@
+{
+  "studentLessonNotes": {
+    "title": "Number System: Real Numbers and Rationalization",
+    "sessionOverview": "This session introduces real numbers, distinguishes between rational and irrational numbers using decimal expansions, explores the number line representation of square roots, and teaches the technique of rationalizing denominators.",
+    "introduction": "Welcome to our journey into the Number System! Today we will explore how every point on a number line corresponds to a unique 'real' number. We'll learn why some numbers like √2 cannot be written as simple fractions and how to work with them confidently in calculations.",
+    "learningObjectives": [
+      "Distinguish between rational and irrational numbers based on decimal expansions",
+      "Represent square roots of real numbers geometrically on the number line",
+      "Rationalize denominators involving surds using conjugates"
+    ],
+    "quickRecall": [
+      "A rational number can be expressed as p/q where q is not zero.",
+      "The decimal expansion of a terminating or repeating fraction represents a rational number."
+    ],
+    "easyToRemember": [
+      "If the decimals stop or repeat, it's Rational. If they go on forever without a pattern, it's Irrational."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Rational vs Irrational Numbers",
+        "headers": [
+          "Feature",
+          "Rational Number",
+          "Irrational Number"
+        ],
+        "rows": [
+          [
+            "Decimal Expansion",
+            "Terminating or Repeating (e.g., 0.5, 0.333...)",
+            "Non-terminating and Non-repeating (e.g., √2 ≈ 1.414213...)"
+          ],
+          [
+            "Form",
+            "Can be written as p/q (q ≠ 0)",
+            "Cannot be written as a simple fraction"
+          ],
+          [
+            "Examples",
+            "-5, 0, 1/4, 3.75",
+            "√2, √3, π, e"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Rationalization Formula",
+        "formula": {
+          "text": "(a + b)(a - b) = a² - b²",
+          "latex": "\\frac{1}{\\sqrt{n}} \\times \\frac{\\sqrt{n}}{\\sqrt{n}} = \\frac{\\sqrt{n}}{n}"
+        },
+        "meaning": "Multiplying by the conjugate or the root itself eliminates the square root from the denominator.",
+        "whenToUse": "When you need to simplify a fraction that has an irrational number (like √2) in the bottom part."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "sqrtNumberLineConstruction",
+        "template": "sqrtNumberLineConstruction",
+        "params": {
+          "roots": [2, 3],
+          "highlightRoot": 2
+        },
+        "title": "Constructing √2 on the Number Line",
+        "caption": "Geometric construction of square root values using a spiral method.",
+        "points": [
+          { "id": "O", "x": 10, "y": 350, "label": "O" },
+          { "id": "A", "x": 60, "y": 350, "label": "A" },
+          { "id": "B", "x": 60, "y": 410, "label": "B" }
+        ],
+        "lines": [
+          { "from": "O", "to": "A", "label": "OA = 1 unit" },
+          { "from": "A", "to": "B", "label": "AB = 1 unit (perpendicular)" },
+          { "from": "O", "to": "B", "label": "OB = √2 units", "highlight": true }
+        ],
+        "arcs": [
+          { "center": "O", "radius": "√2", "startPoint": "A", "endLabel": "P" },
+          { "text": "Arc to mark P on number line" }
+        ],
+        "labels": [],
+        "measurements": []
+      }
+    ],
+    "proofSteps": [
+      "Assume √2 is rational and can be written as p/q in lowest terms.",
+      "Square both sides to get 2 = p²/q², implying p² = 2q².",
+      "This means p² (and thus p) must be even. Let p = 2k.",
+      "Substitute back: (2k)² = 2q² → 4k² = 2q² → q² = 2k², so q is also even.",
+      "Contradiction: If both are even, the fraction was not in lowest terms. Thus, √2 is irrational."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Thinking all square roots result in whole numbers",
+        "correction": "Only perfect squares (like 4, 9, 16) have integer square roots. Others like √2 are irrational.",
+        "example": "√5 is not an integer; it lies between 2 and 3."
+      },
+      {
+        "mistake": "Rationalizing incorrectly by only multiplying the numerator",
+        "correction": "You must multiply both the numerator AND the denominator by the conjugate or root to keep the value unchanged.",
+        "example": "1/√2 becomes √2/2, not just 1."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "Real Numbers and Decimal Expansions",
+        "explanation": "The set of Real numbers includes all Rational and Irrational numbers. The key to identifying them is looking at their decimal expansions.",
+        "keyPoints": [
+          "Rational decimals terminate or repeat.",
+          "Irrational decimals never end and have no repeating pattern."
+        ],
+        "examples": [
+          "1/3 = 0.333... (Repeating, Rational)",
+          "√2 ≈ 1.41421356... (Non-repeating, Irrational)"
+        ],
+        "whyItMatters": "Understanding this helps us know exactly where a number sits on the number line and how precise our calculations need to be.",
+        "terminology": [
+          "Terminating Decimal",
+          "Recurring Decimal"
+        ],
+        "detailedExplanation": "When you divide two integers, the remainder must eventually repeat or become zero. If it repeats, the decimal is recurring (rational). If it never settles into a pattern and goes on forever, the number cannot be expressed as a fraction of integers.",
+        "observedIn": [
+          "Calculating pi for circles",
+          "Measuring diagonal lengths in geometry"
+        ],
+        "visualSupport": [
+          "diagram-1"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "The symbol π is irrational, even though 22/7 is often used as an approximation."
+        ],
+        "memoryTechniques": [
+          "Think of 'Repeating' = Rational (both have the letter R)."
+        ],
+        "conceptSummary": [
+          "Decimal behavior determines if a number is rational or irrational."
+        ]
+      },
+      {
+        "heading": "Representing Irrational Numbers on the Number Line",
+        "explanation": "We can locate square roots like √2, √3, etc., on the number line using geometry and the Pythagorean theorem.",
+        "keyPoints": [
+          "Use a right-angled triangle with legs of length 1 unit.",
+          "The hypotenuse will be √(1² + 1²) = √2."
+        ],
+        "examples": [
+          "Constructing √5: Use base 2 and height 1 (since √(4+1)=√5)."
+        ],
+        "whyItMatters": "This proves that irrational numbers are not just abstract concepts; they have a specific, physical location on the number line.",
+        "terminology": [
+          "Hypotenuse",
+          "Geometric Construction"
+        ],
+        "detailedExplanation": "By drawing a right triangle where one leg is 1 unit and the other is also 1 unit, the hypotenuse becomes √2. We then use a compass to swing an arc from the origin with this length as the radius to mark the point on the number line.",
+        "observedIn": [
+          "Architectural designs",
+          "Navigation systems"
+        ],
+        "visualSupport": [
+          "diagram-1"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "The construction for √n often builds on the previous root (e.g., use hypotenuse of √2 as one leg to find √3)."
+        ],
+        "memoryTechniques": [
+          "One unit up, One unit over = Root Two."
+        ],
+        "conceptSummary": [
+          "Geometry allows us to visualize and locate irrational numbers precisely."
+        ]
+      },
+      {
+        "heading": "Rationalizing the Denominator",
+        "explanation": "In mathematics, it is standard practice to remove square roots from the denominator of a fraction.",
+        "keyPoints": [
+          "Multiply numerator and denominator by the same surd or its conjugate.",
+          "Use (a+b)(a-b) = a² - b² for conjugates."
+        ],
+        "examples": [
+          "1/√3 becomes √3/3",
+          "2/(5+√2) requires multiplying by (5-√2)"
+        ],
+        "whyItMatters": "Rationalized forms are easier to compare, add, and calculate with manually.",
+        "terminology": [
+          "Conjugate",
+          "Surds"
+        ],
+        "detailedExplanation": "If you have a fraction like 1/√2, the denominator is irrational. To fix this, multiply top and bottom by √2. The bottom becomes (√2 * √2) = 2, which is rational.",
+        "observedIn": [
+          "Simplifying algebraic expressions",
+          "Calculus limits"
+        ],
+        "visualSupport": [],
+        "visualAssets": [],
+        "importantNotes": [
+          "Always check if the denominator can be simplified before multiplying."
+        ],
+        "memoryTechniques": [
+          "Make the bottom a whole number by 'rationalizing' it."
+        ],
+        "conceptSummary": [
+          "Rationalization converts irrational denominators into rational ones for easier calculation."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Real Number",
+        "definition": "The set of all numbers that can be represented on the number line, including both rational and irrational numbers."
+      },
+      {
+        "term": "Irrational Number",
+        "definition": "A real number whose decimal expansion is non-terminating and non-repeating (e.g., √2)."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Representing √5 on the Number Line",
+        "problem": "Show how to locate √5 on the number line using geometric construction.",
+        "diagramRef": "diagram-1",
+        "given": [
+          "We need to construct a length of √5 units."
+        ],
+        "formula": [
+          "Pythagorean Theorem: c = √(a² + b²)"
+        ],
+        "steps": [
+          "Draw base OA = 2 units.",
+          "Construct perpendicular AB = 1 unit at A.",
+          "Join OB to form hypotenuse."
+        ],
+        "solutionSteps": [
+          { "text": "Identify the legs of the right triangle", "displayLatex": "a = 2, b = 1" },
+          { "text": "Apply Pythagorean theorem for hypotenuse c", "displayLatex": "c^2 = a^2 + b^2 \\Rightarrow c^2 = 2^2 + 1^2" },
+          { "text": "Calculate the value", "displayLatex": "c^2 = 4 + 1 = 5 \\Rightarrow c = \\sqrt{5}" }
+        ],
+        "reasoning": [
+          "Since √(2²+1²) equals √5, the hypotenuse represents this length."
+        ],
+        "explanation": "By constructing a right triangle with base 2 and height 1, we create a hypotenuse of exactly √5. We then use a compass to transfer this length from the origin onto the number line.",
+        "finalAnswer": { "text": "The point P on the number line represents √5", "displayLatex": "\\sqrt{5}" },
+        "latex": "",
+        "displayLatex": ""
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Rational Number: p/q form",
+        "Irrational Number: Non-terminating, non-repeating"
+      ],
+      "formulas": [
+        "(a+b)(a-b) = a² - b²"
+      ],
+      "facts": [
+        "√2 ≈ 1.414",
+        "π is irrational."
+      ],
+      "keywords": [
+        "Decimal Expansion",
+        "Rationalization",
+        "Hypotenuse"
+      ],
+      "conceptMap": [
+        "Real Numbers -> Rational & Irrational"
+      ],
+      "quickRecap": [
+        "Check decimals to classify numbers."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Is 0.123456789... (continuing without pattern) rational or irrational?",
+      "What is the decimal expansion of √2 up to two places?"
+    ],
+    "quickSummary": [
+      "Real numbers include all points on the number line; their nature is revealed by their decimals."
+    ],
+    "keyTerms": [
+      "Irrational",
+      "Rationalization",
+      "Decimal Expansion"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A decimal expansion that never ends and has no repeating pattern is called ________. ",
+        "answer": "irrational number"
+      },
+      {
+        "prompt": "To rationalize the denominator of 1/√3, we multiply by _________.",
+        "answer": "√3/√3"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is an irrational number?",
+        "options": [
+          "A. 0.5",
+          "B. √4",
+          "C. π",
+          "D. -2"
+        ],
+        "answer": "C. π"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "Define a rational number.",
+        "answer": "A number that can be expressed as p/q where q is not zero."
+      },
+      {
+        "question": "What is the value of √2 to two decimal places?",
+        "answer": "1.41"
+      }
+    ],
+    "didYouKnow": [
+      "The ancient Greeks were shocked when they discovered that the diagonal of a square with side 1 could not be measured by any whole number ratio, leading to the discovery of irrational numbers."
+    ],
+    "summary": [
+      "We learned how to identify real numbers and represent them geometrically."
+    ],
+    "quickRevision": [
+      "Rational = repeating/terminating. Irrational = non-repeating/non-terminating."
+    ],
+    "rememberPoints": [
+      "√2 is irrational -> 1.414...",
+      "Rationalize by multiplying top and bottom.",
+      "Use Pythagoras for number line construction."
+    ]
+  }
+}

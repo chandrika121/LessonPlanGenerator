@@ -1,0 +1,147 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8: Learning Outcomes Extraction - Class IX
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class IX",
+  "units": [
+    {
+      "unit_id": "class-9-mathematics-u1",
+      "unit_name": "Mensuration: Surface Area and Volume (Continued)",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Surface Area and Volume (Continued)"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u2",
+      "unit_name": "UNIT II: ALGEBRA",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "ALGEBRA"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u3",
+      "unit_name": "UNIT III: COORDINATE GEOMETRY",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "COORDINATE GEOMETRY"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u4",
+      "unit_name": "UNIT IV: GEOMETRY",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "GEOMETRY"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u5",
+      "unit_name": "Mensuration: Surface Area and Volume",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Surface Area and Volume"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u6",
+      "unit_name": "UNIT VI: STATISTICS AND PROBABILITY",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "STATISTICS AND PROBABILITY"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u7",
+      "unit_name": "UNIT VI: STATISTICS AND PROBABILITY (Continued)",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "STATISTICS AND PROBABILITY (Continued)"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-9-mathematics-u1",
+      "unit_name": "Mensuration: Surface Area and Volume (Continued)",
+      "chapter_id": "C1",
+      "chapter_name": "Surface Area and Volume (Continued)"
+    },
+    {
+      "unit_id": "class-9-mathematics-u2",
+      "unit_name": "UNIT II: ALGEBRA",
+      "chapter_id": "C1",
+      "chapter_name": "ALGEBRA"
+    },
+    {
+      "unit_id": "class-9-mathematics-u3",
+      "unit_name": "UNIT III: COORDINATE GEOMETRY",
+      "chapter_id": "C1",
+      "chapter_name": "COORDINATE GEOMETRY"
+    },
+    {
+      "unit_id": "class-9-mathematics-u4",
+      "unit_name": "UNIT IV: GEOMETRY",
+      "chapter_id": "C1",
+      "chapter_name": "GEOMETRY"
+    },
+    {
+      "unit_id": "class-9-mathematics-u5",
+      "unit_name": "Mensuration: Surface Area and Volume",
+      "chapter_id": "C1",
+      "chapter_name": "Surface Area and Volume"
+    },
+    {
+      "unit_id": "class-9-mathematics-u6",
+      "unit_name": "UNIT VI: STATISTICS AND PROBABILITY",
+      "chapter_id": "C1",
+      "chapter_name": "STATISTICS AND PROBABILITY"
+    },
+    {
+      "unit_id": "class-9-mathematics-u7",
+      "unit_name": "UNIT VI: STATISTICS AND PROBABILITY (Continued)",
+      "chapter_id": "C1",
+      "chapter_name": "STATISTICS AND PROBABILITY (Continued)"
+    }
+  ],
+  "competencies": []
+}
