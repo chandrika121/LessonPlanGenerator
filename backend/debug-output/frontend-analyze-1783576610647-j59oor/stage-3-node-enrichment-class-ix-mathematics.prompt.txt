@@ -1,0 +1,710 @@
+Stage 3: Node Enrichment - Class IX - Mathematics
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class IX",
+  "subject": "Mathematics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Number System",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "Introduction to rational numbers",
+        "Representation of rational numbers on number line",
+        "Density of rational numbers and its proof",
+        "Finding rational numbers between any two rational numbers",
+        "Decimal representation of rational numbers",
+        "Introduction to irrational numbers",
+        "Proof of irrationality",
+        "Proof of irrationality of √2 and √3",
+        "The square root spiral"
+      ],
+      "key_concepts": [
+        "Understand the concept of a rational number.",
+        "Represent rational numbers on the number line.",
+        "Understand the properties of rational numbers.",
+        "Explain the concept of density of rational numbers.",
+        "Compute decimal representation of rational numbers.",
+        "Understand the concept of irrational numbers.",
+        "Prove the irrationality.",
+        "Construct the square root spiral.",
+        "Apply computational thinking to represent rational and irrational"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Number System",
+          "source_chapter_name": "Number System",
+          "source_heading": "Number System",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Algebra",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Introduction to Polynomials",
+        "Sequences and Progressions",
+        "Exploring Algebraic Identities",
+        "Linear Equations in Two Variables"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Algebra",
+          "source_chapter_name": "Algebra",
+          "source_heading": "Algebra",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Coordinate Geometry",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Coordinate Geometry"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordinate Geometry",
+          "source_chapter_name": "Coordinate Geometry",
+          "source_heading": "Coordinate Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Geometry",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Introduction to Euclid's Geometry: Axioms and Postulates",
+        "Lines and Angles",
+        "Triangles – Congruence Theorems",
+        "4 - gons (Quadrilaterals)",
+        "Circles"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Geometry",
+          "source_chapter_name": "Geometry",
+          "source_heading": "Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U5",
+      "unit_name": "Mensuration",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Area and Perimeter",
+        "Surface Area and Volume"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Mensuration",
+          "source_chapter_name": "Mensuration",
+          "source_heading": "Mensuration",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Statistics and Probability",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Statistics",
+        "Introduction to Probability"
+      ],
+      "subtopics": [
+        "Graphical representation of data (stacked bar graphs)",
+        "Measures of central tendency (mean, median, mode)",
+        "Weighted average application",
+        "Computational thinking for statistical analysis and decision-making"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability",
+          "source_chapter_name": "Statistics and Probability",
+          "source_heading": "Statistics and Probability",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U5",
+      "unit_name": "Mensuration: Surface Area and Volume",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Area of shapes (rectangles, parallelograms, triangles)",
+        "Heron's formula",
+        "Squaring a rectangle",
+        "Area of a circle",
+        "Area of the sector of a circle",
+        "Brahmagupta's formula for area of cyclic 4-gon"
+      ],
+      "subtopics": [
+        "List historical approximations to π (Archimedes, Aryabhata, Zu Chongzhi)",
+        "Compute circumference and length of an arc",
+        "Apply ideas of circle perimeter and arc-length to real-world contexts",
+        "Explain why a median divides triangle into two equal areas",
+        "Use Heron's formula to compute area from sides",
+        "Explain squaring problem",
+        "Explain ancient civilisations' approximations for circle area",
+        "Compute area of circle using formula",
+        "State and use Brahmagupta's formula",
+        "Explain special case/generalisation concepts"
+      ],
+      "key_concepts": [
+        "Computational thinking in geometry",
+        "Generalisation and special cases",
+        "Step-by-step calculation methods"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+          "source_chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+          "source_heading": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+          "part_or_section": "",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "source_unit_id": "U5",
+      "unit_name": "Mensuration: Surface Area and Volume (Continued)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Surface areas and volumes of 3-D shapes"
+      ],
+      "subtopics": [
+        "Recognise cuboids and cubes",
+        "Compute surface area/volume of a cuboid",
+        "Describe right circular cylinder (radius/height)",
+        "Compute surface area/volume of a cylinder",
+        "Recognise cones, describe using radius/height",
+        "Compute surface area/volume of a cone",
+        "Recognise pyramids, identify base/apex",
+        "Compute surface area/volume of a pyramid",
+        "Recognise spheres in real-life situations",
+        "Compute surface area/volume of sphere (including hemispheres)"
+      ],
+      "key_concepts": [
+        "Computational thinking for 3-D shapes",
+        "Pattern recognition across dimensions"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Cuboids, Cylinders, Cones, Pyramids, Spheres",
+          "source_chapter_name": "Cuboids, Cylinders, Cones, Pyramids, Spheres",
+          "source_heading": "Cuboids, Cylinders, Cones, Pyramids, Spheres",
+          "part_or_section": "",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "source_unit_id": "U6",
+      "unit_name": "UNIT VI: STATISTICS AND PROBABILITY (Continued)",
+      "part_or_section": "",
+      "marks": 10,
+      "topics": [
+        "Introduction to Probability"
+      ],
+      "subtopics": [
+        "Concept of probability and randomness",
+        "The probability scale",
+        "Empirical probability from statistical data/experiments",
+        "Theoretical probability (sample space/events)",
+        "Representing probability through tree diagrams and tables"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability Concepts",
+          "source_chapter_name": "Statistics and Probability Concepts",
+          "source_heading": "Statistics and Probability Concepts",
+          "part_or_section": "",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class IX",
+  "subject": "Mathematics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Number System",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "Introduction to rational numbers",
+        "Representation of rational numbers on number line",
+        "Density of rational numbers and its proof",
+        "Finding rational numbers between any two rational numbers",
+        "Decimal representation of rational numbers",
+        "Introduction to irrational numbers",
+        "Proof of irrationality",
+        "Proof of irrationality of √2 and √3",
+        "The square root spiral"
+      ],
+      "key_concepts": [
+        "Understand the concept of a rational number.",
+        "Represent rational numbers on the number line.",
+        "Understand the properties of rational numbers.",
+        "Explain the concept of density of rational numbers.",
+        "Compute decimal representation of rational numbers.",
+        "Understand the concept of irrational numbers.",
+        "Prove the irrationality.",
+        "Construct the square root spiral.",
+        "Apply computational thinking to represent rational and irrational"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Number System",
+          "source_chapter_name": "Number System",
+          "source_heading": "Number System",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Algebra",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Introduction to Polynomials",
+        "Sequences and Progressions",
+        "Exploring Algebraic Identities",
+        "Linear Equations in Two Variables"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Algebra",
+          "source_chapter_name": "Algebra",
+          "source_heading": "Algebra",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Coordinate Geometry",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Coordinate Geometry"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordinate Geometry",
+          "source_chapter_name": "Coordinate Geometry",
+          "source_heading": "Coordinate Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Geometry",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Introduction to Euclid's Geometry: Axioms and Postulates",
+        "Lines and Angles",
+        "Triangles – Congruence Theorems",
+        "4 - gons (Quadrilaterals)",
+        "Circles"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Geometry",
+          "source_chapter_name": "Geometry",
+          "source_heading": "Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U5",
+      "unit_name": "Mensuration",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Area and Perimeter",
+        "Surface Area and Volume"
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Mensuration",
+          "source_chapter_name": "Mensuration",
+          "source_heading": "Mensuration",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Statistics and Probability",
+      "part_or_section": "",
+      "marks": 0,
+      "topics": [
+        "Statistics",
+        "Introduction to Probability"
+      ],
+      "subtopics": [
+        "Graphical representation of data (stacked bar graphs)",
+        "Measures of central tendency (mean, median, mode)",
+        "Weighted average application",
+        "Computational thinking for statistical analysis and decision-making"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability",
+          "source_chapter_name": "Statistics and Probability",
+          "source_heading": "Statistics and Probability",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U5",
+      "unit_name": "Mensuration: Surface Area and Volume",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Area of shapes (rectangles, parallelograms, triangles)",
+        "Heron's formula",
+        "Squaring a rectangle",
+        "Area of a circle",
+        "Area of the sector of a circle",
+        "Brahmagupta's formula for area of cyclic 4-gon"
+      ],
+      "subtopics": [
+        "List historical approximations to π (Archimedes, Aryabhata, Zu Chongzhi)",
+        "Compute circumference and length of an arc",
+        "Apply ideas of circle perimeter and arc-length to real-world contexts",
+        "Explain why a median divides triangle into two equal areas",
+        "Use Heron's formula to compute area from sides",
+        "Explain squaring problem",
+        "Explain ancient civilisations' approximations for circle area",
+        "Compute area of circle using formula",
+        "State and use Brahmagupta's formula",
+        "Explain special case/generalisation concepts"
+      ],
+      "key_concepts": [
+        "Computational thinking in geometry",
+        "Generalisation and special cases",
+        "Step-by-step calculation methods"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+          "source_chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+          "source_heading": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula",
+          "part_or_section": "",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U8",
+      "source_unit_id": "U5",
+      "unit_name": "Mensuration: Surface Area and Volume (Continued)",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Surface areas and volumes of 3-D shapes"
+      ],
+      "subtopics": [
+        "Recognise cuboids and cubes",
+        "Compute surface area/volume of a cuboid",
+        "Describe right circular cylinder (radius/height)",
+        "Compute surface area/volume of a cylinder",
+        "Recognise cones, describe using radius/height",
+        "Compute surface area/volume of a cone",
+        "Recognise pyramids, identify base/apex",
+        "Compute surface area/volume of a pyramid",
+        "Recognise spheres in real-life situations",
+        "Compute surface area/volume of sphere (including hemispheres)"
+      ],
+      "key_concepts": [
+        "Computational thinking for 3-D shapes",
+        "Pattern recognition across dimensions"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Cuboids, Cylinders, Cones, Pyramids, Spheres",
+          "source_chapter_name": "Cuboids, Cylinders, Cones, Pyramids, Spheres",
+          "source_heading": "Cuboids, Cylinders, Cones, Pyramids, Spheres",
+          "part_or_section": "",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U9",
+      "source_unit_id": "U6",
+      "unit_name": "UNIT VI: STATISTICS AND PROBABILITY (Continued)",
+      "part_or_section": "",
+      "marks": 10,
+      "topics": [
+        "Introduction to Probability"
+      ],
+      "subtopics": [
+        "Concept of probability and randomness",
+        "The probability scale",
+        "Empirical probability from statistical data/experiments",
+        "Theoretical probability (sample space/events)",
+        "Representing probability through tree diagrams and tables"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability Concepts",
+          "source_chapter_name": "Statistics and Probability Concepts",
+          "source_heading": "Statistics and Probability Concepts",
+          "part_or_section": "",
+          "source_type": "explicit_chapter",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+## Class IX (2026 – 27)
+Introduction:
+The Mathematics curriculum for the Secondary stage has been redesigned in alignment with the
+National Education Policy 2020 and the National Curriculum Framework for School Education
+(NCF – SE) 2023, prioritizing deep conceptual understanding and logical reasoning. The revised
+syllabus places strong emphasis on developing core mathematical competencies, including
+problem-solving, visualisation, mathematical modelling, mathematical communication,
+computational thinking, and data analytics. The syllabus integrate Indian Knowledge System with
+contemporary mathematical knowledge, highlighting the rich contributions of Indian
+mathematicians to foster a sense of pride and historical context. A deliberate shift from rote
+learning to competency-based education ensures that students build deep conceptual
+understanding and logical reasoning rather than mere procedural fluency. Greater emphasis has
+been laid on the integration of real-life applications and experiential learning, encouraging students
+to connect mathematical concepts with everyday situations and cross-disciplinary contexts.
+Greater emphasis has been laid on competency based learning outcomes encouraging students
+---
+
+# Page 4
+
+## COURSE STRUCTURE CLASS – IX
+Units Unit Name Chapter Name Marks
+I Number System  Number System 07
+II Algebra  Introduction to Polynomials 2 0
+ Sequences and Progressions
+ Exploring Algebraic Identities
+ Linear Equations in Two Variables
+III Coordinate  Coordinate Geometry 04
+Geometry
+IV Geometry  Introduction to Euclid’s Geometry: 2 5
+Axioms and Postulate s
+ Lines and Angles
+ Triangles – Congruence Theorems
+ 4 - gons (Quadrilaterals)
+ Circles
+
+# Page 13
+
+## MATHEMATICS QUESTION PAPER DESIGN
+## CLASS – IX (2026-27)
+Time: 3 Hrs. Max. Marks: 80
+%
+- S. Total
+Typology of Questions Weightage
+No. Marks
+(approx.)
+Remembering: Exhibit memory of previously learned
+material by recalling facts, terms, basic concepts, and
+43 54
+1 answers.
+Understanding: Demonstrate understanding of facts
+and ideas by organizing, comparing, translating,
+interpreting, giving descriptions, and stating main ideas
+Applying: Solve problems to new situations by 19 24
+Pen Paper Test and Multiple Assessment (5+5) 10 Marks
+Portfolio 05 Marks
+Lab Practical (Lab activities to be done from the prescribed books) 05 Marks
+Prescribed Books:
+- 1. Mathematics - Textbook for class IX - NCERT Publication
+- 2. Guidelines for Mathematics Laboratory in Schools, class IX - CBSE Publication
+- 3. Laboratory Manual - Mathematics, secondary stage - NCERT Publication
+- 4. Mathematics exemplar problems for class IX, NCERT publication

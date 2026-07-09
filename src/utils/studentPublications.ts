@@ -1,8 +1,10 @@
 import type { SessionPlan } from "../types";
 import type { PublishedStudentArtifact, StudentPublicationKind } from "../types/student-content";
 
-export const STUDENT_PUBLICATIONS_KEY = "lms:student-publications";
-export const STUDENT_PUBLISHED_ARTIFACTS_KEY = "lms:student-published-artifacts";
+const BACKEND_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+
 const AUTH_STORAGE_KEY = "lms:auth-session";
 
 type StudentPublicationFlags = Partial<Record<StudentPublicationKind, boolean>>;
@@ -15,81 +17,6 @@ function readJson<T>(key: string, fallback: T): T {
   } catch {
     return fallback;
   }
-}
-
-function writeJson<T>(key: string, value: T) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Ignore storage failures and keep the UI usable.
-  }
-}
-
-export function readStudentPublicationFlags() {
-  return readJson<Record<string, StudentPublicationFlags>>(STUDENT_PUBLICATIONS_KEY, {});
-}
-
-export function writeStudentPublicationFlags(value: Record<string, StudentPublicationFlags>) {
-  writeJson(STUDENT_PUBLICATIONS_KEY, value);
-}
-
-export function getStudentPublicationKey(session: { id?: string; sessionNumber?: number } | number, sessionId?: string) {
-  if (typeof session === "number") {
-    return sessionId ? `${sessionId}` : `session-number:${session}`;
-  }
-
-  const resolvedSessionId = String(session.id || sessionId || "").trim();
-  if (resolvedSessionId) {
-    return resolvedSessionId;
-  }
-
-  return `session-number:${Number(session.sessionNumber || 0)}`;
-}
-
-export function readPublishedStudentArtifacts() {
-  const rawArtifacts = readJson<PublishedStudentArtifact[]>(STUDENT_PUBLISHED_ARTIFACTS_KEY, []);
-  const authSession = getAuthSession();
-  let changed = false;
-  const deduped = new Map<string, PublishedStudentArtifact>();
-
-  rawArtifacts.forEach((artifact) => {
-    const schoolId = String(artifact?.schoolId || authSession?.schoolId || "").trim();
-    const classId = String(artifact?.classId || artifact?.className || artifact?.gradeLevel || "").trim();
-    if (!schoolId || !classId) {
-      changed = true;
-      return;
-    }
-
-    const upgraded = ensurePublishedArtifactIdentity({
-      ...artifact,
-      schoolId,
-      classId,
-      className: String(artifact?.className || artifact?.classId || artifact?.gradeLevel || "").trim(),
-      gradeLevel: String(artifact?.gradeLevel || artifact?.className || artifact?.classId || "").trim(),
-      section: String(artifact?.section || authSession?.section || "").trim(),
-      subject: String(artifact?.subject || "").trim(),
-    });
-    if (upgraded.id !== artifact.id) {
-      changed = true;
-    }
-    // Use composite key for deduplication to handle ID instability
-    const compositeKey = getCompositeArtifactKey(upgraded);
-    const existing = deduped.get(compositeKey);
-    if (!existing || new Date(upgraded.publishedAt) > new Date(existing.publishedAt)) {
-      deduped.set(compositeKey, upgraded);
-    }
-  });
-
-  const normalizedArtifacts = Array.from(deduped.values()).sort((a, b) => a.sessionNumber - b.sessionNumber);
-  if (changed || normalizedArtifacts.length !== rawArtifacts.length) {
-    writeJson(STUDENT_PUBLISHED_ARTIFACTS_KEY, normalizedArtifacts);
-  }
-  return normalizedArtifacts;
-}
-
-export function writePublishedStudentArtifacts(value: PublishedStudentArtifact[]) {
-  writeJson(STUDENT_PUBLISHED_ARTIFACTS_KEY, value);
 }
 
 function getAuthSession() {
@@ -126,32 +53,6 @@ function buildPublishedArtifactId(input: {
   const classIdentity = normalizeArtifactIdentityPart(input.classId || input.gradeLevel) || "class";
   const subjectIdentity = normalizeArtifactIdentityPart(input.subject) || "subject";
   return `${input.kind}-${teacherIdentity}-${classIdentity}-${subjectIdentity}-${sessionIdentity}`;
-}
-
-function ensurePublishedArtifactIdentity(artifact: PublishedStudentArtifact): PublishedStudentArtifact {
-  const nextId = buildPublishedArtifactId({
-    kind: artifact.kind,
-    session: {
-      id: artifact.sessionId,
-      sessionNumber: artifact.sessionNumber,
-      title: artifact.sessionTitle,
-      duration: Number(artifact.duration || 0),
-    } as SessionPlan,
-    teacherId: artifact.teacherId || "",
-    classId: artifact.classId || artifact.className || "",
-    subject: artifact.subject || "",
-    gradeLevel: artifact.gradeLevel || "",
-  });
-
-  if (artifact.id === nextId) {
-    return artifact;
-  }
-
-  return {
-    ...artifact,
-    id: nextId,
-    payload: normalizeStudentArtifactPayload(artifact.kind, artifact.payload),
-  };
 }
 
 function normalizeAssessmentPayload(assessment: any) {
@@ -195,6 +96,118 @@ function normalizeStudentArtifactPayload(kind: StudentPublicationKind, payload: 
     };
   }
   return payload;
+}
+
+export function getStudentPublicationKey(session: { id?: string; sessionNumber?: number } | number, sessionId?: string) {
+  if (typeof session === "number") {
+    return sessionId ? `${sessionId}` : `session-number:${session}`;
+  }
+
+  const resolvedSessionId = String(session.id || sessionId || "").trim();
+  if (resolvedSessionId) {
+    return resolvedSessionId;
+  }
+
+  return `session-number:${Number(session.sessionNumber || 0)}`;
+}
+
+export async function readPublishedStudentArtifacts(): Promise<PublishedStudentArtifact[]> {
+  try {
+    const authSession = getAuthSession();
+    const schoolId = authSession?.schoolId || "";
+    const userId = authSession?.id || "";
+
+    if (!schoolId || !userId) {
+      return [];
+    }
+
+    const response = await fetch(
+      `${BACKEND_URL}/api/student/published-content?schoolId=${encodeURIComponent(schoolId)}&userId=${encodeURIComponent(userId)}`,
+      { credentials: "include" }
+    );
+
+    if (!response.ok) {
+      console.warn("[StudentPublications] API fetch failed, falling back to empty array.");
+      return [];
+    }
+
+    const data = await response.json();
+    return Array.isArray(data?.items) ? data.items : [];
+  } catch (error) {
+    console.error("[StudentPublications] Failed to fetch published artifacts:", error);
+    return [];
+  }
+}
+
+export async function writePublishedStudentArtifacts(value: PublishedStudentArtifact[]): Promise<void> {
+  // This function is kept for backward compatibility.
+  // Published artifacts are now managed through the backend API.
+  // Individual upserts should use upsertPublishedStudentArtifact instead.
+  console.warn("[StudentPublications] writePublishedStudentArtifacts is deprecated. Use upsertPublishedStudentArtifact instead.");
+}
+
+export async function upsertPublishedStudentArtifact(artifact: PublishedStudentArtifact): Promise<void> {
+  try {
+    const authSession = getAuthSession();
+    const schoolId = authSession?.schoolId || "";
+
+    if (!schoolId) {
+      console.warn("[StudentPublications] Cannot upsert: no schoolId available.");
+      return;
+    }
+
+    // The backend PATCH endpoint updates publication flags in the workspace.
+    // We need to find the workspace for this artifact and update the publication state.
+    const response = await fetch(`${BACKEND_URL}/api/student/published-content`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        schoolId,
+        artifact,
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn("[StudentPublications] Failed to upsert artifact via API.");
+    }
+  } catch (error) {
+    console.error("[StudentPublications] Failed to upsert published artifact:", error);
+  }
+}
+
+export async function removePublishedStudentArtifact(sessionNumber: number, kind: StudentPublicationKind, sessionId?: string): Promise<void> {
+  try {
+    const authSession = getAuthSession();
+    const schoolId = authSession?.schoolId || "";
+
+    if (!schoolId) {
+      return;
+    }
+
+    const response = await fetch(`${BACKEND_URL}/api/student/published-content/remove`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        schoolId,
+        sessionNumber,
+        kind,
+        sessionId,
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn("[StudentPublications] Failed to remove artifact via API.");
+    }
+  } catch (error) {
+    console.error("[StudentPublications] Failed to remove published artifact:", error);
+  }
+}
+
+export async function getPublishedArtifactsByKind(kind: StudentPublicationKind): Promise<PublishedStudentArtifact[]> {
+  const artifacts = await readPublishedStudentArtifacts();
+  return artifacts.filter((item) => item.kind === kind && artifactHasContentForKind(item));
 }
 
 export function buildPublishedArtifact(
@@ -300,33 +313,135 @@ function getCompositeArtifactKey(item: { kind: string; sessionId?: string; sessi
   return `${normKind}:${normSession}:${normSubject}:${normClass}`;
 }
 
-export function upsertPublishedStudentArtifact(artifact: PublishedStudentArtifact) {
-  const current = readPublishedStudentArtifacts();
-  const compositeKey = getCompositeArtifactKey(artifact);
-  const next = [
-    ...current.filter((item) => getCompositeArtifactKey(item) !== compositeKey),
-    artifact,
-  ].sort((a, b) => a.sessionNumber - b.sessionNumber);
-  writePublishedStudentArtifacts(next);
+export async function hasPublishedStudentArtifact(sessionNumber: number, kind: StudentPublicationKind, sessionId?: string): Promise<boolean> {
+  const artifacts = await readPublishedStudentArtifacts();
+  return artifacts.some((item) => {
+    if (item.kind !== kind) {
+      return false;
+    }
+    if (sessionId) {
+      return item.sessionId === sessionId;
+    }
+    return item.sessionNumber === sessionNumber;
+  });
 }
 
-export function removePublishedStudentArtifact(sessionNumber: number, kind: StudentPublicationKind, sessionId?: string) {
-  const current = readPublishedStudentArtifacts();
-  writePublishedStudentArtifacts(
-    current.filter((item) => {
-      if (item.kind !== kind) {
-        return true;
-      }
-      if (sessionId) {
-        return item.sessionId !== sessionId;
-      }
-      return item.sessionNumber !== sessionNumber;
-    }),
+export async function getPublishedStudentArtifact(sessionNumber: number, kind: StudentPublicationKind, sessionId?: string): Promise<PublishedStudentArtifact | null> {
+  const artifacts = await readPublishedStudentArtifacts();
+  return artifacts.find((item) => {
+    if (item.kind !== kind) {
+      return false;
+    }
+    if (sessionId) {
+      return item.sessionId === sessionId;
+    }
+    return item.sessionNumber === sessionNumber;
+  }) || null;
+}
+
+export async function removePublishedArtifactsForCurriculumScope(scope: {
+  subject?: string;
+  gradeLevel?: string;
+  classId?: string;
+}): Promise<void> {
+  try {
+    const authSession = getAuthSession();
+    const schoolId = authSession?.schoolId || "";
+
+    if (!schoolId) {
+      return;
+    }
+
+    const response = await fetch(`${BACKEND_URL}/api/student/published-content/remove-scope`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        schoolId,
+        scope,
+      }),
+    });
+
+    if (!response.ok) {
+      console.warn("[StudentPublications] Failed to remove artifacts by scope via API.");
+    }
+  } catch (error) {
+    console.error("[StudentPublications] Failed to remove published artifacts by scope:", error);
+  }
+}
+
+export function readStudentPublicationFlags() {
+  return readJson<Record<string, StudentPublicationFlags>>("lms:student-publications", {});
+}
+
+export function writeStudentPublicationFlags(value: Record<string, StudentPublicationFlags>) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem("lms:student-publications", JSON.stringify(value));
+  } catch {
+    // Ignore storage failures
+  }
+}
+
+export function publishedArtifactMatchesStudent(
+  artifact: PublishedStudentArtifact,
+  student?: {
+    schoolId?: string;
+    classId?: string;
+    section?: string;
+    assignedClasses?: string[];
+  } | null,
+) {
+  const studentSchoolId = String(student?.schoolId || "").trim();
+  const artifactSchoolId = String(artifact.schoolId || "").trim();
+  if (!artifactSchoolId) {
+    return false;
+  }
+  if (studentSchoolId && artifactSchoolId !== studentSchoolId) {
+    return false;
+  }
+
+  const studentClassAliases = Array.from(
+    new Set([...(student?.assignedClasses || []), student?.classId || ""].map((value) => String(value || "").trim()).filter(Boolean)),
   );
+
+  if (studentClassAliases.length === 0) {
+    return false;
+  }
+
+  const artifactClassAliases = [artifact.classId, artifact.className, artifact.gradeLevel]
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+
+  if (artifactClassAliases.length === 0) {
+    return false;
+  }
+
+  const classMatches = artifactClassAliases.some((artifactClass) =>
+    studentClassAliases.some((studentClass) => classValuesOverlap(artifactClass, studentClass)),
+  );
+  if (!classMatches) {
+    return false;
+  }
+
+  const studentSection = extractSectionToken(student?.section || "");
+  const artifactSection = extractSectionToken(artifact.section || artifact.className || artifact.classId || "");
+  if (studentSection && artifactSection && studentSection !== artifactSection) {
+    return false;
+  }
+
+  return true;
 }
 
-export function getPublishedArtifactsByKind(kind: StudentPublicationKind) {
-  return readPublishedStudentArtifacts().filter((item) => item.kind === kind && artifactHasContentForKind(item));
+export async function getPublishedArtifactsForStudent(
+  kind: StudentPublicationKind,
+  student?: {
+    classId?: string;
+    assignedClasses?: string[];
+  } | null,
+): Promise<PublishedStudentArtifact[]> {
+  const artifacts = await getPublishedArtifactsByKind(kind);
+  return artifacts.filter((artifact) => publishedArtifactMatchesStudent(artifact, student));
 }
 
 function normalizeText(value: unknown) {
@@ -405,122 +520,4 @@ function classValuesOverlap(left: unknown, right: unknown) {
   const leftFlat = leftText.replace(/[^a-z0-9]/g, "");
   const rightFlat = rightText.replace(/[^a-z0-9]/g, "");
   return leftFlat === rightFlat || leftFlat.includes(rightFlat) || rightFlat.includes(leftFlat);
-}
-
-export function publishedArtifactMatchesStudent(
-  artifact: PublishedStudentArtifact,
-  student?: {
-    schoolId?: string;
-    classId?: string;
-    section?: string;
-    assignedClasses?: string[];
-  } | null,
-) {
-  const studentSchoolId = String(student?.schoolId || "").trim();
-  const artifactSchoolId = String(artifact.schoolId || "").trim();
-  if (!artifactSchoolId) {
-    return false;
-  }
-  if (studentSchoolId && artifactSchoolId !== studentSchoolId) {
-    return false;
-  }
-
-  const studentClassAliases = Array.from(
-    new Set([...(student?.assignedClasses || []), student?.classId || ""].map((value) => String(value || "").trim()).filter(Boolean)),
-  );
-
-  if (studentClassAliases.length === 0) {
-    return false;
-  }
-
-  const artifactClassAliases = [artifact.classId, artifact.className, artifact.gradeLevel]
-    .map((value) => String(value || "").trim())
-    .filter(Boolean);
-
-  if (artifactClassAliases.length === 0) {
-    return false;
-  }
-
-  const classMatches = artifactClassAliases.some((artifactClass) =>
-    studentClassAliases.some((studentClass) => classValuesOverlap(artifactClass, studentClass)),
-  );
-  if (!classMatches) {
-    return false;
-  }
-
-  const studentSection = extractSectionToken(student?.section || "");
-  const artifactSection = extractSectionToken(artifact.section || artifact.className || artifact.classId || "");
-  if (studentSection && artifactSection && studentSection !== artifactSection) {
-    return false;
-  }
-
-  return true;
-}
-
-export function getPublishedArtifactsForStudent(
-  kind: StudentPublicationKind,
-  student?: {
-    classId?: string;
-    assignedClasses?: string[];
-  } | null,
-) {
-  return getPublishedArtifactsByKind(kind).filter((artifact) => publishedArtifactMatchesStudent(artifact, student));
-}
-
-export function removePublishedArtifactsForCurriculumScope(scope: {
-  subject?: string;
-  gradeLevel?: string;
-  classId?: string;
-}) {
-  const subject = normalizeText(scope.subject);
-  const classCandidates = [scope.classId, scope.gradeLevel]
-    .map((value) => String(value || "").trim())
-    .filter(Boolean);
-
-  if (!subject && classCandidates.length === 0) {
-    return;
-  }
-
-  const current = readPublishedStudentArtifacts();
-  const next = current.filter((artifact) => {
-    const subjectMatches = subject ? normalizeText(artifact.subject) === subject : true;
-    const classMatches = classCandidates.length > 0
-      ? classCandidates.some((candidate) =>
-          [artifact.classId, artifact.className, artifact.gradeLevel]
-            .map((value) => String(value || "").trim())
-            .filter(Boolean)
-            .some((artifactClass) => classValuesOverlap(artifactClass, candidate))
-        )
-      : true;
-
-    return !(subjectMatches && classMatches);
-  });
-
-  if (next.length !== current.length) {
-    writePublishedStudentArtifacts(next);
-  }
-}
-
-export function hasPublishedStudentArtifact(sessionNumber: number, kind: StudentPublicationKind, sessionId?: string) {
-  return readPublishedStudentArtifacts().some((item) => {
-    if (item.kind !== kind) {
-      return false;
-    }
-    if (sessionId) {
-      return item.sessionId === sessionId;
-    }
-    return item.sessionNumber === sessionNumber;
-  });
-}
-
-export function getPublishedStudentArtifact(sessionNumber: number, kind: StudentPublicationKind, sessionId?: string) {
-  return readPublishedStudentArtifacts().find((item) => {
-    if (item.kind !== kind) {
-      return false;
-    }
-    if (sessionId) {
-      return item.sessionId === sessionId;
-    }
-    return item.sessionNumber === sessionNumber;
-  }) || null;
 }

@@ -30,6 +30,20 @@ const ENV_FILE_PATH = path.resolve(__dirname, "../.env");
 // Load environment variables
 dotenv.config({ path: ENV_FILE_PATH });
 
+// ======== GLOBAL FAULT TOLERANCE ========
+// A stray async error (unhandled promise rejection, uncaught exception from a
+// background task, undici dispatcher error, mongoose buffer error, etc.) can
+// terminate the Node process. With `tsx watch` the server does NOT auto-restart
+// on a runtime crash, so the listener is lost and every later request fails with
+// ERR_CONNECTION_REFUSED. These handlers keep the API server alive and simply
+// log the fault so the request can fail gracefully instead of killing the server.
+process.on("uncaughtException", (error: any) => {
+  console.error("[Backend][FATAL] Uncaught exception (server kept alive):", error);
+});
+process.on("unhandledRejection", (reason: any) => {
+  console.error("[Backend][FATAL] Unhandled promise rejection (server kept alive):", reason);
+});
+
 const app = express();
 const PORT = Number(process.env.BACKEND_PORT) || 3002;
 const FRONTEND_PORT = Number(process.env.FRONTEND_PORT) || 4173;
@@ -2870,15 +2884,29 @@ function pickSessionSections(sessionPlan: any, selectedSections: SessionSectionK
   return partial;
 }
 
+function hasGeneratedSessionSectionValue(value: unknown): boolean {
+  if (value == null) return false;
+  if (typeof value === "string") return value.trim().length > 0;
+  if (Array.isArray(value)) return value.length > 0;
+  if (typeof value === "object") return Object.keys(value as Record<string, unknown>).length > 0;
+  return true;
+}
+
 function mergeSessionPlanSections(basePlan: any, patchPlan: any, selectedSections: SessionSectionKey[]) {
   const merged = {
     ...(basePlan || {}),
-    ...(patchPlan || {}),
   };
 
-  for (const section of ALL_SESSION_SECTIONS) {
-    if (!selectedSections.includes(section) && basePlan && section in basePlan) {
-      merged[section] = basePlan[section];
+  const sessionSectionSet = new Set<string>(ALL_SESSION_SECTIONS);
+  for (const [key, value] of Object.entries(patchPlan || {})) {
+    if (!sessionSectionSet.has(key)) {
+      merged[key] = value;
+    }
+  }
+
+  for (const section of selectedSections) {
+    if (section in (patchPlan || {}) && hasGeneratedSessionSectionValue(patchPlan[section])) {
+      merged[section] = patchPlan[section];
     }
   }
 
@@ -3024,10 +3052,10 @@ function findMatchingGeneratedSessionEntry(
   const candidates: Array<[string, any]> = [];
 
   if (generatedSessions[preferredKey]) {
-    candidates.push([preferredKey, generatedSessions[preferredKey]]);
+    return { key: preferredKey, sessionPlan: generatedSessions[preferredKey] };
   }
   if (generatedSessions[legacyKey]) {
-    candidates.push([legacyKey, generatedSessions[legacyKey]]);
+    return { key: legacyKey, sessionPlan: generatedSessions[legacyKey] };
   }
   for (const [key, value] of Object.entries(generatedSessions || {})) {
     if (key !== preferredKey && key !== legacyKey) {
@@ -21926,8 +21954,8 @@ app.get("/api/student/published-content", async (req, res) => {
       return;
     }
 
-    if (kind !== "homework" && kind !== "assessments") {
-      res.status(400).json({ error: "kind must be homework or assessments." });
+    if (kind && !["homework", "assessments", "quizzes", "notes"].includes(kind)) {
+      res.status(400).json({ error: "kind must be homework, assessments, quizzes, or notes." });
       return;
     }
 
@@ -22121,6 +22149,193 @@ app.patch("/api/planning-workspaces/:id/student-publications", async (req, res) 
   } catch (error: any) {
     console.error("[PlanningWorkspaces] Student publication update failed:", error);
     res.status(500).json({ error: error?.message || "Failed to update student publication state." });
+  }
+});
+
+// POST endpoint to upsert a published student artifact
+app.post("/api/student/published-content", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.body?.schoolId || "").trim();
+    const artifact = req.body?.artifact;
+
+    if (!schoolId || !artifact) {
+      return res.status(400).json({ error: "schoolId and artifact are required." });
+    }
+
+    // Find the workspace that contains this session
+    const sessionId = String(artifact?.sessionId || "").trim();
+    const sessionNumber = Number(artifact?.sessionNumber || 0);
+    const kind = String(artifact?.kind || "").trim();
+
+    if (!sessionId && !sessionNumber) {
+      return res.status(400).json({ error: "sessionId or sessionNumber is required." });
+    }
+
+    // Search for the workspace containing this session
+    const workspaces = await PlanningWorkspaceModel.find({ schoolId }).lean();
+    let targetWorkspace: any = null;
+    let targetSessionKey = "";
+
+    for (const workspace of workspaces) {
+      const generatedSessions = workspace.generationScope?.generatedSessions;
+      if (!generatedSessions || typeof generatedSessions !== "object") continue;
+
+      for (const [key, session] of Object.entries(generatedSessions as Record<string, any>)) {
+        const matchesSessionId = sessionId && String(session?.id || "").trim() === sessionId;
+        const matchesSessionNumber = sessionNumber > 0 && Number(session?.sessionNumber || 0) === sessionNumber;
+        const matchesKey = sessionId && key === sessionId;
+
+        if (matchesSessionId || matchesSessionNumber || matchesKey) {
+          targetWorkspace = await PlanningWorkspaceModel.findOne({ _id: workspace._id });
+          targetSessionKey = key;
+          break;
+        }
+      }
+      if (targetWorkspace) break;
+    }
+
+    if (!targetWorkspace || !targetSessionKey) {
+      return res.status(404).json({ error: "Session not found in any workspace." });
+    }
+
+    // Update the publication flags
+    const nextGenerationScope = targetWorkspace.generationScope && typeof targetWorkspace.generationScope === "object"
+      ? { ...targetWorkspace.generationScope }
+      : {};
+    const nextStudentPublications = nextGenerationScope.studentPublications && typeof nextGenerationScope.studentPublications === "object"
+      ? { ...nextGenerationScope.studentPublications }
+      : {};
+    const currentFlags = nextStudentPublications[targetSessionKey] && typeof nextStudentPublications[targetSessionKey] === "object"
+      ? { ...nextStudentPublications[targetSessionKey] }
+      : {};
+
+    currentFlags[kind] = { published: true, publishedAt: new Date().toISOString() };
+    nextStudentPublications[targetSessionKey] = currentFlags;
+    nextGenerationScope.studentPublications = nextStudentPublications;
+    targetWorkspace.generationScope = nextGenerationScope;
+
+    await targetWorkspace.save();
+    res.json({ success: true, studentPublications: nextStudentPublications });
+  } catch (error: any) {
+    console.error("[Student] Published content upsert failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to upsert published content." });
+  }
+});
+
+// POST endpoint to remove a published student artifact
+app.post("/api/student/published-content/remove", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.body?.schoolId || "").trim();
+    const sessionNumber = Number(req.body?.sessionNumber || 0);
+    const kind = String(req.body?.kind || "").trim();
+    const sessionId = String(req.body?.sessionId || "").trim();
+
+    if (!schoolId || !kind || (!sessionNumber && !sessionId)) {
+      return res.status(400).json({ error: "schoolId, kind, and sessionNumber or sessionId are required." });
+    }
+
+    const workspaces = await PlanningWorkspaceModel.find({ schoolId }).lean();
+    let targetWorkspace: any = null;
+    let targetSessionKey = "";
+
+    for (const workspace of workspaces) {
+      const generatedSessions = workspace.generationScope?.generatedSessions;
+      if (!generatedSessions || typeof generatedSessions !== "object") continue;
+
+      for (const [key, session] of Object.entries(generatedSessions as Record<string, any>)) {
+        const matchesSessionId = sessionId && String(session?.id || "").trim() === sessionId;
+        const matchesSessionNumber = sessionNumber > 0 && Number(session?.sessionNumber || 0) === sessionNumber;
+        const matchesKey = sessionId && key === sessionId;
+
+        if (matchesSessionId || matchesSessionNumber || matchesKey) {
+          targetWorkspace = await PlanningWorkspaceModel.findOne({ _id: workspace._id });
+          targetSessionKey = key;
+          break;
+        }
+      }
+      if (targetWorkspace) break;
+    }
+
+    if (!targetWorkspace || !targetSessionKey) {
+      return res.status(404).json({ error: "Session not found in any workspace." });
+    }
+
+    const nextGenerationScope = targetWorkspace.generationScope && typeof targetWorkspace.generationScope === "object"
+      ? { ...targetWorkspace.generationScope }
+      : {};
+    const nextStudentPublications = nextGenerationScope.studentPublications && typeof nextGenerationScope.studentPublications === "object"
+      ? { ...nextGenerationScope.studentPublications }
+      : {};
+    const currentFlags = nextStudentPublications[targetSessionKey] && typeof nextStudentPublications[targetSessionKey] === "object"
+      ? { ...nextStudentPublications[targetSessionKey] }
+      : {};
+
+    currentFlags[kind] = { published: false, publishedAt: null };
+    nextStudentPublications[targetSessionKey] = currentFlags;
+    nextGenerationScope.studentPublications = nextStudentPublications;
+    targetWorkspace.generationScope = nextGenerationScope;
+
+    await targetWorkspace.save();
+    res.json({ success: true, studentPublications: nextStudentPublications });
+  } catch (error: any) {
+    console.error("[Student] Published content remove failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to remove published content." });
+  }
+});
+
+// POST endpoint to remove published artifacts by curriculum scope
+app.post("/api/student/published-content/remove-scope", async (req, res) => {
+  try {
+    await connectToMongo();
+    const schoolId = String(req.body?.schoolId || "").trim();
+    const scope = req.body?.scope;
+
+    if (!schoolId || !scope) {
+      return res.status(400).json({ error: "schoolId and scope are required." });
+    }
+
+    const subject = String(scope?.subject || "").trim();
+    const gradeLevel = String(scope?.gradeLevel || "").trim();
+    const classId = String(scope?.classId || "").trim();
+
+    if (!subject && !gradeLevel && !classId) {
+      return res.status(400).json({ error: "At least one scope filter (subject, gradeLevel, classId) is required." });
+    }
+
+    const workspaces = await PlanningWorkspaceModel.find({ schoolId }).lean();
+    let updatedCount = 0;
+
+    for (const workspace of workspaces) {
+      const workspaceSubject = String(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || "").trim();
+      const workspaceGrade = String(workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || "").trim();
+      const workspaceClassId = String(workspace?.classId || "").trim();
+
+      const subjectMatches = !subject || normalizeSubjectKey(workspaceSubject) === normalizeSubjectKey(subject);
+      const gradeMatches = !gradeLevel || normalizeSourceText(workspaceGrade) === normalizeSourceText(gradeLevel);
+      const classMatches = !classId || normalizeSourceText(workspaceClassId) === normalizeSourceText(classId);
+
+      if (!subjectMatches || !gradeMatches || !classMatches) continue;
+
+      const nextGenerationScope = workspace.generationScope && typeof workspace.generationScope === "object"
+        ? { ...workspace.generationScope }
+        : {};
+
+      if (nextGenerationScope.studentPublications) {
+        delete nextGenerationScope.studentPublications;
+        await PlanningWorkspaceModel.updateOne(
+          { _id: workspace._id },
+          { $set: { "generationScope.studentPublications": {} } }
+        );
+        updatedCount += 1;
+      }
+    }
+
+    res.json({ success: true, updatedWorkspaces: updatedCount });
+  } catch (error: any) {
+    console.error("[Student] Published content remove by scope failed:", error);
+    res.status(500).json({ error: error?.message || "Failed to remove published content by scope." });
   }
 });
 
@@ -24104,9 +24319,9 @@ export {
 
 // ======== START SERVER ========
 if (process.env.NODE_ENV !== "test") {
-  app.listen(PORT, "0.0.0.0", () => {
+  app.listen(PORT, "127.0.0.1", () => {
     const defaultOllamaConfig = getOllamaConfig("default");
-    console.log(`[Backend] API server running on http://0.0.0.0:${PORT}`);
+    console.log(`[Backend] API server running on http://127.0.0.1:${PORT}`);
     console.log(`[Backend] Ollama: ${defaultOllamaConfig.baseUrl} | Model: ${defaultOllamaConfig.model}`);
     console.log(`[Backend] MongoDB: ${MONGODB_URI}`);
     console.log(`[Backend] CORS enabled for http://localhost:${FRONTEND_PORT}`);

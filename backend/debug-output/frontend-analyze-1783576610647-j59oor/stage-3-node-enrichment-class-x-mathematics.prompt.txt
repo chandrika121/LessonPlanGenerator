@@ -1,0 +1,169 @@
+Stage 3: Node Enrichment - Class X - Mathematics
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class X",
+  "subject": "Mathematics",
+  "part_or_section": "",
+  "units": []
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class X",
+  "subject": "Mathematics",
+  "part_or_section": "",
+  "units": []
+}
+
+Curriculum source text:
+## Class IX (2026 – 27)
+Introduction:
+The Mathematics curriculum for the Secondary stage has been redesigned in alignment with the
+National Education Policy 2020 and the National Curriculum Framework for School Education
+(NCF – SE) 2023, prioritizing deep conceptual understanding and logical reasoning. The revised
+syllabus places strong emphasis on developing core mathematical competencies, including
+problem-solving, visualisation, mathematical modelling, mathematical communication,
+computational thinking, and data analytics. The syllabus integrate Indian Knowledge System with
+contemporary mathematical knowledge, highlighting the rich contributions of Indian
+mathematicians to foster a sense of pride and historical context. A deliberate shift from rote
+learning to competency-based education ensures that students build deep conceptual
+understanding and logical reasoning rather than mere procedural fluency. Greater emphasis has
+been laid on the integration of real-life applications and experiential learning, encouraging students
+to connect mathematical concepts with everyday situations and cross-disciplinary contexts.
+Greater emphasis has been laid on competency based learning outcomes encouraging students
+to connect mathematical concepts with everyday situations and inter-disciplinary contexts.
+Continuous and holistic assessment through projects, activities, and investigations forms an
+integral part of the learning process, moving beyond summative examinations.
+At the secondary stage, the curriculum focuses on developing essential global mathematical
+competencies, including mathematical representation through quantities and relations,
+mathematical modelling and algorithm building, and effective mathematical communication. The
+study of the number system, algebra, geometry, mensuration, statistics and probability is designed
+to build a strong foundation for higher education while enhancing functional life skills. The
+curriculum thus aims to build rich mathematical learning frameworks not only for higher academic
+pursuits but also for the practical demands of life in a rapidly changing, data-driven world.
+Objectives: The broad objectives of teaching Mathematics at the secondary stage are to help the
+learners to:
+ develop logical thinking, critical reasoning, and a structured approach to problem-solving;
+ build the ability to recognise, analyse, and solve diverse problems with confidence and
+adaptability;
+ communicate mathematical ideas effectively using appropriate language, symbols, and
+representations;
+ appreciate the beauty, history, and real-life relevance of Mathematics as a discipline;
+ connect mathematical concepts to fields such as Science, Technology, Engineering, and
+Economics;
+ engage in both collaborative and independent mathematical exploration and learning;
+ develop habits of precision, accuracy, and logical consistency in mathematical work;
+ build confidence to explore, experiment, and grow in mathematical understanding without
+fear of failure.
+
+---
+
+# Page 2
+
+Curricular Goals (CGs) and Competencies (Cs) from the NCF-SE 2023
+CG-1: Understands numbers (natural, whole, integer, rational, irrational, and real), ways of
+representing numbers, relationships amongst numbers, and number sets.
+C-1.1 Develops understanding of numbers, including the set of real numbers and its properties.
+CG-2: Builds deductive and inductive logic to prove theorems related to numbers and their
+relationships (such as ‘2 is an irrational number’, a recursion relation for Virahanka numbers,
+a formula for the sum of the first n square numbers).
+C-2.1 Understanding of powers (radical powers) and exponents.
+CG-3: Discovers and proves algebraic identities and models real-life situations in the form
+of equations to solve them.
+C-3.1 States and proves remainder theorem, factor theorem, and division algorithm.
+C-3.2 Models and solves contextualised problems using equations (for example, simultaneous
+linear equations in two variables or single polynomial equations), and draws conclusions about a
+situation being modelled.
+C-3.3 Learns Brahmagupta’s quadratic formula (in both symbolic and poetic form) and its derivation,
+and uses it to solve some of the poetic puzzles of Bhaskara as well as modern-day problems.
+CG-4: Analyses characteristics and properties of two-dimensional geometric shapes, and
+develops mathematical arguments to explain geometric relationships.
+C-4.1 Describes relationships including congruence of two-dimensional geometric shapes (such as
+lines, angles, triangles) to make and test conjectures and solve problems.
+C-4.2 Proves theorems using Euclid’s axioms and postulates for triangles and quadrilaterals, and
+applies them to solve geometric problems.
+C-4.3 Proves theorems about the geometry of a circle, including its chords, subtended angles,
+inscribed polygons, and area in terms of pi.
+C-4.4 Understands the irrationality of pi, the best approximations to be discovered over human
+history, and the first exact formula (infinite series) for pi given by Madhava.
+C-4.5 Specifies locations and describes spatial relationships using coordinate geometry, for
+example, plotting a pair of linear equations and graphically finding the solution, or finding the area
+of triangle with given coordinates as vertices.
+C-4.6 Understands the definitions of the basic trigonometric functions, their history and motivation
+(including the introduction of the sin and cos functions by Aryabhata using chords), and their utility
+across the sciences.
+CG-5: Derives and uses formulae to calculate areas of plane figures, surface area, and
+volumes of solid objects.
+C-5.1 Visualises, represents, and calculates the area of a triangle using Heron’s formula and its
+generalisation to cyclic quadrilaterals given by Brahmagupta’s formula.
+C-5.2 Visualises and uses mathematical thinking to discover formulae to calculate surface areas
+and volumes of solid objects (cubes, cuboids, spheres, hemispheres, right circular cylinders or
+cones, and their combinations).
+
+---
+
+# Page 3
+
+CG-6: Analyses and interprets data using statistical concepts (such as measures of central
+tendency, standard deviations) and probability.
+C-6.1 Applies measures of central tendencies, such as mean, median, and mode.
+C-6.2 Applies concepts from probability to solve problems on the likelihood of everyday events.
+CG-7: Begins to perceive and appreciate the axiomatic and deductive structure of
+Mathematics.
+C-7.1 Proves mathematical statements and carries out geometric constructions using stated
+assumptions, axioms, postulates, definitions, and mathematics vocabulary.
+C-7.2 Visualises and appreciates geometric proofs for algebraic identities and other ‘proofs without
+words’.
+C-7.3 Proves theorems using Euclid’s axioms and postulates for angles, triangles, quadrilaterals,
+circles, area-related theorems for triangles, and parallelograms.
+C-7.4 Constructs different geometrical shapes like bisectors of line segments, angles and their
+bisectors, triangles, and other polygons, satisfying given constraints.
+CG-8: Builds skills, such as visualisation, optimisation, representation, and mathematical
+modelling along with their application in daily life.
+C-8.1 Models daily-life phenomena and uses representations, such as graphs, tables, and
+equations to draw conclusions.
+C-8.2 Uses two-dimensional representations of three-dimensional objects to visualise and solve
+problems, such as those involving surface area and volume.
+C-8.3 Employs optimisation strategies to maximise desired quantities (such as area, volume, or
+other output) under given constraints.
+CG-9: Develops computational thinking, i.e., deals with complex problems and is able to
+break them down into a series of simple problems that can then be solved by suitable
+procedures/algorithms.
+C-9.1 Decomposes a problem into sub-problems.
+C-9.2 Describes and analyses a sequence of instructions being followed.
+C-9.3 Analyses similarities and differences among problems to make one solution or 
