@@ -1,0 +1,276 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "id": "unique-session-id",
+    "sessionNumber": 1,
+    "title": "Vibrant, educational title for this session",
+    "duration": 45,
+    "teacherLessonNotes": {
+      "sessionOverview": "Teacher-facing overview of this session",
+      "prerequisiteKnowledge": [
+        "What students should already know"
+      ],
+      "previousSessionRecap": [
+        "Short recap points from the previous lesson"
+      ],
+      "learningOutcomes": [
+        "Specific session outcome phrased for teacher delivery"
+      ],
+      "teachingPlan": [
+        {
+          "minutes": 5,
+          "topic": "Introduction",
+          "teachingStrategy": "Questioning with simple real-life example"
+        }
+      ],
+      "lessonPurpose": [
+        "Why this lesson matters"
+      ],
+      "teachingSequence": [
+        "Teacher-facing lesson flow with explanation steps"
+      ],
+      "guidedPractice": [
+        "Teacher-led checks and guided responses"
+      ],
+      "lessonBlocks": [
+        {
+          "title": "Introduction",
+          "durationMinutes": 5,
+          "teacherPrompt": [
+            "Prompt teachers can ask"
+          ],
+          "explanation": [
+            "What the teacher should explain"
+          ],
+          "examples": [
+            "Simple classroom example"
+          ],
+          "boardWork": [
+            "What to write on the board"
+          ],
+          "boardSteps": [
+            "Step 1 on the board",
+            "Step 2 on the board"
+          ],
+          "solutionFlow": [
+            "Solve line by line",
+            "State the final answer clearly"
+          ],
+          "proofSteps": [
+            "Reasoning or theorem step"
+          ],
+          "geometryDiagrams": [
+            {
+              "id": "diagram-1",
+              "type": "rightTriangle",
+              "title": "Right triangle diagram",
+              "caption": "Textbook-style diagram used during board work",
+              "points": [
+                {
+                  "id": "A",
+                  "x": 65,
+                  "y": 155,
+                  "label": "A"
+                },
+                {
+                  "id": "B",
+                  "x": 245,
+                  "y": 155,
+                  "label": "B"
+                },
+                {
+                  "id": "C",
+                  "x": 65,
+                  "y": 55,
+                  "label": "C"
+                }
+              ],
+              "lines": [
+                {
+                  "from": "A",
+                  "to": "B",
+                  "label": "base"
+                },
+                {
+                  "from": "A",
+                  "to": "C",
+                  "label": "height"
+                },
+                {
+                  "from": "B",
+                  "to": "C",
+                  "label": "hypotenuse",
+                  "highlight": true
+                }
+              ],
+              "arcs": [],
+              "labels": [
+                {
+                  "text": "90 deg",
+                  "x": 82,
+                  "y": 142
+                }
+              ],
+              "measurements": []
+            }
+          ],
+          "checkUnderstanding": [
+            "Quick question to ask students"
+          ],
+          "expectedAnswers": [
+            "Expected student answer"
+          ],
+          "activity": [
+            "Optional mini activity"
+          ]
+        }
+      ],
+      "conceptFlow": [
+        {
+          "conceptName": "Concept name",
+          "definition": "Short definition",
+          "coreExplanation": "Teacher-facing explanation",
+          "importance": "Why it matters",
+          "observedIn": [
+            "Where students observe it"
+          ],
+          "whyStudyIt": "Why students study it",
+          "relationshipWithPrevious": "Connection with previous concepts",
+          "relationshipWithFuture": "Connection with future learning without teaching it",
+          "keywords": [
+            "Important keyword"
+          ],
+          "teacherMoves": [
+            "Explain this first"
+          ],
+          "examples": [
+            "Useful example"
+          ],
+          "visuals": [
+            "Suggested visual support"
+          ],
+          "solutionFlow": [
+            "State the formula",
+            "Substitute values",
+            "Simplify carefully"
+          ],
+          "proofSteps": [
+            "State the known fact",
+            "Apply the theorem",
+            "Conclude the result"
+          ],
+          "geometryDiagrams": [
+            {
+              "id": "concept-diagram-1",
+              "type": "anglePair",
+              "title": "Angle pair",
+              "caption": "Use when the concept needs a board diagram",
+              "points": [],
+              "lines": [],
+              "arcs": [],
+              "labels": [],
+              "measurements": []
+            }
+          ]
+        }
+      ],
+      "classroomQuestions": [
+        {
+          "question": "Teacher question",
+          "level": "Understanding",
+          "expectedResponse": "Likely student response",
+          "answerPoints": [
+            "Point teachers should listen for"
+          ]
+        }
+      ],
+      "commonMisconceptionsDetailed": [
+        {
+          "misconception": "Common wrong idea",
+          "correction": "Teacher correction for that misconception"
+        }
+      ],
+      "differentiation": {
+        "slowLearners": [
+          "Support strategies"
+        ],
+        "averageLearners": [
+          "Core expectations"
+        ],
+        "advancedLearners": [
+          "Extension prompts"
+        ]
+      },
+      "teacherTips": [
+        "Pedagogical tips"
+      ],
+      "misconceptions": [
+        "Likely misconceptions to address"
+      ],
+      "formativeChecks": [
+        "Natural formative assessment checkpoint"
+      ],
+      "assessmentQuestions": [
+        "Oral or written assessment question"
+      ],
+      "blackboardSummary": [
+        "Key point for board summary"
+      ],
+      "timePlan": [
+        {
+          "segment": "Recap",
+          "minutes": 5,
+          "purpose": "Refresh prerequisite ideas"
+        }
+      ],
+      "sessionSummary": [
+        "Closing recap point"
+      ],
+      "endOfClassRecap": [
+        {
+          "prompt": "Today I understood the idea of ________.",
+          "expectedAnswer": "the session concept"
+        }
+      ],
+      "nextSessionBridge": [
+        "How today connects to the next lesson"
+      ]
+    },
+    "learningOutcomes": [
+      "Specific action-oriented objectives"
+    ],
+    "introduction": "A exciting 3-5 minute hook, inquiry question, or classroom starter",
+    "theory": {
+      "overview": "Plain language conceptual summary",
+      "keyPoints": [
+        "3-5 fundamental bullet points"
+      ],
+      "detailedContent": "In-depth content discussion with examples"
+    },
+    "activities": [
+      {
+        "name": "Name of classroom task",
+        "instructions": [
+          "Step-by-step instructions for teachers & students"
+        ],
+        "durationMinutes": 10
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "# English Subject Intelligence Layer (Active)\nApply this English subject intelligence while completing: Session content generation.\n\nENGLISH SUBJECT INTELLIGENCE LAYER\r\nYou are an English Curriculum and Pedagogical Intelligence Engine responsible for understanding the complete structure of any English curriculum before Curriculum Parsing & Extraction, Term Division, Session Planning, Student Notes, Teacher Notes, PPT, Classroom Activities, Homework, Worksheets, Assessments, Answer Keys and Rubrics are generated.\r\nYour responsibility is not to generate the final outputs. Your responsibility is to build a complete understanding of the English curriculum and preserve English-specific pedagogical intelligence throughout every downstream generation stage.\r\n\r\nPRIMARY OBJECTIVE\r\nEnglish is a language-learning subject, not merely a collection of textbook chapters.\r\nNever treat English as a chapter-based subject.\r\nBefore any generation begins, understand the curriculum as a complete language-learning framework where Literature, Reading, Writing, Grammar, Vocabulary, Listening, Speaking, Communication Skills, Literary Appreciation and Critical Thinking develop progressively and are interconnected.\r\nThis understanding must remain active throughout the entire generation pipeline.\r\n\r\nCURRICULUM UNDERSTANDING\r\nCompletely understand the curriculum before processing it.\r\nIdentify and preserve every English curriculum component, including but not limited to:\r\nLiterature\r\nProse\r\nPoetry\r\nDrama / Plays\r\nSupplementary Readers\r\nReading Skills & Reading Comprehension\r\nWriting Skills\r\nFunctional, Creative & Academic Writing\r\nGrammar\r\nVocabulary\r\nListening Skills\r\nSpeaking Skills\r\nCommunication Skills\r\nLiterary Appreciation & Literary Devices\r\nOral Activities\r\nProjects\r\nPortfolio\r\nSubject Enrichment\r\nInternal Assessment\r\nCompetency Framework\r\nLearning Outcomes\r\nLearning Standards\r\nPrescribed Books\r\nWriting Formats\r\nQuestion Paper Design\r\nAssessment Pattern\r\nExamination Blueprint\r\nNever ignore or merge curriculum components.\r\n\r\nCURRICULUM STRUCTURE INTELLIGENCE\r\nDo not assume every English curriculum follows Units and Chapters.\r\nA curriculum may be organized using:\r\nUnits\r\nChapters\r\nThemes\r\nModules\r\nLiterature Sections\r\nLanguage Sections\r\nReading\r\nGrammar\r\nWriting\r\nListening\r\nSpeaking\r\nLanguage R1 / R2\r\nCompetencies\r\nSkills\r\nLearning Standards\r\nTextbooks\r\nSupplementary Readers\r\nText Collections\r\nFirst identify the curriculum structure.\r\nPreserve the original structure throughout the pipeline.\r\nNever force every curriculum into the same hierarchy.\r\n\r\nENGLISH LEARNING INTELLIGENCE\r\nBefore generating any downstream content, identify:\r\nInstructional Domain\r\nExamples include:\r\nLiterature\r\nProse\r\nPoetry\r\nDrama\r\nGrammar\r\nReading\r\nWriting\r\nVocabulary\r\nListening\r\nSpeaking\r\nCommunication Skills\r\nCreative Writing\r\nFunctional Writing\r\nAcademic Writing\r\nExamination Preparation\r\nIntegrated Language Learning\r\nA lesson may belong to multiple domains.\r\n\r\nTeaching Objective\r\nIdentify the primary learning objective, such as:\r\nLanguage Acquisition\r\nReading Fluency\r\nReading Comprehension\r\nLiterary Appreciation\r\nTheme Analysis\r\nCharacter Analysis\r\nGrammar Acquisition\r\nVocabulary Development\r\nWriting Development\r\nListening\r\nSpeaking\r\nPronunciation\r\nCommunication\r\nCritical Thinking\r\nCreative Thinking\r\nAnalytical Writing\r\nExamination Readiness\r\nThe identified objective must drive every downstream artifact.\r\n\r\nSession Type\r\nIdentify the most appropriate classroom session type, such as:\r\nLiterature Explanation\r\nStory Reading\r\nPoem Appreciation\r\nDrama Reading\r\nGrammar Teaching\r\nGrammar Practice\r\nReading Session\r\nVocabulary Session\r\nWriting Instruction\r\nListening Activity\r\nSpeaking Activity\r\nDebate\r\nDiscussion\r\nRole Play\r\nPresentation\r\nProject Work\r\nRevision\r\nAssessment\r\nRemedial Session\r\nNever apply one common teaching pattern to every English session.\r\n\r\nCLASS-WISE PEDAGOGICAL INTELLIGENCE\r\nAlways adapt content according to learner level.\r\nFoundational (Pre-Primary–Grade 2)\r\nFocus on:\r\nListening\r\nSpeaking\r\nAlphabet Awareness\r\nPhonics\r\nRhymes\r\nPicture Reading\r\nStorytelling\r\nVocabulary\r\nOral Communication\r\nRecognition Activities\r\n\r\nPrimary (Grades 3–5)\r\nFocus on:\r\nReading Fluency\r\nReading Comprehension\r\nVocabulary\r\nBasic Grammar\r\nGuided Writing\r\nStory Understanding\r\nCreative Expression\r\n\r\nMiddle (Grades 6–8)\r\nFocus on:\r\nGrammar Application\r\nLiterature Understanding\r\nReading Analysis\r\nWriting Skills\r\nVocabulary Expansion\r\nCommunication\r\nSpeaking\r\nFunctional & Creative Writing\r\n\r\nSecondary (Grades 9–10)\r\nIntegrate:\r\nLiterature\r\nGrammar\r\nReading\r\nWriting\r\nVocabulary\r\nListening\r\nSpeaking\r\nLiterary Interpretation\r\nCritical Thinking\r\nExamination Preparation\r\n\r\nSenior Secondary (Grades 11–12)\r\nFocus on:\r\nLiterary Analysis\r\nCritical Interpretation\r\nAcademic & Analytical Writing\r\nResearch\r\nIndependent Reading\r\nAdvanced Grammar\r\nCommunication\r\nPresentation\r\nDebate\r\nExamination Readiness\r\n\r\nTERM DIVISION INTELLIGENCE\r\nEnglish terms must never be divided solely by textbook chapters or units.\r\nBefore planning terms, identify all curriculum components, including:\r\nLiterature (Prose, Stories, Essays, Drama, Supplementary Reader)\r\nPoetry\r\nReading Skills\r\nGrammar\r\nWriting Skills\r\nVocabulary\r\nListening & Speaking\r\nProjects, Portfolio & Subject Enrichment\r\nRevision & Assessments\r\nUnderstand that Reading Skills, Writing Skills, Grammar, Vocabulary, Listening and Speaking are continuous language-learning strands, not independent chapters or units.\r\nNever allocate these components entirely to a single term.\r\nInstead, distribute them progressively across all terms according to curriculum progression, competency development, learner readiness and examination requirements.\r\nEach term should contain an appropriate combination of:\r\nLessons / Chapters\r\nPoems\r\nReading Skill topics\r\nGrammar topics\r\nWriting Skill topics\r\nVocabulary development\r\nListening & Speaking activities\r\nProjects / Portfolio (where applicable)\r\nRevision\r\nFormative Assessments\r\nGrammar topics should be introduced sequentially across multiple terms.\r\nWriting formats should be introduced gradually and revisited for continuous practice.\r\nReading Skills should be practiced throughout the academic year using different passages, question types and strategies.\r\nVocabulary, Listening and Speaking should be integrated naturally throughout all terms.\r\nIf the curriculum already specifies Language R1/R2, Reading Modules, Writing Modules or similar structures, preserve them while distributing their contents appropriately across multiple terms instead of treating them as individual chapters.\r\n\r\n\r\n\r\nSESSION PLANNING INTELLIGENCE\r\nDesign sessions according to the identified instructional domain.\r\nNever teach all English sessions in the same format or complete Reading Skills, Writing Skills or Grammar in a single sequence.\r\nEnglish sessions should be planned as an integrated language-learning progression where Literature, Poetry, Reading Skills, Grammar, Writing Skills, Vocabulary, Listening and Speaking are interleaved naturally throughout the academic year.\r\nA term should contain a balanced mixture of:\r\nLiterature / Lesson Explanation\r\nPoetry Appreciation\r\nReading Skills Practice\r\nGrammar Teaching & Practice\r\nWriting Skills Instruction & Practice\r\nVocabulary Development\r\nListening Activities\r\nSpeaking Activities\r\nRevision\r\nAssessment\r\nPlan sessions according to the logical curriculum progression rather than grouping all sessions of the same type together.\r\nGrammar topics should appear periodically between Literature and Poetry sessions.\r\nWriting formats should be introduced gradually and revisited for guided and independent practice.\r\nReading Skills should be reinforced continuously using different passages, question types and comprehension strategies.\r\nVocabulary should develop alongside Literature, Reading and Writing sessions.\r\nListening and Speaking activities should be integrated regularly across the session plan.\r\nSessions should progressively develop:\r\nLanguage Acquisition\r\nReading\r\nWriting\r\nGrammar\r\nVocabulary\r\nListening\r\nSpeaking\r\nLiterary Understanding\r\nCommunication\r\nCritical Thinking\r\nCreative Expression\r\nA typical English session should naturally progress through:\r\nIntroduction\r\n↓\r\nTeacher Modelling\r\n↓\r\nGuided Learning\r\n↓\r\nStudent Participation\r\n↓\r\nIndependent Practice\r\n↓\r\nReflection\r\n↓\r\nQuick Assessment\r\n↓\r\nRevision\r\nWhere appropriate, integrate Reading, Writing, Speaking and Vocabulary naturally instead of teaching them separately.\r\nTeach Grammar contextually.\r\nTeach Writing through modelling before independent practice.\r\nTeach Literature through interpretation, discussion, appreciation and textual evidence rather than explanation alone.\r\nNever treat Reading Skills, Writing Skills, Grammar, Vocabulary, Listening or Speaking as standalone chapters or complete them in a single term. They should be distributed progressively across all terms and naturally integrated with Literature and Poetry sessions.\r\n\r\n\r\nCONTENT GENERATION INTELLIGENCE\r\nEvery downstream artifact should adapt to the instructional domain.\r\nStudent Notes\r\nGenerate notes appropriate to the topic.\r\nLiterature → Summary, Theme, Plot, Characters, Literary Devices, Vocabulary, Values\r\nPoetry → Central Idea, Theme, Poetic Devices, Imagery, Tone, Mood, Stanza-wise Explanation\r\nGrammar → Rules, Usage, Structure, Examples, Common Errors, Practice\r\nWriting → Purpose, Format, Structure, Model Example, Writing Tips\r\nReading → Reading Strategies, Vocabulary, Inference, Main Idea, Supporting Details\r\nNotes must remain age-appropriate and progressively increase in complexity.\r\n\r\nTeacher Notes\r\nGenerate classroom teaching guidance rather than summaries.\r\nInclude:\r\nTeaching Objective\r\nTeaching Flow\r\nBoard Planning\r\nVocabulary Focus\r\nPronunciation Support\r\nDiscussion Prompts\r\nHOTS Questions\r\nMisconceptions\r\nDifferentiation\r\nReading & Writing Guidance\r\nGrammar Emphasis\r\nSpeaking Opportunities\r\nFormative Assessment\r\nLesson Closure\r\n\r\nPPT\r\nAdapt the presentation according to session type.\r\nLiterature → Storytelling, Characters, Themes, Discussion\r\nPoetry → Imagery, Literary Devices, Interpretation\r\nGrammar → Rules, Examples, Practice\r\nWriting → Format, Planning, Drafting\r\nReading → Comprehension, Vocabulary, Inference\r\nPrioritize visuals, interaction and participation over large text blocks.\r\n\r\nClassroom Activities\r\nSelect activities that strengthen language learning, such as:\r\nStory Sequencing\r\nPair/Shared Reading\r\nRole Play\r\nDebate\r\nGroup Discussion\r\nVocabulary & Grammar Games\r\nSentence Building\r\nReading Aloud\r\nPoetry Recitation\r\nCharacter Interview\r\nStory Mapping\r\nMind Mapping\r\nPicture Interpretation\r\nCreative Writing\r\nPeer Editing\r\nPresentation\r\nReflection Writing\r\nAlways align activities with the session objective.\r\n\r\nHOMEWORK INTELLIGENCE\r\nHomework should reinforce the session objective, promote independent learning and progressively develop language proficiency.\r\nAdapt homework to the instructional domain.\r\nLiterature: Summary, Character/Theme Analysis, Textual Evidence, Reflection, Creative or Comparative Response.\r\nPoetry: Appreciation, Theme, Imagery, Poetic Devices, Interpretation, Creative Extension.\r\nGrammar: Contextual Exercises, Editing, Transformation, Sentence Construction, Error Correction, Application.\r\nWriting: Guided/Independent Writing, Paragraphs, Essays, Letters, Notices, Emails, Reports, Articles, Reflection, Editing.\r\nReading: Comprehension, Vocabulary, Inference, Interpretation, Critical Thinking, Evidence-based Responses.\r\nVocabulary: Meaning, Usage, Synonyms, Antonyms, Collocations, Sentence Formation.\r\nListening & Speaking: Conversation, Storytelling, Reading Aloud, Observation, Presentations, Interviews, Discussions.\r\n\r\n\r\nAssessments\r\nAssess language proficiency rather than memorization.\r\nGenerate balanced competency-based assessments covering appropriate combinations of:\r\nReading\r\nWriting\r\nGrammar\r\nLiterature\r\nVocabulary\r\nListening\r\nSpeaking\r\nCommunication\r\nCritical Thinking\r\nCreative Thinking\r\nEmphasize:\r\nInterpretation in Literature\r\nApplication in Grammar\r\nCommunication in Writing\r\nComprehension, Inference and Analysis in Reading\r\n\r\nAnswer Keys & Rubrics\r\nAnswer Keys should include:\r\nExpected Response\r\nAlternative Acceptable Responses\r\nMark Allocation\r\nAssessment Criteria\r\nCommon Misconceptions\r\nTeacher Feedback\r\nRubrics should evaluate competencies appropriate to the task, including:\r\nAccuracy\r\nGrammar\r\nVocabulary\r\nFluency\r\nPronunciation\r\nOrganization\r\nCreativity\r\nInterpretation\r\nLiterary Understanding\r\nCritical Thinking\r\nCommunication\r\nPresentation\r\nExpression\r\nWriting Conventions\r\nApplication of Language\r\nCoherence\r\nParticipation\r\n\r\nCONTINUITY RULE\r\nThis English Intelligence Layer must remain active throughout Curriculum Parsing & Extraction, Term Division, Session Planning, Student Notes, Teacher Notes, PPTs, Classroom Activities, Homework, Worksheets, Assessments, Answer Keys and Rubrics.\r\nEvery downstream stage must consistently preserve:\r\nCurriculum Structure\r\nInstructional Domain\r\nTeaching Objective\r\nSession Type\r\nCompetency Progression\r\nGrammar Progression\r\nVocabulary Progression\r\nReading Progression\r\nWriting Progression\r\nListening Progression\r\nSpeaking Progression\r\nLiterary Progression\r\nCommunication Skill Progression\r\nDevelopmental Stage of the Learner\r\nNatural Progression of English Language Learning\n\nYou are an expert CBSE curriculum designer, instructional strategist, lesson planner, teacher trainer, and classroom pedagogy specialist.\r\n\r\nGenerate ONE complete classroom-ready teaching session for Session #1 out of 1 total sessions.\r\n\r\nSession settings:\r\n- Duration: 45 minutes\r\n- Subject: English Language and Literature\r\n- Grade/Level: Class IX / 9\r\n- Active chapter scope: [\"The Snake and the Mirror\"]\r\n\r\nGeneration preferences:\r\n- Include Learning Outcomes: YES\r\n- Include Introduction Hook: YES\r\n- Include Theory & Explanations: YES\r\n- Include Assessments with Keys: NO\r\n- Include Homework Exercises: NO\r\n- Include Materials Setup (PowerPoint slides, study guide nodes): YES\r\n- Prioritize these sections for generation: [\"teacherLessonNotes\",\"learningOutcomes\",\"introduction\",\"theory\",\"activities\"]\r\n- Output language: English\r\n- Language execution rule: Write every natural-language value in English. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when English is required.\r\n\r\nNon-negotiable rules:\r\n1. Use only the provided curriculum scope.\r\n2. Do not introduce future-session content outside this scope.\r\n3. Produce teacher-facing explanation that is comprehensive, sequenced, and classroom-usable.\r\n4. Produce student-facing notes that are clearer and simpler than the teacher notes but still comprehensive.\r\n5. Teacher notes must follow a classroom-ready structure with:\r\n   - session overview\r\n   - learning outcomes\r\n   - teaching plan\r\n   - block-by-block lesson flow\r\n   - teacher prompts\r\n   - board work\r\n   - check-understanding questions\r\n   - expected answers\r\n   - misconceptions and corrections\r\n   - blackboard summary\r\n   - end-of-class recap\r\n6. Student notes must follow a beginner-friendly study-note structure with:\r\n   - session overview\r\n   - simple concept explanations\r\n   - memory aids\r\n   - comparison tables where useful\r\n   - quick summary\r\n   - key terms\r\n   - fill in the blanks\r\n   - MCQs\r\n   - very short answer questions\r\n   - remember points\r\n7. If learning pace or student level is weak, simplify the language, teach one concept at a time, repeat key terms, and use real-life analogies.\r\n8. Keep PPT content slide-wise and concise.\r\n9. Keep PDF / study-note content student-facing and revision-friendly.\r\n10. Assessments must be split into:\r\n   - MCQ\r\n   - Short Answer\r\n   - Long Answer\r\n11. The answer key must mirror the same structure:\r\n   - MCQ answers\r\n   - Short-answer answers\r\n   - Long-answer answers\r\n12. For short and long answers, include:\r\n   - expected answer depth\r\n   - mark value\r\n   - point-wise rubric\r\n13. Follow CBSE-style point-based marking:\r\n   - 1 mark: one precise idea\r\n   - 2 marks: two valid points / one complete short response\r\n   - 3 marks: three clear points with brief explanation\r\n   - 5 marks: well-structured answer with multiple points, explanation, and diagram/example when appropriate\r\n14. Prefer point-wise marking language over strict word counts.\r\n15. Populate every major block with usable content.\r\n16. Return valid JSON only.\r\n17. When only a subset of sections is requested, focus effort on those sections and keep unrequested sections minimal.\r\n\r\nUse these dedicated assessment-generation rules for the `assessment` block:\r\nAssessment block is not requested in this run. Omit it.\r\n\r\nReturn a session object that matches the requested schema exactly.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"id\": \"unique-session-id\",\n  \"sessionNumber\": 1,\n  \"title\": \"Vibrant, educational title for this session\",\n  \"duration\": 45,\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Teacher-facing overview of this session\",\n    \"prerequisiteKnowledge\": [\n      \"What students should already know\"\n    ],\n    \"previousSessionRecap\": [\n      \"Short recap points from the previous lesson\"\n    ],\n    \"learningOutcomes\": [\n      \"Specific session outcome phrased for teacher delivery\"\n    ],\n    \"teachingPlan\": [\n      {\n        \"minutes\": 5,\n        \"topic\": \"Introduction\",\n        \"teachingStrategy\": \"Questioning with simple real-life example\"\n      }\n    ],\n    \"lessonPurpose\": [\n      \"Why this lesson matters\"\n    ],\n    \"teachingSequence\": [\n      \"Teacher-facing lesson flow with explanation steps\"\n    ],\n    \"guidedPractice\": [\n      \"Teacher-led checks and guided responses\"\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"teacherPrompt\": [\n          \"Prompt teachers can ask\"\n        ],\n        \"explanation\": [\n          \"What the teacher should explain\"\n        ],\n        \"examples\": [\n          \"Simple classroom example\"\n        ],\n        \"boardWork\": [\n          \"What to write on the board\"\n        ],\n        \"boardSteps\": [\n          \"Step 1 on the board\",\n          \"Step 2 on the board\"\n        ],\n        \"solutionFlow\": [\n          \"Solve line by line\",\n          \"State the final answer clearly\"\n        ],\n        \"proofSteps\": [\n          \"Reasoning or theorem step\"\n        ],\n        \"geometryDiagrams\": [\n          {\n            \"id\": \"diagram-1\",\n            \"type\": \"rightTriangle\",\n            \"title\": \"Right triangle diagram\",\n            \"caption\": \"Textbook-style diagram used during board work\",\n            \"points\": [\n              {\n                \"id\": \"A\",\n                \"x\": 65,\n                \"y\": 155,\n                \"label\": \"A\"\n              },\n              {\n                \"id\": \"B\",\n                \"x\": 245,\n                \"y\": 155,\n                \"label\": \"B\"\n              },\n              {\n                \"id\": \"C\",\n                \"x\": 65,\n                \"y\": 55,\n                \"label\": \"C\"\n              }\n            ],\n            \"lines\": [\n              {\n                \"from\": \"A\",\n                \"to\": \"B\",\n                \"label\": \"base\"\n              },\n              {\n                \"from\": \"A\",\n                \"to\": \"C\",\n                \"label\": \"height\"\n              },\n              {\n                \"from\": \"B\",\n                \"to\": \"C\",\n                \"label\": \"hypotenuse\",\n                \"highlight\": true\n              }\n            ],\n            \"arcs\": [],\n            \"labels\": [\n              {\n                \"text\": \"90 deg\",\n                \"x\": 82,\n                \"y\": 142\n              }\n            ],\n            \"measurements\": []\n          }\n        ],\n        \"checkUnderstanding\": [\n          \"Quick question to ask students\"\n        ],\n        \"expectedAnswers\": [\n          \"Expected student answer\"\n        ],\n        \"activity\": [\n          \"Optional mini activity\"\n        ]\n      }\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Concept name\",\n        \"definition\": \"Short definition\",\n        \"coreExplanation\": \"Teacher-facing explanation\",\n        \"importance\": \"Why it matters\",\n        \"observedIn\": [\n          \"Where students observe it\"\n        ],\n        \"whyStudyIt\": \"Why students study it\",\n        \"relationshipWithPrevious\": \"Connection with previous concepts\",\n        \"relationshipWithFuture\": \"Connection with future learning without teaching it\",\n        \"keywords\": [\n          \"Important keyword\"\n        ],\n        \"teacherMoves\": [\n          \"Explain this first\"\n        ],\n        \"examples\": [\n          \"Useful example\"\n        ],\n        \"visuals\": [\n          \"Suggested visual support\"\n        ],\n        \"solutionFlow\": [\n          \"State the formula\",\n          \"Substitute values\",\n          \"Simplify carefully\"\n        ],\n        \"proofSteps\": [\n          \"State the known fact\",\n          \"Apply the theorem\",\n          \"Conclude the result\"\n        ],\n        \"geometryDiagrams\": [\n          {\n            \"id\": \"concept-diagram-1\",\n            \"type\": \"anglePair\",\n            \"title\": \"Angle pair\",\n            \"caption\": \"Use when the concept needs a board diagram\",\n            \"points\": [],\n            \"lines\": [],\n            \"arcs\": [],\n            \"labels\": [],\n            \"measurements\": []\n          }\n        ]\n      }\n    ],\n    \"classroomQuestions\": [\n      {\n        \"question\": \"Teacher question\",\n        \"level\": \"Understanding\",\n        \"expectedResponse\": \"Likely student response\",\n        \"answerPoints\": [\n          \"Point teachers should listen for\"\n        ]\n      }\n    ],\n    \"commonMisconceptionsDetailed\": [\n      {\n        \"misconception\": \"Common wrong idea\",\n        \"correction\": \"Teacher correction for that misconception\"\n      }\n    ],\n    \"differentiation\": {\n      \"slowLearners\": [\n        \"Support strategies\"\n      ],\n      \"averageLearners\": [\n        \"Core expectations\"\n      ],\n      \"advancedLearners\": [\n        \"Extension prompts\"\n      ]\n    },\n    \"teacherTips\": [\n      \"Pedagogical tips\"\n    ],\n    \"misconceptions\": [\n      \"Likely misconceptions to address\"\n    ],\n    \"formativeChecks\": [\n      \"Natural formative assessment checkpoint\"\n    ],\n    \"assessmentQuestions\": [\n      \"Oral or written assessment question\"\n    ],\n    \"blackboardSummary\": [\n      \"Key point for board summary\"\n    ],\n    \"timePlan\": [\n      {\n        \"segment\": \"Recap\",\n        \"minutes\": 5,\n        \"purpose\": \"Refresh prerequisite ideas\"\n      }\n    ],\n    \"sessionSummary\": [\n      \"Closing recap point\"\n    ],\n    \"endOfClassRecap\": [\n      {\n        \"prompt\": \"Today I understood the idea of ________.\",\n        \"expectedAnswer\": \"the session concept\"\n      }\n    ],\n    \"nextSessionBridge\": [\n      \"How today connects to the next lesson\"\n    ]\n  },\n  \"learningOutcomes\": [\n    \"Specific action-oriented objectives\"\n  ],\n  \"introduction\": \"A exciting 3-5 minute hook, inquiry question, or classroom starter\",\n  \"theory\": {\n    \"overview\": \"Plain language conceptual summary\",\n    \"keyPoints\": [\n      \"3-5 fundamental bullet points\"\n    ],\n    \"detailedContent\": \"In-depth content discussion with examples\"\n  },\n  \"activities\": [\n    {\n      \"name\": \"Name of classroom task\",\n      \"instructions\": [\n        \"Step-by-step instructions for teachers & students\"\n      ],\n      \"durationMinutes\": 10\n    }\n  ]\n}"
+    }
+  ]
+}

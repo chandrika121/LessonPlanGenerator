@@ -75,9 +75,7 @@ import {
 import {
   buildPublishedArtifact,
   getStudentPublicationKey,
-  removePublishedStudentArtifact,
   removePublishedArtifactsForCurriculumScope,
-  upsertPublishedStudentArtifact,
   writeStudentPublicationFlags,
 } from "./utils/studentPublications";
 import type { StudentPublicationKind } from "./types/student-content";
@@ -288,6 +286,51 @@ const buildSessionStorageKey = (sessionNum: number, chapterName?: string, sessio
     .replace(/^-+|-+$/g, "")
     .slice(0, 80) || `session-${sessionNum}`;
   return `session-${sessionNum}__${topicSlug}`;
+};
+
+const SESSION_SECTION_KEYS: SessionSectionKey[] = [
+  "teacherLessonNotes",
+  "studentLessonNotes",
+  "learningOutcomes",
+  "introduction",
+  "theory",
+  "activities",
+  "materials",
+  "homework",
+  "assessment",
+  "assignment",
+];
+
+const mergeSessionPlanRecords = (
+  existingSession: SessionPlan | null | undefined,
+  incomingSession: Partial<SessionPlan> | null | undefined
+): SessionPlan => {
+  const baseSession = (existingSession || {}) as SessionPlan;
+  const nextSession = {
+    ...baseSession,
+    ...(incomingSession || {}),
+  } as SessionPlan;
+
+  const hasValue = (value: unknown): boolean => {
+    if (value == null) return false;
+    if (typeof value === "string") return value.trim().length > 0;
+    if (typeof value === "number" || typeof value === "boolean") return true;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === "object") return Object.keys(value as Record<string, unknown>).length > 0;
+    return false;
+  };
+
+  for (const sectionKey of SESSION_SECTION_KEYS) {
+    const incomingValue = incomingSession?.[sectionKey];
+    if (!hasValue(incomingValue)) {
+      const existingValue = existingSession?.[sectionKey];
+      if (existingValue !== undefined) {
+        nextSession[sectionKey] = existingValue as never;
+      }
+    }
+  }
+
+  return nextSession;
 };
 
 const getOutlineSessionKey = (outlineItem?: { sessionNumber?: number; chapterName?: string; title?: string } | null): string =>
@@ -559,6 +602,14 @@ export default function App() {
           sessionKey,
           kind: target,
           published: nextPublished,
+          sessionNumber: session.sessionNumber,
+          sessionTitle: session.title,
+          subjectId: activeWorkspace?.subjectId || "",
+          subjectName: activeWorkspace?.academicConfig?.subject || extractedData?.subject || "",
+          classId: activeWorkspace?.classId || activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel || "",
+          grade: activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel || "",
+          section: activeWorkspace?.academicConfig?.section || "",
+          termNumber: activeWorkspace?.sessionAllocation?.selectedTermSummary?.termNumber || null,
         }, authSession)),
       });
       if (!response.ok) {
@@ -585,23 +636,8 @@ export default function App() {
       writeStudentPublicationFlags(nextStudentPublications);
 
       if (nextPublished) {
-        const artifact = buildPublishedArtifact(
-          target,
-          session,
-          activeWorkspace?.academicConfig?.subject || extractedData?.subject,
-          activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel,
-          {
-            schoolId: authSession?.schoolId || "",
-            classId: activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel || "",
-            className: activeWorkspace?.academicConfig?.className || extractedData?.gradeLevel || "",
-          },
-        );
-        if (artifact) {
-          upsertPublishedStudentArtifact(artifact);
-        }
         setPopupMessage(`${getPublicationLabel(target)} published for students.`);
       } else {
-        removePublishedStudentArtifact(session.sessionNumber, target, session.id);
         setPopupMessage(`${getPublicationLabel(target)} unpublished for students.`);
       }
     } catch (error: any) {
@@ -6439,6 +6475,31 @@ export default function App() {
       }));
   };
 
+  const appendRenderableLines = (
+    lines: string[],
+    label: string,
+    value: unknown,
+    options?: { numbered?: boolean; bullet?: boolean; indent?: string }
+  ) => {
+    const items = Array.isArray(value) ? value : value == null ? [] : [value];
+    const normalizedItems = items
+      .map((item) => formatRenderableText(item).replace(/\s+/g, " ").trim())
+      .filter(Boolean);
+    if (!normalizedItems.length) return;
+
+    if (normalizedItems.length === 1 && !options?.numbered && !options?.bullet) {
+      lines.push(`${label}: ${normalizedItems[0]}`);
+      return;
+    }
+
+    lines.push(`${label}:`);
+    normalizedItems.forEach((item, index) => {
+      const marker = options?.numbered ? `${index + 1}.` : options?.bullet ? "-" : "";
+      const prefix = options?.indent || "  ";
+      lines.push(marker ? `${prefix}${marker} ${item}` : `${prefix}${item}`);
+    });
+  };
+
   const buildAssessmentQuestionPaperText = (session: SessionPlan) => {
     const assessment = session.assessment;
     if (!assessment) return "";
@@ -6469,9 +6530,30 @@ export default function App() {
         if (entry.question?.type === "mcq") {
           (entry.question?.options || []).forEach((option: any) => lines.push(`- ${formatRenderableText(option)}`));
         }
+        if (entry.question?.expectedLength) {
+          lines.push(`Expected Length: ${formatRenderableText(entry.question.expectedLength)}`);
+        }
+        appendRenderableLines(lines, "Learning Outcomes", entry.question?.learningOutcomeRefs, { bullet: true });
+        appendRenderableLines(lines, "Concepts", entry.question?.conceptRefs, { bullet: true });
+        appendRenderableLines(lines, "Topics", entry.question?.topicCoverage, { bullet: true });
+        appendRenderableLines(lines, "Subtopics", entry.question?.subtopicCoverage, { bullet: true });
+        appendRenderableLines(lines, "Source Evidence", entry.question?.sourceEvidence, { bullet: true });
+        const metadataBits = [
+          entry.question?.difficulty ? `Difficulty: ${formatRenderableText(entry.question.difficulty)}` : "",
+          entry.question?.bloomsLevel ? `Bloom's: ${formatRenderableText(entry.question.bloomsLevel)}` : "",
+          entry.question?.competencyTag ? `Competency: ${formatRenderableText(entry.question.competencyTag)}` : "",
+        ].filter(Boolean);
+        if (metadataBits.length) {
+          lines.push(metadataBits.join(" | "));
+        }
         lines.push("");
       });
     });
+
+    if (assessment.summary?.coverageSummary?.length) {
+      appendRenderableLines(lines, "Coverage Summary", assessment.summary.coverageSummary, { bullet: true });
+      lines.push("");
+    }
 
     return lines.join("\n");
   };
@@ -6498,9 +6580,37 @@ export default function App() {
         );
         if (answerItem?.explanation) lines.push(`Explanation: ${formatRenderableText(answerItem.explanation)}`);
         if (answerItem?.marks != null) lines.push(`Marks: ${formatRenderableText(answerItem.marks)}`);
+        if (Array.isArray(entry.markingScheme?.markBreakdown) && entry.markingScheme.markBreakdown.length > 0) {
+          lines.push("Mark Breakdown:");
+          entry.markingScheme.markBreakdown.forEach((item: any, idx: number) => {
+            const marksLabel = item?.marks != null ? ` (${formatRenderableText(item.marks)} marks)` : "";
+            lines.push(`  ${idx + 1}. ${formatRenderableText(item?.criterion || "")}${marksLabel}`);
+          });
+        }
+        if (Array.isArray(entry.markingScheme?.awardGuidance) && entry.markingScheme.awardGuidance.length > 0) {
+          lines.push("Award Guidance:");
+          entry.markingScheme.awardGuidance.forEach((guidance: any, idx: number) => {
+            lines.push(`  ${idx + 1}. ${formatRenderableText(guidance)}`);
+          });
+        }
         lines.push("");
       });
     });
+
+    if (Array.isArray(assessment.evaluation?.generalInstructions) && assessment.evaluation.generalInstructions.length > 0) {
+      appendRenderableLines(lines, "General Marking Guidance", assessment.evaluation.generalInstructions, { numbered: true });
+      lines.push("");
+    }
+
+    if (Array.isArray(assessment.evaluation?.evaluatorInstructions) && assessment.evaluation.evaluatorInstructions.length > 0) {
+      appendRenderableLines(lines, "Evaluator Instructions", assessment.evaluation.evaluatorInstructions, { numbered: true });
+      lines.push("");
+    }
+
+    if (Array.isArray(assessment.evaluation?.moderationNotes) && assessment.evaluation.moderationNotes.length > 0) {
+      appendRenderableLines(lines, "Moderation Notes", assessment.evaluation.moderationNotes, { numbered: true });
+      lines.push("");
+    }
 
     return lines.join("\n");
   };
@@ -6534,10 +6644,20 @@ export default function App() {
         } else {
           lines.push("No rubric provided.");
         }
+        if (rubricItem?.sampleAnswer) {
+          lines.push(`Sample Answer: ${formatRenderableText(rubricItem.sampleAnswer)}`);
+        }
         if (Array.isArray(markingSchemeItem?.awardGuidance) && markingSchemeItem.awardGuidance.length > 0) {
           lines.push("Award Guidance:");
           markingSchemeItem.awardGuidance.forEach((guidance: any, guidanceIdx: number) => {
             lines.push(`${guidanceIdx + 1}. ${formatRenderableText(guidance)}`);
+          });
+        }
+        if (Array.isArray(markingSchemeItem?.markBreakdown) && markingSchemeItem.markBreakdown.length > 0) {
+          lines.push("Mark Breakdown:");
+          markingSchemeItem.markBreakdown.forEach((item: any, idx: number) => {
+            const marksLabel = item?.marks != null ? ` (${formatRenderableText(item.marks)} marks)` : "";
+            lines.push(`${idx + 1}. ${formatRenderableText(item?.criterion || "")}${marksLabel}`);
           });
         }
         lines.push("");
@@ -6553,6 +6673,12 @@ export default function App() {
     if (Array.isArray(assessment.evaluation.evaluatorInstructions) && assessment.evaluation.evaluatorInstructions.length > 0) {
       lines.push("Evaluator Instructions");
       assessment.evaluation.evaluatorInstructions.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
+      lines.push("");
+    }
+
+    if (Array.isArray(assessment.evaluation.moderationNotes) && assessment.evaluation.moderationNotes.length > 0) {
+      lines.push("Moderation Notes");
+      assessment.evaluation.moderationNotes.forEach((item, idx) => lines.push(`${idx + 1}. ${formatRenderableText(item)}`));
       lines.push("");
     }
 
@@ -7077,18 +7203,18 @@ export default function App() {
     const sessionPlan = data.sessionPlan as SessionPlan;
     setGeneratedSessionsByKey((prev) => {
       const existingSession = prev[sessionKey] || findGeneratedSessionForOutline(prev, { sessionNumber: sessionNum, ...outlineItem }) || undefined;
+      const mergedSession = mergeSessionPlanRecords(existingSession, {
+        ...(outlineItem || {}),
+        ...sessionPlan,
+        id: sessionPlan.id || outlineItem?.id || existingSession?.id || `session-${sessionNum}`,
+        sessionKey: sessionPlan.sessionKey || sessionKey,
+        title: sessionPlan.title || outlineItem?.title || existingSession?.title || `Session ${sessionNum}`,
+        duration: sessionPlan.duration || outlineItem?.duration || existingSession?.duration || 45,
+        sessionNumber: Number(sessionPlan.sessionNumber || sessionNum),
+      });
       return {
         ...prev,
-        [sessionKey]: {
-          ...existingSession,
-          ...(outlineItem || {}),
-          ...sessionPlan,
-          id: sessionPlan.id || outlineItem?.id || existingSession?.id || `session-${sessionNum}`,
-          sessionKey: sessionPlan.sessionKey || sessionKey,
-          title: sessionPlan.title || outlineItem?.title || existingSession?.title || `Session ${sessionNum}`,
-          duration: sessionPlan.duration || outlineItem?.duration || existingSession?.duration || 45,
-          sessionNumber: Number(sessionPlan.sessionNumber || sessionNum),
-        },
+        [sessionKey]: mergedSession,
       };
     });
     return sessionPlan;
@@ -7837,7 +7963,13 @@ export default function App() {
         },
       ])
     );
-    setGeneratedSessionsByKey(generatedFromWorkspace || {});
+    setGeneratedSessionsByKey((prev) => {
+      const mergedSessions = { ...prev };
+      for (const [sessionKey, sessionValue] of Object.entries(generatedFromWorkspace || {})) {
+        mergedSessions[sessionKey] = mergeSessionPlanRecords(mergedSessions[sessionKey], sessionValue);
+      }
+      return mergedSessions;
+    });
   }, [activeWorkspace]);
 
   useEffect(() => {
@@ -9210,19 +9342,19 @@ export default function App() {
             title: outlineItem.title,
           }) ||
           undefined;
+        const mergedSession = mergeSessionPlanRecords(existingSession, {
+          ...outlineItem,
+          ...details,
+          id: details.id || existingSession?.id || outlineItem.id,
+          sessionKey: details.sessionKey || existingSession?.sessionKey || sessionKey,
+          title: details.title || existingSession?.title || outlineItem.title,
+          duration: details.duration || existingSession?.duration || outlineItem.duration,
+          sessionNumber: outlineItem.sessionNumber,
+        });
 
         return {
           ...prev,
-          [sessionKey]: {
-            ...existingSession,
-            ...details,
-            ...outlineItem,
-            id: details.id || existingSession?.id || outlineItem.id,
-            sessionKey: details.sessionKey || existingSession?.sessionKey || sessionKey,
-            title: details.title || existingSession?.title || outlineItem.title,
-            duration: details.duration || existingSession?.duration || outlineItem.duration,
-            sessionNumber: outlineItem.sessionNumber,
-          },
+          [sessionKey]: mergedSession,
         };
       });
       setActiveSessionNumber(sessionNum);

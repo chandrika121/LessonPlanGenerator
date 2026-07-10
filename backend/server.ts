@@ -2663,12 +2663,17 @@ function matchesAnySubjectAlias(value: unknown, aliases: unknown[]) {
     if (!normalizedAlias) {
       return false;
     }
+    const candidateWithoutTrailingDigits = candidate.replace(/\d+$/g, "");
+    const aliasWithoutTrailingDigits = normalizedAlias.replace(/\d+$/g, "");
     return (
       normalizedAlias === candidate ||
-      normalizedAlias.includes(candidate) ||
-      candidate.includes(normalizedAlias)
+      aliasWithoutTrailingDigits === candidateWithoutTrailingDigits
     );
   });
+}
+
+function subjectMatchesAlias(value: unknown, aliases: unknown[]) {
+  return matchesAnySubjectAlias(value, aliases);
 }
 
 function explainTeacherClassRecordMatch(item: any, options: {
@@ -3073,7 +3078,7 @@ function findMatchingGeneratedSessionEntry(
 }
 
 function resolveStudentPublicationEntry(
-  studentPublications: Record<string, Record<string, boolean | { published?: boolean }>>,
+  studentPublications: Record<string, Record<string, any>>,
   generatedSessionKey: string,
   session: any,
 ) {
@@ -3092,7 +3097,6 @@ function resolveStudentPublicationEntry(
   }
 
   const sessionNumber = Number(session?.sessionNumber || 0);
-  const sessionTitle = normalizeSessionIdentityText(session?.title || session?.sessionTitle || "");
   const generatedKeyPrefix = sessionNumber > 0 ? `session-${sessionNumber}__` : "";
 
   for (const [savedKey, entry] of Object.entries(studentPublications || {})) {
@@ -3104,23 +3108,192 @@ function resolveStudentPublicationEntry(
     if (generatedKeyPrefix && normalizedSavedKey.startsWith(generatedKeyPrefix)) {
       return entry;
     }
-
-    if (!sessionTitle) {
-      continue;
-    }
-
-    const normalizedSavedTitle = normalizeSessionIdentityText(
-      normalizedSavedKey
-        .replace(/^session-\d+__/, "")
-        .replace(/-/g, " "),
-    );
-
-    if (normalizedSavedTitle && normalizedSavedTitle.includes(sessionTitle)) {
-      return entry;
-    }
   }
 
   return {};
+}
+
+function parseSessionNumberFromGeneratedSessionKey(value: unknown) {
+  const candidate = String(value || "").trim();
+  if (!candidate) {
+    return 0;
+  }
+
+  const prefixedMatch = candidate.match(/session-(\d+)__/i) || candidate.match(/session-(\d+)/i);
+  if (prefixedMatch?.[1]) {
+    const parsed = Number(prefixedMatch[1]);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  const plainNumber = Number(candidate);
+  return Number.isFinite(plainNumber) && plainNumber > 0 ? plainNumber : 0;
+}
+
+function resolvePublishedSessionNumber(session: any, generatedSessionKey?: string) {
+  const candidates = [
+    String(generatedSessionKey || "").trim(),
+    String(session?.sessionKey || "").trim(),
+    String(session?.id || "").trim(),
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    const parsed = parseSessionNumberFromGeneratedSessionKey(candidate);
+    if (parsed > 0) {
+      return parsed;
+    }
+  }
+
+  const directSessionNumber = Number(session?.sessionNumber || 0);
+  if (Number.isFinite(directSessionNumber) && directSessionNumber > 0) {
+    return directSessionNumber;
+  }
+
+  return 0;
+}
+
+function resolvePublicationTimestamp(
+  publicationEntry: Record<string, boolean | { published?: boolean; publishedAt?: string | null }> | undefined,
+  kind: string,
+  workspace: any,
+) {
+  const entry = publicationEntry?.[kind];
+  const entryPublishedAt =
+    entry && typeof entry === "object"
+      ? String((entry as { publishedAt?: string | null }).publishedAt || "").trim()
+      : "";
+
+  if (entryPublishedAt) {
+    return new Date(entryPublishedAt).toISOString();
+  }
+
+  return new Date(workspace?.updatedAt || workspace?.createdAt || Date.now()).toISOString();
+}
+
+function normalizePublicationKind(kind: unknown) {
+  const normalizedKind = String(kind || "").trim().toLowerCase();
+  return ["notes", "homework", "assessments", "quizzes"].includes(normalizedKind)
+    ? normalizedKind
+    : "";
+}
+
+function normalizePublicationMetadata(
+  value: any,
+  fallback: {
+    workspace: any;
+    generatedSessionKey: string;
+    session: any;
+    kind: string;
+  },
+) {
+  const kind = normalizePublicationKind(fallback.kind);
+  const session = fallback.session || {};
+  const workspace = fallback.workspace || {};
+  const sessionNumberFromKey = parseSessionNumberFromGeneratedSessionKey(fallback.generatedSessionKey);
+  const sessionNumberFromValue = Number(value?.sessionNumber || 0);
+  const sessionNumberFromSession = Number(session?.sessionNumber || 0);
+  const sessionNumber =
+    (Number.isFinite(sessionNumberFromValue) && sessionNumberFromValue > 0 ? sessionNumberFromValue : 0) ||
+    (Number.isFinite(sessionNumberFromSession) && sessionNumberFromSession > 0 ? sessionNumberFromSession : 0) ||
+    sessionNumberFromKey;
+  const publishedAtRaw = String(value?.publishedAt || "").trim();
+  const publishedAt = publishedAtRaw ? new Date(publishedAtRaw).toISOString() : "";
+  const generatedSessionKey = String(value?.generatedSessionKey || fallback.generatedSessionKey || session?.sessionKey || session?.id || "").trim();
+
+  return {
+    published: value === true || Boolean(value?.published),
+    publishedAt,
+    workspaceId: String(value?.workspaceId || workspace?._id || "").trim(),
+    generatedSessionKey,
+    sessionNumber,
+    sessionTitle: String(value?.sessionTitle || session?.title || session?.sessionTitle || "").trim(),
+    subjectId: String(value?.subjectId || workspace?.subjectId || "").trim(),
+    subjectName: getCanonicalSubjectDisplayName(
+      value?.subjectName || workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || workspace?.subjectId || "",
+    ),
+    classId: String(value?.classId || workspace?.classId || workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || "").trim(),
+    grade: String(value?.grade || workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || "").trim(),
+    section: String(value?.section || workspace?.academicConfig?.section || workspace?.sectionId || "").trim(),
+    termNumber: Number(value?.termNumber || workspace?.sessionAllocation?.selectedTermSummary?.termNumber || 0) || null,
+    contentType: String(value?.contentType || kind).trim(),
+  };
+}
+
+function buildCanonicalPublicationItem(input: {
+  workspace: any;
+  generatedSessionKey: string;
+  session: any;
+  student: any;
+  publicationValue: any;
+  kind: string;
+  schoolId: string;
+}) {
+  const kind = normalizePublicationKind(input.kind);
+  if (!kind) {
+    return null;
+  }
+
+  const metadata = normalizePublicationMetadata(input.publicationValue, {
+    workspace: input.workspace,
+    generatedSessionKey: input.generatedSessionKey,
+    session: input.session,
+    kind,
+  });
+
+  if (!metadata.published || !metadata.publishedAt || metadata.sessionNumber <= 0) {
+    return null;
+  }
+
+  let payload: Record<string, any> | null = null;
+  if (kind === "notes" && input.session?.studentLessonNotes) {
+    payload = { studentLessonNotes: input.session.studentLessonNotes };
+  }
+  if (kind === "homework" && input.session?.homework) {
+    payload = { homework: input.session.homework };
+  }
+  if (kind === "assessments" && input.session?.assessment) {
+    payload = { assessment: normalizeStudentAssessmentPayloadForResponse(input.session.assessment) };
+  }
+
+  if (!payload) {
+    return null;
+  }
+
+  const teacherId = String(input.workspace?.teacherId || input.workspace?.createdBy || "").trim();
+  const sessionTitle = metadata.sessionTitle || "Session";
+  const classId = metadata.classId || String(input.student?.classId || "").trim();
+  const className = metadata.grade || classId;
+  const subjectName = metadata.subjectName || "General";
+  const generatedSessionKey = metadata.generatedSessionKey;
+  const sessionId = `${metadata.workspaceId}-${generatedSessionKey}`;
+  const artifactId = `${kind}-${String(metadata.workspaceId || "workspace").trim().toLowerCase()}-${String(generatedSessionKey || `session-${metadata.sessionNumber}`).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+
+  return {
+    id: artifactId,
+    workspaceId: metadata.workspaceId,
+    generatedSessionKey,
+    sessionId,
+    sessionNumber: metadata.sessionNumber,
+    sessionTitle,
+    teacherId,
+    teacherName: "",
+    classId,
+    className,
+    gradeLevel: metadata.grade || className,
+    subject: subjectName,
+    subjectId: metadata.subjectId,
+    subjectName,
+    section: metadata.section || String(input.student?.section || "").trim(),
+    termNumber: metadata.termNumber,
+    contentType: metadata.contentType || kind,
+    kind,
+    duration: Number(input.session?.duration || 0),
+    schoolId: input.schoolId,
+    publishedAt: metadata.publishedAt,
+    payload,
+    content: payload,
+  };
 }
 
 function sessionPlanMatchesRequest(
@@ -7794,6 +7967,45 @@ function canonicalizeSubjectName(value: string): string {
     .replace(/[-–—/:]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function getCanonicalSubjectDisplayName(value: unknown) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const aliasGroups = [
+    ...CURRICULUM_SUBJECT_ALIAS_GROUPS,
+    { subject: "English", aliases: ENGLISH_SUBJECT_ALIASES },
+    { subject: "Science", aliases: SCIENCE_SUBJECT_ALIASES },
+  ];
+
+  for (const group of aliasGroups) {
+    if (matchesAnySubjectAlias(raw, group.aliases)) {
+      return group.subject;
+    }
+  }
+
+  return canonicalizeSubjectName(raw) || raw;
+}
+
+function getCanonicalSubjectAliases(value: unknown) {
+  const raw = String(value || "").trim();
+  if (!raw) return [];
+
+  const aliasGroups = [
+    ...CURRICULUM_SUBJECT_ALIAS_GROUPS,
+    { subject: "English", aliases: ENGLISH_SUBJECT_ALIASES },
+    { subject: "Science", aliases: SCIENCE_SUBJECT_ALIASES },
+  ];
+
+  for (const group of aliasGroups) {
+    if (matchesAnySubjectAlias(raw, group.aliases)) {
+      return Array.from(new Set([group.subject, ...group.aliases].map((entry) => String(entry || "").trim()).filter(Boolean)));
+    }
+  }
+
+  const canonical = canonicalizeSubjectName(raw) || raw;
+  return Array.from(new Set([raw, canonical].map((entry) => String(entry || "").trim()).filter(Boolean)));
 }
 
 function isMathSubject(subject: string): boolean {
@@ -16266,7 +16478,9 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     const mergedSessionPlan = {
       id: existingSessionPlan?.id || `session-${generatedSessionKey}`,
       sessionKey: generatedSessionKey,
-      sessionNumber: existingSessionPlan?.sessionNumber || roadmapSessionNumber,
+      // Always align the stored session number with the current roadmap slot.
+      // Reusing an older matched session plan must not carry forward a stale number.
+      sessionNumber: roadmapSessionNumber,
       title: (sessionPlan as any)?.title || requestedSessionTitle || `${chapterName} - Session ${roadmapSessionNumber}`,
       duration: existingSessionPlan?.duration || durationMinutes,
       ...mergeSessionPlanSections(existingSessionPlan, sessionPlan, selectedSections),
@@ -20520,15 +20734,24 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
     ...matchingAllocations.flatMap((item: any) => Array.isArray(item?.subjects) ? item.subjects.map(String) : []),
     ...matchingWorkspaces.map((workspace: any) => String(workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "").trim()),
     ...matchingClassDocs.flatMap((item: any) => Array.isArray(item?.subjectIds) ? item.subjectIds.map(String) : []),
+    ...classHomeworkSubmissions.map((item: any) => String(item?.subjectId || item?.subject || "").trim()),
+    ...classAssignmentSubmissions.map((item: any) => String(item?.subjectId || item?.subject || "").trim()),
+    ...matchingResults.map((item: any) => String(item?.subjectId || "").trim()),
   ].filter(Boolean));
 
   for (const subject of subjectCandidates) {
     const normalizedSubject = String(subject || "").trim() || "General";
+    const canonicalSubjectDisplay = getCanonicalSubjectDisplayName(normalizedSubject) || normalizedSubject;
+    const subjectBucketKey = normalizeSubjectKey(canonicalSubjectDisplay) || normalizeSubjectKey(normalizedSubject) || normalizedSubject.toLowerCase();
+    const subjectAliases = getCanonicalSubjectAliases(normalizedSubject);
     const subjectAllocations = matchingAllocations.filter((item: any) =>
-      Array.isArray(item?.subjects) ? item.subjects.map(String).includes(normalizedSubject) : false
+      Array.isArray(item?.subjects) ? item.subjects.some((entry: unknown) => subjectMatchesAlias(entry, subjectAliases)) : false
     );
     const subjectWorkspaces = matchingWorkspaces.filter((workspace: any) =>
-      String(workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "").trim() === normalizedSubject
+      subjectMatchesAlias(
+        workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "",
+        subjectAliases,
+      )
     );
     const workspaceHomeworkItems = subjectWorkspaces.flatMap((workspace: any) => getWorkspaceHomeworkItems(workspace));
     const workspaceAssessmentItems = subjectWorkspaces.flatMap((workspace: any) => getWorkspaceAssessmentItems(workspace));
@@ -20545,11 +20768,13 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
       || ""
     ).trim();
     const teacher = users.find((user: any) => String(user?._id || "") === primaryTeacherId);
-    const subjectResults = matchingResults.filter((result: any) => String(result?.subjectId || "").trim() === normalizedSubject || !result?.subjectId);
+    const subjectResults = matchingResults.filter((result: any) =>
+      subjectMatchesAlias(result?.subjectId || "", subjectAliases) || !result?.subjectId
+    );
     const subjectHomeworkSubmissions = classHomeworkSubmissions.filter((item: any) => {
       const itemSubjectKey = normalizeSubjectKey(item?.subjectId || item?.subject || "");
       const itemHomeworkId = String(item?.homeworkId || "").trim();
-      if (itemSubjectKey && itemSubjectKey === normalizeSubjectKey(normalizedSubject)) {
+      if (itemSubjectKey && subjectMatchesAlias(item?.subjectId || item?.subject || "", subjectAliases)) {
         return true;
       }
       if (subjectWorkspaces.length === 0) {
@@ -20566,7 +20791,7 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
       if (!isAssessment) {
         return false;
       }
-      if (itemSubjectKey && itemSubjectKey === normalizeSubjectKey(normalizedSubject)) {
+      if (itemSubjectKey && subjectMatchesAlias(item?.subjectId || item?.subject || "", subjectAliases)) {
         return true;
       }
       if (subjectWorkspaces.length === 0) {
@@ -20576,9 +20801,9 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
         || workspaceAssessmentArtifactIds.has(itemAssignmentId)
         || matchesLegacyPublishedArtifactId(itemAssignmentId, "assessments", workspaceAssessmentArtifactSuffixes);
     });
-    const entry = subjectMap.get(subject) || {
-      subjectKey: normalizeSubjectKey(normalizedSubject),
-      subject: normalizedSubject,
+    const entry = subjectMap.get(subjectBucketKey) || {
+      subjectKey: subjectBucketKey,
+      subject: canonicalSubjectDisplay,
       teacherId: primaryTeacherId,
       teacher: teacher?.name || "Unassigned",
       studentCount: studentRoster.length || Number(summary?.students || 0),
@@ -20597,6 +20822,16 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
       lastUpdated: "",
       assignedSince: String(subjectAllocations[0]?.createdAt || "").trim(),
     };
+    if (!entry.subject || entry.subject.length < canonicalSubjectDisplay.length) {
+      entry.subject = canonicalSubjectDisplay;
+    }
+    if (!entry.teacherId && primaryTeacherId) {
+      entry.teacherId = primaryTeacherId;
+      entry.teacher = teacher?.name || entry.teacher || "Unassigned";
+    }
+    if (!entry.assignedSince && subjectAllocations[0]?.createdAt) {
+      entry.assignedSince = String(subjectAllocations[0]?.createdAt || "").trim();
+    }
     entry.homework = workspaceHomeworkItems.length;
     entry.assessments = workspaceAssessmentItems.length;
     entry.assignments = workspaceAssessmentItems.length;
@@ -20633,27 +20868,72 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
         .sort()
         .slice(-1)[0] || ""
     );
-    subjectMap.set(subject, entry);
+    subjectMap.set(subjectBucketKey, entry);
   }
 
-  const subjectDetails = Array.from(subjectMap.values());
-  const aggregateGeneratedSessions = subjectDetails.reduce((sum, item) => sum + Number(item.sessionsGenerated || 0), 0);
-  const aggregateCompletedSessions = subjectDetails.reduce((sum, item) => sum + Number(item.sessionsCompleted || 0), 0);
-  const aggregatePendingSessions = subjectDetails.reduce((sum, item) => sum + Number(item.pendingSessions || 0), 0);
-  const aggregateHomework = subjectDetails.reduce((sum, item) => sum + Number(item.homework || 0), 0);
-  const aggregateAssessments = subjectDetails.reduce((sum, item) => sum + Number(item.assessments || 0), 0);
-  const aggregateEvaluations = subjectDetails.reduce((sum, item) => sum + Number(item.evaluationCount || 0), 0);
-  const aggregateSubmissionRate = subjectDetails.length > 0
-    ? Number((subjectDetails.reduce((sum, item) => sum + Number(item.submissionPercentage || 0), 0) / subjectDetails.length).toFixed(1))
+  const rawSubjectDetails = Array.from(subjectMap.values());
+  const canonicalSubjectPresence = new Set(
+    rawSubjectDetails
+      .filter((item) => String(item.teacherId || "").trim() || Number(item.sessionsGenerated || 0) > 0 || Number(item.homework || 0) > 0 || Number(item.assessments || 0) > 0)
+      .map((item) => normalizeSubjectKey(getCanonicalSubjectDisplayName(item.subject || item.subjectKey || "") || item.subjectKey || item.subject || ""))
+      .filter(Boolean)
+  );
+  const subjectDetails = rawSubjectDetails.filter((item) => {
+    const subjectKey = normalizeSubjectKey(getCanonicalSubjectDisplayName(item.subject || item.subjectKey || "") || item.subjectKey || item.subject || "");
+    const teacherLabel = String(item.teacher || "").trim().toLowerCase();
+    const isUnassignedPlaceholder =
+      (!String(item.teacherId || "").trim() || !teacherLabel || teacherLabel === "unassigned") &&
+      Number(item.sessionsGenerated || 0) === 0 &&
+      Number(item.sessionsCompleted || 0) === 0 &&
+      Number(item.homework || 0) === 0 &&
+      Number(item.assessments || 0) === 0 &&
+      Number(item.pendingSessions || 0) === 0 &&
+      Number(item.submissionPercentage || 0) === 0 &&
+      Number(item.evaluationCount || 0) === 0;
+
+    if (!isUnassignedPlaceholder) {
+      return true;
+    }
+
+    return !canonicalSubjectPresence.has(subjectKey);
+  });
+  const dedupedSubjectMap = new Map<string, typeof subjectDetails[number]>();
+  const scoreSubjectDetail = (item: typeof subjectDetails[number]) => {
+    const hasAssignedTeacher = Boolean(String(item.teacherId || "").trim()) && String(item.teacher || "").trim().toLowerCase() !== "unassigned";
+    const activityScore =
+      Number(item.sessionsGenerated || 0) +
+      Number(item.sessionsCompleted || 0) +
+      Number(item.homework || 0) +
+      Number(item.assessments || 0) +
+      Number(item.pendingSessions || 0) +
+      Number(item.evaluationCount || 0);
+    return (hasAssignedTeacher ? 100000 : 0) + activityScore;
+  };
+  for (const item of subjectDetails) {
+    const canonicalKey = normalizeSubjectKey(getCanonicalSubjectDisplayName(item.subject || item.subjectKey || "") || item.subjectKey || item.subject || "");
+    const existing = dedupedSubjectMap.get(canonicalKey);
+    if (!existing || scoreSubjectDetail(item) > scoreSubjectDetail(existing)) {
+      dedupedSubjectMap.set(canonicalKey, item);
+    }
+  }
+  const finalSubjectDetails = Array.from(dedupedSubjectMap.values());
+  const aggregateGeneratedSessions = finalSubjectDetails.reduce((sum, item) => sum + Number(item.sessionsGenerated || 0), 0);
+  const aggregateCompletedSessions = finalSubjectDetails.reduce((sum, item) => sum + Number(item.sessionsCompleted || 0), 0);
+  const aggregatePendingSessions = finalSubjectDetails.reduce((sum, item) => sum + Number(item.pendingSessions || 0), 0);
+  const aggregateHomework = finalSubjectDetails.reduce((sum, item) => sum + Number(item.homework || 0), 0);
+  const aggregateAssessments = finalSubjectDetails.reduce((sum, item) => sum + Number(item.assessments || 0), 0);
+  const aggregateEvaluations = finalSubjectDetails.reduce((sum, item) => sum + Number(item.evaluationCount || 0), 0);
+  const aggregateSubmissionRate = finalSubjectDetails.length > 0
+    ? Number((finalSubjectDetails.reduce((sum, item) => sum + Number(item.submissionPercentage || 0), 0) / finalSubjectDetails.length).toFixed(1))
     : 0;
-  const aggregateAveragePerformance = subjectDetails.length > 0
-    ? Number((subjectDetails.reduce((sum, item) => sum + Number(item.averageMarks || 0), 0) / subjectDetails.length).toFixed(1))
+  const aggregateAveragePerformance = finalSubjectDetails.length > 0
+    ? Number((finalSubjectDetails.reduce((sum, item) => sum + Number(item.averageMarks || 0), 0) / finalSubjectDetails.length).toFixed(1))
     : 0;
-  const aggregateCurriculumProgress = subjectDetails.length > 0
-    ? Number((subjectDetails.reduce((sum, item) => sum + Number(item.curriculumProgress || 0), 0) / subjectDetails.length).toFixed(1))
+  const aggregateCurriculumProgress = finalSubjectDetails.length > 0
+    ? Number((finalSubjectDetails.reduce((sum, item) => sum + Number(item.curriculumProgress || 0), 0) / finalSubjectDetails.length).toFixed(1))
     : 0;
-  const aggregateTerms = subjectDetails.reduce((max, item) => Math.max(max, Number(item.terms || 0)), 0);
-  const latestActivity = subjectDetails
+  const aggregateTerms = finalSubjectDetails.reduce((max, item) => Math.max(max, Number(item.terms || 0)), 0);
+  const latestActivity = finalSubjectDetails
     .map((item) => String(item.lastUpdated || "").trim())
     .filter(Boolean)
     .sort()
@@ -20685,7 +20965,7 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
       status: "active",
       evaluationCompletion: 0,
     }),
-    subjects: subjectDetails.length,
+    subjects: finalSubjectDetails.length,
     totalTerms: aggregateTerms,
     sessionsGenerated: aggregateGeneratedSessions,
     sessionsCompleted: aggregateCompletedSessions,
@@ -20701,7 +20981,7 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
     totalTeachers: teacherRoster.length,
     teacherRoster,
     studentRoster,
-    subjectDetails,
+    subjectDetails: finalSubjectDetails,
   };
 }
 
@@ -20720,9 +21000,10 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
 
   const requestedSubjectKey = normalizeSubjectKey(decodeRouteParamValue(subjectKeyOrName));
   const subjectSummary = (classDetail.subjectDetails || []).find((item) =>
-    normalizeSubjectKey(item.subjectKey || item.subject || "") === requestedSubjectKey
+    subjectMatchesAlias(item.subjectKey || item.subject || "", [decodeRouteParamValue(subjectKeyOrName)])
   );
   if (!subjectSummary) return null;
+  const requestedSubjectAliases = getCanonicalSubjectAliases(subjectSummary.subject || decodeRouteParamValue(subjectKeyOrName));
 
   const normalizedSection = normalizeSectionKey(classDetail.section || "");
   const subjectTeacherId = String(subjectSummary.teacherId || "").trim();
@@ -20732,7 +21013,10 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
       classDetail.className || classDetail.classKey || "",
     )
     && normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") === normalizedSection
-    && normalizeSubjectKey(workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "") === requestedSubjectKey
+    && subjectMatchesAlias(
+      workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "",
+      requestedSubjectAliases,
+    )
     && (!subjectTeacherId || String(workspace?.teacherId || workspace?.createdBy || "").trim() === subjectTeacherId)
   ));
 
@@ -20815,16 +21099,31 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     };
   };
 
-  const buildSubmissionLabel = (item: any) => {
-    const meta = resolveSubmissionSessionMeta(item?.sessionId);
+  const buildSubmissionLabel = (item: any, fallbackSessionId?: string) => {
+    const meta = resolveSubmissionSessionMeta(String(item?.sessionId || fallbackSessionId || "").trim());
     const sessionLabel = meta.sessionNumber > 0 ? `Session ${meta.sessionNumber}` : "";
     const title = String(item?.title || "").trim() || meta.sessionTitle || "Submission";
     return [sessionLabel, title].filter(Boolean).join(" • ");
   };
 
+  const buildSubmissionSnapshot = (item: any, marks?: number | null) => {
+    if (!item) {
+      return null;
+    }
+
+    return {
+      status: String(item?.status || "submitted").trim().toLowerCase() === "reviewed" ? "Reviewed" : "Submitted",
+      submittedDate: String(item?.updatedAt || item?.createdAt || "").trim(),
+      fileName: String(item?.fileName || "").trim(),
+      title: String(item?.title || "").trim(),
+      fileDataUrl: String(item?.fileDataUrl || "").trim(),
+      marks: typeof marks === "number" && Number.isFinite(marks) ? marks : null,
+    };
+  };
+
   const subjectResults = evaluationResults.filter((result: any) =>
     (String(result?.studentId || "").trim() ? classStudentIds.has(String(result.studentId || "").trim()) : true)
-    && normalizeSubjectKey(result?.subjectId || "") === requestedSubjectKey
+    && subjectMatchesAlias(result?.subjectId || "", requestedSubjectAliases)
     && sessionMatchesRequest(result)
   );
   const classAssignmentSubmissions = assignmentSubmissions.filter((item: any) =>
@@ -20922,7 +21221,7 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     const isAssessment = String(item?.submissionType || "").trim().toLowerCase() === "assessment";
     const isAssignment = String(item?.submissionType || "").trim().toLowerCase() === "assignment";
     // Include if subject matches
-    if (itemSubjectKey && itemSubjectKey === requestedSubjectKey) {
+    if (itemSubjectKey && subjectMatchesAlias(item?.subjectId || item?.subject || "", requestedSubjectAliases)) {
       return true;
     }
     // Include if there are no workspaces yet (submission arrived before workspace was created/stored differently)
@@ -20947,7 +21246,7 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     const itemSubjectKey = normalizeSubjectKey(item?.subjectId || item?.subject || "");
     const itemHomeworkId = String(item?.homeworkId || "").trim();
     // Include if subject matches
-    if (itemSubjectKey && itemSubjectKey === requestedSubjectKey) {
+    if (itemSubjectKey && subjectMatchesAlias(item?.subjectId || item?.subject || "", requestedSubjectAliases)) {
       return true;
     }
     // Include if there are no workspaces yet (submission arrived before workspace was created/stored differently)
@@ -21044,10 +21343,15 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
         id: String(item.id || "").trim(),
         name: String(item.title || "Homework").trim(),
         submissionStatus: "generated",
-        pendingCount: Math.max(0, classStudentIds.size - subjectHomeworkSubmissions.length),
+        pendingCount: classStudentIds.size,
         studentSubmissions: [],
       });
     }
+  });
+  homeworkById.forEach((entry) => {
+    const uniqueStudentCount = new Set(entry.studentSubmissions.map((item) => String(item.studentId || "").trim()).filter(Boolean)).size;
+    entry.pendingCount = Math.max(0, classStudentIds.size - uniqueStudentCount);
+    entry.submissionStatus = uniqueStudentCount > 0 ? entry.submissionStatus : "generated";
   });
 
   const assessmentById = new Map<string, {
@@ -21101,6 +21405,11 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
         studentSubmissions: [],
       });
     }
+  });
+  assessmentById.forEach((entry) => {
+    const uniqueStudentCount = new Set(entry.studentSubmissions.map((item) => String(item.studentId || "").trim()).filter(Boolean)).size;
+    entry.totalStudentsAttempted = uniqueStudentCount;
+    entry.pendingStudents = Math.max(0, classStudentIds.size - uniqueStudentCount);
   });
 
   const assignmentById = new Map<string, {
@@ -21158,21 +21467,48 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     );
 
     if (studentSessionIds.length === 0) {
+      const latestSubmission = [...studentHomework, ...studentAssessmentSubmissions]
+        .sort((left: any, right: any) => {
+          const leftTime = new Date(String(left?.updatedAt || left?.createdAt || 0)).getTime();
+          const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
+          return rightTime - leftTime;
+        })[0] || null;
+      const latestHomeworkSubmission = [...studentHomework]
+        .sort((left: any, right: any) => {
+          const leftTime = new Date(String(left?.updatedAt || left?.createdAt || 0)).getTime();
+          const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
+          return rightTime - leftTime;
+        })[0] || null;
+      const latestAssessmentSubmission = [...studentAssessmentSubmissions]
+        .sort((left: any, right: any) => {
+          const leftTime = new Date(String(left?.updatedAt || left?.createdAt || 0)).getTime();
+          const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
+          return rightTime - leftTime;
+        })[0] || null;
+      const latestEvaluation = [...studentEvaluations]
+        .sort((left: any, right: any) => {
+          const leftTime = new Date(String(left?.updatedAt || left?.createdAt || 0)).getTime();
+          const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
+          return rightTime - leftTime;
+        })[0] || null;
+
       return [{
         id: studentId,
         name: String(student.name || "Student").trim(),
         rollNo: String(student.rollNo || "").trim(),
         email: String(student.email || "").trim(),
-        assignmentStatus: studentAssignments.some((item: any) => String(item?.submissionType || "").trim().toLowerCase() !== "assessment") ? "Uploaded" : "Pending",
-        homeworkStatus: "Pending",
-        assessmentStatus: "Pending",
-        submissionCount: 0,
-        submissionLabel: "No submission yet",
+        assignmentStatus: studentAssignments.some((item: any) => String(item?.submissionType || "").trim().toLowerCase() !== "assessment") ? "Submitted" : "Pending",
+        homeworkStatus: studentHomework.length > 0 ? "Submitted" : "Pending",
+        assessmentStatus: studentAssessmentSubmissions.length > 0 ? "Submitted" : "Pending",
+        submissionCount: studentHomework.length + studentAssessmentSubmissions.length,
+        submissionLabel: latestSubmission ? buildSubmissionLabel(latestSubmission) : "No submission yet",
         evaluationResult: studentEvaluations[0]?.grade ? `${studentEvaluations[0].grade} (${Number(studentEvaluations[0].percentage || 0)}%)` : "Pending",
         attendance: "N/A",
         overallProgress: averageEvaluation,
         sessionId: "",
         sessionIds: [],
+        latestHomeworkSubmission: buildSubmissionSnapshot(latestHomeworkSubmission),
+        latestAssessmentSubmission: buildSubmissionSnapshot(latestAssessmentSubmission, latestEvaluation ? Number(latestEvaluation?.totalMarks || 0) : null),
       }];
     }
 
@@ -21186,22 +21522,42 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
           const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
           return rightTime - leftTime;
         })[0] || null;
+      const latestHomeworkSubmission = [...sessionHomework]
+        .sort((left: any, right: any) => {
+          const leftTime = new Date(String(left?.updatedAt || left?.createdAt || 0)).getTime();
+          const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
+          return rightTime - leftTime;
+        })[0] || null;
+      const latestAssessmentSubmission = [...sessionAssessmentSubmissions]
+        .sort((left: any, right: any) => {
+          const leftTime = new Date(String(left?.updatedAt || left?.createdAt || 0)).getTime();
+          const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
+          return rightTime - leftTime;
+        })[0] || null;
+      const latestSessionEvaluation = [...sessionEvaluations]
+        .sort((left: any, right: any) => {
+          const leftTime = new Date(String(left?.updatedAt || left?.createdAt || 0)).getTime();
+          const rightTime = new Date(String(right?.updatedAt || right?.createdAt || 0)).getTime();
+          return rightTime - leftTime;
+        })[0] || null;
 
       return {
         id: `${studentId}:${sessionId || "no-session"}`,
         name: String(student.name || "Student").trim(),
         rollNo: String(student.rollNo || "").trim(),
         email: String(student.email || "").trim(),
-        assignmentStatus: studentAssignments.some((item: any) => String(item?.submissionType || "").trim().toLowerCase() !== "assessment") ? "Uploaded" : "Pending",
-        homeworkStatus: sessionHomework.length > 0 ? "Uploaded" : "Pending",
-        assessmentStatus: sessionAssessmentSubmissions.length > 0 ? "Uploaded" : "Pending",
+        assignmentStatus: studentAssignments.some((item: any) => String(item?.submissionType || "").trim().toLowerCase() !== "assessment") ? "Submitted" : "Pending",
+        homeworkStatus: sessionHomework.length > 0 ? "Submitted" : "Pending",
+        assessmentStatus: sessionAssessmentSubmissions.length > 0 ? "Submitted" : "Pending",
         submissionCount: sessionHomework.length + sessionAssessmentSubmissions.length,
-        submissionLabel: latestSubmission ? buildSubmissionLabel(latestSubmission) : "No submission yet",
+        submissionLabel: latestSubmission ? buildSubmissionLabel(latestSubmission, sessionId) : "No submission yet",
         evaluationResult: sessionEvaluations[0]?.grade ? `${sessionEvaluations[0].grade} (${Number(sessionEvaluations[0].percentage || 0)}%)` : "Pending",
         attendance: "N/A",
         overallProgress: averageEvaluation,
         sessionId,
         sessionIds: [sessionId],
+        latestHomeworkSubmission: buildSubmissionSnapshot(latestHomeworkSubmission),
+        latestAssessmentSubmission: buildSubmissionSnapshot(latestAssessmentSubmission, latestSessionEvaluation ? Number(latestSessionEvaluation?.totalMarks || 0) : null),
       };
     });
   });
@@ -21949,56 +22305,46 @@ app.get("/api/student/notes", async (req, res) => {
       const generatedSessions =
         workspace.generationScope?.generatedSessions &&
         typeof workspace.generationScope.generatedSessions === "object"
-          ? Object.entries(workspace.generationScope.generatedSessions as Record<string, any>)
-          : [];
+          ? workspace.generationScope.generatedSessions as Record<string, any>
+          : {};
       const studentPublications =
         workspace.generationScope?.studentPublications &&
         typeof workspace.generationScope.studentPublications === "object"
-          ? workspace.generationScope.studentPublications as Record<string, Record<string, boolean | { published?: boolean }>>
+          ? workspace.generationScope.studentPublications as Record<string, Record<string, any>>
           : {};
 
-      return generatedSessions.flatMap(([generatedSessionKey, session]: [string, any]) => {
-        const publicationEntry = resolveStudentPublicationEntry(
-          studentPublications,
-          String(generatedSessionKey || ""),
-          session,
-        );
-        const notesPublished = typeof publicationEntry?.notes === "object"
-          ? Boolean((publicationEntry.notes as { published?: boolean })?.published)
-          : Boolean(publicationEntry?.notes);
-
-        if (!notesPublished || !session?.studentLessonNotes) {
+      return Object.entries(studentPublications).flatMap(([publicationSessionKey, publicationEntry]: [string, any]) => {
+        const generatedSessionKey = String(publicationSessionKey || "").trim();
+        if (!generatedSessionKey) {
           return [];
         }
 
-        const sessionNumber = Number(generatedSessionKey || session?.sessionNumber || 0);
-        const sessionId = `${workspace._id}-${generatedSessionKey || sessionNumber}`;
+        const session =
+          generatedSessions[generatedSessionKey] ||
+          generatedSessions[String((publicationEntry as any)?.notes?.generatedSessionKey || "").trim()] ||
+          null;
+        if (!session || !session.studentLessonNotes) {
+          return [];
+        }
 
-        return [{
-          id: `notes-${sessionId}`,
+        const item = buildCanonicalPublicationItem({
+          workspace,
+          generatedSessionKey,
+          session,
+          student,
+          publicationValue: publicationEntry?.notes,
           kind: "notes",
-          sessionId,
-          sessionNumber,
-          sessionTitle: String(session.title || session.sessionTitle || "Session Notes"),
-          teacherId: String(workspace.teacherId || workspace.createdBy || ""),
-          teacherName: "",
-          classId: String(workspace.classId || workspace.curriculumSnapshot?.gradeLevel || student.classId || ""),
-          className: String(workspace.academicConfig?.className || workspace.curriculumSnapshot?.gradeLevel || student.classId || ""),
-          subject: String(workspace.academicConfig?.subject || workspace.curriculumSnapshot?.subject || ""),
-          gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || student.classId || ""),
-          duration: Number(session.duration || 0),
-          publishedAt: new Date(workspace.updatedAt || workspace.createdAt || Date.now()).toISOString(),
-          payload: {
-            studentLessonNotes: session.studentLessonNotes,
-          },
-        }];
+          schoolId,
+        });
+
+        return item ? [item] : [];
       });
     });
 
     const dedupedItems = Array.from(
       new Map(
         items.map((item: any) => [
-          `${String(item?.kind || "").toLowerCase()}::${String(item?.subject || "").toLowerCase()}::${String(item?.sessionId || "").toLowerCase()}::${String(item?.classId || "").toLowerCase()}::${String(item?.section || "").toLowerCase()}`,
+          `${String(item?.kind || "").toLowerCase()}::${String(item?.workspaceId || "").toLowerCase()}::${String(item?.generatedSessionKey || "").toLowerCase()}::${String(item?.classId || "").toLowerCase()}::${String(item?.section || "").toLowerCase()}`,
           item,
         ]),
       ).values(),
@@ -22065,86 +22411,46 @@ app.get("/api/student/published-content", async (req, res) => {
       const generatedSessions =
         workspace.generationScope?.generatedSessions &&
         typeof workspace.generationScope.generatedSessions === "object"
-          ? Object.entries(workspace.generationScope.generatedSessions as Record<string, any>)
-          : [];
+          ? workspace.generationScope.generatedSessions as Record<string, any>
+          : {};
       const studentPublications =
         workspace.generationScope?.studentPublications &&
         typeof workspace.generationScope.studentPublications === "object"
-          ? workspace.generationScope.studentPublications as Record<string, Record<string, boolean | { published?: boolean }>>
+          ? workspace.generationScope.studentPublications as Record<string, Record<string, any>>
           : {};
 
-      return generatedSessions.flatMap(([generatedSessionKey, session]: [string, any]): any[] => {
-        const publicationEntry = resolveStudentPublicationEntry(
-          studentPublications,
-          String(generatedSessionKey || ""),
-          session,
-        );
-        const targetPublished = typeof (publicationEntry as any)?.[kind] === "object"
-          ? Boolean((publicationEntry as any)?.[kind]?.published)
-          : Boolean((publicationEntry as any)?.[kind]);
-        if (!targetPublished) {
+      return Object.entries(studentPublications).flatMap(([publicationSessionKey, publicationEntry]: [string, any]): any[] => {
+        const generatedSessionKey = String(publicationSessionKey || "").trim();
+        if (!generatedSessionKey) {
           return [];
         }
 
-        const fallbackSessionNumber = Number(generatedSessionKey || 0);
-        const sessionNumber = Number(generatedSessionKey || session?.sessionNumber || fallbackSessionNumber || 0);
-        const sessionId = `${workspace._id}-${generatedSessionKey || sessionNumber || ""}`;
-        const sessionTitle = String(session?.title || session?.sessionTitle || "Session").trim() || "Session";
-        const teacherId = String(workspace?.teacherId || workspace?.createdBy || "").trim();
-        const classId = String(workspace?.classId || workspace?.curriculumSnapshot?.gradeLevel || student.classId || "").trim();
-        const className = String(workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || student.classId || "").trim();
-        const subject = String(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || "").trim();
-        const gradeLevel = String(workspace?.curriculumSnapshot?.gradeLevel || workspace?.academicConfig?.className || student.classId || "").trim();
-        const publishedAt = new Date(workspace?.updatedAt || workspace?.createdAt || Date.now()).toISOString();
-        const artifactId = `${kind}-${String(teacherId || "teacher").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "teacher"}-${String(classId || gradeLevel || "class").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "class"}-${String(subject || "subject").trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "subject"}-${String(sessionId || `session-${sessionNumber}`).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || `session-${sessionNumber}`}`;
+        const targetKinds = kind
+          ? [kind]
+          : (["homework", "assessments", "quizzes", "notes"] as const);
 
-        if (kind === "homework" && session?.homework) {
-          return [{
-            id: artifactId,
-            kind: "homework",
-            sessionId,
-            sessionNumber,
-            sessionTitle,
-            teacherId,
-            teacherName: "",
-            classId,
-            className,
-            section: String(workspace?.academicConfig?.section || student.section || "").trim(),
-            subject,
-            gradeLevel,
-            duration: Number(session?.duration || 0),
+        return targetKinds.flatMap((targetKind) => {
+          const publicationValue = (publicationEntry as any)?.[targetKind];
+          const session =
+            generatedSessions[generatedSessionKey] ||
+            generatedSessions[String(publicationValue?.generatedSessionKey || "").trim()] ||
+            null;
+          if (!session) {
+            return [];
+          }
+
+          const item = buildCanonicalPublicationItem({
+            workspace,
+            generatedSessionKey,
+            session,
+            student,
+            publicationValue,
+            kind: targetKind,
             schoolId,
-            publishedAt,
-            payload: {
-              homework: session.homework,
-            },
-          }];
-        }
+          });
 
-        if (kind === "assessments" && session?.assessment) {
-          return [{
-            id: artifactId,
-            kind: "assessments",
-            sessionId,
-            sessionNumber,
-            sessionTitle,
-            teacherId,
-            teacherName: "",
-            classId,
-            className,
-            section: String(workspace?.academicConfig?.section || student.section || "").trim(),
-            subject,
-            gradeLevel,
-            duration: Number(session?.duration || 0),
-            schoolId,
-            publishedAt,
-            payload: {
-              assessment: normalizeStudentAssessmentPayloadForResponse(session.assessment),
-            },
-          }];
-        }
-
-        return [];
+          return item ? [item] : [];
+        });
       });
     });
 
@@ -22154,10 +22460,10 @@ app.get("/api/student/published-content", async (req, res) => {
           [
             String(item?.kind || "").trim().toLowerCase(),
             String(item?.teacherId || "").trim().toLowerCase(),
-            String(item?.classId || item?.className || item?.gradeLevel || "").trim().toLowerCase(),
+            String(item?.workspaceId || "").trim().toLowerCase(),
             String(item?.section || "").trim().toLowerCase(),
             String(item?.subject || "").trim().toLowerCase(),
-            String(item?.sessionId || "").trim().toLowerCase() || `session-${Number(item?.sessionNumber || 0)}`,
+            String(item?.generatedSessionKey || item?.sessionId || "").trim().toLowerCase() || `session-${Number(item?.sessionNumber || 0)}`,
             String(item?.sessionTitle || "").trim().toLowerCase(),
           ].join("::"),
           item,
@@ -22192,6 +22498,76 @@ app.patch("/api/planning-workspaces/:id/student-publications", async (req, res) 
       return res.status(400).json({ error: "sessionKey and valid kind are required." });
     }
 
+    const generatedSessions =
+      workspace.generationScope?.generatedSessions &&
+      typeof workspace.generationScope.generatedSessions === "object"
+        ? workspace.generationScope.generatedSessions as Record<string, any>
+        : {};
+    const requestedSessionNumber = Number(req.body?.sessionNumber || 0);
+    const resolvedSessionNumber = Number.isFinite(requestedSessionNumber) && requestedSessionNumber > 0
+      ? requestedSessionNumber
+      : 0;
+    const fallbackKeys = [
+      sessionKey,
+      String(req.body?.generatedSessionKey || "").trim(),
+      String(req.body?.sessionId || "").trim(),
+      String(resolvedSessionNumber || ""),
+      resolvedSessionNumber > 0 ? `session-number:${resolvedSessionNumber}` : "",
+    ].filter(Boolean);
+
+    let resolvedGeneratedSessionKey = "";
+    let session = null as any;
+
+    for (const candidateKey of fallbackKeys) {
+      if (generatedSessions[candidateKey]) {
+        resolvedGeneratedSessionKey = candidateKey;
+        session = generatedSessions[candidateKey];
+        break;
+      }
+    }
+
+    if (!session && resolvedSessionNumber > 0) {
+      for (const [savedKey, savedSession] of Object.entries(generatedSessions)) {
+        if (!savedSession || typeof savedSession !== "object") {
+          continue;
+        }
+
+        if (
+          String(savedSession?.sessionKey || "").trim() === sessionKey ||
+          String(savedSession?.id || "").trim() === sessionKey ||
+          Number(savedSession?.sessionNumber || 0) === resolvedSessionNumber
+        ) {
+          resolvedGeneratedSessionKey = savedKey;
+          session = savedSession;
+          break;
+        }
+      }
+    }
+
+    if (!session) {
+      const matchedEntry = findMatchingGeneratedSessionEntry(generatedSessions, {
+        requestedSessionKey: sessionKey,
+        roadmapSessionNumber: resolvedSessionNumber,
+        chapterName: String(req.body?.chapterName || "").trim(),
+        sessionTitle: String(req.body?.sessionTitle || "").trim(),
+        subject: String(req.body?.subjectName || workspace.academicConfig?.subject || workspace.curriculumSnapshot?.subject || "").trim(),
+        gradeLevel: String(req.body?.grade || workspace.academicConfig?.className || workspace.curriculumSnapshot?.gradeLevel || "").trim(),
+        sessionNumber: resolvedSessionNumber,
+      });
+
+      if (matchedEntry?.sessionPlan) {
+        resolvedGeneratedSessionKey = matchedEntry.key;
+        session = matchedEntry.sessionPlan;
+      }
+    }
+
+    if (!session) {
+      return res.status(404).json({ error: "Generated session not found for the provided sessionKey." });
+    }
+    if (!resolvedGeneratedSessionKey) {
+      resolvedGeneratedSessionKey = sessionKey;
+    }
+
     const nextGenerationScope =
       workspace.generationScope && typeof workspace.generationScope === "object"
         ? { ...workspace.generationScope }
@@ -22201,15 +22577,41 @@ app.patch("/api/planning-workspaces/:id/student-publications", async (req, res) 
         ? { ...nextGenerationScope.studentPublications }
         : {};
     const currentFlags =
-      nextStudentPublications[sessionKey] && typeof nextStudentPublications[sessionKey] === "object"
-        ? { ...nextStudentPublications[sessionKey] }
+      nextStudentPublications[resolvedGeneratedSessionKey] && typeof nextStudentPublications[resolvedGeneratedSessionKey] === "object"
+        ? { ...nextStudentPublications[resolvedGeneratedSessionKey] }
         : {};
 
-    currentFlags[kind] = published
-      ? { published: true, publishedAt: new Date().toISOString() }
-      : { published: false, publishedAt: null };
+    const currentPublicationValue = currentFlags[kind];
+    const previousPublishedAt =
+      currentPublicationValue && typeof currentPublicationValue === "object"
+        ? String((currentPublicationValue as { publishedAt?: string | null }).publishedAt || "").trim()
+        : "";
+    const sessionNumber =
+      resolvedSessionNumber ||
+      resolvePublishedSessionNumber(session, resolvedGeneratedSessionKey);
 
-    nextStudentPublications[sessionKey] = currentFlags;
+    currentFlags[kind] = {
+      published,
+      publishedAt: published
+        ? previousPublishedAt || new Date().toISOString()
+        : null,
+      workspaceId: String(workspace._id || "").trim(),
+      generatedSessionKey: resolvedGeneratedSessionKey,
+      sessionNumber,
+      sessionTitle: String(req.body?.sessionTitle || session?.title || session?.sessionTitle || "").trim(),
+      subjectId: String(req.body?.subjectId || workspace.subjectId || "").trim(),
+      subjectName: String(req.body?.subjectName || workspace.academicConfig?.subject || workspace.curriculumSnapshot?.subject || "").trim(),
+      classId: String(req.body?.classId || workspace.classId || workspace.academicConfig?.className || workspace.curriculumSnapshot?.gradeLevel || "").trim(),
+      grade: String(req.body?.grade || workspace.academicConfig?.className || workspace.curriculumSnapshot?.gradeLevel || "").trim(),
+      section: String(req.body?.section || workspace.academicConfig?.section || workspace.sectionId || "").trim(),
+      termNumber: Number(req.body?.termNumber || workspace.sessionAllocation?.selectedTermSummary?.termNumber || 0) || null,
+      contentType: kind,
+    };
+
+    if (resolvedGeneratedSessionKey !== sessionKey && nextStudentPublications[sessionKey] && nextStudentPublications[sessionKey] !== currentFlags) {
+      delete nextStudentPublications[sessionKey];
+    }
+    nextStudentPublications[resolvedGeneratedSessionKey] = currentFlags;
     nextGenerationScope.studentPublications = nextStudentPublications;
     workspace.generationScope = nextGenerationScope;
 
@@ -22452,7 +22854,9 @@ app.get("/api/student/subjects", async (req, res) => {
       const sectionMatches = !sectionKey || !normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") || normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") === sectionKey;
       if (!classMatches || !sectionMatches) return;
 
-      const subject = String(workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || workspace?.subjectId || "").trim();
+      const subject = getCanonicalSubjectDisplayName(
+        workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || workspace?.subjectId || "",
+      );
       if (subject) subjectSet.add(subject);
     });
 
@@ -22461,7 +22865,7 @@ app.get("/api/student/subjects", async (req, res) => {
       const sectionMatches = !sectionKey || !normalizeSectionKey(allocation?.section || "") || normalizeSectionKey(allocation?.section || "") === sectionKey;
       if (!classMatches || !sectionMatches) return;
       (Array.isArray(allocation?.subjects) ? allocation.subjects : []).forEach((subject: unknown) => {
-        const value = String(subject || "").trim();
+        const value = getCanonicalSubjectDisplayName(subject);
         if (value) subjectSet.add(value);
       });
     });
@@ -22554,28 +22958,33 @@ app.post("/api/student/assignments/:id/submit", async (req, res) => {
       subject: String(req.body?.subjectId || req.body?.subject || "").trim(),
     });
 
-    const submission = await AssignmentSubmissionModel.findOneAndUpdate(
-      { schoolId, studentId, assignmentId: req.params.id, submissionType: "assignment" },
-      {
-        $set: {
-          schoolId,
-          studentId,
-          classId: submissionContext.classId,
-          teacherId,
-          assignmentId: req.params.id,
-          subject: subjectId,
-          subjectId,
-          sessionId,
-          submissionType: "assignment",
-          status: "submitted",
-          fileName,
-          mimeType,
-          fileDataUrl,
-          title,
-        },
-      },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    const existingSubmission = await AssignmentSubmissionModel.findOne({
+      schoolId,
+      studentId,
+      assignmentId: req.params.id,
+      submissionType: "assignment",
+      status: "submitted",
+    }).lean();
+    if (existingSubmission) {
+      return res.status(409).json({ error: "This assignment is already submitted. Ask the teacher to delete it before submitting again." });
+    }
+
+    const submission = await AssignmentSubmissionModel.create({
+      schoolId,
+      studentId,
+      classId: submissionContext.classId,
+      teacherId,
+      assignmentId: req.params.id,
+      subject: subjectId,
+      subjectId,
+      sessionId,
+      submissionType: "assignment",
+      status: "submitted",
+      fileName,
+      mimeType,
+      fileDataUrl,
+      title,
+    });
 
     await logActivity({
       schoolId,
@@ -22621,27 +23030,31 @@ app.post("/api/student/homework/:id/submit", async (req, res) => {
       subject: String(req.body?.subjectId || req.body?.subject || "").trim(),
     });
 
-    const submission = await HomeworkSubmissionModel.findOneAndUpdate(
-      { schoolId, studentId, homeworkId: req.params.id },
-      {
-        $set: {
-          schoolId,
-          studentId,
-          classId: submissionContext.classId,
-          teacherId,
-          homeworkId: req.params.id,
-          subject: subjectId,
-          subjectId,
-          sessionId,
-          status: "submitted",
-          fileName,
-          mimeType,
-          fileDataUrl,
-          title,
-        },
-      },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    const existingSubmission = await HomeworkSubmissionModel.findOne({
+      schoolId,
+      studentId,
+      homeworkId: req.params.id,
+      status: "submitted",
+    }).lean();
+    if (existingSubmission) {
+      return res.status(409).json({ error: "This homework is already submitted. Ask the teacher to delete it before submitting again." });
+    }
+
+    const submission = await HomeworkSubmissionModel.create({
+      schoolId,
+      studentId,
+      classId: submissionContext.classId,
+      teacherId,
+      homeworkId: req.params.id,
+      subject: subjectId,
+      subjectId,
+      sessionId,
+      status: "submitted",
+      fileName,
+      mimeType,
+      fileDataUrl,
+      title,
+    });
 
     await logActivity({
       schoolId,
@@ -22680,28 +23093,33 @@ app.post("/api/student/assessments/:id/attempt", async (req, res) => {
       return res.status(400).json({ error: "studentId is required." });
     }
 
-    const submission = await AssignmentSubmissionModel.findOneAndUpdate(
-      { schoolId, studentId, assignmentId: req.params.id, submissionType: "assessment" },
-      {
-        $set: {
-          schoolId,
-          studentId,
-          classId,
-          teacherId,
-          assignmentId: req.params.id,
-          subject: subjectId,
-          subjectId,
-          sessionId,
-          submissionType: "assessment",
-          status: "submitted",
-          fileName,
-          mimeType,
-          fileDataUrl,
-          title,
-        },
-      },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    );
+    const existingSubmission = await AssignmentSubmissionModel.findOne({
+      schoolId,
+      studentId,
+      assignmentId: req.params.id,
+      submissionType: "assessment",
+      status: "submitted",
+    }).lean();
+    if (existingSubmission) {
+      return res.status(409).json({ error: "This assessment is already submitted. Ask the teacher to delete it before submitting again." });
+    }
+
+    const submission = await AssignmentSubmissionModel.create({
+      schoolId,
+      studentId,
+      classId,
+      teacherId,
+      assignmentId: req.params.id,
+      subject: subjectId,
+      subjectId,
+      sessionId,
+      submissionType: "assessment",
+      status: "submitted",
+      fileName,
+      mimeType,
+      fileDataUrl,
+      title,
+    });
 
     await logActivity({
       schoolId,
@@ -23028,7 +23446,7 @@ app.get("/api/teacher/submissions", async (req, res) => {
           title: String(item.title || item.assignmentId || "Assignment"),
           sessionId: sessionMeta.sessionId,
           sessionTitle: sessionMeta.sessionTitle,
-          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "uploaded",
+          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "submitted",
           uploadedAt: item.updatedAt || item.createdAt,
           source: "student_upload",
           fileName: String(item.fileName || ""),
@@ -23051,7 +23469,7 @@ app.get("/api/teacher/submissions", async (req, res) => {
           title: String(item.title || item.assignmentId || "Assessment"),
           sessionId: sessionMeta.sessionId,
           sessionTitle: sessionMeta.sessionTitle,
-          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "uploaded",
+          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "submitted",
           uploadedAt: item.updatedAt || item.createdAt,
           source: "student_upload",
           fileName: String(item.fileName || ""),
@@ -23074,7 +23492,7 @@ app.get("/api/teacher/submissions", async (req, res) => {
           title: String(item.title || item.homeworkId || "Homework"),
           sessionId: sessionMeta.sessionId,
           sessionTitle: sessionMeta.sessionTitle,
-          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "uploaded",
+          status: String(item.status || "submitted") === "reviewed" ? "reviewed" : "submitted",
           uploadedAt: item.updatedAt || item.createdAt,
           source: "student_upload",
           fileName: String(item.fileName || ""),

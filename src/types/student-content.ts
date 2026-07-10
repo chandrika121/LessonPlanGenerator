@@ -5,6 +5,8 @@ export type StudentPublicationKind = "homework" | "assessments" | "assignments" 
 export interface PublishedStudentArtifact {
   id: string;
   kind: StudentPublicationKind;
+  workspaceId?: string;
+  generatedSessionKey?: string;
   sessionId: string;
   sessionNumber: number;
   sessionTitle: string;
@@ -16,10 +18,14 @@ export interface PublishedStudentArtifact {
   section?: string;
   duration?: number;
   subject?: string;
+  subjectId?: string;
+  subjectName?: string;
   gradeLevel?: string;
   termId?: string;
   termName?: string;
   termNumber?: number;
+  contentType?: string;
+  content?: Partial<SessionPlan>;
   publishedAt: string;
   payload: Partial<SessionPlan>;
 }

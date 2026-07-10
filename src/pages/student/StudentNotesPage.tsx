@@ -22,7 +22,39 @@ function getCurrentUser(): AuthUser | null {
 function formatText(value: unknown) {
   if (typeof value === "string") return value;
   if (value == null) return "";
+  if (typeof value === "object" && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    const text = typeof record.text === "string" ? record.text.trim() : "";
+    const latex = typeof record.displayLatex === "string"
+      ? record.displayLatex.trim()
+      : typeof record.latex === "string"
+        ? record.latex.trim()
+        : "";
+    if (text && latex) return text.includes(latex) ? text : `${text} ${latex}`.trim();
+    if (text || latex) return text || latex;
+    return Object.values(record).map((item) => formatText(item)).filter(Boolean).join(" ");
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => formatText(item)).filter(Boolean).join("; ");
+  }
   return String(value);
+}
+
+function formatSessionLabel(sessionNumber: unknown) {
+  const parsed = Number(sessionNumber || 0);
+  return Number.isFinite(parsed) && parsed > 0 ? `Session ${parsed}` : "Session";
+}
+
+function normalizeSubjectKey(value: unknown) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\b(theory|practical|practicals|lab|laboratory|pedagogy|lessonplanner|lesson planner)\b/g, " ")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function getSubjectDisplayName(note: Pick<PublishedStudentArtifact, "subject" | "subjectName" | "subjectId">) {
+  return note.subjectName || note.subject || note.subjectId || "General";
 }
 
 const subjectIcons: Record<string, string> = {
@@ -134,7 +166,7 @@ function StudentNotesPage() {
   const notesBySubject = useMemo(() => {
     const grouped = new Map<string, PublishedStudentArtifact[]>();
     for (const note of backendNotes) {
-      const subject = note.subject || "General";
+      const subject = getSubjectDisplayName(note);
       if (!grouped.has(subject)) {
         grouped.set(subject, []);
       }
@@ -142,7 +174,8 @@ function StudentNotesPage() {
     }
 
     for (const subject of studentSubjects) {
-      if (!grouped.has(subject)) {
+      const existingKey = Array.from(grouped.keys()).find((entry) => normalizeSubjectKey(entry) === normalizeSubjectKey(subject));
+      if (!existingKey) {
         grouped.set(subject, []);
       }
     }
@@ -168,7 +201,7 @@ function StudentNotesPage() {
       .map((group) => {
         const matchingNotes = group.notes.filter((note) => {
           const sessionTitle = formatText(note.sessionTitle).toLowerCase();
-          const subject = formatText(note.subject).toLowerCase();
+          const subject = formatText(getSubjectDisplayName(note)).toLowerCase();
           const className = formatText(note.className).toLowerCase();
           const gradeLevel = formatText(note.gradeLevel).toLowerCase();
           return sessionTitle.includes(queryLower) ||
@@ -263,7 +296,7 @@ function StudentNotesPage() {
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
                         <p className="text-[11px] font-black uppercase tracking-[0.15em] text-[#36ADAA]">
-                          Session {latestNote.sessionNumber}
+                          {formatSessionLabel(latestNote.sessionNumber)}
                         </p>
                         <p className="mt-0.5 truncate text-xs font-semibold text-slate-700">
                           {latestNote.sessionTitle}

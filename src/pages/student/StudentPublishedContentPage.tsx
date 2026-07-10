@@ -22,7 +22,31 @@ function getSession() {
 function formatText(value: unknown) {
   if (typeof value === "string") return value;
   if (value == null) return "";
+  if (typeof value === "object" && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    const text = typeof record.text === "string" ? record.text.trim() : "";
+    const latex = typeof record.displayLatex === "string"
+      ? record.displayLatex.trim()
+      : typeof record.latex === "string"
+        ? record.latex.trim()
+        : "";
+    if (text && latex) return text.includes(latex) ? text : `${text} ${latex}`.trim();
+    if (text || latex) return text || latex;
+    return Object.values(record).map((item) => formatText(item)).filter(Boolean).join(" ");
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => formatText(item)).filter(Boolean).join("; ");
+  }
   return String(value);
+}
+
+function formatSessionLabel(sessionNumber: unknown) {
+  const parsed = Number(sessionNumber || 0);
+  return Number.isFinite(parsed) && parsed > 0 ? `Session ${parsed}` : "Session";
+}
+
+function getSubjectDisplayName(item: Pick<PublishedStudentArtifact, "subject" | "subjectName" | "subjectId">) {
+  return item.subjectName || item.subject || item.subjectId || "General";
 }
 
 function asArray<T>(value: T[] | undefined | null): T[] {
@@ -380,34 +404,40 @@ function SubmissionPanel({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="text-sm font-bold text-slate-800">
-            {submittedIds[item.id] ? "Submission uploaded" : kind === "assessments" ? "Upload your answer sheet" : "Upload your submission"}
+            {submittedIds[item.id] ? "Submitted" : kind === "assessments" ? "Submit your answer sheet" : "Submit your work"}
           </div>
           <div className="mt-1 text-xs text-slate-500">
             {submittedIds[item.id]
-              ? "The teacher can now review this in Student Action."
+              ? "Your submission is locked. If you need to submit again, ask the teacher to delete it from Student Action."
               : "Choose a file and submit it so your teacher can review it."}
           </div>
         </div>
-        <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm">
-          <input
-            type="file"
-            className="hidden"
-            accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-            onChange={(event) => {
-              const file = event.target.files?.[0] || null;
-              void onSubmit(item.id, item.sessionTitle, file, {
-                classId: item.classId,
-                className: item.className,
-                gradeLevel: item.gradeLevel,
-                teacherId: item.teacherId,
-                subject: item.subject,
-                sessionId: item.sessionId,
-              });
-              event.currentTarget.value = "";
-            }}
-          />
-          {submittingId === item.id ? "Submitting..." : submittedIds[item.id] ? "Submitted" : "Submit File"}
-        </label>
+        {submittedIds[item.id] ? (
+          <div className="inline-flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm">
+            Submitted
+          </div>
+        ) : (
+          <label className="inline-flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm">
+            <input
+              type="file"
+              className="hidden"
+              accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+              onChange={(event) => {
+                const file = event.target.files?.[0] || null;
+                void onSubmit(item.id, item.sessionTitle, file, {
+                  classId: item.classId,
+                  className: item.className,
+                  gradeLevel: item.gradeLevel,
+                  teacherId: item.teacherId,
+                  subject: item.subject,
+                  sessionId: item.sessionId,
+                });
+                event.currentTarget.value = "";
+              }}
+            />
+            {submittingId === item.id ? "Submitting..." : "Submit File"}
+          </label>
+        )}
       </div>
     </div>
   );
@@ -523,7 +553,7 @@ export function StudentPublishedContentPage({
     file: File | null,
     metadata?: { classId?: string; className?: string; gradeLevel?: string; teacherId?: string; subject?: string; sessionId?: string },
   ) => {
-    if (!session?.id || !file) {
+    if (!session?.id || !file || submittedIds[itemId]) {
       return;
     }
 
@@ -560,6 +590,7 @@ export function StudentPublishedContentPage({
       setPopupMessage(`${itemTitle} submitted successfully.`);
     } catch (error) {
       console.error(error);
+      setPopupMessage(error instanceof Error ? error.message : "Failed to submit.");
     } finally {
       setSubmittingId(null);
     }
@@ -568,7 +599,7 @@ export function StudentPublishedContentPage({
   const groupedItems = useMemo(() => {
     const grouped = new Map<string, PublishedStudentArtifact[]>();
     for (const item of items) {
-      const subject = item.subject || "General";
+      const subject = getSubjectDisplayName(item);
       if (!grouped.has(subject)) {
         grouped.set(subject, []);
       }
@@ -590,7 +621,7 @@ export function StudentPublishedContentPage({
     return groupedItems
       .map((group) => {
         const matchingItems = group.items.filter((item) =>
-          [group.subject, item.sessionTitle, item.className, item.gradeLevel]
+          [group.subject, item.sessionTitle, item.className, item.gradeLevel, getSubjectDisplayName(item)]
             .map((value) => formatText(value).toLowerCase())
             .some((value) => value.includes(queryValue)),
         );
@@ -654,13 +685,13 @@ export function StudentPublishedContentPage({
                 header={
                   <>
                     <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#36ADAA]">
-                      Session {item.sessionNumber}
+                      {formatSessionLabel(item.sessionNumber)}
                     </p>
                     <h3 className="mt-1 font-display text-xl font-extrabold text-slate-900">
                       {item.sessionTitle}
                     </h3>
                     <p className="mt-1 text-xs text-slate-500">
-                      {[item.subject, item.gradeLevel].filter(Boolean).join(" | ") || "Published by teacher"} · Published {new Date(item.publishedAt).toLocaleString()}
+                      {[getSubjectDisplayName(item), item.gradeLevel].filter(Boolean).join(" | ") || "Published by teacher"} · {formatSessionLabel(item.sessionNumber)} · Published {new Date(item.publishedAt).toLocaleString()}
                     </p>
                   </>
                 }
@@ -749,7 +780,7 @@ export function StudentPublishedContentPage({
                         <div className="flex items-center justify-between">
                           <div className="min-w-0 flex-1">
                             <p className="text-[11px] font-black uppercase tracking-[0.15em] text-[#36ADAA]">
-                              Session {latestItem.sessionNumber}
+                              {formatSessionLabel(latestItem.sessionNumber)}
                             </p>
                             <p className="mt-0.5 truncate text-xs font-semibold text-slate-700">
                               {latestItem.sessionTitle}

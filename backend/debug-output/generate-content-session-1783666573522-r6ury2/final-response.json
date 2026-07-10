@@ -1,0 +1,705 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":9,\"totalQuestions\":7,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Students will be able to describe the early life of Albert Einstein.",
+        "Students will identify the qualities that make a mind 'beautiful'.",
+        "Students will understand the meaning of words like 'eccentric' and 'humanitarian' in context."
+      ],
+      "assessedConcepts": [
+        "Einstein's early childhood and curiosity",
+        "The concept of 'eccentricity' in character",
+        "Humanitarian values and pacifism",
+        "Einstein's work as a patent clerk"
+      ],
+      "conceptCoveragePriorities": [
+        "Einstein's humanitarian values over scientific fame",
+        "Understanding the term 'eccentric' in context",
+        "The significance of the compass story"
+      ],
+      "misconceptionTargets": [
+        "Einstein was always successful and a typical student",
+        "Science is only for geniuses without human qualities"
+      ],
+      "competencyFocus": [
+        "Understanding",
+        "Application"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-prescribed-books",
+          "title": "Prescribed Books",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Assessment of 'A Truly Beautiful Mind' focusing on character, vocabulary, and early life events."
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Einstein's early life and curiosity",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Humanitarian values and pacifism",
+          "questionRefs": [
+            "q2",
+            "q5"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        },
+        {
+          "concept": "Vocabulary: Eccentric and Humanitarian",
+          "questionRefs": [
+            "q3",
+            "q6",
+            "q7"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will be able to describe the early life of Albert Einstein.",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Students will identify the qualities that make a mind 'beautiful'.",
+          "questionRefs": [
+            "q2",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Students will understand the meaning of words like 'eccentric' and 'humanitarian' in context.",
+          "questionRefs": [
+            "q3",
+            "q6",
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 30,
+        "understanding": 50,
+        "application": 20,
+        "analysis": 0,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 3,
+        "analysis": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Prescribed Books",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in the session 'A Truly Beautiful Mind'.",
+        "Read the instructions for each section carefully before answering."
+      ],
+      "sections": [
+        {
+          "id": "section-prescribed-books",
+          "title": "Prescribed Books",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "curriculum"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "What was Einstein's profession before he became famous?",
+          "options": [
+            "A. Professor at a University",
+            "B. Patent Clerk",
+            "C. Doctor",
+            "D. Musician"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Einstein's early life and curiosity"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Early Career"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Factual recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Einstein worked as a patent clerk in Bern."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following best describes why Einstein is considered to have a 'truly beautiful mind'?",
+          "options": [
+            "A. Because he invented the atomic bomb",
+            "B. Because he was a great musician only",
+            "C. Because of his humanitarian values and kindness",
+            "D. Because he was the richest scientist"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Humanitarian values and pacifism"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Character Analysis"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: The core theme is his character and commitment to peace."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "In the context of the chapter, what does the word 'eccentric' mean?",
+          "options": [
+            "A. Very intelligent and fast",
+            "B. Unconventional or strange in behavior",
+            "C. Lazy and uninterested",
+            "D. Popular and friendly"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Vocabulary: Eccentric and Humanitarian"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Vocabulary in Context"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Contextual understanding",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Discuss vocabulary like 'genius', 'eccentric'."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Name one invention Einstein made as a child.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One word or short phrase",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Einstein's early life and curiosity"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Childhood Inventions"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Factual recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Mention the compass or electric pencil sharpener."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Why did Einstein refuse to work on the atomic bomb?",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Humanitarian values and pacifism"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Moral Character"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: He believed in peace and wanted to prevent destruction."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Describe two qualities of Einstein that make his mind 'beautiful'. Give one example from the text for each.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Two points with examples",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Humanitarian values and pacifism"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Character Traits"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application of text evidence",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Discuss traits like 'Kind', 'Eccentric', 'Peaceful'."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Explain why Einstein struggled in school. How did this relate to his curiosity?",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Two points with explanation",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Einstein's early life and curiosity"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "School Struggles"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual understanding",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: He struggled with rigid schooling but showed early curiosity."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "B. Patent Clerk",
+            "explanation": "The text explicitly states Einstein worked as a patent clerk before becoming famous.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "C. Because of his humanitarian values and kindness",
+            "explanation": "The chapter emphasizes that his beauty lies in his character, peace advocacy, and humanity.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "B. Unconventional or strange in behavior",
+            "explanation": "In the context of Einstein, 'eccentric' refers to his unconventional personality and behavior.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "The compass (or the electric pencil sharpener)",
+            "explanation": "Einstein was amazed by the compass at age 5, showing his early curiosity.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "He believed in peace and wanted to prevent the destruction of human life.",
+            "explanation": "Einstein was a pacifist who opposed the misuse of science for war.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "Example Answer: 1. Humble - He downplayed his own achievements. 2. Peace-loving - He advocated for peace and refused to work on the atomic bomb.",
+            "explanation": "Students must identify two traits and provide textual evidence for each to earn full marks.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "Example Answer: He struggled because he did not like rigid schooling and strict obedience. However, this rigidity suppressed his natural curiosity, which was evident in his constant questioning of the world.",
+            "explanation": "The answer should link his struggle with school rules to his innate curiosity and unconventional thinking.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (C)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct answer (Compass or Electric Pencil Sharpener)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for either of the two correct inventions mentioned in the text."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mentioned belief in peace/prevention of destruction",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if the student mentions his pacifist nature or concern for humanity."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "First valid point with example",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point with example",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for each trait identified and correctly supported by an example from the text."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Mentioned struggle with rigid schooling/rules",
+                "marks": 1
+              },
+              {
+                "criterion": "Connected it to his curiosity/questioning nature",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for identifying the cause (rigid rules) and the effect (suppressed curiosity)."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "First valid point with example",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point with example",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "1. Humble: He downplayed his achievements. 2. Peace-loving: He refused to work on the atomic bomb."
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "Identified struggle with rigid schooling",
+                "marks": 1
+              },
+              {
+                "criterion": "Explained the link to curiosity",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "He did not like strict obedience in school, which made him feel out of place. However, this environment could not stop his natural curiosity and questioning nature."
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point with example",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point with example",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "1. Humble: He downplayed his achievements. 2. Peace-loving: He refused to work on the atomic bomb."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Identified struggle with rigid schooling",
+                "marks": 1
+              },
+              {
+                "criterion": "Explained the link to curiosity",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "He did not like strict obedience in school, which made him feel out of place. However, this environment could not stop his natural curiosity and questioning nature."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea in short answer questions.",
+        "For MCQs, only the correct option is accepted."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Accept any variation of the sample answers that conveys the same meaning and uses text evidence correctly."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers regarding Einstein's character traits."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of Einstein's early life, humanitarian values, and vocabulary from 'A Truly Beautiful Mind'."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from factual recall (MCQs) to application and analysis (Short Answers)."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Requested questions: 7",
+          "Generated questions: 7"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Requested marks: 9",
+          "Generated marks: 9"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Prescribed Books: 7 question(s), 9 mark(s)"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Answer key items: 7",
+          "Marking scheme items: 7",
+          "Rubric-linked questions: 4"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

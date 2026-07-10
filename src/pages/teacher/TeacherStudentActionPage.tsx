@@ -19,7 +19,7 @@ interface SubmissionItem {
   title: string;
   sessionId?: string;
   sessionTitle?: string;
-  status: "uploaded" | "not_uploaded" | "reviewed";
+  status: "submitted" | "not_uploaded" | "reviewed";
   uploadedAt?: string;
   source: "student_upload" | "teacher_upload";
   fileName?: string;
@@ -72,7 +72,8 @@ function getSession() {
 
 function formatStatus(status: SubmissionItem["status"]) {
   if (status === "not_uploaded") return "Not Uploaded";
-  return "Uploaded";
+  if (status === "reviewed") return "Reviewed";
+  return "Submitted";
 }
 
 function statusClass(status: SubmissionItem["status"]) {

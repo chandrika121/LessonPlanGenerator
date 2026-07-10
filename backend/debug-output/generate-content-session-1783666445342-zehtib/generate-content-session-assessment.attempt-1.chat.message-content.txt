@@ -1,0 +1,688 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Students will be able to summarize the early life of Albert Einstein.",
+        "Students will identify and define key vocabulary words related to the text.",
+        "Students will analyze Einstein's character traits and their impact on his success.",
+        "Students will distinguish between factual events and the author's interpretation."
+      ],
+      "assessedConcepts": [
+        "Biographical Narrative",
+        "Einstein's Early Life Struggles",
+        "The Compass Mystery",
+        "Humanitarian Values",
+        "Vocabulary: Eccentric, Genius, Patent Office"
+      ],
+      "conceptCoveragePriorities": [
+        "Einstein's early life struggles and how they shaped his character",
+        "The significance of the compass in sparking his curiosity",
+        "Distinction between Einstein's 'eccentric' behavior and his brilliance"
+      ],
+      "misconceptionTargets": [
+        "Einstein was a slow learner who failed everything.",
+        "Einstein was always successful from the start."
+      ],
+      "competencyFocus": [
+        "Understanding",
+        "Application"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-prescribed-books",
+          "title": "Prescribed Books",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Assessment of 'A Truly Beautiful Mind' focusing on biography, character traits, and vocabulary."
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Einstein's Early Life Struggles",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "The Compass Mystery",
+          "questionRefs": [
+            "q3"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        },
+        {
+          "concept": "Humanitarian Values",
+          "questionRefs": [
+            "q4",
+            "q5"
+          ],
+          "competency": "Understanding",
+          "importance": "high"
+        },
+        {
+          "concept": "Vocabulary & Character Traits",
+          "questionRefs": [
+            "q6",
+            "q7"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Students will be able to summarize the early life of Albert Einstein.",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Students will identify and define key vocabulary words related to the text.",
+          "questionRefs": [
+            "q3",
+            "q6"
+          ]
+        },
+        {
+          "outcome": "Students will analyze Einstein's character traits and their impact on his success.",
+          "questionRefs": [
+            "q4",
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Students will distinguish between factual events and the author's interpretation.",
+          "questionRefs": [
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 30,
+        "understanding": 40,
+        "application": 20,
+        "analysis": 10,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 3,
+        "analysis": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Prescribed Books",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Read the chapter 'A Truly Beautiful Mind' carefully.",
+        "Answer all questions based only on the text provided in this session.",
+        "Write your answers clearly and concisely."
+      ],
+      "sections": [
+        {
+          "id": "section-prescribed-books",
+          "title": "Prescribed Books",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "curriculum"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "What object sparked Albert Einstein's curiosity about the universe during his childhood?",
+          "options": [
+            "A. A telescope",
+            "B. A compass",
+            "C. A microscope",
+            "D. A book"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "The Compass Mystery"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Early Life"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Factual recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: 'His interest in science began with simple tools like a compass.'"
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Before becoming famous, where did Einstein work?",
+          "options": [
+            "A. A university laboratory",
+            "B. A patent office",
+            "C. A school as a teacher",
+            "D. A government agency"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Einstein's Early Life Struggles"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Career Beginnings"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Factual recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: 'He worked at a patent office before becoming famous.'"
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "The author describes Einstein as 'eccentric'. What does this word mean in the context of the text?",
+          "options": [
+            "A. He was very poor and uneducated.",
+            "B. He behaved differently from others and had a unique way of thinking.",
+            "C. He was rude to his teachers and classmates.",
+            "D. He was afraid of science."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Vocabulary & Character Traits"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Character Analysis"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: 'The text portrays him as an eccentric but brilliant individual.'"
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Why was Einstein not considered a 'slow learner' despite his struggles in school?",
+          "marks": 1,
+          "expectedLength": "One sentence.",
+          "learningOutcomeRefs": [
+            "LO4"
+          ],
+          "conceptRefs": [
+            "Einstein's Early Life Struggles"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Misconceptions"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Analysis of character",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: 'He was not a slow learner in the traditional sense but rather a deep thinker.'"
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "What does the title 'A Truly Beautiful Mind' suggest about Einstein?",
+          "marks": 1,
+          "expectedLength": "One sentence.",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Humanitarian Values"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Theme Analysis"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Interpretation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: 'The author emphasizes his humanitarian values alongside his scientific genius.'"
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "How did Einstein's time at the patent office contribute to his scientific success?",
+          "marks": 2,
+          "expectedLength": "Two points.",
+          "learningOutcomeRefs": [
+            "LO1"
+          ],
+          "conceptRefs": [
+            "Einstein's Early Life Struggles"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Career Development"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Cause and effect reasoning",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: 'This job... provided him the quiet time to develop his theories on relativity.'"
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-prescribed-books",
+          "sectionTitle": "Prescribed Books",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Give two examples from the text that show Einstein's humanitarian values.",
+          "marks": 2,
+          "expectedLength": "Two points with brief explanation.",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Humanitarian Values"
+          ],
+          "topicCoverage": [
+            "A Truly Beautiful Mind"
+          ],
+          "subtopicCoverage": [
+            "Character Traits"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Evidence-based analysis",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: 'The text also touches upon his personality... contrasts this with his profound kindness and concern for humanity.'"
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "B. A compass",
+            "explanation": "The text explicitly states that his interest in science began with a compass given by his father.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "B. A patent office",
+            "explanation": "The chapter mentions he worked at a patent office in Bern before becoming famous.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "B. He behaved differently from others and had a unique way of thinking.",
+            "explanation": "'Eccentric' in the text refers to his unconventional behavior and deep, unique thought process, not rudeness or poverty.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "He was not a slow learner but a deep thinker who struggled with rigid school systems.",
+            "explanation": "The text clarifies that his 'slowness' was actually a different way of thinking, not a lack of intelligence.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": "It suggests that Einstein had a brilliant mind combined with kindness, humanitarian values, and moral courage.",
+            "explanation": "The title refers to both his intellect and his character/heart.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": [
+              "It provided him with quiet time to think and develop his theories.",
+              "The mundane nature of the job allowed him to observe the world without academic pressure."
+            ],
+            "explanation": "The text states the job gave him 'quiet time' to develop theories on relativity.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-prescribed-books",
+            "sectionTitle": "Prescribed Books",
+            "answer": [
+              "He was concerned for humanity and spoke out against war.",
+              "He supported Jewish refugees fleeing persecution."
+            ],
+            "explanation": "The text highlights his humanitarian side, including his support for refugees and opposition to war.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mention that he was a deep thinker or had a unique way of thinking",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if the student clarifies that his 'slowness' was actually depth of thought."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Mention both intellect/genius and kindness/humanitarian values",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks if the student connects the title to character as well as intelligence."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Mention 'quiet time' or opportunity to think",
+                "marks": 1
+              },
+              {
+                "criterion": "Mention development of theories or lack of academic pressure",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award one mark for each valid point regarding the utility of the patent office job."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "First valid example (e.g., opposition to war)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid example (e.g., support for refugees)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award one mark for each distinct humanitarian value mentioned with brief context."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point regarding the utility of the job",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point regarding the development of theories",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "It gave him quiet time to think and allowed him to develop his theories on relativity without academic pressure."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid example of humanitarianism (e.g., peace)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid example of humanitarianism (e.g., refugees)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "He spoke out against war and supported Jewish refugees fleeing persecution."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea in short answer questions.",
+        "For MCQs, only the correct option is accepted."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Accept any variation of the sample answers that conveys the same meaning."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers regarding Einstein's character traits."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of 'A Truly Beautiful Mind' focusing on biography, character, and vocabulary."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from factual recall (MCQs) to understanding and application (Short Answers)."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint: 3 MCQs, 2 Very Short Answers, 2 Short Answers."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Total marks (9) match the requested total (9)."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to the valid section 'section-prescribed-books'."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

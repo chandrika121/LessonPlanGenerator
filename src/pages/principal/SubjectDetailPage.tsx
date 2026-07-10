@@ -11,6 +11,56 @@ function formatDate(value: string | undefined | null) {
   return Number.isNaN(d.getTime()) ? "N/A" : d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
+function formatDateTime(value: string | undefined | null) {
+  if (!value) return "N/A";
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? "N/A" : d.toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+function dataUrlToBlob(dataUrl: string) {
+  const [prefix, base64] = dataUrl.split(",");
+  const mimeMatch = prefix.match(/^data:([^;]+)/i);
+  const mimeType = mimeMatch ? mimeMatch[1] : "application/octet-stream";
+  const binary = window.atob(base64 || "");
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new Blob([bytes], { type: mimeType });
+}
+
+function downloadFile(dataUrl: string, fileName?: string) {
+  const blob = dataUrlToBlob(dataUrl);
+  const blobUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = fileName || "download";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+}
+
+async function openFile(dataUrl: string, fileName?: string) {
+  try {
+    const mimeMatch = dataUrl.match(/^data:([^;]+)/i);
+    const mimeType = mimeMatch ? mimeMatch[1].toLowerCase() : "";
+
+    if (mimeType.includes("pdf")) {
+      const blob = dataUrlToBlob(dataUrl);
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, "_blank", "noopener,noreferrer");
+      window.setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+      return;
+    }
+
+    downloadFile(dataUrl, fileName);
+  } catch (error) {
+    console.error("Failed to open file:", error);
+    window.alert("Unable to open this file. It may no longer be available.");
+  }
+}
+
 export function SubjectDetailPage() {
   const { className: classKey, subjectKey } = useParams<{ className: string; subjectKey: string }>();
   const navigate = useNavigate();
@@ -110,8 +160,51 @@ export function SubjectDetailPage() {
                     <div className="text-sm font-bold text-slate-900">{student.name}</div>
                     <div className="mt-1 text-xs text-slate-500">{student.rollNo || "No roll"}  {student.email || "No email"}</div>
                   </td>
-                  <td className="bg-slate-50 px-4 py-3 text-sm text-slate-700">{student.homeworkStatus}</td>
-                  <td className="bg-slate-50 px-4 py-3 text-sm text-slate-700">{student.assessmentStatus}</td>
+                  <td className="bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    <div className="font-semibold text-slate-900">{student.homeworkStatus}</div>
+                    {student.latestHomeworkSubmission ? (
+                      <div className="mt-1 space-y-1 text-xs text-slate-500">
+                        <div>{formatDateTime(student.latestHomeworkSubmission.submittedDate)}</div>
+                        <div>{student.latestHomeworkSubmission.fileName || student.latestHomeworkSubmission.title || "Submission file"}</div>
+                        {student.latestHomeworkSubmission.fileDataUrl ? (
+                          <button
+                            type="button"
+                            onClick={() => void openFile(
+                              student.latestHomeworkSubmission!.fileDataUrl!,
+                              student.latestHomeworkSubmission!.fileName || student.latestHomeworkSubmission!.title || "submission",
+                            )}
+                            className="text-left font-semibold text-[#36ADAA] hover:underline"
+                          >
+                            View file
+                          </button>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </td>
+                  <td className="bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                    <div className="font-semibold text-slate-900">{student.assessmentStatus}</div>
+                    {student.latestAssessmentSubmission ? (
+                      <div className="mt-1 space-y-1 text-xs text-slate-500">
+                        <div>{formatDateTime(student.latestAssessmentSubmission.submittedDate)}</div>
+                        <div>{student.latestAssessmentSubmission.fileName || student.latestAssessmentSubmission.title || "Submission file"}</div>
+                        {student.latestAssessmentSubmission.marks != null ? (
+                          <div className="font-semibold text-slate-700">Marks: {student.latestAssessmentSubmission.marks}</div>
+                        ) : null}
+                        {student.latestAssessmentSubmission.fileDataUrl ? (
+                          <button
+                            type="button"
+                            onClick={() => void openFile(
+                              student.latestAssessmentSubmission!.fileDataUrl!,
+                              student.latestAssessmentSubmission!.fileName || student.latestAssessmentSubmission!.title || "submission",
+                            )}
+                            className="text-left font-semibold text-[#36ADAA] hover:underline"
+                          >
+                            View file
+                          </button>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </td>
                   <td className="bg-slate-50 px-4 py-3 text-sm font-bold text-slate-900">{student.submissionCount}</td>
                   <td className="bg-slate-50 px-4 py-3 text-sm text-slate-700">{student.evaluationResult}</td>
                   <td className="rounded-r-2xl bg-slate-50 px-4 py-3 text-sm text-slate-700">{student.submissionLabel || "No submission yet"}</td>

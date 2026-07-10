@@ -188,6 +188,22 @@ export interface PrincipalSubjectDetail extends Omit<PrincipalSubjectSummary, "a
     overallProgress: number;
     sessionId?: string;
     sessionIds?: string[];
+    latestHomeworkSubmission?: {
+      status: string;
+      submittedDate?: string;
+      fileName?: string;
+      title?: string;
+      fileDataUrl?: string;
+      marks?: number | null;
+    } | null;
+    latestAssessmentSubmission?: {
+      status: string;
+      submittedDate?: string;
+      fileName?: string;
+      title?: string;
+      fileDataUrl?: string;
+      marks?: number | null;
+    } | null;
   }[];
   curriculum: {
     units: string[];

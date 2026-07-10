@@ -1,4 +1,4 @@
-import { BookOpenText, CalendarClock, ListTodo, Megaphone, Sparkles } from "lucide-react";
+import { BookOpenText, CalendarClock, ListTodo, Megaphone } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { StatCard } from "../../components/StatCard";
 import { AnnouncementList } from "../../components/AnnouncementList";
@@ -33,12 +33,10 @@ export function TeacherDashboard() {
   const announcements = readAnnouncements().slice(0, 3);
   const summary = useMemo(() => {
     const classCount = classes.length;
-    const generatedLessonPlans = classes.reduce((sum, item) => sum + Number(item.lessonPlans || 0), 0);
     const pendingSessions = classes.reduce((sum, item) => sum + Number(item.remainingSessions || 0), 0);
     const todaySessions = classes.reduce((sum, item) => sum + Number(item.sessionsGenerated || 0), 0);
     return {
       classCount,
-      generatedLessonPlans,
       pendingSessions,
       todaySessions,
     };
@@ -54,7 +52,6 @@ export function TeacherDashboard() {
           icon={BookOpenText}
         />
         <StatCard label="Today's Sessions" value={String(summary.todaySessions)} detail="Generated sessions across your assigned classes" icon={CalendarClock} />
-        <StatCard label="Generated Lesson Plans" value={String(summary.generatedLessonPlans)} detail="Saved lesson packs across your workspaces" icon={Sparkles} />
         <StatCard label="Pending Sessions" value={String(summary.pendingSessions)} detail="Remaining sessions pending generation" icon={ListTodo} />
       </div>
 

@@ -23,7 +23,39 @@ function getSession() {
 function formatText(value: unknown) {
   if (typeof value === "string") return value;
   if (value == null) return "";
+  if (typeof value === "object" && !Array.isArray(value)) {
+    const record = value as Record<string, unknown>;
+    const text = typeof record.text === "string" ? record.text.trim() : "";
+    const latex = typeof record.displayLatex === "string"
+      ? record.displayLatex.trim()
+      : typeof record.latex === "string"
+        ? record.latex.trim()
+        : "";
+    if (text && latex) return text.includes(latex) ? text : `${text} ${latex}`.trim();
+    if (text || latex) return text || latex;
+    return Object.values(record).map((item) => formatText(item)).filter(Boolean).join(" ");
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => formatText(item)).filter(Boolean).join("; ");
+  }
   return String(value);
+}
+
+function formatSessionLabel(sessionNumber: unknown) {
+  const parsed = Number(sessionNumber || 0);
+  return Number.isFinite(parsed) && parsed > 0 ? `Session ${parsed}` : "Session";
+}
+
+function normalizeSubjectKey(value: unknown) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\b(theory|practical|practicals|lab|laboratory|pedagogy|lessonplanner|lesson planner)\b/g, " ")
+    .replace(/[^a-z0-9]/g, "");
+}
+
+function getSubjectDisplayName(note: Pick<PublishedStudentArtifact, "subject" | "subjectName" | "subjectId">) {
+  return note.subjectName || note.subject || note.subjectId || "General";
 }
 
 function asArray<T = any>(value: unknown): T[] {
@@ -75,9 +107,11 @@ function SubjectNotesPage() {
 
   const subjectNotes = useMemo(() => {
     return backendNotes
-      .filter((note) => note.subject === subject)
+      .filter((note) => normalizeSubjectKey(getSubjectDisplayName(note)) === normalizeSubjectKey(subject))
       .sort((a, b) => a.sessionNumber - b.sessionNumber);
   }, [backendNotes, subject]);
+
+  const subjectTitle = subjectNotes[0] ? getSubjectDisplayName(subjectNotes[0]) : subject;
 
   const handleBack = () => {
     navigate("/student/study-materials");
@@ -104,7 +138,7 @@ function SubjectNotesPage() {
           </div>
           <div className="flex-1">
             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#36ADAA]">Subject Notes</p>
-            <h2 className="font-display text-2xl font-extrabold text-slate-900">{subject}</h2>
+            <h2 className="font-display text-2xl font-extrabold text-slate-900">{subjectTitle}</h2>
             <p className="mt-1 text-sm text-slate-500">
               {subjectNotes.length} {subjectNotes.length === 1 ? "note" : "notes"} · {session?.classId || "Your class"}{session?.section ? ` · ${session.section}` : ""}
             </p>
@@ -116,7 +150,7 @@ function SubjectNotesPage() {
       {subjectNotes.length === 0 ? (
         <div className="rounded-[30px] border border-white/80 bg-white/90 p-8 text-center shadow-[0_24px_60px_rgba(15,23,42,0.06)]">
           <BookMarked className="mx-auto h-10 w-10 text-slate-300" />
-          <p className="mt-4 text-lg font-bold text-slate-800">No notes for {subject}</p>
+          <p className="mt-4 text-lg font-bold text-slate-800">No notes for {subjectTitle}</p>
           <p className="mt-2 text-sm text-slate-500">Notes for this subject will appear here once published by your teacher.</p>
         </div>
       ) : (
@@ -142,13 +176,13 @@ function SubjectNotesPage() {
                 header={
                   <>
                     <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#36ADAA]">
-                      Session {note.sessionNumber}
+                      {formatSessionLabel(note.sessionNumber)}
                     </p>
                     <h3 className="mt-1 font-display text-xl font-extrabold text-slate-900">
                       {note.sessionTitle}
                     </h3>
                     <p className="mt-1 text-xs text-slate-500">
-                      Published {new Date(note.publishedAt).toLocaleString()}
+                      {formatSessionLabel(note.sessionNumber)} · Published {new Date(note.publishedAt).toLocaleString()}
                     </p>
                   </>
                 }
