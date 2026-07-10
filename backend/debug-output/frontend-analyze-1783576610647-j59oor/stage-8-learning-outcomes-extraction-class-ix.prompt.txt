@@ -1,0 +1,292 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8: Learning Outcomes Extraction - Class IX
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class IX",
+  "units": [
+    {
+      "unit_id": "class-9-mathematics-u1",
+      "unit_name": "Number System",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Number System"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u2",
+      "unit_name": "Algebra",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Algebra"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u3",
+      "unit_name": "Coordinate Geometry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordinate Geometry"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u4",
+      "unit_name": "Geometry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Geometry"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u5",
+      "unit_name": "Mensuration",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Mensuration"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u6",
+      "unit_name": "Statistics and Probability",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u7",
+      "unit_name": "Mensuration: Surface Area and Volume",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u8",
+      "unit_name": "Mensuration: Surface Area and Volume (Continued)",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Cuboids, Cylinders, Cones, Pyramids, Spheres"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-9-mathematics-u9",
+      "unit_name": "UNIT VI: STATISTICS AND PROBABILITY (Continued)",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability Concepts"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-9-mathematics-u1",
+      "unit_name": "Number System",
+      "chapter_id": "C1",
+      "chapter_name": "Number System"
+    },
+    {
+      "unit_id": "class-9-mathematics-u2",
+      "unit_name": "Algebra",
+      "chapter_id": "C1",
+      "chapter_name": "Algebra"
+    },
+    {
+      "unit_id": "class-9-mathematics-u3",
+      "unit_name": "Coordinate Geometry",
+      "chapter_id": "C1",
+      "chapter_name": "Coordinate Geometry"
+    },
+    {
+      "unit_id": "class-9-mathematics-u4",
+      "unit_name": "Geometry",
+      "chapter_id": "C1",
+      "chapter_name": "Geometry"
+    },
+    {
+      "unit_id": "class-9-mathematics-u5",
+      "unit_name": "Mensuration",
+      "chapter_id": "C1",
+      "chapter_name": "Mensuration"
+    },
+    {
+      "unit_id": "class-9-mathematics-u6",
+      "unit_name": "Statistics and Probability",
+      "chapter_id": "C1",
+      "chapter_name": "Statistics and Probability"
+    },
+    {
+      "unit_id": "class-9-mathematics-u7",
+      "unit_name": "Mensuration: Surface Area and Volume",
+      "chapter_id": "C1",
+      "chapter_name": "Area of shapes, Heron's formula, Squaring a rectangle, Circle area, Brahmagupta's formula"
+    },
+    {
+      "unit_id": "class-9-mathematics-u8",
+      "unit_name": "Mensuration: Surface Area and Volume (Continued)",
+      "chapter_id": "C1",
+      "chapter_name": "Cuboids, Cylinders, Cones, Pyramids, Spheres"
+    },
+    {
+      "unit_id": "class-9-mathematics-u9",
+      "unit_name": "UNIT VI: STATISTICS AND PROBABILITY (Continued)",
+      "chapter_id": "C1",
+      "chapter_name": "Statistics and Probability Concepts"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "CG-1",
+      "title": "Understands numbers and number sets",
+      "description": "Develops understanding of numbers, including the set of real numbers and its properties.",
+      "competencies": [
+        "C-1.1: Develops understanding of numbers, including the set of real numbers and its properties."
+      ],
+      "unit_name": "Number System",
+      "chapter_name": "Number System"
+    },
+    {
+      "code": "CG-2",
+      "title": "Builds deductive and inductive logic for proofs",
+      "description": "Understands powers (radical powers) and exponents.",
+      "competencies": [
+        "C-2.1: Understanding of powers (radical powers) and exponents."
+      ],
+      "unit_name": "Number System",
+      "chapter_name": "Number System"
+    },
+    {
+      "code": "CG-3",
+      "title": "Discovers algebraic identities and models real-life situations",
+      "description": "States and proves remainder theorem, factor theorem, division algorithm; models contextualised problems using equations.",
+      "competencies": [
+        "C-3.1: States and proves remainder theorem, factor theorem, and division algorithm.",
+        "C-3.2: Models and solves contextualised problems using equations (for example, simultaneous linear equations in two variables or single polynomial equations), and draws conclusions about a situation being modelled."
+      ],
+      "unit_name": "Algebra",
+      "chapter_name": "Introduction to Polynomials"
+    },
+    {
+      "code": "CG-4",
+      "title": "Analyses characteristics of 2D geometric shapes and develops arguments",
+      "description": "Describes relationships including congruence; proves theorems using Euclid's axioms for triangles, quadrilaterals, circles.",
+      "competencies": [
+        "C-4.1: Describes relationships including congruence of two-dimensional geometric shapes (such as lines, angles, triangles) to make and test conjectures and solve problems.",
+        "C-4.2: Proves theorems using Euclid's axioms and postulates for triangles and quadrilaterals, and applies them to solve geometric problems."
+      ],
+      "unit_name": "Geometry",
+      "chapter_name": "Introduction to Euclid's Geometry"
+    },
+    {
+      "code": "CG-5",
+      "title": "Derives and uses formulae for areas, surface area, and volumes",
+      "description": "Visualises Heron's formula; visualises mathematical thinking to discover formulae for solid objects.",
+      "competencies": [
+        "C-5.1: Visualises, represents, and calculates the area of a triangle using Heron's formula and its generalisation to cyclic quadrilaterals given by Brahmagupta's formula."
+      ],
+      "unit_name": "Mensuration",
+      "chapter_name": "Area of shapes"
+    },
+    {
+      "code": "CG-6",
+      "title": "Analyses and interprets data using statistical concepts and probability",
+      "description": "Applies measures of central tendencies; applies concepts from probability to solve problems.",
+      "competencies": [
+        "C-6.1: Applies measures of central tendencies, such as mean, median, and mode."
+      ],
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Statistics"
+    },
+    {
+      "code": "CG-7",
+      "title": "Perceives the axiomatic structure of Mathematics",
+      "description": "Proves mathematical statements; visualises geometric proofs for algebraic identities.",
+      "competencies": [
+        "C-7.1: Proves mathematical statements and carries out geometric constructions using stated assumptions, axioms, postulates, definitions, and mathematics vocabulary."
+      ],
+      "unit_name": "Geometry",
+      "chapter_name": "Introduction to Euclid's Geometry"
+    },
+    {
+      "code": "CG-8",
+      "title": "Builds skills in visualisation, optimisation, representation, and modelling",
+      "description": "Models daily-life phenomena; uses 2D representations of 3D objects.",
+      "competencies": [
+        "C-8.1: Models daily-life phenomena and uses representations, such as graphs, tables, and equations to draw conclusions."
+      ],
+      "unit_name": "Algebra",
+      "chapter_name": "Introduction to Polynomials"
+    },
+    {
+      "code": "CG-9",
+      "title": "Develops computational thinking",
+      "description": "Decomposes problems; describes sequences of instructions.",
+      "competencies": [
+        "C-9.1: Decomposes a problem into sub-problems."
+      ],
+      "unit_name": "Number System",
+      "chapter_name": "Number System"
+    },
+    {
+      "code": "CG-10",
+      "title": "Knows and appreciates contributions of mathematicians from India and around the world",
+      "description": "Recognises important contributions made by mathematicians in the field.",
+      "competencies": [
+        "C-10.1: Recognises the important contributions made by mathematicians (Indian and others) in the field of Mathematics."
+      ],
+      "unit_name": "Geometry",
+      "chapter_name": "Introduction to Euclid's Geometry"
+    },
+    {
+      "code": "CG-11",
+      "title": "Explores connections of Mathematics with other subjects",
+      "description": "Applies mathematical knowledge and tools to analyse problems in multiple subjects.",
+      "competencies": [
+        "C-11.1: Applies mathematical knowledge and tools to analyse problems or situations in multiple subjects across Science, Social Science, Visual Arts, Music, Vocational Education, and Sports."
+      ],
+      "unit_name": "Algebra",
+      "chapter_name": "Sequences and Progressions"
+    }
+  ]
+}

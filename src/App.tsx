@@ -423,6 +423,9 @@ export default function App() {
     includeTeacherNotes: true,
   });
   const [sessionAllocationDraft, setSessionAllocationDraft] = useState<ChapterSessionPlan[]>([]);
+  const [coursePlanningDraftDirty, setCoursePlanningDraftDirty] = useState<boolean>(false);
+  const [sessionPlanningDraftDirty, setSessionPlanningDraftDirty] = useState<boolean>(false);
+  const hydratedPlanningWorkspaceIdRef = useRef<string>("");
 
   // Step 2 State: Divide Terms
   const [termsList, setTermsList] = useState<TermRow[]>([]);
@@ -7533,27 +7536,45 @@ export default function App() {
     };
   };
 
-  const syncWorkspaceIntoCoursePlanState = (workspace: PlanningWorkspace | null) => {
+  const syncWorkspaceIntoCoursePlanState = (
+    workspace: PlanningWorkspace | null,
+    options?: { force?: boolean }
+  ) => {
     if (!workspace) return;
 
-    setAcademicConfigDraft(workspace.academicConfig || {});
-    if (workspace.termPlan?.recommendedTermCount) {
-      setPreferredTermCount(Number(workspace.termPlan.recommendedTermCount) || 3);
+    const workspaceId = workspace._id || "";
+    const isNewWorkspace = workspaceId !== hydratedPlanningWorkspaceIdRef.current;
+    const shouldForceSync = Boolean(options?.force || isNewWorkspace);
+
+    if (shouldForceSync || !coursePlanningDraftDirty) {
+      setAcademicConfigDraft(workspace.academicConfig || {});
+      if (workspace.termPlan?.recommendedTermCount) {
+        setPreferredTermCount(Number(workspace.termPlan.recommendedTermCount) || 3);
+      }
+
+      const sourceAllocations =
+        workspace.termPlan?.allocations?.length
+          ? workspace.termPlan.allocations
+          : workspace.termPlan?.recommendations || [];
+      setCoursePlanDraft(sourceAllocations);
+      syncTermRowsFromAllocations(sourceAllocations);
+      setCoursePlanningDraftDirty(false);
     }
 
-    const sourceAllocations =
-      workspace.termPlan?.allocations?.length
-        ? workspace.termPlan.allocations
-        : workspace.termPlan?.recommendations || [];
-    setCoursePlanDraft(sourceAllocations);
-    setTeachingStrategyDraft(workspace.teachingStrategy || {});
-    setSessionPlanningDefaultsDraft(getSessionPlanningDefaultsSeed(workspace));
-    setSessionAllocationDraft(
-      workspace.sessionAllocation?.allocations?.length
-        ? workspace.sessionAllocation.allocations
-        : workspace.sessionAllocation?.recommendations || []
-    );
-    syncTermRowsFromAllocations(sourceAllocations);
+    if (shouldForceSync || !sessionPlanningDraftDirty) {
+      setTeachingStrategyDraft(workspace.teachingStrategy || {});
+      setSessionPlanningDefaultsDraft(getSessionPlanningDefaultsSeed(workspace));
+      setSessionAllocationDraft(
+        workspace.sessionAllocation?.allocations?.length
+          ? workspace.sessionAllocation.allocations
+          : workspace.sessionAllocation?.recommendations || []
+      );
+      setSessionPlanningDraftDirty(false);
+    }
+
+    if (workspaceId) {
+      hydratedPlanningWorkspaceIdRef.current = workspaceId;
+    }
   };
 
   type WorkspaceViewMode = "planning" | "content_generation" | "full";
@@ -9179,18 +9200,31 @@ export default function App() {
         setActiveWorkspace(workspace);
         localStorage.setItem(LAST_WORKSPACE_ID_KEY, workspace._id);
       }
-      setGeneratedSessionsByKey((prev) => ({
-        ...prev,
-        [sessionKey]: {
-          ...details,
-          ...outlineItem,
-          id: details.id || outlineItem.id,
-          sessionKey: details.sessionKey || sessionKey,
-          title: details.title || outlineItem.title,
-          duration: details.duration || outlineItem.duration,
-          sessionNumber: outlineItem.sessionNumber,
-        },
-      }));
+      setGeneratedSessionsByKey((prev) => {
+        const existingSession =
+          prev[sessionKey] ||
+          findGeneratedSessionForOutline(prev, {
+            id: outlineItem.id,
+            sessionNumber: sessionNum,
+            chapterName: outlineItem.chapterName,
+            title: outlineItem.title,
+          }) ||
+          undefined;
+
+        return {
+          ...prev,
+          [sessionKey]: {
+            ...existingSession,
+            ...details,
+            ...outlineItem,
+            id: details.id || existingSession?.id || outlineItem.id,
+            sessionKey: details.sessionKey || existingSession?.sessionKey || sessionKey,
+            title: details.title || existingSession?.title || outlineItem.title,
+            duration: details.duration || existingSession?.duration || outlineItem.duration,
+            sessionNumber: outlineItem.sessionNumber,
+          },
+        };
+      });
       setActiveSessionNumber(sessionNum);
     } catch (err: any) {
       console.error(err);
