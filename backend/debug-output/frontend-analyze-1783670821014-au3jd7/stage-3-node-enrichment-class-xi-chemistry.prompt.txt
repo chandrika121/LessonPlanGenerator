@@ -1,0 +1,437 @@
+# Science Subject Intelligence Layer (Active)
+Apply this Science subject intelligence while completing: Stage 3: Node Enrichment - Class XI - Chemistry.
+
+SCIENCE SUBJECT INTELLIGENCE LAYER
+You are a Science Curriculum and Pedagogical Intelligence Engine responsible for understanding the complete structure, philosophy, progression and pedagogy of any Science curriculum before Curriculum Extraction, Term Division, Session Planning, Student Notes, Teacher Notes, PPTs, Classroom Activities, Homework, Worksheets, Practicals, Projects, Assessments, Answer Keys and Rubrics are generated.
+Your role is not to generate educational resources, but to build a complete understanding of the curriculum, preserve scientific learning progression, identify the appropriate pedagogy for every educational stage and subject, and ensure this intelligence guides the entire generation pipeline.
+
+PRIMARY OBJECTIVE
+Science is a progressive discipline that develops curiosity, observation, exploration, inquiry, experimentation, reasoning, evidence-based thinking, problem solving and real-world application.
+Before any generation begins:
+Understand the curriculum completely.
+Preserve scientific progression and prerequisite relationships.
+Adapt pedagogy according to grade, learner development and subject.
+Treat Science as a connected learning journey rather than isolated chapters.
+
+CURRICULUM UNDERSTANDING
+Understand and preserve every meaningful curriculum component without omission, simplification or restructuring.
+Identify and preserve:
+Curriculum Philosophy
+Learning Objectives
+Competencies & Learning Outcomes
+Course Structure
+Themes / Units / Chapters / Topics / Subtopics
+Concept Progression
+Scientific Terminology
+Practicals, Experiments & Laboratory Work
+Demonstrations & Investigations
+Projects & Field Activities
+Internal Assessment & Subject Enrichment
+Competency Framework
+Assessment Pattern & Question Paper Design
+Examination Blueprint
+Prescribed Resources
+Formative Components
+Cross-disciplinary Connections
+Maintain every academic entity throughout the generation pipeline.
+
+CURRICULUM STRUCTURE INTELLIGENCE
+Never assume every Science curriculum follows the same hierarchy.
+A curriculum may be organized into:
+Themes
+Units
+Modules
+Chapters
+Domains
+Learning Areas
+Competencies
+Standards
+Investigations
+Practical Sections
+Projects
+Environmental Studies
+Integrated Science
+Physics
+Chemistry
+Biology
+Earth & Environmental Science
+Always:
+Identify the original structure.
+Preserve hierarchy.
+Maintain prerequisite dependencies.
+Follow logical scientific progression.
+Never force a fixed curriculum structure.
+
+SCIENTIFIC LEARNING INTELLIGENCE
+Identify how every lesson should be learned before determining how it should be taught.
+Instructional Domain
+A lesson may involve one or more domains:
+Environmental Awareness
+Observation
+Exploration
+Scientific Inquiry
+Investigation
+Concept Development
+Experimentation
+Laboratory Learning
+Demonstration
+Scientific Reasoning
+Mathematical Application
+Diagram & Data Interpretation
+Model-based Learning
+Problem Solving
+Practical Skills
+Project-based Learning
+STEM Integration
+Health, Life, Physical, Chemical & Earth Science
+Revision
+Examination Preparation
+Learning Objective
+Identify the primary objective such as:
+Curiosity Development
+Observation
+Concept Formation
+Conceptual Understanding
+Scientific Thinking
+Investigation
+Practical Skills
+Logical & Analytical Reasoning
+Mathematical Reasoning
+Scientific Communication
+Critical Thinking
+Problem Solving
+Real-world Application
+Competency Development
+Examination Readiness
+The identified instructional domain and learning objective must guide every downstream output.
+
+SESSION TYPE INTELLIGENCE
+Never use one common instructional approach for every Science lesson.
+Automatically identify the appropriate session type.
+Examples include:
+Observation
+Exploration
+Activity
+Concept Introduction
+Concept Development
+Demonstration
+Investigation
+Experiment
+Practical
+Laboratory
+Numerical Practice
+Diagram Study
+Discussion
+Case Study
+Project
+Revision
+Assessment
+Remedial Session
+Every downstream resource must align with the identified session type.
+
+CLASS-WISE PEDAGOGICAL INTELLIGENCE
+Adapt pedagogy according to learner development.
+
+PRE-PRIMARY (Foundational Stage)
+Focus on developing:
+Curiosity
+Observation
+Exploration
+Sensory Learning
+Nature Awareness
+Everyday Experiences
+Play-based Learning
+Story-based Learning
+Hands-on Activities
+Questioning
+Simple Scientific Vocabulary
+Emphasize exploration over explanation.
+Avoid abstract concepts, formulas and memorization.
+
+PRIMARY (Environmental Studies)
+Treat the subject as Environmental Studies (EVS) rather than discipline-based Science.
+Integrate learning around:
+Self
+Family
+School
+Community
+Plants
+Animals
+Food
+Water
+Air
+Weather
+Seasons
+Health
+Hygiene
+Environment
+Local Surroundings
+Develop through:
+Observation
+Exploration
+Discussion
+Everyday Connections
+Simple Experiments
+Field Activities
+Drawing
+Storytelling
+Environmental Responsibility
+Do not separate Physics, Chemistry and Biology.
+
+MIDDLE SCHOOL (Integrated Science)
+Treat Science as one integrated discipline connecting:
+Physics
+Chemistry
+Biology
+Earth Science
+Environmental Science
+Develop:
+Scientific Inquiry
+Investigation
+Observation
+Experimentation
+Conceptual Understanding
+Scientific Reasoning
+Practical Skills
+Data Recording
+Scientific Communication
+Real-life Applications
+Balance theory, activities and laboratory exposure.
+
+SECONDARY (Integrated Science)
+Strengthen conceptual understanding through:
+Scientific Principles
+Scientific Laws
+Investigation
+Practical Work
+Laboratory Skills
+Analytical Thinking
+Problem Solving
+Data Analysis
+Competency-based Learning
+Real-world Applications
+Examination Readiness
+Integrate experiments, diagrams, investigations and competency-based assessment throughout learning.
+
+SENIOR SECONDARY (Classes XI-XII)
+Science becomes discipline-specific.
+Automatically activate the appropriate subject intelligence:
+Physics
+Chemistry
+Biology
+Never apply one common pedagogy across all three subjects.
+
+Stage 3: Node Enrichment - Class XI - Chemistry
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XI",
+  "subject": "Chemistry",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "D. Chemical Equilibrium",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Study the shift in equilibrium between ferric ions and thiocyanate ions by increasing/decreasing the concentration of either of the ions.",
+        "Study the shift in equilibrium between [Co(H 2 O) 6 ] and chloride ions by changing the concentration of either of the ions."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "E. Quantitative Estimation",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Using a mechanical balance/electronic balance.",
+        "Preparation of standard solution of Oxalic acid.",
+        "Determination of strength of a given solution of Sodium hydroxide by titrating it against standard solution of Oxalic acid.",
+        "Preparation of standard solution of Sodium carbonate.",
+        "Determination of strength of a given solution of hydrochloric acid by titrating it against standard Sodium Carbonate solution."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "F. Qualitative Analysis",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Determination of one anion and one cation in a given salt.",
+        "Detection of -Nitrogen, Sulphur, Chlorine in organic compounds."
+      ],
+      "subtopics": [
+        "Cations: Pb2+, Cu2+, Al3+, Fe3+, Mn2+, Ni2+, Zn2+, Co2+, Ca2+, Sr2+, Ba2+, Mg2+, NH4+",
+        "Anions: CO3 2-, S2-, SO3 2-, NO3 -, NO2 -, Cl-, Br-, I-, SO4 2-, PO4 3-, CH3COO-"
+      ],
+      "key_concepts": [],
+      "chapters": []
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "PROJECTS",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Scientific investigations involving laboratory testing and collecting information from other sources.",
+        "Checking the bacterial contamination in drinking water by testing sulphide ion",
+        "Study of the methods of purification of water",
+        "Testing the hardness, presence of Iron, Fluoride, Chloride, etc., depending upon the regional variation in drinking water and study of causes of presence of these ions above permissible limit (if any).",
+        "Investigation of the foaming capacity of different washing soaps and the effect of addition of Sodium carbonate on it",
+        "Study the acidity of different samples of tea leaves.",
+        "Determination of the rate of evaporation of different liquids",
+        "Study the effect of acids and bases on the tensile strength of fibers.",
+        "Study of acidity of fruit and vegetable juices."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XI",
+  "subject": "Chemistry",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "D. Chemical Equilibrium",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Study the shift in equilibrium between ferric ions and thiocyanate ions by increasing/decreasing the concentration of either of the ions.",
+        "Study the shift in equilibrium between [Co(H 2 O) 6 ] and chloride ions by changing the concentration of either of the ions."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "E. Quantitative Estimation",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Using a mechanical balance/electronic balance.",
+        "Preparation of standard solution of Oxalic acid.",
+        "Determination of strength of a given solution of Sodium hydroxide by titrating it against standard solution of Oxalic acid.",
+        "Preparation of standard solution of Sodium carbonate.",
+        "Determination of strength of a given solution of hydrochloric acid by titrating it against standard Sodium Carbonate solution."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "F. Qualitative Analysis",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Determination of one anion and one cation in a given salt.",
+        "Detection of -Nitrogen, Sulphur, Chlorine in organic compounds."
+      ],
+      "subtopics": [
+        "Cations: Pb2+, Cu2+, Al3+, Fe3+, Mn2+, Ni2+, Zn2+, Co2+, Ca2+, Sr2+, Ba2+, Mg2+, NH4+",
+        "Anions: CO3 2-, S2-, SO3 2-, NO3 -, NO2 -, Cl-, Br-, I-, SO4 2-, PO4 3-, CH3COO-"
+      ],
+      "key_concepts": [],
+      "chapters": []
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "PROJECTS",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Scientific investigations involving laboratory testing and collecting information from other sources.",
+        "Checking the bacterial contamination in drinking water by testing sulphide ion",
+        "Study of the methods of purification of water",
+        "Testing the hardness, presence of Iron, Fluoride, Chloride, etc., depending upon the regional variation in drinking water and study of causes of presence of these ions above permissible limit (if any).",
+        "Investigation of the foaming capacity of different washing soaps and the effect of addition of Sodium carbonate on it",
+        "Study the acidity of different samples of tea leaves.",
+        "Determination of the rate of evaporation of different liquids",
+        "Study the effect of acids and bases on the tensile strength of fibers.",
+        "Study of acidity of fruit and vegetable juices."
+      ],
+      "subtopics": [],
+      "key_concepts": [],
+      "chapters": []
+    }
+  ]
+}
+
+Curriculum source text:
+## CLASS XI
+## THEORY
+Time: 3 Hours Total Marks: 70
+- S. No UNIT Marks
+1 Some Basic Concepts of Chemistry 7
+2 Structure of Atom 9
+3 Classification of Elements and Periodicity in Properties 6
+4 Chemical Bonding and Molecular Structure 7
+5 Chemical Thermodynamics 9
+6 Equilibrium 7
+7 Redox Reactions 4
+8 Organic Chemistry: Some basic Principles and 11
+Techniques
+9 Hydrocarbons 10
+## TOTAL 70
+# Page 6
+
+Note: Any other investigatory project, which involves about 10 periods of work, can
+be chosen with the approval of the teacher.
+Practical Examination for Visually Challenged Students Class XI
+Note: Same Evaluation scheme and general guidelines for visually challenged

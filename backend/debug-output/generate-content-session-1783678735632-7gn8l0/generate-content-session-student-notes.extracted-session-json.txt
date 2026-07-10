@@ -1,0 +1,367 @@
+{
+  "studentLessonNotes": {
+    "title": "Number System: Real Numbers and Their Representation",
+    "sessionOverview": "This session explores the Number System, focusing on rational and irrational numbers, their decimal expansions, and how to locate them on a number line.",
+    "introduction": "Welcome to the world of Numbers! You already know about natural numbers (1, 2, 3...) and integers. Today, we will expand our toolkit to include fractions, decimals that go on forever, and special numbers like square roots that cannot be written as simple fractions. We will learn how to visualize these 'invisible' numbers on a straight line.",
+    "learningObjectives": [
+      "Distinguish between rational and irrational numbers based on their decimal expansions.",
+      "Represent real numbers geometrically using the number line.",
+      "Apply the concept of successive magnification to locate numbers precisely."
+    ],
+    "quickRecall": [
+      "Natural numbers are counting numbers (1, 2, 3...).",
+      "Integers include negative numbers, zero, and positive numbers.",
+      "Rational numbers can be written as p/q where q is not zero."
+    ],
+    "easyToRemember": [
+      "If a decimal ends or repeats, it is Rational. If it goes on forever without repeating, it is Irrational."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Rational vs. Irrational Numbers",
+        "headers": [
+          "Feature",
+          "Rational Numbers",
+          "Irrational Numbers"
+        ],
+        "rows": [
+          [
+            "Decimal Expansion",
+            "Terminating (ends) or Repeating",
+            "Non-terminating and Non-repeating"
+          ],
+          [
+            "Representation",
+            "Can be written as p/q",
+            "Cannot be written as p/q"
+          ],
+          [
+            "Examples",
+            "1/2, 0.75, -4",
+            "√2, π, √3"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Pythagorean Theorem for Number Line Construction",
+        "formula": {
+          "text": "Hypotenuse squared equals sum of squares of other two sides",
+          "latex": "c^2 = a^2 + b^2"
+        },
+        "meaning": "Used to find the length of the hypotenuse (diagonal) in a right-angled triangle, which helps locate square roots on the number line.",
+        "whenToUse": "When constructing lengths like √2, √3, or any √n on a number line."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "sqrtNumberLineConstruction",
+        "template": "sqrtNumberLineConstruction",
+        "params": {
+          "baseLength": "2 units",
+          "height": "1 unit",
+          "highlightRoot": "√5"
+        },
+        "title": "Constructing √5 on the Number Line",
+        "caption": "A right triangle used to find the length of √5",
+        "points": [
+          {
+            "id": "O",
+            "x": 100,
+            "y": 200,
+            "label": "O"
+          },
+          {
+            "id": "A",
+            "x": 300,
+            "y": 200,
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "x": 300,
+            "y": 100,
+            "label": "B"
+          }
+        ],
+        "lines": [
+          {
+            "from": "O",
+            "to": "A",
+            "label": "Base (2 units)"
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "Height (1 unit)"
+          },
+          {
+            "from": "O",
+            "to": "B",
+            "label": "Hypotenuse (√5)",
+            "highlight": true
+          }
+        ],
+        "arcs": [
+          {
+            "center": "O",
+            "radius": "OB",
+            "startAngle": 0,
+            "endAngle": -90,
+            "label": "Arc to number line"
+          }
+        ],
+        "labels": [
+          {
+            "text": "90°",
+            "x": 285,
+            "y": 185
+          }
+        ],
+        "measurements": []
+      }
+    ],
+    "proofSteps": [
+      "Identify the rational and irrational parts of a number.",
+      "Check if the decimal expansion terminates or repeats.",
+      "Use geometric construction to represent the value on the number line."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Thinking all decimals are terminating.",
+        "correction": "Remember that 1/3 = 0.333... goes on forever without repeating.",
+        "example": "0.5 is rational, but 0.1010010001... (pattern increases zeros) is irrational."
+      },
+      {
+        "mistake": "Confusing the length of the hypotenuse with the base.",
+        "correction": "The hypotenuse is always the longest side, opposite the right angle.",
+        "example": "If base=2 and height=1, hypotenuse is √5, not 3."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "Rational Numbers",
+        "explanation": "Rational numbers are numbers that can be expressed as a fraction p/q where p and q are integers and q ≠ 0. Their decimal forms either stop (terminate) or repeat a pattern.",
+        "keyPoints": [
+          "Terminating decimals: 0.5, 0.75",
+          "Repeating decimals: 0.333..., 0.142857..."
+        ],
+        "examples": [
+          "The number 1/2 is rational because it equals 0.5.",
+          "The number -4 is rational because it equals -4/1."
+        ],
+        "whyItMatters": "Rational numbers allow us to measure exact quantities like length, weight, and time in daily life.",
+        "terminology": [
+          "Terminating",
+          "Recurring"
+        ],
+        "detailedExplanation": "When you divide two integers, the result is either a finite decimal or an infinite repeating one. There are no 'gaps' in the pattern for rational numbers.",
+        "observedIn": [
+          "Money calculations",
+          "Cooking recipes"
+        ],
+        "visualSupport": [
+          "Number line with marked fractions"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "Zero is a rational number (0/1)."
+        ],
+        "memoryTechniques": [
+          "Rational = Ratio (Fraction)"
+        ],
+        "conceptSummary": [
+          "Rational numbers are fractions or decimals that end or repeat."
+        ]
+      },
+      {
+        "heading": "Irrational Numbers",
+        "explanation": "Irrational numbers cannot be written as a simple fraction p/q. Their decimal expansions go on forever without any repeating pattern.",
+        "keyPoints": [
+          "Non-terminating",
+          "Non-repeating"
+        ],
+        "examples": [
+          "√2 ≈ 1.4142135... (never repeats)",
+          "π ≈ 3.14159... (never repeats)"
+        ],
+        "whyItMatters": "They are essential for geometry, such as finding the exact length of a diagonal or the circumference of a circle.",
+        "terminology": [
+          "Irrational",
+          "Surds"
+        ],
+        "detailedExplanation": "Even though we can approximate them (like 1.41 for √2), we can never write their exact value as a fraction or a finite decimal.",
+        "observedIn": [
+          "Diagonals of squares",
+          "Circles and pi"
+        ],
+        "visualSupport": [
+          "Diagram showing the gap between rational approximations"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "The sum of a rational and an irrational number is always irrational."
+        ],
+        "memoryTechniques": [
+          "Irrational = Impossible to write as a simple ratio"
+        ],
+        "conceptSummary": [
+          "Irrational numbers have infinite, non-repeating decimals."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Real Number",
+        "definition": "The set of all rational and irrational numbers combined. Every point on the number line represents a real number."
+      },
+      {
+        "term": "Successive Magnification",
+        "definition": "A method of zooming in on smaller and smaller intervals of the number line to locate an irrational number with increasing precision."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Locating √5 on the Number Line",
+        "problem": "Construct a geometric representation to show where √5 lies on the number line.",
+        "diagramRef": "diagram-1",
+        "given": [
+          "Base length = 2 units",
+          "Height = 1 unit"
+        ],
+        "formula": [
+          "c^2 = a^2 + b^2"
+        ],
+        "steps": [
+          "Draw a right triangle with base 2 and height 1.",
+          "Calculate the hypotenuse length.",
+          "Use a compass to transfer this length to the number line."
+        ],
+        "solutionSteps": [
+          {
+            "text": "Write the Pythagorean formula",
+            "displayLatex": "c^2 = a^2 + b^2"
+          },
+          {
+            "text": "Substitute values a=2 and b=1",
+            "displayLatex": "c^2 = 2^2 + 1^2"
+          },
+          {
+            "text": "Simplify the squares",
+            "displayLatex": "c^2 = 4 + 1 = 5"
+          },
+          {
+            "text": "Take the square root to find c",
+            "displayLatex": "c = \\sqrt{5}"
+          }
+        ],
+        "reasoning": [
+          "The hypotenuse represents the length √5 because 2^2 + 1^2 = 5."
+        ],
+        "explanation": "By constructing a right triangle with legs of length 2 and 1, the diagonal (hypotenuse) has a length of exactly √5. We can then swing an arc from the origin to mark this point on the number line.",
+        "finalAnswer": {
+          "text": "The point representing √5 is located at distance √5 units from zero.",
+          "displayLatex": "\\sqrt{5}"
+        },
+        "latex": "c = \\sqrt{a^2 + b^2}",
+        "displayLatex": "\\sqrt{5} \\approx 2.236"
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Rational numbers have terminating or repeating decimals.",
+        "Irrational numbers have non-terminating, non-repeating decimals."
+      ],
+      "formulas": [
+        "c^2 = a^2 + b^2 (Pythagorean Theorem)"
+      ],
+      "facts": [
+        "Every point on the number line is a real number.",
+        "√2, √3, √5 are irrational."
+      ],
+      "keywords": [
+        "Rational",
+        "Irrational",
+        "Real Numbers",
+        "Number Line"
+      ],
+      "conceptMap": [
+        "Real Numbers = Rational + Irrational"
+      ],
+      "quickRecap": [
+        "Use Pythagoras to find lengths for irrational numbers."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Is 0.123456789... (pattern increases) rational or irrational?",
+      "Can you write √9 as a fraction?"
+    ],
+    "quickSummary": [
+      "Real numbers include both fractions and infinite non-repeating decimals."
+    ],
+    "keyTerms": [
+      "Rational",
+      "Irrational",
+      "Decimal Expansion",
+      "Number Line"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A number with a non-terminating and non-repeating decimal expansion is called ______.",
+        "answer": "Irrational Number"
+      },
+      {
+        "prompt": "The sum of a rational number and an irrational number is always ______.",
+        "answer": "Irrational"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is an irrational number?",
+        "options": [
+          "A. 0.5",
+          "B. √4",
+          "C. π",
+          "D. -2"
+        ],
+        "answer": "C. π"
+      },
+      {
+        "question": "What is the decimal expansion of a rational number?",
+        "options": [
+          "A. Always terminating",
+          "B. Always non-terminating and non-repeating",
+          "C. Terminating or repeating",
+          "D. Never repeating"
+        ],
+        "answer": "C. Terminating or repeating"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "Is √2 a rational number?",
+        "answer": "No, it is irrational."
+      },
+      {
+        "question": "What is the value of √9?",
+        "answer": "3"
+      }
+    ],
+    "didYouKnow": [
+      "The concept of irrational numbers was discovered by the ancient Greek mathematician Hippasus, who reportedly drowned for revealing that not all numbers could be written as fractions."
+    ],
+    "summary": [
+      "We learned to distinguish rational and irrational numbers and how to locate them on a number line using geometry."
+    ],
+    "quickRevision": [
+      "Rational = Fraction/Repeating; Irrational = Infinite Non-Repeating"
+    ],
+    "rememberPoints": [
+      "Real Numbers -> Rational + Irrational",
+      "Pythagoras -> Hypotenuse Length",
+      "Number Line -> All Real Numbers"
+    ]
+  }
+}

@@ -1,0 +1,474 @@
+{
+  "teacherLessonNotes": {
+    "sessionOverview": "This session introduces Class IX students to the expansion of the Number System beyond integers. It focuses on defining rational numbers, representing them on a number line, and introducing the concept of irrational numbers through geometric construction (square roots).",
+    "prerequisiteKnowledge": [
+      "Understanding of whole numbers and integers",
+      "Basic operations with fractions",
+      "Concept of a number line"
+    ],
+    "previousSessionRecap": [
+      "Review of natural numbers and whole numbers",
+      "Representation of integers on a number line"
+    ],
+    "learningOutcomes": [
+      "Students will define rational numbers in the form p/q.",
+      "Students will locate rational numbers on a number line using division.",
+      "Students will distinguish between terminating and non-terminating recurring decimals.",
+      "Students will visualize irrational numbers as lengths of geometric figures."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Questioning with simple real-life example"
+      },
+      {
+        "minutes": 15,
+        "topic": "Rational Numbers Deep Dive",
+        "teachingStrategy": "Direct instruction with board demonstration"
+      },
+      {
+        "minutes": 15,
+        "topic": "Irrational Numbers & Visualization",
+        "teachingStrategy": "Geometric construction and inquiry"
+      },
+      {
+        "minutes": 10,
+        "topic": "Consolidation",
+        "teachingStrategy": "Guided practice and recap"
+      }
+    ],
+    "lessonPurpose": [
+      "To bridge the gap between finite counting numbers and the infinite continuum of real numbers.",
+      "To develop spatial reasoning for representing abstract numbers geometrically."
+    ],
+    "teachingSequence": [
+      "Start with a hook about 'filling the gaps' on the number line.",
+      "Define Rational Numbers (p/q) with examples.",
+      "Demonstrate how to place 3/4 or -5/7 on a number line.",
+      "Introduce Irrational Numbers as non-terminating, non-recurring decimals.",
+      "Show geometric construction for √2 and √3.",
+      "Conclude with a summary of the Real Number System."
+    ],
+    "guidedPractice": [
+      "Ask students to identify if 0.75 is rational or irrational.",
+      "Guide students through marking 1/3 on a number line.",
+      "Walk through the steps of drawing √2 using a right-angled triangle."
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction to Rational Numbers",
+        "durationMinutes": 15,
+        "teacherPrompt": [
+          "Can we write every number as a fraction?",
+          "What happens if we divide 1 by 3?"
+        ],
+        "explanation": [
+          "Rational numbers are those that can be expressed in the form p/q where p and q are integers and q ≠ 0.",
+          "They include all integers, fractions, terminating decimals (like 0.5), and non-terminating recurring decimals (like 0.333...)."
+        ],
+        "examples": [
+          "2/3 is rational because it fits p/q.",
+          "0.75 is rational because it equals 3/4."
+        ],
+        "boardWork": [
+          {
+            "text": "Definition:",
+            "latex": "Rational Number = p/q (q ≠ 0)",
+            "displayLatex": "Rational Number = p/q (q ≠ 0)"
+          },
+          {
+            "text": "Examples:",
+            "latex": "\\frac{1}{2,}-\\frac{4}{5,}0.6",
+            "displayLatex": "\\frac{1}{2,}-\\frac{4}{5,}0.6"
+          },
+          {
+            "text": "Number Line:",
+            "latex": "Marking \\frac{1}{4}",
+            "displayLatex": "Marking \\frac{1}{4}"
+          }
+        ],
+        "boardSteps": [
+          "Draw a number line from 0 to 1.",
+          "Divide the segment into 4 equal parts.",
+          "Mark the first division point as 1/4."
+        ],
+        "solutionFlow": [
+          "Identify the denominator (4).",
+          "Divide the unit length into 4 parts.",
+          "Count 1 part from 0 to locate 1/4."
+        ],
+        "proofSteps": [
+          "Since 1/4 can be written as a ratio of integers, it is rational by definition."
+        ],
+        "geometryDiagrams": [],
+        "checkUnderstanding": [
+          "Is -5 a rational number? Why?"
+        ],
+        "expectedAnswers": [
+          "Yes, because -5 can be written as -5/1."
+        ],
+        "activity": [
+          "Pair work: Convert 0.25 and 0.666... into p/q form."
+        ]
+      },
+      {
+        "title": "Irrational Numbers & Visualization",
+        "durationMinutes": 15,
+        "teacherPrompt": [
+          "Is there a number between 1 and 2 that cannot be written as a fraction?",
+          "How do we draw the length of √2?"
+        ],
+        "explanation": [
+          "Irrational numbers are non-terminating and non-recurring decimals (e.g., π, √2).",
+          "They cannot be expressed as p/q.",
+          "We can visualize them using the Pythagorean theorem on a number line."
+        ],
+        "examples": [
+          "√2 is approximately 1.414...",
+          "π is approximately 3.1415..."
+        ],
+        "boardWork": [
+          "Definition: Irrational Number (non-terminating, non-recurring)",
+          "Construction of √2 on number line",
+          "Pythagorean Theorem: a² + b² = c²"
+        ],
+        "boardSteps": [
+          "Draw a right triangle with base 1 and height 1.",
+          "Calculate hypotenuse: √(1² + 1²) = √2.",
+          "Use compass to transfer this length to the number line starting from 0."
+        ],
+        "solutionFlow": [
+          "Draw triangle OAB where OA=1, AB=1 perpendicular to OA.",
+          "OB = √(1+1) = √2.",
+          "Mark point C on number line such that OC = OB."
+        ],
+        "proofSteps": [
+          "By Pythagoras theorem, the length is √2.",
+          "Since √2 cannot be written as p/q, it is irrational."
+        ],
+        "geometryDiagrams": [
+          {
+            "id": "sqrt2-construction",
+            "type": "rightTriangle",
+            "template": "rightTriangle",
+            "params": {},
+            "title": "Construction of √2",
+            "caption": "Right triangle used to visualize the length of √2",
+            "points": [
+              {
+                "id": "O",
+                "x": 50,
+                "y": 150,
+                "label": "O"
+              },
+              {
+                "id": "A",
+                "x": 150,
+                "y": 150,
+                "label": "A"
+              },
+              {
+                "id": "B",
+                "x": 150,
+                "y": 50,
+                "label": "B"
+              }
+            ],
+            "lines": [
+              {
+                "from": "O",
+                "to": "A",
+                "label": "base (1)",
+                "style": "solid",
+                "highlight": false
+              },
+              {
+                "from": "A",
+                "to": "B",
+                "label": "height (1)",
+                "style": "solid",
+                "highlight": false
+              },
+              {
+                "from": "O",
+                "to": "B",
+                "label": "hypotenuse (√2)",
+                "style": "solid",
+                "highlight": true
+              }
+            ],
+            "arcs": [
+              {
+                "center": "O",
+                "radius": 30,
+                "startAngle": 0,
+                "endAngle": 90,
+                "label": "",
+                "highlight": false
+              }
+            ],
+            "labels": [
+              {
+                "text": "√2",
+                "latex": "",
+                "x": 160,
+                "y": 100
+              }
+            ],
+            "measurements": [],
+            "highlights": [],
+            "bars": []
+          }
+        ],
+        "checkUnderstanding": [
+          "Why can't we write √2 as a fraction?"
+        ],
+        "expectedAnswers": [
+          "Because its decimal expansion never ends and never repeats."
+        ],
+        "activity": [
+          {
+            "text": "Visualize:",
+            "latex": "Draw the number line and mark \\sqrt{2} using the compass method.",
+            "displayLatex": ""
+          }
+        ]
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Rational Numbers",
+        "definition": "Numbers expressible as p/q where p, q are integers and q ≠ 0.",
+        "coreExplanation": "They include all integers, fractions, terminating decimals, and recurring decimals. They are dense on the number line.",
+        "importance": "Forms the basis for algebraic operations and precise measurement in many contexts.",
+        "observedIn": [
+          "Fractions in recipes",
+          "Percentages in sales"
+        ],
+        "whyStudyIt": "To understand the structure of numbers before moving to real numbers.",
+        "relationshipWithPrevious": "Extends the set of integers.",
+        "relationshipWithFuture": "Leads to the concept of Real Numbers and Irrational Numbers.",
+        "keywords": [
+          "p/q",
+          "Terminating",
+          "Recurring"
+        ],
+        "teacherMoves": [
+          "Emphasize that q cannot be zero.",
+          "Show examples of both terminating and recurring decimals."
+        ],
+        "examples": [
+          {
+            "text": "",
+            "latex": "0.5 = \\frac{1}{2}",
+            "displayLatex": "0.5 = \\frac{1}{2}"
+          },
+          {
+            "text": "",
+            "latex": "0.333... = \\frac{1}{3}",
+            "displayLatex": "0.333... = \\frac{1}{3}"
+          }
+        ],
+        "visuals": [
+          "Number line with marked fractions"
+        ],
+        "solutionFlow": [
+          "Identify the fraction form.",
+          "Check if denominator is non-zero integer."
+        ],
+        "proofSteps": [
+          "If a number can be written as p/q, it is rational by definition."
+        ],
+        "geometryDiagrams": [],
+        "teacherPrompt": [],
+        "explanation": [],
+        "boardWork": [],
+        "boardSteps": [],
+        "checkUnderstanding": [],
+        "expectedAnswers": [],
+        "activity": []
+      },
+      {
+        "conceptName": "Irrational Numbers",
+        "definition": "Numbers that cannot be expressed as p/q; non-terminating and non-recurring decimals.",
+        "coreExplanation": "They fill the 'gaps' between rational numbers. Examples include square roots of non-perfect squares (√2, √3) and constants like π.",
+        "importance": "Essential for geometry, trigonometry, and advanced calculus.",
+        "observedIn": [
+          "Circumference of circles",
+          "Diagonal lengths of squares"
+        ],
+        "whyStudyIt": "To complete the number system (Real Numbers) and handle geometric measurements accurately.",
+        "relationshipWithPrevious": "Complements rational numbers to form Real Numbers.",
+        "relationshipWithFuture": "Foundation for Class X algebra and trigonometry.",
+        "keywords": [
+          "Non-terminating",
+          "Non-recurring",
+          "Geometric length"
+        ],
+        "teacherMoves": [
+          "Use the square root construction to make them concrete.",
+          "Contrast with rational numbers clearly."
+        ],
+        "examples": [
+          {
+            "text": "",
+            "latex": "\\sqrt{2} ≈ 1.414...",
+            "displayLatex": ""
+          },
+          "π ≈ 3.1415..."
+        ],
+        "visuals": [
+          "Number line showing gaps filled by irrational numbers"
+        ],
+        "solutionFlow": [
+          "Recognize non-perfect square roots.",
+          "Verify decimal expansion pattern."
+        ],
+        "proofSteps": [
+          "Assume √2 = p/q, derive contradiction (standard proof outline)."
+        ],
+        "geometryDiagrams": [],
+        "teacherPrompt": [],
+        "explanation": [],
+        "boardWork": [],
+        "boardSteps": [],
+        "checkUnderstanding": [],
+        "expectedAnswers": [],
+        "activity": []
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "Is every integer a rational number?",
+        "level": "Understanding",
+        "expectedResponse": "Yes, because integers can be written as n/1.",
+        "answerPoints": [
+          "Integers are whole numbers.",
+          "They have a denominator of 1."
+        ]
+      },
+      {
+        "question": "Can you find a rational number between 0.1 and 0.2?",
+        "level": "Application",
+        "expectedResponse": "Yes, for example 0.15.",
+        "answerPoints": [
+          "Any terminating decimal between them works.",
+          "There are infinite rational numbers between any two rationals."
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "Thinking that all decimals are rational.",
+        "correction": "Clarify that only terminating or recurring decimals are rational; non-terminating non-recurring ones are irrational."
+      },
+      {
+        "misconception": "Believing √4 is irrational because it has a root symbol.",
+        "correction": "Show that √4 = 2, which is an integer and thus rational."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Use physical number lines with pre-marked intervals.",
+        "Focus on terminating decimals first before recurring ones."
+      ],
+      "averageLearners": [
+        "Practice converting fractions to decimals and vice versa.",
+        "Draw √2 on the board independently."
+      ],
+      "advancedLearners": [
+        "Challenge them to find a rational number between two specific irrational numbers.",
+        "Ask for examples of non-terminating recurring decimals."
+      ]
+    },
+    "teacherTips": [
+      "Use a large compass and ruler for the board demonstration to ensure visibility.",
+      "Emphasize that 'irrational' does not mean 'illogical'.",
+      "Repeat the definition of p/q frequently."
+    ],
+    "misconceptions": [
+      "Confusing non-terminating with non-recurring.",
+      "Thinking there are no numbers between two rational numbers."
+    ],
+    "formativeChecks": [
+      "Ask students to hold up fingers: 1 for rational, 2 for irrational for given examples."
+    ],
+    "assessmentQuestions": [
+      "Is 0.575757... rational or irrational? Justify."
+    ],
+    "blackboardSummary": [
+      "Rational Numbers = p/q (q≠0)",
+      "Irrational Numbers = Non-terminating, Non-recurring",
+      "Real Numbers = Rational + Irrational"
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap",
+        "minutes": 5,
+        "purpose": "Refresh prerequisite ideas of integers and fractions"
+      },
+      {
+        "segment": "New Concept",
+        "minutes": 20,
+        "purpose": "Introduce Rational and Irrational definitions"
+      },
+      {
+        "segment": "Visualization",
+        "minutes": 15,
+        "purpose": "Draw number line representations"
+      },
+      {
+        "segment": "Recap",
+        "minutes": 5,
+        "purpose": "End of class summary"
+      }
+    ],
+    "sessionSummary": [
+      "We expanded the number system to include fractions and decimals, distinguishing between those that repeat/terminate (rational) and those that don't (irrational)."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "Today I understood the idea of ________.",
+        "expectedAnswer": "how rational and irrational numbers exist on the number line"
+      }
+    ],
+    "nextSessionBridge": [
+      "Next session will focus on operations (addition/subtraction) with these numbers and laws of exponents."
+    ]
+  },
+  "learningOutcomes": [
+    "Define rational and irrational numbers accurately.",
+    "Represent rational numbers on a number line using division.",
+    "Construct the geometric representation of √2 on a number line.",
+    "Distinguish between terminating, recurring, and non-recurring decimals."
+  ],
+  "introduction": "Imagine you have a ruler that only has marks at whole numbers (1, 2, 3). Can you measure exactly half a meter? What about the diagonal of a square with side 1 meter? Today, we will discover that our number line is not just made of integers and fractions; it is filled with 'invisible' numbers called irrational numbers that complete the picture.",
+  "theory": {
+    "overview": "The Number System in Class IX expands from Integers to Rational Numbers (fractions and decimals) and introduces Irrational Numbers. Rational numbers can be written as p/q, while irrational numbers cannot. Together they form the Real Number System.",
+    "keyPoints": [
+      "Rational numbers include integers, fractions, terminating decimals, and recurring decimals.",
+      "Irrational numbers are non-terminating and non-recurring decimals.",
+      "Every point on a number line represents a real number (rational or irrational).",
+      "Geometric construction allows us to visualize irrational numbers like √2."
+    ],
+    "detailedContent": "Rational numbers are defined as any number that can be expressed in the form p/q where p and q are integers and q is not zero. This includes all integers (e.g., 5 = 5/1) and fractions (e.g., 3/4). When we divide p by q, we get either a terminating decimal (like 0.25) or a recurring decimal (like 0.333...). Irrational numbers, on the other hand, are numbers that cannot be written as p/q. Their decimal expansions go on forever without repeating. A classic example is √2, which is approximately 1.414213... and never repeats. We can visualize these numbers by using the Pythagorean theorem to create a length (like the hypotenuse of a right triangle) and transferring that length to the number line."
+  },
+  "activities": [
+    {
+      "name": "Number Line Construction Challenge",
+      "instructions": [
+        "Draw a horizontal number line from -3 to +3 on your notebook.",
+        "Mark the integers clearly.",
+        "Divide the segment between 0 and 1 into 4 equal parts and mark 1/4.",
+        "Using a compass and ruler, construct the length of √2 starting from 0.",
+        "Mark the point representing √2 on your number line."
+      ],
+      "durationMinutes": 15
+    }
+  ],
+  "id": "math-ix-numsys-sess01",
+  "sessionNumber": 1,
+  "title": "The Infinite World of Numbers: Rational and Irrational",
+  "duration": 45
+}

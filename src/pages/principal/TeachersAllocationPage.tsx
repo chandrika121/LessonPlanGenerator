@@ -90,7 +90,10 @@ export function TeachersAllocationPage() {
   }, [allocations]);
 
   const filtered = useMemo(() => {
-    let result = [...teachers];
+    let result = [...teachers].filter((teacher) => {
+      const display = teacherDisplayMap.get(teacher.id);
+      return Boolean((display?.classes?.length || 0) > 0);
+    });
 
     if (search) {
       const q = search.toLowerCase();
@@ -374,12 +377,12 @@ export function TeachersAllocationPage() {
                   <td className="bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600">{teacher.employeeId}</td>
                   <td className="bg-slate-50 px-4 py-3">
                     <div className="flex flex-wrap gap-1">
-                      {classesToShow.length ? classesToShow.map((c) => (
+                      {classesToShow.map((c) => (
                         <span key={c} className="rounded-full bg-[#36ADAA]/10 px-2 py-0.5 text-[11px] font-bold text-[#36ADAA]">{c}</span>
-                      )) : <span className="text-sm text-slate-400">No class allocated</span>}
+                      ))}
                     </div>
                   </td>
-                  <td className="bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600">{subjectsToShow.length ? subjectsToShow.join(", ") : "No subject allocated"}</td>
+                  <td className="bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-600">{subjectsToShow.join(", ")}</td>
                   <td className="bg-slate-50 px-4 py-3 text-sm text-slate-500">{new Date(teacher.lastLogin).toLocaleDateString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</td>
                   <td className="rounded-r-2xl bg-slate-50 px-4 py-3">
                     <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold ${teacher.status === "Active" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>

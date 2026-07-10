@@ -1,0 +1,362 @@
+{
+  "studentLessonNotes": {
+    "title": "Number System: Real Numbers and Their Representation",
+    "sessionOverview": "This session explores the Number System for Class IX, focusing on real numbers, rational vs. irrational numbers, their decimal expansions, and representation on the number line.",
+    "introduction": "Welcome to the world of Real Numbers! In this session, we will move beyond simple counting numbers to understand the complete set of numbers used in mathematics. You will learn how to identify rational and irrational numbers, visualize them on a number line, and perform operations with square roots.",
+    "learningObjectives": [
+      "Define real numbers as the union of rational and irrational numbers.",
+      "Distinguish between terminating and non-terminating recurring decimal expansions.",
+      "Represent irrational numbers like √2 and √3 geometrically on a number line.",
+      "Apply laws of exponents for real numbers."
+    ],
+    "quickRecall": [
+      "A rational number can be written in the form p/q where q ≠ 0.",
+      "The square root of a perfect square is always an integer."
+    ],
+    "easyToRemember": [
+      "Real Numbers = Rational Numbers + Irrational Numbers."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Rational vs. Irrational Numbers",
+        "headers": [
+          "Feature",
+          "Rational Numbers",
+          "Irrational Numbers"
+        ],
+        "rows": [
+          [
+            "Definition",
+            "Can be written as p/q (q ≠ 0)",
+            "Cannot be written as p/q"
+          ],
+          [
+            "Decimal Expansion",
+            "Terminating or Non-terminating Recurring",
+            "Non-terminating Non-recurring"
+          ],
+          [
+            "Examples",
+            "1/2, 0.75, -3",
+            "√2, π, √3"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Laws of Exponents for Real Numbers",
+        "formula": {
+          "text": "a^m × a^n = a^(m+n)",
+          "latex": "a^m \\cdot a^n = a^{m+n}"
+        },
+        "meaning": "When multiplying powers with the same base, add the exponents.",
+        "whenToUse": "Whenever you are multiplying terms with the same base raised to powers."
+      },
+      {
+        "title": "Pythagorean Theorem for Construction",
+        "formula": {
+          "text": "Hypotenuse = √(Base² + Height²)",
+          "latex": "c = \\sqrt{a^2 + b^2}"
+        },
+        "meaning": "The length of the hypotenuse in a right triangle is the square root of the sum of squares of the other two sides.",
+        "whenToUse": "When constructing lengths like √2, √3, etc., on a number line."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "sqrtNumberLineConstruction",
+        "template": "sqrtNumberLineConstruction",
+        "params": {
+          "baseLength": "1 unit",
+          "height": "1 unit",
+          "roots": [
+            2,
+            3
+          ],
+          "highlightRoot": 2
+        },
+        "title": "Geometric Construction of √2 and √3",
+        "caption": "Step-by-step construction of irrational numbers on the number line",
+        "points": [
+          {
+            "id": "O",
+            "x": 50,
+            "y": 150,
+            "label": "O"
+          },
+          {
+            "id": "A",
+            "x": 150,
+            "y": 150,
+            "label": "A"
+          },
+          {
+            "id": "B",
+            "x": 150,
+            "y": 50,
+            "label": "B"
+          }
+        ],
+        "lines": [
+          {
+            "from": "O",
+            "to": "A",
+            "label": "Base (1 unit)"
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "Height (1 unit)"
+          },
+          {
+            "from": "O",
+            "to": "B",
+            "label": "Hypotenuse (√2)",
+            "highlight": true
+          }
+        ],
+        "arcs": [
+          {
+            "center": "O",
+            "radius": "OB",
+            "startAngle": 0,
+            "endAngle": -90,
+            "label": "Arc to mark √2"
+          }
+        ],
+        "labels": [
+          {
+            "text": "1 unit",
+            "x": 100,
+            "y": 165
+          },
+          {
+            "text": "√2",
+            "x": 160,
+            "y": 100
+          }
+        ],
+        "measurements": []
+      }
+    ],
+    "proofSteps": [
+      "Assume √2 is rational and can be written as p/q in lowest terms.",
+      "Derive that both p and q must be even, contradicting the assumption that they are coprime.",
+      "Conclude that √2 cannot be expressed as p/q, hence it is irrational."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Thinking all square roots are irrational.",
+        "correction": "Square roots of perfect squares (like 4, 9, 16) are rational integers.",
+        "example": "√4 = 2 (Rational), but √5 is Irrational."
+      },
+      {
+        "mistake": "Adding square roots directly (e.g., √2 + √3 = √5).",
+        "correction": "Square roots can only be added if they have the same radicand.",
+        "example": "√2 + √2 = 2√2, but √2 + √3 remains as is."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "Real Numbers Overview",
+        "explanation": "Real numbers include all rational and irrational numbers. They can be represented on a number line.",
+        "keyPoints": [
+          "Every point on the number line represents a real number.",
+          "Rational numbers have repeating or terminating decimals."
+        ],
+        "examples": [
+          "The number 0.5 is rational; √2 is irrational."
+        ],
+        "whyItMatters": "Real numbers are essential for measuring physical quantities like length, time, and mass.",
+        "terminology": [
+          "Rational Number",
+          "Irrational Number",
+          "Decimal Expansion"
+        ],
+        "detailedExplanation": "A number is rational if it can be written as p/q where p and q are integers and q ≠ 0. If a number cannot be written this way, it is irrational.",
+        "observedIn": [
+          "Geometry (lengths)",
+          "Physics (measurements)"
+        ],
+        "visualSupport": [
+          "Number line with marked points"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "π is an irrational number, not just 3.14."
+        ],
+        "memoryTechniques": [
+          "Real = Rational + Irrational"
+        ],
+        "conceptSummary": [
+          "Real numbers cover the entire continuous number line."
+        ]
+      },
+      {
+        "heading": "Representing Irrational Numbers",
+        "explanation": "We can locate irrational numbers like √2 on the number line using geometric construction.",
+        "keyPoints": [
+          "Use Pythagoras theorem to find the length.",
+          "Draw an arc with that length from the origin."
+        ],
+        "examples": [
+          "To mark √2, draw a right triangle with sides 1 and 1, then the hypotenuse is √2."
+        ],
+        "whyItMatters": "It proves that irrational numbers exist as specific points on the number line.",
+        "terminology": [
+          "Geometric Construction",
+          "Hypotenuse"
+        ],
+        "detailedExplanation": "By constructing a right-angled triangle with legs of length 1, the hypotenuse becomes √(1² + 1²) = √2. We then use a compass to transfer this length to the number line.",
+        "observedIn": [
+          "Mathematics problems",
+          "Engineering drawings"
+        ],
+        "visualSupport": [
+          "diagram-1"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "Always ensure the triangle is right-angled for Pythagoras to apply."
+        ],
+        "memoryTechniques": [
+          "Square root construction = Right triangle + Arc"
+        ],
+        "conceptSummary": [
+          "Irrational numbers can be precisely located geometrically."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Real Number",
+        "definition": "The set of all rational and irrational numbers."
+      },
+      {
+        "term": "Irrational Number",
+        "definition": "A number that cannot be expressed in the form p/q where p and q are integers and q ≠ 0."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Representing √2 on the Number Line",
+        "problem": "Construct √2 on the number line using geometric methods.",
+        "diagramRef": "diagram-1",
+        "given": [
+          "Base = 1 unit",
+          "Height = 1 unit"
+        ],
+        "formula": [
+          "Hypotenuse = √(Base² + Height²)"
+        ],
+        "steps": [
+          "Draw a right triangle with sides 1 and 1.",
+          "Calculate the hypotenuse length."
+        ],
+        "solutionSteps": [
+          {
+            "text": "Apply Pythagoras theorem",
+            "displayLatex": "c = \\sqrt{1^2 + 1^2}"
+          },
+          {
+            "text": "Simplify the expression",
+            "displayLatex": "c = \\sqrt{1 + 1} = \\sqrt{2}"
+          },
+          {
+            "text": "Mark this length on the number line",
+            "displayLatex": "Point at \\sqrt{2}"
+          }
+        ],
+        "reasoning": [
+          "The hypotenuse of a right triangle with unit legs is √2."
+        ],
+        "explanation": "We construct a right triangle where the legs are 1 unit each. The hypotenuse represents √2. By drawing an arc from the origin with radius equal to the hypotenuse, we mark √2 on the number line.",
+        "finalAnswer": {
+          "text": "√2 is located at distance √2 units from origin",
+          "displayLatex": "x = \\sqrt{2}"
+        },
+        "latex": "c^2 = a^2 + b^2",
+        "displayLatex": "\\sqrt{1^2 + 1^2} = \\sqrt{2}"
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Real numbers include rational and irrational numbers."
+      ],
+      "formulas": [
+        "a^m × a^n = a^(m+n)",
+        "c = √(a² + b²)"
+      ],
+      "facts": [
+        "√2 is approximately 1.414."
+      ],
+      "keywords": [
+        "Irrational",
+        "Number Line",
+        "Pythagoras"
+      ],
+      "conceptMap": [
+        "Real Numbers -> Rational + Irrational -> Decimal Expansions"
+      ],
+      "quickRecap": [
+        "Rational = p/q; Irrational = Non-repeating decimals."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Is 0.333... a rational or irrational number?",
+      "Can you represent √5 on the number line? How?"
+    ],
+    "quickSummary": [
+      "Real numbers cover all points on the number line."
+    ],
+    "keyTerms": [
+      "Rational",
+      "Irrational",
+      "Decimal Expansion"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A number that cannot be written as p/q is called a ________ number.",
+        "answer": "irrational"
+      },
+      {
+        "prompt": "The decimal expansion of √2 is ________ and ________. ",
+        "answer": "non-terminating, non-recurring"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is an irrational number?",
+        "options": [
+          "A. 0.5",
+          "B. √4",
+          "C. √2",
+          "D. -3"
+        ],
+        "answer": "C. √2"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "What is the decimal expansion of a rational number?",
+        "answer": "Terminating or non-terminating recurring."
+      }
+    ],
+    "didYouKnow": [
+      "The concept of irrational numbers was discovered by the Pythagoreans, who were initially shocked that √2 could not be written as a fraction."
+    ],
+    "summary": [
+      "Real numbers are the union of rational and irrational numbers."
+    ],
+    "quickRevision": [
+      "Rational = p/q; Irrational = Non-repeating."
+    ],
+    "rememberPoints": [
+      "Real Numbers -> Rational + Irrational",
+      "√2 Construction -> Right Triangle",
+      "Decimal Expansions -> Terminating or Recurring"
+    ]
+  }
+}

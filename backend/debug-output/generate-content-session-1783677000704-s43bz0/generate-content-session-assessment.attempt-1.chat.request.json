@@ -1,0 +1,287 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "meta": {
+        "assessmentType": "Session assessment",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "language": "English",
+        "preferredDifficulty": "Balanced",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ]
+      },
+      "sessionAnalysis": {
+        "assessedLearningOutcomes": [
+          "Learning outcome text"
+        ],
+        "assessedConcepts": [
+          "Concept from the session"
+        ],
+        "conceptCoveragePriorities": [
+          "High-emphasis taught concept"
+        ],
+        "misconceptionTargets": [
+          "Likely misconception to check"
+        ],
+        "competencyFocus": [
+          "Application"
+        ]
+      },
+      "blueprint": {
+        "sectionPlan": [
+          {
+            "sectionId": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "focus": "Session-aligned assessment focus"
+          }
+        ],
+        "conceptDistribution": [
+          {
+            "concept": "Concept from the session",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ],
+            "competency": "Understanding",
+            "importance": "core"
+          }
+        ],
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "competencyDistribution": {
+          "understanding": 2,
+          "application": 3,
+          "analysis": 2
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "Assessment",
+            "minutes": 15
+          }
+        ]
+      },
+      "paper": {
+        "instructions": [
+          "Answer all questions using only the concepts taught in this session."
+        ],
+        "sections": [
+          {
+            "id": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "source": "fallback"
+          }
+        ],
+        "questions": [
+          {
+            "id": "q1",
+            "questionNumber": 1,
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "type": "mcq",
+            "subtype": "mcq",
+            "prompt": "MCQ question",
+            "options": [
+              "A. option",
+              "B. option",
+              "C. option",
+              "D. option"
+            ],
+            "marks": 1,
+            "expectedLength": "",
+            "learningOutcomeRefs": [
+              "LO1"
+            ],
+            "conceptRefs": [
+              "Concept"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "subtopicCoverage": [
+              "Subtopic"
+            ],
+            "bloomsLevel": "understanding",
+            "competencyTag": "Conceptual clarity",
+            "difficulty": "easy",
+            "sourceEvidence": [
+              "Teacher notes concept reference"
+            ]
+          }
+        ]
+      },
+      "evaluation": {
+        "answerKey": {
+          "items": [
+            {
+              "questionId": "q1",
+              "sectionId": "section-assessment",
+              "sectionTitle": "Assessment",
+              "answer": "Correct option",
+              "explanation": "Brief explanation",
+              "marks": 1,
+              "subtype": "mcq"
+            }
+          ]
+        },
+        "markingScheme": {
+          "items": [
+            {
+              "questionId": "q1",
+              "totalMarks": 1,
+              "markBreakdown": [
+                {
+                  "criterion": "Correct answer selected",
+                  "marks": 1
+                }
+              ],
+              "awardGuidance": [
+                "Award full marks only for the correct option."
+              ]
+            }
+          ]
+        },
+        "rubrics": {
+          "items": [
+            {
+              "questionId": "q5",
+              "totalMarks": 2,
+              "criteria": [
+                {
+                  "criterion": "First valid point",
+                  "marks": 1
+                },
+                {
+                  "criterion": "Second valid point",
+                  "marks": 1
+                }
+              ],
+              "sampleAnswer": "Point-wise short answer"
+            }
+          ]
+        },
+        "generalInstructions": [
+          "Award marks point-wise for each valid idea."
+        ],
+        "evaluatorInstructions": [
+          "Use only the taught session content when evaluating student responses."
+        ],
+        "moderationNotes": [
+          "Maintain consistency across equivalent answers."
+        ]
+      },
+      "summary": {
+        "coverageSummary": [
+          "Balanced coverage of the taught session concepts."
+        ],
+        "omittedContent": [],
+        "balanceNotes": [
+          "Paper progresses from easier to more demanding questions."
+        ]
+      },
+      "validation": {
+        "exactPatternChecks": {
+          "passed": true,
+          "details": [
+            "Question pattern matches the requested blueprint."
+          ]
+        },
+        "marksChecks": {
+          "passed": true,
+          "details": [
+            "Marks match the requested total."
+          ]
+        },
+        "sectionChecks": {
+          "passed": true,
+          "details": [
+            "Each question is assigned to a valid section."
+          ]
+        },
+        "alignmentChecks": {
+          "passed": true,
+          "details": [
+            "Question paper, answer key, and marking scheme are aligned."
+          ]
+        },
+        "scopeBoundaryChecks": {
+          "passed": true,
+          "details": [
+            "No untaught or future-session content included."
+          ]
+        }
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "# Science Subject Intelligence Layer (Active)\nApply this Science subject intelligence while completing: Assessment generation.\n\nSCIENCE SUBJECT INTELLIGENCE LAYER\r\nYou are a Science Curriculum and Pedagogical Intelligence Engine responsible for understanding the complete structure, philosophy, progression and pedagogy of any Science curriculum before Curriculum Extraction, Term Division, Session Planning, Student Notes, Teacher Notes, PPTs, Classroom Activities, Homework, Worksheets, Practicals, Projects, Assessments, Answer Keys and Rubrics are generated.\r\nYour role is not to generate educational resources, but to build a complete understanding of the curriculum, preserve scientific learning progression, identify the appropriate pedagogy for every educational stage and subject, and ensure this intelligence guides the entire generation pipeline.\r\n\r\nPRIMARY OBJECTIVE\r\nScience is a progressive discipline that develops curiosity, observation, exploration, inquiry, experimentation, reasoning, evidence-based thinking, problem solving and real-world application.\r\nBefore any generation begins:\r\nUnderstand the curriculum completely.\r\nPreserve scientific progression and prerequisite relationships.\r\nAdapt pedagogy according to grade, learner development and subject.\r\nTreat Science as a connected learning journey rather than isolated chapters.\r\n\r\nCURRICULUM UNDERSTANDING\r\nUnderstand and preserve every meaningful curriculum component without omission, simplification or restructuring.\r\nIdentify and preserve:\r\nCurriculum Philosophy\r\nLearning Objectives\r\nCompetencies & Learning Outcomes\r\nCourse Structure\r\nThemes / Units / Chapters / Topics / Subtopics\r\nConcept Progression\r\nScientific Terminology\r\nPracticals, Experiments & Laboratory Work\r\nDemonstrations & Investigations\r\nProjects & Field Activities\r\nInternal Assessment & Subject Enrichment\r\nCompetency Framework\r\nAssessment Pattern & Question Paper Design\r\nExamination Blueprint\r\nPrescribed Resources\r\nFormative Components\r\nCross-disciplinary Connections\r\nMaintain every academic entity throughout the generation pipeline.\r\n\r\nCURRICULUM STRUCTURE INTELLIGENCE\r\nNever assume every Science curriculum follows the same hierarchy.\r\nA curriculum may be organized into:\r\nThemes\r\nUnits\r\nModules\r\nChapters\r\nDomains\r\nLearning Areas\r\nCompetencies\r\nStandards\r\nInvestigations\r\nPractical Sections\r\nProjects\r\nEnvironmental Studies\r\nIntegrated Science\r\nPhysics\r\nChemistry\r\nBiology\r\nEarth & Environmental Science\r\nAlways:\r\nIdentify the original structure.\r\nPreserve hierarchy.\r\nMaintain prerequisite dependencies.\r\nFollow logical scientific progression.\r\nNever force a fixed curriculum structure.\r\n\r\nSCIENTIFIC LEARNING INTELLIGENCE\r\nIdentify how every lesson should be learned before determining how it should be taught.\r\nInstructional Domain\r\nA lesson may involve one or more domains:\r\nEnvironmental Awareness\r\nObservation\r\nExploration\r\nScientific Inquiry\r\nInvestigation\r\nConcept Development\r\nExperimentation\r\nLaboratory Learning\r\nDemonstration\r\nScientific Reasoning\r\nMathematical Application\r\nDiagram & Data Interpretation\r\nModel-based Learning\r\nProblem Solving\r\nPractical Skills\r\nProject-based Learning\r\nSTEM Integration\r\nHealth, Life, Physical, Chemical & Earth Science\r\nRevision\r\nExamination Preparation\r\nLearning Objective\r\nIdentify the primary objective such as:\r\nCuriosity Development\r\nObservation\r\nConcept Formation\r\nConceptual Understanding\r\nScientific Thinking\r\nInvestigation\r\nPractical Skills\r\nLogical & Analytical Reasoning\r\nMathematical Reasoning\r\nScientific Communication\r\nCritical Thinking\r\nProblem Solving\r\nReal-world Application\r\nCompetency Development\r\nExamination Readiness\r\nThe identified instructional domain and learning objective must guide every downstream output.\r\n\r\nSESSION TYPE INTELLIGENCE\r\nNever use one common instructional approach for every Science lesson.\r\nAutomatically identify the appropriate session type.\r\nExamples include:\r\nObservation\r\nExploration\r\nActivity\r\nConcept Introduction\r\nConcept Development\r\nDemonstration\r\nInvestigation\r\nExperiment\r\nPractical\r\nLaboratory\r\nNumerical Practice\r\nDiagram Study\r\nDiscussion\r\nCase Study\r\nProject\r\nRevision\r\nAssessment\r\nRemedial Session\r\nEvery downstream resource must align with the identified session type.\r\n\r\nCLASS-WISE PEDAGOGICAL INTELLIGENCE\r\nAdapt pedagogy according to learner development.\r\n\r\nPRE-PRIMARY (Foundational Stage)\r\nFocus on developing:\r\nCuriosity\r\nObservation\r\nExploration\r\nSensory Learning\r\nNature Awareness\r\nEveryday Experiences\r\nPlay-based Learning\r\nStory-based Learning\r\nHands-on Activities\r\nQuestioning\r\nSimple Scientific Vocabulary\r\nEmphasize exploration over explanation.\r\nAvoid abstract concepts, formulas and memorization.\r\n\r\nPRIMARY (Environmental Studies)\r\nTreat the subject as Environmental Studies (EVS) rather than discipline-based Science.\r\nIntegrate learning around:\r\nSelf\r\nFamily\r\nSchool\r\nCommunity\r\nPlants\r\nAnimals\r\nFood\r\nWater\r\nAir\r\nWeather\r\nSeasons\r\nHealth\r\nHygiene\r\nEnvironment\r\nLocal Surroundings\r\nDevelop through:\r\nObservation\r\nExploration\r\nDiscussion\r\nEveryday Connections\r\nSimple Experiments\r\nField Activities\r\nDrawing\r\nStorytelling\r\nEnvironmental Responsibility\r\nDo not separate Physics, Chemistry and Biology.\r\n\r\nMIDDLE SCHOOL (Integrated Science)\r\nTreat Science as one integrated discipline connecting:\r\nPhysics\r\nChemistry\r\nBiology\r\nEarth Science\r\nEnvironmental Science\r\nDevelop:\r\nScientific Inquiry\r\nInvestigation\r\nObservation\r\nExperimentation\r\nConceptual Understanding\r\nScientific Reasoning\r\nPractical Skills\r\nData Recording\r\nScientific Communication\r\nReal-life Applications\r\nBalance theory, activities and laboratory exposure.\r\n\r\nSECONDARY (Integrated Science)\r\nStrengthen conceptual understanding through:\r\nScientific Principles\r\nScientific Laws\r\nInvestigation\r\nPractical Work\r\nLaboratory Skills\r\nAnalytical Thinking\r\nProblem Solving\r\nData Analysis\r\nCompetency-based Learning\r\nReal-world Applications\r\nExamination Readiness\r\nIntegrate experiments, diagrams, investigations and competency-based assessment throughout learning.\r\n\r\nSENIOR SECONDARY (Classes XI-XII)\r\nScience becomes discipline-specific.\r\nAutomatically activate the appropriate subject intelligence:\r\nPhysics\r\nChemistry\r\nBiology\r\nNever apply one common pedagogy across all three subjects.\n\n# Science Generation Policy Layer (Active)\nApply this science generation policy while completing: Assessment generation.\n\nScience session profile:\n{\n  \"scienceMode\": \"Integrated Science\",\n  \"scienceSessionType\": \"assessment_or_revision\",\n  \"scienceContentModes\": [\n    \"formula_equation\",\n    \"diagram_data\",\n    \"experimental\",\n    \"analytical\",\n    \"comparison\",\n    \"conceptual\"\n  ],\n  \"scienceArtifact\": \"assessment\",\n  \"artifactEmphasis\": [\n    \"balanced_science_assessment\",\n    \"application\",\n    \"diagram_data\",\n    \"practical_reasoning\",\n    \"scientific_communication\"\n  ],\n  \"practicalMode\": \"contextual_only\",\n  \"assessmentBias\": \"balanced_science\",\n  \"pptStyle\": \"n/a\"\n}\n\nSCIENCE DOWNSTREAM GENERATION ENGINE\r\nYou are generating downstream classroom artifacts for Science.\r\n\r\nUse the science session profile as the source of truth for:\r\n- scienceMode\r\n- scienceSessionType\r\n- scienceContentModes\r\n- scienceArtifact\r\n- artifactEmphasis\r\n\r\nUniversal science rules:\r\n1. Stay strictly inside the taught session boundary.\r\n2. Preserve scientific accuracy, terminology, symbols, units, equations, and cause-effect relationships.\r\n3. Treat evidence, observation, reasoning, and real-world application as core science behaviors.\r\n4. Include practicals, demonstrations, experiments, and investigations only when contextually relevant to the session profile.\r\n5. Never flatten Physics, Chemistry, Biology, EVS-style Science, and integrated Science into one generic pedagogy.\r\n6. Prefer concept progression and prerequisite integrity over decorative verbosity.\r\n7. Surface formulas, equations, labeled diagrams, graphs, tables, observations, and inference language whenever the science content demands them.\r\n8. Avoid textbook dumping. Every output must remain session-bounded, usable, and pedagogy-aware.\r\n\r\nMode guidance:\r\n- EVS-style Science: observation, environment, daily life, local examples, simple explanation, curiosity\r\n- Integrated Science: connected concept building, investigation, explanation, observation, everyday application\r\n- Physics: units, laws, numericals, graphs, ray diagrams, stepwise reasoning, precision\r\n- Chemistry: symbols, formulas, equations, reactions, observations, particles, transformations, lab links\r\n- Biology: structure-function, processes, labeled diagrams, life examples, terminology, sequence clarity\n\nSCIENCE ASSESSMENT RULES\r\nAssessments must follow a balanced science blueprint by default.\r\n\r\nBalance, as relevant to the session:\r\n- conceptual understanding\r\n- application\r\n- diagram/data/graph/table interpretation\r\n- practical or observation-based reasoning\r\n- scientific terminology and communication\r\n\r\nSubject emphasis:\r\n- Physics: numericals, units, graph reading, law-based reasoning, step accuracy\r\n- Chemistry: formulae, symbolic writing, reaction reasoning, observation-based inference\r\n- Biology: process explanation, diagram interpretation, structure-function reasoning, terminology accuracy\r\n\r\nIn answer keys and rubrics, explicitly reward:\r\n- correct scientific terminology\r\n- correct units and notation\r\n- correct labels\r\n- valid observations and conclusions\r\n- reasoning steps where the question demands them\n\nUNIVERSAL ASSESSMENT & EVALUATION INTELLIGENCE ENGINE\r\n\r\nROLE\r\nYou are an Enterprise Assessment & Evaluation Intelligence Engine.\r\nYou function like a professional examination committee made up of a curriculum assessment specialist, paper setter, head examiner, subject expert, psychometric reviewer, and marking-scheme designer.\r\n\r\nYou are not a simple question generator.\r\nYou are responsible for designing a complete, session-bounded examination package that is immediately usable by a teacher or school.\r\n\r\nPRIMARY OBJECTIVE\r\nGenerate a complete assessment package for one classroom session only.\r\n\r\nSession context:\r\n- Subject: Science (086)\r\n- Grade/Level: Class X / 10 / General\r\n- Session title: Chemical Substances and Their Properties\r\n- Session number: 1 of 1\r\n- Session duration: 45 minutes\r\n- Chapter scope: [\"Chemical Substances and Their Properties\"]\r\n- Learning outcomes: []\r\n- Previous session context: No previous session context provided.\r\n- Learning pace: Balanced\r\n- Preferred difficulty: Balanced\r\n- Output language: english\r\n- Language execution rule: Write every natural-language value in english. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when english is required.\r\n\r\nAssessment preferences:\r\n- Assessment type: Session assessment\r\n- Requested total marks: 9\r\n- Requested total questions: 7\r\n- Requested duration: 15 minutes\r\n- Assessment preference inputs: []\r\n- Target blooms emphasis: [\"Remember + Understand\",\"Apply + Analyze\",\"Evaluate + Create\"]\r\n- Requested question type mix: [{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]\r\n- Allowed assessment sections: [\n  {\n    \"id\": \"section-unit-i-chemical-substances-nature-and-behaviour\",\n    \"title\": \"Unit I: Chemical Substances - Nature and Behaviour\",\n    \"marks\": 25,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-ii-world-of-living\",\n    \"title\": \"Unit II: World of Living\",\n    \"marks\": 25,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-iii-natural-phenomena\",\n    \"title\": \"Unit III: Natural Phenomena\",\n    \"marks\": 12,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-iv-effects-of-current\",\n    \"title\": \"Unit IV: Effects of Current\",\n    \"marks\": 13,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-unit-v-natural-resources\",\n    \"title\": \"Unit V: Natural Resources\",\n    \"marks\": 5,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-total-theory-marks-80\",\n    \"title\": \"Total Theory Marks: 80\",\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-internal-assessment\",\n    \"title\": \"Internal Assessment\",\n    \"marks\": 20,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-grand-total\",\n    \"title\": \"Grand Total\",\n    \"marks\": 100,\n    \"source\": \"assessment_framework\"\n  }\n]\r\n- Question paper objective: Not specified.\r\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 9,\n  \"totalQuestions\": 7,\n  \"questionTypes\": [\n    {\n      \"type\": \"mcq\",\n      \"label\": \"MCQs\",\n      \"questionCount\": 3,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    }\n  ]\n}\r\n\r\nSession JSON source of truth:\r\n{\n  \"id\": \"session-1\",\n  \"sessionNumber\": 1,\n  \"title\": \"Chemical Substances and Their Properties\",\n  \"duration\": 45,\n  \"learningOutcomes\": [\n    \"Students can define chemical substances and their properties.\",\n    \"Students can classify elements as metals or non-metals based on oxide formation.\",\n    \"Students can distinguish between acidic, basic, and neutral oxides.\",\n    \"Students can predict the nature of an oxide formed by a given element.\"\n  ],\n  \"introduction\": \"Imagine you have two pieces of metal: one is shiny gold that never changes, and another is iron that turns reddish-brown over time. Why do they behave so differently? Today, we will explore 'Chemical Substances and Their Properties' to understand how elements react with oxygen to form new substances called oxides. We will discover why some oxides turn blue litmus paper red while others turn it blue!\",\n  \"theory\": {\n    \"overview\": \"Chemical substances are forms of matter that have a constant composition and distinct properties. A key property is their reactivity, specifically how they combine with oxygen to form oxides. This session focuses on the classification of elements into metals and non-metals based on the nature of the oxides they produce.\",\n    \"keyPoints\": [\n      \"Metals react with oxygen to form basic oxides (e.g., MgO).\",\n      \"Non-metals react with oxygen to form acidic or neutral oxides (e.g., CO2, SO2).\",\n      \"The nature of the oxide determines its chemical behavior in water.\"\n    ],\n    \"detailedContent\": \"When elements burn or react with oxygen, they form oxides. For example, when Magnesium ribbon burns in air, it forms a white powder called Magnesium Oxide (MgO). If you dissolve this in water and test it with litmus paper, it turns red litmus blue, indicating it is a basic oxide. Conversely, when Carbon burns, it forms Carbon Dioxide (CO2). When dissolved in water, it forms carbonic acid, turning blue litmus red. This shows that non-metal oxides are generally acidic. Understanding this distinction helps us predict how substances will behave in chemical reactions.\"\n  },\n  \"activities\": [\n    {\n      \"name\": \"Oxide Nature Detective\",\n      \"instructions\": [\n        \"Divide students into groups of 4.\",\n        \"Provide a list of elements: Iron, Carbon, Sodium, Sulfur.\",\n        \"Ask students to predict the nature of the oxide each element forms when reacting with oxygen.\",\n        \"Groups must justify their answer using the rule: Metal -> Basic, Non-metal -> Acidic.\"\n      ],\n      \"durationMinutes\": 10\n    }\n  ],\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"This session introduces Class X students to the concept of chemical substances, focusing on their classification based on reactivity with oxygen (metals vs. non-metals) and the formation of oxides. It establishes the foundational understanding of how elements behave chemically before moving into specific reactions.\",\n    \"prerequisiteKnowledge\": [\n      \"Basic definition of matter and its states\",\n      \"Distinction between physical and chemical changes\",\n      \"Familiarity with common elements like Iron, Copper, Magnesium, and Carbon\"\n    ],\n    \"learningOutcomes\": [\n      \"Define chemical substances and their properties.\",\n      \"Classify elements into metals and non-metals based on their reaction with oxygen.\",\n      \"Distinguish between acidic, basic, and neutral oxides.\",\n      \"Predict the nature of an oxide formed by a given element.\"\n    ],\n    \"lessonPurpose\": [\n      \"To understand that different substances react differently with oxygen.\",\n      \"To link the nature of oxides (acidic/basic) to the type of element (non-metal/metal).\",\n      \"To develop scientific reasoning through observation and classification.\"\n    ],\n    \"teachingSequence\": [\n      \"Start with a hook about rusting iron vs. burning magnesium.\",\n      \"Demonstrate the reaction of Magnesium ribbon with oxygen (burning).\",\n      \"Discuss the nature of the ash formed (Magnesium Oxide) using litmus test concept.\",\n      \"Introduce Non-metals (e.g., Carbon/Sulfur) and their reaction with oxygen.\",\n      \"Explain why non-metal oxides are acidic while metal oxides are basic.\",\n      \"Conclude with a summary table of properties.\"\n    ],\n    \"guidedPractice\": [\n      \"Ask students to predict the product when Iron burns in air.\",\n      \"Have students classify given elements based on their oxide nature.\",\n      \"Discuss real-life examples like antacids (basic oxides) and acid rain (acidic oxides).\"\n    ],\n    \"misconceptions\": [\n      \"Confusing physical change with chemical change in combustion.\",\n      \"Thinking all gases are acidic.\"\n    ],\n    \"formativeChecks\": [\n      \"Ask: 'If I burn sulfur, will the gas turn blue litmus red?'\"\n    ],\n    \"assessmentQuestions\": [\n      \"Write the word equation for the reaction of Magnesium with Oxygen.\"\n    ],\n    \"sessionSummary\": [\n      \"Chemical substances are classified by their reactivity with oxygen.\",\n      \"The nature of the oxide (acidic/basic) depends on whether the element is a metal or non-metal.\"\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Reactivity with Oxygen\",\n        \"definition\": \"The tendency of an element to combine with oxygen to form oxides.\",\n        \"coreExplanation\": \"Metals generally react with oxygen to form basic oxides, while non-metals form acidic or neutral oxides. The intensity of the reaction varies (e.g., Sodium reacts violently, Iron reacts slowly).\",\n        \"importance\": \"Understanding reactivity helps predict how substances behave in daily life and industry.\",\n        \"keywords\": [\n          \"Reactivity\",\n          \"Oxide\",\n          \"Metal\",\n          \"Non-metal\"\n        ],\n        \"examples\": [\n          \"Magnesium + Oxygen -> Magnesium Oxide (White powder)\",\n          \"Carbon + Oxygen -> Carbon Dioxide (Gas)\"\n        ]\n      }\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction to Chemical Substances\",\n        \"durationMinutes\": 5,\n        \"explanation\": [\n          \"Chemical substances are defined by their properties and how they react with other substances.\",\n          \"Reactivity is the ability of an element to combine with others, especially oxygen.\",\n          \"We classify substances based on whether they form acidic or basic oxides.\"\n        ],\n        \"examples\": [\n          \"Rusting of iron (slow reaction)\",\n          \"Burning of magnesium (fast reaction)\"\n        ],\n        \"checkUnderstanding\": [\n          \"Is rusting a physical or chemical change?\"\n        ],\n        \"expectedAnswers\": [\n          \"Chemical change because a new substance (iron oxide) is formed.\"\n        ],\n        \"activity\": [\n          \"Quick think-pair-share: List 3 metals and 2 non-metals you know.\"\n        ]\n      }\n    ]\n  },\n  \"studentLessonNotes\": {\n    \"title\": \"Chemical Substances and Their Properties\",\n    \"sessionOverview\": \"An introduction to the fundamental properties of matter, focusing on physical vs. chemical changes, metals vs. non-metals, and the reactivity series.\",\n    \"introduction\": \"Welcome to your first session on Chemical Substances! Today, we aren't just memorizing facts; we are learning how to observe the world around us. You will discover why iron rusts, why gold stays shiny, and how to tell if a change is temporary or permanent. By the end of this lesson, you will be able to classify substances and predict how they behave.\",\n    \"learningObjectives\": [\n      \"Distinguish between physical and chemical changes with real-world examples.\",\n      \"Compare and contrast the properties of metals and non-metals.\",\n      \"Understand the concept of the reactivity series and its importance in displacement reactions.\",\n      \"Identify common chemical reactions like oxidation and corrosion.\"\n    ],\n    \"keyTerms\": [\n      \"Oxidation\",\n      \"Reduction\",\n      \"Displacement\",\n      \"Corrosion\"\n    ],\n    \"quickSummary\": [\n      \"Metals are shiny and conductive; non-metals are dull and brittle.\",\n      \"Reactivity series predicts displacement reactions.\"\n    ],\n    \"summary\": [\n      \"Today we learned to classify changes and understand how metals behave based on their reactivity.\"\n    ],\n    \"rememberPoints\": [\n      \"Rusting = Iron + Oxygen + Water → Rust\",\n      \"Zinc > Copper in reactivity\",\n      \"Graphite is the exception (Non-metal conductor)\"\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Corrosion\",\n        \"definition\": \"The slow degradation of metals by chemical reactions with the environment (e.g., rusting of iron).\"\n      },\n      {\n        \"term\": \"Displacement Reaction\",\n        \"definition\": \"A reaction where a more reactive element replaces a less reactive element from its compound.\"\n      },\n      {\n        \"term\": \"Malleability\",\n        \"definition\": \"The ability of a metal to be beaten into thin sheets without breaking.\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"Physical vs. Chemical Changes\",\n        \"explanation\": \"A physical change alters the form of a substance without changing its chemical identity. A chemical change creates a completely new substance with different properties.\",\n        \"keyPoints\": [\n          \"Physical changes are often reversible (e.g., melting ice).\",\n          \"Chemical changes are usually irreversible (e.g., burning wood).\",\n          \"Look for color change, gas evolution, or temperature change as clues.\"\n        ],\n        \"examples\": [\n          \"Melting ice cream: Physical (still water).\",\n          \"Rusting of iron: Chemical (iron turns into rust).\"\n        ],\n        \"importantNotes\": [\n          \"Burning a candle involves both physical and chemical changes.\"\n        ],\n        \"conceptSummary\": [\n          \"Physical = Same stuff, different look. Chemical = New stuff created.\"\n        ]\n      },\n      {\n        \"heading\": \"Metals and Non-Metals\",\n        \"explanation\": \"Elements are broadly classified into metals and non-metals based on their physical and chemical properties.\",\n        \"keyPoints\": [\n          \"Metals are generally hard, shiny, and conductive.\",\n          \"Non-metals are dull, brittle, and insulators.\",\n          \"Mercury is the only liquid metal at room temperature.\"\n        ],\n        \"examples\": [\n          \"Gold: Shiny, non-reactive (used in jewelry).\",\n          \"Sulphur: Dull yellow solid, breaks easily.\"\n        ],\n        \"importantNotes\": [\n          \"Graphite is an exception: it is a non-metal but conducts electricity.\"\n        ],\n        \"conceptSummary\": [\n          \"Metals = Strong & Shiny; Non-Metals = Brittle & Dull.\"\n        ]\n      },\n      {\n        \"heading\": \"Reactivity Series\",\n        \"explanation\": \"The reactivity series is a list of metals arranged in decreasing order of their chemical reactivity.\",\n        \"keyPoints\": [\n          \"Potassium (K) and Sodium (Na) are the most reactive.\",\n          \"Gold (Au) and Platinum (Pt) are the least reactive.\",\n          \"A more reactive metal can displace a less reactive metal from its salt solution.\"\n        ],\n        \"examples\": [\n          \"Iron nails in Copper Sulphate: Iron displaces copper, turning the blue solution green.\",\n          \"Copper in Silver Nitrate: No reaction (Copper is less reactive than Silver).\"\n        ],\n        \"importantNotes\": [\n          \"Metals above Hydrogen react with dilute acids to release Hydrogen gas.\"\n        ],\n        \"conceptSummary\": [\n          \"Stronger metals push out weaker metals from solutions.\"\n        ]\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Predicting Displacement\",\n        \"steps\": [\n          \"Check the reactivity series.\",\n          \"Compare Zinc and Copper.\"\n        ],\n        \"explanation\": \"Zinc is more reactive than copper. It takes the place of copper in the solution, forming Zinc Sulphate (which is colorless/greenish) and leaving solid Copper behind.\"\n      }\n    ],\n    \"selfCheckQuestions\": [\n      \"Is melting ice a physical or chemical change? Why?\",\n      \"Why do we use copper wires instead of iron wires?\",\n      \"What happens when an iron nail is dipped in copper sulphate solution?\"\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"Define corrosion.\",\n        \"answer\": \"The slow degradation of metals by chemical reactions with the environment.\"\n      },\n      {\n        \"question\": \"What is the reactivity series?\",\n        \"answer\": \"A list of metals arranged in decreasing order of their chemical reactivity.\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which of the following is a physical change?\",\n        \"answer\": \"C. Melting of ice\"\n      },\n      {\n        \"question\": \"Which metal is liquid at room temperature?\",\n        \"answer\": \"B. Mercury\"\n      }\n    ]\n  },\n  \"topicCoverage\": []\n}\r\n\r\nTARGET JSON SHAPE\r\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}\r\n\r\nABSOLUTE RULES\r\n1. This assessment is for ONE SESSION ONLY.\r\n2. Use only content that is explicitly present in the supplied session information.\r\n3. Never introduce future chapters, untaught formulas, external textbook knowledge, or assumed content.\r\n4. Learning outcomes guide coverage, but questions must originate from taught concepts, not from repetitive learning-outcome wording.\r\n5. Every question must measure real learning: understanding, application, reasoning, analysis, interpretation, communication, competency, or conceptual clarity.\r\n6. Match the requested marks, duration, question counts, and section structure exactly.\r\n7. If allowed assessment sections are supplied, every question must use one valid sectionId and sectionTitle from that list.\r\n8. Keep the paper professional, board-style, fair, age appropriate, and free from repetitive AI patterns.\r\n9. Return valid JSON only.\r\n\r\nINTERNAL WORKFLOW\r\nFollow this reasoning process before writing the final JSON:\r\n\r\nPHASE 1 - SESSION INTELLIGENCE\r\n- Identify what students learned in this session.\r\n- Extract taught concepts, skills, vocabulary, examples, activities, practical work, and likely misconceptions.\r\n- Distinguish high-emphasis concepts from supporting concepts.\r\n\r\nPHASE 2 - CONCEPT INTELLIGENCE\r\n- Build an internal concept graph from the taught session.\r\n- Map each learning outcome to the concepts actually taught.\r\n- Identify concept importance, dependency, applications, likely misconceptions, and assessment opportunities.\r\n\r\nPHASE 3 - BLUEPRINT-FIRST DESIGN\r\n- Design the full paper before writing questions.\r\n- Decide section allocation, marks per section, question progression, blooms balance, competency balance, and time allocation.\r\n- Distribute questions across important taught concepts rather than over-testing one idea.\r\n\r\nPHASE 4 - PROFESSIONAL QUESTION PAPER\r\n- Generate a student-facing paper with ordered questions.\r\n- Use continuous ids: q1, q2, q3, ...\r\n- Keep wording precise and board-like.\r\n- Preserve the requested subtype mix such as mcq, veryShortAnswer, shortAnswer, longAnswer, and caseStudy.\r\n\r\nPHASE 5 - EVALUATION PACKAGE\r\n- Generate a complete linked evaluation package:\r\n  - answer key\r\n  - marking scheme\r\n  - rubric package\r\n  - evaluator instructions\r\n  - moderation notes\r\n- Every evaluation item must link to the same question id as the paper.\r\n- For non-MCQ questions, provide point-wise criteria and mark allocation.\r\n\r\nPHASE 6 - VALIDATION\r\n- Confirm the final output matches requested marks, requested counts, requested duration, and valid sections.\r\n- Confirm each question has aligned answer-key and marking-scheme coverage.\r\n- Confirm the paper stays within the session boundary.\r\n\r\nOUTPUT REQUIREMENTS\r\n1. Output the canonical assessment package only.\r\n2. Put student-facing instructions in `paper.instructions`.\r\n3. Put the ordered question paper in `paper.questions`.\r\n4. Put answer keys in `evaluation.answerKey.items`.\r\n5. Put mark splits in `evaluation.markingScheme.items`.\r\n6. Put rubric criteria in `evaluation.rubrics.items`.\r\n7. Put summary notes in `summary`.\r\n8. Put validation status in `validation`.\r\n9. Use the exact section ids and titles supplied or derived from the session context.\r\n10. Keep question metadata, evaluation metadata, and blueprint references aligned to the same continuous ids.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}"
+    }
+  ]
+}

@@ -426,6 +426,7 @@ export default function App() {
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string>("");
   const [activeWorkspace, setActiveWorkspace] = useState<PlanningWorkspace | null>(null);
   const [editingJsonText, setEditingJsonText] = useState<string>("");
+  const contentGenerationRefreshAttemptsRef = useRef<Record<string, boolean>>({});
   const [isEditingJson, setIsEditingJson] = useState<boolean>(false);
   const [isJsonCollapsed, setIsJsonCollapsed] = useState<boolean>(false);
   const [savedCurriculums, setSavedCurriculums] = useState<SavedCurriculumSummary[]>([]);
@@ -738,6 +739,7 @@ export default function App() {
   };
 
   const clearCurriculumWorkspace = () => {
+    contentGenerationRefreshAttemptsRef.current = {};
     setCurrentCurriculumId("");
     setCurrentWorkspaceId("");
     setActiveWorkspace(null);
@@ -897,6 +899,10 @@ export default function App() {
     setCurrentCurriculumId(data.curriculumId || "");
     setExtractedData(data.curriculum?.extractedCurriculum || data.curriculum || null);
     setEditingJsonText("");
+    setShowExtractionOutput(true);
+    setShowExtractionJsonViewer(true);
+    setIsEditingJson(false);
+    setIsJsonCollapsed(false);
     if (data.curriculumId) {
       localStorage.setItem(LAST_CURRICULUM_ID_KEY, data.curriculumId);
     }
@@ -7674,9 +7680,12 @@ export default function App() {
 
     if (shouldForceSync || !coursePlanningDraftDirty) {
       setAcademicConfigDraft(workspace.academicConfig || {});
-      if (workspace.termPlan?.recommendedTermCount) {
-        setPreferredTermCount(Number(workspace.termPlan.recommendedTermCount) || 3);
-      }
+      const savedPreferredTermCount = Number(workspace.termPlan?.recommendedTermCount || 0);
+      setPreferredTermCount(
+        savedPreferredTermCount >= 1 && savedPreferredTermCount <= 4
+          ? savedPreferredTermCount
+          : 3
+      );
 
       const sourceAllocations =
         workspace.termPlan?.allocations?.length
@@ -7913,8 +7922,13 @@ export default function App() {
       (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions &&
       typeof (activeWorkspace.generationScope as Record<string, unknown>).generatedSessions === "object";
     if (hasGeneratedSessions) {
+      delete contentGenerationRefreshAttemptsRef.current[currentWorkspaceId];
       return;
     }
+    if (contentGenerationRefreshAttemptsRef.current[currentWorkspaceId]) {
+      return;
+    }
+    contentGenerationRefreshAttemptsRef.current[currentWorkspaceId] = true;
 
     void loadPlanningWorkspaceById(currentWorkspaceId, { view: "content_generation" }).catch((error: any) => {
       console.error("[Frontend] Content-generation workspace refresh failed", error);
@@ -8175,6 +8189,16 @@ export default function App() {
   const loadCurriculumFile = async (file: File) => {
     setErrorHeader(null);
     resetTamilIndexState();
+    setCurrentCurriculumId("");
+    setCurrentWorkspaceId("");
+    setActiveWorkspace(null);
+    setExtractedData(null);
+    setEditingJsonText("");
+    setShowExtractionOutput(false);
+    setShowExtractionJsonViewer(false);
+    setIsEditingJson(false);
+    setIsJsonCollapsed(false);
+    closePendingCurriculumSelection();
     setFileName(file.name);
     setFileSizeStr((file.size / 1024).toFixed(1) + " KB");
 
@@ -8555,6 +8579,10 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildPlannerRequestPayload({
           academicConfig: academicConfigDraft,
+          termPlan: {
+            ...(activeWorkspace?.termPlan || {}),
+            recommendedTermCount: preferredTermCount,
+          },
         }, authSession)),
       });
 
@@ -8594,6 +8622,10 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildPlannerRequestPayload({
           academicConfig: academicConfigDraft,
+          termPlan: {
+            ...(activeWorkspace?.termPlan || {}),
+            recommendedTermCount: preferredTermCount,
+          },
         }, authSession)),
       });
 
@@ -8650,6 +8682,7 @@ export default function App() {
           academicConfig: academicConfigDraft,
           termPlan: {
             ...(activeWorkspace.termPlan || {}),
+            recommendedTermCount: preferredTermCount,
             approved: false,
             allocations: activeWorkspace.termPlan.recommendations,
           },
@@ -8747,6 +8780,7 @@ export default function App() {
           academicConfig: academicConfigDraft,
           termPlan: {
             ...(activeWorkspace?.termPlan || {}),
+            recommendedTermCount: preferredTermCount,
             approved: false,
             allocations: coursePlanDraft,
           },
@@ -8818,6 +8852,7 @@ export default function App() {
           },
           termPlan: {
             ...(activeWorkspace?.termPlan || {}),
+            recommendedTermCount: preferredTermCount,
             approved: false,
             allocations: coursePlanDraft,
           },
@@ -8835,7 +8870,8 @@ export default function App() {
       setAcademicConfigDraft(savedWorkspace.academicConfig || {});
       localStorage.setItem(LAST_WORKSPACE_ID_KEY, savedWorkspace._id);
 
-      const res = await fetch(apiUrl(`/api/planning-workspaces/${currentWorkspaceId}/approve-course-plan`), {
+      const approvalWorkspaceId = savedWorkspace._id || currentWorkspaceId;
+      const res = await fetch(apiUrl(`/api/planning-workspaces/${approvalWorkspaceId}/approve-course-plan`), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildPlannerRequestPayload({}, authSession)),

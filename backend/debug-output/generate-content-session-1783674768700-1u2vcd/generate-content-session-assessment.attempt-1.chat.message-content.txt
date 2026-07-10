@@ -1,0 +1,693 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Define rational and irrational numbers accurately.",
+        "Represent rational numbers on a number line using division.",
+        "Construct the geometric representation of √2 on a number line.",
+        "Distinguish between terminating, recurring, and non-recurring decimals."
+      ],
+      "assessedConcepts": [
+        "Rational Numbers (p/q form)",
+        "Irrational Numbers (non-terminating, non-recurring)",
+        "Decimal Expansions",
+        "Geometric Construction of Square Roots"
+      ],
+      "conceptCoveragePriorities": [
+        "Distinguishing rational vs irrational numbers",
+        "Geometric visualization of √2"
+      ],
+      "misconceptionTargets": [
+        "Confusing non-terminating with non-recurring decimals",
+        "Thinking there are no numbers between two rational numbers"
+      ],
+      "competencyFocus": [
+        "Application",
+        "Analysis"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Session-aligned assessment on Number System concepts"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Rational Numbers Definition",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Geometric Construction of √2",
+          "questionRefs": [
+            "q5",
+            "q6"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        },
+        {
+          "concept": "Decimal Expansions",
+          "questionRefs": [
+            "q3",
+            "q4",
+            "q7"
+          ],
+          "competency": "Analysis",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define rational and irrational numbers accurately.",
+          "questionRefs": [
+            "q1",
+            "q2"
+          ]
+        },
+        {
+          "outcome": "Represent rational numbers on a number line using division.",
+          "questionRefs": [
+            "q3"
+          ]
+        },
+        {
+          "outcome": "Construct the geometric representation of √2 on a number line.",
+          "questionRefs": [
+            "q5",
+            "q6"
+          ]
+        },
+        {
+          "outcome": "Distinguish between terminating, recurring, and non-recurring decimals.",
+          "questionRefs": [
+            "q4",
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 30,
+        "application": 35,
+        "analysis": 20,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 3,
+        "application": 3,
+        "analysis": 1
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Unit I: Number System",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session.",
+        "For MCQs, select the single correct option.",
+        "For short answers, provide clear reasoning and steps."
+      ],
+      "sections": [
+        {
+          "id": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following numbers is irrational?",
+          "options": [
+            "A. 0.5",
+            "B. √4",
+            "C. √2",
+            "D. 3/7"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Define rational and irrational numbers accurately."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Irrational numbers are non-terminating and non-recurring."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "The decimal expansion of the rational number 3/8 is:",
+          "options": [
+            "A. Terminating",
+            "B. Non-terminating recurring",
+            "C. Non-terminating non-recurring",
+            "D. Infinite"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Define rational and irrational numbers accurately."
+          ],
+          "conceptRefs": [
+            "Rational Numbers Definition"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Decimal Expansions"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Rational numbers include terminating decimals."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Is the number 0.75 rational or irrational? Justify your answer in one sentence.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Define rational and irrational numbers accurately."
+          ],
+          "conceptRefs": [
+            "Rational Numbers Definition"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Rational numbers are expressible as p/q."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "What is the nature of the decimal expansion of √3?",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One sentence",
+          "learningOutcomeRefs": [
+            "Distinguish between terminating, recurring, and non-recurring decimals."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Decimal Expansions"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Analysis",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Irrational numbers are non-terminating and non-recurring."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Describe the steps to construct √2 on a number line using geometric methods.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "3-4 steps",
+          "learningOutcomeRefs": [
+            "Construct the geometric representation of √2 on a number line."
+          ],
+          "conceptRefs": [
+            "Geometric Construction of Square Roots"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Use Pythagoras theorem to find the length."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Explain why the number 0.123456789... (where digits continue without repeating) is irrational.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "2-3 points",
+          "learningOutcomeRefs": [
+            "Distinguish between terminating, recurring, and non-recurring decimals."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Decimal Expansions"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Analysis",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: Irrational numbers are non-terminating and non-recurring."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Represent the rational number -3/4 on a number line. Describe the division process used.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Description of process",
+          "learningOutcomeRefs": [
+            "Represent rational numbers on a number line using division."
+          ],
+          "conceptRefs": [
+            "Rational Numbers Definition"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Divide the segment between 0 and -1 into 4 equal parts."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. √2",
+            "explanation": "√2 is approximately 1.414... and never repeats, making it irrational.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "A. Terminating",
+            "explanation": "3/8 = 0.375, which terminates after three decimal places.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Rational. It can be written as 3/4.",
+            "explanation": "0.75 is a terminating decimal, which is a property of rational numbers.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Non-terminating and non-recurring.",
+            "explanation": "√3 is an irrational number, so its decimal expansion goes on forever without repeating.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Draw a right triangle with legs of length 1. The hypotenuse is √2. Mark this length on the number line from the origin.",
+            "explanation": "Uses Pythagoras theorem (1^2 + 1^2 = 2) to find the length and transfers it to the number line.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "It is irrational because the digits continue indefinitely without any repeating pattern.",
+            "explanation": "Irrational numbers are defined by non-terminating, non-recurring decimal expansions.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Divide the segment between 0 and -1 into 4 equal parts. Count 3 parts from 0 towards -1.",
+            "explanation": "This locates -3/4 on the number line by dividing the unit interval.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct classification (Rational)",
+                "marks": 0.5
+              },
+              {
+                "criterion": "Valid justification (p/q form)",
+                "marks": 0.5
+              }
+            ],
+            "awardGuidance": [
+              "Award partial marks if the student identifies it as rational but fails to justify, or vice versa."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct description (Non-terminating non-recurring)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for the correct description."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Mentioning right triangle with sides 1 and 1",
+                "marks": 1
+              },
+              {
+                "criterion": "Mentioning hypotenuse as √2 and marking on number line",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise for each valid step described."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Identifying non-terminating nature",
+                "marks": 1
+              },
+              {
+                "criterion": "Identifying non-recurring nature",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise for each valid point."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correctly describing division of unit interval into 4 parts",
+                "marks": 1
+              },
+              {
+                "criterion": "Correctly locating -3/4 on the negative side",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise for each valid step."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q5",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Draw a right triangle with legs of length 1. The hypotenuse is √2. Mark this length on the number line from the origin."
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "The digits continue indefinitely without any repeating pattern."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Divide the segment between 0 and -1 into 4 equal parts. Count 3 parts from 0 towards -1."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts including rational/irrational definitions, decimal expansions, and geometric construction."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier to more demanding questions."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (3 MCQs, 2 VSA, 2 SA)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total (9 marks)."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to a valid section (section-unit-i-number-system)."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

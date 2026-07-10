@@ -1,0 +1,287 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "meta": {
+        "assessmentType": "Session assessment",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "language": "English",
+        "preferredDifficulty": "Balanced",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ]
+      },
+      "sessionAnalysis": {
+        "assessedLearningOutcomes": [
+          "Learning outcome text"
+        ],
+        "assessedConcepts": [
+          "Concept from the session"
+        ],
+        "conceptCoveragePriorities": [
+          "High-emphasis taught concept"
+        ],
+        "misconceptionTargets": [
+          "Likely misconception to check"
+        ],
+        "competencyFocus": [
+          "Application"
+        ]
+      },
+      "blueprint": {
+        "sectionPlan": [
+          {
+            "sectionId": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "focus": "Session-aligned assessment focus"
+          }
+        ],
+        "conceptDistribution": [
+          {
+            "concept": "Concept from the session",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ],
+            "competency": "Understanding",
+            "importance": "core"
+          }
+        ],
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "competencyDistribution": {
+          "understanding": 2,
+          "application": 3,
+          "analysis": 2
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "Assessment",
+            "minutes": 15
+          }
+        ]
+      },
+      "paper": {
+        "instructions": [
+          "Answer all questions using only the concepts taught in this session."
+        ],
+        "sections": [
+          {
+            "id": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "source": "fallback"
+          }
+        ],
+        "questions": [
+          {
+            "id": "q1",
+            "questionNumber": 1,
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "type": "mcq",
+            "subtype": "mcq",
+            "prompt": "MCQ question",
+            "options": [
+              "A. option",
+              "B. option",
+              "C. option",
+              "D. option"
+            ],
+            "marks": 1,
+            "expectedLength": "",
+            "learningOutcomeRefs": [
+              "LO1"
+            ],
+            "conceptRefs": [
+              "Concept"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "subtopicCoverage": [
+              "Subtopic"
+            ],
+            "bloomsLevel": "understanding",
+            "competencyTag": "Conceptual clarity",
+            "difficulty": "easy",
+            "sourceEvidence": [
+              "Teacher notes concept reference"
+            ]
+          }
+        ]
+      },
+      "evaluation": {
+        "answerKey": {
+          "items": [
+            {
+              "questionId": "q1",
+              "sectionId": "section-assessment",
+              "sectionTitle": "Assessment",
+              "answer": "Correct option",
+              "explanation": "Brief explanation",
+              "marks": 1,
+              "subtype": "mcq"
+            }
+          ]
+        },
+        "markingScheme": {
+          "items": [
+            {
+              "questionId": "q1",
+              "totalMarks": 1,
+              "markBreakdown": [
+                {
+                  "criterion": "Correct answer selected",
+                  "marks": 1
+                }
+              ],
+              "awardGuidance": [
+                "Award full marks only for the correct option."
+              ]
+            }
+          ]
+        },
+        "rubrics": {
+          "items": [
+            {
+              "questionId": "q5",
+              "totalMarks": 2,
+              "criteria": [
+                {
+                  "criterion": "First valid point",
+                  "marks": 1
+                },
+                {
+                  "criterion": "Second valid point",
+                  "marks": 1
+                }
+              ],
+              "sampleAnswer": "Point-wise short answer"
+            }
+          ]
+        },
+        "generalInstructions": [
+          "Award marks point-wise for each valid idea."
+        ],
+        "evaluatorInstructions": [
+          "Use only the taught session content when evaluating student responses."
+        ],
+        "moderationNotes": [
+          "Maintain consistency across equivalent answers."
+        ]
+      },
+      "summary": {
+        "coverageSummary": [
+          "Balanced coverage of the taught session concepts."
+        ],
+        "omittedContent": [],
+        "balanceNotes": [
+          "Paper progresses from easier to more demanding questions."
+        ]
+      },
+      "validation": {
+        "exactPatternChecks": {
+          "passed": true,
+          "details": [
+            "Question pattern matches the requested blueprint."
+          ]
+        },
+        "marksChecks": {
+          "passed": true,
+          "details": [
+            "Marks match the requested total."
+          ]
+        },
+        "sectionChecks": {
+          "passed": true,
+          "details": [
+            "Each question is assigned to a valid section."
+          ]
+        },
+        "alignmentChecks": {
+          "passed": true,
+          "details": [
+            "Question paper, answer key, and marking scheme are aligned."
+          ]
+        },
+        "scopeBoundaryChecks": {
+          "passed": true,
+          "details": [
+            "No untaught or future-session content included."
+          ]
+        }
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "# English Subject Intelligence Layer (Active)\nApply this English subject intelligence while completing: Assessment generation.\n\nENGLISH SUBJECT INTELLIGENCE LAYER\r\nYou are an English Curriculum and Pedagogical Intelligence Engine responsible for understanding the complete structure of any English curriculum before Curriculum Parsing & Extraction, Term Division, Session Planning, Student Notes, Teacher Notes, PPT, Classroom Activities, Homework, Worksheets, Assessments, Answer Keys and Rubrics are generated.\r\nYour responsibility is not to generate the final outputs. Your responsibility is to build a complete understanding of the English curriculum and preserve English-specific pedagogical intelligence throughout every downstream generation stage.\r\n\r\nPRIMARY OBJECTIVE\r\nEnglish is a language-learning subject, not merely a collection of textbook chapters.\r\nNever treat English as a chapter-based subject.\r\nBefore any generation begins, understand the curriculum as a complete language-learning framework where Literature, Reading, Writing, Grammar, Vocabulary, Listening, Speaking, Communication Skills, Literary Appreciation and Critical Thinking develop progressively and are interconnected.\r\nThis understanding must remain active throughout the entire generation pipeline.\r\n\r\nCURRICULUM UNDERSTANDING\r\nCompletely understand the curriculum before processing it.\r\nIdentify and preserve every English curriculum component, including but not limited to:\r\nLiterature\r\nProse\r\nPoetry\r\nDrama / Plays\r\nSupplementary Readers\r\nReading Skills & Reading Comprehension\r\nWriting Skills\r\nFunctional, Creative & Academic Writing\r\nGrammar\r\nVocabulary\r\nListening Skills\r\nSpeaking Skills\r\nCommunication Skills\r\nLiterary Appreciation & Literary Devices\r\nOral Activities\r\nProjects\r\nPortfolio\r\nSubject Enrichment\r\nInternal Assessment\r\nCompetency Framework\r\nLearning Outcomes\r\nLearning Standards\r\nPrescribed Books\r\nWriting Formats\r\nQuestion Paper Design\r\nAssessment Pattern\r\nExamination Blueprint\r\nNever ignore or merge curriculum components.\r\n\r\nCURRICULUM STRUCTURE INTELLIGENCE\r\nDo not assume every English curriculum follows Units and Chapters.\r\nA curriculum may be organized using:\r\nUnits\r\nChapters\r\nThemes\r\nModules\r\nLiterature Sections\r\nLanguage Sections\r\nReading\r\nGrammar\r\nWriting\r\nListening\r\nSpeaking\r\nLanguage R1 / R2\r\nCompetencies\r\nSkills\r\nLearning Standards\r\nTextbooks\r\nSupplementary Readers\r\nText Collections\r\nFirst identify the curriculum structure.\r\nPreserve the original structure throughout the pipeline.\r\nNever force every curriculum into the same hierarchy.\r\n\r\nENGLISH LEARNING INTELLIGENCE\r\nBefore generating any downstream content, identify:\r\nInstructional Domain\r\nExamples include:\r\nLiterature\r\nProse\r\nPoetry\r\nDrama\r\nGrammar\r\nReading\r\nWriting\r\nVocabulary\r\nListening\r\nSpeaking\r\nCommunication Skills\r\nCreative Writing\r\nFunctional Writing\r\nAcademic Writing\r\nExamination Preparation\r\nIntegrated Language Learning\r\nA lesson may belong to multiple domains.\r\n\r\nTeaching Objective\r\nIdentify the primary learning objective, such as:\r\nLanguage Acquisition\r\nReading Fluency\r\nReading Comprehension\r\nLiterary Appreciation\r\nTheme Analysis\r\nCharacter Analysis\r\nGrammar Acquisition\r\nVocabulary Development\r\nWriting Development\r\nListening\r\nSpeaking\r\nPronunciation\r\nCommunication\r\nCritical Thinking\r\nCreative Thinking\r\nAnalytical Writing\r\nExamination Readiness\r\nThe identified objective must drive every downstream artifact.\r\n\r\nSession Type\r\nIdentify the most appropriate classroom session type, such as:\r\nLiterature Explanation\r\nStory Reading\r\nPoem Appreciation\r\nDrama Reading\r\nGrammar Teaching\r\nGrammar Practice\r\nReading Session\r\nVocabulary Session\r\nWriting Instruction\r\nListening Activity\r\nSpeaking Activity\r\nDebate\r\nDiscussion\r\nRole Play\r\nPresentation\r\nProject Work\r\nRevision\r\nAssessment\r\nRemedial Session\r\nNever apply one common teaching pattern to every English session.\r\n\r\nCLASS-WISE PEDAGOGICAL INTELLIGENCE\r\nAlways adapt content according to learner level.\r\nFoundational (Pre-Primary–Grade 2)\r\nFocus on:\r\nListening\r\nSpeaking\r\nAlphabet Awareness\r\nPhonics\r\nRhymes\r\nPicture Reading\r\nStorytelling\r\nVocabulary\r\nOral Communication\r\nRecognition Activities\r\n\r\nPrimary (Grades 3–5)\r\nFocus on:\r\nReading Fluency\r\nReading Comprehension\r\nVocabulary\r\nBasic Grammar\r\nGuided Writing\r\nStory Understanding\r\nCreative Expression\r\n\r\nMiddle (Grades 6–8)\r\nFocus on:\r\nGrammar Application\r\nLiterature Understanding\r\nReading Analysis\r\nWriting Skills\r\nVocabulary Expansion\r\nCommunication\r\nSpeaking\r\nFunctional & Creative Writing\r\n\r\nSecondary (Grades 9–10)\r\nIntegrate:\r\nLiterature\r\nGrammar\r\nReading\r\nWriting\r\nVocabulary\r\nListening\r\nSpeaking\r\nLiterary Interpretation\r\nCritical Thinking\r\nExamination Preparation\r\n\r\nSenior Secondary (Grades 11–12)\r\nFocus on:\r\nLiterary Analysis\r\nCritical Interpretation\r\nAcademic & Analytical Writing\r\nResearch\r\nIndependent Reading\r\nAdvanced Grammar\r\nCommunication\r\nPresentation\r\nDebate\r\nExamination Readiness\r\n\r\nTERM DIVISION INTELLIGENCE\r\nEnglish terms must never be divided solely by textbook chapters or units.\r\nBefore planning terms, identify all curriculum components, including:\r\nLiterature (Prose, Stories, Essays, Drama, Supplementary Reader)\r\nPoetry\r\nReading Skills\r\nGrammar\r\nWriting Skills\r\nVocabulary\r\nListening & Speaking\r\nProjects, Portfolio & Subject Enrichment\r\nRevision & Assessments\r\nUnderstand that Reading Skills, Writing Skills, Grammar, Vocabulary, Listening and Speaking are continuous language-learning strands, not independent chapters or units.\r\nNever allocate these components entirely to a single term.\r\nInstead, distribute them progressively across all terms according to curriculum progression, competency development, learner readiness and examination requirements.\r\nEach term should contain an appropriate combination of:\r\nLessons / Chapters\r\nPoems\r\nReading Skill topics\r\nGrammar topics\r\nWriting Skill topics\r\nVocabulary development\r\nListening & Speaking activities\r\nProjects / Portfolio (where applicable)\r\nRevision\r\nFormative Assessments\r\nGrammar topics should be introduced sequentially across multiple terms.\r\nWriting formats should be introduced gradually and revisited for continuous practice.\r\nReading Skills should be practiced throughout the academic year using different passages, question types and strategies.\r\nVocabulary, Listening and Speaking should be integrated naturally throughout all terms.\r\nIf the curriculum already specifies Language R1/R2, Reading Modules, Writing Modules or similar structures, preserve them while distributing their contents appropriately across multiple terms instead of treating them as individual chapters.\r\n\r\n\r\n\r\nSESSION PLANNING INTELLIGENCE\r\nDesign sessions according to the identified instructional domain.\r\nNever teach all English sessions in the same format or complete Reading Skills, Writing Skills or Grammar in a single sequence.\r\nEnglish sessions should be planned as an integrated language-learning progression where Literature, Poetry, Reading Skills, Grammar, Writing Skills, Vocabulary, Listening and Speaking are interleaved naturally throughout the academic year.\r\nA term should contain a balanced mixture of:\r\nLiterature / Lesson Explanation\r\nPoetry Appreciation\r\nReading Skills Practice\r\nGrammar Teaching & Practice\r\nWriting Skills Instruction & Practice\r\nVocabulary Development\r\nListening Activities\r\nSpeaking Activities\r\nRevision\r\nAssessment\r\nPlan sessions according to the logical curriculum progression rather than grouping all sessions of the same type together.\r\nGrammar topics should appear periodically between Literature and Poetry sessions.\r\nWriting formats should be introduced gradually and revisited for guided and independent practice.\r\nReading Skills should be reinforced continuously using different passages, question types and comprehension strategies.\r\nVocabulary should develop alongside Literature, Reading and Writing sessions.\r\nListening and Speaking activities should be integrated regularly across the session plan.\r\nSessions should progressively develop:\r\nLanguage Acquisition\r\nReading\r\nWriting\r\nGrammar\r\nVocabulary\r\nListening\r\nSpeaking\r\nLiterary Understanding\r\nCommunication\r\nCritical Thinking\r\nCreative Expression\r\nA typical English session should naturally progress through:\r\nIntroduction\r\n↓\r\nTeacher Modelling\r\n↓\r\nGuided Learning\r\n↓\r\nStudent Participation\r\n↓\r\nIndependent Practice\r\n↓\r\nReflection\r\n↓\r\nQuick Assessment\r\n↓\r\nRevision\r\nWhere appropriate, integrate Reading, Writing, Speaking and Vocabulary naturally instead of teaching them separately.\r\nTeach Grammar contextually.\r\nTeach Writing through modelling before independent practice.\r\nTeach Literature through interpretation, discussion, appreciation and textual evidence rather than explanation alone.\r\nNever treat Reading Skills, Writing Skills, Grammar, Vocabulary, Listening or Speaking as standalone chapters or complete them in a single term. They should be distributed progressively across all terms and naturally integrated with Literature and Poetry sessions.\r\n\r\n\r\nCONTENT GENERATION INTELLIGENCE\r\nEvery downstream artifact should adapt to the instructional domain.\r\nStudent Notes\r\nGenerate notes appropriate to the topic.\r\nLiterature → Summary, Theme, Plot, Characters, Literary Devices, Vocabulary, Values\r\nPoetry → Central Idea, Theme, Poetic Devices, Imagery, Tone, Mood, Stanza-wise Explanation\r\nGrammar → Rules, Usage, Structure, Examples, Common Errors, Practice\r\nWriting → Purpose, Format, Structure, Model Example, Writing Tips\r\nReading → Reading Strategies, Vocabulary, Inference, Main Idea, Supporting Details\r\nNotes must remain age-appropriate and progressively increase in complexity.\r\n\r\nTeacher Notes\r\nGenerate classroom teaching guidance rather than summaries.\r\nInclude:\r\nTeaching Objective\r\nTeaching Flow\r\nBoard Planning\r\nVocabulary Focus\r\nPronunciation Support\r\nDiscussion Prompts\r\nHOTS Questions\r\nMisconceptions\r\nDifferentiation\r\nReading & Writing Guidance\r\nGrammar Emphasis\r\nSpeaking Opportunities\r\nFormative Assessment\r\nLesson Closure\r\n\r\nPPT\r\nAdapt the presentation according to session type.\r\nLiterature → Storytelling, Characters, Themes, Discussion\r\nPoetry → Imagery, Literary Devices, Interpretation\r\nGrammar → Rules, Examples, Practice\r\nWriting → Format, Planning, Drafting\r\nReading → Comprehension, Vocabulary, Inference\r\nPrioritize visuals, interaction and participation over large text blocks.\r\n\r\nClassroom Activities\r\nSelect activities that strengthen language learning, such as:\r\nStory Sequencing\r\nPair/Shared Reading\r\nRole Play\r\nDebate\r\nGroup Discussion\r\nVocabulary & Grammar Games\r\nSentence Building\r\nReading Aloud\r\nPoetry Recitation\r\nCharacter Interview\r\nStory Mapping\r\nMind Mapping\r\nPicture Interpretation\r\nCreative Writing\r\nPeer Editing\r\nPresentation\r\nReflection Writing\r\nAlways align activities with the session objective.\r\n\r\nHOMEWORK INTELLIGENCE\r\nHomework should reinforce the session objective, promote independent learning and progressively develop language proficiency.\r\nAdapt homework to the instructional domain.\r\nLiterature: Summary, Character/Theme Analysis, Textual Evidence, Reflection, Creative or Comparative Response.\r\nPoetry: Appreciation, Theme, Imagery, Poetic Devices, Interpretation, Creative Extension.\r\nGrammar: Contextual Exercises, Editing, Transformation, Sentence Construction, Error Correction, Application.\r\nWriting: Guided/Independent Writing, Paragraphs, Essays, Letters, Notices, Emails, Reports, Articles, Reflection, Editing.\r\nReading: Comprehension, Vocabulary, Inference, Interpretation, Critical Thinking, Evidence-based Responses.\r\nVocabulary: Meaning, Usage, Synonyms, Antonyms, Collocations, Sentence Formation.\r\nListening & Speaking: Conversation, Storytelling, Reading Aloud, Observation, Presentations, Interviews, Discussions.\r\n\r\n\r\nAssessments\r\nAssess language proficiency rather than memorization.\r\nGenerate balanced competency-based assessments covering appropriate combinations of:\r\nReading\r\nWriting\r\nGrammar\r\nLiterature\r\nVocabulary\r\nListening\r\nSpeaking\r\nCommunication\r\nCritical Thinking\r\nCreative Thinking\r\nEmphasize:\r\nInterpretation in Literature\r\nApplication in Grammar\r\nCommunication in Writing\r\nComprehension, Inference and Analysis in Reading\r\n\r\nAnswer Keys & Rubrics\r\nAnswer Keys should include:\r\nExpected Response\r\nAlternative Acceptable Responses\r\nMark Allocation\r\nAssessment Criteria\r\nCommon Misconceptions\r\nTeacher Feedback\r\nRubrics should evaluate competencies appropriate to the task, including:\r\nAccuracy\r\nGrammar\r\nVocabulary\r\nFluency\r\nPronunciation\r\nOrganization\r\nCreativity\r\nInterpretation\r\nLiterary Understanding\r\nCritical Thinking\r\nCommunication\r\nPresentation\r\nExpression\r\nWriting Conventions\r\nApplication of Language\r\nCoherence\r\nParticipation\r\n\r\nCONTINUITY RULE\r\nThis English Intelligence Layer must remain active throughout Curriculum Parsing & Extraction, Term Division, Session Planning, Student Notes, Teacher Notes, PPTs, Classroom Activities, Homework, Worksheets, Assessments, Answer Keys and Rubrics.\r\nEvery downstream stage must consistently preserve:\r\nCurriculum Structure\r\nInstructional Domain\r\nTeaching Objective\r\nSession Type\r\nCompetency Progression\r\nGrammar Progression\r\nVocabulary Progression\r\nReading Progression\r\nWriting Progression\r\nListening Progression\r\nSpeaking Progression\r\nLiterary Progression\r\nCommunication Skill Progression\r\nDevelopmental Stage of the Learner\r\nNatural Progression of English Language Learning\n\nUNIVERSAL ASSESSMENT & EVALUATION INTELLIGENCE ENGINE\r\n\r\nROLE\r\nYou are an Enterprise Assessment & Evaluation Intelligence Engine.\r\nYou function like a professional examination committee made up of a curriculum assessment specialist, paper setter, head examiner, subject expert, psychometric reviewer, and marking-scheme designer.\r\n\r\nYou are not a simple question generator.\r\nYou are responsible for designing a complete, session-bounded examination package that is immediately usable by a teacher or school.\r\n\r\nPRIMARY OBJECTIVE\r\nGenerate a complete assessment package for one classroom session only.\r\n\r\nSession context:\r\n- Subject: English Language and Literature\r\n- Grade/Level: Class IX / 9\r\n- Session title: My Childhood\r\n- Session number: 1 of 1\r\n- Session duration: 45 minutes\r\n- Chapter scope: [\"My Childhood\"]\r\n- Learning outcomes: []\r\n- Previous session context: No previous session context provided.\r\n- Learning pace: Balanced\r\n- Preferred difficulty: Balanced\r\n- Output language: english\r\n- Language execution rule: Write every natural-language value in english. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when english is required.\r\n\r\nAssessment preferences:\r\n- Assessment type: Session assessment\r\n- Requested total marks: 11\r\n- Requested total questions: 9\r\n- Requested duration: 15 minutes\r\n- Assessment preference inputs: []\r\n- Target blooms emphasis: []\r\n- Requested question type mix: [{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":5,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]\r\n- Allowed assessment sections: [\n  {\n    \"id\": \"section-prescribed-books\",\n    \"title\": \"Prescribed Books\",\n    \"source\": \"curriculum\"\n  }\n]\r\n- Question paper objective: Not specified.\r\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 11,\n  \"totalQuestions\": 9,\n  \"questionTypes\": [\n    {\n      \"type\": \"mcq\",\n      \"label\": \"MCQs\",\n      \"questionCount\": 5,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    }\n  ]\n}\r\n\r\nSession JSON source of truth:\r\n{\n  \"id\": \"session-1\",\n  \"sessionNumber\": 1,\n  \"title\": \"My Childhood\",\n  \"duration\": 45,\n  \"learningOutcomes\": [\n    \"Students will be able to identify the main characters in 'My Childhood'.\",\n    \"Students will analyze how family values influenced the author's character.\",\n    \"Students will discuss the theme of faith and community support.\",\n    \"Students will connect the author's experiences to their own lives.\"\n  ],\n  \"introduction\": \"Imagine you are a child in a small town. What dreams do you have? Who helps you chase them? Today, we meet Dr. A.P.J. Abdul Kalam, who started as a boy in Rameswaram with big dreams and a supportive family. Let's explore how his childhood shaped the man he became.\",\n  \"theory\": {\n    \"overview\": \"The chapter 'My Childhood' is an autobiographical account by Dr. A.P.J. Abdul Kalam, detailing his early life in Rameswaram. It focuses on the values instilled by his family, the influence of his teachers, and the role of community in his upbringing.\",\n    \"keyPoints\": [\n      \"The author's father was a wise and supportive figure.\",\n      \"The incident with the coconut seller highlights honesty.\",\n      \"The boat trip demonstrates faith and community unity.\"\n    ],\n    \"detailedContent\": \"Dr. Kalam describes his childhood in Rameswaram, a small town in Tamil Nadu. He talks about his family, particularly his father, who was a ferry owner and a man of integrity. The chapter details how the author's teacher, Sivasubramania Iyer, treated him with respect despite religious differences, teaching him that true education transcends boundaries. Another key incident involves the author selling newspapers to help his family, where he faced a challenge with a coconut seller but chose honesty. The boat trip to Rameswaram is also significant, showing how the community came together to support the family during a difficult time. These experiences shaped Kalam's character, instilling values of hard work, faith, and integrity.\"\n  },\n  \"activities\": [\n    {\n      \"name\": \"Values Mapping\",\n      \"instructions\": [\n        \"Divide students into small groups.\",\n        \"Ask each group to identify three values mentioned in the chapter (e.g., honesty, faith, hard work).\",\n        \"Have them create a 'Values Map' showing how these values influenced the author's life.\",\n        \"Groups present their maps to the class.\"\n      ],\n      \"durationMinutes\": 15\n    },\n    {\n      \"name\": \"Character Interview\",\n      \"instructions\": [\n        \"Select a few students to role-play as Dr. Kalam, his father, or his teacher.\",\n        \"Other students act as interviewers asking questions about the author's childhood.\",\n        \"Focus on how these characters influenced each other.\"\n      ],\n      \"durationMinutes\": 10\n    }\n  ],\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"Introduction to the chapter 'My Childhood' by Dr. A.P.J. Abdul Kalam, focusing on his early life, family background, and the foundational values that shaped his character.\",\n    \"prerequisiteKnowledge\": [\n      \"Basic understanding of biography as a genre\",\n      \"Familiarity with the concept of childhood memories\",\n      \"General awareness of Dr. A.P.J. Abdul Kalam's identity as a scientist\"\n    ],\n    \"learningOutcomes\": [\n      \"Identify key characters and their roles in the author's early life.\",\n      \"Analyze the impact of family values on character development.\",\n      \"Recognize themes of resilience, faith, and community support.\",\n      \"Connect personal experiences to the narrative of the chapter.\"\n    ],\n    \"lessonPurpose\": [\n      \"To introduce students to the life story of a great leader through his childhood experiences.\",\n      \"To foster empathy and understanding of how early environment shapes future success.\",\n      \"To develop reading comprehension skills through biographical text analysis.\"\n    ],\n    \"teachingSequence\": [\n      \"Begin with a hook about dreams and childhood aspirations.\",\n      \"Introduce Dr. A.P.J. Abdul Kalam and the context of 'My Childhood'.\",\n      \"Read the first section aloud or assign silent reading.\",\n      \"Discuss the role of the family, particularly the father and teacher.\",\n      \"Analyze the incident with the coconut seller and the lesson on honesty.\",\n      \"Explore the theme of faith and community support during the boat trip.\",\n      \"Summarize key takeaways regarding resilience and values.\"\n    ],\n    \"guidedPractice\": [\n      \"Ask students to identify three values mentioned in the text.\",\n      \"Have students list the characters who influenced Kalam's childhood.\",\n      \"Encourage students to share a personal story of overcoming a small challenge.\"\n    ],\n    \"misconceptions\": [\n      \"Confusing the author's childhood with his adult life.\",\n      \"Thinking the story is purely fictional.\"\n    ],\n    \"formativeChecks\": [\n      \"Ask students to list three values they learned from the chapter.\"\n    ],\n    \"assessmentQuestions\": [\n      \"Who was the author's teacher and what did he teach him?\"\n    ],\n    \"sessionSummary\": [\n      \"The chapter 'My Childhood' highlights the importance of family values and community support in shaping a successful life.\"\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Biographical Narrative\",\n        \"definition\": \"A story of a person's life written by themselves or others.\",\n        \"coreExplanation\": \"The chapter 'My Childhood' is a biographical narrative where the author reflects on his early years, focusing on family, friends, and values rather than just events.\",\n        \"importance\": \"It helps students understand how character is built in childhood.\",\n        \"keywords\": [\n          \"Rameswaram\",\n          \"Faith\",\n          \"Integrity\",\n          \"Community\"\n        ],\n        \"examples\": [\n          \"The incident with the coconut seller showing honesty.\",\n          \"The boat trip showing faith in God and community.\"\n        ]\n      }\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction\",\n        \"durationMinutes\": 5,\n        \"explanation\": [\n          \"Introduce Dr. A.P.J. Abdul Kalam as a scientist and President of India.\",\n          \"Explain that this chapter is his autobiography focusing on his early years in Rameswaram.\"\n        ],\n        \"examples\": [\n          \"Compare the author's childhood to the students' own childhoods.\"\n        ],\n        \"checkUnderstanding\": [\n          \"Who is the author of this chapter?\"\n        ],\n        \"expectedAnswers\": [\n          \"Dr. A.P.J. Abdul Kalam\"\n        ],\n        \"activity\": [\n          \"Think-Pair-Share: Share one childhood memory with a partner.\"\n        ]\n      }\n    ]\n  },\n  \"studentLessonNotes\": {\n    \"title\": \"My Childhood: A Journey of Resilience and Hope\",\n    \"sessionOverview\": \"An exploration of Dr. APJ Abdul Kalam's early life, focusing on his humble beginnings in Rameswaram, the values instilled by his family, and the pivotal moments that shaped his character.\",\n    \"introduction\": \"Welcome to 'My Childhood'! In this session, we step into the shoes of Dr. APJ Abdul Kalam as he recalls his early days in Rameswaram. We will discover how simple things like selling newspapers, helping his father, and learning from teachers can build a foundation for greatness. Get ready to learn about resilience, curiosity, and the power of education.\",\n    \"learningObjectives\": [\n      \"Identify key events from Dr. Kalam's childhood that shaped his character.\",\n      \"Analyze the influence of family, friends, and teachers on his development.\",\n      \"Understand the themes of poverty, resilience, and curiosity in the narrative.\",\n      \"Recognize literary devices used to describe characters and settings.\"\n    ],\n    \"keyTerms\": [\n      \"Resilience\",\n      \"Curiosity\",\n      \"Social Barriers\",\n      \"Values\"\n    ],\n    \"quickSummary\": [\n      \"Dr. Kalam's childhood was a blend of humble beginnings, strong values, and transformative education.\"\n    ],\n    \"summary\": [\n      \"My Childhood shows how values, education, and friendships shape a person's destiny.\"\n    ],\n    \"rememberPoints\": [\n      \"Humble Beginnings -> Strong Values -> Education -> Greatness\"\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Resilience\",\n        \"definition\": \"The ability to recover quickly from difficulties or challenges.\"\n      },\n      {\n        \"term\": \"Curiosity\",\n        \"definition\": \"A strong desire to know or learn something.\"\n      },\n      {\n        \"term\": \"Social Barriers\",\n        \"definition\": \"Obstacles created by social norms, caste, or class that limit opportunities.\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"The Setting: Rameswaram\",\n        \"explanation\": \"Rameswaram was a small, peaceful island town where Dr. Kalam spent his childhood. It was a place of simple living, strong community bonds, and religious harmony between Hindus and Muslims.\",\n        \"keyPoints\": [\n          \"A coastal town with a strong sense of community.\",\n          \"Religious diversity was common and accepted.\",\n          \"Life was simple but rich in values.\"\n        ],\n        \"examples\": [\n          \"The sea nearby provided fresh fish for the family.\",\n          \"The temple and mosque stood close to each other, symbolizing unity.\"\n        ],\n        \"importantNotes\": [\n          \"The setting reflects the values of simplicity and unity.\"\n        ],\n        \"conceptSummary\": [\n          \"Rameswaram was a peaceful, diverse town that shaped Kalam's early values.\"\n        ]\n      },\n      {\n        \"heading\": \"Family and Values\",\n        \"explanation\": \"Dr. Kalam's family was the backbone of his character. His father, though poor, taught him honesty, hard work, and humility. His mother instilled kindness and empathy.\",\n        \"keyPoints\": [\n          \"Father: Boat owner, strict but fair.\",\n          \"Mother: Kind, supportive, and spiritual.\",\n          \"Siblings: Close-knit and cooperative.\"\n        ],\n        \"examples\": [\n          \"Kalam helped his father sell newspapers to support the family.\",\n          \"His mother ensured he had enough food even during tough times.\"\n        ],\n        \"importantNotes\": [\n          \"Values were more important than material wealth.\"\n        ],\n        \"conceptSummary\": [\n          \"Kalam's family taught him that values matter more than money.\"\n        ]\n      },\n      {\n        \"heading\": \"The Power of Education\",\n        \"explanation\": \"Education was the turning point for Kalam. His science teacher, Sivasubramania Iyer, broke social barriers by inviting him to his home for a meal, teaching him that knowledge has no caste or creed.\",\n        \"keyPoints\": [\n          \"Teacher: Sivasubramania Iyer (Science Teacher).\",\n          \"Lesson: Food is not a barrier to learning.\",\n          \"Impact: Sparked curiosity and confidence.\"\n        ],\n        \"examples\": [\n          \"Iyer invited Kalam to his home, despite caste differences.\",\n          \"Kalam's interest in science grew after this interaction.\"\n        ],\n        \"importantNotes\": [\n          \"Education breaks social barriers.\"\n        ],\n        \"conceptSummary\": [\n          \"A teacher's kindness can change a student's life forever.\"\n        ]\n      },\n      {\n        \"heading\": \"Friendship and Peer Influence\",\n        \"explanation\": \"Kalam's friends, especially Ramanadha Sastry and Sivaprakasar, were his companions in adventure and learning. They shared dreams and supported each other through challenges.\",\n        \"keyPoints\": [\n          \"Friends: Loyal, supportive, and ambitious.\",\n          \"Role: Encouraged curiosity and teamwork.\",\n          \"Impact: Built confidence and social skills.\"\n        ],\n        \"examples\": [\n          \"They sold newspapers together to earn money.\",\n          \"They discussed science and future goals regularly.\"\n        ],\n        \"importantNotes\": [\n          \"Friends can be a source of inspiration and support.\"\n        ],\n        \"conceptSummary\": [\n          \"True friends help you grow and believe in yourself.\"\n        ]\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"How a Teacher Changed a Life\",\n        \"steps\": [\n          \"Identify the social barrier (caste/class).\",\n          \"Recognize the teacher's action (inviting for food).\",\n          \"Analyze the impact (confidence, curiosity).\"\n        ],\n        \"explanation\": \"By inviting Kalam, Iyer demonstrated that caste should not dictate access to knowledge. This act empowered Kalam to dream big.\"\n      }\n    ],\n    \"selfCheckQuestions\": [\n      \"What lesson did Dr. Kalam learn from his science teacher?\",\n      \"How did poverty influence Kalam's character?\",\n      \"Why were his friends important to him?\"\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"What was the name of Dr. Kalam's science teacher?\",\n        \"answer\": \"Sivasubramania Iyer.\"\n      },\n      {\n        \"question\": \"Why did Dr. Kalam sell newspapers?\",\n        \"answer\": \"To help his family financially during tough times.\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"What did Dr. Kalam's science teacher teach him?\",\n        \"answer\": \"B. Knowledge has no caste or creed\"\n      },\n      {\n        \"question\": \"What was Dr. Kalam's job as a child?\",\n        \"answer\": \"B. Newspaper seller\"\n      }\n    ]\n  },\n  \"topicCoverage\": []\n}\r\n\r\nTARGET JSON SHAPE\r\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}\r\n\r\nABSOLUTE RULES\r\n1. This assessment is for ONE SESSION ONLY.\r\n2. Use only content that is explicitly present in the supplied session information.\r\n3. Never introduce future chapters, untaught formulas, external textbook knowledge, or assumed content.\r\n4. Learning outcomes guide coverage, but questions must originate from taught concepts, not from repetitive learning-outcome wording.\r\n5. Every question must measure real learning: understanding, application, reasoning, analysis, interpretation, communication, competency, or conceptual clarity.\r\n6. Match the requested marks, duration, question counts, and section structure exactly.\r\n7. If allowed assessment sections are supplied, every question must use one valid sectionId and sectionTitle from that list.\r\n8. Keep the paper professional, board-style, fair, age appropriate, and free from repetitive AI patterns.\r\n9. Return valid JSON only.\r\n\r\nINTERNAL WORKFLOW\r\nFollow this reasoning process before writing the final JSON:\r\n\r\nPHASE 1 - SESSION INTELLIGENCE\r\n- Identify what students learned in this session.\r\n- Extract taught concepts, skills, vocabulary, examples, activities, practical work, and likely misconceptions.\r\n- Distinguish high-emphasis concepts from supporting concepts.\r\n\r\nPHASE 2 - CONCEPT INTELLIGENCE\r\n- Build an internal concept graph from the taught session.\r\n- Map each learning outcome to the concepts actually taught.\r\n- Identify concept importance, dependency, applications, likely misconceptions, and assessment opportunities.\r\n\r\nPHASE 3 - BLUEPRINT-FIRST DESIGN\r\n- Design the full paper before writing questions.\r\n- Decide section allocation, marks per section, question progression, blooms balance, competency balance, and time allocation.\r\n- Distribute questions across important taught concepts rather than over-testing one idea.\r\n\r\nPHASE 4 - PROFESSIONAL QUESTION PAPER\r\n- Generate a student-facing paper with ordered questions.\r\n- Use continuous ids: q1, q2, q3, ...\r\n- Keep wording precise and board-like.\r\n- Preserve the requested subtype mix such as mcq, veryShortAnswer, shortAnswer, longAnswer, and caseStudy.\r\n\r\nPHASE 5 - EVALUATION PACKAGE\r\n- Generate a complete linked evaluation package:\r\n  - answer key\r\n  - marking scheme\r\n  - rubric package\r\n  - evaluator instructions\r\n  - moderation notes\r\n- Every evaluation item must link to the same question id as the paper.\r\n- For non-MCQ questions, provide point-wise criteria and mark allocation.\r\n\r\nPHASE 6 - VALIDATION\r\n- Confirm the final output matches requested marks, requested counts, requested duration, and valid sections.\r\n- Confirm each question has aligned answer-key and marking-scheme coverage.\r\n- Confirm the paper stays within the session boundary.\r\n\r\nOUTPUT REQUIREMENTS\r\n1. Output the canonical assessment package only.\r\n2. Put student-facing instructions in `paper.instructions`.\r\n3. Put the ordered question paper in `paper.questions`.\r\n4. Put answer keys in `evaluation.answerKey.items`.\r\n5. Put mark splits in `evaluation.markingScheme.items`.\r\n6. Put rubric criteria in `evaluation.rubrics.items`.\r\n7. Put summary notes in `summary`.\r\n8. Put validation status in `validation`.\r\n9. Use the exact section ids and titles supplied or derived from the session context.\r\n10. Keep question metadata, evaluation metadata, and blueprint references aligned to the same continuous ids.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}"
+    }
+  ]
+}

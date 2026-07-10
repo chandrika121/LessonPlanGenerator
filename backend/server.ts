@@ -2442,7 +2442,7 @@ async function findMatchingTeacherAllocationForWorkspace(workspace: any, overrid
     "",
   ).trim();
 
-  if (!schoolId || !teacherId || !className || !subject) {
+  if (!schoolId || !className || !subject) {
     return null;
   }
 
@@ -2452,11 +2452,14 @@ async function findMatchingTeacherAllocationForWorkspace(workspace: any, overrid
     section ? `${className} - Section ${section}` : "",
   );
   const subjectAliases = buildSubjectAliases(subject);
-  const allocations = await TeacherClassAllocationModel.find({
+  const allocationQuery: Record<string, unknown> = {
     schoolId,
-    teacherId,
     status: "published",
-  }).lean();
+  };
+  if (teacherId) {
+    allocationQuery.teacherId = teacherId;
+  }
+  const allocations = await TeacherClassAllocationModel.find(allocationQuery).lean();
 
   return allocations.find((item: any) => {
     const classMatches = [item.classId, item.className, item.section ? `${item.className || item.classId} - Section ${item.section}` : ""]
@@ -2488,7 +2491,14 @@ function syncWorkspaceIdentityFromRequest(workspace: any, req: express.Request) 
 
 async function validateWorkspaceAgainstTeacherAllocations(workspace: any, req: express.Request) {
   syncWorkspaceIdentityFromRequest(workspace, req);
-  const matchingAllocation = await findMatchingTeacherAllocationForWorkspace(workspace);
+  let matchingAllocation = await findMatchingTeacherAllocationForWorkspace(workspace);
+  if (!matchingAllocation) {
+    matchingAllocation = await findMatchingTeacherAllocationForWorkspace(workspace, { teacherId: "" });
+    if (matchingAllocation?.teacherId) {
+      workspace.teacherId = String(matchingAllocation.teacherId).trim();
+      workspace.createdBy = String(matchingAllocation.teacherId).trim();
+    }
+  }
   if (!matchingAllocation) {
     return {
       valid: false,
@@ -2566,6 +2576,17 @@ function normalizeSubjectKey(value: unknown) {
     .replace(/[^a-z0-9]/g, "");
 }
 
+function isScienceUmbrellaSubjectKey(value: unknown) {
+  const normalized = normalizeSubjectKey(value);
+  return normalized === "science" || normalized === "generalscience" || normalized === "integratedscience";
+}
+
+function isScienceFamilySubjectKey(value: unknown) {
+  const normalized = normalizeSubjectKey(value);
+  if (!normalized) return false;
+  return SCIENCE_SUBJECT_ALIASES.some((alias) => normalizeSubjectKey(alias) === normalized);
+}
+
 function buildSubjectAliases(...values: unknown[]) {
   return Array.from(new Set(values.flatMap((value) => {
     if (Array.isArray(value)) {
@@ -2580,6 +2601,26 @@ function buildTeacherAliases(...values: unknown[]) {
   return Array.from(new Set(values
     .map((value) => String(value || "").trim())
     .filter(Boolean)));
+}
+
+function buildStudentWorkspaceClassAliases(student: any) {
+  const assignedClasses = Array.isArray(student?.assignedClasses)
+    ? student.assignedClasses.map((value: unknown) => String(value || "").trim()).filter(Boolean)
+    : [];
+  const classId = String(student?.classId || "").trim();
+  const section = String(student?.section || "").trim();
+  const aliases = new Set<string>();
+
+  for (const value of [classId, getCanonicalClassLabel(classId), ...assignedClasses]) {
+    const normalized = String(value || "").trim();
+    if (!normalized) continue;
+    aliases.add(normalized);
+    if (section) {
+      aliases.add(`${normalized} - Section ${section}`);
+    }
+  }
+
+  return Array.from(aliases);
 }
 
 function normalizeSectionKey(value: unknown) {
@@ -2667,7 +2708,9 @@ function matchesAnySubjectAlias(value: unknown, aliases: unknown[]) {
     const aliasWithoutTrailingDigits = normalizedAlias.replace(/\d+$/g, "");
     return (
       normalizedAlias === candidate ||
-      aliasWithoutTrailingDigits === candidateWithoutTrailingDigits
+      aliasWithoutTrailingDigits === candidateWithoutTrailingDigits ||
+      (isScienceUmbrellaSubjectKey(candidate) && isScienceFamilySubjectKey(normalizedAlias)) ||
+      (isScienceUmbrellaSubjectKey(normalizedAlias) && isScienceFamilySubjectKey(candidate))
     );
   });
 }
@@ -10630,6 +10673,31 @@ function isScienceFrameworkUnitName(unitName: string) {
   ].some((phrase) => normalized.includes(phrase));
 }
 
+function isGenericCurriculumUnitLabel(value: unknown) {
+  const normalized = normalizeSourceText(String(value || ""));
+  if (!normalized) {
+    return false;
+  }
+
+  return (
+    normalized === "whole term" ||
+    /^unit\s+[ivxlcdm0-9]+$/.test(normalized)
+  );
+}
+
+function resolveCurriculumUnitDisplayName(...candidates: unknown[]) {
+  const values = candidates
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+
+  if (values.length === 0) {
+    return "";
+  }
+
+  const nonGeneric = values.find((value) => !isGenericCurriculumUnitLabel(value));
+  return nonGeneric || values[0] || "";
+}
+
 function isPracticalLikeUnitContent(unit: any) {
   const content = [
     ...(unit?.topics || []),
@@ -16019,7 +16087,16 @@ app.post("/api/planning-workspaces/:id/recommend-course-plan", async (req, res) 
     }
 
     const academicConfig = workspace.academicConfig || {};
-    const preferredTermCount = Number(req.body?.preferredTermCount || 0) || undefined;
+    const requestedPreferredTermCount = Number(req.body?.preferredTermCount || 0);
+    const savedPreferredTermCount = Number(workspace.termPlan?.recommendedTermCount || 0);
+    const preferredTermCount =
+      (requestedPreferredTermCount >= 1 && requestedPreferredTermCount <= 4
+        ? requestedPreferredTermCount
+        : 0) ||
+      (savedPreferredTermCount >= 1 && savedPreferredTermCount <= 4
+        ? savedPreferredTermCount
+        : 0) ||
+      undefined;
     const classTermPlans = (normalizedStructure?.classes || []).length > 1
       ? normalizedStructure.classes.map((cls: any) => ({
           class_name: cls?.class_name || "",
@@ -20457,7 +20534,22 @@ async function getPrincipalClasses(schoolId?: string) {
       ? Number((matchingResults.reduce((sum: number, result: any) => sum + Number(result.percentage || 0), 0) / matchingResults.length).toFixed(1))
       : 0;
 
-    return {
+    const hasPublishedAllocation = matchingAllocations.some((item: any) => String(item?.status || "").trim().toLowerCase() === "published");
+    const hasTeacherAllocation = teacherIds.size > 0;
+    const hasMappedSubject = subjectSet.size > 0;
+    const hasWorkspaceActivity = matchingWorkspaces.length > 0;
+    const hasClassDocMapping = matchingClassDocs.some((item: any) =>
+      (Array.isArray(item?.subjectIds) && item.subjectIds.some(Boolean))
+      || (Array.isArray(item?.teacherIds) && item.teacherIds.some(Boolean))
+    );
+    const shouldDisplayClass =
+      hasPublishedAllocation
+      || hasTeacherAllocation
+      || hasMappedSubject
+      || hasWorkspaceActivity
+      || hasClassDocMapping;
+
+    return shouldDisplayClass ? {
       classKey: option.classKey,
       classId: option.classKey,
       className: option.className,
@@ -20481,8 +20573,8 @@ async function getPrincipalClasses(schoolId?: string) {
       lastActivity,
       status: "active",
       evaluationCompletion: averageClassPerformance,
-    };
-  });
+    } : null;
+  }).filter(Boolean);
 }
 
 async function getPrincipalAllocationClassOptions(schoolId?: string) {
@@ -20730,14 +20822,29 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
     assignedSince: string;
   }>();
 
-  const subjectCandidates = new Set<string>([
+  const strongSubjectCandidates = [
     ...matchingAllocations.flatMap((item: any) => Array.isArray(item?.subjects) ? item.subjects.map(String) : []),
     ...matchingWorkspaces.map((workspace: any) => String(workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "").trim()),
-    ...matchingClassDocs.flatMap((item: any) => Array.isArray(item?.subjectIds) ? item.subjectIds.map(String) : []),
     ...classHomeworkSubmissions.map((item: any) => String(item?.subjectId || item?.subject || "").trim()),
     ...classAssignmentSubmissions.map((item: any) => String(item?.subjectId || item?.subject || "").trim()),
     ...matchingResults.map((item: any) => String(item?.subjectId || "").trim()),
-  ].filter(Boolean));
+  ].filter(Boolean);
+  const strongCanonicalSubjectKeys = new Set(
+    strongSubjectCandidates
+      .map((subject) => normalizeSubjectKey(getCanonicalSubjectDisplayName(subject) || subject))
+      .filter(Boolean)
+  );
+  const classDocSubjectCandidates = matchingClassDocs
+    .flatMap((item: any) => Array.isArray(item?.subjectIds) ? item.subjectIds.map(String) : [])
+    .filter(Boolean)
+    .filter((subject) => {
+      const canonicalKey = normalizeSubjectKey(getCanonicalSubjectDisplayName(subject) || subject);
+      return canonicalKey ? !strongCanonicalSubjectKeys.has(canonicalKey) : true;
+    });
+  const subjectCandidates = new Set<string>([
+    ...strongSubjectCandidates,
+    ...classDocSubjectCandidates,
+  ]);
 
   for (const subject of subjectCandidates) {
     const normalizedSubject = String(subject || "").trim() || "General";
@@ -20998,16 +21105,36 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     HomeworkSubmissionModel.find(schoolMatch).lean(),
   ]);
 
-  const requestedSubjectKey = normalizeSubjectKey(decodeRouteParamValue(subjectKeyOrName));
+  const decodedRequestedSubject = decodeRouteParamValue(subjectKeyOrName);
+  const requestedSubjectKey = normalizeSubjectKey(decodedRequestedSubject);
   const subjectSummary = (classDetail.subjectDetails || []).find((item) =>
-    subjectMatchesAlias(item.subjectKey || item.subject || "", [decodeRouteParamValue(subjectKeyOrName)])
+    subjectMatchesAlias(item.subjectKey || item.subject || "", [decodedRequestedSubject])
   );
   if (!subjectSummary) return null;
-  const requestedSubjectAliases = getCanonicalSubjectAliases(subjectSummary.subject || decodeRouteParamValue(subjectKeyOrName));
+  const requestedSubjectAliasSeeds = [
+    decodedRequestedSubject,
+    requestedSubjectKey,
+    String(subjectSummary.subjectKey || "").trim(),
+    String(subjectSummary.subject || "").trim(),
+    getCanonicalSubjectDisplayName(subjectSummary.subjectKey || subjectSummary.subject || decodedRequestedSubject),
+  ].filter(Boolean);
+  const requestedSubjectAliases = Array.from(new Set(
+    requestedSubjectAliasSeeds.flatMap((value) => [
+      String(value || "").trim(),
+      ...getCanonicalSubjectAliases(value),
+    ]).filter(Boolean)
+  ));
+  if (requestedSubjectAliases.some((value) => isScienceUmbrellaSubjectKey(value))) {
+    SCIENCE_SUBJECT_ALIASES.forEach((alias) => {
+      if (alias) {
+        requestedSubjectAliases.push(alias);
+      }
+    });
+  }
 
   const normalizedSection = normalizeSectionKey(classDetail.section || "");
   const subjectTeacherId = String(subjectSummary.teacherId || "").trim();
-  const matchingWorkspaces = dedupeWorkspacesByTeachingScope(workspaces.filter((workspace: any) =>
+  const subjectScopedWorkspaces = dedupeWorkspacesByTeachingScope(workspaces.filter((workspace: any) =>
     classKeysOverlap(
       workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || workspace?.classId || "",
       classDetail.className || classDetail.classKey || "",
@@ -21017,8 +21144,15 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
       workspace?.subjectId || workspace?.curriculumSnapshot?.subject || workspace?.academicConfig?.subject || "",
       requestedSubjectAliases,
     )
-    && (!subjectTeacherId || String(workspace?.teacherId || workspace?.createdBy || "").trim() === subjectTeacherId)
   ));
+  const teacherScopedWorkspaces = subjectTeacherId
+    ? dedupeWorkspacesByTeachingScope(subjectScopedWorkspaces.filter((workspace: any) =>
+      String(workspace?.teacherId || workspace?.createdBy || "").trim() === subjectTeacherId
+    ))
+    : subjectScopedWorkspaces;
+  const matchingWorkspaces = teacherScopedWorkspaces.length > 0
+    ? teacherScopedWorkspaces
+    : subjectScopedWorkspaces;
 
   const subjectTeacher = users.find((user: any) => String(user?._id || "") === subjectTeacherId);
   const classStudentIds = new Set((classDetail.studentRoster || []).map((student) => String(student.id || "").trim()).filter(Boolean));
@@ -21213,6 +21347,8 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
   const workspaceAssessmentArtifactIds = new Set(workspaceAssessmentItems.map((item: any) => String(item?.artifactId || "").trim()).filter(Boolean));
   const workspaceAssessmentArtifactSuffixes = new Set(workspaceAssessmentItems.map((item: any) => String(item?.artifactSuffix || "").trim()).filter(Boolean));
   const unitSet = new Set<string>();
+  const realUnitSet = new Set<string>();
+  const fallbackUnitSet = new Set<string>();
   const chapterSet = new Set<string>();
 
   const subjectAssignmentSubmissions = classAssignmentSubmissions.filter((item: any) => {
@@ -21267,8 +21403,21 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     classes.forEach((cls: any) => {
       const units = Array.isArray(cls?.units) ? cls.units : [];
       units.forEach((unit: any) => {
-        const unitName = String(unit?.unit_name || unit?.unitName || unit?.title || unit?.name || "").trim();
-        if (unitName) unitSet.add(unitName);
+        const unitName = resolveCurriculumUnitDisplayName(
+          unit?.part_or_section,
+          unit?.block_name,
+          unit?.source_heading,
+          unit?.unit_name,
+          unit?.unitName,
+          unit?.title,
+          unit?.name,
+        );
+        if (unitName) {
+          unitSet.add(unitName);
+          if (!isGenericCurriculumUnitLabel(unitName)) {
+            realUnitSet.add(unitName);
+          }
+        }
         const chapters = Array.isArray(unit?.chapters) ? unit.chapters : [];
         chapters.forEach((chapter: any) => {
           const chapterName = String(chapter?.chapter_name || chapter?.chapterName || chapter?.title || chapter?.name || "").trim();
@@ -21281,9 +21430,22 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     const termAllocations = Array.isArray(workspace?.termPlan?.allocations) ? workspace.termPlan.allocations : [];
     const termRecommendations = Array.isArray(workspace?.termPlan?.recommendations) ? workspace.termPlan.recommendations : [];
     [...termAllocations, ...termRecommendations].forEach((item: any) => {
-      const unitName = String(item?.unitName || item?.unit || "").trim();
+      const unitName = resolveCurriculumUnitDisplayName(
+        item?.partOrSection,
+        item?.part_or_section,
+        item?.sectionName,
+        item?.strand,
+        item?.unitName,
+        item?.unit,
+      );
       const chapterName = String(item?.chapterName || item?.chapter || "").trim();
-      if (unitName) unitSet.add(unitName);
+      if (unitName) {
+        if (isGenericCurriculumUnitLabel(unitName)) {
+          fallbackUnitSet.add(unitName);
+        } else {
+          realUnitSet.add(unitName);
+        }
+      }
       if (chapterName) chapterSet.add(chapterName);
       // Also extract chapters from the chapters array if present
       const chapters = Array.isArray(item?.chapters) ? item.chapters : [];
@@ -21297,12 +21459,29 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     const sessionAllocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
     const sessionRecommendations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
     [...sessionAllocations, ...sessionRecommendations].forEach((item: any) => {
-      const unitName = String(item?.unitName || item?.unit || "").trim();
+      const unitName = resolveCurriculumUnitDisplayName(
+        item?.partOrSection,
+        item?.part_or_section,
+        item?.sectionName,
+        item?.strand,
+        item?.unitName,
+        item?.unit,
+      );
       const chapterName = String(item?.chapterName || item?.chapter || "").trim();
-      if (unitName) unitSet.add(unitName);
+      if (unitName) {
+        if (isGenericCurriculumUnitLabel(unitName)) {
+          fallbackUnitSet.add(unitName);
+        } else {
+          realUnitSet.add(unitName);
+        }
+      }
       if (chapterName) chapterSet.add(chapterName);
     });
   });
+
+  const resolvedUnits = realUnitSet.size > 0
+    ? Array.from(realUnitSet)
+    : Array.from(new Set([...unitSet, ...fallbackUnitSet]));
 
   const homeworkById = new Map<string, {
     id: string;
@@ -21581,7 +21760,7 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     },
     students,
     curriculum: {
-      units: Array.from(unitSet),
+      units: resolvedUnits,
       chapters: Array.from(chapterSet),
       terms: termItems.map((item: any) => String(item?.title || "").trim()).filter(Boolean),
       sessions: sessionOptions,
@@ -22274,11 +22453,7 @@ app.get("/api/student/notes", async (req, res) => {
       return;
     }
 
-    const classAliases = buildClassAliasKeys(
-      student.classId,
-      getCanonicalClassLabel(student.classId),
-      student.section ? `${student.classId} - Section ${student.section}` : "",
-    );
+    const classAliases = buildStudentWorkspaceClassAliases(student);
     const sectionKey = normalizeSectionKey(student.section || "");
 
     const workspaces = await PlanningWorkspaceModel.find({ schoolId }).lean();
@@ -22380,11 +22555,7 @@ app.get("/api/student/published-content", async (req, res) => {
       return;
     }
 
-    const classAliases = buildClassAliasKeys(
-      student.classId,
-      getCanonicalClassLabel(student.classId),
-      student.section ? `${student.classId} - Section ${student.section}` : "",
-    );
+    const classAliases = buildStudentWorkspaceClassAliases(student);
     const sectionKey = normalizeSectionKey(student.section || "");
 
     const workspaces = await PlanningWorkspaceModel.find({ schoolId }).lean();

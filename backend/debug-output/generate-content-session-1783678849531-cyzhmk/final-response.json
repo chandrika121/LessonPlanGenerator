@@ -1,0 +1,874 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 11,
+      "totalQuestions": 9,
+      "durationMinutes": 15,
+      "language": "english",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":11,\"totalQuestions\":9,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":5,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 5,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Define Real Numbers as the union of Rational and Irrational numbers.",
+        "Identify decimal expansions as terminating, recurring, or non-recurring.",
+        "Represent square roots geometrically on the number line.",
+        "Distinguish between rational and irrational numbers in practical contexts."
+      ],
+      "assessedConcepts": [
+        "Rational Numbers",
+        "Irrational Numbers",
+        "Decimal Expansions",
+        "Geometric Representation of Square Roots"
+      ],
+      "conceptCoveragePriorities": [
+        "Distinguishing Rational vs Irrational based on decimal expansion",
+        "Geometric construction of square roots on the number line"
+      ],
+      "misconceptionTargets": [
+        "Confusing 'irrational' with 'illogical'",
+        "Thinking √2 is exactly 1.414"
+      ],
+      "competencyFocus": [
+        "Application",
+        "Understanding"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 11,
+          "questionCount": 9,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9"
+          ],
+          "focus": "Session-aligned assessment on Real Numbers, decimal expansions, and geometric representation."
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Rational Numbers",
+          "questionRefs": [
+            "q1",
+            {
+              "text": "",
+              "latex": "q^2",
+              "displayLatex": ""
+            },
+            {
+              "text": "",
+              "latex": "q^3",
+              "displayLatex": ""
+            }
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Irrational Numbers",
+          "questionRefs": [
+            "q4",
+            "q5",
+            "q6"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        },
+        {
+          "concept": "Geometric Representation",
+          "questionRefs": [
+            "q7",
+            "q8",
+            "q9"
+          ],
+          "competency": "Application",
+          "importance": "high"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define Real Numbers as the union of Rational and Irrational numbers.",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Identify decimal expansions as terminating, recurring, or non-recurring.",
+          "questionRefs": [
+            {
+              "text": "",
+              "latex": "q^2",
+              "displayLatex": ""
+            },
+            {
+              "text": "",
+              "latex": "q^3",
+              "displayLatex": ""
+            },
+            "q5"
+          ]
+        },
+        {
+          "outcome": "Represent square roots geometrically on the number line.",
+          "questionRefs": [
+            "q7",
+            "q8",
+            "q9"
+          ]
+        },
+        {
+          "outcome": "Distinguish between rational and irrational numbers in practical contexts.",
+          "questionRefs": [
+            "q6"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 20,
+        "understanding": 35,
+        "application": 30,
+        "analysis": 15,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 5,
+        "analysis": 0
+      },
+      "questionDistribution": {
+        "mcq": 5,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Unit I: Number System",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session.",
+        "Section A contains MCQs (1 mark each). Section B contains Very Short Answers (1 mark each). Section C contains Short Answers (2 marks each).",
+        "Show necessary steps for geometric representation questions."
+      ],
+      "sections": [
+        {
+          "id": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 11,
+          "questionCount": 9,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7",
+            "q8",
+            "q9"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following is a rational number?",
+          "options": [
+            {
+              "text": "",
+              "latex": "A. \\sqrt{2}",
+              "displayLatex": ""
+            },
+            "B. π",
+            "C. 0.75",
+            "D. 0.1010010001..."
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Define Real Numbers as the union of Rational and Irrational numbers."
+          ],
+          "conceptRefs": [
+            "Rational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Rational vs Irrational"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Rational numbers are fractions or decimals that end or repeat."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "The decimal expansion of the number √3 is:",
+          "options": [
+            "A. Terminating",
+            "B. Non-terminating recurring",
+            "C. Non-terminating non-recurring",
+            "D. Finite"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Identify decimal expansions as terminating, recurring, or non-recurring."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Decimal Expansions"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Irrational numbers have non-terminating, non-recurring decimal expansions."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following is an irrational number?",
+          "options": [
+            {
+              "text": "",
+              "latex": "A. 2\\frac{2}{7}",
+              "displayLatex": "A. 2\\frac{2}{7}"
+            },
+            "B. 0.5",
+            {
+              "text": "",
+              "latex": "C. \\sqrt{9}",
+              "displayLatex": ""
+            },
+            "D. π"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Define Real Numbers as the union of Rational and Irrational numbers."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Rational vs Irrational"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: π is an example of an irrational number."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Is the number 0.123456789... (where the pattern of digits increases) rational or irrational?",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One word or short phrase",
+          "learningOutcomeRefs": [
+            "Identify decimal expansions as terminating, recurring, or non-recurring."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Decimal Expansions"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Analysis",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Non-terminating non-recurring decimals are irrational."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "What is the value of √9?",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "One word or short phrase",
+          "learningOutcomeRefs": [
+            "Distinguish between rational and irrational numbers in practical contexts."
+          ],
+          "conceptRefs": [
+            "Rational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Square Roots"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Application",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            {
+              "text": "Teacher notes:",
+              "latex": "\\sqrt{9} = 3, which is a rational number.",
+              "displayLatex": "\\sqrt{9} = 3, which is a rational number."
+            }
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Explain why the sum of a rational number and an irrational number is always irrational.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "2-3 sentences",
+          "learningOutcomeRefs": [
+            "Define Real Numbers as the union of Rational and Irrational numbers."
+          ],
+          "conceptRefs": [
+            "Real Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Properties of Real Numbers"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: The sum of a rational and an irrational number is always irrational."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Describe the steps to locate √2 on the number line using geometric construction.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "Step-by-step description",
+          "learningOutcomeRefs": [
+            "Represent square roots geometrically on the number line."
+          ],
+          "conceptRefs": [
+            "Geometric Representation"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Square Roots"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            {
+              "text": "Teacher notes:",
+              "latex": "Draw a right-angled triangle with base 1 and height 1 to find hypotenuse \\sqrt{2}.",
+              "displayLatex": ""
+            }
+          ]
+        },
+        {
+          "id": "q8",
+          "questionNumber": 8,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "A square has a side length of 1 meter. What is the length of its diagonal? Is this number rational or irrational?",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Value and classification",
+          "learningOutcomeRefs": [
+            "Represent square roots geometrically on the number line.",
+            "Distinguish between rational and irrational numbers in practical contexts."
+          ],
+          "conceptRefs": [
+            "Geometric Representation",
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Square Roots"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            {
+              "text": "Teacher notes:",
+              "latex": "The diagonal of a square with side 1 is \\sqrt{2}. It cannot be written as p/q.",
+              "displayLatex": ""
+            }
+          ]
+        },
+        {
+          "id": "q9",
+          "questionNumber": 9,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Identify the type of decimal expansion for the number 0.1010010001... and justify your answer.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "Classification and justification",
+          "learningOutcomeRefs": [
+            "Identify decimal expansions as terminating, recurring, or non-recurring."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Decimal Expansions"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Analysis",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: Non-terminating non-recurring decimals are irrational."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. 0.75",
+            "explanation": "0.75 is a terminating decimal, which can be written as a fraction (3/4).",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. Non-terminating non-recurring",
+            "explanation": "√3 is an irrational number, so its decimal expansion goes on forever without repeating.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "D. π",
+            "explanation": "π is a classic example of an irrational number.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Irrational",
+            "explanation": "The pattern increases and does not repeat, making it non-terminating and non-recurring.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "3",
+            "explanation": "√9 = 3, which is a rational number.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "If the sum were rational, subtracting the known rational number would result in a rational irrational number, which is a contradiction.",
+            "explanation": "The sum of a rational and an irrational number cannot be rational.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "1. Draw a horizontal line and mark 0 and 1. 2. Construct a perpendicular at 1 of length 1. 3. Join the origin to the top of the perpendicular (hypotenuse = √2). 4. Use a compass to mark this length on the number line.",
+            "explanation": "Geometric construction uses the Pythagorean theorem where base=1, height=1, hypotenuse=√2.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q8",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Length is √2 meters. It is irrational.",
+            "explanation": "By Pythagoras theorem, diagonal = √(1² + 1²) = √2. √2 cannot be written as p/q.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q9",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "Non-terminating non-recurring (Irrational). The pattern of zeros increases, so it never repeats.",
+            "explanation": "Since the decimal does not terminate and does not repeat a fixed pattern, it is irrational.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct classification (Irrational)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for the correct answer."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct value (3)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for the correct answer."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "State that sum is irrational",
+                "marks": 1
+              },
+              {
+                "criterion": "Provide logical justification (contradiction method)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise for each valid idea."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct description of triangle construction (base=1, height=1)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct method to transfer length to number line",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise for each valid step."
+            ]
+          },
+          {
+            "questionId": "q8",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct length (√2)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct classification (Irrational)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise for each valid part."
+            ]
+          },
+          {
+            "questionId": "q9",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct classification (Non-terminating non-recurring)",
+                "marks": 1
+              },
+              {
+                "criterion": "Valid justification regarding the pattern",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise for each valid idea."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q6",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "First valid point (Statement of property)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point (Logical reasoning)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "The sum is irrational because if it were rational, subtracting the rational part would make the irrational number rational, which is impossible."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "First valid point (Triangle construction)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point (Compass transfer)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Draw a right triangle with base 1 and height 1. The hypotenuse is √2. Use a compass to mark this length on the number line."
+          },
+          {
+            "questionId": "q8",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point (Calculation of diagonal)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point (Classification as irrational)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "Diagonal = √(1²+1²) = √2. Since √2 cannot be written as p/q, it is irrational."
+          },
+          {
+            "questionId": "q9",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point (Correct identification)",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point (Justification of non-repeating pattern)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "It is non-terminating non-recurring because the number of zeros between ones keeps increasing, so no pattern repeats."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea in short answer questions.",
+        "For MCQs, only the correct option is awarded marks."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Accept equivalent logical explanations for reasoning questions."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers.",
+        "Ensure geometric descriptions are clear and follow standard conventions."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts including rational/irrational distinction, decimal expansions, and geometric representation."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier MCQs to more demanding short answer questions requiring application and reasoning."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Requested questions: 9",
+          "Generated questions: 9"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Requested marks: 11",
+          "Generated marks: 11"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Unit I: Number System: 9 question(s), 11 mark(s)"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Answer key items: 9",
+          "Marking scheme items: 9",
+          "Rubric-linked questions: 4"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

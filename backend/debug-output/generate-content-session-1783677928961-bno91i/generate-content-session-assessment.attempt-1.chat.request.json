@@ -1,0 +1,287 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "meta": {
+        "assessmentType": "Session assessment",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "language": "English",
+        "preferredDifficulty": "Balanced",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ]
+      },
+      "sessionAnalysis": {
+        "assessedLearningOutcomes": [
+          "Learning outcome text"
+        ],
+        "assessedConcepts": [
+          "Concept from the session"
+        ],
+        "conceptCoveragePriorities": [
+          "High-emphasis taught concept"
+        ],
+        "misconceptionTargets": [
+          "Likely misconception to check"
+        ],
+        "competencyFocus": [
+          "Application"
+        ]
+      },
+      "blueprint": {
+        "sectionPlan": [
+          {
+            "sectionId": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "focus": "Session-aligned assessment focus"
+          }
+        ],
+        "conceptDistribution": [
+          {
+            "concept": "Concept from the session",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ],
+            "competency": "Understanding",
+            "importance": "core"
+          }
+        ],
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "competencyDistribution": {
+          "understanding": 2,
+          "application": 3,
+          "analysis": 2
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "Assessment",
+            "minutes": 15
+          }
+        ]
+      },
+      "paper": {
+        "instructions": [
+          "Answer all questions using only the concepts taught in this session."
+        ],
+        "sections": [
+          {
+            "id": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "source": "fallback"
+          }
+        ],
+        "questions": [
+          {
+            "id": "q1",
+            "questionNumber": 1,
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "type": "mcq",
+            "subtype": "mcq",
+            "prompt": "MCQ question",
+            "options": [
+              "A. option",
+              "B. option",
+              "C. option",
+              "D. option"
+            ],
+            "marks": 1,
+            "expectedLength": "",
+            "learningOutcomeRefs": [
+              "LO1"
+            ],
+            "conceptRefs": [
+              "Concept"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "subtopicCoverage": [
+              "Subtopic"
+            ],
+            "bloomsLevel": "understanding",
+            "competencyTag": "Conceptual clarity",
+            "difficulty": "easy",
+            "sourceEvidence": [
+              "Teacher notes concept reference"
+            ]
+          }
+        ]
+      },
+      "evaluation": {
+        "answerKey": {
+          "items": [
+            {
+              "questionId": "q1",
+              "sectionId": "section-assessment",
+              "sectionTitle": "Assessment",
+              "answer": "Correct option",
+              "explanation": "Brief explanation",
+              "marks": 1,
+              "subtype": "mcq"
+            }
+          ]
+        },
+        "markingScheme": {
+          "items": [
+            {
+              "questionId": "q1",
+              "totalMarks": 1,
+              "markBreakdown": [
+                {
+                  "criterion": "Correct answer selected",
+                  "marks": 1
+                }
+              ],
+              "awardGuidance": [
+                "Award full marks only for the correct option."
+              ]
+            }
+          ]
+        },
+        "rubrics": {
+          "items": [
+            {
+              "questionId": "q5",
+              "totalMarks": 2,
+              "criteria": [
+                {
+                  "criterion": "First valid point",
+                  "marks": 1
+                },
+                {
+                  "criterion": "Second valid point",
+                  "marks": 1
+                }
+              ],
+              "sampleAnswer": "Point-wise short answer"
+            }
+          ]
+        },
+        "generalInstructions": [
+          "Award marks point-wise for each valid idea."
+        ],
+        "evaluatorInstructions": [
+          "Use only the taught session content when evaluating student responses."
+        ],
+        "moderationNotes": [
+          "Maintain consistency across equivalent answers."
+        ]
+      },
+      "summary": {
+        "coverageSummary": [
+          "Balanced coverage of the taught session concepts."
+        ],
+        "omittedContent": [],
+        "balanceNotes": [
+          "Paper progresses from easier to more demanding questions."
+        ]
+      },
+      "validation": {
+        "exactPatternChecks": {
+          "passed": true,
+          "details": [
+            "Question pattern matches the requested blueprint."
+          ]
+        },
+        "marksChecks": {
+          "passed": true,
+          "details": [
+            "Marks match the requested total."
+          ]
+        },
+        "sectionChecks": {
+          "passed": true,
+          "details": [
+            "Each question is assigned to a valid section."
+          ]
+        },
+        "alignmentChecks": {
+          "passed": true,
+          "details": [
+            "Question paper, answer key, and marking scheme are aligned."
+          ]
+        },
+        "scopeBoundaryChecks": {
+          "passed": true,
+          "details": [
+            "No untaught or future-session content included."
+          ]
+        }
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL ASSESSMENT & EVALUATION INTELLIGENCE ENGINE\r\n\r\nROLE\r\nYou are an Enterprise Assessment & Evaluation Intelligence Engine.\r\nYou function like a professional examination committee made up of a curriculum assessment specialist, paper setter, head examiner, subject expert, psychometric reviewer, and marking-scheme designer.\r\n\r\nYou are not a simple question generator.\r\nYou are responsible for designing a complete, session-bounded examination package that is immediately usable by a teacher or school.\r\n\r\nPRIMARY OBJECTIVE\r\nGenerate a complete assessment package for one classroom session only.\r\n\r\nSession context:\r\n- Subject: Hindi\r\n- Grade/Level: Class X / X\r\n- Session title: Listening Skills (श्रवण कौशल)\r\n- Session number: 1 of 1\r\n- Session duration: 45 minutes\r\n- Chapter scope: [\"Listening Skills (श्रवण कौशल)\"]\r\n- Learning outcomes: []\r\n- Previous session context: No previous session context provided.\r\n- Learning pace: Balanced\r\n- Preferred difficulty: Balanced\r\n- Output language: Hindi\r\n- Language execution rule: Write every natural-language value in Hindi. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when Hindi is required.\r\n\r\nAssessment preferences:\r\n- Assessment type: Session assessment\r\n- Requested total marks: 14\r\n- Requested total questions: 12\r\n- Requested duration: 15 minutes\r\n- Assessment preference inputs: []\r\n- Target blooms emphasis: []\r\n- Requested question type mix: [{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":6,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":4,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]\r\n- Allowed assessment sections: [\n  {\n    \"id\": \"section-total-marks-100-80-board-exam-20-internal-assessment\",\n    \"title\": \"Total Marks: 100 (80 Board Exam + 20 Internal Assessment)\",\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-section-a-unseen-prose-poetry\",\n    \"title\": \"Section A (Unseen Prose & Poetry)\",\n    \"marks\": 14,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-section-b-grammar\",\n    \"title\": \"Section B (Grammar)\",\n    \"marks\": 16,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-section-c-textbook-supplementary-reader\",\n    \"title\": \"Section C (Textbook & Supplementary Reader)\",\n    \"marks\": 30,\n    \"source\": \"assessment_framework\"\n  },\n  {\n    \"id\": \"section-section-d-creative-writing\",\n    \"title\": \"Section D (Creative Writing)\",\n    \"marks\": 20,\n    \"source\": \"assessment_framework\"\n  }\n]\r\n- Question paper objective: Not specified.\r\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 14,\n  \"totalQuestions\": 12,\n  \"questionTypes\": [\n    {\n      \"type\": \"mcq\",\n      \"label\": \"MCQs\",\n      \"questionCount\": 6,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 4,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    }\n  ]\n}\r\n\r\nSession JSON source of truth:\r\n{\n  \"id\": \"session-1\",\n  \"sessionNumber\": 1,\n  \"title\": \"Listening Skills (श्रवण कौशल)\",\n  \"duration\": 45,\n  \"learningOutcomes\": [\n    \"छात्र श्रवण कौशल की परिभाषा और महत्व को स्पष्ट रूप से बता सकेंगे।\",\n    \"छात्र ध्यानपूर्वक सुनने के तीन मुख्य चरणों की पहचान कर सकेंगे।\",\n    \"छात्र एक संक्षिप्त श्रवण गतिविधि के बाद मुख्य बिंदुओं को लिखकर प्रस्तुत कर सकेंगे।\"\n  ],\n  \"introduction\": \"क्या आपने कभी किसी को ध्यान से सुना है और फिर उससे पूछा कि उसने क्या कहा? क्या आप सही उत्तर दे पाए? आज हम सीखेंगे कि 'सुनना' केवल कानों से शब्द सुनना नहीं है, बल्कि उसे समझना और याद रखना भी है।\",\n  \"theory\": {\n    \"overview\": \"श्रवण कौशल (Listening Skills) वह क्षमता है जिसके द्वारा हम किसी वक्ता की बातों को ध्यानपूर्वक सुनते हैं, उनका अर्थ निकालते हैं और उन्हें याद रखते हैं। यह हिंदी पाठ्यक्रम का एक महत्वपूर्ण भाग है जो छात्रों की संचार क्षमता को बढ़ाता है।\",\n    \"keyPoints\": [\n      \"श्रवण कौशल केवल शब्द सुनना नहीं है, बल्कि अर्थ निकालना है।\",\n      \"ध्यानपूर्वक सुनने से गलतफहमियां कम होती हैं।\",\n      \"यह परीक्षाओं और दैनिक जीवन दोनों में महत्वपूर्ण है।\"\n    ],\n    \"detailedContent\": \"श्रवण कौशल का अर्थ है किसी वक्ता की बातों को ध्यानपूर्वक सुनना, उन्हें समझना और उनका सही अर्थ निकालना। यह केवल शब्दों को सुनना नहीं है, बल्कि भावनाओं और संदेशों को भी समझना है। जब हम किसी की बात सुनते हैं, तो हमें ध्यान देना चाहिए कि वह क्या कह रहा है, क्यों कह रहा है और उसकी आवाज में क्या भावनाएं हैं। इससे हम गलतफहमियों से बच सकते हैं और सही निर्णय ले सकते हैं।\"\n  },\n  \"activities\": [\n    {\n      \"name\": \"श्रवण गतिविधि: 'क्या सुना?'\",\n      \"instructions\": [\n        \"शिक्षक एक छोटा वाक्य या संदेश पढ़ें (जैसे: 'कल स्कूल में प्रयोगशाला का कार्य होगा।')।\",\n        \"छात्रों को तुरंत मुख्य बिंदु लिखने को कहें।\",\n        \"फिर छात्रों से पूछें कि उन्होंने क्या सुना और क्या लिखा।\",\n        \"सही उत्तर की तुलना करें और समझाएं कि ध्यान कैसे दिया जाना चाहिए।\"\n      ],\n      \"durationMinutes\": 15\n    }\n  ],\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"यह सत्र कक्षा दस के हिंदी पाठ्यक्रम के 'श्रवण कौशल' (Listening Skills) अध्याय का पहला और आधारभूत सत्र है। इसका उद्देश्य छात्रों को यह समझाना है कि सुनना केवल कानों से शब्दों को पकड़ना नहीं, बल्कि ध्यानपूर्वक सुनकर अर्थ निकालना है।\",\n    \"prerequisiteKnowledge\": [\n      \"छात्रों को सामान्य हिंदी शब्दावली का ज्ञान होना चाहिए।\",\n      \"छात्रों को कक्षा में मौखिक निर्देशों को समझने की क्षमता होनी चाहिए।\"\n    ],\n    \"learningOutcomes\": [\n      \"श्रवण कौशल की परिभाषा और महत्व को समझाना।\",\n      \"ध्यानपूर्वक सुनने (Active Listening) के तत्वों को पहचानना।\",\n      \"सुनी गई बात से मुख्य विचार और सूचनाओं को अलग-अलग करना।\"\n    ],\n    \"lessonPurpose\": [\n      \"छात्रों को यह समझाना कि परीक्षा में श्रवण कौशल के प्रश्नों का उत्तर देने के लिए ध्यानपूर्वक सुनना आवश्यक है।\",\n      \"दैनिक जीवन में सही संदेश प्राप्त करने के लिए सुनने की क्षमता विकसित करना।\"\n    ],\n    \"teachingSequence\": [\n      \"श्रवण कौशल को परिभाषित करें और इसका महत्व समझाएं।\",\n      \"ध्यानपूर्वक सुनने (Active Listening) के तीन मुख्य चरणों की व्याख्या करें: ध्यान देना, अर्थ निकालना, और याद रखना।\",\n      \"एक संक्षिप्त वीडियो क्लिप या शिक्षक द्वारा पढ़ा गया पाठ सुनाएं।\",\n      \"छात्रों से पूछें कि उन्होंने क्या सुना और मुख्य बिंदु क्या थे।\",\n      \"सामान्य गलतफहमियों (जैसे बीच में बोलना) पर चर्चा करें।\"\n    ],\n    \"guidedPractice\": [\n      \"शिक्षक द्वारा एक छोटा संदेश पढ़ा जाए और छात्रों से मुख्य बिंदु लिखने को कहा जाए।\",\n      \"छात्रों को जोड़े में बांटकर एक-दूसरे के कहे गए वाक्य को दोहराने का अभ्यास कराएं।\"\n    ],\n    \"misconceptions\": [\n      \"सुनना और पढ़ना एक ही प्रक्रिया है।\",\n      \"सुनने में ध्यान देने की आवश्यकता नहीं होती।\"\n    ],\n    \"formativeChecks\": [\n      \"क्या आपने सुनी गई बात का मुख्य बिंदु लिख लिया?\"\n    ],\n    \"assessmentQuestions\": [\n      \"एक वाक्य पढ़ें और छात्रों से पूछें कि उसमें क्या संदेश है।\"\n    ],\n    \"sessionSummary\": [\n      \"श्रवण कौशल केवल सुनना नहीं है, बल्कि समझना और याद रखना भी है।\"\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"ध्यानपूर्वक सुनना (Active Listening)\",\n        \"definition\": \"वक्ता की बातों को बिना किसी विचलन के ध्यान से सुनना और उनका सही अर्थ निकालना।\",\n        \"coreExplanation\": \"यह एक सक्रिय प्रक्रिया है जिसमें श्रोता वक्ता पर पूरा ध्यान देता है, न कि अपने मन में दूसरी बातें सोच रहा होता है। इसमें शारीरिक भाषा और आवाज के उतार-चढ़ाव को भी समझना शामिल है।\",\n        \"importance\": \"यह परीक्षाओं में अंक प्राप्त करने और दैनिक जीवन में सही निर्णय लेने के लिए आवश्यक है।\",\n        \"keywords\": [\n          \"ध्यान\",\n          \"समझना\",\n          \"अर्थ\",\n          \"श्रोता\",\n          \"वक्ता\"\n        ],\n        \"examples\": [\n          \"जब कोई शिक्षक घर का कार्य बताता है, तो छात्र को तुरंत नोट करना चाहिए।\"\n        ]\n      }\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"प्रस्तावना: सुनना क्या है?\",\n        \"durationMinutes\": 5,\n        \"explanation\": [\n          \"श्रवण कौशल का अर्थ है किसी वक्ता की बातों को ध्यानपूर्वक सुनना, उन्हें समझना और उनका सही अर्थ निकालना। यह केवल शब्दों को सुनना नहीं है, बल्कि भावनाओं और संदेशों को भी समझना है।\"\n        ],\n        \"examples\": [\n          \"जब आप अपने माता-पिता से किसी निर्देश को सुनते हैं, तो आपको तुरंत उसे याद रखना होता है।\"\n        ],\n        \"checkUnderstanding\": [\n          \"क्या आप समझ गए कि 'सुनना' और 'समझना' में क्या अंतर है?\"\n        ],\n        \"expectedAnswers\": [\n          \"सुनना केवल कानों से शब्द सुनना है, जबकि समझना उसका अर्थ निकालना है।\"\n        ],\n        \"activity\": [\n          \"एक छात्र को एक वाक्य बोलने को कहें और दूसरे छात्र को उसे दोहराने को कहें।\"\n        ]\n      }\n    ]\n  },\n  \"studentLessonNotes\": {\n    \"title\": \"श्रवण कौशल: सुनने की कला और समझना\",\n    \"sessionOverview\": \"इस सत्र में हम सीखेंगे कि 'श्रवण कौशल' क्या है, इसके महत्वपूर्ण घटक क्या हैं, और कैसे हम प्रभावी ढंग से सुनकर जानकारी को सही तरीके से समझ सकते हैं।\",\n    \"introduction\": \"नमस्ते! आज की कक्षा में हम एक बहुत ही महत्वपूर्ण कौशल पर चर्चा करेंगे जो अक्सर नजरअंदाज कर दिया जाता है - 'सुनना'। क्या आपने कभी सोचा है कि जब कोई बात करता है, तो हम उसकी आवाज़ सुनते हैं या उसका मतलब समझते हैं? श्रवण कौशल सिर्फ़ कानों से सुनना नहीं है, बल्कि दिल और दिमाग से समझना भी है।\",\n    \"learningObjectives\": [\n      \"श्रवण कौशल की परिभाषा और महत्व को समझना\",\n      \"सुनने के विभिन्न स्तरों (Passive vs Active) में अंतर करना\",\n      \"प्रभावी श्रवण के लिए आवश्यक तकनीकों को पहचानना\",\n      \"शब्दार्थ और संदर्भ से जानकारी निकालना सीखना\"\n    ],\n    \"keyTerms\": [\n      \"श्रवण कौशल\",\n      \"सक्रिय श्रवण\",\n      \"संचार\"\n    ],\n    \"quickSummary\": [\n      \"श्रवण कौशल सही सुनने और समझने की क्षमता है।\"\n    ],\n    \"summary\": [\n      \"श्रवण कौशल सही सुनने और समझने की क्षमता है जो जीवन में सफलता दिलाती है।\"\n    ],\n    \"rememberPoints\": [\n      \"श्रवण कौशल = सुनना + समझना\",\n      \"सक्रिय श्रवण = ध्यान + प्रतिक्रिया\",\n      \"गलतफहमी से बचने के लिए सुनना जरूरी है\"\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"श्रवण कौशल\",\n        \"definition\": \"किसी बोलने वाले की बातों को ध्यान से सुनना, उन्हें समझना और सही प्रतिक्रिया देने की क्षमता।\"\n      },\n      {\n        \"term\": \"सक्रिय श्रवण\",\n        \"definition\": \"बोलने वाले पर पूरा ध्यान केंद्रित करना और उनकी बात को गहराई से समझना।\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"श्रवण कौशल क्या है?\",\n        \"explanation\": \"श्रवण कौशल (Listening Skills) का अर्थ है किसी बोलने वाले की बातों को ध्यान से सुनना, उन्हें समझना और उनका सही उत्तर देना। यह केवल आवाज़ सुनना नहीं है, बल्कि शब्दों के पीछे छिपे भाव और संदेश को पकड़ना भी है।\",\n        \"keyPoints\": [\n          \"यह एक सक्रिय प्रक्रिया है।\",\n          \"इसमें ध्यान और समझ दोनों शामिल हैं।\",\n          \"यह संचार का पहला चरण है।\"\n        ],\n        \"examples\": [\n          \"कक्षा में शिक्षक द्वारा दी गई निर्देशों को ध्यान से सुनना।\",\n          \"दोस्त की समस्या को बिना बीच में बोले सुनना।\"\n        ],\n        \"importantNotes\": [\n          \"सुनना बोलने से पहले की प्रक्रिया है।\",\n          \"बिना सुने हुए सही जवाब देना मुश्किल है।\"\n        ],\n        \"conceptSummary\": [\n          \"श्रवण कौशल सही सुनने और गहराई से समझने की क्षमता है।\"\n        ]\n      },\n      {\n        \"heading\": \"सुनने के स्तर (Levels of Listening)\",\n        \"explanation\": \"हम अलग-अलग स्थितियों में अलग तरह से सुनते हैं। कुछ बार हम बस आवाज़ सुनते हैं, तो कभी हम पूरी तरह ध्यान देते हैं।\",\n        \"keyPoints\": [\n          \"निष्क्रिय सुनना (Passive)\",\n          \"सक्रिय सुनना (Active)\",\n          \"आलोचनात्मक सुनना (Critical)\"\n        ],\n        \"examples\": [\n          \"पृष्ठभूमि में चल रही संगीत सुनना (निष्क्रिय)।\",\n          \"शिक्षक की बात को नोट्स में लिखना (सक्रिय)।\"\n        ],\n        \"importantNotes\": [\n          \"परीक्षाओं के लिए 'सक्रिय सुनना' सबसे जरूरी है।\",\n          \"गलतफहमी से बचने के लिए ध्यान दें।\"\n        ],\n        \"conceptSummary\": [\n          \"सही सुनने के लिए सक्रियता जरूरी है।\"\n        ]\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"श्रवण कौशल का व्यावहारिक उदाहरण\",\n        \"steps\": [\n          \"सुनना: दोस्त की बात पूरा सुनें।\",\n          \"समझना: उसकी भावनाओं को पहचानें (उदासी/चिंता)।\",\n          \"प्रतिक्रिया: उसे सही सलाह दें या मदद करें।\"\n        ],\n        \"explanation\": \"यहाँ छात्र ने सिर्फ़ आवाज़ नहीं सुनी, बल्कि दोस्त की समस्या को समझा और उसकी मदद करने का फैसला किया।\"\n      }\n    ],\n    \"selfCheckQuestions\": [\n      \"क्या आपने आज किसी की बात पूरा सुनी और समझी?\",\n      \"सुनते समय ध्यान केंद्रित करने के लिए आप क्या करते हैं?\"\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"श्रवण कौशल क्या है?\",\n        \"answer\": \"किसी बोलने वाले की बातों को सुनना, समझना और सही प्रतिक्रिया देने की क्षमता।\"\n      },\n      {\n        \"question\": \"सक्रिय श्रवण क्यों जरूरी है?\",\n        \"answer\": \"यह गलतफहमी को कम करता है और संचार को बेहतर बनाता है।\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"श्रवण कौशल का मुख्य उद्देश्य क्या है?\",\n        \"answer\": \"B. बातों को समझना और प्रतिक्रिया देना\"\n      },\n      {\n        \"question\": \"सक्रिय श्रवण (Active Listening) में क्या शामिल होता है?\",\n        \"answer\": \"B. पूरा ध्यान केंद्रित करना और समझना\"\n      }\n    ]\n  },\n  \"topicCoverage\": []\n}\r\n\r\nTARGET JSON SHAPE\r\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}\r\n\r\nABSOLUTE RULES\r\n1. This assessment is for ONE SESSION ONLY.\r\n2. Use only content that is explicitly present in the supplied session information.\r\n3. Never introduce future chapters, untaught formulas, external textbook knowledge, or assumed content.\r\n4. Learning outcomes guide coverage, but questions must originate from taught concepts, not from repetitive learning-outcome wording.\r\n5. Every question must measure real learning: understanding, application, reasoning, analysis, interpretation, communication, competency, or conceptual clarity.\r\n6. Match the requested marks, duration, question counts, and section structure exactly.\r\n7. If allowed assessment sections are supplied, every question must use one valid sectionId and sectionTitle from that list.\r\n8. Keep the paper professional, board-style, fair, age appropriate, and free from repetitive AI patterns.\r\n9. Return valid JSON only.\r\n\r\nINTERNAL WORKFLOW\r\nFollow this reasoning process before writing the final JSON:\r\n\r\nPHASE 1 - SESSION INTELLIGENCE\r\n- Identify what students learned in this session.\r\n- Extract taught concepts, skills, vocabulary, examples, activities, practical work, and likely misconceptions.\r\n- Distinguish high-emphasis concepts from supporting concepts.\r\n\r\nPHASE 2 - CONCEPT INTELLIGENCE\r\n- Build an internal concept graph from the taught session.\r\n- Map each learning outcome to the concepts actually taught.\r\n- Identify concept importance, dependency, applications, likely misconceptions, and assessment opportunities.\r\n\r\nPHASE 3 - BLUEPRINT-FIRST DESIGN\r\n- Design the full paper before writing questions.\r\n- Decide section allocation, marks per section, question progression, blooms balance, competency balance, and time allocation.\r\n- Distribute questions across important taught concepts rather than over-testing one idea.\r\n\r\nPHASE 4 - PROFESSIONAL QUESTION PAPER\r\n- Generate a student-facing paper with ordered questions.\r\n- Use continuous ids: q1, q2, q3, ...\r\n- Keep wording precise and board-like.\r\n- Preserve the requested subtype mix such as mcq, veryShortAnswer, shortAnswer, longAnswer, and caseStudy.\r\n\r\nPHASE 5 - EVALUATION PACKAGE\r\n- Generate a complete linked evaluation package:\r\n  - answer key\r\n  - marking scheme\r\n  - rubric package\r\n  - evaluator instructions\r\n  - moderation notes\r\n- Every evaluation item must link to the same question id as the paper.\r\n- For non-MCQ questions, provide point-wise criteria and mark allocation.\r\n\r\nPHASE 6 - VALIDATION\r\n- Confirm the final output matches requested marks, requested counts, requested duration, and valid sections.\r\n- Confirm each question has aligned answer-key and marking-scheme coverage.\r\n- Confirm the paper stays within the session boundary.\r\n\r\nOUTPUT REQUIREMENTS\r\n1. Output the canonical assessment package only.\r\n2. Put student-facing instructions in `paper.instructions`.\r\n3. Put the ordered question paper in `paper.questions`.\r\n4. Put answer keys in `evaluation.answerKey.items`.\r\n5. Put mark splits in `evaluation.markingScheme.items`.\r\n6. Put rubric criteria in `evaluation.rubrics.items`.\r\n7. Put summary notes in `summary`.\r\n8. Put validation status in `validation`.\r\n9. Use the exact section ids and titles supplied or derived from the session context.\r\n10. Keep question metadata, evaluation metadata, and blueprint references aligned to the same continuous ids.\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}"
+    }
+  ]
+}
