@@ -10685,17 +10685,38 @@ function isGenericCurriculumUnitLabel(value: unknown) {
   );
 }
 
-function resolveCurriculumUnitDisplayName(...candidates: unknown[]) {
-  const values = candidates
+function resolveCurriculumUnitDisplayName(primaryCandidates: unknown[], fallbackCandidates: unknown[] = []) {
+  const primaryValues = primaryCandidates
+    .map((value) => String(value || "").trim())
+    .filter(Boolean);
+  const fallbackValues = fallbackCandidates
     .map((value) => String(value || "").trim())
     .filter(Boolean);
 
-  if (values.length === 0) {
+  if (primaryValues.length === 0 && fallbackValues.length === 0) {
     return "";
   }
 
-  const nonGeneric = values.find((value) => !isGenericCurriculumUnitLabel(value));
-  return nonGeneric || values[0] || "";
+  const preferredPrimary = primaryValues.find((value) => !isGenericCurriculumUnitLabel(value));
+  if (preferredPrimary) {
+    return preferredPrimary;
+  }
+
+  const preferredFallback = fallbackValues.find((value) => !isGenericCurriculumUnitLabel(value));
+  if (preferredFallback) {
+    return preferredFallback;
+  }
+
+  return primaryValues[0] || fallbackValues[0] || "";
+}
+
+function shouldPreferScienceFrameworkUnits(units: string[]) {
+  const normalizedUnits = (units || []).map((value) => String(value || "").trim()).filter(Boolean);
+  if (normalizedUnits.length === 0) {
+    return false;
+  }
+
+  return normalizedUnits.every((value) => isGenericCurriculumUnitLabel(value));
 }
 
 function isPracticalLikeUnitContent(unit: any) {
@@ -21403,15 +21424,16 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     classes.forEach((cls: any) => {
       const units = Array.isArray(cls?.units) ? cls.units : [];
       units.forEach((unit: any) => {
-        const unitName = resolveCurriculumUnitDisplayName(
-          unit?.part_or_section,
-          unit?.block_name,
-          unit?.source_heading,
+        const unitName = resolveCurriculumUnitDisplayName([
           unit?.unit_name,
           unit?.unitName,
           unit?.title,
           unit?.name,
-        );
+        ], [
+          unit?.part_or_section,
+          unit?.block_name,
+          unit?.source_heading,
+        ]);
         if (unitName) {
           unitSet.add(unitName);
           if (!isGenericCurriculumUnitLabel(unitName)) {
@@ -21430,14 +21452,15 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     const termAllocations = Array.isArray(workspace?.termPlan?.allocations) ? workspace.termPlan.allocations : [];
     const termRecommendations = Array.isArray(workspace?.termPlan?.recommendations) ? workspace.termPlan.recommendations : [];
     [...termAllocations, ...termRecommendations].forEach((item: any) => {
-      const unitName = resolveCurriculumUnitDisplayName(
+      const unitName = resolveCurriculumUnitDisplayName([
+        item?.unitName,
+        item?.unit,
+      ], [
         item?.partOrSection,
         item?.part_or_section,
         item?.sectionName,
         item?.strand,
-        item?.unitName,
-        item?.unit,
-      );
+      ]);
       const chapterName = String(item?.chapterName || item?.chapter || "").trim();
       if (unitName) {
         if (isGenericCurriculumUnitLabel(unitName)) {
@@ -21459,14 +21482,15 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     const sessionAllocations = Array.isArray(workspace?.sessionAllocation?.allocations) ? workspace.sessionAllocation.allocations : [];
     const sessionRecommendations = Array.isArray(workspace?.sessionAllocation?.recommendations) ? workspace.sessionAllocation.recommendations : [];
     [...sessionAllocations, ...sessionRecommendations].forEach((item: any) => {
-      const unitName = resolveCurriculumUnitDisplayName(
+      const unitName = resolveCurriculumUnitDisplayName([
+        item?.unitName,
+        item?.unit,
+      ], [
         item?.partOrSection,
         item?.part_or_section,
         item?.sectionName,
         item?.strand,
-        item?.unitName,
-        item?.unit,
-      );
+      ]);
       const chapterName = String(item?.chapterName || item?.chapter || "").trim();
       if (unitName) {
         if (isGenericCurriculumUnitLabel(unitName)) {
@@ -21479,9 +21503,16 @@ async function getPrincipalSubjectDetail(classKeyOrName: string, subjectKeyOrNam
     });
   });
 
-  const resolvedUnits = realUnitSet.size > 0
+  let resolvedUnits = realUnitSet.size > 0
     ? Array.from(realUnitSet)
     : Array.from(new Set([...unitSet, ...fallbackUnitSet]));
+
+  if (isScienceUmbrellaSubjectKey(subjectSummary.subjectKey || subjectSummary.subject || "") && shouldPreferScienceFrameworkUnits(resolvedUnits)) {
+    const scienceFrameworkUnits = Array.from(chapterSet).filter((chapterName) => isScienceFrameworkUnitName(chapterName));
+    if (scienceFrameworkUnits.length > 0) {
+      resolvedUnits = scienceFrameworkUnits;
+    }
+  }
 
   const homeworkById = new Map<string, {
     id: string;
