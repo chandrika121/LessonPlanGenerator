@@ -1,0 +1,279 @@
+{
+  "studentLessonNotes": {
+    "title": "Number System: Rational and Irrational Numbers",
+    "sessionOverview": "This session explores the expansion of the number system to include irrational numbers, focusing on their representation on the number line and operations involving square roots.",
+    "introduction": "Welcome to Class IX Mathematics! We already know about natural numbers, whole numbers, integers, and rational numbers (fractions). Today, we discover a new family of numbers that cannot be written as simple fractions. These are called irrational numbers, and they play a huge role in geometry and real-world measurements.",
+    "learningObjectives": [
+      "Identify rational and irrational numbers from given examples",
+      "Represent square roots of non-perfect squares on the number line",
+      "Perform basic operations (addition, subtraction) with square roots",
+      "Distinguish between terminating and non-terminating decimal expansions"
+    ],
+    "quickRecall": [
+      "A rational number can be written as p/q where q is not zero.",
+      "The square root of a perfect square is always a rational number."
+    ],
+    "easyToRemember": [
+      "If the decimal goes on forever without repeating, it's irrational."
+    ],
+    "comparisonTables": [
+      {
+        "title": "Rational vs. Irrational Numbers",
+        "headers": [
+          "Feature",
+          "Rational Numbers",
+          "Irrational Numbers"
+        ],
+        "rows": [
+          [
+            "Definition",
+            "Can be written as p/q (q ≠ 0)",
+            "Cannot be written as p/q"
+          ],
+          [
+            "Decimal Expansion",
+            "Terminating or Repeating",
+            "Non-terminating and Non-repeating"
+          ],
+          [
+            "Examples",
+            "1/2, 0.75, -3",
+            "√2, π, √3"
+          ]
+        ]
+      }
+    ],
+    "formulaCards": [
+      {
+        "title": "Pythagorean Theorem for Number Line Construction",
+        "formula": {
+          "text": "Hypotenuse = √(base² + height²)",
+          "latex": "c = \\sqrt{a^2 + b^2}",
+          "displayLatex": "c = \\sqrt{a^2 + b^2}"
+        },
+        "meaning": "Used to find the length of a side in a right-angled triangle, essential for marking square roots on the number line.",
+        "whenToUse": "When constructing √n on the number line using a right triangle with legs 1 and √(n-1)."
+      }
+    ],
+    "geometryDiagrams": [
+      {
+        "id": "diagram-1",
+        "type": "numberLine",
+        "template": "sqrtNumberLineConstruction",
+        "params": {
+          "roots": [
+            2,
+            3
+          ],
+          "highlightRoot": 2
+        },
+        "title": "Constructing √2 on the Number Line",
+        "caption": "Step-by-step construction of √2 using a right triangle",
+        "points": [],
+        "lines": [],
+        "arcs": [],
+        "labels": [],
+        "measurements": [],
+        "highlights": [],
+        "axis": {
+          "xMin": 0,
+          "xMax": 6,
+          "yMin": -3,
+          "yMax": 3,
+          "points": [
+            {
+              "id": "R",
+              "x": 2,
+              "y": 0,
+              "label": "sqrt value"
+            }
+          ]
+        },
+        "bars": []
+      }
+    ],
+    "proofSteps": [
+      "Assume √2 is rational and can be written as p/q in simplest form.",
+      "Square both sides to get 2 = p²/q², implying p² = 2q².",
+      "This means p² is even, so p must be even. Let p = 2k.",
+      "Substitute back to find q² = 2k², meaning q is also even.",
+      "Contradiction: p and q cannot both be even if the fraction is in simplest form."
+    ],
+    "commonMistakes": [
+      {
+        "mistake": "Thinking √4.5 is a rational number because it has a decimal.",
+        "correction": "Check if the decimal terminates or repeats. √4.5 = 2.1213... (non-repeating), so it is irrational.",
+        "example": "√4 = 2 (Rational) vs √5 ≈ 2.236... (Irrational)"
+      },
+      {
+        "mistake": "Adding square roots directly like normal numbers (e.g., √2 + √3 = √5).",
+        "correction": "Square roots can only be added if they have the same radicand (e.g., 2√3 + 3√3 = 5√3).",
+        "example": "√2 + √3 cannot be simplified to a single square root."
+      }
+    ],
+    "sections": [
+      {
+        "heading": "What are Irrational Numbers?",
+        "explanation": "Irrational numbers are real numbers that cannot be expressed as a simple fraction p/q. Their decimal expansions go on forever without any repeating pattern.",
+        "keyPoints": [
+          "They exist between rational numbers.",
+          "Examples include √2, √3, and π."
+        ],
+        "examples": [
+          "The diagonal of a square with side 1 is √2."
+        ],
+        "whyItMatters": "They are essential for measuring lengths in geometry that don't result in whole numbers or fractions.",
+        "terminology": [
+          "Non-terminating",
+          "Non-repeating"
+        ],
+        "detailedExplanation": "While rational numbers fill the number line densely, irrational numbers fill the gaps. For instance, between 1.4 and 1.5, there are infinitely many rational numbers, but also irrational numbers like √2 (approx 1.414).",
+        "observedIn": [
+          "Geometry problems involving diagonals",
+          "Circumference calculations"
+        ],
+        "visualSupport": [
+          "diagram-1"
+        ],
+        "visualAssets": [],
+        "importantNotes": [
+          "Never assume a long decimal is rational just because it looks like it might repeat."
+        ],
+        "memoryTechniques": [
+          "Think 'Irrational' as 'Not Rational' (No fraction)."
+        ],
+        "conceptSummary": [
+          "Numbers with infinite, non-repeating decimals are irrational."
+        ]
+      }
+    ],
+    "definitions": [
+      {
+        "term": "Rational Number",
+        "definition": "A number that can be written in the form p/q where p and q are integers and q is not zero."
+      },
+      {
+        "term": "Irrational Number",
+        "definition": "A real number that cannot be written as a simple fraction; its decimal expansion is non-terminating and non-repeating."
+      }
+    ],
+    "workedExamples": [
+      {
+        "title": "Constructing √2 on the Number Line",
+        "problem": "Represent √2 on the number line using geometric construction.",
+        "diagramRef": "diagram-1",
+        "given": [
+          "Base length = 1 unit",
+          "Height = 1 unit"
+        ],
+        "formula": [
+          "Hypotenuse = √(base² + height²)"
+        ],
+        "steps": [
+          "Draw a number line and mark point O at 0 and A at 1.",
+          "Draw a perpendicular line at A with length 1 unit to point B.",
+          "Join O to B to form the hypotenuse."
+        ],
+        "solutionSteps": [
+          {
+            "text": "Apply Pythagoras theorem",
+            "latex": "",
+            "displayLatex": "OB = \\sqrt{OA^2 + AB^2}"
+          },
+          {
+            "text": "Substitute values OA=1, AB=1",
+            "latex": "",
+            "displayLatex": "OB = \\sqrt{1^2 + 1^2} = \\sqrt{2}"
+          },
+          "Use compass to mark length OB on the number line starting from O. Point at \\sqrt{2}"
+        ],
+        "reasoning": [
+          "The hypotenuse of a right triangle with legs 1 and 1 is exactly √2."
+        ],
+        "explanation": "By constructing a right-angled triangle with equal sides of length 1, the hypotenuse represents the irrational number √2. We then transfer this length to the number line using a compass.",
+        "finalAnswer": {
+          "text": "The point representing √2 is located at distance √2 units from 0.",
+          "latex": "",
+          "displayLatex": "\\sqrt{2}"
+        },
+        "latex": "c = \\sqrt{a^2 + b^2}",
+        "displayLatex": "\\sqrt{1^2 + 1^2} = \\sqrt{2}"
+      }
+    ],
+    "revisionSection": {
+      "definitions": [
+        "Irrational numbers have non-terminating, non-repeating decimals."
+      ],
+      "formulas": [
+        {
+          "text": "",
+          "latex": "c = √(a² + b²)",
+          "displayLatex": "c = √(a² + b²)"
+        }
+      ],
+      "facts": [
+        "√2 is the first irrational number discovered in history."
+      ],
+      "keywords": [
+        "Non-repeating",
+        "Number Line"
+      ],
+      "conceptMap": [
+        "Rational -> Fraction -> Terminating/Repeating",
+        "Irrational -> No Fraction -> Non-terminating/Non-repeating"
+      ],
+      "quickRecap": [
+        "Use Pythagoras to find lengths like √2."
+      ]
+    },
+    "selfCheckQuestions": [
+      "Is 0.1010010001... a rational or irrational number?",
+      "Can you write √5 as a fraction p/q?"
+    ],
+    "quickSummary": [
+      "Irrational numbers cannot be fractions and have infinite non-repeating decimals."
+    ],
+    "keyTerms": [
+      "Irrational",
+      "Rational",
+      "Square Root"
+    ],
+    "fillInTheBlanks": [
+      {
+        "prompt": "A number with a non-terminating and non-repeating decimal expansion is called a ________ number.",
+        "answer": "irrational"
+      }
+    ],
+    "mcqQuestions": [
+      {
+        "question": "Which of the following is an irrational number?",
+        "options": [
+          "A. 0.5",
+          "B. √4",
+          "C. √2",
+          "D. -3"
+        ],
+        "answer": "C. √2"
+      }
+    ],
+    "veryShortAnswerQuestions": [
+      {
+        "question": "What is the decimal expansion of √2?",
+        "answer": "Non-terminating and non-repeating (approx 1.414...)"
+      }
+    ],
+    "didYouKnow": [
+      "The ancient Greek mathematician Hippasus was said to have been thrown overboard for proving that √2 is irrational!"
+    ],
+    "summary": [
+      "We learned about irrational numbers and how to represent them on the number line."
+    ],
+    "quickRevision": [
+      "Check if a decimal repeats to identify rational vs irrational."
+    ],
+    "rememberPoints": [
+      "√2 = 1.414... (Irrational)",
+      "√4 = 2 (Rational)"
+    ]
+  }
+}

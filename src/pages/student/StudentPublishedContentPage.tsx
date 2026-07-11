@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ActionToast } from "../../components/ActionToast";
 import { ExpandableCard } from "../../components/ExpandableCard";
 import type { PublishedStudentArtifact, StudentPublicationKind } from "../../types/student-content";
+import { dedupePublishedStudentArtifacts } from "../../utils/studentArtifactDedup";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
 const BACKEND_URL =
@@ -500,7 +501,10 @@ export function StudentPublishedContentPage({
   }, [kind, session]);
 
   const items = useMemo(
-    () => [...backendItems].sort((left, right) => left.sessionNumber - right.sessionNumber),
+    () =>
+      dedupePublishedStudentArtifacts(backendItems)
+        .slice()
+        .sort((left, right) => left.sessionNumber - right.sessionNumber),
     [backendItems],
   );
 

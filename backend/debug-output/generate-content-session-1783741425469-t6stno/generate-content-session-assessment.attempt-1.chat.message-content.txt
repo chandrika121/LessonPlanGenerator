@@ -1,0 +1,663 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+      "requestSignature": "stable-customization-signature",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Define rational and irrational numbers.",
+        "Identify decimal expansions of rational numbers.",
+        "Recognize non-terminating, non-recurring decimals as irrational."
+      ],
+      "assessedConcepts": [
+        "Rational Numbers (p/q form)",
+        "Irrational Numbers (non-terminating, non-recurring)",
+        "Decimal Expansions",
+        "Real Number System"
+      ],
+      "conceptCoveragePriorities": [
+        "Distinguishing rational vs irrational based on decimal expansion",
+        "Identifying examples of irrational numbers like √2 and π"
+      ],
+      "misconceptionTargets": [
+        "Confusing non-repeating with random",
+        "Thinking √2 is exactly 1.414"
+      ],
+      "competencyFocus": [
+        "Understanding",
+        "Application"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Session-aligned assessment on Number System"
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Rational Numbers",
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q4"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Irrational Numbers",
+          "questionRefs": [
+            "q3",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define rational and irrational numbers.",
+          "questionRefs": [
+            "q1",
+            "q3"
+          ]
+        },
+        {
+          "outcome": "Identify decimal expansions of rational numbers.",
+          "questionRefs": [
+            "q2",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Recognize non-terminating, non-recurring decimals as irrational.",
+          "questionRefs": [
+            "q5",
+            "q6",
+            "q7"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 40,
+        "medium": 40,
+        "hard": 20
+      },
+      "bloomsDistribution": {
+        "recall": 15,
+        "understanding": 35,
+        "application": 30,
+        "analysis": 15,
+        "evaluation": 5
+      },
+      "competencyDistribution": {
+        "understanding": 4,
+        "application": 3,
+        "analysis": 0
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Unit I: Number System",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "Answer all questions using only the concepts taught in this session on Number Systems.",
+        "For MCQs, select the single correct option.",
+        "For Very Short Answer questions, provide a concise answer (1-2 lines).",
+        "For Short Answer questions, provide a detailed explanation with necessary steps."
+      ],
+      "sections": [
+        {
+          "id": "section-unit-i-number-system",
+          "title": "Unit I: Number System",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "assessment_framework"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following numbers is an irrational number?",
+          "options": [
+            "A. 0.5",
+            "B. √4",
+            "C. π",
+            "D. -2/3"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Define rational and irrational numbers."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Irrational numbers include π."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "The decimal expansion of the rational number 1/3 is:",
+          "options": [
+            "A. Terminating",
+            "B. Non-terminating and non-recurring",
+            "C. Non-terminating and recurring",
+            "D. None of these"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Identify decimal expansions of rational numbers."
+          ],
+          "conceptRefs": [
+            "Rational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Decimal Expansions"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Rational numbers have recurring decimals."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "Which of the following is a rational number?",
+          "options": [
+            "A. √2",
+            "B. 0.1010010001...",
+            "C. 5/7",
+            "D. π"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "Define rational and irrational numbers."
+          ],
+          "conceptRefs": [
+            "Rational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Rational numbers can be expressed as p/q."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Write the decimal expansion of 3/8.",
+          "marks": 1,
+          "expectedLength": "0.375",
+          "learningOutcomeRefs": [
+            "Identify decimal expansions of rational numbers."
+          ],
+          "conceptRefs": [
+            "Rational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Decimal Expansions"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Calculation",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Rational numbers have terminating decimals."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "veryShortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "Give one example of an irrational number.",
+          "marks": 1,
+          "expectedLength": "√2 or π",
+          "learningOutcomeRefs": [
+            "Define rational and irrational numbers."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Conceptual clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Examples include √2, √3, and π."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Explain why √2 is an irrational number. Support your answer with the definition of rational and irrational numbers.",
+          "marks": 2,
+          "expectedLength": "Explanation regarding non-terminating non-recurring decimal",
+          "learningOutcomeRefs": [
+            "Recognize non-terminating, non-recurring decimals as irrational."
+          ],
+          "conceptRefs": [
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Reasoning",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes concept reference: √2 equals approx 1.414... and continues forever without repeating."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-unit-i-number-system",
+          "sectionTitle": "Unit I: Number System",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Classify the following numbers as rational or irrational and justify your answer: 0.75, √3, and 22/7.",
+          "marks": 2,
+          "expectedLength": "Classification with justification",
+          "learningOutcomeRefs": [
+            "Define rational and irrational numbers.",
+            "Identify decimal expansions of rational numbers."
+          ],
+          "conceptRefs": [
+            "Rational Numbers",
+            "Irrational Numbers"
+          ],
+          "topicCoverage": [
+            "Number System"
+          ],
+          "subtopicCoverage": [
+            "Real Numbers"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Application",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes concept reference: Rational numbers have terminating or recurring decimals; irrational do not."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. π",
+            "explanation": "π is a famous irrational number used in circles and cannot be written as p/q.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. Non-terminating and recurring",
+            "explanation": "1/3 = 0.333..., which is a non-terminating recurring decimal.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "C. 5/7",
+            "explanation": "5/7 is a fraction in the form p/q, making it a rational number.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "0.375",
+            "explanation": "Dividing 3 by 8 gives the terminating decimal 0.375.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "√2 (or π)",
+            "explanation": "√2 cannot be expressed as a simple fraction p/q.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "√2 is irrational because its decimal expansion (approx 1.41421356...) is non-terminating and non-recurring, meaning it cannot be written as p/q.",
+            "explanation": "The definition of an irrational number is a real number that cannot be expressed as a simple fraction; its decimal expansion goes on forever without repeating.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-unit-i-number-system",
+            "sectionTitle": "Unit I: Number System",
+            "answer": "0.75 is Rational (terminating decimal); √3 is Irrational (non-terminating, non-recurring); 22/7 is Rational (expressible as p/q).",
+            "explanation": "Rational numbers have terminating or recurring decimals. Irrational numbers do not.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct decimal value provided",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for the correct answer 0.375."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Valid example provided",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for any valid irrational number (e.g., √2, π)."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "States that decimal is non-terminating and non-recurring",
+                "marks": 1
+              },
+              {
+                "criterion": "Concludes it cannot be written as p/q",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award 1 mark for identifying the decimal nature, 1 mark for linking to the definition."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct classification of all three numbers",
+                "marks": 1
+              },
+              {
+                "criterion": "Valid justification provided for at least one number",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for correct identification and logical reasoning based on decimal expansion."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "First valid point: Identifies non-terminating, non-recurring nature",
+                "marks": 1
+              },
+              {
+                "criterion": "Second valid point: Links to definition (cannot be p/q)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "√2 is irrational because its decimal expansion (approx 1.414...) goes on forever without repeating, so it cannot be written as a fraction."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Correctly classifies all three numbers",
+                "marks": 1
+              },
+              {
+                "criterion": "Provides correct reasoning for the classification",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "0.75 is rational (terminating), √3 is irrational (non-repeating), 22/7 is rational (fraction). Rational numbers have terminating or recurring decimals."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea in short answer questions.",
+        "For MCQs, only the correct option receives marks."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses.",
+        "Ensure students distinguish between terminating/recurring decimals and non-terminating/non-recurring decimals."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers (e.g., any valid irrational number for q5)."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of the taught session concepts including rational/irrational definitions and decimal expansions."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from easier MCQs to more demanding short answer questions requiring reasoning."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Question pattern matches the requested blueprint (3 MCQs, 2 VSA, 2 SA)."
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Marks match the requested total (9 marks)."
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Each question is assigned to a valid section (section-unit-i-number-system)."
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Question paper, answer key, and marking scheme are aligned."
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content included."
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,797 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "academic-split",
+      "templateName": "Academic Split Layout",
+      "themeId": "cbse-academic-blue",
+      "title": "Number System - Session 1",
+      "presentationTitle": "The Number System: Foundations of Mathematics",
+      "presentationGoal": "To introduce the classification of numbers, distinguish between rational and irrational numbers, and demonstrate their representation on the number line.",
+      "audience": "Grade 9 Students",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Bold",
+          "body": "Open Sans Regular"
+        },
+        "colors": {
+          "primary": "#003366",
+          "secondary": "#4CAF50",
+          "accent": "#FF9800",
+          "background": "#F5F7FA",
+          "surface": "#FFFFFF",
+          "text": "#2C3E50",
+          "mutedText": "#7F8C8D"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid",
+          "cardStyle": "shadow-elevated",
+          "visualFrameStyle": "rounded-rect"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons",
+          "Khan Academy",
+          "Math is Fun"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all images are CC0 or Creative Commons Attribution."
+        ],
+        "fallbackStrategy": "Use SVG diagrams for mathematical representations if external images fail to load."
+      },
+      "licenseChecklist": [
+        "Verify no copyrighted textbook figures are used directly.",
+        "All generated diagrams must be original or public domain."
+      ],
+      "presentationWarnings": [
+        "Do not introduce complex algebraic proofs beyond the scope of this session.",
+        "Ensure number line scales are accurate in visual representations."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define natural, whole, integer, rational, and real numbers.",
+          "Distinguish between terminating and non-terminating recurring decimals.",
+          "Represent irrational numbers on the number line using geometric construction."
+        ],
+        "topicsCovered": [
+          "Classification of Real Numbers",
+          "Decimal Expansions",
+          "Geometric Representation of Irrationals"
+        ],
+        "taughtConceptsCovered": [
+          "Set theory basics applied to numbers",
+          "Euclid's Division Lemma application (conceptual)",
+          "Square root construction on number line"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Lesson Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "The Number System: Foundations",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Introduction to Real Numbers"
+          ],
+          "teacherIntent": "Set the stage for the lesson and define the scope of today's learning.",
+          "studentTakeaway": "Understand that numbers are classified into specific categories based on their properties.",
+          "layout": "title-hero",
+          "bulletPoints": [
+            "Subject: Mathematics",
+            "Chapter: Number System",
+            "Session 1 of 5",
+            "Duration: 45 Minutes"
+          ],
+          "onSlideText": [
+            "The Number System",
+            "Classifying the Infinite",
+            "From Natural to Real Numbers"
+          ],
+          "speakerNotes": [
+            "Welcome students and introduce the concept that numbers are not just for counting.",
+            "Explain that today we will explore the 'family tree' of numbers.",
+            "Mention that this session focuses on understanding the different types of numbers and how they fit together.",
+            "Transition: 'Let's start by looking at what we already know about counting numbers.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "Hero image showing a fractal pattern or a number line extending infinitely in both directions with distinct colored zones for different number types.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Hero image showing a fractal pattern or a number line extending infinitely in both directions with distinct colored zones for different number types.",
+          "assets": [
+            {
+              "purpose": "Visual hook to represent infinity and structure",
+              "searchQuery": "Fractal geometry number line abstract",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC0",
+              "attributionText": "Public Domain",
+              "altText": "Abstract fractal pattern representing mathematical infinity",
+              "placementHint": "Background or large central image"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in title",
+            "Slide up subtitle elements"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "learning_outcomes",
+          "slideTitle": "What We Will Learn Today",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2",
+            "LO3"
+          ],
+          "topicCoverage": [
+            "Number Classification",
+            "Decimal Types",
+            "Geometric Representation"
+          ],
+          "teacherIntent": "Clearly state the goals so students know what success looks like.",
+          "studentTakeaway": "I can classify numbers and plot them on a line.",
+          "layout": "list-outcomes",
+          "bulletPoints": [
+            "Classify numbers into Natural, Whole, Integer, Rational, and Real.",
+            "Identify terminating vs. non-terminating recurring decimals.",
+            "Construct irrational numbers geometrically on the number line."
+          ],
+          "onSlideText": [
+            "1. Classify Number Sets",
+            "2. Analyze Decimal Expansions",
+            "3. Plot Irrationals Geometrically"
+          ],
+          "speakerNotes": [
+            "Read each outcome aloud and ask students to paraphrase it.",
+            "Emphasize that 'Real Numbers' is the umbrella term for all numbers we use in daily life.",
+            "Explain that by the end of class, they will be able to draw a square root on a line without a calculator.",
+            "Transition: 'To do this, we first need to review what we already know.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "Simple icon set next to each outcome (e.g., a magnifying glass for classification, a ruler for plotting).",
+            "svgDiagram": null
+          },
+          "visualPlan": "Simple icon set next to each outcome (e.g., a magnifying glass for classification, a ruler for plotting).",
+          "assets": [
+            {
+              "purpose": "Visual reinforcement of outcomes",
+              "searchQuery": "Mathematics icons classification ruler",
+              "sourceSite": "Khan Academy",
+              "sourceUrl": "",
+              "licenseType": "CC-BY",
+              "attributionText": "Khan Academy",
+              "altText": "Icons representing math classification and measurement",
+              "placementHint": "Left margin or bullet points"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Staggered fade-in for each outcome"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "What We Already Know",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "prerequisite_knowledge",
+          "slideTitle": "Recall: The Number Hierarchy",
+          "learningOutcomeIds": [
+            "LO1"
+          ],
+          "topicCoverage": [
+            "Natural Numbers",
+            "Whole Numbers",
+            "Integers"
+          ],
+          "teacherIntent": "Activate prior knowledge to build a bridge to new concepts.",
+          "studentTakeaway": "I remember the order of numbers from counting to negatives.",
+          "layout": "diagram-recall",
+          "bulletPoints": [
+            "Natural Numbers: 1, 2, 3...",
+            "Whole Numbers: 0, 1, 2...",
+            "Integers: ..., -2, -1, 0, 1, 2..."
+          ],
+          "onSlideText": [
+            "Natural (N)",
+            "Whole (W)",
+            "Integer (Z)"
+          ],
+          "speakerNotes": [
+            "Ask students to give examples of each set.",
+            "Pose the question: 'Is every natural number a whole number? Yes.'",
+            "Challenge them: 'Is every whole number an integer? Yes.'",
+            "Introduce the concept of inclusion: N is inside W, which is inside Z.",
+            "Transition: 'Now that we have these, what about numbers like 1/2 or square roots?'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "Venn diagram showing three concentric circles labeled N, W, and Z.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Venn diagram showing three concentric circles labeled N, W, and Z.",
+          "assets": [
+            {
+              "purpose": "Visualizing set inclusion",
+              "searchQuery": "Venn diagram natural whole integer sets",
+              "sourceSite": "Math is Fun",
+              "sourceUrl": "",
+              "licenseType": "CC-BY-SA",
+              "attributionText": "Math is Fun",
+              "altText": "Concentric circles showing set inclusion of number types",
+              "placementHint": "Center of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Number Set Inclusion",
+            "type": "venn-diagram",
+            "instructions": [
+              "Draw three concentric circles.",
+              "Label inner circle 'N (Natural)', middle 'W (Whole)', outer 'Z (Integer)'."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate circles expanding outward"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "The Mystery of Pi",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "lesson_hook",
+          "slideTitle": "Can You Measure a Circle Exactly?",
+          "learningOutcomeIds": [
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Rational vs Irrational",
+            "Decimal Expansions"
+          ],
+          "teacherIntent": "Create cognitive dissonance to spark curiosity about non-terminating decimals.",
+          "studentTakeaway": "Some numbers cannot be written as simple fractions.",
+          "layout": "problem-statement",
+          "bulletPoints": [
+            "Pi (π) ≈ 3.14159...",
+            "Does it ever end?",
+            "Can we write it as a fraction?"
+          ],
+          "onSlideText": [
+            "The Circle Mystery",
+            "Endless Digits?",
+            "Fraction or Not?"
+          ],
+          "speakerNotes": [
+            "Show the value of Pi to 50 decimal places.",
+            "Ask: 'Does this pattern repeat? Does it stop?'",
+            "Explain that numbers like Pi cannot be written as p/q (where q is not zero).",
+            "Introduce the term 'Irrational Number' as a number that breaks the fraction rule.",
+            "Transition: 'Let's look at the rules that govern these numbers.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "A large circle with a measuring tape wrapping around it, showing an infinite decimal expansion spiraling out.",
+            "svgDiagram": null
+          },
+          "visualPlan": "A large circle with a measuring tape wrapping around it, showing an infinite decimal expansion spiraling out.",
+          "assets": [
+            {
+              "purpose": "Visualizing the concept of Pi and infinity",
+              "searchQuery": "Pi circle measurement spiral",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC0",
+              "attributionText": "Public Domain",
+              "altText": "Circle with spiral measuring tape representing Pi",
+              "placementHint": "Right side of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Zoom in on the decimal expansion"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Rational Numbers Defined",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "topic_introduction",
+          "slideTitle": "The World of Rational Numbers",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Definition of Rational Numbers",
+            "Decimal Expansions"
+          ],
+          "teacherIntent": "Formally define rational numbers and their two types of decimal expansions.",
+          "studentTakeaway": "Rational numbers are either terminating or repeating.",
+          "layout": "definition-focus",
+          "bulletPoints": [
+            "Definition: p/q where q ≠ 0.",
+            "Terminating Decimals (e.g., 0.5).",
+            "Non-Terminating Recurring (e.g., 0.333...)."
+          ],
+          "onSlideText": [
+            "Rational Numbers (Q)",
+            "Terminating vs Recurring",
+            "The Fraction Rule"
+          ],
+          "speakerNotes": [
+            "Define Rational Numbers clearly: Any number that can be written as a fraction.",
+            "Explain 'Terminating': The decimal ends (e.g., 1/2 = 0.5).",
+            "Explain 'Recurring': A digit or block repeats forever (e.g., 1/3 = 0.333...).",
+            "Emphasize that both are rational because they can be converted to fractions.",
+            "Transition: 'But what about numbers that don't repeat and don't end?'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "Split screen showing a terminating decimal (0.25) and a recurring decimal (0.666...) with arrows pointing to their fractional forms.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Split screen showing a terminating decimal (0.25) and a recurring decimal (0.666...) with arrows pointing to their fractional forms.",
+          "assets": [
+            {
+              "purpose": "Visualizing the conversion of decimals to fractions",
+              "searchQuery": "terminating vs recurring decimal fraction conversion",
+              "sourceSite": "Khan Academy",
+              "sourceUrl": "",
+              "licenseType": "CC-BY",
+              "attributionText": "Khan Academy",
+              "altText": "Diagram showing decimal to fraction conversion",
+              "placementHint": "Center of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in definitions",
+            "Slide in examples"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "core_concept_a",
+          "templateSlideTitle": "Irrational Numbers Explained",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "core_concept_a",
+          "slideTitle": "The Non-Repeating Mystery",
+          "learningOutcomeIds": [
+            "LO2"
+          ],
+          "topicCoverage": [
+            "Irrational Numbers",
+            "Real Number System"
+          ],
+          "teacherIntent": "Deep dive into the properties of irrational numbers and their non-repeating nature.",
+          "studentTakeaway": "Irrational numbers have infinite, non-repeating decimals.",
+          "layout": "concept-deep-dive",
+          "bulletPoints": [
+            "Cannot be written as p/q.",
+            "Non-terminating & Non-recurring.",
+            "Examples: √2, π, e."
+          ],
+          "onSlideText": [
+            "Irrational Numbers",
+            "Infinite & Unique",
+            "Real Number System"
+          ],
+          "speakerNotes": [
+            "Define Irrational Numbers: Numbers that cannot be expressed as a simple fraction.",
+            "Highlight the key feature: The decimal expansion goes on forever without repeating.",
+            "Give examples: Square root of 2 (approx 1.414...), Pi, Euler's number.",
+            "Explain that together with Rational numbers, they form the Real Number System.",
+            "Transition: 'Now we know what they are, but how do we see them?'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "A number line showing a gap between 1 and 2, filled with an irrational number marker like √2.",
+            "svgDiagram": null
+          },
+          "visualPlan": "A number line showing a gap between 1 and 2, filled with an irrational number marker like √2.",
+          "assets": [
+            {
+              "purpose": "Visualizing the placement of irrationals",
+              "searchQuery": "number line irrational numbers sqrt2",
+              "sourceSite": "Math is Fun",
+              "sourceUrl": "",
+              "licenseType": "CC-BY-SA",
+              "attributionText": "Math is Fun",
+              "altText": "Number line highlighting the position of square root 2",
+              "placementHint": "Bottom of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Highlight the irrational marker"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Visualizing Irrationals",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "core_concept_b_visual",
+          "slideTitle": "Geometric Construction of √2",
+          "learningOutcomeIds": [
+            "LO3"
+          ],
+          "topicCoverage": [
+            "Geometric Representation",
+            "Pythagorean Theorem"
+          ],
+          "teacherIntent": "Demonstrate how to physically locate an irrational number on a line using geometry.",
+          "studentTakeaway": "I can draw the square root of 2 on a number line.",
+          "layout": "diagram-heavy",
+          "bulletPoints": [
+            "Start with unit length (1).",
+            "Draw perpendicular (1).",
+            "Hypotenuse = √(1² + 1²) = √2."
+          ],
+          "onSlideText": [
+            "Step 1: Unit Length",
+            "Step 2: Perpendicular",
+            "Step 3: Hypotenuse"
+          ],
+          "speakerNotes": [
+            "Explain the Pythagorean theorem briefly: a² + b² = c².",
+            "Walk through the construction: Draw a line of length 1, then a perpendicular of length 1.",
+            "Show that the hypotenuse is exactly √2.",
+            "Demonstrate how to swing an arc from the origin to the number line to mark √2.",
+            "Transition: 'Now let's try this together.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "Step-by-step diagram showing a right-angled triangle with legs 1 and 1, and an arc marking √2 on the number line.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Step-by-step diagram showing a right-angled triangle with legs 1 and 1, and an arc marking √2 on the number line.",
+          "assets": [
+            {
+              "purpose": "Visual guide for geometric construction",
+              "searchQuery": "geometric construction square root 2 number line",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC0",
+              "attributionText": "Public Domain",
+              "altText": "Diagram of constructing sqrt(2) on a number line",
+              "placementHint": "Center of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Construction of Square Root 2",
+            "type": "geometric-construction",
+            "instructions": [
+              "Draw horizontal axis from 0 to 2.",
+              "At point 1, draw vertical line of length 1.",
+              "Connect origin to top of vertical line (hypotenuse).",
+              "Draw arc from hypotenuse tip down to axis."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate the drawing of the triangle step-by-step",
+            "Animate the arc swinging down"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example: Locating √3",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "worked_example",
+          "slideTitle": "Example: Plotting Square Root of 3",
+          "learningOutcomeIds": [
+            "LO3"
+          ],
+          "topicCoverage": [
+            "Geometric Representation",
+            "Iterative Construction"
+          ],
+          "teacherIntent": "Model the expert thinking process for locating a more complex irrational number.",
+          "studentTakeaway": "I can extend the method to find any square root.",
+          "layout": "step-by-step",
+          "bulletPoints": [
+            "Previous hypotenuse becomes new base (√2).",
+            "Add perpendicular of length 1.",
+            "New hypotenuse = √(2 + 1) = √3."
+          ],
+          "onSlideText": [
+            "Base: √2",
+            "Height: 1",
+            "Result: √3"
+          ],
+          "speakerNotes": [
+            "Show the previous diagram with √2 marked.",
+            "Explain that we use √2 as the base for the next triangle.",
+            "Draw a perpendicular of length 1 at the end of √2.",
+            "Calculate the new hypotenuse: √( (√2)² + 1² ) = √3.",
+            "Show how to mark this on the number line.",
+            "Transition: 'Now it's your turn to try this.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "Diagram showing the spiral of Theodorus up to √3, with clear labels for each step.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Diagram showing the spiral of Theodorus up to √3, with clear labels for each step.",
+          "assets": [
+            {
+              "purpose": "Visualizing the iterative process",
+              "searchQuery": "Spiral of Theodorus sqrt3 construction",
+              "sourceSite": "Math is Fun",
+              "sourceUrl": "",
+              "licenseType": "CC-BY-SA",
+              "attributionText": "Math is Fun",
+              "altText": "Spiral diagram showing construction of square roots",
+              "placementHint": "Center of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Iterative Construction of Irrationals",
+            "type": "spiral-diagram",
+            "instructions": [
+              "Draw triangle with base sqrt(2) and height 1.",
+              "Connect origin to new tip.",
+              "Label hypotenuse as sqrt(3)."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in the new triangle on top of the old one"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Let's Practice Together",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "guided_practice",
+          "slideTitle": "Activity: Locate √5",
+          "learningOutcomeIds": [
+            "LO3"
+          ],
+          "topicCoverage": [
+            "Geometric Representation",
+            "Problem Solving"
+          ],
+          "teacherIntent": "Guide students through a similar problem to reinforce the method.",
+          "studentTakeaway": "I can construct square roots independently.",
+          "layout": "activity-focus",
+          "bulletPoints": [
+            "Task: Locate √5 on number line.",
+            "Hint: Use √4 as base (length 2).",
+            "Add perpendicular of length 1."
+          ],
+          "onSlideText": [
+            "Challenge: Find √5",
+            "Base: 2 units",
+            "Height: 1 unit"
+          ],
+          "speakerNotes": [
+            "Ask students to work in pairs.",
+            "Prompt: 'If the base is 2, what is the hypotenuse?'",
+            "Guide them to realize 2² + 1² = 5, so hypotenuse is √5.",
+            "Circulate and check if they are drawing perpendiculars correctly.",
+            "Transition: 'Let's see how well you understood this.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "Blank number line with a grid for students to draw on, or a partially filled diagram.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Blank number line with a grid for students to draw on, or a partially filled diagram.",
+          "assets": [
+            {
+              "purpose": "Visual aid for student practice",
+              "searchQuery": "blank number line grid math worksheet",
+              "sourceSite": "Khan Academy",
+              "sourceUrl": "",
+              "licenseType": "CC-BY",
+              "attributionText": "Khan Academy",
+              "altText": "Grid paper with a number line for drawing",
+              "placementHint": "Center of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "None (Static for drawing)"
+          ],
+          "timeEstimateMinutes": 7
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Check",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "quick_assessment",
+          "slideTitle": "Do You Understand?",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2",
+            "LO3"
+          ],
+          "topicCoverage": [
+            "Classification",
+            "Decimal Types",
+            "Representation"
+          ],
+          "teacherIntent": "Assess immediate understanding of the session's core concepts.",
+          "studentTakeaway": "I know if I can classify and plot numbers correctly.",
+          "layout": "assessment-list",
+          "bulletPoints": [
+            "Is 0.333... rational or irrational?",
+            "Can √2 be written as p/q?",
+            "What is the base for √5 construction?"
+          ],
+          "onSlideText": [
+            "1. Rational or Irrational?",
+            "2. Fraction Rule?",
+            "3. Construction Base?"
+          ],
+          "speakerNotes": [
+            "Ask students to raise hands for answers.",
+            "Q1 Answer: Rational (recurring).",
+            "Q2 Answer: No, it's irrational.",
+            "Q3 Answer: 2 (since √4 = 2).",
+            "Transition: 'Let's summarize what we've learned.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "Simple icons for each question type (Checkmark, Question Mark, Ruler).",
+            "svgDiagram": null
+          },
+          "visualPlan": "Simple icons for each question type (Checkmark, Question Mark, Ruler).",
+          "assets": [
+            {
+              "purpose": "Visual cues for assessment questions",
+              "searchQuery": "math quiz icons checkmark ruler",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC0",
+              "attributionText": "Public Domain",
+              "altText": "Icons representing math questions and tools",
+              "placementHint": "Left of each question"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal answers one by one on click"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Lesson Summary",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Key Takeaways",
+          "learningOutcomeIds": [
+            "LO1",
+            "LO2",
+            "LO3"
+          ],
+          "topicCoverage": [
+            "Real Number System",
+            "Classification",
+            "Geometric Plotting"
+          ],
+          "teacherIntent": "Consolidate the main points and reinforce memory.",
+          "studentTakeaway": "I remember the hierarchy and the construction method.",
+          "layout": "summary-list",
+          "bulletPoints": [
+            "Real Numbers = Rational + Irrational.",
+            "Rational: Terminating or Recurring.",
+            "Irrational: Infinite Non-Recurring.",
+            "Geometric Construction works for all."
+          ],
+          "onSlideText": [
+            "1. Real Number System",
+            "2. Rational vs Irrational",
+            "3. Geometric Method"
+          ],
+          "speakerNotes": [
+            "Review the hierarchy: N -> W -> Z -> Q -> R.",
+            "Reiterate that irrational numbers are real but not fractions.",
+            "Remind them of the 'base + 1' trick for construction.",
+            "Transition: 'Now let's prepare for tomorrow.'"
+          ],
+          "visualAttribution": {
+            "visualPlan": "A flowchart summarizing the classification and a small icon of the spiral construction.",
+            "svgDiagram": null
+          },
+          "visualPlan": "A flowchart summarizing the classification and a small icon of the spiral construction.",
+          "assets": [
+            {
+              "purpose": "Visual summary of concepts",
+              "searchQuery": "number system hierarchy flowchart",
+              "sourceSite": "Math is Fun",
+              "sourceUrl": "",
+              "licenseType": "CC-BY-SA",
+              "attributionText": "Math is Fun",
+              "altText": "Flowchart of number classification",
+              "placementHint": "Center of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "Number System Summary",
+            "type": "flowchart",
+            "instructions": [
+              "Show N inside W inside Z inside Q inside R.",
+              "Split Q into Terminating/Recurring.",
+              "Show Irrational as separate branch."
+            ],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in summary points"
+          ],
+          "timeEstimateMinutes": 3
+        }
+      ]
+    }
+  }
+}

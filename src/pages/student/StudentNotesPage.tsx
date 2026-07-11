@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { AuthUser } from "../../types/auth";
 import type { PublishedStudentArtifact } from "../../types/student-content";
+import { dedupePublishedStudentArtifacts } from "../../utils/studentArtifactDedup";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
 const BACKEND_URL =
@@ -164,8 +165,9 @@ function StudentNotesPage() {
   }, [currentUser?.id, currentUser?.schoolId]);
 
   const notesBySubject = useMemo(() => {
+    const uniqueNotes = dedupePublishedStudentArtifacts(backendNotes);
     const grouped = new Map<string, PublishedStudentArtifact[]>();
-    for (const note of backendNotes) {
+    for (const note of uniqueNotes) {
       const subject = getSubjectDisplayName(note);
       if (!grouped.has(subject)) {
         grouped.set(subject, []);

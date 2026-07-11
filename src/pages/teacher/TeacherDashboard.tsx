@@ -51,7 +51,7 @@ export function TeacherDashboard() {
           detail={summary.classCount === 1 ? "Assigned class linked to your account" : "Assigned classes linked to your account"}
           icon={BookOpenText}
         />
-        <StatCard label="Today's Sessions" value={String(summary.todaySessions)} detail="Generated sessions across your assigned classes" icon={CalendarClock} />
+        <StatCard label="Generated Sessions" value={String(summary.todaySessions)} detail="Generated sessions across your assigned classes" icon={CalendarClock} />
         <StatCard label="Pending Sessions" value={String(summary.pendingSessions)} detail="Remaining sessions pending generation" icon={ListTodo} />
       </div>
 

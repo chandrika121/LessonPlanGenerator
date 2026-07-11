@@ -151,6 +151,7 @@ app.use(cors({
   origin: [
     `http://localhost:${FRONTEND_PORT}`,
     `http://127.0.0.1:${FRONTEND_PORT}`,
+    "http://103.204.53.106:4173",
   ],
   credentials: true,
 }));
@@ -3233,16 +3234,26 @@ function normalizePublicationMetadata(
   const kind = normalizePublicationKind(fallback.kind);
   const session = fallback.session || {};
   const workspace = fallback.workspace || {};
-  const sessionNumberFromKey = parseSessionNumberFromGeneratedSessionKey(fallback.generatedSessionKey);
+  const exactGeneratedSessionKey = String(fallback.generatedSessionKey || "").trim();
+  const storedGeneratedSessionKey = String(value?.generatedSessionKey || "").trim();
+  const resolvedGeneratedSessionKey =
+    exactGeneratedSessionKey ||
+    storedGeneratedSessionKey ||
+    String(session?.sessionKey || session?.id || "").trim();
+  const sessionNumberFromExactKey = parseSessionNumberFromGeneratedSessionKey(exactGeneratedSessionKey);
+  const sessionNumberFromResolvedKey = parseSessionNumberFromGeneratedSessionKey(resolvedGeneratedSessionKey);
   const sessionNumberFromValue = Number(value?.sessionNumber || 0);
   const sessionNumberFromSession = Number(session?.sessionNumber || 0);
   const sessionNumber =
+    (Number.isFinite(sessionNumberFromExactKey) && sessionNumberFromExactKey > 0 ? sessionNumberFromExactKey : 0) ||
+    (Number.isFinite(sessionNumberFromResolvedKey) && sessionNumberFromResolvedKey > 0 ? sessionNumberFromResolvedKey : 0) ||
+    (Number.isFinite(sessionNumberFromValue) && sessionNumberFromValue > 1 ? sessionNumberFromValue : 0) ||
+    (Number.isFinite(sessionNumberFromSession) && sessionNumberFromSession > 1 ? sessionNumberFromSession : 0) ||
     (Number.isFinite(sessionNumberFromValue) && sessionNumberFromValue > 0 ? sessionNumberFromValue : 0) ||
-    (Number.isFinite(sessionNumberFromSession) && sessionNumberFromSession > 0 ? sessionNumberFromSession : 0) ||
-    sessionNumberFromKey;
+    (Number.isFinite(sessionNumberFromSession) && sessionNumberFromSession > 0 ? sessionNumberFromSession : 0);
   const publishedAtRaw = String(value?.publishedAt || "").trim();
   const publishedAt = publishedAtRaw ? new Date(publishedAtRaw).toISOString() : "";
-  const generatedSessionKey = String(value?.generatedSessionKey || fallback.generatedSessionKey || session?.sessionKey || session?.id || "").trim();
+  const generatedSessionKey = resolvedGeneratedSessionKey;
 
   return {
     published: value === true || Boolean(value?.published),
@@ -19855,26 +19866,11 @@ async function getPrincipalDashboardAnalytics(schoolId?: string) {
     performanceMap.set(label, current);
   }
 
-  const currentYear = new Date().getFullYear();
-  const monthlyBuckets = new Map<string, number>();
-  for (let month = 0; month < 12; month += 1) {
-    monthlyBuckets.set(toMonthLabel(new Date(currentYear, month, 1)), 0);
-  }
-  const incrementMonthly = (value: unknown, amount = 1) => {
-    if (!value) return;
-    const date = new Date(String(value));
-    if (Number.isNaN(date.getTime())) return;
-    const label = toMonthLabel(date);
-    monthlyBuckets.set(label, (monthlyBuckets.get(label) || 0) + amount);
-  };
-  curriculums.forEach((item) => incrementMonthly(item.createdAt));
-  workspaces.forEach((item) => incrementMonthly(item.updatedAt, Math.max(Object.keys(item?.generationScope?.generatedSessions || {}).length, Array.isArray(item.generatedArtifacts) ? item.generatedArtifacts.length : 0, 1)));
-  evaluations.forEach((item) => incrementMonthly(item.completedAt || item.updatedAt));
-  evaluationResults.forEach((item) => incrementMonthly(item.updatedAt));
-  assignmentSubmissions.forEach((item) => incrementMonthly(item.createdAt));
-  homeworkSubmissions.forEach((item) => incrementMonthly(item.createdAt));
-  activityLogs.forEach((item) => incrementMonthly(item.occurredAt || item.createdAt));
-  const maxMonthlyActivity = Math.max(...Array.from(monthlyBuckets.values()), 1);
+  const monthlyMetrics = buildMonthlyProgressMetrics({
+    workspaces,
+    homeworkSubmissions,
+    assignmentSubmissions,
+  });
 
   const totalEvaluationsCompleted = evaluations.filter((item) => ["completed", "saved"].includes(String(item.status).toLowerCase())).length;
 
@@ -19893,10 +19889,7 @@ async function getPrincipalDashboardAnalytics(schoolId?: string) {
       .map(([label, value]) => ({ label, score: value.count > 0 ? Number((value.total / value.count).toFixed(1)) : 0 }))
       .sort((a, b) => b.score - a.score),
     teacherActivity: Array.from(teacherActivityMap.values()).sort((a, b) => b.sessions - a.sessions),
-    monthlyProgress: Array.from(monthlyBuckets.entries()).map(([month, rawValue]) => ({
-      month,
-      value: Number(((rawValue / maxMonthlyActivity) * 100).toFixed(1)),
-    })),
+    monthlyProgress: monthlyMetrics.monthlyProgress,
     recentActivity: prioritizedRecentActivity
       .slice(0, 8)
       .map(({ teacherName, role, action, timeAgo }) => ({ teacherName, role, action, timeAgo })),
@@ -19908,12 +19901,7 @@ async function getPrincipalDashboardAnalytics(schoolId?: string) {
       teacherProductivity: teachers.length > 0 ? Number((((lessonPlansGenerated + totalEvaluationsCompleted) / teachers.length) * 10).toFixed(1)) : 0,
       homeworkCompletion: homeworkSubmissions.length,
       assessmentCompletion: assignmentSubmissions.length,
-      monthlyTrend: Array.from(monthlyBuckets.entries()).map(([month, rawValue]) => ({
-        month,
-        curriculum: Number(((curriculums.filter((item) => toMonthLabel(new Date(item.createdAt)) === month).length / maxMonthlyActivity) * 100).toFixed(1)),
-        evaluation: Number((((evaluations.filter((item) => toMonthLabel(new Date(item.completedAt || item.updatedAt)) === month).length) / maxMonthlyActivity) * 100).toFixed(1)),
-        performance: Number(((rawValue / maxMonthlyActivity) * 100).toFixed(1)),
-      })),
+      monthlyTrend: monthlyMetrics.monthlyTrend,
       subjectPerformance: Array.from(lessonPlansBySubjectMap.entries()).map(([subject, count]) => ({
         subject,
         score: lessonPlansGenerated > 0 ? Number(((count / lessonPlansGenerated) * 100).toFixed(1)) : 0,
@@ -20008,6 +19996,102 @@ function getWorkspaceLessonPlanCount(workspace: any) {
   const generatedSessions = getWorkspaceGeneratedSessionCount(workspace);
   const artifactCount = Array.isArray(workspace?.generatedArtifacts) ? workspace.generatedArtifacts.length : 0;
   return Math.max(generatedSessions, artifactCount, 0);
+}
+
+function clampPercentage(value: number) {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+  return Math.max(0, Math.min(100, Number(value.toFixed(1))));
+}
+
+function getMonthBucketMap(currentYear: number) {
+  const buckets = new Map<string, { completed: number; expected: number }>();
+  for (let month = 0; month < 12; month += 1) {
+    buckets.set(toMonthLabel(new Date(currentYear, month, 1)), { completed: 0, expected: 0 });
+  }
+  return buckets;
+}
+
+function incrementMonthlyProgressBucket(
+  buckets: Map<string, { completed: number; expected: number }>,
+  value: unknown,
+  update: { completed?: number; expected?: number },
+) {
+  if (!value) return;
+  const date = new Date(String(value));
+  if (Number.isNaN(date.getTime())) return;
+  const label = toMonthLabel(date);
+  const current = buckets.get(label);
+  if (!current) return;
+  current.completed += Math.max(0, Number(update.completed || 0));
+  current.expected += Math.max(0, Number(update.expected || 0));
+  buckets.set(label, current);
+}
+
+function buildMonthlyProgressMetrics(input: {
+  workspaces: any[];
+  homeworkSubmissions: any[];
+  assignmentSubmissions: any[];
+}) {
+  const currentYear = new Date().getFullYear();
+  const buckets = getMonthBucketMap(currentYear);
+
+  for (const workspace of Array.isArray(input.workspaces) ? input.workspaces : []) {
+    const generatedSessionCount = getWorkspaceGeneratedSessionCount(workspace);
+    incrementMonthlyProgressBucket(buckets, workspace?.updatedAt || workspace?.createdAt, {
+      completed: generatedSessionCount,
+      expected: generatedSessionCount,
+    });
+
+    const studentPublications =
+      workspace?.generationScope?.studentPublications &&
+      typeof workspace.generationScope.studentPublications === "object"
+        ? workspace.generationScope.studentPublications as Record<string, Record<string, any>>
+        : {};
+
+    for (const publicationEntry of Object.values(studentPublications)) {
+      const homeworkPublishedAt = publicationEntry?.homework === true
+        ? String(workspace?.updatedAt || workspace?.createdAt || "").trim()
+        : String(publicationEntry?.homework?.publishedAt || "").trim();
+      const assessmentPublishedAt = publicationEntry?.assessments === true
+        ? String(workspace?.updatedAt || workspace?.createdAt || "").trim()
+        : String(publicationEntry?.assessments?.publishedAt || "").trim();
+
+      if (publicationEntry?.homework === true || publicationEntry?.homework?.published) {
+        incrementMonthlyProgressBucket(buckets, homeworkPublishedAt, { expected: 1 });
+      }
+      if (publicationEntry?.assessments === true || publicationEntry?.assessments?.published) {
+        incrementMonthlyProgressBucket(buckets, assessmentPublishedAt, { expected: 1 });
+      }
+    }
+  }
+
+  for (const submission of Array.isArray(input.homeworkSubmissions) ? input.homeworkSubmissions : []) {
+    incrementMonthlyProgressBucket(buckets, submission?.createdAt || submission?.updatedAt, { completed: 1 });
+  }
+
+  for (const submission of Array.isArray(input.assignmentSubmissions) ? input.assignmentSubmissions : []) {
+    const submissionType = String(submission?.submissionType || "").trim().toLowerCase();
+    if (submissionType === "assessment" || submissionType === "assessments") {
+      incrementMonthlyProgressBucket(buckets, submission?.createdAt || submission?.updatedAt, { completed: 1 });
+    }
+  }
+
+  const monthlyProgress = Array.from(buckets.entries()).map(([month, metrics]) => ({
+    month,
+    value: metrics.expected > 0 ? clampPercentage((metrics.completed / metrics.expected) * 100) : 0,
+  }));
+
+  return {
+    monthlyProgress,
+    monthlyTrend: Array.from(buckets.entries()).map(([month, metrics]) => ({
+      month,
+      curriculum: metrics.expected > 0 ? clampPercentage((Math.min(metrics.completed, metrics.expected) / metrics.expected) * 100) : 0,
+      evaluation: metrics.expected > 0 ? clampPercentage((Math.min(metrics.completed, metrics.expected) / metrics.expected) * 100) : 0,
+      performance: metrics.expected > 0 ? clampPercentage((metrics.completed / metrics.expected) * 100) : 0,
+    })),
+  };
 }
 
 function getWorkspaceTermCount(workspace: any) {
@@ -20252,6 +20336,125 @@ function buildWorkspaceSessionCounts(workspaces: any[]) {
   };
 }
 
+function getTeacherOwnedWorkspaces(workspaces: any[], teacherId: string) {
+  const normalizedTeacherId = String(teacherId || "").trim();
+  return dedupeWorkspacesByTeachingScope(
+    (Array.isArray(workspaces) ? workspaces : []).filter((item) => {
+      const workspaceTeacherId = String(item?.teacherId || item?.createdBy || "").trim();
+      return Boolean(normalizedTeacherId) && workspaceTeacherId === normalizedTeacherId;
+    }),
+  );
+}
+
+function countPublishedArtifactsForTeacherWorkspaces(
+  workspaces: any[],
+  kind: "homework" | "assessments",
+) {
+  const seen = new Set<string>();
+
+  for (const workspace of Array.isArray(workspaces) ? workspaces : []) {
+    const workspaceId = String(workspace?._id || "").trim();
+    const studentPublications =
+      workspace?.generationScope?.studentPublications &&
+      typeof workspace.generationScope.studentPublications === "object"
+        ? workspace.generationScope.studentPublications as Record<string, Record<string, any>>
+        : {};
+
+    for (const [generatedSessionKey, publicationEntry] of Object.entries(studentPublications)) {
+      const publicationValue = publicationEntry?.[kind];
+      const isPublished = publicationValue === true || Boolean(publicationValue?.published);
+      if (!isPublished) {
+        continue;
+      }
+
+      const resolvedGeneratedSessionKey =
+        String(generatedSessionKey || "").trim() ||
+        String(publicationValue?.generatedSessionKey || "").trim();
+      if (!workspaceId || !resolvedGeneratedSessionKey) {
+        continue;
+      }
+
+      seen.add(`${workspaceId}::${resolvedGeneratedSessionKey}::${kind}`);
+    }
+  }
+
+  return seen.size;
+}
+
+function buildTeacherAllocationRows(
+  teacherAllocations: any[],
+  teacherWorkspaces: any[],
+  classes: any[],
+  students: any[],
+) {
+  const rows = new Map<string, {
+    className: string;
+    subject: string;
+    studentCount: number;
+    curriculumProgress: number;
+  }>();
+
+  for (const allocation of Array.isArray(teacherAllocations) ? teacherAllocations : []) {
+    const className = String(allocation?.className || allocation?.classId || "").trim() || "Class";
+    const section = String(allocation?.section || "").trim();
+    const normalizedSection = normalizeSectionKey(section);
+    const allocationSubjects = Array.from(new Set([
+      ...(Array.isArray(allocation?.subjects) ? allocation.subjects : []),
+      ...(Array.isArray(allocation?.subjectIds) ? allocation.subjectIds : []),
+    ].map((item) => String(item || "").trim()).filter(Boolean)));
+
+    const matchedClassDocs = (Array.isArray(classes) ? classes : []).filter((item: any) =>
+      classKeysOverlap(item?.name || item?.gradeLevel || item?._id || "", className)
+      && (!normalizedSection || normalizeSectionKey(item?.section || "") === normalizedSection),
+    );
+    const matchedStudents = (Array.isArray(students) ? students : []).filter((student: any) =>
+      classKeysOverlap(student?.classId || "", className)
+      && (!normalizedSection || normalizeSectionKey(student?.section || "") === normalizedSection),
+    );
+
+    const studentCount = matchedStudents.length || matchedClassDocs.reduce((sum: number, item: any) => sum + Number(item?.studentCount || 0), 0);
+    const subjects = allocationSubjects.length > 0 ? allocationSubjects : ["General"];
+
+    for (const subject of subjects) {
+      const relatedWorkspaces = teacherWorkspaces.filter((workspace: any) =>
+        classKeysOverlap(
+          workspace?.academicConfig?.className || workspace?.curriculumSnapshot?.gradeLevel || workspace?.classId || "",
+          className,
+        )
+        && (!normalizedSection || normalizeSectionKey(workspace?.academicConfig?.section || workspace?.sectionId || "") === normalizedSection)
+        && (!subject || matchesAnySubjectAlias(
+          workspace?.subjectId || workspace?.academicConfig?.subject || workspace?.curriculumSnapshot?.subject || "",
+          buildSubjectAliases([subject], subject, [subject]),
+        ))
+      );
+
+      const generatedSessions = relatedWorkspaces.reduce((sum: number, workspace: any) => sum + getWorkspaceGeneratedSessionCount(workspace), 0);
+      const plannedSessions = relatedWorkspaces.reduce((sum: number, workspace: any) => sum + getWorkspacePlannedSessionCount(workspace), 0);
+      const totalTarget = Math.max(plannedSessions, generatedSessions);
+      const curriculumProgress = totalTarget > 0
+        ? Number(((Math.min(generatedSessions, totalTarget) / totalTarget) * 100).toFixed(1))
+        : 0;
+
+      const key = [
+        normalizeClassKey(className),
+        normalizedSection,
+        normalizeSubjectKey(subject),
+      ].join("::");
+
+      rows.set(key, {
+        className: section ? `${className} - Section ${section}` : className,
+        subject: subject || "General",
+        studentCount,
+        curriculumProgress,
+      });
+    }
+  }
+
+  return Array.from(rows.values()).sort((left, right) =>
+    left.className.localeCompare(right.className) || left.subject.localeCompare(right.subject),
+  );
+}
+
 function getWorkspaceExpectedCompletionDays(workspace: any) {
   const plannedSessions = getPlannedSessionCount(workspace);
   return Math.max(10, Math.min(30, 7 + plannedSessions));
@@ -20363,38 +20566,36 @@ async function getPrincipalAlerts(schoolId: string) {
 
 async function getPrincipalTeachers(schoolId?: string) {
   const schoolMatch = buildSchoolMatch(schoolId);
-  const [teachers, classes, workspaces, evaluations, assignmentSubmissions] = await Promise.all([
+  const [teachers, allocations, classes, students, workspaces, evaluations] = await Promise.all([
     UserModel.find({ ...schoolMatch, role: "teacher" }).lean(),
+    TeacherClassAllocationModel.find(schoolMatch).lean(),
     ClassModel.find(schoolMatch).lean(),
+    UserModel.find({ ...schoolMatch, role: "student" }).lean(),
     PlanningWorkspaceModel.find(schoolMatch).lean(),
     EvaluationModel.find(schoolMatch).lean(),
-    AssignmentSubmissionModel.find(schoolMatch).lean(),
   ]);
 
   return teachers.map((teacher) => {
     const teacherId = String(teacher._id);
-    const teacherWorkspaces = workspaces.filter((item) => String(item.teacherId || item.createdBy || "") === teacherId);
+    const teacherAllocations = allocations.filter((item: any) => String(item?.teacherId || "").trim() === teacherId);
+    const teacherWorkspaces = getTeacherOwnedWorkspaces(workspaces, teacherId);
     const teacherEvaluations = evaluations.filter((item) => String(item.teacherId || "") === teacherId);
-    const teacherClasses = classes.filter((item) => Array.isArray(item.teacherIds) && item.teacherIds.some((entry: unknown) => String(entry) === teacherId));
-    const assignedClasses = teacherClasses.map((item) => String(item.gradeLevel || item.name || "").replace(/^Class\s+/i, "").trim()).filter(Boolean);
+    const teacherClassRows = buildTeacherAllocationRows(teacherAllocations, teacherWorkspaces, classes, students);
+    const assignedClasses = Array.from(new Set(teacherClassRows.map((item) => item.className).filter(Boolean)));
     const subjects = Array.from(new Set(
-      teacherWorkspaces
-        .map((item) => String(item.subjectId || item.curriculumSnapshot?.subject || item.academicConfig?.subject || "").trim())
+      [
+        ...teacherAllocations.flatMap((item: any) => [
+          ...(Array.isArray(item?.subjects) ? item.subjects : []),
+          ...(Array.isArray(item?.subjectIds) ? item.subjectIds : []),
+        ]),
+        ...teacherWorkspaces.map((item) => String(item.subjectId || item.curriculumSnapshot?.subject || item.academicConfig?.subject || "").trim()),
+      ]
         .filter(Boolean)
     ));
-    const lessonPlansGenerated = teacherWorkspaces.reduce((sum, item) => (
-      sum + Math.max(
-        Object.keys(item?.generationScope?.generatedSessions || {}).length,
-        Array.isArray(item.generatedArtifacts) ? item.generatedArtifacts.length : 0,
-        0
-      )
-    ), 0);
-    const homeworkGenerated = teacherWorkspaces.reduce((sum, item) => (
-      sum + (Array.isArray(item.generatedArtifacts)
-        ? item.generatedArtifacts.filter((artifact: any) => /homework/i.test(String(artifact?.type || artifact?.kind || artifact?.title || ""))).length
-        : 0)
-    ), 0) + assignmentSubmissions.filter((item) => String(item.teacherId || "") === teacherId && String(item.submissionType || "") === "homework").length;
-    const assessmentsGenerated = teacherEvaluations.length;
+    const sessionCounts = buildWorkspaceSessionCounts(teacherWorkspaces);
+    const lessonPlansGenerated = teacherWorkspaces.reduce((sum, item) => sum + getWorkspaceGeneratedSessionCount(item), 0) || sessionCounts.totalSessions;
+    const homeworkGenerated = countPublishedArtifactsForTeacherWorkspaces(teacherWorkspaces, "homework") || sessionCounts.totalHomework;
+    const assessmentsGenerated = countPublishedArtifactsForTeacherWorkspaces(teacherWorkspaces, "assessments") || sessionCounts.totalAssessments || teacherEvaluations.length;
 
     return {
       id: teacherId,
@@ -20413,20 +20614,76 @@ async function getPrincipalTeachers(schoolId?: string) {
 
 async function getPrincipalTeacherDetail(id: string, schoolId?: string) {
   const schoolMatch = buildSchoolMatch(schoolId);
-  const [teacher, classes, workspaces, evaluations, assignmentSubmissions] = await Promise.all([
+  const [teacher, allocations, classes, students, workspaces, evaluations] = await Promise.all([
     UserModel.findOne({ ...schoolMatch, _id: id, role: "teacher" }).lean(),
+    TeacherClassAllocationModel.find(schoolMatch).lean(),
     ClassModel.find(schoolMatch).lean(),
+    UserModel.find({ ...schoolMatch, role: "student" }).lean(),
     PlanningWorkspaceModel.find(schoolMatch).lean(),
     EvaluationModel.find(schoolMatch).lean(),
-    AssignmentSubmissionModel.find(schoolMatch).lean(),
   ]);
   if (!teacher) return null;
 
   const teacherId = String(teacher._id);
   const summary = (await getPrincipalTeachers(schoolId)).find((item) => item.id === teacherId);
-  const teacherClasses = classes.filter((item) => Array.isArray(item.teacherIds) && item.teacherIds.some((entry: unknown) => String(entry) === teacherId));
-  const teacherWorkspaces = workspaces.filter((item) => String(item.teacherId || item.createdBy || "") === teacherId);
+  const teacherAllocations = allocations.filter((item: any) => String(item?.teacherId || "").trim() === teacherId);
+  const teacherWorkspaces = getTeacherOwnedWorkspaces(workspaces, teacherId);
   const teacherEvaluations = evaluations.filter((item) => String(item.teacherId || "") === teacherId);
+  const teacherClasses = buildTeacherAllocationRows(teacherAllocations, teacherWorkspaces, classes, students);
+
+  const recentActivity = [
+    ...teacherAllocations
+      .filter((item: any) => item?.updatedAt || item?.publishedAt || item?.createdAt)
+      .map((item: any) => ({
+        action: `Updated class allocation for ${String(item?.className || item?.classId || "class").trim()}${item?.subjects?.length ? ` (${item.subjects.join(", ")})` : ""}`,
+        occurredAt: new Date(item.updatedAt || item.publishedAt || item.createdAt || Date.now()),
+      })),
+    ...teacherWorkspaces
+      .filter((item: any) => item?.updatedAt || item?.createdAt)
+      .map((item: any) => ({
+        action: `Updated ${item.subjectId || item.curriculumSnapshot?.subject || item.academicConfig?.subject || "lesson plan"} workspace`,
+        occurredAt: new Date(item.updatedAt || item.createdAt || Date.now()),
+      })),
+    ...teacherWorkspaces.flatMap((workspace: any) => {
+      const studentPublications =
+        workspace?.generationScope?.studentPublications &&
+        typeof workspace.generationScope.studentPublications === "object"
+          ? workspace.generationScope.studentPublications as Record<string, Record<string, any>>
+          : {};
+
+      return Object.values(studentPublications).flatMap((publicationEntry: any) => {
+        const activities: Array<{ action: string; occurredAt: Date }> = [];
+        const homeworkPublishedAt = String(publicationEntry?.homework?.publishedAt || "").trim();
+        const assessmentsPublishedAt = String(publicationEntry?.assessments?.publishedAt || "").trim();
+        if (publicationEntry?.homework === true || publicationEntry?.homework?.published) {
+          activities.push({
+            action: `Published homework in ${workspace?.academicConfig?.subject || workspace?.subjectId || "subject"}`,
+            occurredAt: new Date(homeworkPublishedAt || workspace?.updatedAt || Date.now()),
+          });
+        }
+        if (publicationEntry?.assessments === true || publicationEntry?.assessments?.published) {
+          activities.push({
+            action: `Published assessment in ${workspace?.academicConfig?.subject || workspace?.subjectId || "subject"}`,
+            occurredAt: new Date(assessmentsPublishedAt || workspace?.updatedAt || Date.now()),
+          });
+        }
+        return activities;
+      });
+    }),
+    ...teacherEvaluations
+      .filter((item) => item.updatedAt || item.createdAt)
+      .map((item) => ({
+        action: `Completed evaluation${item.title ? `: ${item.title}` : ""}`,
+        occurredAt: new Date(item.updatedAt || item.createdAt || Date.now()),
+      })),
+  ]
+    .filter((item) => !Number.isNaN(item.occurredAt.getTime()))
+    .sort((left, right) => right.occurredAt.getTime() - left.occurredAt.getTime())
+    .slice(0, 8)
+    .map((item) => ({
+      action: item.action,
+      time: toRelativeTime(item.occurredAt),
+    }));
 
   return {
     ...(summary || {
@@ -20442,41 +20699,10 @@ async function getPrincipalTeacherDetail(id: string, schoolId?: string) {
       status: "Offline" as const,
     }),
     email: teacher.email || "",
-    phone: "",
+    phone: String((teacher as any).phone || "").trim(),
     joinedDate: teacher.createdAt ? new Date(teacher.createdAt).toISOString() : new Date().toISOString(),
-    classes: teacherClasses.map((item) => {
-      const related = teacherWorkspaces.filter((workspace) => String(workspace.classId || "") === String(item._id));
-      const approvedCount = related.filter((workspace) => workspace.curriculumApproval?.approved).length;
-      const curriculumProgress = related.length > 0 ? Number(((approvedCount / related.length) * 100).toFixed(1)) : 0;
-      return {
-        className: item.name || item.gradeLevel || "Class",
-        subject: related[0]?.subjectId || related[0]?.curriculumSnapshot?.subject || related[0]?.academicConfig?.subject || "General",
-        studentCount: Number(item.studentCount || 0),
-        curriculumProgress,
-      };
-    }),
-    recentActivity: [
-      ...teacherWorkspaces
-        .filter((item) => item.updatedAt)
-        .map((item) => ({
-          action: `Updated ${item.subjectId || item.curriculumSnapshot?.subject || item.academicConfig?.subject || "lesson plan"} workspace`,
-          time: toRelativeTime(item.updatedAt),
-        })),
-      ...teacherEvaluations
-        .filter((item) => item.updatedAt)
-        .map((item) => ({
-          action: `Completed evaluation${item.title ? `: ${item.title}` : ""}`,
-          time: toRelativeTime(item.updatedAt),
-        })),
-      ...assignmentSubmissions
-        .filter((item) => String(item.teacherId || "") === teacherId && item.createdAt)
-        .map((item) => ({
-          action: `Received ${String(item.submissionType || "assignment")} submission`,
-          time: toRelativeTime(item.createdAt),
-        })),
-    ]
-      .sort((a, b) => a.time.localeCompare(b.time))
-      .slice(0, 8),
+    classes: teacherClasses,
+    recentActivity,
   };
 }
 
@@ -20686,8 +20912,11 @@ async function getPrincipalClassDetail(classKeyOrName: string, schoolId?: string
   const requestedSection = normalizeSectionKey(requestedSectionRaw);
   const requestedCanonicalKey = buildCanonicalClassKey(requestedClassKeyRaw || requestedValue);
   const classSummaries = await getPrincipalClasses(schoolId);
-  const summary = classSummaries.find((item) => item.classKey === requestedValue)
+  const summary = classSummaries.find((item) => item?.classKey === requestedValue)
     || classSummaries.find((item) => {
+      if (!item) {
+        return false;
+      }
       const itemClassKey = buildCanonicalClassKey(item.className || "");
       return requestedCanonicalKey
         && itemClassKey === requestedCanonicalKey

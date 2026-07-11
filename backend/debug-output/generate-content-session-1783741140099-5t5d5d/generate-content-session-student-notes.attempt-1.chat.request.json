@@ -1,0 +1,272 @@
+{
+  "model": "qwen3.5:35b-mlx",
+  "stream": false,
+  "think": false,
+  "format": {
+    "studentLessonNotes": {
+      "title": "Student lesson note title",
+      "sessionOverview": "Simple overview of what this session covers",
+      "introduction": "Student-friendly introduction",
+      "learningObjectives": [
+        "After this lesson you will be able to..."
+      ],
+      "quickRecall": [
+        "Short prerequisite revision point"
+      ],
+      "easyToRemember": [
+        "Simple memory line for the concept"
+      ],
+      "comparisonTables": [
+        {
+          "title": "Comparison table title",
+          "headers": [
+            "Feature",
+            "Type A",
+            "Type B"
+          ],
+          "rows": [
+            [
+              "Example feature",
+              "Example A",
+              "Example B"
+            ]
+          ]
+        }
+      ],
+      "formulaCards": [
+        {
+          "title": "Formula title",
+          "formula": {
+            "text": "Formula in readable form",
+            "latex": "a^2 + b^2 = c^2"
+          },
+          "meaning": "What the formula means",
+          "whenToUse": "When students should use it"
+        }
+      ],
+      "geometryDiagrams": [
+        {
+          "id": "diagram-1",
+          "type": "rightTriangle",
+          "title": "Right triangle diagram",
+          "caption": "A clean labelled geometry diagram",
+          "points": [
+            {
+              "id": "A",
+              "x": 65,
+              "y": 155,
+              "label": "A"
+            },
+            {
+              "id": "B",
+              "x": 245,
+              "y": 155,
+              "label": "B"
+            },
+            {
+              "id": "C",
+              "x": 65,
+              "y": 55,
+              "label": "C"
+            }
+          ],
+          "lines": [
+            {
+              "from": "A",
+              "to": "B",
+              "label": "base"
+            },
+            {
+              "from": "A",
+              "to": "C",
+              "label": "height"
+            },
+            {
+              "from": "B",
+              "to": "C",
+              "label": "hypotenuse",
+              "highlight": true
+            }
+          ],
+          "arcs": [],
+          "labels": [
+            {
+              "text": "90 deg",
+              "x": 82,
+              "y": 142
+            }
+          ],
+          "measurements": []
+        }
+      ],
+      "proofSteps": [
+        "Reasoning step 1",
+        "Reasoning step 2"
+      ],
+      "commonMistakes": [
+        {
+          "mistake": "Common incorrect step",
+          "correction": "Correct method",
+          "example": "Short example"
+        }
+      ],
+      "sections": [
+        {
+          "heading": "Main idea",
+          "explanation": "Comprehensive but student-friendly explanation",
+          "keyPoints": [
+            "Revision point"
+          ],
+          "examples": [
+            "Worked example or everyday example"
+          ],
+          "whyItMatters": "Why students should care about this concept",
+          "terminology": [
+            "Important term"
+          ],
+          "detailedExplanation": "A slightly deeper but student-friendly explanation",
+          "observedIn": [
+            "Where students observe it"
+          ],
+          "visualSupport": [
+            "Diagram or visual suggestion"
+          ],
+          "visualAssets": [
+            {
+              "prompt": "Image generation prompt",
+              "alt": "Student-friendly illustration alt text",
+              "imageDataUrl": "data:image/png;base64,...",
+              "mimeType": "image/png",
+              "model": "runtime image model"
+            }
+          ],
+          "importantNotes": [
+            "Exam point or caution note"
+          ],
+          "memoryTechniques": [
+            "Mnemonic or memory tip"
+          ],
+          "conceptSummary": [
+            "One-line takeaway"
+          ]
+        }
+      ],
+      "definitions": [
+        {
+          "term": "Key term",
+          "definition": "Clear definition"
+        }
+      ],
+      "workedExamples": [
+        {
+          "title": "Worked example title",
+          "problem": "Solve the problem clearly",
+          "diagramRef": "diagram-1",
+          "given": [
+            "Given value 1",
+            "Given value 2"
+          ],
+          "formula": [
+            "Required formula"
+          ],
+          "steps": [
+            "Step 1",
+            "Step 2"
+          ],
+          "solutionSteps": [
+            "Write formula",
+            "Substitute values",
+            "Simplify",
+            "State final answer"
+          ],
+          "reasoning": [
+            "Why this method applies"
+          ],
+          "explanation": "How this example works",
+          "finalAnswer": "Final answer with unit",
+          "latex": "x = y + z",
+          "displayLatex": "\\\\frac{a+b}{c}"
+        }
+      ],
+      "revisionSection": {
+        "definitions": [
+          "Important definition"
+        ],
+        "formulas": [
+          "Useful formula if applicable"
+        ],
+        "facts": [
+          "Important fact"
+        ],
+        "keywords": [
+          "Keyword"
+        ],
+        "conceptMap": [
+          "Concept map cue"
+        ],
+        "quickRecap": [
+          "Fast revision point"
+        ]
+      },
+      "selfCheckQuestions": [
+        "Question students can answer independently"
+      ],
+      "quickSummary": [
+        "Short summary point"
+      ],
+      "keyTerms": [
+        "Important keyword"
+      ],
+      "fillInTheBlanks": [
+        {
+          "prompt": "A ________ helps explain the main idea.",
+          "answer": "key term"
+        }
+      ],
+      "mcqQuestions": [
+        {
+          "question": "Which option best matches the lesson concept?",
+          "options": [
+            "A. Choice 1",
+            "B. Choice 2",
+            "C. Choice 3",
+            "D. Choice 4"
+          ],
+          "answer": "A. Choice 1"
+        }
+      ],
+      "veryShortAnswerQuestions": [
+        {
+          "question": "What is the main concept discussed today?",
+          "answer": "A short subject-appropriate definition."
+        }
+      ],
+      "didYouKnow": [
+        "Interesting supporting fact"
+      ],
+      "summary": [
+        "Short summary point"
+      ],
+      "quickRevision": [
+        "Revision cue"
+      ],
+      "rememberPoints": [
+        "Concept -> Meaning -> Example"
+      ]
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 8192
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "SESSION INPUTS\r\nUse the following session inputs as the source of truth.\r\n\r\nSubject: Mathematics\r\nGrade/Level: Class IX\r\nChapter scope: [\"Number System\"]\r\nSession title: Number System\r\nSession number: 1 of 1\r\nSession duration: 45 minutes\r\nLearning outcomes: []\r\nPrevious session context: Number System: We expanded our number system to include numbers that cannot be written as fractions.\r\nLearning pace: Balanced\r\nTarget difficulty: Balanced\r\nOutput language: english\r\nLanguage execution rule: Write every natural-language value in english. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when english is required.\r\nReading level: Grade-aligned\r\nResponse length: Balanced\r\nCreativity: Moderate\r\n\r\nSTRICT OUTPUT CONTRACT\r\n1. Generate notes for one mathematics session only.\r\n2. Use only the provided session scope and learning outcomes.\r\n3. Do not introduce future-session content.\r\n4. Return valid JSON only.\r\n5. Use note-ready, student-friendly language.\r\n6. Prefer explicit worked steps over long prose when solving is involved.\r\n7. Use non-generic mathematics questions and examples tied to the visible scope.\r\n8. Include formula-first explanation when applicable.\r\n9. Show substitution, simplification, and final answer clearly in worked examples.\r\n10. You may include readable LaTeX-style strings in `latex` or `displayLatex` fields where helpful, but the text should still make sense without a math renderer.\r\n11. For geometry, mensuration, coordinate geometry, triangles, circles, constructions, transformations, graphs, number lines, ratios, and 3D solids, include at least one structured `geometryDiagrams` item.\r\n12. Do not return raw SVG, HTML, markdown tables, or script-like markup. Return diagram JSON only.\r\n13. Every geometry worked example must include `problem`, `diagramRef`, `given`, `formula`, `solutionSteps`, `reasoning`, and `finalAnswer`.\r\n14. Prefer real tables in `comparisonTables` for shape properties, theorem conditions/conclusions, formula comparisons, and common mistakes.\r\n15. Include `formulaCards` for important formulas and `commonMistakes` for likely calculation/diagram mistakes.\r\n16. Do not create or request AI-generated images in math notes. Do not include `visualAssets`, image prompts, base64 images, screenshots, or decorative picture descriptions.\r\n17. For common diagrams, use `template` plus `params` instead of inventing many point coordinates. Approved templates are: `rightTriangle`, `sqrtNumberLineConstruction`, `theodorusSpiral`, `circleRadiusDiameter`, `coordinatePlanePlot`, `rectangleAreaPerimeter`, `anglePair`, `barModel`, `solid3D`.\r\n18. For square-root or irrational-number construction topics, prefer `template: \"sqrtNumberLineConstruction\"` or `template: \"theodorusSpiral\"` with `params.roots` and `params.highlightRoot`.\r\n19. Keep diagram captions short and external-note friendly. Do not repeat the same diagram as both a global diagram and a worked-example image; use `diagramRef`.\r\n20. For `given`, `formula`, `solutionSteps`, `reasoning`, and `finalAnswer`, use structured math objects whenever an expression appears.\r\n21. Prefer this shape for mixed math lines: `{ \"text\": \"Multiply numerator and denominator by\", \"latex\": \"\\\\frac{\\\\sqrt{3}}{\\\\sqrt{3}}\" }`.\r\n22. Use `displayLatex` for standalone expressions such as `\\\\frac{5}{\\\\sqrt{3}}`, multi-step substitutions, or final simplified equations that should appear on their own line.\r\n23. Do not put a full narrated sentence and the full expression into one plain string when a structured math object can be used.\r\n24. For variable setup lines, use natural wording like `Let a = 6 cm` or `Take b = 8 cm`. Never write malformed labels like `Leg a = 6 cm`.\r\n\r\nReturn exactly this top-level shape:\r\n{\r\n  \"studentLessonNotes\": {\r\n    \"title\": \"Student lesson note title\",\r\n    \"sessionOverview\": \"Friendly one-session overview\",\r\n    \"introduction\": \"Friendly student-facing introduction\",\r\n    \"learningObjectives\": [\"After this lesson you will be able to...\"],\r\n    \"quickRecall\": [\"Short prerequisite revision point\"],\r\n    \"easyToRemember\": [\"Simple memory line for the concept\"],\r\n    \"comparisonTables\": [\r\n      {\r\n        \"title\": \"Comparison title\",\r\n        \"headers\": [\"Feature\", \"Type A\", \"Type B\"],\r\n        \"rows\": [[\"Example feature\", \"Example A\", \"Example B\"]]\r\n      }\r\n    ],\r\n    \"formulaCards\": [\r\n      {\r\n        \"title\": \"Formula title\",\r\n        \"formula\": {\r\n          \"text\": \"Readable formula\",\r\n          \"latex\": \"a^2 + b^2 = c^2\"\r\n        },\r\n        \"meaning\": \"What each part means\",\r\n        \"whenToUse\": \"When this formula applies\"\r\n      }\r\n    ],\r\n    \"geometryDiagrams\": [\r\n      {\r\n        \"id\": \"diagram-1\",\r\n        \"type\": \"rightTriangle\",\r\n        \"template\": \"rightTriangle\",\r\n        \"params\": {\r\n          \"baseLength\": \"3 units\",\r\n          \"height\": \"4 units\",\r\n          \"hypotenuse\": \"5 units\"\r\n        },\r\n        \"title\": \"Right triangle diagram\",\r\n        \"caption\": \"A clean labelled geometry diagram\",\r\n        \"points\": [\r\n          { \"id\": \"A\", \"x\": 65, \"y\": 155, \"label\": \"A\" },\r\n          { \"id\": \"B\", \"x\": 245, \"y\": 155, \"label\": \"B\" },\r\n          { \"id\": \"C\", \"x\": 65, \"y\": 55, \"label\": \"C\" }\r\n        ],\r\n        \"lines\": [\r\n          { \"from\": \"A\", \"to\": \"B\", \"label\": \"base\" },\r\n          { \"from\": \"A\", \"to\": \"C\", \"label\": \"height\" },\r\n          { \"from\": \"B\", \"to\": \"C\", \"label\": \"hypotenuse\", \"highlight\": true }\r\n        ],\r\n        \"arcs\": [],\r\n        \"labels\": [{ \"text\": \"90 deg\", \"x\": 82, \"y\": 142 }],\r\n        \"measurements\": []\r\n      }\r\n    ],\r\n    \"proofSteps\": [\"Reasoning step 1\", \"Reasoning step 2\"],\r\n    \"commonMistakes\": [\r\n      {\r\n        \"mistake\": \"Common incorrect step\",\r\n        \"correction\": \"Correct method\",\r\n        \"example\": \"Short example\"\r\n      }\r\n    ],\r\n    \"sections\": [\r\n      {\r\n        \"heading\": \"Concept name\",\r\n        \"explanation\": \"Simple explanation\",\r\n        \"keyPoints\": [\"Important point\"],\r\n        \"examples\": [\"Real-life or classroom example\"],\r\n        \"whyItMatters\": \"Why students should care about this concept\",\r\n        \"terminology\": [\"Important term\"],\r\n        \"detailedExplanation\": \"A deeper but student-friendly explanation\",\r\n        \"observedIn\": [\"Where students observe it\"],\r\n        \"visualSupport\": [\"Diagram or visual suggestion\"],\r\n        \"visualAssets\": [],\r\n        \"importantNotes\": [\"Exam point or caution note\"],\r\n        \"memoryTechniques\": [\"Mnemonic or memory tip\"],\r\n        \"conceptSummary\": [\"One-line takeaway\"]\r\n      }\r\n    ],\r\n    \"definitions\": [\r\n      {\r\n        \"term\": \"Key term\",\r\n        \"definition\": \"Clear student-friendly definition\"\r\n      }\r\n    ],\r\n    \"workedExamples\": [\r\n      {\r\n        \"title\": \"Worked example title\",\r\n        \"problem\": \"Problem statement\",\r\n        \"diagramRef\": \"diagram-1\",\r\n        \"given\": [{ \"text\": \"Let a = 3 and b = 4\", \"latex\": \"a = 3, b = 4\" }],\r\n        \"formula\": [{ \"text\": \"Relevant formula\", \"latex\": \"a^2 + b^2 = c^2\" }],\r\n        \"steps\": [\"Step 1\", \"Step 2\"],\r\n        \"solutionSteps\": [\r\n          { \"text\": \"Write the formula\", \"displayLatex\": \"a^2 + b^2 = c^2\" },\r\n          { \"text\": \"Substitute the known values\", \"displayLatex\": \"3^2 + 4^2 = c^2\" },\r\n          { \"text\": \"Simplify carefully\", \"displayLatex\": \"9 + 16 = c^2\" }\r\n        ],\r\n        \"reasoning\": [{ \"text\": \"Why this method applies\", \"latex\": \"c^2 = a^2 + b^2\" }],\r\n        \"explanation\": \"How this example works\",\r\n        \"finalAnswer\": { \"text\": \"Final answer\", \"displayLatex\": \"c = 5\" },\r\n        \"latex\": \"x = y + z\",\r\n        \"displayLatex\": \"\\\\\\\\frac{a+b}{c}\"\r\n      }\r\n    ],\r\n    \"revisionSection\": {\r\n      \"definitions\": [\"Important definition\"],\r\n      \"formulas\": [\"Useful formula if applicable\"],\r\n      \"facts\": [\"Important fact\"],\r\n      \"keywords\": [\"Keyword\"],\r\n      \"conceptMap\": [\"Concept map cue\"],\r\n      \"quickRecap\": [\"Fast revision point\"]\r\n    },\r\n    \"selfCheckQuestions\": [\"Question students can answer independently\"],\r\n    \"quickSummary\": [\"Short summary point\"],\r\n    \"keyTerms\": [\"Important keyword\"],\r\n    \"fillInTheBlanks\": [\r\n      {\r\n        \"prompt\": \"An equation blank\",\r\n        \"answer\": \"Answer\"\r\n      }\r\n    ],\r\n    \"mcqQuestions\": [\r\n      {\r\n        \"question\": \"A mathematics MCQ\",\r\n        \"options\": [\"A. option\", \"B. option\", \"C. option\", \"D. option\"],\r\n        \"answer\": \"Correct option\"\r\n      }\r\n    ],\r\n    \"veryShortAnswerQuestions\": [\r\n      {\r\n        \"question\": \"A short mathematics question\",\r\n        \"answer\": \"Short answer\"\r\n      }\r\n    ],\r\n    \"didYouKnow\": [\"Interesting supporting fact\"],\r\n    \"summary\": [\"Key learning point\"],\r\n    \"quickRevision\": [\"Very short revision cue\"],\r\n    \"rememberPoints\": [\"Memory point\"]\r\n  }\r\n}\r\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"studentLessonNotes\": {\n    \"title\": \"Student lesson note title\",\n    \"sessionOverview\": \"Simple overview of what this session covers\",\n    \"introduction\": \"Student-friendly introduction\",\n    \"learningObjectives\": [\n      \"After this lesson you will be able to...\"\n    ],\n    \"quickRecall\": [\n      \"Short prerequisite revision point\"\n    ],\n    \"easyToRemember\": [\n      \"Simple memory line for the concept\"\n    ],\n    \"comparisonTables\": [\n      {\n        \"title\": \"Comparison table title\",\n        \"headers\": [\n          \"Feature\",\n          \"Type A\",\n          \"Type B\"\n        ],\n        \"rows\": [\n          [\n            \"Example feature\",\n            \"Example A\",\n            \"Example B\"\n          ]\n        ]\n      }\n    ],\n    \"formulaCards\": [\n      {\n        \"title\": \"Formula title\",\n        \"formula\": {\n          \"text\": \"Formula in readable form\",\n          \"latex\": \"a^2 + b^2 = c^2\"\n        },\n        \"meaning\": \"What the formula means\",\n        \"whenToUse\": \"When students should use it\"\n      }\n    ],\n    \"geometryDiagrams\": [\n      {\n        \"id\": \"diagram-1\",\n        \"type\": \"rightTriangle\",\n        \"title\": \"Right triangle diagram\",\n        \"caption\": \"A clean labelled geometry diagram\",\n        \"points\": [\n          {\n            \"id\": \"A\",\n            \"x\": 65,\n            \"y\": 155,\n            \"label\": \"A\"\n          },\n          {\n            \"id\": \"B\",\n            \"x\": 245,\n            \"y\": 155,\n            \"label\": \"B\"\n          },\n          {\n            \"id\": \"C\",\n            \"x\": 65,\n            \"y\": 55,\n            \"label\": \"C\"\n          }\n        ],\n        \"lines\": [\n          {\n            \"from\": \"A\",\n            \"to\": \"B\",\n            \"label\": \"base\"\n          },\n          {\n            \"from\": \"A\",\n            \"to\": \"C\",\n            \"label\": \"height\"\n          },\n          {\n            \"from\": \"B\",\n            \"to\": \"C\",\n            \"label\": \"hypotenuse\",\n            \"highlight\": true\n          }\n        ],\n        \"arcs\": [],\n        \"labels\": [\n          {\n            \"text\": \"90 deg\",\n            \"x\": 82,\n            \"y\": 142\n          }\n        ],\n        \"measurements\": []\n      }\n    ],\n    \"proofSteps\": [\n      \"Reasoning step 1\",\n      \"Reasoning step 2\"\n    ],\n    \"commonMistakes\": [\n      {\n        \"mistake\": \"Common incorrect step\",\n        \"correction\": \"Correct method\",\n        \"example\": \"Short example\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"Main idea\",\n        \"explanation\": \"Comprehensive but student-friendly explanation\",\n        \"keyPoints\": [\n          \"Revision point\"\n        ],\n        \"examples\": [\n          \"Worked example or everyday example\"\n        ],\n        \"whyItMatters\": \"Why students should care about this concept\",\n        \"terminology\": [\n          \"Important term\"\n        ],\n        \"detailedExplanation\": \"A slightly deeper but student-friendly explanation\",\n        \"observedIn\": [\n          \"Where students observe it\"\n        ],\n        \"visualSupport\": [\n          \"Diagram or visual suggestion\"\n        ],\n        \"visualAssets\": [\n          {\n            \"prompt\": \"Image generation prompt\",\n            \"alt\": \"Student-friendly illustration alt text\",\n            \"imageDataUrl\": \"data:image/png;base64,...\",\n            \"mimeType\": \"image/png\",\n            \"model\": \"runtime image model\"\n          }\n        ],\n        \"importantNotes\": [\n          \"Exam point or caution note\"\n        ],\n        \"memoryTechniques\": [\n          \"Mnemonic or memory tip\"\n        ],\n        \"conceptSummary\": [\n          \"One-line takeaway\"\n        ]\n      }\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Key term\",\n        \"definition\": \"Clear definition\"\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Worked example title\",\n        \"problem\": \"Solve the problem clearly\",\n        \"diagramRef\": \"diagram-1\",\n        \"given\": [\n          \"Given value 1\",\n          \"Given value 2\"\n        ],\n        \"formula\": [\n          \"Required formula\"\n        ],\n        \"steps\": [\n          \"Step 1\",\n          \"Step 2\"\n        ],\n        \"solutionSteps\": [\n          \"Write formula\",\n          \"Substitute values\",\n          \"Simplify\",\n          \"State final answer\"\n        ],\n        \"reasoning\": [\n          \"Why this method applies\"\n        ],\n        \"explanation\": \"How this example works\",\n        \"finalAnswer\": \"Final answer with unit\",\n        \"latex\": \"x = y + z\",\n        \"displayLatex\": \"\\\\\\\\frac{a+b}{c}\"\n      }\n    ],\n    \"revisionSection\": {\n      \"definitions\": [\n        \"Important definition\"\n      ],\n      \"formulas\": [\n        \"Useful formula if applicable\"\n      ],\n      \"facts\": [\n        \"Important fact\"\n      ],\n      \"keywords\": [\n        \"Keyword\"\n      ],\n      \"conceptMap\": [\n        \"Concept map cue\"\n      ],\n      \"quickRecap\": [\n        \"Fast revision point\"\n      ]\n    },\n    \"selfCheckQuestions\": [\n      \"Question students can answer independently\"\n    ],\n    \"quickSummary\": [\n      \"Short summary point\"\n    ],\n    \"keyTerms\": [\n      \"Important keyword\"\n    ],\n    \"fillInTheBlanks\": [\n      {\n        \"prompt\": \"A ________ helps explain the main idea.\",\n        \"answer\": \"key term\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which option best matches the lesson concept?\",\n        \"options\": [\n          \"A. Choice 1\",\n          \"B. Choice 2\",\n          \"C. Choice 3\",\n          \"D. Choice 4\"\n        ],\n        \"answer\": \"A. Choice 1\"\n      }\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"What is the main concept discussed today?\",\n        \"answer\": \"A short subject-appropriate definition.\"\n      }\n    ],\n    \"didYouKnow\": [\n      \"Interesting supporting fact\"\n    ],\n    \"summary\": [\n      \"Short summary point\"\n    ],\n    \"quickRevision\": [\n      \"Revision cue\"\n    ],\n    \"rememberPoints\": [\n      \"Concept -> Meaning -> Example\"\n    ]\n  }\n}"
+    }
+  ]
+}

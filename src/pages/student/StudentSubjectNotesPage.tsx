@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ActionToast } from "../../components/ActionToast";
 import { ExpandableCard } from "../../components/ExpandableCard";
 import type { PublishedStudentArtifact } from "../../types/student-content";
+import { dedupePublishedStudentArtifacts } from "../../utils/studentArtifactDedup";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
 const BACKEND_URL =
@@ -106,7 +107,7 @@ function SubjectNotesPage() {
   }, [session?.id, session?.schoolId]);
 
   const subjectNotes = useMemo(() => {
-    return backendNotes
+    return dedupePublishedStudentArtifacts(backendNotes)
       .filter((note) => normalizeSubjectKey(getSubjectDisplayName(note)) === normalizeSubjectKey(subject))
       .sort((a, b) => a.sessionNumber - b.sessionNumber);
   }, [backendNotes, subject]);

@@ -1,0 +1,356 @@
+{
+  "id": "math-ix-numsys-sess01",
+  "sessionNumber": 1,
+  "title": "The Real Number System: Rational vs. Irrational Numbers",
+  "duration": 45,
+  "teacherLessonNotes": {
+    "sessionOverview": "This session introduces Class IX students to the classification of real numbers, focusing on the distinction between rational and irrational numbers. Students will explore decimal expansions, identify non-terminating non-recurring decimals, and learn to locate irrational numbers on the number line.",
+    "prerequisiteKnowledge": [
+      "Understanding of integers and whole numbers",
+      "Basic concept of fractions and division",
+      "Familiarity with terminating decimals (e.g., 0.5)",
+      "Ability to plot points on a number line"
+    ],
+    "previousSessionRecap": [
+      "Review of natural numbers, whole numbers, and integers",
+      "Definition of rational numbers as p/q form where q ≠ 0"
+    ],
+    "learningOutcomes": [
+      "Students will define rational and irrational numbers with examples.",
+      "Students will distinguish between terminating, non-terminating recurring, and non-terminating non-recurring decimals.",
+      "Students will identify specific irrational numbers (e.g., √2, √3) on the number line."
+    ],
+    "teachingPlan": [
+      {
+        "minutes": 5,
+        "topic": "Introduction",
+        "teachingStrategy": "Questioning with simple real-life example"
+      },
+      {
+        "minutes": 15,
+        "topic": "Decimal Expansions & Classification",
+        "teachingStrategy": "Direct instruction with board examples"
+      },
+      {
+        "minutes": 20,
+        "topic": "Locating Irrational Numbers",
+        "teachingStrategy": "Visual demonstration and guided practice"
+      },
+      {
+        "minutes": 5,
+        "topic": "Recap & Assessment",
+        "teachingStrategy": "Oral questioning and summary"
+      }
+    ],
+    "lessonPurpose": [
+      "To bridge the gap between known rational numbers and the broader set of real numbers.",
+      "To develop logical reasoning regarding infinite decimal patterns.",
+      "To prepare students for geometric constructions involving square roots."
+    ],
+    "teachingSequence": [
+      "Start with a hook about measuring lengths that cannot be exact fractions.",
+      "Define Rational Numbers and their decimal forms (terminating/recurring).",
+      "Introduce Irrational Numbers as non-terminating, non-recurring decimals.",
+      "Demonstrate the geometric construction of √2 on the number line.",
+      "Conclude with a summary of the Real Number System hierarchy."
+    ],
+    "guidedPractice": [
+      "Ask students to classify 0.333..., 0.5, and 1.414213... as rational or irrational.",
+      "Guide students through drawing a right triangle to find √2 length.",
+      "Have students mark √2 on a drawn number line."
+    ],
+    "lessonBlocks": [
+      {
+        "title": "Introduction",
+        "durationMinutes": 5,
+        "teacherPrompt": [
+          "If I measure the diagonal of a square with side 1 cm, can I write its length exactly as a fraction?"
+        ],
+        "explanation": [
+          "Explain that while we know the answer is approximately 1.414..., it cannot be written as p/q.",
+          "Introduce the term 'Irrational Number' for such numbers."
+        ],
+        "examples": [
+          "The diagonal of a square with side 1 unit."
+        ],
+        "boardWork": [
+          "Write: Side = 1, Diagonal = ?"
+        ],
+        "boardSteps": [
+          "Draw a square ABCD with side AB = 1.",
+          "Draw diagonal AC and label it x."
+        ],
+        "solutionFlow": [
+          "State Pythagoras theorem: x² = 1² + 1²",
+          "Conclude x = √2, which is approx 1.414..."
+        ],
+        "proofSteps": [
+          "Assume √2 is rational (p/q).",
+          "Show contradiction that p and q must both be even."
+        ],
+        "geometryDiagrams": [
+          {
+            "id": "diagram-1",
+            "type": "rightTriangle",
+            "title": "Square Diagonal",
+            "caption": "Square with side 1 and diagonal √2",
+            "points": [
+              {
+                "id": "A",
+                "x": 50,
+                "y": 150,
+                "label": "A"
+              },
+              {
+                "id": "B",
+                "x": 200,
+                "y": 150,
+                "label": "B"
+              },
+              {
+                "id": "C",
+                "x": 200,
+                "y": 50,
+                "label": "C"
+              }
+            ],
+            "lines": [
+              {
+                "from": "A",
+                "to": "B",
+                "label": "1"
+              },
+              {
+                "from": "B",
+                "to": "C",
+                "label": "1"
+              },
+              {
+                "from": "A",
+                "to": "C",
+                "label": "√2",
+                "highlight": true
+              }
+            ],
+            "arcs": [],
+            "labels": [
+              {
+                "text": "90°",
+                "x": 185,
+                "y": 135
+              }
+            ],
+            "measurements": []
+          }
+        ],
+        "checkUnderstanding": [
+          "Is 0.5 a rational number? Why?"
+        ],
+        "expectedAnswers": [
+          "Yes, because it terminates (1/2)."
+        ],
+        "activity": [
+          "Think-Pair-Share: List three numbers you think are irrational."
+        ]
+      }
+    ],
+    "conceptFlow": [
+      {
+        "conceptName": "Rational Numbers",
+        "definition": "Numbers expressible as p/q where p, q are integers and q ≠ 0.",
+        "coreExplanation": "They have decimal expansions that either terminate or repeat a pattern.",
+        "importance": "Foundation for algebraic operations and measurement.",
+        "observedIn": [
+          "Fractions in recipes",
+          "Money calculations"
+        ],
+        "whyStudyIt": "To understand the limits of fractions in representing all quantities.",
+        "relationshipWithPrevious": "Extends the set of integers.",
+        "relationshipWithFuture": "Leads to Real Numbers and complex numbers.",
+        "keywords": [
+          "Terminating",
+          "Recurring",
+          "p/q"
+        ],
+        "teacherMoves": [
+          "Show 1/3 = 0.333..."
+        ],
+        "examples": [
+          "2/5, -4/7, 0"
+        ],
+        "visuals": [
+          "Number line with fractions marked"
+        ],
+        "solutionFlow": [
+          "Convert fraction to decimal",
+          "Check for termination or repetition"
+        ],
+        "proofSteps": [
+          "Assume p/q exists",
+          "Perform division"
+        ],
+        "geometryDiagrams": []
+      },
+      {
+        "conceptName": "Irrational Numbers",
+        "definition": "Numbers that cannot be written as p/q; decimal expansion is non-terminating and non-recurring.",
+        "coreExplanation": "They fill the gaps between rational numbers on the number line.",
+        "importance": "Essential for geometry (diagonals, circles) and advanced math.",
+        "observedIn": [
+          "Pi (π)",
+          "Square roots of non-perfect squares"
+        ],
+        "whyStudyIt": "To realize that the number line is continuous, not just dots.",
+        "relationshipWithPrevious": "Complements rational numbers to form Real Numbers.",
+        "relationshipWithFuture": "Used in trigonometry and calculus.",
+        "keywords": [
+          "Non-terminating",
+          "Non-recurring",
+          "√2"
+        ],
+        "teacherMoves": [
+          "Demonstrate √2 cannot be a fraction"
+        ],
+        "examples": [
+          "√2, √3, π"
+        ],
+        "visuals": [
+          "Number line showing gaps filled by irrationals"
+        ],
+        "solutionFlow": [
+          "Identify non-perfect square",
+          "Estimate decimal value"
+        ],
+        "proofSteps": [
+          "Proof by contradiction for √2"
+        ],
+        "geometryDiagrams": []
+      }
+    ],
+    "classroomQuestions": [
+      {
+        "question": "Is 0.1010010001... rational or irrational?",
+        "level": "Understanding",
+        "expectedResponse": "Irrational because the pattern of zeros increases, so it never repeats.",
+        "answerPoints": [
+          "Pattern is not repeating",
+          "Zeros increase in count"
+        ]
+      },
+      {
+        "question": "Can every point on a number line be represented as a fraction?",
+        "level": "Analysis",
+        "expectedResponse": "No, irrational numbers exist between any two rational numbers.",
+        "answerPoints": [
+          "Existence of irrationals",
+          "Continuity of the number line"
+        ]
+      }
+    ],
+    "commonMisconceptionsDetailed": [
+      {
+        "misconception": "All decimals are rational numbers.",
+        "correction": "Clarify that only terminating or recurring decimals are rational; non-terminating non-recurring ones are irrational."
+      },
+      {
+        "misconception": "√4 is an irrational number.",
+        "correction": "Remind students that √4 = 2, which is a perfect square and thus rational."
+      }
+    ],
+    "differentiation": {
+      "slowLearners": [
+        "Use visual number lines with pre-marked points.",
+        "Focus on identifying terminating decimals first."
+      ],
+      "averageLearners": [
+        "Practice converting fractions to decimals.",
+        "Locate √2 and √3 on the number line."
+      ],
+      "advancedLearners": [
+        "Challenge them to find an irrational number between two given rationals."
+      ]
+    },
+    "teacherTips": [
+      "Use a large piece of string or paper strip to physically show lengths like √2.",
+      "Emphasize that 'irrational' does not mean 'illogical'."
+    ],
+    "misconceptions": [
+      "Confusing non-recurring with random numbers",
+      "Thinking π is exactly 3.14"
+    ],
+    "formativeChecks": [
+      "Ask students to hold up fingers: 1 for rational, 2 for irrational when a number is called out."
+    ],
+    "assessmentQuestions": [
+      "Is 0.75 rational? Justify.",
+      "Locate √2 on the number line."
+    ],
+    "blackboardSummary": [
+      "Rational: Terminating or Recurring",
+      "Irrational: Non-terminating, Non-recurring",
+      "Real Numbers = Rational + Irrational"
+    ],
+    "timePlan": [
+      {
+        "segment": "Recap",
+        "minutes": 5,
+        "purpose": "Refresh prerequisite ideas of integers and fractions"
+      },
+      {
+        "segment": "New Concept",
+        "minutes": 20,
+        "purpose": "Introduce irrational numbers and decimal types"
+      },
+      {
+        "segment": "Application",
+        "minutes": 15,
+        "purpose": "Locate irrationals on number line"
+      },
+      {
+        "segment": "Closure",
+        "minutes": 5,
+        "purpose": "Summarize key takeaways"
+      }
+    ],
+    "sessionSummary": [
+      "We learned that not all numbers can be written as fractions; some are irrational."
+    ],
+    "endOfClassRecap": [
+      {
+        "prompt": "Today I understood the idea of ________.",
+        "expectedAnswer": "irrational numbers and their decimal expansion"
+      }
+    ],
+    "nextSessionBridge": [
+      "Next session will explore operations on real numbers and simplification of surds."
+    ]
+  },
+  "learningOutcomes": [
+    "Define rational and irrational numbers.",
+    "Classify decimals as terminating, recurring, or non-recurring.",
+    "Locate √2 on the number line using geometric construction."
+  ],
+  "introduction": "Imagine you have a square piece of paper with sides exactly 1 meter long. If you cut it diagonally, how long is the cut? Is it exactly 1.4 meters? Or 1.41 meters? What if I told you that no matter how many digits you write, you can never write the exact length as a fraction? Today, we discover these mysterious numbers called 'Irrational Numbers' and see how they fit into our number system.",
+  "theory": {
+    "overview": "The Real Number System consists of Rational and Irrational numbers. Rational numbers have decimal expansions that terminate or repeat. Irrational numbers have non-terminating, non-recurring decimal expansions.",
+    "keyPoints": [
+      "Rational numbers can be written as p/q (q ≠ 0).",
+      "Terminating decimals are rational (e.g., 0.5).",
+      "Recurring decimals are rational (e.g., 0.333...).",
+      "Non-terminating, non-recurring decimals are irrational (e.g., √2)."
+    ],
+    "detailedContent": "A number is rational if it can be expressed as a fraction of two integers. For example, 1/2 = 0.5 (terminating) and 1/3 = 0.333... (recurring). However, numbers like √2 (approx 1.414...) or π (approx 3.1415...) cannot be written as fractions. Their decimal expansions go on forever without repeating a pattern. These are irrational numbers. Together, rational and irrational numbers form the set of Real Numbers."
+  },
+  "activities": [
+    {
+      "name": "Number Line Hunt",
+      "instructions": [
+        "Draw a number line from 0 to 3 on your notebook.",
+        "Mark the integers 1, 2, and 3 clearly.",
+        "Using a compass and ruler, construct the length of √2 starting from 0.",
+        "Mark the point where this length ends on the number line."
+      ],
+      "durationMinutes": 15
+    }
+  ]
+}
