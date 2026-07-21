@@ -682,6 +682,10 @@ export interface SessionPlan {
   materials?: {
     ppt: {
       deckMode?: "teacher-delivery";
+      deckReadiness?: "teacher-ready" | "needs-review" | "visual-fallback-used" | "export-safe";
+      coverageStatus?: "complete" | "partial" | "needs-review";
+      visualIntegrityStatus?: "resolved" | "fallback-used" | "needs-review";
+      exportIntegrityStatus?: "ready" | "blocked" | "needs-review";
       templateId?: string;
       templateName?: string;
       themeId?: string;
@@ -726,6 +730,13 @@ export interface SessionPlan {
         omittedContent?: RenderableMathText[];
       };
       slides: {
+        slidePurpose?: RenderableMathText;
+        teachingBeat?: RenderableMathText;
+        mustTeach?: RenderableMathText[];
+        visualDecision?: "svg-programmatic" | "local-generated-image" | "reusable-external" | "none";
+        visualResolved?: boolean;
+        visualRelevanceStatus?: "valid" | "generic" | "mismatch" | "none";
+        qualityFlags?: string[];
         templateId?: string;
         templateSlideKey?: string;
         templateSlideTitle?: string;
@@ -753,6 +764,12 @@ export interface SessionPlan {
         };
         visualPlan?: RenderableMathText;
         assets?: {
+          assetId?: string;
+          storagePath?: RenderableMathText;
+          generator?: RenderableMathText;
+          promptHash?: string;
+          conceptKey?: string;
+          visualRelevanceStatus?: "valid" | "generic" | "mismatch" | "none";
           purpose?: RenderableMathText;
           searchQuery?: RenderableMathText;
           sourceSite?: RenderableMathText;
@@ -772,6 +789,8 @@ export interface SessionPlan {
           type?: string;
           instructions?: RenderableMathText[];
           svgCode?: string;
+          conceptKey?: string;
+          visualRelevanceStatus?: "valid" | "generic" | "mismatch" | "none";
         };
         generatedVisual?: {
           visualPlan?: RenderableMathText;

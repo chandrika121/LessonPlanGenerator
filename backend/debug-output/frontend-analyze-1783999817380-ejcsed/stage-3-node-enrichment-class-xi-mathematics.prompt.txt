@@ -1,0 +1,520 @@
+Stage 3: Node Enrichment - Class XI - Mathematics
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XI",
+  "subject": "Mathematics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U2",
+      "unit_name": "Conic Sections",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "Sections of a cone: circles, ellipse, parabola, hyperbola, a point, a straight line and a pair of intersecting lines as a degenerated case of a conic section.",
+        "Standard equations and simple properties of parabola, ellipse and hyperbola.",
+        "Standard equation of a circle."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Conic Sections",
+          "source_chapter_name": "Conic Sections",
+          "source_heading": "Conic Sections",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Unit-II: Algebra",
+      "part_or_section": "",
+      "marks": 25,
+      "topics": [
+        "Complex Numbers and Quadratic Equations",
+        "Linear Inequalities",
+        "Permutations and Combinations",
+        "Binomial Theorem",
+        "Sequence and Series",
+        "Principle of Mathematical Induction",
+        "(Complex Numbers and) Quadratic Equations"
+      ],
+      "subtopics": [
+        "Process of the proof by induction, motivating the application of the method by looking at natural numbers as the least inductive subset of real numbers. The principle of mathematical induction and simple applications.",
+        "Polar representation of complex numbers. Statement of Fundamental Theorem of Algebra, solution of quadratic equations (with real coefficients) in the complex number system.",
+        "Graphical solution of linear inequalities in two variables. Graphical method of finding a solution of system of linear inequalities in two variables.",
+        "General and middle term in binomial expansion",
+        "Formulae for special sums: sum k, sum k^2, sum k^3"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Algebra",
+          "source_chapter_name": "Algebra",
+          "source_heading": "Algebra",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Unit-III: Coordinate Geometry",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "Straight Lines",
+        "Introduction to Three-dimensional Geometry"
+      ],
+      "subtopics": [
+        "Normal form. General equation of a line.",
+        "Section formula."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordinate Geometry",
+          "source_chapter_name": "Coordinate Geometry",
+          "source_heading": "Coordinate Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U3",
+      "unit_name": "Introduction to Three-dimensional Geometry",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "Coordinate axes and coordinate planes in three dimensions.",
+        "Coordinates of a point.",
+        "Distance between two points."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Introduction to Three-dimensional Geometry",
+          "source_chapter_name": "Introduction to Three-dimensional Geometry",
+          "source_heading": "Introduction to Three-dimensional Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U4",
+      "unit_name": "Calculus",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Limits and Derivatives"
+      ],
+      "subtopics": [
+        "Derivatives of composite functions (Chain rule)"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Calculus",
+          "source_chapter_name": "Calculus",
+          "source_heading": "Calculus",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U5",
+      "unit_name": "Statistics and Probability",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Statistics",
+        "Probability"
+      ],
+      "subtopics": [
+        "Random experiments; outcomes, sample space (set representation)"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability",
+          "source_chapter_name": "Statistics and Probability",
+          "source_heading": "Statistics and Probability",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U1",
+      "unit_name": "Sets and Functions",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Sets",
+        "Relations and Functions",
+        "Trigonometric Functions"
+      ],
+      "subtopics": [
+        "Practical problems on Union and Intersection of two sets",
+        "Composition of Functions",
+        "General solution of trigonometric equations of the type sin y = sin a, cos y = cos a and tan y = tan a"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Sets and Functions",
+          "source_chapter_name": "Sets and Functions",
+          "source_heading": "Sets and Functions",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XI",
+  "subject": "Mathematics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U2",
+      "unit_name": "Conic Sections",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "Sections of a cone: circles, ellipse, parabola, hyperbola, a point, a straight line and a pair of intersecting lines as a degenerated case of a conic section.",
+        "Standard equations and simple properties of parabola, ellipse and hyperbola.",
+        "Standard equation of a circle."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Conic Sections",
+          "source_chapter_name": "Conic Sections",
+          "source_heading": "Conic Sections",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Unit-II: Algebra",
+      "part_or_section": "",
+      "marks": 25,
+      "topics": [
+        "Complex Numbers and Quadratic Equations",
+        "Linear Inequalities",
+        "Permutations and Combinations",
+        "Binomial Theorem",
+        "Sequence and Series",
+        "Principle of Mathematical Induction",
+        "(Complex Numbers and) Quadratic Equations"
+      ],
+      "subtopics": [
+        "Process of the proof by induction, motivating the application of the method by looking at natural numbers as the least inductive subset of real numbers. The principle of mathematical induction and simple applications.",
+        "Polar representation of complex numbers. Statement of Fundamental Theorem of Algebra, solution of quadratic equations (with real coefficients) in the complex number system.",
+        "Graphical solution of linear inequalities in two variables. Graphical method of finding a solution of system of linear inequalities in two variables.",
+        "General and middle term in binomial expansion",
+        "Formulae for special sums: sum k, sum k^2, sum k^3"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Algebra",
+          "source_chapter_name": "Algebra",
+          "source_heading": "Algebra",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Unit-III: Coordinate Geometry",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "Straight Lines",
+        "Introduction to Three-dimensional Geometry"
+      ],
+      "subtopics": [
+        "Normal form. General equation of a line.",
+        "Section formula."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordinate Geometry",
+          "source_chapter_name": "Coordinate Geometry",
+          "source_heading": "Coordinate Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U3",
+      "unit_name": "Introduction to Three-dimensional Geometry",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "Coordinate axes and coordinate planes in three dimensions.",
+        "Coordinates of a point.",
+        "Distance between two points."
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Introduction to Three-dimensional Geometry",
+          "source_chapter_name": "Introduction to Three-dimensional Geometry",
+          "source_heading": "Introduction to Three-dimensional Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U4",
+      "unit_name": "Calculus",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Limits and Derivatives"
+      ],
+      "subtopics": [
+        "Derivatives of composite functions (Chain rule)"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Calculus",
+          "source_chapter_name": "Calculus",
+          "source_heading": "Calculus",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U5",
+      "unit_name": "Statistics and Probability",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Statistics",
+        "Probability"
+      ],
+      "subtopics": [
+        "Random experiments; outcomes, sample space (set representation)"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability",
+          "source_chapter_name": "Statistics and Probability",
+          "source_heading": "Statistics and Probability",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U7",
+      "source_unit_id": "U1",
+      "unit_name": "Sets and Functions",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Sets",
+        "Relations and Functions",
+        "Trigonometric Functions"
+      ],
+      "subtopics": [
+        "Practical problems on Union and Intersection of two sets",
+        "Composition of Functions",
+        "General solution of trigonometric equations of the type sin y = sin a, cos y = cos a and tan y = tan a"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Sets and Functions",
+          "source_chapter_name": "Sets and Functions",
+          "source_heading": "Sets and Functions",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+## CLASS XI (2026-27)
+Three Hours Max Marks: 80
+No. Units Marks
+- I. Sets and Functions 23
+II. Algebra 25
+III. Coordinate Geometry 12
+IV. Calculus 08
+- V. Statistics and Probability 12
+Total 80
+Internal Assessment 20
+*No chapter/unit-wise weightage. Care to be taken to cover all the chapters.
+## Unit-I: Sets and Functions
+- 1. Sets
+Sets and their representations, Empty set, Finite and Infinite sets, Equal sets, Subsets,
+Subsets of a set of real numbers especially intervals (with notations). Universal set. Venn
+
+# Page 5
+
+## MATHEMATICS QUESTION PAPER DESIGN
+## CLASS – XI (2026-27)
+Time: 3 hours Max. Marks: 80
+%
+- S. Typology of Questions Total Weight
+No. Marks age
+Remembering: Exhibit memory of previously learned material
+by recalling facts, terms, basic concepts, and answers.
+1 55
+44
+Understanding: Demonstrate understanding of facts and ideas
+by organizing, comparing, translating, interpreting, giving
+descriptions, and stating main ideas
+Applying: Solve problems to new situations by applying
+2 20 25
+acquired knowledge, facts, techniques and rules in a different
+---
+
+# Page 6
+
+## CLASS – XI (2026-27)
+The following topics are included in the syllabus but will be assessed only formatively to reinforce
+understanding without adding to summative assessments. This reduces academic stress while
+ensuring meaningful learning. Schools can integrate these with existing chapters as they align well.
+Relevant NCERT textual material is enclosed for reference.
+S.No. Content
+## Unit-I: Sets and Functions
+- 1. Sets
+Practical problems on Union and Intersection of two sets.
+- 2. Relations and Functions
+Composition of Functions
+- 3. Trigonometric Functions
+General solution of trigonometric equations of the type sin 𝑦 = sin 𝑎 , cos 𝑦 = cos 𝑎 and
+tan 𝑦 = tan 𝑎 .
+## Unit-II: Algebra

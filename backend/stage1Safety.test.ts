@@ -3,10 +3,12 @@ import assert from "node:assert/strict";
 async function main() {
   process.env.NODE_ENV = "test";
   const {
+    repairAssessmentFrameworkStringArrays,
     sanitizeJsonText,
     isLanguageSubject,
     buildLanguageFallbackStage1Facts,
     generateWithOllama,
+    tryRepairStructuredStageJson,
     tryRepairSessionJson,
   } = await import("./server.ts");
 
@@ -34,6 +36,41 @@ async function main() {
       "sessionOverview": "Overview"
   `);
   assert.equal(unrecoverableSessionJson, null);
+
+  const repairedAssessmentFramework = repairAssessmentFrameworkStringArrays(`{
+    "assessment_framework": {
+      "question_paper_design": [
+        "Remembering: 44%",
+        "Analysing": "Weightage not explicitly quantified.",
+        "Evaluating": "Included in typology list."
+      ]
+    }
+  }`);
+  const parsedAssessmentFramework = JSON.parse(repairedAssessmentFramework);
+  assert.deepEqual(
+    parsedAssessmentFramework.assessment_framework.question_paper_design,
+    [
+      "Remembering: 44%",
+      "Analysing: Weightage not explicitly quantified.",
+      "Evaluating: Included in typology list.",
+    ]
+  );
+
+  const repairedStructuredJson = tryRepairStructuredStageJson(`{
+    "learning_outcomes": [
+      {
+        "unit_name": "Unit-I",
+        "chapter_name": "Relations and Functions",
+        "topic" "Relations",
+        "outcomes": ["Identify relations"]
+      }
+    ]
+  }`);
+  assert.ok(repairedStructuredJson, "repairable structured stage JSON should produce a repaired candidate");
+  assert.equal(
+    JSON.parse(repairedStructuredJson || "{}").learning_outcomes[0].topic,
+    "Relations"
+  );
 
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () =>

@@ -562,7 +562,7 @@ async function main() {
   assert.equal(scienceSessionMetadata?.scienceArtifact, "assessment");
   assert.ok((scienceSessionMetadata?.scienceContentModes || []).includes("numerical"));
 
-  const scienceStage1Prompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
+  const scienceStage1Prompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction/faithful-curriculum-extraction.md", {
     STAGE_NAME: "Stage 1 - Raw Curriculum Extraction",
     EXTRACTION_RULES: "return JSON only",
     CHUNK_RULE: "",
@@ -573,7 +573,7 @@ async function main() {
   assert.match(scienceStage1Prompt, /Science Subject Intelligence Layer \(Active\)/);
   assert.match(scienceStage1Prompt, /Never force a fixed curriculum structure\./);
 
-  const tamilWrappedPrompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
+  const tamilWrappedPrompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction/faithful-curriculum-extraction.md", {
     STAGE_NAME: "Stage 1 - Raw Curriculum Extraction",
     EXTRACTION_RULES: "return JSON only",
     CHUNK_RULE: "",
@@ -627,7 +627,7 @@ async function main() {
   });
   assert.doesNotMatch(genericDownstreamPrompt, /English Subject Intelligence Layer \(Active\)/);
 
-  const nonTamilStage1Prompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
+  const nonTamilStage1Prompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction/faithful-curriculum-extraction.md", {
     STAGE_NAME: "Stage 1 - Raw Curriculum Extraction",
     EXTRACTION_RULES: "return JSON only",
     CHUNK_RULE: "",
@@ -658,7 +658,7 @@ async function main() {
   );
 
   const tamilPromptLengthEstimator = (chunkText: string) =>
-    renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
+    renderStage1PromptWithCurriculumIntelligence("curriculum-extraction/faithful-curriculum-extraction.md", {
       STAGE_NAME: "Stage 1 - Raw Curriculum Extraction",
       EXTRACTION_RULES: "return JSON only",
       CHUNK_RULE: "",
@@ -668,7 +668,7 @@ async function main() {
       stageLabel: "Stage 1 - Raw Curriculum Extraction",
     }).length;
   const nonTamilPromptLengthEstimator = (chunkText: string) =>
-    renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
+    renderStage1PromptWithCurriculumIntelligence("curriculum-extraction/faithful-curriculum-extraction.md", {
       STAGE_NAME: "Stage 1 - Raw Curriculum Extraction",
       EXTRACTION_RULES: "return JSON only",
       CHUNK_RULE: "",
@@ -769,7 +769,7 @@ async function main() {
   assert.match(filteredTamilCombinedSource, /CLASS IX TAMIL/);
   assert.doesNotMatch(filteredTamilCombinedSource, /CLASS X TAMIL/);
   assert.match(filteredTamilCombinedSource, /IX INDEX\nX INDEX/);
-  const selectedTamilStage1Prompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction.md", {
+  const selectedTamilStage1Prompt = renderStage1PromptWithCurriculumIntelligence("curriculum-extraction/faithful-curriculum-extraction.md", {
     STAGE_NAME: "Stage 1 - Raw Curriculum Extraction",
     EXTRACTION_RULES: "return JSON only",
     CHUNK_RULE: "",

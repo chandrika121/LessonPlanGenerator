@@ -1,0 +1,76 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "document_metadata": {
+      "board": "",
+      "subject": "",
+      "class": "",
+      "grade": "",
+      "stream": "",
+      "academic_year": "",
+      "total_pages": ""
+    },
+    "classes": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": ""
+      }
+    ],
+    "units": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ],
+    "chapters": [
+      {
+        "class_name": "",
+        "subject": "",
+        "part_or_section": "",
+        "unit_id": "U1",
+        "unit_name": "Unit heading from source",
+        "chapter_name": "",
+        "marks": null,
+        "topics": [
+          ""
+        ],
+        "subtopics": [
+          ""
+        ],
+        "key_concepts": [
+          ""
+        ]
+      }
+    ]
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 4096
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "Stage 1: Raw Curriculum Extraction\nExtraction-first architecture is mandatory.\nComplete stages strictly in this order:\nStage 1: Raw Curriculum Extraction\nStage 2: Document Structure Hierarchy\nStage 3: Node Enrichment\nStage 4: Normalized Teaching Blocks\nStage 5: Structural Validation\nStage 6: Competency Extraction\nStage 7: Assessment Extraction\nStage 8: Learning Outcomes Extraction\nStage 9: Activities / Projects / Practicals Extraction\nStage 10: Curriculum Intelligence Generation\n\nRules:\n- explicit curriculum structure is the source of truth\n- do not invent unit names or chapter names\n- do not perform analysis during extraction stages\n- no recommendations outside Stage 6\n- return JSON only\n- Detected curriculum profile: multi_class_board_syllabus\n- Expected structure type: multi_class_unit_topic\n- Preserve separate classes/grades when multiple classes appear in one document\n- Never merge Class XI and Class XII structures together\n\nReturn JSON only.\nAnswer directly.\nExtract the curriculum hierarchy faithfully from the source text.\n\nCapture only:\n\n* document_metadata\n* classes\n* units\n* chapters\n* topics\n* subtopics\n* key_concepts\n* explicit marks attached to units or chapters\n\nHierarchy:\ndocument\n-> class\n-> unit\n-> chapter\n-> topic\n-> subtopic\n\nExtraction rules:\n\n* Preserve the hierarchy explicitly visible in the source.\n* Keep output concise, but capture every visible unit, chapter, topic, and subtopic in the current input.\n* Preserve official syllabus wording as closely as possible.\n* Do not replace specific syllabus content with generic summaries.\n* Do not infer curriculum content that is not visible in the current input.\n* If the input is partial, extract only the hierarchy and content visible in that input.\n\nClass detection:\n\n* Treat explicit labels such as \"CLASS XI\", \"CLASS XII\", \"Class - XI\", \"Class – XII\", and equivalent formatting variants as class boundaries.\n* Keep content under the current class until another explicit class boundary appears.\n* Never merge units from different classes.\n* If multiple classes are visible, preserve each class separately.\n\nUnit detection:\n\n* Treat explicit headings such as \"Unit-I\", \"UNIT II\", \"Unit - III\", or equivalent numbered unit labels as units.\n* Preserve the official unit name.\n* Preserve explicit marks associated with the unit.\n* Never convert a unit into a chapter.\n* If a unit is followed directly by syllabus content without explicit chapter headings, attach that content to unit topics.\n\nChapter detection:\n\n* Create a chapter only when chapter-like structure is explicitly visible inside a unit.\n* Numbered headings inside a unit are chapter headings when they introduce syllabus content.\n* Examples of chapter patterns include:\n  \"1. Relations and Functions\"\n  \"2. Inverse Trigonometric Functions\"\n  \"1. Matrices\"\n  \"2. Determinants\"\n* A numeric marker and its heading may be split across adjacent lines. For example:\n\n  \"1.\"\n  \"Matrices\"\n\n  must be interpreted as the chapter heading \"Matrices\" when the lines are adjacent and followed by syllabus content.\n* Also recognize numbered headings where the number and title are separated by whitespace, line breaks, or PDF extraction artifacts.\n* Attach the syllabus text following a chapter heading to that chapter until the next chapter, unit, class, or section boundary.\n* Never create a fallback chapter from the unit name.\n* Never copy the unit name into chapters solely because no chapter was detected.\n* If no explicit chapter structure is visible, keep content at unit -> topics.\n\nTopic extraction:\n\n* Extract topics from syllabus statements attached to the current unit or chapter.\n* Preserve enumerated concepts, methods, properties, formulas, restrictions, and scope qualifiers.\n* Do not collapse an explicit list into \"etc.\" when the source lists individual items.\n* Do not remove parenthetical syllabus constraints.\n* Preserve phrases such as \"up to 3 x 3 matrices\", \"having unique solution\", \"without proof\", and similar scope restrictions when visible.\n* When a syllabus paragraph begins with the chapter heading followed by a colon, do not duplicate the chapter name as a topic.\n* Do not classify an explicit chapter heading only as a topic or key concept.\n\nSubtopic extraction:\n\n* Create subtopics only when the source visibly expresses a nested list or subordinate structure under a topic.\n* Do not invent subtopics by semantic decomposition alone.\n\nKey concept extraction:\n\n* Extract concise named concepts explicitly present in the source.\n* Key concepts are enrichment fields and must not replace units, chapters, topics, or subtopics.\n* A phrase may appear as a key concept even when it is also part of a chapter or topic, but the original structural node must remain.\n* Do not use key concept extraction to reconstruct missing hierarchy.\n\nMarks:\n\n* Capture marks only when explicitly stated.\n* Attach marks to the exact unit or chapter indicated by the source.\n* Do not infer marks from totals, percentages, or nearby unrelated assessment tables.\n\nSection handling:\n\n* Include practical or assessment section names only when they appear as unit-like or chapter-like structural entries tied to the visible class or section.\n* Do not convert general assessment tables, question paper design, internal assessment notes, or explanatory text into curriculum units or chapters.\n\nValidation rules:\n\n* If explicit chapter headings are detected inside a unit, preserve them as chapters.\n* If chapters exist, attach their syllabus content to those chapters rather than duplicating the same content at unit level.\n* If no chapters are explicitly visible, chapters must be an empty array and syllabus content must remain at unit level.\n* Never generate synthetic, fallback, reconstructed, or normalized chapters.\n* Never shift hierarchy by treating chapters as topics and units as chapters.\n* Never generate the complete curriculum from prior knowledge.\n\nDo not infer, estimate, explain, recommend, analyze, or repair missing source content.\nDo not include fields other than the requested schema.\n\n- This is partial curriculum input for chunk 2 of 2; extract only what is present in this chunk\n\nCurriculum source text:\n# Page 11\n\nConduct of Periodic Tests:\nPeriodic Test is a Pen and Paper assessment which is to be conducted by the\nrespective subject teacher. The format of periodic test must have questions items with\na balance mix, such as, very short answer (VSA), short answer (SA) and long answer\n(LA) to effectively assess the knowledge, understanding, application, skills, analysis,\nevaluation and synthesis. Depending on the nature of subject, the subject teacher will\nhave the liberty of incorporating any other types of questions too. The modalities of\nthe PT are as follows:\na) Mode: The periodic test is to be taken in the form of pen-paper test.\nb) Schedule: In the entire Academic Year, three Periodic Tests in each subject\nmay be conducted as follows:\nTest Pre-Mid-term (PT-I) Mid-Term (PT-II) Post Mid-Term (PT-III)\nTentative Month July-August November December-January\nThis is only a suggestive schedule and schools may conduct periodic tests as per their\nconvenience. The winter bound schools would develop their own schedule with similar\ntime gaps between two consecutive tests.\nc) Average of Marks : Once schools complete the conduct of all the three periodic\ntests, they will convert the weightage of each of the three tests into ten marks each\nfor identifying best two tests. The best two will be taken into consideration and the\naverage of the two shall be taken as the final marks for PT.\nd) The school will ensure simple documentation to keep a record of performance as\nsuggested in detail circular no. Acad-05/2017.\ne) Sharing of Feedback/Performance : The students’ achievement in each test must\nbe shared with the students and their parents to give them an overview of the level of\nlearning that has taken place during different periods. Feedback will help parents\nformulate interventions (conducive ambience, support materials, motivation and\nmorale-boosting) to further enhance learning. A teacher, while sharing the feedback\nwith student or parent, should be empathetic, non- judgmental and motivating. It is\nrecommended that the teacher share best examples/performances of IA with the\n## class to motivate all learners\n\n# Page 12\n\nAssessment of Activity Work:\nThroughout the year any 10 activities shall be performed by the student from the\nactivities given in the NCERT Laboratory Manual for the respective class (XI or\nXII) which is available on the link:\nhttp://www.ncert.nic.in/exemplar/labmanuals.html a record of the same may be\nkept by the student. An year end test on the activity may be conducted\nThe weightage are as under:\n The activities performed by the student throughout the year and record\nkeeping: 5 marks\n Assessment of the activity performed during the year end test: 3 marks\n Viva-voce: 2 marks\nPrescribed Books:\n- 1) Mathematics Textbook for Class XI, NCERT Publications\n- 2) Mathematics Part I - Textbook for Class XII, NCERT Publication\n- 3) Mathematics Part II - Textbook for Class XII, NCERT Publication\n- 4) Mathematics Exemplar Problem for Class XI, Published by NCERT\n- 5) Mathematics Exemplar Problem for Class XII, Published by NCERT\n- 6) Mathematics Lab Manual class XI, published by NCERT\n- 7) Mathematics Lab Manual class XII, published by NCERT\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"document_metadata\": {\n    \"board\": \"\",\n    \"subject\": \"\",\n    \"class\": \"\",\n    \"grade\": \"\",\n    \"stream\": \"\",\n    \"academic_year\": \"\",\n    \"total_pages\": \"\"\n  },\n  \"classes\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\"\n    }\n  ],\n  \"units\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ],\n  \"chapters\": [\n    {\n      \"class_name\": \"\",\n      \"subject\": \"\",\n      \"part_or_section\": \"\",\n      \"unit_id\": \"U1\",\n      \"unit_name\": \"Unit heading from source\",\n      \"chapter_name\": \"\",\n      \"marks\": null,\n      \"topics\": [\n        \"\"\n      ],\n      \"subtopics\": [\n        \"\"\n      ],\n      \"key_concepts\": [\n        \"\"\n      ]\n    }\n  ]\n}"
+    }
+  ]
+}

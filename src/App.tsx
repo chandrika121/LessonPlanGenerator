@@ -78,6 +78,7 @@ import {
   removePublishedArtifactsForCurriculumScope,
   writeStudentPublicationFlags,
 } from "./utils/studentPublications";
+import { getBackendBaseUrl } from "./utils/api";
 import type { StudentPublicationKind } from "./types/student-content";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
@@ -390,9 +391,7 @@ export default function App() {
   const LAST_WORKSPACE_ID_KEY = "lms:lastWorkspaceId";
   const location = useLocation();
   const navigate = useNavigate();
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL ||
-    `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+  const API_BASE_URL = getBackendBaseUrl();
   const apiUrl = useCallback((path: string) => {
     if (/^https?:\/\//i.test(path)) {
       return path;
@@ -508,6 +507,8 @@ export default function App() {
   const [activeMaterialTab, setActiveMaterialTab] = useState<"ppt" | "pdf" | "docx">("ppt");
   const [assessmentCustomizationBySession, setAssessmentCustomizationBySession] = useState<Record<number, SessionAssessmentCustomization>>({});
   const [pptGenerationOptionsBySession, setPptGenerationOptionsBySession] = useState<Record<number, SessionPptGenerationOptions>>({});
+  const [pptSelectedSlideBySession, setPptSelectedSlideBySession] = useState<Record<number, number>>({});
+  const [pptReviewTabBySession, setPptReviewTabBySession] = useState<Record<number, "slide" | "notes" | "visual" | "source">>({});
   const [studentPublications, setStudentPublications] = useState<Record<string, Partial<Record<StudentPublicationKind, boolean>>>>({});
   const getPublicationFlagsForSession = useCallback(
     (session: Pick<SessionPlan, "id" | "sessionNumber">) => {
@@ -803,7 +804,7 @@ export default function App() {
   };
 
   const detectCurriculumClassOptions = async (): Promise<CurriculumClassOptionsResponse> => {
-    const res = await fetch("/api/curriculum-class-options", {
+    const res = await fetch(apiUrl("/api/curriculum-class-options"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -838,7 +839,7 @@ export default function App() {
         text: tamilStructureText,
       });
     }
-    const res = await fetch("/api/analyze-curriculum", {
+    const res = await fetch(apiUrl("/api/analyze-curriculum"), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -3724,6 +3725,29 @@ export default function App() {
       ? slide.assets.find((asset) => Boolean(asset.imageDataUrl || asset.previewUrl || asset.sourceUrl))
       : undefined;
 
+  const getRenderablePptSvgMarkup = (svgCode?: string | null) => {
+    const raw = String(svgCode || "").trim();
+    if (!raw) return "";
+    const stripped = raw.replace(/^\s*<\?xml[\s\S]*?\?>\s*/i, "");
+    return stripped.startsWith("<svg") ? stripped : "";
+  };
+
+  const hasBrowserRenderablePptVisual = (slide: NonNullable<ReturnType<typeof getPptSlides>>[number]) => {
+    if (!slide.visualResolved || slide.visualRelevanceStatus !== "valid") {
+      return false;
+    }
+    const primaryAsset = Array.isArray(slide.assets) ? slide.assets[0] : null;
+    const previewUrl = typeof primaryAsset?.previewUrl === "string" ? primaryAsset.previewUrl : "";
+    const imageDataUrl = typeof primaryAsset?.imageDataUrl === "string" ? primaryAsset.imageDataUrl : "";
+    const sourceUrl = typeof primaryAsset?.sourceUrl === "string" ? primaryAsset.sourceUrl : "";
+    return Boolean(
+      imageDataUrl ||
+      previewUrl ||
+      /^https?:\/\//i.test(sourceUrl) ||
+      getRenderablePptSvgMarkup(slide.svgDiagram?.svgCode)
+    );
+  };
+
   const getPptThemePalette = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => ({
     primary: ppt?.themeTokens?.colors?.primary || "#1D4E89",
     accent: ppt?.themeTokens?.colors?.accent || "#D97706",
@@ -3732,6 +3756,43 @@ export default function App() {
     text: ppt?.themeTokens?.colors?.text || "#1F2937",
     muted: ppt?.themeTokens?.colors?.mutedText || "#6B7280",
   });
+
+  const getPptDeckStatusBadges = (ppt?: SessionPlan["materials"] extends infer M ? M extends { ppt: infer P } ? P : never : never) => {
+    const badges: { label: string; tone: "good" | "warn" | "muted" }[] = [];
+    if (ppt?.deckReadiness) {
+      badges.push({
+        label:
+          ppt.deckReadiness === "teacher-ready"
+            ? "Teacher-ready"
+            : ppt.deckReadiness === "visual-fallback-used"
+            ? "Visual fallback used"
+            : ppt.deckReadiness === "export-safe"
+            ? "Export-safe"
+            : "Needs review",
+        tone: ppt.deckReadiness === "teacher-ready" || ppt.deckReadiness === "export-safe" ? "good" : "warn",
+      });
+    }
+    if (ppt?.visualIntegrityStatus === "fallback-used") {
+      badges.push({ label: "Visual fallback used", tone: "warn" });
+    }
+    if (ppt?.visualIntegrityStatus === "needs-review") {
+      badges.push({ label: "Needs review", tone: "warn" });
+    }
+    if (ppt?.exportIntegrityStatus === "ready") {
+      badges.push({ label: "Export-safe", tone: "good" });
+    }
+    if (badges.length === 0) {
+      badges.push({ label: "Deck generated", tone: "muted" });
+    }
+    return badges;
+  };
+
+  const getPptStatusClassName = (tone: "good" | "warn" | "muted") =>
+    tone === "good"
+      ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+      : tone === "warn"
+      ? "border-amber-200 bg-amber-50 text-amber-700"
+      : "border-slate-200 bg-slate-50 text-slate-600";
 
   const escapeHtml = (value: unknown) =>
     formatRenderableText(value)
@@ -6931,10 +6992,11 @@ export default function App() {
           .map((item) => `<li>${renderRichValueToExportHtml(item)}</li>`)
           .join("");
         const visualSrc = primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "";
+        const svgMarkup = getRenderablePptSvgMarkup(slide.svgDiagram?.svgCode);
         const visualMarkup = visualSrc
           ? `<img src="${escapeHtml(visualSrc)}" alt="${escapeHtml(primaryAsset?.altText || primaryAsset?.purpose || "Slide visual")}" />`
-          : slide.svgDiagram?.svgCode?.trim().startsWith("<svg")
-          ? `<div class="svg-wrap">${slide.svgDiagram.svgCode}</div>`
+          : svgMarkup
+          ? `<div class="svg-wrap">${svgMarkup}</div>`
           : `
             <div class="visual-fallback">
               <div class="visual-chip">${renderRichValueToExportHtml(slide.svgDiagram?.title || "Planned Visual")}</div>
@@ -7058,7 +7120,7 @@ export default function App() {
       const enrichedSession = await ensureSlideVisuals(session);
       const enrichedPpt = enrichedSession.materials?.ppt;
 
-      const response = await fetch("/api/export-pptx", {
+      const response = await fetch(apiUrl("/api/export-pptx"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -7088,21 +7150,26 @@ export default function App() {
     const slides = session.materials?.ppt?.slides;
     if (!slides || slides.length === 0) return session;
 
-    const visualSlides = slides.filter((slide) => slide.visualAttribution?.visualPlan || slide.visualAttribution?.svgDiagram?.search);
+    const visualSlides = slides.filter((slide) =>
+      Boolean(
+        slide.visualDecision === "local-generated-image" ||
+        slide.visualDecision === "svg-programmatic" ||
+        slide.visualPlan ||
+        slide.svgDiagram?.svgCode ||
+        slide.visualAttribution?.visualPlan ||
+        slide.visualAttribution?.svgDiagram?.search
+      )
+    );
     if (visualSlides.length === 0) return session;
 
-    const allVisualSlidesResolved = visualSlides.every((slide) => {
-      const primaryAsset = Array.isArray(slide.assets) ? slide.assets[0] : null;
-      return Boolean(
-        slide.generatedVisual?.imageDataUrl ||
-        primaryAsset?.imageDataUrl ||
-        primaryAsset?.previewUrl ||
-        primaryAsset?.sourceUrl
-      );
-    });
+    const allVisualSlidesResolved = visualSlides.every((slide) =>
+      slide.visualResolved === false ||
+      Boolean(slide.generatedVisual?.imageDataUrl) ||
+      hasBrowserRenderablePptVisual(slide)
+    );
     if (allVisualSlidesResolved) return session;
 
-    const response = await fetch("/api/generate-slide-visuals", {
+    const response = await fetch(apiUrl("/api/generate-slide-visuals"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -8248,7 +8315,7 @@ export default function App() {
   };
 
   const searchTamilSunbirdContent = async () => {
-    const res = await fetch("/api/tamil/sunbird/search", {
+    const res = await fetch(apiUrl("/api/tamil/sunbird/search"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -8266,7 +8333,7 @@ export default function App() {
   };
 
   const previewTamilSunbirdStructure = async (candidate: SunbirdSearchCandidate) => {
-    const res = await fetch("/api/tamil/sunbird/preview-structure", {
+    const res = await fetch(apiUrl("/api/tamil/sunbird/preview-structure"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -12754,6 +12821,13 @@ export default function App() {
                                 const selectedTheme = PPT_THEME_OPTIONS.find((item) => item.id === pptSettings.pptThemeId) || PPT_THEME_OPTIONS[0];
                                 const themePalette = getPptThemePalette(ppt);
                                 const slides = getPptSlides(ppt);
+                                const selectedSlideIndex = Math.min(
+                                  pptSelectedSlideBySession[activeSessionNumber] ?? 0,
+                                  Math.max(slides.length - 1, 0)
+                                );
+                                const selectedSlide = slides[selectedSlideIndex];
+                                const reviewTab = pptReviewTabBySession[activeSessionNumber] || "slide";
+                                const deckStatusBadges = getPptDeckStatusBadges(ppt);
 
                                 return (
                                   <div className="space-y-4">
@@ -12821,296 +12895,485 @@ export default function App() {
                                     </div>
 
                                     {ppt ? (
-                                      <>
-                                        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                                          <div className="p-3 border rounded-xl flex items-center gap-2.5 text-xs flex-1" style={{ backgroundColor: `${themePalette.background}`, borderColor: `${themePalette.primary}22`, color: themePalette.primary }}>
-                                            <Info className="w-4 h-4 shrink-0" />
-                                            <span>Production-ready teacher deck generated from the approved session plan, with real slides, notes, and export-ready visual assets.</span>
-                                          </div>
-                                          <div className="flex flex-wrap gap-2">
-                                            <button
-                                              onClick={() => void handleExportPptx(session)}
-                                              className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white transition hover:opacity-90"
-                                              style={{ backgroundColor: themePalette.primary }}
-                                            >
-                                              <Download className="w-3.5 h-3.5" />
-                                              Export Editable PPTX
-                                            </button>
-                                            <button
-                                              onClick={() => handleExportPptSlidesPdf(session)}
-                                              className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
-                                            >
-                                              <Download className="w-3.5 h-3.5" />
-                                              Export Slides PDF
-                                            </button>
+                                      <div className="space-y-4">
+                                        <div className="rounded-3xl border border-slate-200 bg-white p-5">
+                                          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                                            <div className="space-y-3">
+                                              <div className="flex flex-wrap items-center gap-2">
+                                                {deckStatusBadges.map((badge) => (
+                                                  <span
+                                                    key={badge.label}
+                                                    className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] ${getPptStatusClassName(badge.tone)}`}
+                                                  >
+                                                    {badge.label}
+                                                  </span>
+                                                ))}
+                                              </div>
+                                              <div>
+                                                <h4 className="font-display text-xl font-black text-slate-900">{renderMixedMathLine(getPptTitle(ppt))}</h4>
+                                                <p className="mt-1 max-w-3xl text-sm leading-relaxed text-slate-500">
+                                                  Teacher-delivery deck with adaptive teaching flow, editable slide text, preserved notes, and local visuals only where they improve understanding.
+                                                </p>
+                                              </div>
+                                              <div className="grid gap-2 text-xs text-slate-600 md:grid-cols-2 xl:grid-cols-4">
+                                                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                                                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Slides</div>
+                                                  <div className="mt-1 font-bold text-slate-800">{slides.length}</div>
+                                                </div>
+                                                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                                                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Template</div>
+                                                  <div className="mt-1 font-bold text-slate-800">{formatRenderableText(ppt.templateName || selectedTemplate.name)}</div>
+                                                </div>
+                                                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                                                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Theme</div>
+                                                  <div className="mt-1 font-bold text-slate-800">{formatRenderableText(ppt.themeName || ppt.theme || selectedTheme.name)}</div>
+                                                </div>
+                                                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                                                  <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Coverage</div>
+                                                  <div className="mt-1 font-bold text-slate-800">{formatRenderableText(ppt.coverageStatus || "In review")}</div>
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            <div className="flex w-full max-w-xl flex-col gap-2">
+                                              <div className="grid gap-2 sm:grid-cols-2">
+                                                <button
+                                                  onClick={() => void handleGenerateSessionTab("materials", activeSessionNumber, outlineItem)}
+                                                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                                >
+                                                  Generate deck
+                                                </button>
+                                                <button
+                                                  onClick={() => {
+                                                    void (async () => {
+                                                      try {
+                                                        setLoading(true);
+                                                        setLoadingMessage("Refreshing slide visuals...");
+                                                        const refreshedSession = await ensureSlideVisuals(session);
+                                                        const targetSessionKey =
+                                                          refreshedSession.sessionKey ||
+                                                          session.sessionKey ||
+                                                          getOutlineSessionKey(outlineItem);
+                                                        setGeneratedSessionsByKey((prev) => ({
+                                                          ...prev,
+                                                          [targetSessionKey]: mergeSessionPlanRecords(
+                                                            prev[targetSessionKey] || findGeneratedSessionForOutline(prev, outlineItem) || session,
+                                                            refreshedSession
+                                                          ),
+                                                        }));
+                                                      } catch (error: any) {
+                                                        setErrorHeader(error?.message || "Failed to regenerate deck visuals.");
+                                                      } finally {
+                                                        setLoading(false);
+                                                        setLoadingMessage("");
+                                                      }
+                                                    })();
+                                                  }}
+                                                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                                >
+                                                  Regenerate visuals
+                                                </button>
+                                                <button
+                                                  onClick={() => void handleGenerateSessionTab("materials", activeSessionNumber, outlineItem)}
+                                                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                                                >
+                                                  Regenerate deck
+                                                </button>
+                                                <button
+                                                  onClick={() => void handleExportPptx(session)}
+                                                  className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white transition hover:opacity-90"
+                                                  style={{ backgroundColor: themePalette.primary }}
+                                                >
+                                                  <Download className="h-3.5 w-3.5" />
+                                                  Export editable PPTX
+                                                </button>
+                                              </div>
+                                              <button
+                                                onClick={() => handleExportPptSlidesPdf(session)}
+                                                className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                                              >
+                                                <Download className="h-3.5 w-3.5" />
+                                                Export slides PDF
+                                              </button>
+                                            </div>
                                           </div>
                                         </div>
 
-                                        <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3">
-                                          <h4 className="font-display font-black text-slate-800 text-base">
-                                            {renderMixedMathLine(getPptTitle(ppt))}
-                                          </h4>
-                                          <div className="grid gap-2 md:grid-cols-2 text-xs text-slate-600">
-                                            <div><span className="font-bold text-slate-700">Template:</span> {formatRenderableText(ppt.templateName || selectedTemplate.name)}</div>
-                                            <div><span className="font-bold text-slate-700">Theme preset:</span> {formatRenderableText(ppt.themeName || ppt.theme || selectedTheme.name)}</div>
-                                            {ppt.audience && <div><span className="font-bold text-slate-700">Audience:</span> {renderMixedMathLine(ppt.audience)}</div>}
-                                            <div><span className="font-bold text-slate-700">Deck mode:</span> {formatRenderableText(ppt.deckMode || "teacher-delivery")}</div>
+                                        <div className="grid gap-4 xl:grid-cols-[280px_minmax(0,1fr)]">
+                                          <div className="rounded-3xl border border-slate-200 bg-white p-4">
+                                            <div className="flex items-center justify-between">
+                                              <div>
+                                                <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Slide Review</div>
+                                                <div className="mt-1 text-sm font-black text-slate-800">Teaching flow</div>
+                                              </div>
+                                              <div className="text-xs font-bold text-slate-400">{selectedSlideIndex + 1}/{slides.length}</div>
+                                            </div>
+                                            <div className="mt-4 space-y-2">
+                                              {slides.map((slide, sIdx) => {
+                                                const active = sIdx === selectedSlideIndex;
+                                                return (
+                                                  <button
+                                                    key={sIdx}
+                                                    type="button"
+                                                    onClick={() => setPptSelectedSlideBySession((prev) => ({ ...prev, [activeSessionNumber]: sIdx }))}
+                                                    className={`w-full rounded-2xl border px-3 py-3 text-left transition ${active ? "border-slate-900 bg-slate-900 text-white shadow-sm" : "border-slate-200 bg-slate-50 hover:border-slate-300 hover:bg-white"}`}
+                                                  >
+                                                    <div className="flex items-start justify-between gap-3">
+                                                      <div className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[11px] font-black ${active ? "bg-white/15 text-white" : "bg-white text-slate-500"}`}>
+                                                        {slide.slideNumber || sIdx + 1}
+                                                      </div>
+                                                      <div className="min-w-0 flex-1">
+                                                        <div className={`truncate text-[10px] font-extrabold uppercase tracking-[0.18em] ${active ? "text-slate-300" : "text-slate-400"}`}>
+                                                          {formatRenderableText(slide.slidePurpose || slide.templateSlideTitle || "Slide")}
+                                                        </div>
+                                                        <div className={`mt-1 line-clamp-2 text-sm font-black ${active ? "text-white" : "text-slate-800"}`}>
+                                                          {renderMixedMathLine(slide.slideTitle || `Slide ${sIdx + 1}`)}
+                                                        </div>
+                                                        {slide.teachingBeat && (
+                                                          <div className={`mt-1 line-clamp-2 text-xs ${active ? "text-slate-300" : "text-slate-500"}`}>
+                                                            {renderMixedMathLine(slide.teachingBeat)}
+                                                          </div>
+                                                        )}
+                                                      </div>
+                                                    </div>
+                                                  </button>
+                                                );
+                                              })}
+                                            </div>
                                           </div>
-                                          {ppt.presentationGoal && (
-                                            <p className="text-xs text-slate-600 leading-relaxed">
-                                              <span className="font-bold text-slate-700">Goal:</span> {renderMixedMathLine(ppt.presentationGoal)}
-                                            </p>
-                                          )}
-                                          {getPptThemeSummary(ppt) && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Theme details:</span> {getPptThemeSummary(ppt)}
-                                            </div>
-                                          )}
-                                          {!!ppt.coverageSummary?.learningOutcomesCovered?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">LO coverage:</span> {ppt.coverageSummary.learningOutcomesCovered.map((item, idx) => <span key={idx} className="mr-2 inline-block">{renderMixedMathLine(item)}</span>)}
-                                            </div>
-                                          )}
-                                          {!!ppt.coverageSummary?.topicsCovered?.length && (
-                                            <div className="text-xs text-slate-600">
-                                              <span className="font-bold text-slate-700">Topics:</span> {ppt.coverageSummary.topicsCovered.map((item, idx) => <span key={idx} className="mr-2 inline-block">{renderMixedMathLine(item)}</span>)}
-                                            </div>
-                                          )}
-                                        </div>
 
-                                        <div className="space-y-6 max-h-[70vh] overflow-y-auto pr-1">
-                                          {slides.map((slide, sIdx) => {
-                                            const accent = getPptAccentStyle(sIdx);
-                                            const primaryAsset = getPrimaryPptAsset(slide);
-                                            const hasSvgPreview = Boolean(slide.svgDiagram?.svgCode && slide.svgDiagram.svgCode.trim().startsWith("<svg"));
+                                          {selectedSlide ? (() => {
+                                            const accent = getPptAccentStyle(selectedSlideIndex);
+                                            const primaryAsset = getPrimaryPptAsset(selectedSlide);
+                                            const svgMarkup = getRenderablePptSvgMarkup(selectedSlide.svgDiagram?.svgCode);
+                                            const hasSvgPreview = Boolean(selectedSlide.visualResolved && selectedSlide.visualRelevanceStatus === "valid" && svgMarkup);
                                             const primaryVisualSrc = formatRenderableText(primaryAsset?.imageDataUrl || primaryAsset?.previewUrl || primaryAsset?.sourceUrl || "");
-                                            const visualSourceLabel =
-                                              primaryAsset?.sourceKind === "generated-image"
-                                                ? "Generated image"
-                                                : primaryAsset?.sourceKind === "svg-diagram"
-                                                ? "SVG / diagram"
-                                                : primaryAsset?.sourceKind === "reusable-external"
-                                                ? "Legacy external"
-                                                : hasSvgPreview
-                                                ? "SVG / diagram"
-                                                : "Planned visual";
+                                            const hasResolvedVisual = Boolean(selectedSlide.visualResolved && selectedSlide.visualRelevanceStatus === "valid" && (primaryVisualSrc || hasSvgPreview));
                                             const previewColumns =
-                                              resolvedTemplateId === "visual-focus"
+                                              !hasResolvedVisual
+                                                ? "1fr"
+                                                : resolvedTemplateId === "visual-focus"
                                                 ? "2fr 3fr"
                                                 : resolvedTemplateId === "textbook-clean"
                                                 ? "3.2fr 2fr"
                                                 : "3fr 2fr";
 
                                             return (
-                                              <div key={sIdx} className="space-y-3">
-                                                <div className="rounded-[28px] border border-slate-200 p-4 shadow-sm" style={{ backgroundColor: themePalette.background }}>
-                                                  <div className="mb-3 flex items-center justify-between px-1">
-                                                    <div className="flex items-center gap-2">
-                                                      <span className={`inline-flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-black text-white ${accent.bar}`}>
-                                                        {slide.slideNumber || sIdx + 1}
-                                                      </span>
-                                                      <div>
-                                                        <div className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
-                                                          {renderMixedMathLine(slide.templateSlideTitle || "PowerPoint Slide Preview")}
-                                                        </div>
-                                                        <div className="text-sm font-display font-black text-slate-800">
-                                                          {renderMixedMathLine(slide.slideTitle || `Slide ${sIdx + 1}`)}
-                                                        </div>
+                                              <div className="space-y-4">
+                                                <div className="rounded-3xl border border-slate-200 bg-white p-4">
+                                                  <div className="flex flex-col gap-3 border-b border-slate-100 pb-4 md:flex-row md:items-end md:justify-between">
+                                                    <div>
+                                                      <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">
+                                                        {renderMixedMathLine(selectedSlide.slidePurpose || selectedSlide.templateSlideTitle || "Selected Slide")}
                                                       </div>
+                                                      <h5 className="mt-1 font-display text-lg font-black text-slate-900">
+                                                        {renderMixedMathLine(selectedSlide.slideTitle || `Slide ${selectedSlideIndex + 1}`)}
+                                                      </h5>
+                                                      {selectedSlide.teachingBeat && (
+                                                        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-500">
+                                                          {renderMixedMathLine(selectedSlide.teachingBeat)}
+                                                        </p>
+                                                      )}
                                                     </div>
-                                                    <div className="flex flex-col items-end gap-1">
-                                                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${accent.soft} ${accent.text}`}>
-                                                        {formatRenderableText(slide.slideType || "concept")}
-                                                      </span>
-                                                      <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold text-slate-500 border border-slate-200">
-                                                        {visualSourceLabel}
-                                                      </span>
+                                                    <div className="flex flex-wrap gap-2">
+                                                      {[
+                                                        { id: "slide", label: "Slide" },
+                                                        { id: "notes", label: "Notes" },
+                                                        { id: "visual", label: "Visual" },
+                                                        { id: "source", label: "Source" },
+                                                      ].map((tab) => {
+                                                        const active = reviewTab === tab.id;
+                                                        return (
+                                                          <button
+                                                            key={tab.id}
+                                                            type="button"
+                                                            onClick={() => setPptReviewTabBySession((prev) => ({ ...prev, [activeSessionNumber]: tab.id as "slide" | "notes" | "visual" | "source" }))}
+                                                            className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${active ? "bg-slate-900 text-white" : "border border-slate-200 bg-white text-slate-600 hover:text-slate-900"}`}
+                                                          >
+                                                            {tab.label}
+                                                          </button>
+                                                        );
+                                                      })}
                                                     </div>
                                                   </div>
 
-                                                  <div className="aspect-video overflow-hidden rounded-[22px] border border-slate-300 bg-white shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
-                                                    <div className="h-4 w-full" style={{ backgroundColor: themePalette.primary }} />
-                                                    <div className="grid h-[calc(100%-1rem)] gap-0" style={{ gridTemplateColumns: previewColumns }}>
-                                                      <div className="flex min-w-0 flex-col px-8 py-7">
-                                                        <div className="mb-5">
-                                                          <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
-                                                            {renderMixedMathLine(getPptTitle(ppt))}
-                                                          </div>
-                                                          <h5 className="mt-2 leading-tight" style={{ color: themePalette.text, fontSize: resolvedTemplateId === "textbook-clean" ? "1.55rem" : "1.75rem", fontWeight: 900, fontFamily: ppt.themeTokens?.fonts?.heading || "Georgia, serif" }}>
-                                                            {renderMixedMathLine(slide.slideTitle || `Slide ${sIdx + 1}`)}
-                                                          </h5>
-                                                        </div>
+                                                  {reviewTab === "slide" && (
+                                                    <div className="mt-4 space-y-4">
+                                                      <div className="aspect-video overflow-hidden rounded-[24px] border border-slate-300 bg-white shadow-[0_18px_45px_rgba(15,23,42,0.08)]">
+                                                        <div className="h-4 w-full" style={{ backgroundColor: themePalette.primary }} />
+                                                        <div className="grid h-[calc(100%-1rem)] gap-0" style={{ gridTemplateColumns: previewColumns }}>
+                                                          <div className="flex min-w-0 flex-col px-8 py-7">
+                                                            <div className="mb-5">
+                                                              <div className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                                                {renderMixedMathLine(getPptTitle(ppt))}
+                                                              </div>
+                                                              <h6 className="mt-2 leading-tight" style={{ color: themePalette.text, fontSize: resolvedTemplateId === "textbook-clean" ? "1.55rem" : "1.75rem", fontWeight: 900, fontFamily: ppt.themeTokens?.fonts?.heading || "Georgia, serif" }}>
+                                                                {renderMixedMathLine(selectedSlide.slideTitle || `Slide ${selectedSlideIndex + 1}`)}
+                                                              </h6>
+                                                            </div>
 
-                                                        {!!slide.onSlideText?.length && (
-                                                          <div className="mb-4 flex flex-wrap gap-2">
-                                                            {slide.onSlideText.slice(0, 3).map((item, idx) => (
-                                                              <span key={idx} className={`rounded-full px-3 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
+                                                            {!!selectedSlide.onSlideText?.length && (
+                                                              <div className="mb-4 flex flex-wrap gap-2">
+                                                                {selectedSlide.onSlideText.slice(0, 3).map((item, idx) => (
+                                                                  <span key={idx} className={`rounded-full px-3 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
+                                                                    {renderMixedMathLine(item)}
+                                                                  </span>
+                                                                ))}
+                                                              </div>
+                                                            )}
+
+                                                            <div className="space-y-3">
+                                                              {(selectedSlide.bulletPoints || []).slice(0, resolvedTemplateId === "visual-focus" ? 4 : 5).map((bp, bpIdx) => (
+                                                                <div key={bpIdx} className="flex items-start gap-3">
+                                                                  <span className={`mt-1 inline-block h-2.5 w-2.5 rounded-full ${accent.bar}`} />
+                                                                  <p className="text-[13px] leading-6" style={{ color: themePalette.text }}>
+                                                                    {renderMixedMathLine(bp)}
+                                                                  </p>
+                                                                </div>
+                                                              ))}
+                                                            </div>
+
+                                                            <div className="mt-auto pt-5">
+                                                              <div className="grid grid-cols-2 gap-3">
+                                                                {selectedSlide.studentTakeaway && (
+                                                                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                                                                    <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Takeaway</div>
+                                                                    <div className="mt-1 text-[11px] leading-5 text-slate-700">
+                                                                      {renderMixedMathLine(selectedSlide.studentTakeaway)}
+                                                                    </div>
+                                                                  </div>
+                                                                )}
+                                                                {selectedSlide.timeEstimateMinutes != null && (
+                                                                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                                                                    <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Timing</div>
+                                                                    <div className="mt-1 text-[11px] leading-5 text-slate-700">
+                                                                      {formatRenderableText(selectedSlide.timeEstimateMinutes)} minutes
+                                                                    </div>
+                                                                  </div>
+                                                                )}
+                                                              </div>
+                                                            </div>
+                                                          </div>
+
+                                                          {hasResolvedVisual && (
+                                                            <div className="min-w-0 border-l border-slate-200 bg-slate-50/70 px-5 py-6">
+                                                              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">Visual Panel</div>
+                                                              <div className="mt-3 flex h-[calc(100%-1.5rem)] flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white">
+                                                                {primaryVisualSrc ? (
+                                                                  <img
+                                                                    src={primaryVisualSrc}
+                                                                    alt={formatRenderableText(primaryAsset?.altText || primaryAsset?.purpose || "Slide visual")}
+                                                                    className="h-full w-full object-cover"
+                                                                    loading="lazy"
+                                                                    referrerPolicy="no-referrer"
+                                                                  />
+                                                                ) : (
+                                                                  <div
+                                                                    className="flex h-full w-full items-center justify-center bg-white p-4 [&_svg]:h-full [&_svg]:w-full [&_svg]:max-h-full [&_svg]:max-w-full"
+                                                                    dangerouslySetInnerHTML={{ __html: svgMarkup }}
+                                                                  />
+                                                                )}
+                                                              </div>
+                                                            </div>
+                                                          )}
+                                                        </div>
+                                                      </div>
+
+                                                      <div className="grid gap-3 md:grid-cols-3">
+                                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                                          <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Purpose</div>
+                                                          <div className="mt-1 text-sm font-bold text-slate-800">{renderMixedMathLine(selectedSlide.slidePurpose || "Teaching slide")}</div>
+                                                        </div>
+                                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                                          <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Visual routing</div>
+                                                          <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(selectedSlide.visualDecision || "none")}</div>
+                                                        </div>
+                                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                                          <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Visual status</div>
+                                                          <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(selectedSlide.visualRelevanceStatus || "none")}</div>
+                                                        </div>
+                                                        <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                                                          <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Delivery mode</div>
+                                                          <div className="mt-1 text-sm font-bold text-slate-800">{formatRenderableText(ppt.deckMode || "teacher-delivery")}</div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  )}
+
+                                                  {reviewTab === "notes" && (
+                                                    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                                      {selectedSlide.teacherIntent && (
+                                                        <p className="text-sm leading-relaxed text-slate-600">
+                                                          <span className="font-bold text-slate-700">Teacher intent:</span> {renderMixedMathLine(selectedSlide.teacherIntent)}
+                                                        </p>
+                                                      )}
+                                                      {!!selectedSlide.mustTeach?.length && (
+                                                        <div className="mt-4">
+                                                          <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Must teach</div>
+                                                          <div className="mt-2 flex flex-wrap gap-2">
+                                                            {selectedSlide.mustTeach.map((item, idx) => (
+                                                              <span key={idx} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600">
                                                                 {renderMixedMathLine(item)}
                                                               </span>
                                                             ))}
                                                           </div>
-                                                        )}
-
-                                                        <div className="space-y-3">
-                                                          {(slide.bulletPoints || []).slice(0, resolvedTemplateId === "visual-focus" ? 4 : 5).map((bp, bpIdx) => (
-                                                            <div key={bpIdx} className="flex items-start gap-3">
-                                                              <span className={`mt-1 inline-block h-2.5 w-2.5 rounded-full ${accent.bar}`} />
-                                                              <p className="text-[13px] leading-6" style={{ color: themePalette.text }}>
-                                                                {renderMixedMathLine(bp)}
-                                                              </p>
-                                                            </div>
-                                                          ))}
                                                         </div>
-
-                                                        <div className="mt-auto pt-5">
-                                                          <div className="grid grid-cols-2 gap-3">
-                                                            {slide.studentTakeaway && (
-                                                              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                                                                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Takeaway</div>
-                                                                <div className="mt-1 text-[11px] leading-5 text-slate-700">
-                                                                  {renderMixedMathLine(slide.studentTakeaway)}
-                                                                </div>
+                                                      )}
+                                                      <div className="mt-4">
+                                                        <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Speaker notes</div>
+                                                        {!!selectedSlide.speakerNotes?.length ? (
+                                                          <div className="mt-3 space-y-3">
+                                                            {selectedSlide.speakerNotes.map((item, idx) => (
+                                                              <div key={idx} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed text-slate-600">
+                                                                {renderMixedMathLine(item)}
                                                               </div>
-                                                            )}
-                                                            {slide.timeEstimateMinutes != null && (
-                                                              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-                                                                <div className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Timing</div>
-                                                                <div className="mt-1 text-[11px] leading-5 text-slate-700">
-                                                                  {formatRenderableText(slide.timeEstimateMinutes)} minutes
-                                                                </div>
-                                                              </div>
-                                                            )}
+                                                            ))}
                                                           </div>
-                                                        </div>
+                                                        ) : (
+                                                          <p className="mt-2 text-sm text-slate-500">No speaker notes were returned for this slide.</p>
+                                                        )}
                                                       </div>
+                                                    </div>
+                                                  )}
 
-                                                      <div className="min-w-0 border-l border-slate-200 bg-slate-50/70 px-5 py-6">
-                                                        <div className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
-                                                          Visual Panel
-                                                        </div>
-                                                        <div className="mt-3 flex h-[calc(100%-1.5rem)] flex-col overflow-hidden rounded-[20px] border border-slate-200 bg-white">
-                                                          {primaryVisualSrc ? (
+                                                  {reviewTab === "visual" && (
+                                                    <div className="mt-4 grid gap-3 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+                                                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                                        <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Resolved visual</div>
+                                                        <div className="mt-3 overflow-hidden rounded-[20px] border border-slate-200 bg-white">
+                                                          {hasResolvedVisual && primaryVisualSrc ? (
                                                             <img
                                                               src={primaryVisualSrc}
                                                               alt={formatRenderableText(primaryAsset?.altText || primaryAsset?.purpose || "Slide visual")}
-                                                              className="h-full w-full object-cover"
+                                                              className="max-h-[420px] w-full object-cover"
                                                               loading="lazy"
                                                               referrerPolicy="no-referrer"
                                                             />
-                                                          ) : hasSvgPreview ? (
+                                                          ) : hasResolvedVisual && hasSvgPreview ? (
                                                             <div
-                                                              className="flex h-full w-full items-center justify-center bg-white p-4 [&_svg]:h-full [&_svg]:w-full [&_svg]:max-h-full [&_svg]:max-w-full"
-                                                              dangerouslySetInnerHTML={{ __html: slide.svgDiagram?.svgCode || "" }}
+                                                              className="flex min-h-[320px] items-center justify-center p-5 [&_svg]:h-full [&_svg]:w-full [&_svg]:max-h-[380px] [&_svg]:max-w-full"
+                                                              dangerouslySetInnerHTML={{ __html: svgMarkup }}
                                                             />
                                                           ) : (
-                                                            <div className="flex h-full flex-col justify-between p-4">
-                                                              <div>
-                                                                <div className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold ${accent.soft} ${accent.text}`}>
-                                                                  {slide.svgDiagram?.title
-                                                                    ? renderMixedMathLine(slide.svgDiagram.title)
-                                                                    : "Planned visual"}
-                                                                </div>
-                                                                <p className="mt-3 text-xs leading-5 text-slate-600">
-                                                                  {renderMixedMathLine(slide.visualPlan || "This slide uses a teacher-planned visual area in the final PPT.")}
-                                                                </p>
+                                                            <div className="flex min-h-[320px] items-center justify-center p-6 text-center text-sm leading-relaxed text-slate-500">
+                                                              {renderMixedMathLine(selectedSlide.visualResolved === false ? "This slide intentionally uses no visual because a trustworthy slide-specific visual was not resolved." : selectedSlide.visualPlan || "No visual is required for this slide.")}
+                                                            </div>
+                                                          )}
+                                                        </div>
+                                                      </div>
+                                                      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                                                        <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Visual policy</div>
+                                                        <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-600">
+                                                          <p><span className="font-bold text-slate-700">Decision:</span> {formatRenderableText(selectedSlide.visualDecision || "none")}</p>
+                                                          <p><span className="font-bold text-slate-700">Relevance:</span> {formatRenderableText(selectedSlide.visualRelevanceStatus || "none")}</p>
+                                                          {selectedSlide.visualPlan && <p><span className="font-bold text-slate-700">Intent:</span> {renderMixedMathLine(selectedSlide.visualPlan)}</p>}
+                                                          {selectedSlide.svgDiagram?.title && <p><span className="font-bold text-slate-700">Diagram:</span> {renderMixedMathLine(selectedSlide.svgDiagram.title)}</p>}
+                                                          {!!selectedSlide.svgDiagram?.instructions?.length && (
+                                                            <div>
+                                                              <div className="font-bold text-slate-700">Build notes</div>
+                                                              <div className="mt-2 space-y-2">
+                                                                {selectedSlide.svgDiagram.instructions.map((item, idx) => (
+                                                                  <div key={idx} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                                                                    {renderMixedMathLine(item)}
+                                                                  </div>
+                                                                ))}
                                                               </div>
-                                                              {!!slide.svgDiagram?.instructions?.length && (
-                                                                <ul className="space-y-2 text-[11px] leading-4 text-slate-500">
-                                                                  {slide.svgDiagram.instructions.slice(0, 4).map((item, idx) => (
-                                                                    <li key={idx} className="flex gap-2">
-                                                                      <span className={`mt-1 inline-block h-2 w-2 rounded-full ${accent.bar}`} />
-                                                                      <span>{renderMixedMathLine(item)}</span>
-                                                                    </li>
-                                                                  ))}
-                                                                </ul>
-                                                              )}
                                                             </div>
                                                           )}
                                                         </div>
                                                       </div>
                                                     </div>
-                                                  </div>
-                                                </div>
+                                                  )}
 
-                                                <div className="grid gap-3 md:grid-cols-2">
-                                                  <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
-                                                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Speaker Notes</div>
-                                                    {slide.teacherIntent && (
-                                                      <p className="text-xs leading-relaxed text-slate-600">
-                                                        <span className="font-bold text-slate-700">Teacher intent:</span> {renderMixedMathLine(slide.teacherIntent)}
-                                                      </p>
-                                                    )}
-                                                    {!!slide.speakerNotes?.length ? (
-                                                      <ul className="list-disc list-inside space-y-1 text-xs text-slate-600">
-                                                        {slide.speakerNotes.map((item, idx) => <li key={idx}>{renderMixedMathLine(item)}</li>)}
-                                                      </ul>
-                                                    ) : (
-                                                      <p className="text-xs text-slate-500">No speaker notes were returned for this slide.</p>
-                                                    )}
-                                                  </div>
-
-                                                  <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
-                                                    <div className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Visual & Attribution</div>
-                                                    {slide.visualPlan && (
-                                                      <p className="text-xs leading-relaxed text-slate-600">
-                                                        <span className="font-bold text-slate-700">Visual plan:</span> {renderMixedMathLine(slide.visualPlan)}
-                                                      </p>
-                                                    )}
-                                                    {!!slide.assets?.length && slide.assets.map((asset, assetIdx) => (
-                                                      <div key={assetIdx} className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
-                                                        <div className="flex flex-wrap gap-2">
-                                                          <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-500 border border-slate-200">
-                                                            {formatRenderableText(asset.sourceKind || "visual")}
-                                                          </span>
-                                                          {asset.model && (
-                                                            <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold text-slate-500 border border-slate-200">
-                                                              {formatRenderableText(asset.model)}
-                                                            </span>
+                                                  {reviewTab === "source" && (
+                                                    <div className="mt-4 grid gap-3 xl:grid-cols-2">
+                                                      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                                        <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Deck source</div>
+                                                        <div className="mt-3 space-y-2 text-sm text-slate-600">
+                                                          {ppt.audience && <p><span className="font-bold text-slate-700">Audience:</span> {renderMixedMathLine(ppt.audience)}</p>}
+                                                          {ppt.presentationGoal && <p><span className="font-bold text-slate-700">Goal:</span> {renderMixedMathLine(ppt.presentationGoal)}</p>}
+                                                          {getPptThemeSummary(ppt) && <p><span className="font-bold text-slate-700">Theme details:</span> {getPptThemeSummary(ppt)}</p>}
+                                                          {!!ppt.coverageSummary?.learningOutcomesCovered?.length && (
+                                                            <div>
+                                                              <div className="font-bold text-slate-700">Learning outcomes</div>
+                                                              <div className="mt-2 flex flex-wrap gap-2">
+                                                                {ppt.coverageSummary.learningOutcomesCovered.map((item, idx) => (
+                                                                  <span key={idx} className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600">
+                                                                    {renderMixedMathLine(item)}
+                                                                  </span>
+                                                                ))}
+                                                              </div>
+                                                            </div>
                                                           )}
                                                         </div>
-                                                        {asset.purpose && <div><span className="font-bold text-slate-700">Purpose:</span> {renderMixedMathLine(asset.purpose)}</div>}
-                                                        {asset.searchQuery && <div><span className="font-bold text-slate-700">Search:</span> {renderMixedMathLine(asset.searchQuery)}</div>}
-                                                        {(asset.sourceSite || asset.sourceUrl) && <div><span className="font-bold text-slate-700">Source:</span> {[asset.sourceSite, asset.sourceUrl].filter(Boolean).map((item) => formatRenderableText(item)).join(" - ")}</div>}
-                                                        {asset.licenseType && <div><span className="font-bold text-slate-700">License:</span> {formatRenderableText(asset.licenseType)}</div>}
                                                       </div>
-                                                    ))}
-                                                    {!slide.assets?.length && slide.svgDiagram && (
-                                                      <div className="rounded-xl border border-slate-100 bg-slate-50 p-3 text-xs text-slate-600 space-y-1">
-                                                        <div><span className="font-bold text-slate-700">Diagram:</span> {renderMixedMathLine(slide.svgDiagram.title || slide.svgDiagram.type || "SVG-supported visual")}</div>
-                                                        {!!slide.svgDiagram.instructions?.length && (
-                                                          <div><span className="font-bold text-slate-700">Instructions:</span> {slide.svgDiagram.instructions.map((item, idx) => <span key={idx} className="mr-2 inline-block">{renderMixedMathLine(item)}</span>)}</div>
+
+                                                      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                                                        <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Asset metadata</div>
+                                                        {!!selectedSlide.assets?.length ? (
+                                                          <div className="mt-3 space-y-3">
+                                                            {selectedSlide.assets.map((asset, assetIdx) => (
+                                                              <div key={assetIdx} className="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                                                                <div className="flex flex-wrap gap-2">
+                                                                  <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 font-bold text-slate-500">
+                                                                    {formatRenderableText(asset.sourceKind || "visual")}
+                                                                  </span>
+                                                                  {asset.model && (
+                                                                    <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 font-bold text-slate-500">
+                                                                      {formatRenderableText(asset.model)}
+                                                                    </span>
+                                                                  )}
+                                                                </div>
+                                                                <div className="mt-2 space-y-1">
+                                                                  {asset.purpose && <div><span className="font-bold text-slate-700">Purpose:</span> {renderMixedMathLine(asset.purpose)}</div>}
+                                                                  {asset.storagePath && <div><span className="font-bold text-slate-700">Stored at:</span> {formatRenderableText(asset.storagePath)}</div>}
+                                                                  {asset.assetId && <div><span className="font-bold text-slate-700">Asset ID:</span> {formatRenderableText(asset.assetId)}</div>}
+                                                                  {(asset.sourceSite || asset.sourceUrl) && <div><span className="font-bold text-slate-700">Source:</span> {[asset.sourceSite, asset.sourceUrl].filter(Boolean).map((item) => formatRenderableText(item)).join(" - ")}</div>}
+                                                                </div>
+                                                              </div>
+                                                            ))}
+                                                          </div>
+                                                        ) : (
+                                                          <p className="mt-3 text-sm text-slate-500">No external asset metadata is needed for this slide.</p>
                                                         )}
                                                       </div>
+                                                    </div>
+                                                  )}
+                                                </div>
+
+                                                {(!!ppt.licenseChecklist?.length || !!ppt.presentationWarnings?.length) && (
+                                                  <div className="grid gap-3 xl:grid-cols-2">
+                                                    {!!ppt.licenseChecklist?.length && (
+                                                      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                                                        <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Export checks</div>
+                                                        <div className="mt-3 space-y-2 text-sm text-slate-600">
+                                                          {ppt.licenseChecklist.map((item, idx) => (
+                                                            <div key={idx} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+                                                              {renderMixedMathLine(item)}
+                                                            </div>
+                                                          ))}
+                                                        </div>
+                                                      </div>
                                                     )}
-                                                    {!!slide.animationHints?.length && (
-                                                      <p className="text-xs leading-relaxed text-slate-600">
-                                                        <span className="font-bold text-slate-700">Animation:</span> {slide.animationHints.map((item, idx) => <span key={idx} className="mr-2 inline-block">{renderMixedMathLine(item)}</span>)}
-                                                      </p>
+                                                    {!!ppt.presentationWarnings?.length && (
+                                                      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                                                        <div className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-amber-700">Needs attention</div>
+                                                        <div className="mt-3 space-y-2 text-sm text-amber-900">
+                                                          {ppt.presentationWarnings.map((item, idx) => (
+                                                            <div key={idx} className="rounded-xl border border-amber-200 bg-white/80 px-3 py-2">
+                                                              {renderMixedMathLine(item)}
+                                                            </div>
+                                                          ))}
+                                                        </div>
+                                                      </div>
                                                     )}
                                                   </div>
-                                                </div>
+                                                )}
                                               </div>
                                             );
-                                          })}
+                                          })() : null}
                                         </div>
-
-                                        {!!ppt.licenseChecklist?.length && (
-                                          <div className="rounded-2xl border border-slate-200 bg-white p-4 space-y-2">
-                                            <div className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">License Checklist</div>
-                                            <ul className="list-disc list-inside text-xs text-slate-600 space-y-1">
-                                              {ppt.licenseChecklist.map((item, idx) => <li key={idx}>{renderMixedMathLine(item)}</li>)}
-                                            </ul>
-                                          </div>
-                                        )}
-                                        {!!ppt.presentationWarnings?.length && (
-                                          <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 space-y-2">
-                                            <div className="text-[10px] font-extrabold text-rose-500 uppercase tracking-widest">Presentation Warnings</div>
-                                            <ul className="list-disc list-inside text-xs text-rose-700 space-y-1">
-                                              {ppt.presentationWarnings.map((item, idx) => <li key={idx}>{renderMixedMathLine(item)}</li>)}
-                                            </ul>
-                                          </div>
-                                        )}
-                                      </>
+                                      </div>
                                     ) : (
                                       <div className="rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-5 py-8 text-center">
                                         <div className="text-sm font-display font-black text-slate-800">No PPT Generated Yet</div>

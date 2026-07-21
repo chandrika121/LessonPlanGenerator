@@ -3,12 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { AuthUser } from "../../types/auth";
 import type { PublishedStudentArtifact } from "../../types/student-content";
+import { getBackendBaseUrl } from "../../utils/api";
 import { dedupePublishedStudentArtifacts } from "../../utils/studentArtifactDedup";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+const BACKEND_URL = getBackendBaseUrl();
 
 function getCurrentUser(): AuthUser | null {
   try {

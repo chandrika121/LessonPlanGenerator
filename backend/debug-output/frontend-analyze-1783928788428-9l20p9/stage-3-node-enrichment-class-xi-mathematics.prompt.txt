@@ -1,0 +1,540 @@
+Stage 3: Node Enrichment - Class XI - Mathematics
+Return compact JSON only.
+Enrich and label ONLY the existing document nodes for this class.
+
+Output rules:
+- Use only the provided structure hierarchy
+- Return only units, chapter topic assignments, subtopics, formative_content_refs, validation_report
+- Do not output practicals, activities, projects, teacher notes, assessment framework, or excluded content details
+- The input contains theory/main syllabus units only; do not create or return practical, formative, SECTION A, SECTION B, or laboratory units
+- source_text_excerpt is not allowed in this stage
+- max 5 topics per chapter
+- no explanations
+- no duplicated source text
+- do not repeat non-theory content
+- output chapter count must equal input chapter count
+
+Node rules:
+- Stage 3 may label or enrich nodes but must never create hierarchy
+- Preserve the provided hierarchy exactly
+- use unit_id from Stage 2 only
+- keep every chapter source_chapter_name exactly as provided
+- do not create new chapters
+- do not split chapters
+- do not merge chapters
+- do not rename chapters
+- do not reclassify chapters as topics
+- do not reclassify topics as chapters
+- the chapter list provided in input is the source of truth
+- for every chapter: keep chapter name exactly as provided, then extract only topics, subtopics, and key concepts
+- each chapter must include source_type using only: explicit_chapter, chapter_heading, unit_fallback
+- never create new class names, subject names, unit names, or chapter names
+- do not promote unit_name, topics, subtopics, key_concepts, learning outcomes, activities, competencies, examples, or practical tasks into chapters
+- topics and subtopics may be merged, reordered, or reassigned, but names must not be invented
+- node_type labels must reflect the provided nodes only: unit, chapter, topic, competency, module
+- not allowed: create new units, rename units, merge units, split units, convert subjects into classes, or use chapter names as units
+
+Raw class extraction:
+{
+  "class_name": "Class XI",
+  "subject": "Mathematics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Prescribed Books - Mathematics Textbook for Class XI, NCERT Publications",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "NCERT Publications"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Prescribed Books - Mathematics Textbook for Class XI, NCERT Publications",
+          "source_chapter_name": "Prescribed Books - Mathematics Textbook for Class XI, NCERT Publications",
+          "source_heading": "Prescribed Books - Mathematics Textbook for Class XI, NCERT Publications",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Prescribed Books - Mathematics Exemplar Problem for Class XI, Published by NCERT",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "Published by NCERT"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Prescribed Books - Mathematics Exemplar Problem for Class XI, Published by NCERT",
+          "source_chapter_name": "Prescribed Books - Mathematics Exemplar Problem for Class XI, Published by NCERT",
+          "source_heading": "Prescribed Books - Mathematics Exemplar Problem for Class XI, Published by NCERT",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Unit-III: Calculus",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "Continuity and Differentiability",
+        "Applications of Derivatives",
+        "Integrals",
+        "Application of the Integrals",
+        "Differential Equations"
+      ],
+      "subtopics": [
+        "Chain rule",
+        "Derivative of composite functions",
+        "Inverse trigonometric functions like sin^-1 x, cos^-1 x and tan^-1 x",
+        "Derivative of implicit functions",
+        "Concept of exponential and logarithmic functions",
+        "Derivatives of logarithmic and exponential functions",
+        "Logarithmic differentiation",
+        "Derivative of functions expressed in parametric forms",
+        "Second order derivatives",
+        "Rate of change of quantities",
+        "Increasing/decreasing functions",
+        "Maxima and minima (first derivative test motivated geometrically and second derivative test given as a provable tool)",
+        "Simple problems illustrating basic principles, understanding of the subject, and real-life situations",
+        "Integration as inverse process of differentiation",
+        "Integration by substitution",
+        "Integration by partial fractions",
+        "Integration by parts",
+        "Evaluation of simple integrals including: dx/(x^2+a^2), dx/sqrt(x^2-a^2), dx/sqrt(a^2-x^2), (px+q)/sqrt(ax^2+bx+c)dx, px+q/ax^2+bx+c dx, sqrt(a+x)dx, sqrt(x-a)dx, sqrt(ax+b)dx",
+        "Fundamental Theorem of Calculus (without proof)",
+        "Basic properties of definite integrals and evaluation of definite integrals",
+        "Finding the area under simple curves: lines, circles/parabolas/ellipses in standard form only",
+        "Definition, order and degree of differential equations",
+        "General and particular solutions of a differential equation",
+        "Solution by method of separation of variables",
+        "Solutions of homogeneous differential equations of first order and first degree",
+        "Linear differential equation dy/dx + py = q where p and q are functions of x or constants",
+        "Linear differential equation dx/dy + px = q where p and q are functions of y or constants"
+      ],
+      "key_concepts": [
+        "Calculus",
+        "Continuity",
+        "Differentiability",
+        "Chain Rule",
+        "Inverse Trigonometric Functions",
+        "Exponential Functions",
+        "Logarithmic Differentiation",
+        "Parametric Forms",
+        "Second Order Derivatives",
+        "Rate of Change",
+        "Maxima and Minima",
+        "Integration by Substitution",
+        "Partial Fractions",
+        "Definite Integrals",
+        "Area Under Curves",
+        "Differential Equations"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Calculus",
+          "source_chapter_name": "Calculus",
+          "source_heading": "Calculus",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Vectors",
+        "Three-dimensional Geometry"
+      ],
+      "subtopics": [
+        "Vectors and scalars, magnitude and direction of a vector. Direction cosines and direction ratios of a vector.",
+        "Types of vectors (equal, unit, zero, parallel and collinear vectors), position vector of a point, negative of a vector, components of a vector, addition of vectors, multiplication of a vector by a scalar, position vector of a point dividing a line segment in a given ratio. Definition, Geometrical Interpretation, properties and application of scalar (dot) product of vectors, vector (cross) product of vectors.",
+        "Direction cosines and direction ratios of a line joining two points. Cartesian equation and vector equation of a line, skew lines, shortest distance between two lines. Angle between two lines."
+      ],
+      "key_concepts": [
+        "Vectors",
+        "Three-dimensional Geometry"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Vectors and Three-dimensional Geometry",
+          "source_chapter_name": "Vectors and Three-dimensional Geometry",
+          "source_heading": "Vectors and Three-dimensional Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U5",
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Linear Programming"
+      ],
+      "subtopics": [
+        "Introduction, related terminology such as constraints, objective function, optimization, graphical method of solution for problems in two variables, feasible and infeasible regions (bounded or unbounded), feasible and infeasible solutions, optimal feasible solutions (up to three non-trivial constraints)."
+      ],
+      "key_concepts": [
+        "Linear Programming"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Linear Programming Problem",
+          "source_chapter_name": "Linear Programming Problem",
+          "source_heading": "Linear Programming Problem",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Unit-VI: Probability",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Probability"
+      ],
+      "subtopics": [
+        "Conditional probability, multiplication theorem on probability, independent events, total probability, Bayes' theorem."
+      ],
+      "key_concepts": [
+        "Probability"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Probability",
+          "source_chapter_name": "Probability",
+          "source_heading": "Probability",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Document structure hierarchy for this class:
+{
+  "class_name": "Class XI",
+  "subject": "Mathematics",
+  "part_or_section": "",
+  "units": [
+    {
+      "unit_id": "U1",
+      "source_unit_id": "U1",
+      "unit_name": "Prescribed Books - Mathematics Textbook for Class XI, NCERT Publications",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "NCERT Publications"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Prescribed Books - Mathematics Textbook for Class XI, NCERT Publications",
+          "source_chapter_name": "Prescribed Books - Mathematics Textbook for Class XI, NCERT Publications",
+          "source_heading": "Prescribed Books - Mathematics Textbook for Class XI, NCERT Publications",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U2",
+      "source_unit_id": "U2",
+      "unit_name": "Prescribed Books - Mathematics Exemplar Problem for Class XI, Published by NCERT",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [],
+      "subtopics": [
+        "Published by NCERT"
+      ],
+      "key_concepts": [],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Prescribed Books - Mathematics Exemplar Problem for Class XI, Published by NCERT",
+          "source_chapter_name": "Prescribed Books - Mathematics Exemplar Problem for Class XI, Published by NCERT",
+          "source_heading": "Prescribed Books - Mathematics Exemplar Problem for Class XI, Published by NCERT",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U3",
+      "source_unit_id": "U3",
+      "unit_name": "Unit-III: Calculus",
+      "part_or_section": "",
+      "marks": 20,
+      "topics": [
+        "Continuity and Differentiability",
+        "Applications of Derivatives",
+        "Integrals",
+        "Application of the Integrals",
+        "Differential Equations"
+      ],
+      "subtopics": [
+        "Chain rule",
+        "Derivative of composite functions",
+        "Inverse trigonometric functions like sin^-1 x, cos^-1 x and tan^-1 x",
+        "Derivative of implicit functions",
+        "Concept of exponential and logarithmic functions",
+        "Derivatives of logarithmic and exponential functions",
+        "Logarithmic differentiation",
+        "Derivative of functions expressed in parametric forms",
+        "Second order derivatives",
+        "Rate of change of quantities",
+        "Increasing/decreasing functions",
+        "Maxima and minima (first derivative test motivated geometrically and second derivative test given as a provable tool)",
+        "Simple problems illustrating basic principles, understanding of the subject, and real-life situations",
+        "Integration as inverse process of differentiation",
+        "Integration by substitution",
+        "Integration by partial fractions",
+        "Integration by parts",
+        "Evaluation of simple integrals including: dx/(x^2+a^2), dx/sqrt(x^2-a^2), dx/sqrt(a^2-x^2), (px+q)/sqrt(ax^2+bx+c)dx, px+q/ax^2+bx+c dx, sqrt(a+x)dx, sqrt(x-a)dx, sqrt(ax+b)dx",
+        "Fundamental Theorem of Calculus (without proof)",
+        "Basic properties of definite integrals and evaluation of definite integrals",
+        "Finding the area under simple curves: lines, circles/parabolas/ellipses in standard form only",
+        "Definition, order and degree of differential equations",
+        "General and particular solutions of a differential equation",
+        "Solution by method of separation of variables",
+        "Solutions of homogeneous differential equations of first order and first degree",
+        "Linear differential equation dy/dx + py = q where p and q are functions of x or constants",
+        "Linear differential equation dx/dy + px = q where p and q are functions of y or constants"
+      ],
+      "key_concepts": [
+        "Calculus",
+        "Continuity",
+        "Differentiability",
+        "Chain Rule",
+        "Inverse Trigonometric Functions",
+        "Exponential Functions",
+        "Logarithmic Differentiation",
+        "Parametric Forms",
+        "Second Order Derivatives",
+        "Rate of Change",
+        "Maxima and Minima",
+        "Integration by Substitution",
+        "Partial Fractions",
+        "Definite Integrals",
+        "Area Under Curves",
+        "Differential Equations"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Calculus",
+          "source_chapter_name": "Calculus",
+          "source_heading": "Calculus",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U4",
+      "source_unit_id": "U4",
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Vectors",
+        "Three-dimensional Geometry"
+      ],
+      "subtopics": [
+        "Vectors and scalars, magnitude and direction of a vector. Direction cosines and direction ratios of a vector.",
+        "Types of vectors (equal, unit, zero, parallel and collinear vectors), position vector of a point, negative of a vector, components of a vector, addition of vectors, multiplication of a vector by a scalar, position vector of a point dividing a line segment in a given ratio. Definition, Geometrical Interpretation, properties and application of scalar (dot) product of vectors, vector (cross) product of vectors.",
+        "Direction cosines and direction ratios of a line joining two points. Cartesian equation and vector equation of a line, skew lines, shortest distance between two lines. Angle between two lines."
+      ],
+      "key_concepts": [
+        "Vectors",
+        "Three-dimensional Geometry"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Vectors and Three-dimensional Geometry",
+          "source_chapter_name": "Vectors and Three-dimensional Geometry",
+          "source_heading": "Vectors and Three-dimensional Geometry",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U5",
+      "source_unit_id": "U5",
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Linear Programming"
+      ],
+      "subtopics": [
+        "Introduction, related terminology such as constraints, objective function, optimization, graphical method of solution for problems in two variables, feasible and infeasible regions (bounded or unbounded), feasible and infeasible solutions, optimal feasible solutions (up to three non-trivial constraints)."
+      ],
+      "key_concepts": [
+        "Linear Programming"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Linear Programming Problem",
+          "source_chapter_name": "Linear Programming Problem",
+          "source_heading": "Linear Programming Problem",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    },
+    {
+      "unit_id": "U6",
+      "source_unit_id": "U6",
+      "unit_name": "Unit-VI: Probability",
+      "part_or_section": "",
+      "marks": null,
+      "topics": [
+        "Probability"
+      ],
+      "subtopics": [
+        "Conditional probability, multiplication theorem on probability, independent events, total probability, Bayes' theorem."
+      ],
+      "key_concepts": [
+        "Probability"
+      ],
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Probability",
+          "source_chapter_name": "Probability",
+          "source_heading": "Probability",
+          "part_or_section": "",
+          "source_type": "unit_fallback",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": []
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+## CLASS – XII
+(2026-27)
+One Paper Max. Marks: 80
+No. Units Marks
+- I. Relations and Functions 08
+II. Algebra
+10
+III. Calculus
+35
+IV. Vectors and Three - Dimensional Geometry
+14
+- V. Linear Programming
+05
+VI. Probability
+08
+# Page 10
+
+MATHEMATICS (Code No. – 041)
+## QUESTION PAPER DESIGN
+## CLASS – XII (2026-27)
+Time: 3 hours Max. Marks: 80
+%
+- S. Total
+Typology of Questions
+Weightage
+No. Marks
+Remembering: Exhibit memory of previously learned
+material by recalling facts, terms, basic concepts, and
+44
+55
+answers.
+1
+Understanding: Demonstrate understanding of facts and
+ideas by organizing, comparing, translating, interpreting,
+# Page 12
+
+Assessment of Activity Work:
+Throughout the year any 10 activities shall be performed by the student from the
+activities given in the NCERT Laboratory Manual for the respective class (XI or
+XII) which is available on the link:
+http://www.ncert.nic.in/exemplar/labmanuals.html a record of the same may be
+kept by the student. An year end test on the activity may be conducted
+The weightage are as under:
+ The activities performed by the student throughout the year and record
+keeping: 5 marks
+ Assessment of the activity performed during the year end test: 3 marks
+ Viva-voce: 2 marks
+Prescribed Books:
+- 1) Mathematics Textbook for Class XI, NCERT Publications
+- 2) Mathematics Part I - Textbook for Class XII, NCERT Publication
+- 3) Mathematics Part II - Textbook for Class XII, NCERT Publication
+- 4) Mathematics Exemplar Problem for Class XI, Published by NCERT
+- 5) Mathematics Exemplar Problem for Class XII, Published by NCERT
+- 6) Mathematics Lab Manual class XI, published by NCERT
+- 7) Mathematics Lab Manual class XII, published by NCERT

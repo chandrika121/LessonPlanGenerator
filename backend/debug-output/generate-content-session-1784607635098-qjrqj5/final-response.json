@@ -1,0 +1,727 @@
+{
+  "assessment": {
+    "meta": {
+      "assessmentType": "Session assessment",
+      "totalMarks": 9,
+      "totalQuestions": 7,
+      "durationMinutes": 15,
+      "language": "English",
+      "preferredDifficulty": "Balanced",
+      "paperObjective": "",
+      "requestSignature": "{\"assessmentType\":\"Session assessment\",\"difficulty\":\"Balanced\",\"paperObjective\":\"\",\"totalMarks\":9,\"totalQuestions\":7,\"questionTypes\":[{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]}",
+      "requestedQuestionTypes": [
+        {
+          "type": "mcq",
+          "label": "MCQs",
+          "questionCount": 3,
+          "marksEach": 1
+        },
+        {
+          "type": "veryShortAnswer",
+          "label": "Very Short Answer",
+          "questionCount": 2,
+          "marksEach": 1
+        },
+        {
+          "type": "shortAnswer",
+          "label": "Short Answer",
+          "questionCount": 2,
+          "marksEach": 2
+        }
+      ]
+    },
+    "sessionAnalysis": {
+      "assessedLearningOutcomes": [
+        "Define Total Surface Area (TSA) and Lateral/Curved Surface Area (LSA/CSA).",
+        "Derive and recall the formula for TSA of a cube ($6s^2$).",
+        "Differentiate between LSA and TSA in word problems.",
+        "Calculate surface areas given dimensions."
+      ],
+      "assessedConcepts": [
+        "Total Surface Area (TSA) definition",
+        "Lateral/Curved Surface Area (LSA/CSA) definition",
+        "Cube geometry properties",
+        "Cuboid geometry properties",
+        "Formula derivation for Cube TSA and LSA",
+        "Formula derivation for Cuboid TSA and LSA"
+      ],
+      "conceptCoveragePriorities": [
+        "Differentiation between TSA (all faces) and LSA (side walls only)",
+        "Application of $6s^2$ for cubes",
+        "Application of $2(lb + bh + hl)$ for cuboids"
+      ],
+      "misconceptionTargets": [
+        "Thinking LSA includes top and bottom faces.",
+        "Forgetting to multiply by 2 for cuboid face pairs."
+      ],
+      "competencyFocus": [
+        "Application",
+        "Analysis",
+        "Understanding"
+      ]
+    },
+    "blueprint": {
+      "sectionPlan": [
+        {
+          "sectionId": "section-assessment",
+          "title": "Assessment",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "focus": "Session-aligned assessment focus on Surface Areas of Cubes and Cuboids."
+        }
+      ],
+      "conceptDistribution": [
+        {
+          "concept": "Cube TSA Formula ($6s^2$)",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ],
+          "competency": "Understanding",
+          "importance": "core"
+        },
+        {
+          "concept": "Cuboid TSA and LSA Formulas",
+          "questionRefs": [
+            {
+              "text": "",
+              "latex": "q^2",
+              "displayLatex": ""
+            },
+            "q5",
+            "q6"
+          ],
+          "competency": "Application",
+          "importance": "core"
+        },
+        {
+          "concept": "LSA vs TSA Differentiation",
+          "questionRefs": [
+            {
+              "text": "",
+              "latex": "q^3",
+              "displayLatex": ""
+            },
+            "q7"
+          ],
+          "competency": "Analysis",
+          "importance": "high"
+        }
+      ],
+      "learningOutcomeCoverage": [
+        {
+          "outcome": "Define Total Surface Area (TSA) and Lateral/Curved Surface Area (LSA/CSA).",
+          "questionRefs": [
+            {
+              "text": "",
+              "latex": "q^3",
+              "displayLatex": ""
+            },
+            "q7"
+          ]
+        },
+        {
+          "outcome": "Derive and recall the formula for TSA of a cube ($6s^2$).",
+          "questionRefs": [
+            "q1",
+            "q4"
+          ]
+        },
+        {
+          "outcome": "Differentiate between LSA and TSA in word problems.",
+          "questionRefs": [
+            "q5",
+            "q6"
+          ]
+        }
+      ],
+      "difficultyDistribution": {
+        "easy": 43,
+        "medium": 43,
+        "hard": 14
+      },
+      "bloomsDistribution": {
+        "recall": 28,
+        "understanding": 29,
+        "application": 29,
+        "analysis": 14,
+        "evaluation": 0
+      },
+      "competencyDistribution": {
+        "understanding": 3,
+        "application": 3,
+        "analysis": 1
+      },
+      "questionDistribution": {
+        "mcq": 3,
+        "veryShortAnswer": 2,
+        "shortAnswer": 2
+      },
+      "timeAllocation": [
+        {
+          "section": "Assessment",
+          "minutes": 15
+        }
+      ]
+    },
+    "paper": {
+      "instructions": [
+        "This assessment covers Surface Areas and Volumes (3-D Shapes) for Cubes and Cuboids only.",
+        "Answer all questions. Marks are indicated against each question.",
+        "Use $\\pi = 22/7$ if required, though not needed for this session's shapes."
+      ],
+      "sections": [
+        {
+          "id": "section-assessment",
+          "title": "Assessment",
+          "marks": 9,
+          "questionCount": 7,
+          "questionRefs": [
+            "q1",
+            "q2",
+            "q3",
+            "q4",
+            "q5",
+            "q6",
+            "q7"
+          ],
+          "source": "fallback"
+        }
+      ],
+      "questions": [
+        {
+          "id": "q1",
+          "questionNumber": 1,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "What is the formula for the Total Surface Area (TSA) of a cube with side length 's'?",
+          "options": [
+            "A. $4s^2$",
+            "B. $6s^2$",
+            "C. $3s^2$",
+            "D. $12s$"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Cube TSA Formula"
+          ],
+          "topicCoverage": [
+            "Surface Areas and Volumes (3-D Shapes)"
+          ],
+          "subtopicCoverage": [
+            "Cubes"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Formula Recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Cube has 6 identical square faces."
+          ]
+        },
+        {
+          "id": "q2",
+          "questionNumber": 2,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "A cuboid has length $l$, breadth $b$, and height $h$. Which expression represents its Total Surface Area?",
+          "options": [
+            "A. $2(l + b)$",
+            "B. $lbh$",
+            "C. $2(lb + bh + hl)$",
+            "D. $4lh$"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO3"
+          ],
+          "conceptRefs": [
+            "Cuboid TSA Formula"
+          ],
+          "topicCoverage": [
+            "Surface Areas and Volumes (3-D Shapes)"
+          ],
+          "subtopicCoverage": [
+            "Cuboids"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Formula Recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Sum of areas of all faces."
+          ]
+        },
+        {
+          "id": "q3",
+          "questionNumber": 3,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "mcq",
+          "subtype": "mcq",
+          "prompt": "When calculating the cost of painting only the four walls of a room (excluding floor and ceiling), which area are you calculating?",
+          "options": [
+            "A. Total Surface Area (TSA)",
+            "B. Lateral/Curved Surface Area (LSA/CSA)",
+            "C. Volume",
+            "D. Perimeter"
+          ],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO4"
+          ],
+          "conceptRefs": [
+            "LSA vs TSA Differentiation"
+          ],
+          "topicCoverage": [
+            "Surface Areas and Volumes (3-D Shapes)"
+          ],
+          "subtopicCoverage": [
+            "Application of LSA/TSA"
+          ],
+          "bloomsLevel": "understanding",
+          "competencyTag": "Conceptual Clarity",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: Painting a room excludes floor/ceiling."
+          ]
+        },
+        {
+          "id": "q4",
+          "questionNumber": 4,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "State the formula for the Lateral Surface Area (LSA) of a cube with side 's'.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO2"
+          ],
+          "conceptRefs": [
+            "Cube LSA Formula"
+          ],
+          "topicCoverage": [
+            "Surface Areas and Volumes (3-D Shapes)"
+          ],
+          "subtopicCoverage": [
+            "Cubes"
+          ],
+          "bloomsLevel": "recall",
+          "competencyTag": "Formula Recall",
+          "difficulty": "easy",
+          "sourceEvidence": [
+            "Teacher notes: LSA excludes top/bottom, leaving 4 side squares."
+          ]
+        },
+        {
+          "id": "q5",
+          "questionNumber": 5,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "veryShortAnswer",
+          "prompt": "A cuboid has dimensions $l=10$ cm, $b=5$ cm, and $h=4$ cm. Calculate its Total Surface Area.",
+          "options": [],
+          "marks": 1,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO5"
+          ],
+          "conceptRefs": [
+            "Cuboid TSA Calculation"
+          ],
+          "topicCoverage": [
+            "Surface Areas and Volumes (3-D Shapes)"
+          ],
+          "subtopicCoverage": [
+            "Cuboids"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Calculation",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Guided practice with numerical examples."
+          ]
+        },
+        {
+          "id": "q6",
+          "questionNumber": 6,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "A room has dimensions $20$ m (length), $15$ m (breadth), and $8$ m (height). Calculate the cost of painting its four walls at Rs. 10 per square meter.",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO5"
+          ],
+          "conceptRefs": [
+            "Cuboid LSA Calculation",
+            "Cost Application"
+          ],
+          "topicCoverage": [
+            "Surface Areas and Volumes (3-D Shapes)"
+          ],
+          "subtopicCoverage": [
+            "Real-world Applications"
+          ],
+          "bloomsLevel": "application",
+          "competencyTag": "Problem Solving",
+          "difficulty": "medium",
+          "sourceEvidence": [
+            "Teacher notes: Assessment questions on painting walls."
+          ]
+        },
+        {
+          "id": "q7",
+          "questionNumber": 7,
+          "sectionId": "section-assessment",
+          "sectionTitle": "Assessment",
+          "type": "shortAnswer",
+          "subtype": "shortAnswer",
+          "prompt": "Explain why the Lateral Surface Area of a cube is $4s^2$ while its Total Surface Area is $6s^2$. Which faces are excluded in the calculation of LSA?",
+          "options": [],
+          "marks": 2,
+          "expectedLength": "",
+          "learningOutcomeRefs": [
+            "LO1",
+            "LO4"
+          ],
+          "conceptRefs": [
+            "LSA vs TSA Differentiation",
+            "Cube Geometry"
+          ],
+          "topicCoverage": [
+            "Surface Areas and Volumes (3-D Shapes)"
+          ],
+          "subtopicCoverage": [
+            "Conceptual Understanding"
+          ],
+          "bloomsLevel": "analysis",
+          "competencyTag": "Reasoning",
+          "difficulty": "hard",
+          "sourceEvidence": [
+            "Teacher notes: Misconceptions about LSA including top/bottom."
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "answerKey": {
+        "items": [
+          {
+            "questionId": "q1",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. $6s^2$",
+            "explanation": "A cube has 6 identical square faces, each with area $s^2$. Total Surface Area is the sum of all faces.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q2",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "C. $2(lb + bh + hl)$",
+            "explanation": "A cuboid has 3 pairs of opposite faces: Top/Bottom ($lb$), Front/Back ($bh$), Left/Right ($hl$). Summing them gives the formula.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q3",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "B. Lateral/Curved Surface Area (LSA/CSA)",
+            "explanation": "Painting only the four walls excludes the floor and ceiling, which corresponds to calculating the Lateral Surface Area.",
+            "marks": 1,
+            "subtype": "mcq"
+          },
+          {
+            "questionId": "q4",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "$4s^2$",
+            "explanation": "LSA of a cube excludes the top and bottom faces, leaving only 4 side squares.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q5",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": {
+              "text": "",
+              "latex": "$2(10\\times5 + 5\\times4 + 4\\times10) = 2(50 + 20 + 40) = 2(110) = 220$ sq cm.",
+              "displayLatex": "$2(10\\times5 + 5\\times4 + 4\\times10) = 2(50 + 20 + 40) = 2(110) = 220$ sq cm."
+            },
+            "explanation": "Substitute $l=10, b=5, h=4$ into the TSA formula for a cuboid: $2(lb+bh+hl)$.",
+            "marks": 1,
+            "subtype": "veryShortAnswer"
+          },
+          {
+            "questionId": "q6",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "LSA of room = $2h(l+b) = 2 \\times 8(20+15) = 16(35) = 560$ sq m. Cost = $560 \\times 10 = Rs. 5600$.",
+            "explanation": "First calculate LSA of the cuboid (room walls only), then multiply by the rate per square meter.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          },
+          {
+            "questionId": "q7",
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "answer": "A cube has 6 faces total. LSA excludes the top and bottom bases, leaving only the 4 side walls ($4s^2$). TSA includes all 6 faces.",
+            "explanation": "The student must identify that 'top' and 'bottom' are excluded in LSA calculations for a cube to explain the difference between $4s^2$ and $6s^2$.",
+            "marks": 2,
+            "subtype": "shortAnswer"
+          }
+        ]
+      },
+      "markingScheme": {
+        "items": [
+          {
+            "questionId": "q1",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q2",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (C)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q3",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct option selected (B)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks only for the correct option."
+            ]
+          },
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct formula written ($4s^2$)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for the correct expression."
+            ]
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "markBreakdown": [
+              {
+                "criterion": "Correct substitution and calculation ($220$ sq cm)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award full marks for the correct numerical answer."
+            ]
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Correct LSA formula and calculation ($560$ sq m)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct final cost calculation (Rs. $5600$)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks point-wise for the area and then the cost."
+            ]
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "markBreakdown": [
+              {
+                "criterion": "Explanation that LSA excludes top/bottom faces (4 side walls)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct identification of the difference in face count ($6$ vs $4$)",
+                "marks": 1
+              }
+            ],
+            "awardGuidance": [
+              "Award marks for clear reasoning regarding excluded faces."
+            ]
+          }
+        ]
+      },
+      "rubrics": {
+        "items": [
+          {
+            "questionId": "q4",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "Correct LSA formula and calculation ($560$ sq m)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct final cost calculation (Rs. $5600$)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "LSA = $2h(l+b)$. Area = $2 \\times 8(20+15) = 560$ sq m. Cost = $560 \\times 10 = Rs. 5600$."
+          },
+          {
+            "questionId": "q5",
+            "totalMarks": 1,
+            "criteria": [
+              {
+                "criterion": "Explanation that LSA excludes top/bottom faces (4 side walls)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct identification of the difference in face count ($6$ vs $4$)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "LSA excludes top and bottom faces, leaving only the 4 side walls. TSA includes all 6 faces."
+          },
+          {
+            "questionId": "q6",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Correct LSA formula and calculation ($560$ sq m)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct final cost calculation (Rs. $5600$)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "LSA = $2h(l+b)$. Area = $2 \\times 8(20+15) = 560$ sq m. Cost = $560 \\times 10 = Rs. 5600$."
+          },
+          {
+            "questionId": "q7",
+            "totalMarks": 2,
+            "criteria": [
+              {
+                "criterion": "Explanation that LSA excludes top/bottom faces (4 side walls)",
+                "marks": 1
+              },
+              {
+                "criterion": "Correct identification of the difference in face count ($6$ vs $4$)",
+                "marks": 1
+              }
+            ],
+            "sampleAnswer": "LSA excludes top and bottom faces, leaving only the 4 side walls. TSA includes all 6 faces."
+          }
+        ]
+      },
+      "generalInstructions": [
+        "Award marks point-wise for each valid idea in calculation questions.",
+        "Ensure units (sq cm/sq m) are used where appropriate for full credit."
+      ],
+      "evaluatorInstructions": [
+        "Use only the taught session content when evaluating student responses. Do not accept formulas from future sessions (e.g., cylinders)."
+      ],
+      "moderationNotes": [
+        "Maintain consistency across equivalent answers regarding LSA vs TSA definitions."
+      ]
+    },
+    "summary": {
+      "coverageSummary": [
+        "Balanced coverage of Cube and Cuboid surface area concepts, formulas, and differentiation between TSA/LSA."
+      ],
+      "omittedContent": [],
+      "balanceNotes": [
+        "Paper progresses from formula recall (MCQs) to direct calculation (Short Answer) and conceptual reasoning (Analysis)."
+      ]
+    },
+    "validation": {
+      "exactPatternChecks": {
+        "passed": true,
+        "details": [
+          "Requested questions: 7",
+          "Generated questions: 7"
+        ]
+      },
+      "marksChecks": {
+        "passed": true,
+        "details": [
+          "Requested marks: 9",
+          "Generated marks: 9"
+        ]
+      },
+      "sectionChecks": {
+        "passed": true,
+        "details": [
+          "Assessment: 7 question(s), 9 mark(s)"
+        ]
+      },
+      "alignmentChecks": {
+        "passed": true,
+        "details": [
+          "Answer key items: 7",
+          "Marking scheme items: 7",
+          "Rubric-linked questions: 4"
+        ]
+      },
+      "scopeBoundaryChecks": {
+        "passed": true,
+        "details": [
+          "No untaught or future-session content (e.g., cylinders) included."
+        ]
+      }
+    }
+  }
+}

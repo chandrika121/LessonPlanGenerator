@@ -15,6 +15,26 @@ function toSafeNumber(value: unknown, fallback = 0) {
   return Number.isFinite(next) ? next : fallback;
 }
 
+function mergeRedundantBlankSectionClasses(items: PrincipalClassSummary[]) {
+  const namedSectionsByClass = new Map<string, Set<string>>();
+
+  items.forEach((item) => {
+    const className = String(item.className || "").trim();
+    const section = String(item.section || "").trim().toUpperCase();
+    if (!className) return;
+    const existing = namedSectionsByClass.get(className) || new Set<string>();
+    if (section) existing.add(section);
+    namedSectionsByClass.set(className, existing);
+  });
+
+  return items.filter((item) => {
+    const className = String(item.className || "").trim();
+    const section = String(item.section || "").trim().toUpperCase();
+    const namedSections = namedSectionsByClass.get(className) || new Set<string>();
+    return !(namedSections.size === 1 && !section);
+  });
+}
+
 export function ClassesPage() {
   const navigate = useNavigate();
   const [classes, setClasses] = useState<PrincipalClassSummary[]>([]);
@@ -50,7 +70,7 @@ export function ClassesPage() {
           averageClassPerformance: toSafeNumber(item.averageClassPerformance),
           curriculumProgress: toSafeNumber(item.curriculumProgress),
         })).filter((item) => String(item.className || "").trim().toLowerCase() !== "class xii");
-        setClasses(normalized);
+        setClasses(mergeRedundantBlankSectionClasses(normalized));
       })
       .catch(() => setClasses([]))
       .finally(() => setLoading(false));

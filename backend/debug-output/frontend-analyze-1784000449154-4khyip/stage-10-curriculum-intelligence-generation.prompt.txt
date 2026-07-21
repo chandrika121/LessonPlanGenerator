@@ -1,0 +1,1355 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class XII",
+      "subject": "Mathematics",
+      "units": [
+        {
+          "unit_id": "class-12-mathematics-u1",
+          "unit_name": "Conic Sections",
+          "part_or_section": "",
+          "topics": [
+            "Sections of a cone: circles, ellipse, parabola, hyperbola, a point, a straight line and a pair of intersecting lines as a degenerated case of a conic section.",
+            "Standard equations and simple properties of parabola, ellipse and hyperbola.",
+            "Standard equation of a circle."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Conic Sections",
+            "Circle",
+            "Ellipse",
+            "Parabola",
+            "Hyperbola"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Conic Sections",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Conic Sections",
+                "Circle",
+                "Ellipse",
+                "Parabola",
+                "Hyperbola"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-u2",
+          "unit_name": "Unit-II: Algebra",
+          "part_or_section": "",
+          "topics": [
+            "Complex Numbers and Quadratic Equations",
+            "Linear Inequalities",
+            "Permutations and Combinations",
+            "Binomial Theorem",
+            "Sequence and Series"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Algebra",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Complex Numbers and Quadratic Equations"
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Complex Numbers",
+                "Quadratic Equations",
+                "Argand Plane"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-u3",
+          "unit_name": "Unit-III: Coordinate Geometry",
+          "part_or_section": "",
+          "topics": [
+            "Straight Lines"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Coordinate Geometry",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Slope",
+                "Equation of Line"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-u4",
+          "unit_name": "Introduction to Three-dimensional Geometry",
+          "part_or_section": "",
+          "topics": [
+            "Coordinate axes and coordinate planes in three dimensions.",
+            "Coordinates of a point.",
+            "Distance between two points."
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "Three-dimensional Geometry",
+            "Coordinate Axes",
+            "Coordinate Planes"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Introduction to Three-dimensional Geometry",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Three-dimensional Geometry",
+                "Coordinate Axes"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-u5",
+          "unit_name": "Unit-IV: Calculus",
+          "part_or_section": "",
+          "topics": [
+            "Limits and Derivatives"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Calculus",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Limit",
+                "Derivative",
+                "Rate of Change"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-u6",
+          "unit_name": "Unit-V Statistics and Probability",
+          "part_or_section": "",
+          "topics": [
+            "Statistics",
+            "Probability"
+          ],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Unit-V Statistics and Probability",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Measures of Dispersion (Range, Mean deviation, Variance, Standard Deviation)"
+              ],
+              "subtopics": [],
+              "key_concepts": [
+                "Dispersion",
+                "Standard Deviation",
+                "Axiomatic Probability"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class XI",
+      "subject": "Mathematics",
+      "units": [
+        {
+          "unit_id": "class-11-mathematics-u1",
+          "unit_name": "Sets and Functions",
+          "part_or_section": "",
+          "topics": [
+            "Sets",
+            "Relations and Functions",
+            "Trigonometric Functions"
+          ],
+          "subtopics": [
+            "Practical problems on Union and Intersection of two sets",
+            "Composition of Functions",
+            "General solution of trigonometric equations of the type sin y = sin a, cos y = cos a and tan y = tan a"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Sets and Functions",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Sets",
+                "Relations and Functions",
+                "Trigonometric Functions"
+              ],
+              "subtopics": [
+                "Subsets of a set of real numbers especially intervals (with notations)",
+                "Composition of Functions"
+              ],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-mathematics-u2",
+          "unit_name": "Algebra",
+          "part_or_section": "",
+          "topics": [
+            "Principle of Mathematical Induction",
+            "(Complex Numbers and) Quadratic Equations",
+            "Linear Inequalities",
+            "Binomial Theorem",
+            "Sequence and Series"
+          ],
+          "subtopics": [
+            "Process of the proof by induction, motivating the application of the method by looking at natural numbers as the least inductive subset of real numbers. The principle of mathematical induction and simple applications.",
+            "Polar representation of complex numbers. Statement of Fundamental Theorem of Algebra, solution of quadratic equations (with real coefficients) in the complex number system.",
+            "Graphical solution of linear inequalities in two variables. Graphical method of finding a solution of system of linear inequalities in two variables.",
+            "General and middle term in binomial expansion",
+            "Formulae for special sums: sum k, sum k^2, sum k^3"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Algebra",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-mathematics-u3",
+          "unit_name": "Coordinate Geometry",
+          "part_or_section": "",
+          "topics": [
+            "Straight Lines",
+            "Introduction to Three-dimensional Geometry"
+          ],
+          "subtopics": [
+            "Normal form. General equation of a line.",
+            "Section formula."
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Coordinate Geometry",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-mathematics-u4",
+          "unit_name": "Calculus",
+          "part_or_section": "",
+          "topics": [
+            "Limits and Derivatives"
+          ],
+          "subtopics": [
+            "Derivatives of composite functions (Chain rule)"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Calculus",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-mathematics-u5",
+          "unit_name": "Statistics and Probability",
+          "part_or_section": "",
+          "topics": [
+            "Probability"
+          ],
+          "subtopics": [
+            "Random experiments; outcomes, sample space (set representation)"
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Statistics and Probability",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [
+                "Probability"
+              ],
+              "subtopics": [
+                "Random experiments; outcomes, sample space (set representation)"
+              ],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "C12-MATH-U1",
+      "title": "Conic Sections Competencies",
+      "description": "Understanding conic sections and their standard equations.",
+      "competencies": [
+        "Identify different types of conic sections including circles, ellipses, parabolas, hyperbolas, and degenerate cases.",
+        "Derive and apply the standard equation of a circle.",
+        "Apply properties to solve problems involving parabolas, ellipses, and hyperbolas."
+      ],
+      "unit_name": "Conic Sections",
+      "chapter_name": "Conic Sections"
+    },
+    {
+      "code": "C12-MATH-U2",
+      "title": "Algebra Competencies (Class XII)",
+      "description": "Mastery of complex numbers, inequalities, combinatorics, and series.",
+      "competencies": [
+        "Solve quadratic equations in the complex number system using algebraic properties.",
+        "Apply principles to solve linear inequalities.",
+        "Calculate permutations and combinations for problem-solving scenarios.",
+        "Utilize the Binomial Theorem for expansions.",
+        "Analyze sequences and series including arithmetic and geometric progressions."
+      ],
+      "unit_name": "Unit-II: Algebra",
+      "chapter_name": "Algebra"
+    },
+    {
+      "code": "C12-MATH-U3",
+      "title": "Coordinate Geometry Competencies (Class XII)",
+      "description": "Application of linear equations and geometric properties.",
+      "competencies": [
+        "Determine the slope and equation of straight lines in various forms.",
+        "Apply coordinate geometry principles to solve distance and intersection problems."
+      ],
+      "unit_name": "Unit-III: Coordinate Geometry",
+      "chapter_name": "Coordinate Geometry"
+    },
+    {
+      "code": "C12-MATH-U4",
+      "title": "Three-dimensional Geometry Competencies (Class XII)",
+      "description": "Spatial reasoning and coordinate calculations in 3D.",
+      "competencies": [
+        "Identify coordinate axes, planes, and points in three dimensions.",
+        "Calculate the distance between two points in a three-dimensional space."
+      ],
+      "unit_name": "Introduction to Three-dimensional Geometry",
+      "chapter_name": "Introduction to Three-dimensional Geometry"
+    },
+    {
+      "code": "C12-MATH-U5",
+      "title": "Calculus Competencies (Class XII)",
+      "description": "Foundational concepts of limits and derivatives.",
+      "competencies": [
+        "Understand the intuitive concept of limits for various functions.",
+        "Define and calculate derivatives as rates of change."
+      ],
+      "unit_name": "Unit-IV: Calculus",
+      "chapter_name": "Calculus"
+    },
+    {
+      "code": "C12-MATH-U6",
+      "title": "Statistics and Probability Competencies (Class XII)",
+      "description": "Data analysis and probabilistic reasoning.",
+      "competencies": [
+        "Calculate measures of dispersion including range, mean deviation, variance, and standard deviation.",
+        "Apply axiomatic probability to determine the likelihood of events."
+      ],
+      "unit_name": "Unit-V Statistics and Probability",
+      "chapter_name": "Unit-V Statistics and Probability"
+    },
+    {
+      "code": "C11-MATH-U1",
+      "title": "Sets and Functions Competencies (Class XI)",
+      "description": "Foundational set theory, function properties, and trigonometry.",
+      "competencies": [
+        "Represent sets using various methods and perform operations like union, intersection, and complementation.",
+        "Analyze relations and functions including domain, range, and composition of functions.",
+        "Apply trigonometric identities and solve equations involving general solutions."
+      ],
+      "unit_name": "Sets and Functions",
+      "chapter_name": "Sets and Functions"
+    },
+    {
+      "code": "C11-MATH-U2",
+      "title": "Algebra Competencies (Class XI)",
+      "description": "Advanced algebraic techniques including induction, complex numbers, and series.",
+      "competencies": [
+        "Apply the Principle of Mathematical Induction to prove statements about natural numbers.",
+        "Solve quadratic equations in the complex number system using polar representation.",
+        "Graphically solve linear inequalities in two variables.",
+        "Determine general and middle terms in binomial expansions.",
+        "Calculate sums of special series involving powers of integers."
+      ],
+      "unit_name": "Algebra",
+      "chapter_name": "Algebra"
+    },
+    {
+      "code": "C11-MATH-U3",
+      "title": "Coordinate Geometry Competencies (Class XI)",
+      "description": "Equations of lines and spatial geometry basics.",
+      "competencies": [
+        "Derive equations of straight lines in normal form, general form, and other standard forms.",
+        "Apply the section formula to find coordinates dividing a line segment."
+      ],
+      "unit_name": "Coordinate Geometry",
+      "chapter_name": "Coordinate Geometry"
+    },
+    {
+      "code": "C11-MATH-U4",
+      "title": "Calculus Competencies (Class XI)",
+      "description": "Introduction to differentiation and limits.",
+      "competencies": [
+        "Apply the chain rule for derivatives of composite functions."
+      ],
+      "unit_name": "Calculus",
+      "chapter_name": "Calculus"
+    },
+    {
+      "code": "C11-MATH-U5",
+      "title": "Statistics and Probability Competencies (Class XI)",
+      "description": "Fundamental probability concepts.",
+      "competencies": [
+        "Define random experiments, outcomes, and sample spaces using set representation."
+      ],
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Statistics and Probability"
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      "Unit-I: Sets and Functions - 23 Marks",
+      "Unit-II: Algebra - 25 Marks",
+      "Unit-III: Coordinate Geometry - 12 Marks",
+      "Unit-IV: Calculus - 08 Marks",
+      "Unit-V: Statistics and Probability - 12 Marks"
+    ],
+    "question_paper_design": [
+      {
+        "typology": "Remembering",
+        "description": "Exhibit memory of previously learned material by recalling facts, terms, basic concepts, and answers.",
+        "marks_weightage_percent": 44
+      },
+      {
+        "typology": "Understanding",
+        "description": "Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas.",
+        "marks_weightage_percent": null
+      },
+      {
+        "typology": "Applying",
+        "description": "Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way.",
+        "marks_weightage_percent": 25
+      },
+      {
+        "typology": "Analysing",
+        "description": "Examine and break information into parts by identifying motives or causes. Make inferences and find evidence to support generalizations.",
+        "marks_weightage_percent": null
+      },
+      {
+        "typology": "Evaluating",
+        "description": "Present and defend opinions by making judgments about information, validity of ideas, or quality of work based on a set of criteria.",
+        "marks_weightage_percent": 20
+      },
+      {
+        "typology": "Creating",
+        "description": "Compile information together in a different way by combining elements in a new pattern or proposing alternative solutions.",
+        "marks_weightage_percent": null
+      }
+    ],
+    "competency_weightage": [
+      "No chapter-wise weightage. Care to be taken to cover all the chapters."
+    ],
+    "bloom_levels": [
+      {
+        "level_name": "Remembering",
+        "marks_allocation": 55,
+        "weight_percent": 44
+      },
+      {
+        "level_name": "Understanding",
+        "marks_allocation": null,
+        "weight_percent": null
+      },
+      {
+        "level_name": "Applying",
+        "marks_allocation": 20,
+        "weight_percent": 25
+      },
+      {
+        "level_name": "Analysing",
+        "marks_allocation": null,
+        "weight_percent": null
+      },
+      {
+        "level_name": "Evaluating",
+        "marks_allocation": 16,
+        "weight_percent": 20
+      },
+      {
+        "level_name": "Creating",
+        "marks_allocation": null,
+        "weight_percent": null
+      }
+    ],
+    "internal_assessment": [
+      "Total Internal Assessment: 20 Marks",
+      "Periodic Tests (Best 2 out of 3 tests conducted): 10 Marks",
+      "Mathematics Activities: 10 Marks"
+    ],
+    "practical_assessment": [],
+    "project_assessment": []
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Conic Sections",
+      "chapter_name": "Conic Sections",
+      "topic": "Identify different types of conic sections including circles, ellipses, parabolas, hyperbolas, and degenerate cases.",
+      "outcomes": [
+        "Derive and apply the standard equation of a circle."
+      ],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Conic Sections",
+      "chapter_name": "Conic Sections",
+      "topic": "Apply properties to solve problems involving parabolas, ellipses, and hyperbolas.",
+      "outcomes": [],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Unit-II: Algebra",
+      "chapter_name": "Algebra",
+      "topic": "Solve quadratic equations in the complex number system using algebraic properties.",
+      "outcomes": [
+        "Apply principles to solve linear inequalities."
+      ],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Unit-II: Algebra",
+      "chapter_name": "Algebra",
+      "topic": "Calculate permutations and combinations for problem-solving scenarios.",
+      "outcomes": [],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Unit-II: Algebra",
+      "chapter_name": "Algebra",
+      "topic": "Utilize the Binomial Theorem for expansions.",
+      "outcomes": [
+        "Analyze sequences and series including arithmetic and geometric progressions."
+      ],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Unit-III: Coordinate Geometry",
+      "chapter_name": "Coordinate Geometry",
+      "topic": "Determine the slope and equation of straight lines in various forms.",
+      "outcomes": [
+        "Apply coordinate geometry principles to solve distance and intersection problems."
+      ],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Introduction to Three-dimensional Geometry",
+      "chapter_name": "Introduction to Three-dimensional Geometry",
+      "topic": "Identify coordinate axes, planes, and points in three dimensions.",
+      "outcomes": [
+        "Calculate the distance between two points in a three-dimensional space."
+      ],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Unit-IV: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Understand the intuitive concept of limits for various functions.",
+      "outcomes": [
+        "Define and calculate derivatives as rates of change."
+      ],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Unit-V Statistics and Probability",
+      "chapter_name": "Unit-V Statistics and Probability",
+      "topic": "Calculate measures of dispersion including range, mean deviation, variance, and standard deviation.",
+      "outcomes": [
+        "Apply axiomatic probability to determine the likelihood of events."
+      ],
+      "class_name": "Class XII"
+    },
+    {
+      "unit_name": "Sets and Functions",
+      "chapter_name": "Sets and Functions",
+      "topic": "Foundational set theory, function properties, and trigonometry",
+      "outcomes": [
+        "Represent sets using various methods and perform operations like union, intersection, and complementation.",
+        "Analyze relations and functions including domain, range, and composition of functions.",
+        "Apply trigonometric identities and solve equations involving general solutions."
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Algebra",
+      "chapter_name": "Algebra",
+      "topic": "Advanced algebraic techniques including induction, complex numbers, and series",
+      "outcomes": [
+        "Apply the Principle of Mathematical Induction to prove statements about natural numbers.",
+        "Solve quadratic equations in the complex number system using polar representation.",
+        "Graphically solve linear inequalities in two variables.",
+        "Determine general and middle terms in binomial expansions.",
+        "Calculate sums of special series involving powers of integers."
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Coordinate Geometry",
+      "chapter_name": "Coordinate Geometry",
+      "topic": "Equations of lines and spatial geometry basics",
+      "outcomes": [
+        "Derive equations of straight lines in normal form, general form, and other standard forms.",
+        "Apply the section formula to find coordinates dividing a line segment."
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Introduction to differentiation and limits",
+      "outcomes": [
+        "Apply the chain rule for derivatives of composite functions."
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Statistics and Probability",
+      "topic": "Fundamental probability concepts",
+      "outcomes": [
+        "Define random experiments, outcomes, and sample spaces using set representation."
+      ],
+      "class_name": "Class XI"
+    }
+  ]
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [],
+  "projects": [],
+  "practicals": []
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

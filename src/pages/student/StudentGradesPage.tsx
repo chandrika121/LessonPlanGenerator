@@ -1,5 +1,6 @@
 import { Award, BookOpen, Calendar, ChevronDown, ChevronUp, FileText, TrendingUp, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getBackendBaseUrl } from "../../utils/api";
 
 interface SubjectGrade {
   subject: string;
@@ -18,9 +19,7 @@ interface SubjectGrade {
 }
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+const BACKEND_URL = getBackendBaseUrl();
 
 function getSession() {
   try {

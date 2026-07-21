@@ -5,6 +5,7 @@ import { StatCard } from "../../components/StatCard";
 import type { AuthUser } from "../../types/auth";
 import type { PublishedStudentArtifact } from "../../types/student-content";
 import { readAnnouncements } from "../../utils/announcements";
+import { buildApiUrl } from "../../utils/api";
 import { getPublishedArtifactsForStudent } from "../../utils/studentPublications";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
@@ -50,7 +51,7 @@ export function StudentDashboard() {
 
     let cancelled = false;
     void fetch(
-      `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}/api/student/subjects?userId=${encodeURIComponent(currentUser.id!)}&schoolId=${encodeURIComponent(currentUser.schoolId!)}`,
+      buildApiUrl(`/api/student/subjects?userId=${encodeURIComponent(currentUser.id!)}&schoolId=${encodeURIComponent(currentUser.schoolId!)}`),
     )
       .then(async (response) => {
         if (!response.ok) {
@@ -85,9 +86,9 @@ export function StudentDashboard() {
     const loadPublishedItems = async () => {
       try {
         const [homeworkResponse, assessmentResponse, notesResponse] = await Promise.all([
-          fetch(`${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}/api/student/published-content?userId=${encodeURIComponent(currentUser!.id!)}&schoolId=${encodeURIComponent(currentUser!.schoolId!)}&kind=homework`),
-          fetch(`${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}/api/student/published-content?userId=${encodeURIComponent(currentUser!.id!)}&schoolId=${encodeURIComponent(currentUser!.schoolId!)}&kind=assessments`),
-          fetch(`${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}/api/student/notes?userId=${encodeURIComponent(currentUser!.id!)}&schoolId=${encodeURIComponent(currentUser!.schoolId!)}`),
+          fetch(buildApiUrl(`/api/student/published-content?userId=${encodeURIComponent(currentUser!.id!)}&schoolId=${encodeURIComponent(currentUser!.schoolId!)}&kind=homework`)),
+          fetch(buildApiUrl(`/api/student/published-content?userId=${encodeURIComponent(currentUser!.id!)}&schoolId=${encodeURIComponent(currentUser!.schoolId!)}&kind=assessments`)),
+          fetch(buildApiUrl(`/api/student/notes?userId=${encodeURIComponent(currentUser!.id!)}&schoolId=${encodeURIComponent(currentUser!.schoolId!)}`)),
         ]);
 
         const [homeworkData, assessmentData, notesData] = await Promise.all([

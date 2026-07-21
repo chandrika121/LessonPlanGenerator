@@ -1,3 +1,5 @@
+import { getBackendBaseUrl } from "../utils/api";
+
 export interface PrincipalDashboardData {
   totalTeachers: number;
   totalClasses: number;
@@ -321,9 +323,7 @@ export interface PrincipalAllocationClassOption {
 }
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+const BACKEND_URL = getBackendBaseUrl();
 
 function getSession() {
   try {

@@ -1,0 +1,1394 @@
+UNIVERSAL CURRICULUM UNDERSTANDING AND EXTRACTION ENGINE
+
+ROLE
+
+You are an Expert Curriculum Intelligence System.
+
+You are NOT a keyword extractor.
+
+You are NOT a text parser.
+
+You are NOT a summarizer.
+
+You are a curriculum analyst, curriculum architect, instructional designer, academic planner and curriculum extraction engine.
+
+Your responsibility is to fully understand the curriculum before extracting any information.
+
+CURRENT REQUEST RULE
+
+Use ONLY the curriculum data provided in this request.
+
+Do NOT use:
+
+- previous uploads
+- previous curriculum runs
+- examples from memory
+- prior extracted JSON from unrelated files
+- assumptions based on common board patterns
+
+Treat every upload as a completely fresh curriculum.
+
+The curriculum may belong to:
+
+- School Education
+- Board Curriculum
+- University Curriculum
+- Diploma Program
+- Certification Program
+- Vocational Program
+- Teacher Education
+- Skill Development Program
+- International Curriculum
+- Professional Training Program
+
+or any future educational framework.
+
+==================================================
+ABSOLUTE RULE
+==================================================
+
+Never assume:
+
+- board
+- institution
+- curriculum structure
+- class
+- grade
+- semester
+- stream
+- subject
+- hierarchy
+- assessment structure
+- competency structure
+
+Everything must be discovered from the curriculum itself.
+
+Never use keyword matching.
+
+Never assume that words such as:
+
+Unit
+Chapter
+Topic
+Theme
+Module
+Domain
+Strand
+
+are always the instructional hierarchy.
+
+Determine educational meaning through context.
+
+==================================================
+STAGE 1
+FULL CURRICULUM UNDERSTANDING
+==================================================
+
+Read the COMPLETE document before extracting anything.
+
+Understand:
+
+1. Educational authority
+2. Board / University / Institution
+3. Curriculum ownership
+4. Academic year
+5. Subject structure
+6. Class structure
+7. Grade structure
+8. Stream structure
+9. Program structure
+10. Assessment philosophy
+11. Pedagogical philosophy
+12. Competency framework
+13. Learning outcome framework
+14. Instructional framework
+15. Document architecture
+16. Curriculum architecture
+
+Do not begin extraction until complete understanding is achieved.
+
+==================================================
+STAGE 2
+ACADEMIC ENTITY DISCOVERY
+==================================================
+
+Determine all academic entities.
+
+Examples:
+
+Single Class
+
+Class IX
+
+Multiple Classes
+
+Class IX
+Class X
+
+Class XI
+Class XII
+
+Multiple Subjects
+
+Physics
+Chemistry
+Biology
+
+Multiple Programs
+
+Semester I
+Semester II
+
+Multiple Streams
+
+Science
+Commerce
+Arts
+
+Multiple Language Variants
+
+R1
+R2
+
+Theory
+Practical
+
+Each entity must be identified separately.
+
+Never merge entities.
+
+==================================================
+STAGE 3
+CURRICULUM SEGMENTATION
+==================================================
+
+If the curriculum contains:
+
+- multiple classes
+- multiple grades
+- multiple subjects
+- multiple streams
+- multiple semesters
+- multiple programs
+- theory/practical sections
+- R1/R2 structures
+
+Create separate curriculum segments.
+
+No content mixing is allowed.
+
+==================================================
+STAGE 4
+CURRICULUM ARCHITECTURE DISCOVERY
+==================================================
+
+Discover the curriculum structure.
+
+Possible instructional structures include:
+
+Curriculum
+→ Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+Curriculum
+→ Theme
+→ Concept
+
+Curriculum
+→ Theme
+→ Learning Outcome
+
+Curriculum
+→ Domain
+→ Strand
+→ Standard
+
+Curriculum
+→ Module
+→ Lesson
+
+Curriculum
+→ Competency
+→ Learning Outcome
+
+Curriculum
+→ Project
+→ Activity
+
+Curriculum
+→ Practical
+→ Experiment
+
+Do not force any hierarchy.
+
+Reconstruct the hierarchy exactly as intended by the curriculum.
+
+==================================================
+STAGE 5
+CURRICULUM STYLE DISCOVERY
+==================================================
+
+Identify curriculum philosophy.
+
+Possible styles:
+
+Content Based
+Competency Based
+Outcome Based
+Skill Based
+Standards Based
+Inquiry Based
+Project Based
+Experiential
+Integrated
+Interdisciplinary
+Hybrid
+
+Multiple styles may coexist.
+
+==================================================
+STAGE 6
+COMPLETE CURRICULUM EXTRACTION
+==================================================
+
+After understanding the curriculum architecture completely, extract ALL curriculum entities.
+
+Possible entities include:
+
+Classes
+Grades
+Subjects
+Streams
+Semesters
+Programs
+
+Units
+Themes
+Domains
+Modules
+Lessons
+
+Chapters
+Topics
+Subtopics
+
+Concepts
+Key Concepts
+
+Learning Outcomes
+Competencies
+Competency Groups
+Competency Codes
+
+Standards
+Indicators
+Performance Indicators
+
+Projects
+Activities
+Assignments
+Investigations
+Case Studies
+
+Practicals
+Experiments
+Field Work
+Laboratory Work
+
+Teaching Suggestions
+Pedagogical Notes
+Teacher Guidance
+
+Question Paper Design
+Assessment Scheme
+Rubrics
+
+Theory Marks
+Practical Marks
+Internal Assessment
+Portfolio Marks
+Project Marks
+
+Reference Material
+Prescribed Books
+
+Do not omit any educational entity.
+
+==================================================
+TOPIC AND SUBTOPIC EXTRACTION RULE
+==================================================
+
+If hierarchy exists:
+
+Unit
+→ Chapter
+→ Topic
+→ Subtopic
+
+extract every level.
+
+If hierarchy exists as:
+
+Theme
+→ Chapter
+→ Topic
+
+extract every level.
+
+If hierarchy exists as:
+
+Module
+→ Topic
+→ Subtopic
+
+extract every level.
+
+Never stop extraction at chapter level.
+
+Always continue until the deepest instructional level present in the curriculum.
+
+Example:
+
+Unit:
+Chemical Substances
+
+Chapter:
+Acids Bases and Salts
+
+Topics:
+Acids
+Bases
+Salts
+pH Scale
+
+Subtopics:
+Indicators
+Neutralisation
+Importance of pH
+Preparation of Sodium Hydroxide
+Preparation of Bleaching Powder
+
+The deepest level must always be extracted.
+
+==================================================
+LEARNING OUTCOME EXTRACTION
+==================================================
+
+Extract every learning outcome separately.
+
+Do not merge.
+
+Do not summarize.
+
+Do not paraphrase.
+
+Each learning outcome must remain independent.
+
+==================================================
+COMPETENCY EXTRACTION
+==================================================
+
+Extract:
+
+CG
+C
+LO
+Standards
+Indicators
+
+Preserve codes exactly.
+
+Examples:
+
+CG-1
+CG-2
+
+C-1.1
+C-1.2
+
+LO-3
+
+Never modify codes.
+
+==================================================
+ASSESSMENT EXTRACTION
+==================================================
+
+Extract all assessment structures.
+
+Including:
+
+Question Paper Design
+Theory Assessment
+Practical Assessment
+Internal Assessment
+Portfolio
+Project Assessment
+Competency Weightage
+Bloom Distribution
+Question Types
+Mark Distribution
+
+==================================================
+PRACTICAL EXTRACTION
+==================================================
+
+Extract separately:
+
+Practicals
+Experiments
+Activities
+Projects
+Field Work
+Case Studies
+Portfolio Tasks
+
+Maintain mapping with:
+
+Class
+Subject
+Unit
+Chapter
+
+==================================================
+LESSON PLANNING INTELLIGENCE
+==================================================
+
+For every instructional node identify:
+
+difficulty_level
+concept_density
+prerequisites
+dependency_chain
+
+If sessions are explicitly provided:
+
+use official values.
+
+If not provided:
+
+estimate:
+
+estimated_sessions
+estimated_teaching_hours
+
+based on:
+
+content volume
+learning outcomes
+competency density
+assessment load
+practical load
+
+Mark all inferred values:
+
+"source":"estimated"
+
+==================================================
+COMPLETENESS VALIDATION
+==================================================
+
+Before final output verify:
+
+Every page processed.
+
+Every class processed.
+
+Every subject processed.
+
+Every stream processed.
+
+Every unit processed.
+
+Every chapter processed.
+
+Every topic processed.
+
+Every subtopic processed.
+
+Every competency processed.
+
+Every learning outcome processed.
+
+Every practical processed.
+
+Every project processed.
+
+Every assessment component processed.
+
+Every prescribed book processed.
+
+If uncertain:
+
+prefer extraction over omission.
+
+==================================================
+HALLUCINATION PREVENTION
+==================================================
+
+Never invent:
+
+units
+chapters
+topics
+subtopics
+learning outcomes
+competencies
+marks
+hours
+sessions
+activities
+projects
+
+If information is not available:
+
+return null or [].
+
+==================================================
+OUTPUT RULES
+==================================================
+
+Return JSON only.
+
+No markdown.
+
+No explanations.
+
+No comments.
+
+No narrative text.
+
+No assumptions.
+
+Output must be valid JSON.parse() compliant.
+
+==================================================
+CURRENT INPUT
+==================================================
+
+Stage name:
+Stage 10: Curriculum Intelligence Generation
+
+Shared extraction rules:
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Normalized structure JSON:
+{
+  "classes": [
+    {
+      "class_name": "Class XI",
+      "subject": "Mathematics",
+      "units": [
+        {
+          "unit_id": "class-11-mathematics-u3",
+          "unit_name": "Unit-III: Calculus",
+          "part_or_section": "",
+          "topics": [
+            "Continuity and Differentiability",
+            "Applications of Derivatives",
+            "Integrals",
+            "Application of the Integrals",
+            "Differential Equations"
+          ],
+          "subtopics": [
+            "Chain rule, derivative of composite functions, derivatives of inverse trigonometric functions like sin^-1 x, cos^-1 x and tan^-1 x, derivative of implicit functions.",
+            "Concept of exponential and logarithmic functions. Derivatives of logarithmic and exponential functions. Logarithmic differentiation, derivative of functions expressed in parametric forms. Second order derivatives.",
+            "Rate of change of quantities, increasing/decreasing functions, maxima and minima (first derivative test motivated geometrically and second derivative test given as a provable tool). Simple problems illustrating basic principles and real-life situations.",
+            "Integration as inverse process of differentiation. Integration by substitution, partial fractions and parts. Evaluation of simple integrals including types: dx/(x^2+a^2), dx/sqrt(x^2-a^2), dx/sqrt(a^2-x^2), (px+q)dx/ax^2+bx+c, dx/sqrt(ax^2+bx+c), px+q over sqrt(ax^2+bx+c), a x+b over sqrt(a+x^2), sqrt(x^2-a), sqrt(ax^2+bx+c). Fundamental Theorem of Calculus (without proof). Basic properties of definite integrals and evaluation.",
+            "Finding the area under simple curves, especially lines, circles/parabolas/ellipses in standard form only.",
+            "Definition, order and degree. General and particular solutions. Solution by method of separation of variables. Solutions of homogeneous differential equations of first order and first degree. Linear differential equation dy/dx + py = q (p,q functions of x or constants) and dx/dy + px = q (p,q functions of y or constants)."
+          ],
+          "key_concepts": [
+            "Continuity",
+            "Differentiability",
+            "Chain Rule",
+            "Inverse Trigonometric Functions Derivatives",
+            "Exponential/Logarithmic Functions",
+            "Parametric Forms",
+            "Second Order Derivatives",
+            "Rate of Change",
+            "Maxima and Minima",
+            "Integration by Substitution",
+            "Partial Fractions",
+            "Integration by Parts",
+            "Definite Integrals",
+            "Fundamental Theorem of Calculus",
+            "Area Under Curves",
+            "Separation of Variables"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Calculus",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-mathematics-u4",
+          "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+          "part_or_section": "",
+          "topics": [
+            "Vectors",
+            "Three-dimensional Geometry"
+          ],
+          "subtopics": [
+            "Vectors and scalars, magnitude and direction of a vector. Direction cosines and direction ratios of a vector.",
+            "Types of vectors (equal, unit, zero, parallel and collinear vectors), position vector of a point, negative of a vector, components of a vector, addition of vectors, multiplication of a vector by a scalar, position vector of a point dividing a line segment in a given ratio.",
+            "Definition, Geometrical Interpretation, properties and application of scalar (dot) product of vectors, vector (cross) product of vectors.",
+            "Direction cosines and direction ratios of a line joining two points. Cartesian equation and vector equation of a line, skew lines, shortest distance between two lines. Angle between two lines."
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Vectors and Three-dimensional Geometry",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-mathematics-u5",
+          "unit_name": "Unit-V: Linear Programming Problem",
+          "part_or_section": "",
+          "topics": [
+            "Linear Programming"
+          ],
+          "subtopics": [
+            "Introduction, related terminology such as constraints, objective function, optimization, graphical method of solution for problems in two variables, feasible and infeasible regions (bounded or unbounded), feasible and infeasible solutions, optimal feasible solutions (up to three non-trivial constraints)."
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Linear Programming Problem",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Linear Programming"
+              ]
+            }
+          ]
+        },
+        {
+          "unit_id": "class-11-mathematics-u6",
+          "unit_name": "Unit-VI: Probability",
+          "part_or_section": "",
+          "topics": [
+            "Probability"
+          ],
+          "subtopics": [
+            "Conditional probability, multiplication theorem on probability, independent events, total probability, Bayes' theorem."
+          ],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Probability",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": [
+                "Probability"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "class_name": "Class XII",
+      "subject": "Mathematics",
+      "units": [
+        {
+          "unit_id": "class-12-mathematics-u1",
+          "unit_name": "Assessment of Activity Work",
+          "part_or_section": "",
+          "topics": [
+            "Activities performed by the student throughout the year and record keeping: 5 marks",
+            "Assessment of the activity performed during the year end test: 3 marks",
+            "Viva-voce: 2 marks"
+          ],
+          "subtopics": [],
+          "key_concepts": [
+            "NCERT Laboratory Manual",
+            "Year end test on the activity"
+          ],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Assessment of Activity Work",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Competencies JSON:
+{
+  "competency_groups": [
+    {
+      "code": "C1",
+      "title": "Relations and Functions",
+      "description": "Understanding types of relations, equivalence relations, one-to-one and onto functions.",
+      "competencies": [
+        "Identify reflexive, symmetric, transitive and equivalence relations",
+        "Determine if a function is one to one or onto"
+      ],
+      "unit_name": "Unit-I: Relations and Functions",
+      "chapter_name": ""
+    },
+    {
+      "code": "C2",
+      "title": "Inverse Trigonometric Functions",
+      "description": "Understanding definition, range, domain, principal value branches, and graphs of inverse trigonometric functions.",
+      "competencies": [
+        "Define inverse trigonometric functions with their domains and ranges",
+        "Identify principal value branches for sin^-1 x, cos^-1 x, tan^-1 x",
+        "Sketch graphs of inverse trigonometric functions"
+      ],
+      "unit_name": "Unit-I: Relations and Functions",
+      "chapter_name": ""
+    },
+    {
+      "code": "C3",
+      "title": "Matrices",
+      "description": "Understanding concepts, operations, properties of matrices including non-commutativity and invertibility.",
+      "competencies": [
+        "Identify types of matrices (zero, identity, symmetric, skew-symmetric)",
+        "Perform matrix addition, multiplication, and scalar multiplication",
+        "Demonstrate non-commutativity of matrix multiplication for order 2 square matrices",
+        "Find the inverse of a square matrix if it exists"
+      ],
+      "unit_name": "Unit-II: Algebra",
+      "chapter_name": ""
+    },
+    {
+      "code": "C4",
+      "title": "Determinants and Applications",
+      "description": "Understanding determinants, minors, co-factors, adjoint, inverse, and solving systems of linear equations.",
+      "competencies": [
+        "Calculate determinant of a square matrix up to 3x3 order",
+        "Find area of a triangle using determinants",
+        "Determine consistency or inconsistency of a system of linear equations",
+        "Solve systems of linear equations in two or three variables using inverse matrices"
+      ],
+      "unit_name": "Unit-II: Algebra",
+      "chapter_name": ""
+    },
+    {
+      "code": "C5",
+      "title": "Continuity and Differentiability",
+      "description": "Understanding continuity, differentiability, chain rule, derivatives of composite/inverse trigonometric/implicit functions.",
+      "competencies": [
+        "Test for continuity and differentiability of a function at a point",
+        "Apply chain rule to differentiate composite functions",
+        "Differentiate inverse trigonometric functions (sin^-1 x, cos^-1 x, tan^-1 x)",
+        "Find derivatives of implicit functions"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C6",
+      "title": "Exponential and Logarithmic Functions Derivatives",
+      "description": "Understanding derivatives of exponential, logarithmic functions, logarithmic differentiation, parametric forms.",
+      "competencies": [
+        "Differentiate exponential and logarithmic functions",
+        "Apply logarithmic differentiation techniques",
+        "Find derivatives of functions expressed in parametric forms"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C7",
+      "title": "Second Order Derivatives and Applications",
+      "description": "Understanding second order derivatives, rate of change, increasing/decreasing functions, maxima/minima.",
+      "competencies": [
+        "Calculate second order derivatives",
+        "Determine the rate of change of quantities",
+        "Identify intervals where a function is increasing or decreasing",
+        "Apply first and second derivative tests to find local maxima and minima"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C8",
+      "title": "Integration Techniques",
+      "description": "Understanding integration as inverse of differentiation, substitution, partial fractions, and parts.",
+      "competencies": [
+        "Evaluate integrals using the method of substitution",
+        "Decompose rational functions into partial fractions for integration",
+        "Apply integration by parts to evaluate complex integrals"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C9",
+      "title": "Definite Integrals and Fundamental Theorem",
+      "description": "Understanding definite integrals, their properties, evaluation of specific types, and the Fundamental Theorem.",
+      "competencies": [
+        "Evaluate standard forms like dx/(x^2+a^2), dx/sqrt(x^2-a^2), etc.",
+        "Apply basic properties of definite integrals",
+        "State and apply the Fundamental Theorem of Calculus"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C10",
+      "title": "Area Under Curves",
+      "description": "Understanding applications of integrals to find area under simple curves.",
+      "competencies": [
+        "Calculate the area under lines, circles, parabolas, and ellipses in standard form"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C11",
+      "title": "Differential Equations",
+      "description": "Understanding definition, order, degree, solutions, and methods of solving differential equations.",
+      "competencies": [
+        "Identify the order and degree of a differential equation",
+        "Find general and particular solutions",
+        "Solve first-order homogeneous differential equations by separation of variables"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C12",
+      "title": "Linear Differential Equations",
+      "description": "Understanding and solving linear differential equations of specific forms.",
+      "competencies": [
+        "Solve linear differential equations of the form dy/dx + py = q"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C13",
+      "title": "Vectors and Scalars",
+      "description": "Understanding vectors, scalars, magnitude, direction, types of vectors.",
+      "competencies": [
+        "Distinguish between vectors and scalars",
+        "Calculate magnitude and direction cosines/ratios of a vector"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C14",
+      "title": "Vector Operations",
+      "description": "Understanding addition, scalar multiplication, position vectors.",
+      "competencies": [
+        "Perform vector addition and scalar multiplication"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C15",
+      "title": "Dot and Cross Products",
+      "description": "Understanding scalar (dot) product and vector (cross) product properties.",
+      "competencies": [
+        "Calculate the dot product of two vectors"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C16",
+      "title": "Three-Dimensional Geometry - Lines",
+      "description": "Understanding direction ratios, equations of lines (Cartesian/Vector), skew lines.",
+      "competencies": [
+        "Find direction cosines and ratios for a line joining two points"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C17",
+      "title": "Distance Between Lines",
+      "description": "Understanding shortest distance between skew lines.",
+      "competencies": [
+        "Calculate the shortest distance between two skew lines"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C18",
+      "title": "Angle Between Lines",
+      "description": "Understanding the angle between two lines.",
+      "competencies": [
+        "Calculate the angle between two given lines"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C19",
+      "title": "Linear Programming Concepts",
+      "description": "Understanding constraints, objective function, optimization.",
+      "competencies": [
+        "Identify feasible and infeasible regions"
+      ],
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "chapter_name": ""
+    },
+    {
+      "code": "C20",
+      "title": "Graphical Solution of LPP",
+      "description": "Understanding graphical method for solving linear programming problems.",
+      "competencies": [
+        "Solve simple linear programming problems in two variables using the graphical method"
+      ],
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "chapter_name": ""
+    },
+    {
+      "code": "C21",
+      "title": "Probability Concepts",
+      "description": "Understanding conditional probability, independent events.",
+      "competencies": [
+        "Calculate probabilities of independent and dependent events"
+      ],
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": ""
+    },
+    {
+      "code": "C22",
+      "title": "Theorems in Probability",
+      "description": "Understanding multiplication theorem, total probability, Bayes' theorem.",
+      "competencies": [
+        "Apply the multiplication theorem on probability"
+      ],
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": ""
+    },
+    {
+      "code": "C23",
+      "title": "Bayes' Theorem and Total Probability",
+      "description": "Understanding total probability and Bayes' theorem applications.",
+      "competencies": [
+        "Apply the law of total probability"
+      ],
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": ""
+    },
+    {
+      "code": "C24",
+      "title": "Bayes' Theorem Application",
+      "description": "Understanding and applying Bayes' theorem.",
+      "competencies": [
+        "Apply Bayes' theorem to solve probability problems"
+      ],
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": ""
+    }
+  ]
+}
+
+Assessment JSON:
+{
+  "assessment_framework": {
+    "marks_distribution": [
+      "Unit-I: Relations and Functions - 08 Marks",
+      "Unit-II: Algebra (Matrices & Determinants) - 10 Marks",
+      "Unit-III: Calculus - 35 Marks",
+      "Unit-IV: Vectors and Three-dimensional Geometry - 14 Marks",
+      "Unit-V: Linear Programming Problem - 05 Marks",
+      "Unit-VI: Probability - 08 Marks",
+      "Total Theory Paper (Max): 80 Marks"
+    ],
+    "question_paper_design": [
+      "Remembering: 22 marks (Weightage ~44%)",
+      "Understanding: 13 marks (Weightage ~25%)",
+      "Applying: 9 marks (Weightage ~20%)",
+      "Analysing/Evaluating/Creating: 6 marks combined (Remaining weightage)",
+      "Total Marks: 80",
+      "Time: 3 hours"
+    ],
+    "competency_weightage": [
+      "Remembering: Exhibit memory of previously learned material by recalling facts, terms, basic concepts.",
+      "Understanding: Demonstrate understanding by organizing, comparing, translating, interpreting, giving descriptions.",
+      "Applying: Solve problems to new situations using acquired knowledge and techniques.",
+      "Analysing/Evaluating/Creating: Examine information, make judgments, compile elements in a new pattern."
+    ],
+    "bloom_levels": [
+      {
+        "level": "Remembering",
+        "description": "Exhibit memory of previously learned material by recalling facts, terms, basic concepts, and answers.",
+        "marks_weightage": 22
+      },
+      {
+        "level": "Understanding",
+        "description": "Demonstrate understanding of facts and ideas by organizing, comparing, translating, interpreting, giving descriptions, and stating main ideas.",
+        "marks_weightage": 13
+      },
+      {
+        "level": "Applying",
+        "description": "Solve problems to new situations by applying acquired knowledge, facts, techniques and rules in a different way.",
+        "marks_weightage": 9
+      }
+    ],
+    "internal_assessment": [
+      "Total Internal Assessment: 20 Marks",
+      "Periodic Tests (Best 2 out of 3): 10 Marks",
+      "Mathematics Activities: 10 Marks"
+    ],
+    "practical_assessment": [
+      {
+        "component": "Activities performed by the student throughout the year and record keeping",
+        "marks": 5,
+        "source": "NCERT Laboratory Manual (Any 10 activities)"
+      },
+      {
+        "component": "Assessment of the activity performed during the year end test",
+        "marks": 3,
+        "description": "Year-end test on the activity"
+      }
+    ],
+    "project_assessment": [
+      {
+        "component": "Viva-voce",
+        "marks": 2,
+        "context": "Part of Internal Assessment (Mathematics Activities)"
+      },
+      {
+        "component": "Periodic Test Format Requirements",
+        "details": "Pen and Paper assessment with a balance mix of Very Short Answer (VSA), Short Answer (SA), and Long Answer (LA) questions."
+      }
+    ]
+  }
+}
+
+Learning outcomes JSON:
+{
+  "learning_outcomes": [
+    {
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Continuity and Differentiability",
+      "outcomes": [
+        "Test for continuity and differentiability of a function at a point",
+        "Apply chain rule to differentiate composite functions",
+        "Differentiate inverse trigonometric functions (sin^-1 x, cos^-1 x, tan^-1 x)",
+        "Find derivatives of implicit functions"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Exponential and Logarithmic Functions Derivatives",
+      "outcomes": [
+        "Differentiate exponential and logarithmic functions",
+        "Apply logarithmic differentiation techniques",
+        "Find derivatives of functions expressed in parametric forms"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Second Order Derivatives and Applications",
+      "outcomes": [
+        "Calculate second order derivatives",
+        "Determine the rate of change of quantities",
+        "Identify intervals where a function is increasing or decreasing",
+        "Apply first and second derivative tests to find local maxima and minima"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Integration Techniques",
+      "outcomes": [
+        "Evaluate integrals using the method of substitution",
+        "Decompose rational functions into partial fractions for integration",
+        "Apply integration by parts to evaluate complex integrals"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Definite Integrals and Fundamental Theorem",
+      "outcomes": [
+        "Evaluate standard forms like dx/(x^2+a^2), dx/sqrt(x^2-a^2), etc.",
+        "Apply basic properties of definite integrals",
+        "State and apply the Fundamental Theorem of Calculus"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Area Under Curves",
+      "outcomes": [
+        "Calculate the area under lines, circles, parabolas, and ellipses in standard form"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Differential Equations",
+      "outcomes": [
+        "Identify the order and degree of a differential equation",
+        "Find general and particular solutions",
+        "Solve first-order homogeneous differential equations by separation of variables"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": "Calculus",
+      "topic": "Linear Differential Equations",
+      "outcomes": [
+        "Solve linear differential equations of the form dy/dx + py = q"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": "Vectors and Three-dimensional Geometry",
+      "topic": "Vectors and Scalars",
+      "outcomes": [
+        "Distinguish between vectors and scalars",
+        "Calculate magnitude and direction cosines/ratios of a vector"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": "Vectors and Three-dimensional Geometry",
+      "topic": "Vector Operations",
+      "outcomes": [
+        "Perform vector addition and scalar multiplication"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": "Vectors and Three-dimensional Geometry",
+      "topic": "Dot and Cross Products",
+      "outcomes": [
+        "Calculate the dot product of two vectors"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": "Vectors and Three-dimensional Geometry",
+      "topic": "Three-Dimensional Geometry - Lines",
+      "outcomes": [
+        "Find direction cosines and ratios for a line joining two points"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": "Vectors and Three-dimensional Geometry",
+      "topic": "Distance Between Lines",
+      "outcomes": [
+        "Calculate the shortest distance between two skew lines"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": "Vectors and Three-dimensional Geometry",
+      "topic": "Angle Between Lines",
+      "outcomes": [
+        "Calculate the angle between two given lines"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "chapter_name": "Linear Programming Problem",
+      "topic": "Linear Programming Concepts",
+      "outcomes": [
+        "Identify feasible and infeasible regions"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "chapter_name": "Linear Programming Problem",
+      "topic": "Graphical Solution of LPP",
+      "outcomes": [
+        "Solve simple linear programming problems in two variables using the graphical method"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": "Probability",
+      "topic": "Probability Concepts",
+      "outcomes": [
+        "Calculate probabilities of independent and dependent events"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": "Probability",
+      "topic": "Theorems in Probability",
+      "outcomes": [
+        "Apply the multiplication theorem on probability"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": "Probability",
+      "topic": "Bayes' Theorem and Total Probability",
+      "outcomes": [
+        "Apply the law of total probability"
+      ],
+      "class_name": "Class XI"
+    },
+    {
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": "Probability",
+      "topic": "Bayes' Theorem Application",
+      "outcomes": [
+        "Apply Bayes' theorem to solve probability problems"
+      ],
+      "class_name": "Class XI"
+    }
+  ]
+}
+
+Activities / Projects / Practicals JSON:
+{
+  "activities": [
+    {
+      "type": "activity",
+      "title": "Mathematics Activities Record Keeping",
+      "unit_name": "Assessment of Activity Work",
+      "chapter_name": "Assessment of Activity Work",
+      "details": "Conduct any 10 activities from the NCERT Laboratory Manual throughout the year and maintain a record. Weightage: 5 marks."
+    },
+    {
+      "type": "activity",
+      "title": "Year End Test on Activities",
+      "unit_name": "Assessment of Activity Work",
+      "chapter_name": "Assessment of Activity Work",
+      "details": "Conduct an assessment test based on the activities performed during the year end. Weightage: 3 marks."
+    },
+    {
+      "type": "activity",
+      "title": "Viva-voce on Activities",
+      "unit_name": "Assessment of Activity Work",
+      "chapter_name": "Assessment of Activity Work",
+      "details": "Oral examination regarding the activities performed. Weightage: 2 marks."
+    }
+  ],
+  "projects": [],
+  "practicals": []
+}
+
+==================================================
+RESPONSE TARGET
+==================================================
+
+Return valid JSON only. Match this schema exactly:
+
+{
+  "dependency_graph": [
+    {
+      "topic": "",
+      "prerequisites": [""],
+      "dependent_topics": [""]
+    }
+  ],
+  "lesson_planning_intelligence": [
+    {
+      "unit_name": "",
+      "chapter_name": "",
+      "difficulty_level": "",
+      "concept_density": "",
+      "estimated_teaching_hours": "",
+      "estimated_sessions": "",
+      "practical_requirement": "",
+      "assessment_requirement": ""
+    }
+  ],
+  "validation_report": {
+    "structural_source_of_truth_enforced": true,
+    "invalid_unit_names": [""],
+    "invalid_chapter_names": [""]
+  }
+}
+
+==================================================
+FINAL PRINCIPLE
+==================================================
+
+First understand the curriculum.
+
+Then discover the curriculum architecture.
+
+Then segment academic entities.
+
+Then extract.
+
+Never extract before understanding.

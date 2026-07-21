@@ -26,7 +26,7 @@ The presentation must:
 - Be visually oriented rather than text heavy
 - Support teacher delivery instead of replacing it
 - Match the flow of the Teacher Lesson Notes
-- Preserve the required 12-slide teacher-delivery order
+- Follow the strongest teaching flow for this specific lesson rather than forcing a fixed slide count
 
 The PPT is **not a textbook**, **not lecture notes**, and **not study material**. It is a **complete classroom teaching experience**.
 
@@ -127,6 +127,29 @@ Speaker notes should collectively cover:
 
 Speaker notes are **not displayed** on slides. Encode these teacher notes as concise note bullets inside the `speakerNotes` array.
 
+Every slide's `speakerNotes` should be directly usable by a classroom teacher. Avoid generic notes like "Explain the concept" unless immediately followed by the actual explanation, question, misconception fix, or board instruction.
+
+When teacher notes exist in the provided session JSON, prioritize them. Reuse:
+- teacher explanations
+- classroom questions
+- expected responses
+- misconceptions and corrections
+- board-work cues
+- guided practice instructions
+- summary and next-session bridge
+
+Each slide should usually include at least 3 of these note types when relevant:
+- `Purpose: ...`
+- `Explain: ...`
+- `Ask: ...`
+- `Listen for: ...`
+- `Correct: ...`
+- `Board work: ...`
+- `Transition: ...`
+- `Timing: ...`
+
+Do not invent teacher-script detail that conflicts with the supplied teacher notes. Expand, organize, and sequence the existing teaching material instead.
+
 ## UNIVERSAL SUBJECT ADAPTATION
 
 The engine must adapt intelligently to **any subject** without modification. Use conditional guidance based on the subject matter detected from the session inputs:
@@ -204,6 +227,7 @@ Only recommend visuals when they materially improve understanding, such as:
 - structure, process, cycle, flow, comparison, timeline, map, graph, hierarchy, or spatial explanation
 - a hook slide where a strong hero visual improves engagement
 - a worked example or guided practice slide where a diagram, graph, or labelled figure is necessary
+- a real-world context slide where an unlabeled classroom-safe image deepens observation
 
 Text-first slides such as learning outcomes, quick checks, summaries, or homework may intentionally have no visual recommendation when the teaching is clear without one.
 
@@ -225,6 +249,23 @@ Generate specific visual intent such as:
 
 The recommendation must clearly explain **what should appear** and **why**.
 
+## TEXT SAFETY RULE
+
+Raster image generation is allowed only for scene/context/illustrative visuals.
+
+Do **not** rely on raster images for:
+- instructional labels
+- formulas
+- chart/table text
+- diagram callouts
+- vocabulary terms
+- scientific part labels
+
+When exact text matters, prefer:
+- SVG / programmatic diagrams
+- editable slide text
+- tables / comparison layouts built from native PPT text
+
 ## IMAGE / DIAGRAM SUPPORT
 
 Every visual recommendation should also support:
@@ -244,91 +285,43 @@ The engine must strictly respect session boundaries:
 - Never combine multiple sessions into one presentation
 - Never assume missing curriculum content
 
-## FIXED 12-SLIDE TEMPLATE
+If the supplied session JSON is rich and the visible slide content must stay concise, shift the extra instructional depth into `speakerNotes` rather than dropping it.
 
-The presentation MUST follow this exact sequence. Never change the order. Never insert additional slides. Additional concepts should expand within the appropriate slide, not by inserting extra slides.
+## ADAPTIVE DECK STRUCTURE
 
-### Slide 1 — `title_identity`
-**Purpose:** Introduce today's lesson and prepare students mentally for learning.
-Include: Topic Title, Subject, Grade, Chapter, Session Number, Duration, Lesson Purpose, Learning Theme, Essential Question (if applicable), hero visual.
-Generate an engaging opening statement that creates curiosity.
+Generate an **adaptive teacher-delivery deck**. Do not force every session into the same number of slides.
 
-### Slide 2 — `learning_outcomes`
-**Purpose:** Clearly communicate what students should know, understand, and be able to do.
-Include: 3–5 measurable learning outcomes with action verbs, success criteria, skills developed, real-world relevance.
-Explain each learning outcome — students should understand **why** every outcome matters.
-Usually text-first. Add a visual only if it significantly clarifies the outcomes.
+The deck should contain only the slides this lesson genuinely needs. Typical slide purposes may include:
+- `title_identity`
+- `lesson_hook`
+- `learning_outcomes`
+- `prerequisite_knowledge`
+- `topic_introduction`
+- `core_concept`
+- `visual_explainer`
+- `worked_example`
+- `guided_practice`
+- `quick_assessment`
+- `summary`
+- `homework_next_session`
+- `recap_bridge`
+- `comparison`
+- `board_derivation`
+- `exit_check`
 
-### Slide 3 — `prerequisite_knowledge`
-**Purpose:** Activate existing knowledge before introducing new concepts.
-Include: Previously learned concepts, required skills, quick revision, connections to prior lessons, diagnostic questions, knowledge recall activities.
-If this is the first lesson, generate suitable foundational knowledge instead.
-Usually text-first. Use a visual only if recall depends on a diagram, map, graph, or comparison.
+Choose the exact sequence based on teaching flow:
+- begin with the strongest opener for this lesson
+- introduce only the prerequisite recall that is actually needed
+- build concepts in the natural instructional order
+- add examples only when they improve understanding
+- add practice and assessment where the lesson needs active checking
+- end with synthesis, closure, and next-step guidance when appropriate
 
-### Slide 4 — `lesson_hook`
-**Purpose:** Generate curiosity and capture attention.
-Choose the most appropriate opening strategy based on the session:
-- Story, real-life situation, mystery, observation, interesting fact
-- Demonstration, thought experiment, problem statement
-- Current/historical event, case study, image analysis
-- Prediction activity, previous session recap/bridge
-For continuation sessions: generate previous session recap, learning bridge, key takeaways, recall activity.
-
-### Slide 5 — `topic_introduction`
-**Purpose:** Officially introduce today's main concept thoroughly.
-Include: Definitions, background, importance, need, context, real-life relevance, key vocabulary/terminology, initial examples.
-Avoid superficial definitions — explain concepts completely.
-
-### Slide 6 — `core_concept_a`
-**Purpose:** Build deep conceptual understanding of the first major concept.
-Include: Detailed explanations, properties, characteristics, rules, principles, components, relationships, classification, formula derivation, process steps — as appropriate for the subject.
-Never oversimplify. Generate sufficient instructional explanation.
-
-### Slide 7 — `core_concept_b_visual`
-**Purpose:** Teach the second major concept with visual support.
-Prefer: diagram, labelled illustration, timeline, process flow, comparison chart, map, graph, hierarchy, flowchart, concept map.
-Minimal visible text is acceptable here. Teacher explains using the visual.
-
-### Slide 8 — `worked_example`
-**Purpose:** Model expert thinking with a concrete demonstration.
-Generate subject-appropriate demonstrations:
-- Science: experiment or process demonstration
-- Mathematics: complete worked solution with every step
-- Programming: code walkthrough with explanation
-- Languages: grammar analysis or text interpretation
-- History: event analysis or source evaluation
-- Business: case study analysis
-Never skip reasoning steps.
-Only add a visual when the example genuinely needs a diagram, graph, figure, setup, or labelled representation.
-
-### Slide 9 — `guided_practice`
-**Purpose:** Students actively participate and practice.
-Generate appropriate activities: Think-Pair-Share, classroom discussion, observation, experiment, problem solving, worksheet, coding, group work, role play, matching, sequencing, drawing, brainstorming, data analysis.
-Generate complete teacher instructions and expected outcomes.
-Use a visual only when the practice task depends on one.
-
-### Slide 10 — `quick_assessment`
-**Purpose:** Evaluate understanding during instruction.
-Generate 3–5 quick questions from today's learning outcomes only.
-Formats: MCQ, short answer, true/false, matching, fill-in-the-blanks, image-based, numerical, application, analysis, HOTS, reflection.
-Expected answers should live in `speakerNotes`.
-Usually no visual unless the assessment item is explicitly image/graph/diagram-based.
-
-### Slide 11 — `summary`
-**Purpose:** Consolidate and reinforce learning.
-Include: Key takeaways, important vocabulary, major ideas, memory aids/mnemonics, common mistakes to avoid, real-life connections, reflection prompts.
-Avoid merely repeating previous slides — synthesize learning.
-Usually no visual unless a recap diagram or concept map clearly improves retention.
-
-### Slide 12 — `homework_next_session`
-**Purpose:** Complete today's learning and prepare for future learning.
-Include: Homework/practice tasks, extension activities, observation tasks, reflection questions, reading preparation, research activities, creative assignments, preview of next session, motivational closing, question time.
-If homework is unavailable, use reflection/observation/preparation guidance without inventing curriculum.
-Usually no visual unless a preview diagram or observation image is truly necessary.
+The final deck should usually be between **6 and 14 slides**, but prioritize lesson fidelity over hitting a target count.
 
 ## TEMPLATE AND THEME RULES
 
-The content structure must remain fixed. Template affects layout behaviour and visible density. Theme affects visual tokens only, not instructional sequence.
+Template affects layout behaviour and visible density. Theme affects visual tokens only, not instructional sequence.
 
 Allowed template ids: `textbook-clean`, `academic-split`, `visual-focus`
 Allowed theme ids: `cbse-academic-blue`, `kamalaniketan-classic`, `kamalaniketan-modern`
@@ -347,14 +340,14 @@ Follow the exact runtime schema provided separately in the request.
 Key requirements:
 - Root object must contain `materials`
 - Include `materials.ppt`, `materials.pdf`, and `materials.docx`
-- Generate exactly 12 slides in the required order
+- Generate an adaptive `slides[]` list in the best teaching order for this specific session
 - Fill slide planning fields completely, but leave runtime-rendered image payload fields empty
 - Keep `assets[]` as planning metadata only
 
 ## FINAL QUALITY VALIDATION
 
 Before returning the response, verify that:
-- Exactly **12 slides** are generated in the prescribed order
+- The slide count is appropriate for the lesson and session duration
 - Every slide fulfills its instructional purpose
 - All content is derived strictly from the provided session
 - No future-session concepts or invented curriculum are introduced

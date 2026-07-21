@@ -1,0 +1,731 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "academic-split",
+      "templateName": "Academic Split Layout",
+      "themeId": "cbse-academic-blue",
+      "title": "Surface Areas and Volumes: 3-D Shapes",
+      "presentationTitle": "Mastering Surface Areas & Volumes of 3D Shapes",
+      "presentationGoal": "To enable students to calculate surface areas and volumes for standard 3-dimensional geometric shapes using appropriate formulas.",
+      "audience": "Grade 9 Mathematics Students",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Condensed, Arial",
+          "body": "Open Sans, Calibri"
+        },
+        "colors": {
+          "primary": "#1a5f7a",
+          "secondary": "#48cae4",
+          "accent": "#023e8a",
+          "background": "#ffffff",
+          "surface": "#f8f9fa",
+          "text": "#212529",
+          "mutedText": "#6c757d"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary",
+          "cardStyle": "shadow-elevation-2",
+          "visualFrameStyle": "rounded-corners-accent-border"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons (Math Diagrams)",
+          "Khan Academy Visual Library",
+          "GeoGebra Static Images"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all geometric diagrams are under Creative Commons or Public Domain licenses.",
+          "Avoid copyrighted textbook images."
+        ],
+        "fallbackStrategy": "Use generated SVG vector graphics for all geometric shapes to ensure clarity and scalability without external dependencies."
+      },
+      "licenseChecklist": [
+        "Verify no biological imagery is included",
+        "Confirm all formulas are standard mathematical notation",
+        "Ensure diagrams represent pure geometry (no organic forms)"
+      ],
+      "presentationWarnings": [
+        "Strictly avoid any references to biology, plants, or natural processes.",
+        "Focus exclusively on geometric properties and calculations."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define surface area and volume for 3D shapes",
+          "Calculate total and curved surface areas of cubes, cuboids, cylinders, cones, and spheres",
+          "Apply formulas to solve real-world geometric problems"
+        ],
+        "topicsCovered": [
+          "Cube Surface Area & Volume",
+          "Cuboid Surface Area & Volume",
+          "Right Circular Cylinder",
+          "Right Circular Cone",
+          "Sphere and Hemisphere"
+        ],
+        "taughtConceptsCovered": [
+          "Lateral vs Total Surface Area distinction",
+          "Derivation of formulas for standard solids",
+          "Unit consistency in calculations (cm, m)"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Lesson Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "Surface Areas and Volumes: 3-D Shapes",
+          "learningOutcomeIds": [
+            "LO-Intro"
+          ],
+          "topicCoverage": [
+            "Introduction to Solid Geometry"
+          ],
+          "teacherIntent": "Introduce the session topic, establish relevance through geometric forms in architecture and engineering, and set the learning focus.",
+          "studentTakeaway": "I will learn how to measure the 'skin' (surface area) and 'space inside' (volume) of 3D shapes like cubes, cylinders, and spheres.",
+          "layout": "split-screen",
+          "bulletPoints": [
+            "Topic: Surface Areas & Volumes",
+            "Focus: Cubes, Cylinders, Cones, Spheres",
+            "Goal: Master Formulas & Applications"
+          ],
+          "onSlideText": [
+            "Surface Areas and Volumes of 3-D Shapes",
+            "Session 1: Introduction to Solids",
+            "Mathematics | Grade 9"
+          ],
+          "speakerNotes": [
+            "Purpose: Set the stage for a deep dive into solid geometry.",
+            "Explain: Today we move from flat shapes (2D) to objects that occupy space (3D). We will learn how much material is needed to make them and how much they can hold.",
+            "Ask: 'What 3D shape do you see in a water tank or an ice cream cone?'",
+            "Listen for: Cylinder, Cone. Correct any misconceptions about flat circles vs solid spheres.",
+            "Board work: Write the session title clearly on the board as students enter.",
+            "Timing: 2 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": "A composite hero image showing a wireframe cube, a cylinder, and a cone side-by-side to visually represent the scope of shapes covered today.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Composite geometric illustration: Wireframe Cube, Cylinder, Cone",
+          "assets": [
+            {
+              "purpose": "Hero visual for topic introduction",
+              "searchQuery": "3D geometry wireframe cube cylinder cone isolated white background",
+              "sourceSite": "Wikimedia Commons / GeoGebra",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 4.0 or Public Domain",
+              "attributionText": "Generated for Mathematics Education",
+              "altText": "Three distinct geometric solids: a cube, a cylinder, and a cone.",
+              "placementHint": "Right side of the slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in title",
+            "Slide up bullet points sequentially"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "learning_outcomes",
+          "templateSlideTitle": "Learning Outcomes & Success Criteria",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "learning_outcomes",
+          "slideTitle": "What We Will Learn Today",
+          "learningOutcomeIds": [
+            "LO-1",
+            "LO-2"
+          ],
+          "topicCoverage": [
+            "Learning Objectives for Surface Area and Volume"
+          ],
+          "teacherIntent": "Clearly articulate the specific skills students will acquire, ensuring they understand the 'why' behind learning these formulas.",
+          "studentTakeaway": "I know exactly what I need to be able to do by the end of this class: calculate surface areas and volumes for standard shapes.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "Define Surface Area vs. Volume clearly",
+            "Apply formulas for Cubes, Cylinders, Cones",
+            "Solve real-world problems involving 3D solids"
+          ],
+          "onSlideText": [
+            "1. Distinguish between Total and Curved Surface Areas.",
+            "2. Calculate Volume using V = Base Area × Height (or specific formulas).",
+            "3. Solve word problems for tanks, containers, and structures."
+          ],
+          "speakerNotes": [
+            "Purpose: Align student expectations with lesson goals.",
+            "Explain: 'Surface area' is the total area of all faces—the paint needed to cover a box. 'Volume' is the capacity—how much water fits inside it.",
+            "Ask: 'Why do we need different formulas for a cylinder and a cube?'",
+            "Listen for: Different shapes have different face configurations (flat vs curved). Correct if they say 'because numbers are different.' Emphasize geometric properties.",
+            "Board work: Write the key terms 'Surface Area' and 'Volume' on opposite sides of the board to reinforce distinction.",
+            "Timing: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Bullet points appear one by one"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "prerequisite_knowledge",
+          "templateSlideTitle": "Recall: Area and Perimeter of 2D Shapes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "prerequisite_knowledge",
+          "slideTitle": "What We Already Know (2D Review)",
+          "learningOutcomeIds": [
+            "LO-Prereq"
+          ],
+          "topicCoverage": [
+            "Review of Rectangle and Circle Area Formulas"
+          ],
+          "teacherIntent": "Activate prior knowledge about 2D shapes to build a bridge to 3D concepts.",
+          "studentTakeaway": "I remember that area is the space inside a flat shape, which forms the basis for calculating surface areas now.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "Area of Rectangle = Length × Width",
+            "Area of Circle = πr²",
+            "Perimeter vs. Area distinction"
+          ],
+          "onSlideText": [
+            "Recall: How do we measure the 'face' of a shape?",
+            "- Square/Rectangle: l × b",
+            "- Triangle: ½ × base × height",
+            "- Circle: πr² (Area) vs. 2πr (Circumference)"
+          ],
+          "speakerNotes": [
+            "Purpose: Connect new learning to existing mental models.",
+            "Explain: A cube is made of squares. To find its surface area, we add the areas of these square faces. If you forget how to calculate a rectangle's area, you cannot solve today's problems.",
+            "Ask: 'What happens if I double the side length of a square? Does the perimeter or area double?'",
+            "Listen for: Area quadruples (2²). Correct misconception that linear scaling applies equally to 2D and 3D measures without squaring/cubing factors.",
+            "Board work: Draw a quick rectangle labeled 'l' and 'b'. Write A = l × b next to it.",
+            "Timing: 4 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in formulas"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "The Water Tank Challenge: A Real-World Problem",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "lesson_hook",
+          "slideTitle": "Hook: The Construction Dilemma",
+          "learningOutcomeIds": [
+            "LO-Hook"
+          ],
+          "topicCoverage": [
+            "Real-world application of Surface Area and Volume"
+          ],
+          "teacherIntent": "Capture attention with a practical problem that requires both surface area (material cost) and volume (capacity) calculations.",
+          "studentTakeaway": "I see why this math matters: engineers need these exact numbers to build water tanks efficiently without wasting money or space.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "Scenario: Building a rectangular tank",
+            "Problem 1: How much steel is needed?",
+            "Problem 2: How many liters of water will it hold?"
+          ],
+          "onSlideText": [
+            "Imagine you are an engineer.",
+            "Task A: Calculate the cost of metal sheets for a tank (Surface Area).",
+            "Task B: Determine how much water fits inside (Volume).",
+            "Question: Which formula do we use for each task?"
+          ],
+          "speakerNotes": [
+            "Purpose: Create curiosity and relevance.",
+            "Explain: Present the scenario. 'If I buy too little metal, it leaks. If I make it too big, I waste money.' This is why precise calculation matters.",
+            "Ask: 'For Task A (metal sheets), are we measuring inside space or outside covering?'",
+            "Listen for: Outside covering / Surface Area. Correct if they say Volume. Emphasize that metal covers the surface.",
+            "Board work: Write 'Task A = Metal Cost' and 'Task B = Water Capacity'. Ask students to guess which math concept applies to each.",
+            "Timing: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal scenario text",
+            "Highlight 'Task A' and 'Task B'"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "topic_introduction",
+          "templateSlideTitle": "Defining Surface Area and Volume of Solids",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "topic_introduction",
+          "slideTitle": "Core Concepts: Definitions & Terminology",
+          "learningOutcomeIds": [
+            "LO-Def"
+          ],
+          "topicCoverage": [
+            "Definitions of Surface Area and Volume for Solids"
+          ],
+          "teacherIntent": "Provide rigorous definitions distinguishing between Total, Curved, and Lateral surface areas.",
+          "studentTakeaway": "I understand that 'Surface Area' is the sum of all face areas (including bases), while 'Curved Surface Area' excludes flat ends for shapes like cylinders.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "Total Surface Area: Sum of ALL faces",
+            "Lateral/Curved SA: Side surfaces only",
+            "Volume: Space occupied by the solid"
+          ],
+          "onSlideText": [
+            "- Total Surface Area (TSA): All external faces.",
+            "- Curved/Lateral Surface Area (CSA): Only curved sides or non-base faces.",
+            "- Volume: The 3D space enclosed within boundaries."
+          ],
+          "speakerNotes": [
+            "Purpose: Establish precise vocabulary to avoid calculation errors later.",
+            "Explain: 'Total' means everything. If you paint a box, you paint the top and bottom too. For a cylinder, TSA includes the two circular lids; CSA is just the label on the side.",
+            "Ask: 'Does a sphere have a base? What about its surface area?'",
+            "Listen for: No flat bases; entire outer skin is curved surface. Correct if they try to subtract anything from a sphere's formula.",
+            "Board work: Draw a cube and label one face, then the whole shape as TSA. Write 'Volume = Capacity'.",
+            "Timing: 5 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in definitions"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "core_concept_a",
+          "templateSlideTitle": "The Cube and Cuboid: Formulas & Logic",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "core_concept_a",
+          "slideTitle": "Cube & Cuboid: Deriving the Formulas",
+          "learningOutcomeIds": [
+            "LO-CubeCuboid"
+          ],
+          "topicCoverage": [
+            "Formulas for Cube and Cuboid Surface Area/Volume"
+          ],
+          "teacherIntent": "Derive formulas logically from 2D area concepts, ensuring students understand the 'why' behind V = l×b×h.",
+          "studentTakeaway": "I can derive that a cube's volume is side³ because it has three dimensions of equal length, and its surface area is 6s² because there are six identical square faces.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "- Cube: Side 'a'. TSA = 6a². Volume = a³.",
+            "- Cuboid: Length (l), Breadth (b), Height (h).",
+            "- TSA = 2(lb + bh + hl)",
+            "- CSA = 2h(l+b) for lateral faces only."
+          ],
+          "onSlideText": [
+            "Cube:",
+            "- Faces: 6 identical squares.",
+            "- Volume: a × a × a = a³",
+            "Cuboid (Rectangular Box):",
+            "- TSA: Sum of all rectangular pairs.",
+            "- CSA: Side walls only."
+          ],
+          "speakerNotes": [
+            "Purpose: Build conceptual understanding through decomposition.",
+            "Explain: 'A cube is a special cuboid where l=b=h=a.' Show how the formula 2(lb+bh+hl) simplifies to 6a² when all sides are equal. This reinforces algebraic thinking.",
+            "Ask: 'If I have a box with no top, which area do we calculate?'",
+            "Listen for: TSA minus one base (lb). Correct if they just say CSA; clarify that it's an open-top cuboid problem requiring modification of the standard formula.",
+            "Board work: Write V = l × b × h. Ask students to explain why 'height' is multiplied last in terms of stacking layers.",
+            "Timing: 6 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal formulas step-by-step"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "core_concept_b_visual",
+          "templateSlideTitle": "Cylinders, Cones & Spheres: Visualizing Curved Solids",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "core_concept_b_visual",
+          "slideTitle": "Curved Surfaces: Cylinders and Cones",
+          "learningOutcomeIds": [
+            "LO-Curved"
+          ],
+          "topicCoverage": [
+            "Formulas for Cylinder, Cone, Sphere Surface Area/Volume"
+          ],
+          "teacherIntent": "Use visual diagrams to explain the derivation of curved surface areas (unrolling cylinders) and volume formulas.",
+          "studentTakeaway": "I understand that a cylinder's lateral area is like unrolled paper (rectangle), and its volume comes from stacking circular bases.",
+          "layout": "visual-focus",
+          "bulletPoints": [
+            "- Cylinder: CSA = 2πrh. TSA = 2πr(r+h). V = πr²h.",
+            "- Cone: CSA = πrl (l=slant height). V = 1/3πr²h.",
+            "- Sphere: Surface Area = 4πr². Volume = 4/3πr³."
+          ],
+          "onSlideText": [
+            "Cylinder:",
+            "- Unrolled side = Rectangle (2πr × h)",
+            "- Base + Top = Circles",
+            "Sphere:",
+            "- No flat faces, only curved surface.",
+            "- Volume is 4/3 of a sphere's radius cubed."
+          ],
+          "speakerNotes": [
+            "Purpose: Visualize the transition from 2D to 3D for curved shapes.",
+            "Explain: 'Imagine peeling the label off a soup can. It becomes a rectangle with width = circumference (2πr) and height = h.' This explains CSA = 2πrh visually.",
+            "Ask: 'Why is there a fraction in the cone volume formula? Why not just πr²h?'",
+            "Listen for: Because it tapers to a point, holding less than a cylinder. Correct if they guess randomly; explain that integration or geometric comparison shows 1/3 factor.",
+            "Board work: Draw a net of a cylinder (rectangle + two circles) and label dimensions r and h clearly.",
+            "Timing: 7 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": "Diagram showing the 'unrolling' of a cylinder into a rectangle to explain lateral surface area, alongside a cone net diagram.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Net diagrams: Cylinder unrolled (rectangle + circles), Cone net",
+          "assets": [
+            {
+              "purpose": "Visual aid for cylinder derivation",
+              "searchQuery": "cylinder surface area net diagram rectangle circle",
+              "sourceSite": "GeoGebra / Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 4.0",
+              "attributionText": "Mathematics Education Resource",
+              "altText": "Diagram showing a cylinder's lateral surface unrolled into a rectangle.",
+              "placementHint": "Center of slide"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Animate the unrolling process",
+            "Highlight dimensions on diagram"
+          ],
+          "timeEstimateMinutes": 7
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Worked Example: Calculating Volume of a Tank",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "worked_example",
+          "slideTitle": "Example: The Water Tank Calculation",
+          "learningOutcomeIds": [
+            "LO-Worked"
+          ],
+          "topicCoverage": [
+            "Step-by-step application of volume formulas"
+          ],
+          "teacherIntent": "Model expert problem-solving by walking through a complete calculation with unit conversion and logical steps.",
+          "studentTakeaway": "I can follow the process: identify shape, select formula, substitute values, calculate, and check units before stating the final answer.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "- Problem: Tank dimensions 2m × 1.5m × 3m (Cuboid).",
+            "- Step 1: Identify shape = Cuboid.",
+            "- Step 2: Formula V = l × b × h.",
+            "- Step 3: Calculate and convert to Liters."
+          ],
+          "onSlideText": [
+            "Given: Length=2m, Breadth=1.5m, Height=3m",
+            "Find Volume in Litres (1 m³ = 1000 L)",
+            "Calculation:",
+            "- V = 2 × 1.5 × 3 = 9 m³",
+            "- Convert: 9 × 1000 = 9,000 Liters"
+          ],
+          "speakerNotes": [
+            "Purpose: Demonstrate the complete problem-solving workflow.",
+            "Explain: 'First, identify the shape. It's a cuboid because it has rectangular faces.' Walk through multiplication step-by-step on board. Emphasize unit conversion (cubic meters to liters) as this is a common error point.",
+            "Ask: 'Why do we multiply by 1000? Is volume linear or cubic?'",
+            "Listen for: Because it's cubic units, and there are 1000 liters in a cubic meter. Correct if they say 'because the formula says so.' Explain the definition of a liter.",
+            "Board work: Write out the full calculation vertically with units at every step (m³ -> L).",
+            "Timing: 8 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal calculation steps sequentially"
+          ],
+          "timeEstimateMinutes": 8
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice: Surface Area of a Cone",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "guided_practice",
+          "slideTitle": "Practice Time: The Ice Cream Cone Problem",
+          "learningOutcomeIds": [
+            "LO-Practice"
+          ],
+          "topicCoverage": [
+            "Application of cone surface area formulas"
+          ],
+          "teacherIntent": "Engage students in active problem solving with a relatable context (ice cream) to reinforce the concept of slant height.",
+          "studentTakeaway": "I can calculate the curved surface area of a cone by identifying radius and slant height, then applying πrl.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "- Problem: Cone with r=5cm, h=12cm.",
+            "- Task 1: Find Slant Height (l) using Pythagoras.",
+            "- Task 2: Calculate CSA = πrl."
+          ],
+          "onSlideText": [
+            "Given: Radius (r)=5 cm, Vertical Height (h)=12 cm",
+            "Find:",
+            "1. Slant Height (l) = ?",
+            "2. Curved Surface Area (CSA)"
+          ],
+          "speakerNotes": [
+            "Purpose: Guided practice to solidify the Pythagorean connection in cones.",
+            "Explain: 'The slant height is not given directly; we must find it first.' Remind students of a² + b² = c². Here, r and h are legs, l is hypotenuse.",
+            "Ask: 'What triangle do you see inside the cone?'",
+            "Listen for: Right-angled triangle formed by radius, height, and slant height. Correct if they try to use diameter or other sides.",
+            "Board work: Draw a cross-section of the cone showing r=5, h=12, l=? Ask students to calculate 5² + 12² = ? (Answer: 13). Then compute CSA = π × 5 × 13.",
+            "Timing: 6 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal problem statement",
+            "Highlight the right triangle in a diagram"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Check: Surface Area vs. Volume",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 10,
+          "slideType": "quick_assessment",
+          "slideTitle": "Check Your Understanding",
+          "learningOutcomeIds": [
+            "LO-Assess"
+          ],
+          "topicCoverage": [
+            "Formative assessment of key concepts"
+          ],
+          "teacherIntent": "Rapidly assess student understanding through targeted questions that distinguish between surface area and volume applications.",
+          "studentTakeaway": "I can identify which formula to use based on whether the problem asks for 'covering' or 'filling'.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "- Q1: A sphere has radius 7cm. Find its Surface Area.",
+            "- Q2: Which shape has volume = πr²h?",
+            "- Q3: True/False: TSA of a cube is 4a²."
+          ],
+          "onSlideText": [
+            "1. Calculate SA of Sphere (r=7cm).",
+            "2. Identify the solid with V = πr²h.",
+            "3. Is TSA of a cube equal to 4a²? (True/False)"
+          ],
+          "speakerNotes": [
+            "Purpose: Immediate feedback on learning outcomes.",
+            "Explain: 'Take 2 minutes to solve these individually.' Walk through answers after time is up.",
+            "Ask: 'For Q1, which formula do you use? For Q3, how many faces does a cube have?'",
+            "Listen for: SA = 4πr². Cylinder/Prism with circular base (Cylinder). False (it's 6a²). Correct misconceptions about the number of faces or formulas.",
+            "Board work: Write 'Answer Key' on board as students finish to facilitate self-checking.",
+            "Timing: 5 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal questions one by one"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Summary: Key Takeaways & Formulas",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 11,
+          "slideType": "summary",
+          "slideTitle": "Lesson Summary: What We Learned",
+          "learningOutcomeIds": [
+            "LO-Summary"
+          ],
+          "topicCoverage": [
+            "Recap of all formulas and concepts covered"
+          ],
+          "teacherIntent": "Consolidate learning by summarizing key distinctions and providing a memory aid for the formulas.",
+          "studentTakeaway": "I have a clear mental map of which formula applies to which shape, distinguishing between surface area (covering) and volume (filling).",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "- Surface Area: Measure of outer skin (TSA/CSA)",
+            "- Volume: Measure of space inside",
+            "- Key Formulas: Cube, Cuboid, Cylinder, Cone, Sphere"
+          ],
+          "onSlideText": [
+            "1. TSA = All faces; CSA = Curved sides only.",
+            "2. Volumes depend on base area × height (with 1/3 for cones).",
+            "3. Always check units before calculating!"
+          ],
+          "speakerNotes": [
+            "Purpose: Reinforce retention and provide a final conceptual anchor.",
+            "Explain: 'Remember the water tank analogy.' Surface Area = Cost of metal (skin); Volume = Capacity of water (space).",
+            "Ask: 'What is the most common mistake students make in this chapter?'",
+            "Listen for: Confusing radius with diameter, or forgetting to square/cube units. Correct by emphasizing unit analysis.",
+            "Board work: Write a mnemonic if available (e.g., 'Cylinders have circles on top and bottom'). Summarize the 5 key formulas in a table format.",
+            "Timing: 4 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in summary points"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "homework_next_session",
+          "templateSlideTitle": "Homework & Next Session Preview",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 12,
+          "slideType": "homework_next_session",
+          "slideTitle": "Next Steps: Homework and Future Learning",
+          "learningOutcomeIds": [
+            "LO-Homework"
+          ],
+          "topicCoverage": [
+            "Assignment instructions and preview of next session"
+          ],
+          "teacherIntent": "Assign meaningful practice tasks that reinforce today's learning and prepare students for the complexity of composite solids in the next lesson.",
+          "studentTakeaway": "I have specific problems to solve at home, and I know we will be combining shapes (like a tent) tomorrow.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "- Homework: Solve 5 word problems on Surface Area/Volume.",
+            "- Task: Find dimensions of objects in your house.",
+            "- Next Session: Composite Solids (Tent, Silo)."
+          ],
+          "onSlideText": [
+            "1. Complete Exercise 13.2, Q1-5 from textbook.",
+            "2. Measure a cylindrical container at home and calculate its volume.",
+            "3. Prepare for: Combining Shapes (Cone + Cylinder)."
+          ],
+          "speakerNotes": [
+            "Purpose: Close the session with clear expectations and forward momentum.",
+            "Explain: 'For homework, focus on unit conversions.' For tomorrow's lesson, we will tackle shapes that are made of two solids combined—like a tent (cone + cylinder).",
+            "Ask: 'What do you think happens to the surface area when we join two shapes?'",
+            "Listen for: It decreases because some faces become internal. Correct if they say it adds up; explain overlapping surfaces.",
+            "Board work: Write homework assignment clearly on board with due date. Remind students about measuring household items.",
+            "Timing: 3 minutes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],

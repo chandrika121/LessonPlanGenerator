@@ -3,12 +3,11 @@ import { useEffect, useMemo, useState } from "react";
 import { ActionToast } from "../../components/ActionToast";
 import { ExpandableCard } from "../../components/ExpandableCard";
 import type { PublishedStudentArtifact, StudentPublicationKind } from "../../types/student-content";
+import { getBackendBaseUrl } from "../../utils/api";
 import { dedupePublishedStudentArtifacts } from "../../utils/studentArtifactDedup";
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+const BACKEND_URL = getBackendBaseUrl();
 
 function getSession() {
   try {

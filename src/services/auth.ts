@@ -1,8 +1,7 @@
 import type { AuthUser, RegisterPayload } from "../types/auth";
+import { getBackendBaseUrl } from "../utils/api";
 
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+const BACKEND_URL = getBackendBaseUrl();
 
 async function parseJsonResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {

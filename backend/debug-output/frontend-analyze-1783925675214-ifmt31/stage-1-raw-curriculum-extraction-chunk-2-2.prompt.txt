@@ -1,0 +1,195 @@
+Stage 1: Raw Curriculum Extraction
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+- Detected curriculum profile: multi_class_board_syllabus
+- Expected structure type: multi_class_unit_topic
+- Preserve separate classes/grades when multiple classes appear in one document
+- Never merge Class XI and Class XII structures together
+
+Return JSON only.
+Answer directly.
+Extract the curriculum hierarchy faithfully from the source text.
+
+Capture only:
+
+* document_metadata
+* classes
+* units
+* chapters
+* topics
+* subtopics
+* key_concepts
+* explicit marks attached to units or chapters
+
+Hierarchy:
+document
+-> class
+-> unit
+-> chapter
+-> topic
+-> subtopic
+
+Extraction rules:
+
+* Preserve the hierarchy explicitly visible in the source.
+* Keep output concise, but capture every visible unit, chapter, topic, and subtopic in the current input.
+* Preserve official syllabus wording as closely as possible.
+* Do not replace specific syllabus content with generic summaries.
+* Do not infer curriculum content that is not visible in the current input.
+* If the input is partial, extract only the hierarchy and content visible in that input.
+
+Class detection:
+
+* Treat explicit labels such as "CLASS XI", "CLASS XII", "Class - XI", "Class – XII", and equivalent formatting variants as class boundaries.
+* Keep content under the current class until another explicit class boundary appears.
+* Never merge units from different classes.
+* If multiple classes are visible, preserve each class separately.
+
+Unit detection:
+
+* Treat explicit headings such as "Unit-I", "UNIT II", "Unit - III", or equivalent numbered unit labels as units.
+* Preserve the official unit name.
+* Preserve explicit marks associated with the unit.
+* Never convert a unit into a chapter.
+* If a unit is followed directly by syllabus content without explicit chapter headings, attach that content to unit topics.
+
+Chapter detection:
+
+* Create a chapter only when chapter-like structure is explicitly visible inside a unit.
+* Numbered headings inside a unit are chapter headings when they introduce syllabus content.
+* Examples of chapter patterns include:
+  "1. Relations and Functions"
+  "2. Inverse Trigonometric Functions"
+  "1. Matrices"
+  "2. Determinants"
+* A numeric marker and its heading may be split across adjacent lines. For example:
+
+  "1."
+  "Matrices"
+
+  must be interpreted as the chapter heading "Matrices" when the lines are adjacent and followed by syllabus content.
+* Also recognize numbered headings where the number and title are separated by whitespace, line breaks, or PDF extraction artifacts.
+* Attach the syllabus text following a chapter heading to that chapter until the next chapter, unit, class, or section boundary.
+* Never create a fallback chapter from the unit name.
+* Never copy the unit name into chapters solely because no chapter was detected.
+* If no explicit chapter structure is visible, keep content at unit -> topics.
+
+Topic extraction:
+
+* Extract topics from syllabus statements attached to the current unit or chapter.
+* Preserve enumerated concepts, methods, properties, formulas, restrictions, and scope qualifiers.
+* Do not collapse an explicit list into "etc." when the source lists individual items.
+* Do not remove parenthetical syllabus constraints.
+* Preserve phrases such as "up to 3 x 3 matrices", "having unique solution", "without proof", and similar scope restrictions when visible.
+* When a syllabus paragraph begins with the chapter heading followed by a colon, do not duplicate the chapter name as a topic.
+* Do not classify an explicit chapter heading only as a topic or key concept.
+
+Subtopic extraction:
+
+* Create subtopics only when the source visibly expresses a nested list or subordinate structure under a topic.
+* Do not invent subtopics by semantic decomposition alone.
+
+Key concept extraction:
+
+* Extract concise named concepts explicitly present in the source.
+* Key concepts are enrichment fields and must not replace units, chapters, topics, or subtopics.
+* A phrase may appear as a key concept even when it is also part of a chapter or topic, but the original structural node must remain.
+* Do not use key concept extraction to reconstruct missing hierarchy.
+
+Marks:
+
+* Capture marks only when explicitly stated.
+* Attach marks to the exact unit or chapter indicated by the source.
+* Do not infer marks from totals, percentages, or nearby unrelated assessment tables.
+
+Section handling:
+
+* Include practical or assessment section names only when they appear as unit-like or chapter-like structural entries tied to the visible class or section.
+* Do not convert general assessment tables, question paper design, internal assessment notes, or explanatory text into curriculum units or chapters.
+
+Validation rules:
+
+* If explicit chapter headings are detected inside a unit, preserve them as chapters.
+* If chapters exist, attach their syllabus content to those chapters rather than duplicating the same content at unit level.
+* If no chapters are explicitly visible, chapters must be an empty array and syllabus content must remain at unit level.
+* Never generate synthetic, fallback, reconstructed, or normalized chapters.
+* Never shift hierarchy by treating chapters as topics and units as chapters.
+* Never generate the complete curriculum from prior knowledge.
+
+Do not infer, estimate, explain, recommend, analyze, or repair missing source content.
+Do not include fields other than the requested schema.
+
+- This is partial curriculum input for chunk 2 of 2; extract only what is present in this chunk
+
+Curriculum source text:
+# Page 11
+
+Conduct of Periodic Tests:
+Periodic Test is a Pen and Paper assessment which is to be conducted by the
+respective subject teacher. The format of periodic test must have questions items with
+a balance mix, such as, very short answer (VSA), short answer (SA) and long answer
+(LA) to effectively assess the knowledge, understanding, application, skills, analysis,
+evaluation and synthesis. Depending on the nature of subject, the subject teacher will
+have the liberty of incorporating any other types of questions too. The modalities of
+the PT are as follows:
+a) Mode: The periodic test is to be taken in the form of pen-paper test.
+b) Schedule: In the entire Academic Year, three Periodic Tests in each subject
+may be conducted as follows:
+Test Pre-Mid-term (PT-I) Mid-Term (PT-II) Post Mid-Term (PT-III)
+Tentative Month July-August November December-January
+This is only a suggestive schedule and schools may conduct periodic tests as per their
+convenience. The winter bound schools would develop their own schedule with similar
+time gaps between two consecutive tests.
+c) Average of Marks : Once schools complete the conduct of all the three periodic
+tests, they will convert the weightage of each of the three tests into ten marks each
+for identifying best two tests. The best two will be taken into consideration and the
+average of the two shall be taken as the final marks for PT.
+d) The school will ensure simple documentation to keep a record of performance as
+suggested in detail circular no. Acad-05/2017.
+e) Sharing of Feedback/Performance : The students’ achievement in each test must
+be shared with the students and their parents to give them an overview of the level of
+learning that has taken place during different periods. Feedback will help parents
+formulate interventions (conducive ambience, support materials, motivation and
+morale-boosting) to further enhance learning. A teacher, while sharing the feedback
+with student or parent, should be empathetic, non- judgmental and motivating. It is
+recommended that the teacher share best examples/performances of IA with the
+## class to motivate all learners
+
+# Page 12
+
+Assessment of Activity Work:
+Throughout the year any 10 activities shall be performed by the student from the
+activities given in the NCERT Laboratory Manual for the respective class (XI or
+XII) which is available on the link:
+http://www.ncert.nic.in/exemplar/labmanuals.html a record of the same may be
+kept by the student. An year end test on the activity may be conducted
+The weightage are as under:
+ The activities performed by the student throughout the year and record
+keeping: 5 marks
+ Assessment of the activity performed during the year end test: 3 marks
+ Viva-voce: 2 marks
+Prescribed Books:
+- 1) Mathematics Textbook for Class XI, NCERT Publications
+- 2) Mathematics Part I - Textbook for Class XII, NCERT Publication
+- 3) Mathematics Part II - Textbook for Class XII, NCERT Publication
+- 4) Mathematics Exemplar Problem for Class XI, Published by NCERT
+- 5) Mathematics Exemplar Problem for Class XII, Published by NCERT
+- 6) Mathematics Lab Manual class XI, published by NCERT
+- 7) Mathematics Lab Manual class XII, published by NCERT

@@ -9,6 +9,8 @@
  *   3. UI components will keep working unchanged.
  */
 
+import { getBackendBaseUrl } from "../utils/api";
+
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface PrincipalDashboardData {
@@ -170,9 +172,7 @@ function getTeachersDetail(id: string): TeacherDetail {
 
 const wait = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 const delay = 300;
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+const BACKEND_URL = getBackendBaseUrl();
 
 async function fetchJson<T>(path: string): Promise<T> {
   const response = await fetch(`${BACKEND_URL}${path}`);

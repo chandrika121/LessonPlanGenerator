@@ -1,0 +1,386 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 6: Competency Extraction
+- Extract competencies only.
+- No analysis or lesson-planning inference.
+- Use only the provided class/unit/chapter payload as structural context.
+- Do not invent new units or chapters.
+
+Stage payload:
+{
+  "classes": [
+    {
+      "class_name": "Class XII",
+      "subject": "MATHEMATICS",
+      "units": [
+        {
+          "unit_id": "class-12-mathematics-unit-1",
+          "unit_name": "Unit 1",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Relations and Functions",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-unit-2",
+          "unit_name": "Unit 2",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Algebra",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-unit-3",
+          "unit_name": "Unit 3",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Calculus",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-unit-4",
+          "unit_name": "Unit 4",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Vectors and Three - Dimensional Geometry",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-unit-5",
+          "unit_name": "Unit 5",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Linear Programming",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        },
+        {
+          "unit_id": "class-12-mathematics-unit-6",
+          "unit_name": "Unit 6",
+          "part_or_section": "",
+          "topics": [],
+          "subtopics": [],
+          "key_concepts": [],
+          "chapters": [
+            {
+              "chapter_id": "C1",
+              "chapter_name": "Probability",
+              "part_or_section": "",
+              "exam_section_name": "",
+              "book_name": "",
+              "category_name": "",
+              "topics": [],
+              "subtopics": [],
+              "key_concepts": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Curriculum source text:
+## CLASS – XII
+(2026-27)
+One Paper Max. Marks: 80
+No. Units Marks
+- I. Relations and Functions 08
+II. Algebra
+10
+III. Calculus
+35
+IV. Vectors and Three - Dimensional Geometry
+14
+- V. Linear Programming
+05
+VI. Probability
+08
+Total
+80
+Internal Assessment
+20
+## Unit-I: Relations and Functions
+- 1. Relations and Functions
+Types of relations: reflexive, symmetric, transitive and equivalence relations. One to one and
+onto functions.
+- 2. Inverse Trigonometric Functions
+Definition, range, domain, principal value branch. Graphs of inverse trigonometric functions.
+## Unit-II: Algebra
+- 1. Matrices
+Concept, notation, order, equality, types of matrices, zero and identity matrix, transpose of a
+matrix, symmetric and skew symmetric matrices. Operations on matrices: Addition and
+multiplication and multiplication with a scalar. Simple properties of addition, multiplication and
+scalar multiplication. Non- commutativity of multiplication of matrices and existence of non-
+zero matrices whose product is the zero matrix (restrict to square matrices of order 2).
+Invertible matrices and proof of the uniqueness of inverse, if it exists; (Here all matrices will
+have real entries).
+- 2. Determinants
+Determinant of a square matrix (up to 3 x 3 matrices), minors, co-factors and applications of
+determinants in finding the area of a triangle. Adjoint and inverse of a square matrix.
+Consistency, inconsistency and number of solutions of system of linear equations by
+examples, solving system of linear equations in two or three variables (having unique solution)
+using inverse of a matrix.
+
+---
+
+# Page 8
+
+## Unit-III: Calculus
+- 1. Continuity and Differentiability
+Continuity and differentiability, chain rule, derivative of composite functions, derivatives of
+−1 −1 −1
+inverse trigonometric functions like sin 𝑥 , cos 𝑥 and tan 𝑥 , derivative of implicit functions.
+Concept of exponential and logarithmic functions. Derivatives of logarithmic and exponential
+functions. Logarithmic differentiation, derivative of functions expressed in parametric forms.
+Second order derivatives.
+- 2. Applications of Derivatives
+Applications of derivatives: rate of change of quantities, increasing/decreasing functions,
+maxima and minima (first derivative test motivated geometrically and second derivative test
+given as a provable tool). Simple problems (that illustrate basic principles and understanding
+of the subject as well as real- life situations).
+- 3. Integrals
+Integration as inverse process of differentiation. Integration of a variety of functions by
+substitution, by partial fractions and by parts, Evaluation of simple integrals of the following
+types and problems based on them.
+𝒅𝒙 𝒅𝒙 𝒅𝒙 𝒅𝒙 𝒅𝒙 𝒑𝒙+𝒒
+∫ , ∫ , ∫ , ∫ , ∫ , ∫ 𝒅𝒙,
+𝟐 𝟐 𝟐 𝟐
+𝒙 ±𝒂 √𝒙 𝟐 ±𝒂 𝟐 √𝒂 𝟐 −𝒙 𝟐 𝒂𝒙 +𝒃𝒙+𝒄 √𝒂𝒙 𝟐 +𝒃𝒙+𝒄 𝒂𝒙 +𝒃𝒙+𝒄
+𝒑𝒙+𝒒
+𝟐 𝟐 𝟐 𝟐 𝟐
+∫ 𝒅𝒙, ∫ √𝒂 ± 𝒙 𝒅𝒙 , ∫ √𝒙 − 𝒂 𝒅𝒙 , ∫ √𝒂𝒙 + 𝒃𝒙 + 𝒄 𝒅𝒙
+√𝒂𝒙 𝟐 +𝒃𝒙+𝒄
+Fundamental Theorem of Calculus (without proof). Basic properties of definite integrals and
+evaluation of definite integrals.
+- 4. Application of the Integrals
+Applications in finding the area under simple curves, especially lines, circles/ parabolas/ellipses
+(in standard form only)
+- 5. Differential Equations
+Definition, order and degree, general and particular solutions of a differential equation. Solution
+of differential equations by method of separation of variables, solutions of homogeneous
+differential equations of first order and first degree. Solutions of linear differential equation of the
+type:
+𝑑𝑦
++ 𝑝𝑦 = 𝑞 , where 𝑝 and 𝑞 are functions of 𝑥 or constants.
+𝑑𝑥
+𝑑𝑥
++ 𝑝𝑥 = 𝑞 , where 𝑝 and 𝑞 are functions of 𝑦 or constants.
+𝑑𝑦
+
+---
+
+# Page 9
+
+## Unit-IV: Vectors and Three-dimensional Geometry
+- 1. Vectors
+Vectors and scalars, magnitude and direction of a vector. Direction cosines and direction ratios
+of a vector. Types of vectors (equal, unit, zero, parallel and collinear vectors), position vector of
+a point, negative of a vector, components of a vector, addition of vectors, multiplication of a
+vector by a scalar, position vector of a point dividing a line segment in a given ratio. Definition,
+Geometrical Interpretation, properties and application of scalar (dot) product of vectors, vector
+(cross) product of vectors.
+- 2. Three-dimensional Geometry
+Direction cosines and direction ratios of a line joining two points. Cartesian equation and vector
+equation of a line, skew lines, shortest distance between two lines. Angle between two lines.
+## Unit-V: Linear Programming Problem
+- 1. Linear Programming
+Introduction, related terminology such as constraints, objective function, optimization, graphical
+method of solution for problems in two variables, feasible and infeasible regions (bounded or
+unbounded), feasible and infeasible solutions, optimal feasible solutions (up to three non-trivial
+constraints).
+## Unit-VI: Probability
+- 1. Probability
+Conditional probability, multiplication theorem on probability, independent events, total
+probability, Bayes’ theorem.
+
+---
+
+# Page 10
+
+MATHEMATICS (Code No. – 041)
+## QUESTION PAPER DESIGN
+## CLASS – XII (2026-27)
+Time: 3 hours Max. Marks: 80
+%
+- S. Total
+Typology of Questions
+Weightage
+No. Marks
+Remembering: Exhibit memory of previously learned
+material by recalling facts, terms, basic concepts, and
+44
+55
+answers.
+1
+Understanding: Demonstrate understanding of facts and
+ideas by organizing, comparing, translating, interpreting,
+giving descriptions, and stating main ideas
+Applying: Solve problems to new situations by applying
+2 20 25
+acquired knowledge, facts, techniques and rules in a
+different way.
+Analysing :
+Examine and break information into parts by identifying
+motives or causes. Make inferences and find evidence to
+support generalizations
+Evaluating:
+3 Present and defend opinions by making judgments about 16 20
+information, validity of ideas, or quality of work based on a
+set of criteria.
+Creating:
+Compile information together in a different way by
+combining elements in a new pattern or proposing
+alternative solutions
+Total 80 100
+- 1. No chapter wise weightage. Care to be taken to cover all the chapters
+- 2. Suitable internal variations may be made for generating various templates keeping the
+overall weightage to different form of questions and typology of questions same.
+Choice(s):
+There will be no overall choice in the question paper. However, 33% internal choices will be given
+in all the sections
+## INTERNAL ASSESSMENT 20 MARKS
+Periodic Tests (Best 2 out of 3 tests conducted) 10 Marks
+Mathematics Activities 10 Marks
+Note : For activities NCERT Lab Manual may be referred.
+
+---
+
+# Page 11
+
+Conduct of Periodic Tests:
+Periodic Test is a Pen and Paper assessment which is to be conducted by the
+respective subject teacher. The format of periodic test must have questions items with
+a balance mix, such as, very short answer (VSA), short answer (SA) and long answer
+(LA) to effectively assess the knowledge, understanding, application, skills, analysis,
+evaluation and synthesis. Depending on the nature of subject, the subject teacher will
+have the liberty of incorporating any other types of questions too. The modalities of
+the PT are as follows:
+a) Mode: The periodic test is to be taken in the form of pen-paper test.
+b) Schedule: In the entire Academic Year, three Periodic Tests in each subject
+may be conducted as follows:
+Test Pre-Mid-term (PT-I) Mid-Term (PT-II) Post Mid-Term (PT-III)
+Tentative Month July-August November December-January
+This is only a suggestive schedule and schools may conduct periodic tests as per their
+convenience. The winter bound schools would develop their own schedule with similar
+time gaps between two consecutive tests.
+c) Average of Marks : Once schools complete the conduct of all the three periodic
+tests, they will convert the weightage of each of the three tests into ten marks each
+for identifying best two tests. The best two will be taken into consideration and the
+average of the two shall be taken as the final marks for PT.
+d) The school will ensure simple documentation to keep a record of performance as
+suggested in detail circular no. Acad-05/2017.
+e) Sharing of Feedback/Performance : The students’ achievement in each test must
+be shared with the students and their parents to give them an overview of the level of
+learning that has taken place during different periods. Feedback will help parents
+formulate interventions (conducive ambience, support materials, motivation and
+morale-boosting) to further enhance learning. A teacher, while sharing the feedback
+with student or parent, should be empathetic, non- judgmental and motivating. It is
+recommended that the teacher share best examples/performances of IA with the
+## class to motivate all learners
+
+---
+
+# Page 12
+
+Assessment of Activity Work:
+Throughout the year any 10 activities shall be performed by the student from the
+activities given in the NCERT Laboratory Manual for the respective class (XI or
+XII) which is available on the link:
+http://www.ncert.nic.in/exemplar/labmanuals.html a record of the same may be
+kept by the student. An year end test on the activity may be conducted
+The weightage are as under:
+ The activities performed by the student throughout the year and record
+keeping: 5 marks
+ Assessment of the activity performed during the year end test: 3 marks
+ Viva-voce: 2 marks
+Prescribed Books:
+- 1) Mathematics Textbook for Class XI, NCERT Publications
+- 2) Mathematics Part I - Textbook for Class XII, NCERT Publication
+- 3) Mathematics Part II - Textbook for Class XII, NCERT Publication
+- 4) Mathematics Exemplar Problem for Class XI, Published by NCERT
+- 5) Mathematics Exemplar Problem for Class XII, Published by NCERT
+- 6) Mathematics Lab Manual class XI, published by NCERT
+- 7) Mathematics Lab Manual class XII, published by NCERT

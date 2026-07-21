@@ -19,6 +19,7 @@ export default defineConfig(() => {
       },
     },
     server: {
+      host: "0.0.0.0",
       port: frontendPort,
       // Proxy /api requests to the backend server
       proxy: {
@@ -42,6 +43,10 @@ export default defineConfig(() => {
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : { ignored: ignoredWatchPaths },
+    },
+    preview: {
+      host: "0.0.0.0",
+      port: frontendPort,
     },
   };
 });

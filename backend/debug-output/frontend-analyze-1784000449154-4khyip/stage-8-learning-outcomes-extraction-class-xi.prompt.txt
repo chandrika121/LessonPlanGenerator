@@ -1,0 +1,209 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8: Learning Outcomes Extraction - Class XI
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "units": [
+    {
+      "unit_id": "class-11-mathematics-u1",
+      "unit_name": "Sets and Functions",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Sets and Functions"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-mathematics-u2",
+      "unit_name": "Algebra",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Algebra"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-mathematics-u3",
+      "unit_name": "Coordinate Geometry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Coordinate Geometry"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-mathematics-u4",
+      "unit_name": "Calculus",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Calculus"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-mathematics-u5",
+      "unit_name": "Statistics and Probability",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Statistics and Probability"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-11-mathematics-u1",
+      "unit_name": "Sets and Functions",
+      "chapter_id": "C1",
+      "chapter_name": "Sets and Functions"
+    },
+    {
+      "unit_id": "class-11-mathematics-u2",
+      "unit_name": "Algebra",
+      "chapter_id": "C1",
+      "chapter_name": "Algebra"
+    },
+    {
+      "unit_id": "class-11-mathematics-u3",
+      "unit_name": "Coordinate Geometry",
+      "chapter_id": "C1",
+      "chapter_name": "Coordinate Geometry"
+    },
+    {
+      "unit_id": "class-11-mathematics-u4",
+      "unit_name": "Calculus",
+      "chapter_id": "C1",
+      "chapter_name": "Calculus"
+    },
+    {
+      "unit_id": "class-11-mathematics-u5",
+      "unit_name": "Statistics and Probability",
+      "chapter_id": "C1",
+      "chapter_name": "Statistics and Probability"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C12-MATH-U2",
+      "title": "Algebra Competencies (Class XII)",
+      "description": "Mastery of complex numbers, inequalities, combinatorics, and series.",
+      "competencies": [
+        "Solve quadratic equations in the complex number system using algebraic properties.",
+        "Apply principles to solve linear inequalities.",
+        "Calculate permutations and combinations for problem-solving scenarios.",
+        "Utilize the Binomial Theorem for expansions.",
+        "Analyze sequences and series including arithmetic and geometric progressions."
+      ],
+      "unit_name": "Unit-II: Algebra",
+      "chapter_name": "Algebra"
+    },
+    {
+      "code": "C12-MATH-U3",
+      "title": "Coordinate Geometry Competencies (Class XII)",
+      "description": "Application of linear equations and geometric properties.",
+      "competencies": [
+        "Determine the slope and equation of straight lines in various forms.",
+        "Apply coordinate geometry principles to solve distance and intersection problems."
+      ],
+      "unit_name": "Unit-III: Coordinate Geometry",
+      "chapter_name": "Coordinate Geometry"
+    },
+    {
+      "code": "C12-MATH-U5",
+      "title": "Calculus Competencies (Class XII)",
+      "description": "Foundational concepts of limits and derivatives.",
+      "competencies": [
+        "Understand the intuitive concept of limits for various functions.",
+        "Define and calculate derivatives as rates of change."
+      ],
+      "unit_name": "Unit-IV: Calculus",
+      "chapter_name": "Calculus"
+    },
+    {
+      "code": "C11-MATH-U1",
+      "title": "Sets and Functions Competencies (Class XI)",
+      "description": "Foundational set theory, function properties, and trigonometry.",
+      "competencies": [
+        "Represent sets using various methods and perform operations like union, intersection, and complementation.",
+        "Analyze relations and functions including domain, range, and composition of functions.",
+        "Apply trigonometric identities and solve equations involving general solutions."
+      ],
+      "unit_name": "Sets and Functions",
+      "chapter_name": "Sets and Functions"
+    },
+    {
+      "code": "C11-MATH-U2",
+      "title": "Algebra Competencies (Class XI)",
+      "description": "Advanced algebraic techniques including induction, complex numbers, and series.",
+      "competencies": [
+        "Apply the Principle of Mathematical Induction to prove statements about natural numbers.",
+        "Solve quadratic equations in the complex number system using polar representation.",
+        "Graphically solve linear inequalities in two variables.",
+        "Determine general and middle terms in binomial expansions.",
+        "Calculate sums of special series involving powers of integers."
+      ],
+      "unit_name": "Algebra",
+      "chapter_name": "Algebra"
+    },
+    {
+      "code": "C11-MATH-U3",
+      "title": "Coordinate Geometry Competencies (Class XI)",
+      "description": "Equations of lines and spatial geometry basics.",
+      "competencies": [
+        "Derive equations of straight lines in normal form, general form, and other standard forms.",
+        "Apply the section formula to find coordinates dividing a line segment."
+      ],
+      "unit_name": "Coordinate Geometry",
+      "chapter_name": "Coordinate Geometry"
+    },
+    {
+      "code": "C11-MATH-U4",
+      "title": "Calculus Competencies (Class XI)",
+      "description": "Introduction to differentiation and limits.",
+      "competencies": [
+        "Apply the chain rule for derivatives of composite functions."
+      ],
+      "unit_name": "Calculus",
+      "chapter_name": "Calculus"
+    },
+    {
+      "code": "C11-MATH-U5",
+      "title": "Statistics and Probability Competencies (Class XI)",
+      "description": "Fundamental probability concepts.",
+      "competencies": [
+        "Define random experiments, outcomes, and sample spaces using set representation."
+      ],
+      "unit_name": "Statistics and Probability",
+      "chapter_name": "Statistics and Probability"
+    }
+  ]
+}

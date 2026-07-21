@@ -4,6 +4,7 @@ import pdfWorker from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getTeacherClasses } from "../../services/teacherClassesService";
+import { getBackendBaseUrl } from "../../utils/api";
 import { endDevTimer, startDevTimer } from "../../utils/devTiming";
 
 type StudentActionType = "homework" | "assessments";
@@ -56,9 +57,7 @@ const sectionConfig: Record<StudentActionType, { label: string }> = {
 };
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+const BACKEND_URL = getBackendBaseUrl();
 
 function getSession() {
   try {

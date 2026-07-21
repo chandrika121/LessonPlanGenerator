@@ -1,0 +1,315 @@
+Extraction-first architecture is mandatory.
+Complete stages strictly in this order:
+Stage 1: Raw Curriculum Extraction
+Stage 2: Document Structure Hierarchy
+Stage 3: Node Enrichment
+Stage 4: Normalized Teaching Blocks
+Stage 5: Structural Validation
+Stage 6: Competency Extraction
+Stage 7: Assessment Extraction
+Stage 8: Learning Outcomes Extraction
+Stage 9: Activities / Projects / Practicals Extraction
+Stage 10: Curriculum Intelligence Generation
+
+Rules:
+- explicit curriculum structure is the source of truth
+- do not invent unit names or chapter names
+- do not perform analysis during extraction stages
+- no recommendations outside Stage 6
+- return JSON only
+
+Stage 8: Learning Outcomes Extraction - Class XI
+- Extract explicit or clearly stated learning outcomes only.
+- Use only the provided stage payload.
+- Map outcomes only to the provided class/unit/chapter entities.
+- Do not infer outcomes from assessment, validation, metadata, or omitted source text.
+
+Stage payload:
+{
+  "class_name": "Class XI",
+  "units": [
+    {
+      "unit_id": "class-11-mathematics-u3",
+      "unit_name": "Unit-III: Calculus",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Calculus"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-mathematics-u4",
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Vectors and Three-dimensional Geometry"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-mathematics-u5",
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Linear Programming Problem"
+        }
+      ]
+    },
+    {
+      "unit_id": "class-11-mathematics-u6",
+      "unit_name": "Unit-VI: Probability",
+      "chapters": [
+        {
+          "chapter_id": "C1",
+          "chapter_name": "Probability"
+        }
+      ]
+    }
+  ],
+  "chapters": [
+    {
+      "unit_id": "class-11-mathematics-u3",
+      "unit_name": "Unit-III: Calculus",
+      "chapter_id": "C1",
+      "chapter_name": "Calculus"
+    },
+    {
+      "unit_id": "class-11-mathematics-u4",
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_id": "C1",
+      "chapter_name": "Vectors and Three-dimensional Geometry"
+    },
+    {
+      "unit_id": "class-11-mathematics-u5",
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "chapter_id": "C1",
+      "chapter_name": "Linear Programming Problem"
+    },
+    {
+      "unit_id": "class-11-mathematics-u6",
+      "unit_name": "Unit-VI: Probability",
+      "chapter_id": "C1",
+      "chapter_name": "Probability"
+    }
+  ],
+  "competencies": [
+    {
+      "code": "C5",
+      "title": "Continuity and Differentiability",
+      "description": "Understanding continuity, differentiability, chain rule, derivatives of composite/inverse trigonometric/implicit functions.",
+      "competencies": [
+        "Test for continuity and differentiability of a function at a point",
+        "Apply chain rule to differentiate composite functions",
+        "Differentiate inverse trigonometric functions (sin^-1 x, cos^-1 x, tan^-1 x)",
+        "Find derivatives of implicit functions"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C6",
+      "title": "Exponential and Logarithmic Functions Derivatives",
+      "description": "Understanding derivatives of exponential, logarithmic functions, logarithmic differentiation, parametric forms.",
+      "competencies": [
+        "Differentiate exponential and logarithmic functions",
+        "Apply logarithmic differentiation techniques",
+        "Find derivatives of functions expressed in parametric forms"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C7",
+      "title": "Second Order Derivatives and Applications",
+      "description": "Understanding second order derivatives, rate of change, increasing/decreasing functions, maxima/minima.",
+      "competencies": [
+        "Calculate second order derivatives",
+        "Determine the rate of change of quantities",
+        "Identify intervals where a function is increasing or decreasing",
+        "Apply first and second derivative tests to find local maxima and minima"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C8",
+      "title": "Integration Techniques",
+      "description": "Understanding integration as inverse of differentiation, substitution, partial fractions, and parts.",
+      "competencies": [
+        "Evaluate integrals using the method of substitution",
+        "Decompose rational functions into partial fractions for integration",
+        "Apply integration by parts to evaluate complex integrals"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C9",
+      "title": "Definite Integrals and Fundamental Theorem",
+      "description": "Understanding definite integrals, their properties, evaluation of specific types, and the Fundamental Theorem.",
+      "competencies": [
+        "Evaluate standard forms like dx/(x^2+a^2), dx/sqrt(x^2-a^2), etc.",
+        "Apply basic properties of definite integrals",
+        "State and apply the Fundamental Theorem of Calculus"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C10",
+      "title": "Area Under Curves",
+      "description": "Understanding applications of integrals to find area under simple curves.",
+      "competencies": [
+        "Calculate the area under lines, circles, parabolas, and ellipses in standard form"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C11",
+      "title": "Differential Equations",
+      "description": "Understanding definition, order, degree, solutions, and methods of solving differential equations.",
+      "competencies": [
+        "Identify the order and degree of a differential equation",
+        "Find general and particular solutions",
+        "Solve first-order homogeneous differential equations by separation of variables"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C12",
+      "title": "Linear Differential Equations",
+      "description": "Understanding and solving linear differential equations of specific forms.",
+      "competencies": [
+        "Solve linear differential equations of the form dy/dx + py = q"
+      ],
+      "unit_name": "Unit-III: Calculus",
+      "chapter_name": ""
+    },
+    {
+      "code": "C13",
+      "title": "Vectors and Scalars",
+      "description": "Understanding vectors, scalars, magnitude, direction, types of vectors.",
+      "competencies": [
+        "Distinguish between vectors and scalars",
+        "Calculate magnitude and direction cosines/ratios of a vector"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C14",
+      "title": "Vector Operations",
+      "description": "Understanding addition, scalar multiplication, position vectors.",
+      "competencies": [
+        "Perform vector addition and scalar multiplication"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C15",
+      "title": "Dot and Cross Products",
+      "description": "Understanding scalar (dot) product and vector (cross) product properties.",
+      "competencies": [
+        "Calculate the dot product of two vectors"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C16",
+      "title": "Three-Dimensional Geometry - Lines",
+      "description": "Understanding direction ratios, equations of lines (Cartesian/Vector), skew lines.",
+      "competencies": [
+        "Find direction cosines and ratios for a line joining two points"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C17",
+      "title": "Distance Between Lines",
+      "description": "Understanding shortest distance between skew lines.",
+      "competencies": [
+        "Calculate the shortest distance between two skew lines"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C18",
+      "title": "Angle Between Lines",
+      "description": "Understanding the angle between two lines.",
+      "competencies": [
+        "Calculate the angle between two given lines"
+      ],
+      "unit_name": "Unit-IV: Vectors and Three-dimensional Geometry",
+      "chapter_name": ""
+    },
+    {
+      "code": "C19",
+      "title": "Linear Programming Concepts",
+      "description": "Understanding constraints, objective function, optimization.",
+      "competencies": [
+        "Identify feasible and infeasible regions"
+      ],
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "chapter_name": ""
+    },
+    {
+      "code": "C20",
+      "title": "Graphical Solution of LPP",
+      "description": "Understanding graphical method for solving linear programming problems.",
+      "competencies": [
+        "Solve simple linear programming problems in two variables using the graphical method"
+      ],
+      "unit_name": "Unit-V: Linear Programming Problem",
+      "chapter_name": ""
+    },
+    {
+      "code": "C21",
+      "title": "Probability Concepts",
+      "description": "Understanding conditional probability, independent events.",
+      "competencies": [
+        "Calculate probabilities of independent and dependent events"
+      ],
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": ""
+    },
+    {
+      "code": "C22",
+      "title": "Theorems in Probability",
+      "description": "Understanding multiplication theorem, total probability, Bayes' theorem.",
+      "competencies": [
+        "Apply the multiplication theorem on probability"
+      ],
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": ""
+    },
+    {
+      "code": "C23",
+      "title": "Bayes' Theorem and Total Probability",
+      "description": "Understanding total probability and Bayes' theorem applications.",
+      "competencies": [
+        "Apply the law of total probability"
+      ],
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": ""
+    },
+    {
+      "code": "C24",
+      "title": "Bayes' Theorem Application",
+      "description": "Understanding and applying Bayes' theorem.",
+      "competencies": [
+        "Apply Bayes' theorem to solve probability problems"
+      ],
+      "unit_name": "Unit-VI: Probability",
+      "chapter_name": ""
+    }
+  ]
+}

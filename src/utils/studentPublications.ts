@@ -1,9 +1,8 @@
 import type { SessionPlan } from "../types";
 import type { PublishedStudentArtifact, StudentPublicationKind } from "../types/student-content";
+import { getBackendBaseUrl } from "./api";
 
-const BACKEND_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  `${window.location.protocol}//${window.location.hostname}:${import.meta.env.VITE_BACKEND_PORT || "3002"}`;
+const BACKEND_URL = getBackendBaseUrl();
 
 const AUTH_STORAGE_KEY = "lms:auth-session";
 

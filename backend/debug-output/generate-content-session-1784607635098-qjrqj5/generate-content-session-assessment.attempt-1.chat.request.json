@@ -1,0 +1,287 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "assessment": {
+      "meta": {
+        "assessmentType": "Session assessment",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "language": "English",
+        "preferredDifficulty": "Balanced",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ]
+      },
+      "sessionAnalysis": {
+        "assessedLearningOutcomes": [
+          "Learning outcome text"
+        ],
+        "assessedConcepts": [
+          "Concept from the session"
+        ],
+        "conceptCoveragePriorities": [
+          "High-emphasis taught concept"
+        ],
+        "misconceptionTargets": [
+          "Likely misconception to check"
+        ],
+        "competencyFocus": [
+          "Application"
+        ]
+      },
+      "blueprint": {
+        "sectionPlan": [
+          {
+            "sectionId": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "focus": "Session-aligned assessment focus"
+          }
+        ],
+        "conceptDistribution": [
+          {
+            "concept": "Concept from the session",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ],
+            "competency": "Understanding",
+            "importance": "core"
+          }
+        ],
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "competencyDistribution": {
+          "understanding": 2,
+          "application": 3,
+          "analysis": 2
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "Assessment",
+            "minutes": 15
+          }
+        ]
+      },
+      "paper": {
+        "instructions": [
+          "Answer all questions using only the concepts taught in this session."
+        ],
+        "sections": [
+          {
+            "id": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "source": "fallback"
+          }
+        ],
+        "questions": [
+          {
+            "id": "q1",
+            "questionNumber": 1,
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "type": "mcq",
+            "subtype": "mcq",
+            "prompt": "MCQ question",
+            "options": [
+              "A. option",
+              "B. option",
+              "C. option",
+              "D. option"
+            ],
+            "marks": 1,
+            "expectedLength": "",
+            "learningOutcomeRefs": [
+              "LO1"
+            ],
+            "conceptRefs": [
+              "Concept"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "subtopicCoverage": [
+              "Subtopic"
+            ],
+            "bloomsLevel": "understanding",
+            "competencyTag": "Conceptual clarity",
+            "difficulty": "easy",
+            "sourceEvidence": [
+              "Teacher notes concept reference"
+            ]
+          }
+        ]
+      },
+      "evaluation": {
+        "answerKey": {
+          "items": [
+            {
+              "questionId": "q1",
+              "sectionId": "section-assessment",
+              "sectionTitle": "Assessment",
+              "answer": "Correct option",
+              "explanation": "Brief explanation",
+              "marks": 1,
+              "subtype": "mcq"
+            }
+          ]
+        },
+        "markingScheme": {
+          "items": [
+            {
+              "questionId": "q1",
+              "totalMarks": 1,
+              "markBreakdown": [
+                {
+                  "criterion": "Correct answer selected",
+                  "marks": 1
+                }
+              ],
+              "awardGuidance": [
+                "Award full marks only for the correct option."
+              ]
+            }
+          ]
+        },
+        "rubrics": {
+          "items": [
+            {
+              "questionId": "q5",
+              "totalMarks": 2,
+              "criteria": [
+                {
+                  "criterion": "First valid point",
+                  "marks": 1
+                },
+                {
+                  "criterion": "Second valid point",
+                  "marks": 1
+                }
+              ],
+              "sampleAnswer": "Point-wise short answer"
+            }
+          ]
+        },
+        "generalInstructions": [
+          "Award marks point-wise for each valid idea."
+        ],
+        "evaluatorInstructions": [
+          "Use only the taught session content when evaluating student responses."
+        ],
+        "moderationNotes": [
+          "Maintain consistency across equivalent answers."
+        ]
+      },
+      "summary": {
+        "coverageSummary": [
+          "Balanced coverage of the taught session concepts."
+        ],
+        "omittedContent": [],
+        "balanceNotes": [
+          "Paper progresses from easier to more demanding questions."
+        ]
+      },
+      "validation": {
+        "exactPatternChecks": {
+          "passed": true,
+          "details": [
+            "Question pattern matches the requested blueprint."
+          ]
+        },
+        "marksChecks": {
+          "passed": true,
+          "details": [
+            "Marks match the requested total."
+          ]
+        },
+        "sectionChecks": {
+          "passed": true,
+          "details": [
+            "Each question is assigned to a valid section."
+          ]
+        },
+        "alignmentChecks": {
+          "passed": true,
+          "details": [
+            "Question paper, answer key, and marking scheme are aligned."
+          ]
+        },
+        "scopeBoundaryChecks": {
+          "passed": true,
+          "details": [
+            "No untaught or future-session content included."
+          ]
+        }
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 12288
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "UNIVERSAL ASSESSMENT & EVALUATION INTELLIGENCE ENGINE\n\nROLE\nYou are an Enterprise Assessment & Evaluation Intelligence Engine.\nYou function like a professional examination committee made up of a curriculum assessment specialist, paper setter, head examiner, subject expert, psychometric reviewer, and marking-scheme designer.\n\nYou are not a simple question generator.\nYou are responsible for designing a complete, session-bounded examination package that is immediately usable by a teacher or school.\n\nPRIMARY OBJECTIVE\nGenerate a complete assessment package for one classroom session only.\n\nSession context:\n- Subject: Mathematics\n- Grade/Level: Class IX / Class X\n- Session title: Surface Areas and Volumes (3-D Shapes)\n- Session number: 1 of 1\n- Session duration: 45 minutes\n- Chapter scope: [\"Surface Areas and Volumes (3-D Shapes)\"]\n- Learning outcomes: []\n- Previous session context: No previous session context provided.\n- Learning pace: Balanced\n- Preferred difficulty: Balanced\n- Output language: English\n- Language execution rule: Write every natural-language value in English. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when English is required.\n\nAssessment preferences:\n- Assessment type: Session assessment\n- Requested total marks: 9\n- Requested total questions: 7\n- Requested duration: 15 minutes\n- Assessment preference inputs: []\n- Target blooms emphasis: [\"Apply + Analyze\",\"Remember + Understand\",\"Evaluate + Create\"]\n- Requested question type mix: [{\"type\":\"mcq\",\"label\":\"MCQs\",\"questionCount\":3,\"marksEach\":1},{\"type\":\"veryShortAnswer\",\"label\":\"Very Short Answer\",\"questionCount\":2,\"marksEach\":1},{\"type\":\"shortAnswer\",\"label\":\"Short Answer\",\"questionCount\":2,\"marksEach\":2}]\n- Allowed assessment sections: [\n  {\n    \"id\": \"section-assessment\",\n    \"title\": \"Assessment\",\n    \"source\": \"fallback\"\n  }\n]\n- Question paper objective: Not specified.\n- Full teacher assessment request: {\n  \"assessmentType\": \"Session assessment\",\n  \"difficulty\": \"Balanced\",\n  \"paperObjective\": \"\",\n  \"totalMarks\": 9,\n  \"totalQuestions\": 7,\n  \"questionTypes\": [\n    {\n      \"type\": \"mcq\",\n      \"label\": \"MCQs\",\n      \"questionCount\": 3,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"veryShortAnswer\",\n      \"label\": \"Very Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 1\n    },\n    {\n      \"type\": \"shortAnswer\",\n      \"label\": \"Short Answer\",\n      \"questionCount\": 2,\n      \"marksEach\": 2\n    }\n  ]\n}\n\nSession JSON source of truth:\n{\n  \"id\": \"session-1\",\n  \"sessionNumber\": 1,\n  \"title\": \"Surface Areas and Volumes (3-D Shapes)\",\n  \"duration\": 45,\n  \"learningOutcomes\": [\n    \"Define Total Surface Area (TSA) and Lateral/Curved Surface Area (LSA/CSA).\",\n    \"Derive and recall the formula for TSA of a cube ($6s^2$).\",\n    \"Derive and recall the formula for TSA of a cuboid ($2(lb+bh+hl)$).\",\n    \"Differentiate between LSA and TSA in word problems.\",\n    \"Calculate surface areas given dimensions.\"\n  ],\n  \"introduction\": \"Imagine you are wrapping a birthday present. You have a box, some ribbon, and a large sheet of paper. How do you know how much paper to cut? Is it the same amount as if you wanted to fill that box with water? Today, we will learn about 'Surface Areas'—the math behind covering objects—and specifically focus on cubes (like dice) and cuboids (like shoe boxes).\",\n  \"theory\": {\n    \"overview\": \"This session covers the fundamental concepts of measuring the outer boundary of solid shapes. We distinguish between Total Surface Area (covering everything) and Lateral/Curved Surface Area (covering only sides). The focus is on deriving formulas for cubes and cuboids based on their geometric properties.\",\n    \"keyPoints\": [\n      \"Surface Area = Sum of areas of all faces.\",\n      \"Cube has 6 identical square faces; Cuboid has 3 pairs of rectangular faces.\",\n      \"TSA includes top/bottom; LSA excludes them.\"\n    ],\n    \"detailedContent\": \"A cube is a special cuboid where length, breadth, and height are all equal (side 's'). Since it has 6 identical square faces, the Total Surface Area is simply $6 \\times s^2$. The Lateral Surface Area of a cube excludes the top and bottom, leaving 4 side squares ($4s^2$). A cuboid has dimensions length (l), breadth (b), and height (h). It consists of three pairs of opposite faces: Top/Bottom ($lb$), Front/Back ($bh$), and Left/Right ($hl$). Summing these gives the TSA formula $2(lb + bh + hl)$. The Lateral Surface Area includes only the four vertical walls, calculated as $2h(l+b)$.\"\n  },\n  \"activities\": [\n    {\n      \"name\": \"The Box Unfolding Challenge\",\n      \"instructions\": [\n        \"Distribute paper nets of cubes and cuboids to students.\",\n        \"Ask students to color the 'Top' face red, 'Bottom' blue, and all side walls green.\",\n        \"Students calculate the area of each colored section using given dimensions (e.g., s=5cm).\",\n        \"Group discussion: Sum the areas for TSA. Then sum only the green faces for LSA.\"\n      ],\n      \"durationMinutes\": 10\n    }\n  ],\n  \"teacherLessonNotes\": {\n    \"sessionOverview\": \"This session introduces the chapter 'Surface Areas and Volumes' for Class IX/X. It focuses on defining total surface area (TSA) and lateral/curved surface area (LSA/CSA) specifically for cubes and cuboids using real-world analogies to build conceptual understanding before introducing formulas.\",\n    \"prerequisiteKnowledge\": [\n      \"Understanding of 2D shapes: Square, Rectangle\",\n      \"Perimeter and Area calculations for squares and rectangles\",\n      \"Basic terminology: Length (l), Breadth (b), Height (h)\",\n      \"Concept of 'faces' in a solid object\"\n    ],\n    \"learningOutcomes\": [\n      \"Students will be able to distinguish between Total Surface Area and Lateral/Curved Surface Area for cubes and cuboids.\",\n      \"Students will derive the formula $6s^2$ for a cube by visualizing its net.\",\n      \"Students will apply formulas correctly to calculate TSA and CSA of given dimensions.\"\n    ],\n    \"lessonPurpose\": [\n      \"To bridge the gap between 2D area concepts and 3D surface measurements.\",\n      \"To provide a foundational understanding required for complex shapes (Cylinder, Cone) in future sessions.\"\n    ],\n    \"teachingSequence\": [\n      \"Hook: Ask students to imagine wrapping a gift box. What determines how much paper is needed?\",\n      \"Define 'Surface Area' as the total area of all outer faces.\",\n      \"Introduce Cube: Show a net, count 6 identical square faces.\",\n      \"Derive TSA for Cube = $6 imes s^2$ and LSA (excluding top/bottom) = $4s^2$.\",\n      \"Move to Cuboid: Identify opposite faces are equal. Derive TSA = $2(lb + bh + hl)$.\",\n      \"Clarify LSA of Cuboid as the area of 4 side walls ($2h(l+b)$).\",\n      \"Guided practice with a specific numerical example on the board.\"\n    ],\n    \"guidedPractice\": [\n      \"[object Object]\",\n      \"Ask students to identify which faces are included in LSA vs TSA for a cuboid room (floor excluded).\",\n      \"Check if students confuse 'Volume' with 'Surface Area'.\",\n      \"Verify calculation steps before writing final answers.\"\n    ],\n    \"misconceptions\": [\n      \"Thinking LSA includes top and bottom faces.\",\n      \"Forgetting to multiply by 2 for cuboids.\"\n    ],\n    \"formativeChecks\": [\n      \"Ask students to hold up fingers: 1 finger for TSA, 4 fingers for LSA when you say 'Painting a room' (excluding floor/ceiling).\"\n    ],\n    \"assessmentQuestions\": [\n      \"Calculate the cost of painting the four walls of a hall with dimensions 20m x 15m and height 8m at Rs. 10 per sq.m.\"\n    ],\n    \"sessionSummary\": [\n      \"We learned that Surface Area is the total area of all faces. We derived specific formulas for Cubes ($6s^2$) and Cuboids ($2(lb+bh+hl)$).\",\n      \"Distinguishing between TSA (all sides) and LSA (side walls only) is critical.\"\n    ],\n    \"conceptFlow\": [\n      {\n        \"conceptName\": \"Total Surface Area (TSA)\",\n        \"definition\": \"The sum of the areas of all external faces of a 3D solid.\",\n        \"coreExplanation\": \"It represents the total amount of material needed to cover the entire object. For cubes, it is $6s^2$. For cuboids, it accounts for top, bottom, front, back, left, and right sides: $2(lb + bh + hl)$.\",\n        \"importance\": \"Essential for real-world applications like painting walls, wrapping gifts, or manufacturing containers.\",\n        \"keywords\": [\n          \"Total Surface Area\",\n          \"Faces\",\n          \"Coverage\"\n        ],\n        \"examples\": [\n          \"A dice (Cube) with side 2cm.\",\n          \"An aquarium tank (Cuboid).\"\n        ]\n      },\n      {\n        \"conceptName\": \"Lateral/Curved Surface Area (LSA/CSA)\",\n        \"definition\": \"The area of the faces excluding the top and bottom bases.\",\n        \"coreExplanation\": \"For a cuboid, this is the sum of the areas of the four vertical walls. Formula: $2h(l+b)$. For a cube, it is $4s^2$ (excluding top/bottom).\",\n        \"importance\": \"Used when calculating costs for painting only walls or fencing.\",\n        \"keywords\": [\n          \"Lateral\",\n          \"Side Walls\",\n          \"Excluding Bases\"\n        ],\n        \"examples\": [\n          \"Painting a room (excluding floor and ceiling).\",\n          \"Labeling only the sides of a box.\"\n        ]\n      }\n    ],\n    \"lessonBlocks\": [\n      {\n        \"title\": \"Introduction to Surface Area\",\n        \"durationMinutes\": 5,\n        \"explanation\": [\n          \"Surface Area is the total area covered by the outer skin of an object.\",\n          \"It answers 'how much material covers it'.\",\n          \"Volume answers 'how much space does it occupy'.\"\n        ],\n        \"examples\": [\n          \"Wrapping a chocolate box (TSA).\",\n          \"Painting only the four walls of a classroom (LSA).\"\n        ],\n        \"checkUnderstanding\": [\n          \"Does a cube have any rectangular faces?\",\n          \"How many edges does a cube have?\"\n        ],\n        \"expectedAnswers\": [\n          \"No, all are squares.\",\n          \"12 edges.\"\n        ],\n        \"activity\": []\n      },\n      {\n        \"title\": \"Cuboid: TSA and LSA Derivation\",\n        \"durationMinutes\": 15,\n        \"explanation\": [\n          \"Cuboids have 3 pairs of opposite rectangular faces.\",\n          \"Pair 1: Top and Bottom ($l imes b$).\",\n          \"Pair 2: Front and Back ($b imes h$).\"\n        ],\n        \"examples\": [\n          \"Calculating paint needed for a room (excluding floor/ceiling) = LSA.\",\n          \"Cardboard box dimensions: 10cm x 5cm x 4cm.\"\n        ],\n        \"checkUnderstanding\": [\n          \"If I double the height, does the LSA change? How?\",\n          \"Is TSA always greater than or equal to LSA?\"\n        ],\n        \"expectedAnswers\": [\n          \"Yes, it increases because $h$ is a factor in side walls.\",\n          \"Yes, unless dimensions are zero.\"\n        ],\n        \"activity\": []\n      }\n    ]\n  },\n  \"studentLessonNotes\": {\n    \"title\": \"Surface Areas and Volumes (3-D Shapes)\",\n    \"sessionOverview\": \"This session introduces the fundamental concepts of calculating surface areas and volumes for common three-dimensional shapes like cubes, cuboids, cylinders, cones, and spheres.\",\n    \"introduction\": \"Welcome to our exploration of 3D geometry! Today we will learn how to measure the space inside objects (volume) and the amount of material needed to cover them (surface area). These skills are essential for everything from packing boxes to designing water tanks.\",\n    \"learningObjectives\": [\n      \"Identify different types of 3-D shapes\",\n      \"Recall formulas for surface areas and volumes of cubes, cuboids, cylinders, cones, and spheres\",\n      \"Apply formulas to solve real-world problems involving mixed units\"\n    ],\n    \"keyTerms\": [\n      \"TSA\",\n      \"CSA\",\n      \"Slant Height\",\n      \"Radius\"\n    ],\n    \"quickSummary\": [\n      \"Surface area measures covering; Volume measures capacity.\"\n    ],\n    \"summary\": [\n      \"Mastering these formulas allows you to solve practical problems involving 3D objects efficiently.\"\n    ],\n    \"rememberPoints\": [\n      \"Volume -> Cubic Units\",\n      \"Surface Area -> Square Units\",\n      \"Cone Volume = 1/3 of Cylinder Volume (same base & height)\"\n    ],\n    \"definitions\": [\n      {\n        \"term\": \"Slant Height\",\n        \"definition\": \"The distance measured along the lateral surface from the apex to any point on the base edge (denoted by 'l').\"\n      },\n      {\n        \"term\": \"Radius\",\n        \"definition\": \"The constant distance from the center of a circle or sphere to its boundary.\"\n      }\n    ],\n    \"sections\": [\n      {\n        \"heading\": \"Understanding Surface Area\",\n        \"explanation\": \"Surface area is the total area of all the faces or surfaces that enclose a solid object. Think of it as how much wrapping paper you would need to cover a gift box completely.\",\n        \"keyPoints\": [\n          \"Total Surface Area (TSA) includes all outer surfaces.\",\n          \"Curved Surface Area (CSA) excludes bases.\"\n        ],\n        \"examples\": [\n          \"Calculating the paint needed for a cylindrical water tank\",\n          \"Finding the cardboard required to make a shoebox\"\n        ],\n        \"importantNotes\": [\n          \"Always check units! Convert cm to m if necessary before calculating.\"\n        ],\n        \"conceptSummary\": [\n          \"Surface area is the sum of areas of all bounding surfaces.\"\n        ]\n      },\n      {\n        \"heading\": \"Understanding Volume\",\n        \"explanation\": \"Volume measures the amount of 3D space an object occupies or can contain. It answers questions like 'How much water fits in this bottle?'\",\n        \"keyPoints\": [\n          \"Formula depends on the base shape.\",\n          \"Cone volume is one-third that of a cylinder with same dimensions.\"\n        ],\n        \"examples\": [\n          \"Calculating capacity of a swimming pool (cuboid)\",\n          \"Determining how much ice cream fits in a cone\"\n        ],\n        \"importantNotes\": [\n          \"Volume is always measured in cubic units (cm³, m³).\"\n        ],\n        \"conceptSummary\": [\n          \"Volume quantifies the internal space of a 3D object.\"\n        ]\n      }\n    ],\n    \"workedExamples\": [\n      {\n        \"title\": \"Finding Volume and TSA of a Cylinder\",\n        \"steps\": [\n          \"Identify given values\",\n          \"Substitute into volume formula\",\n          \"Calculate TSA\"\n        ],\n        \"explanation\": \"First, we calculate the volume by squaring the radius (49), multiplying by height (10) and pi. Then for TSA, we add the area of the two circular bases to the curved surface area.\"\n      }\n    ],\n    \"selfCheckQuestions\": [\n      \"If you double the radius of a cylinder, how does its volume change?\",\n      \"What is the difference between CSA and TSA of a cone?\"\n    ],\n    \"veryShortAnswerQuestions\": [\n      {\n        \"question\": \"What is the unit of measurement for volume?\",\n        \"answer\": \"Cubic units (e.g., cm³, m³)\"\n      },\n      {\n        \"question\": \"Name one shape where TSA = 6a².\",\n        \"answer\": \"Cube\"\n      }\n    ],\n    \"mcqQuestions\": [\n      {\n        \"question\": \"Which formula represents the volume of a cone?\",\n        \"answer\": \"B. (1/3)πr²h\"\n      }\n    ]\n  },\n  \"topicCoverage\": []\n}\n\nTARGET JSON SHAPE\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}\n\nABSOLUTE RULES\n1. This assessment is for ONE SESSION ONLY.\n2. Use only content that is explicitly present in the supplied session information.\n3. Never introduce future chapters, untaught formulas, external textbook knowledge, or assumed content.\n4. Learning outcomes guide coverage, but questions must originate from taught concepts, not from repetitive learning-outcome wording.\n5. Every question must measure real learning: understanding, application, reasoning, analysis, interpretation, communication, competency, or conceptual clarity.\n6. Match the requested marks, duration, question counts, and section structure exactly.\n7. If allowed assessment sections are supplied, every question must use one valid sectionId and sectionTitle from that list.\n8. Keep the paper professional, board-style, fair, age appropriate, and free from repetitive AI patterns.\n9. Return valid JSON only.\n\nINTERNAL WORKFLOW\nFollow this reasoning process before writing the final JSON:\n\nPHASE 1 - SESSION INTELLIGENCE\n- Identify what students learned in this session.\n- Extract taught concepts, skills, vocabulary, examples, activities, practical work, and likely misconceptions.\n- Distinguish high-emphasis concepts from supporting concepts.\n\nPHASE 2 - CONCEPT INTELLIGENCE\n- Build an internal concept graph from the taught session.\n- Map each learning outcome to the concepts actually taught.\n- Identify concept importance, dependency, applications, likely misconceptions, and assessment opportunities.\n\nPHASE 3 - BLUEPRINT-FIRST DESIGN\n- Design the full paper before writing questions.\n- Decide section allocation, marks per section, question progression, blooms balance, competency balance, and time allocation.\n- Distribute questions across important taught concepts rather than over-testing one idea.\n\nPHASE 4 - PROFESSIONAL QUESTION PAPER\n- Generate a student-facing paper with ordered questions.\n- Use continuous ids: q1, q2, q3, ...\n- Keep wording precise and board-like.\n- Preserve the requested subtype mix such as mcq, veryShortAnswer, shortAnswer, longAnswer, and caseStudy.\n\nPHASE 5 - EVALUATION PACKAGE\n- Generate a complete linked evaluation package:\n  - answer key\n  - marking scheme\n  - rubric package\n  - evaluator instructions\n  - moderation notes\n- Every evaluation item must link to the same question id as the paper.\n- For non-MCQ questions, provide point-wise criteria and mark allocation.\n\nPHASE 6 - VALIDATION\n- Confirm the final output matches requested marks, requested counts, requested duration, and valid sections.\n- Confirm each question has aligned answer-key and marking-scheme coverage.\n- Confirm the paper stays within the session boundary.\n\nOUTPUT REQUIREMENTS\n1. Output the canonical assessment package only.\n2. Put student-facing instructions in `paper.instructions`.\n3. Put the ordered question paper in `paper.questions`.\n4. Put answer keys in `evaluation.answerKey.items`.\n5. Put mark splits in `evaluation.markingScheme.items`.\n6. Put rubric criteria in `evaluation.rubrics.items`.\n7. Put summary notes in `summary`.\n8. Put validation status in `validation`.\n9. Use the exact section ids and titles supplied or derived from the session context.\n10. Keep question metadata, evaluation metadata, and blueprint references aligned to the same continuous ids.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}"
+    }
+  ]
+}
