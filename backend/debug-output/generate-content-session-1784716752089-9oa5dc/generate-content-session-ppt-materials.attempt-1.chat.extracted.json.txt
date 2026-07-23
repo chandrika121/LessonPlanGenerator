@@ -1,0 +1,581 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "textbook-clean",
+      "templateName": "Textbook Clean Layout",
+      "themeId": "cbse-academic-blue",
+      "title": "Chemical Reactions and Equations - Session 1",
+      "presentationTitle": "Understanding Chemical Reactions: Signs, Types, and Balancing",
+      "presentationGoal": "To enable students to identify chemical changes through observable signs, write balanced equations for common reactions, and understand the law of conservation of mass.",
+      "audience": "Grade 10 Science Students",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab",
+          "body": "Open Sans"
+        },
+        "colors": {
+          "primary": "#2C3E50",
+          "secondary": "#3498DB",
+          "accent": "#E74C3C",
+          "background": "#FFFFFF",
+          "surface": "#F8F9FA",
+          "text": "#212121",
+          "mutedText": "#607D8B"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary",
+          "cardStyle": "shadow-elevation-2",
+          "visualFrameStyle": "rounded-corners-accent-border"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons (CC-BY-SA)",
+          "USGS Public Domain",
+          "Khan Academy Visuals"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all images used for chemical reactions are either public domain or Creative Commons licensed.",
+          "Avoid copyrighted textbook diagrams; recreate essential reaction schemes using SVG."
+        ],
+        "fallbackStrategy": "Use high-contrast schematic line drawings if specific photos of experiments (e.g., magnesium burning) cannot be sourced safely."
+      },
+      "licenseChecklist": [
+        "Verify all chemical equation symbols are standard Unicode or MathJax compatible.",
+        "Confirm no student faces appear in stock images without consent forms.",
+        "Ensure SVG diagrams do not contain proprietary data structures."
+      ],
+      "presentationWarnings": [
+        "Do not attempt to perform the magnesium burning demonstration live unless safety equipment is present; use video or high-res photo instead.",
+        "Clarify that 'effervescence' refers specifically to gas evolution, not just any bubbling from agitation.",
+        "Ensure students distinguish between physical changes (melting) and chemical changes before proceeding."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Identify signs of a chemical reaction",
+          "Write word equations for given reactions",
+          "Convert word equations to skeletal chemical equations",
+          "Balance simple chemical equations using the hit-and-trial method"
+        ],
+        "topicsCovered": [
+          "Chemical Reactions and Equations",
+          "Signs of Chemical Change",
+          "Writing Balanced Equations",
+          "Law of Conservation of Mass Application"
+        ],
+        "taughtConceptsCovered": [
+          "Exothermic vs Endothermic reactions (Intro)",
+          "Precipitation, Color change, Gas evolution",
+          "Reactants and Products notation",
+          "Balancing stoichiometry basics"
+        ],
+        "omittedContent": [
+          "Redox reactions detailed mechanism",
+          "Ionic equations in depth",
+          "Corrosion prevention methods (future session)"
+        ]
+      },
+      "slides": [
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Session Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "Chemical Reactions and Equations",
+          "learningOutcomeIds": [
+            "LO-Intro"
+          ],
+          "topicCoverage": [
+            "Session Overview"
+          ],
+          "teacherIntent": "Set the stage for the lesson, establish relevance, and state clear learning goals.",
+          "studentTakeaway": "I will learn how to recognize chemical changes and write balanced equations.",
+          "layout": "title-center",
+          "bulletPoints": [
+            "What makes a change 'chemical'?",
+            "From Words to Symbols: Writing Equations",
+            "The Rule of Balance"
+          ],
+          "onSlideText": [
+            "Chemical Reactions and Equations",
+            "Session 1: Signs, Types, and Balancing",
+            "Grade 10 Science"
+          ],
+          "speakerNotes": [
+            "Purpose: Introduce the session topic and hook student interest.",
+            "Explain: Start by asking 'Is melting ice a chemical change?' to trigger prior knowledge. Clarify that today we focus on how substances transform into new ones with different properties.",
+            "Ask: 'Have you ever seen rust form or bread bake? What happened there physically vs chemically?'",
+            "Listen for: Student mentions of color changes, heat release, or permanent change in state.",
+            "Transition: Let's look at the specific signs that tell us a chemical reaction has occurred."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in title",
+            "Slide up learning outcomes"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "Hook: Physical vs Chemical Change",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "lesson_hook",
+          "slideTitle": "Is it a New Substance?",
+          "learningOutcomeIds": [
+            "LO-Signs"
+          ],
+          "topicCoverage": [
+            "Signs of Chemical Change"
+          ],
+          "teacherIntent": "Differentiate between physical and chemical changes using visual examples.",
+          "studentTakeaway": "Chemical reactions create new substances with different properties; physical changes do not.",
+          "layout": "split-comparison",
+          "bulletPoints": [
+            "Physical Change: Reversible, same substance (e.g., Ice melting)",
+            "Chemical Change: Irreversible, new substance formed (e.g., Iron rusting)",
+            "Key Question: Can we get the original back easily?"
+          ],
+          "onSlideText": [
+            "Physical vs Chemical",
+            "Melting Ice -> Water (Same H2O)",
+            "Rusting Iron -> Rust (New Fe2O3)"
+          ],
+          "speakerNotes": [
+            "Purpose: Activate prior knowledge and set the criteria for identifying reactions.",
+            "Explain: Show an image of ice melting. Ask if it's a new substance. Then show rusted iron. Emphasize that in chemical changes, atoms rearrange to form entirely new materials with different properties (color, smell, state).",
+            "Ask: 'If I burn wood into ash and smoke, can I turn the ash back into wood?'",
+            "Listen for: No / It's impossible.",
+            "Correct: Clarify that while some physical changes are hard to reverse (like breaking glass), chemical changes involve a fundamental change in identity.",
+            "Board work: Write 'New Substance Formed' on board as the defining feature."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [
+            {
+              "purpose": "Visual comparison of physical vs chemical change",
+              "searchQuery": "ice melting vs iron rusting side by side diagram",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC-BY-SA 3.0",
+              "attributionText": "Public Domain / CC-BY-SA",
+              "altText": "Side-by-side comparison of ice melting and iron rusting to illustrate physical vs chemical change.",
+              "placementHint": "Left side: Ice/Water; Right side: Rusty Nail"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal physical change first",
+            "Then reveal chemical change"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "core_concept",
+          "templateSlideTitle": "Signs of a Chemical Reaction",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "core_concept",
+          "slideTitle": "How Do We Know? (4 Signs)",
+          "learningOutcomeIds": [
+            "LO-Signs"
+          ],
+          "topicCoverage": [
+            "Signs of Chemical Change: Gas Evolution, Color Change, Precipitate Formation, Temperature Change"
+          ],
+          "teacherIntent": "List and explain the four observable signs that indicate a chemical reaction has occurred.",
+          "studentTakeaway": "I can identify gas evolution, color change, precipitates, and temperature changes as evidence of reactions.",
+          "layout": "grid-4",
+          "bulletPoints": [
+            "1. Evolution of Gas (Bubbles)",
+            "2. Change in Color",
+            "3. Formation of a Precipitate (Solid from liquids)",
+            "4. Temperature Change (Heat released or absorbed)"
+          ],
+          "onSlideText": [
+            "Signs of Chemical Reaction:",
+            "- Gas Evolution",
+            "- Color Change",
+            "- Precipitation",
+            "- Temp Change"
+          ],
+          "speakerNotes": [
+            "Purpose: Detail the specific observable indicators.",
+            "Explain: Go through each point. For gas evolution, mention effervescence (e.g., vinegar + baking soda). For color change, use lead nitrate and potassium iodide example. Explain precipitate as a solid forming from two liquids that were clear. Discuss exothermic (heat released) vs endothermic (heat absorbed).",
+            "Ask: 'What happens when you mix lemon juice with milk?'",
+            "Listen for: Curdling / Solid formation.",
+            "Correct: Clarify this is a precipitate/chemical change, not just mixing.",
+            "Board work: Draw simple icons next to each sign on the board."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [
+            {
+              "purpose": "Visual examples of gas evolution and color change",
+              "searchQuery": "chemical reaction vinegar baking soda bubbles lead nitrate potassium iodide purple precipitate",
+              "sourceSite": "Khan Academy Visuals",
+              "sourceUrl": "",
+              "licenseType": "CC-BY-NC-SA 4.0",
+              "attributionText": "Adapted from Khan Academy",
+              "altText": "Images showing bubbling reaction and color change to purple precipitate.",
+              "placementHint": "Top row: Gas evolution; Bottom row: Color/Precipitate"
+            }
+          ],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in each sign one by one",
+            "Highlight keywords"
+          ],
+          "timeEstimateMinutes": 8
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Writing Chemical Equations",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "worked_example",
+          "slideTitle": "From Words to Symbols",
+          "learningOutcomeIds": [
+            "LO-Equations"
+          ],
+          "topicCoverage": [
+            "Reactants and Products Notation",
+            "Writing Skeletal Equations"
+          ],
+          "teacherIntent": "Demonstrate how to convert a word equation into a skeletal chemical equation.",
+          "studentTakeaway": "I can write reactant formulas on the left, product formulas on the right, separated by an arrow.",
+          "layout": "step-by-step",
+          "bulletPoints": [
+            "Reactants (Left) -> Products (Right)",
+            "Use chemical symbols/formulas",
+            "Arrow indicates 'yields' or 'forms'",
+            "Example: Hydrogen + Oxygen -> Water"
+          ],
+          "onSlideText": [
+            "Word Equation:",
+            "Hydrogen + Oxygen → Water",
+            "Skeletal Equation:",
+            "H₂(g) + O₂(g) → H₂O(l)",
+            "(Note: Not balanced yet)"
+          ],
+          "speakerNotes": [
+            "Purpose: Teach the syntax of chemical equations.",
+            "Explain: Define reactants (starting materials) and products (new substances). Explain that '→' means yields. Show how to write formulas correctly (subscripts for atoms, state symbols like g/l/s/aq if known at this stage). Emphasize that skeletal equations are just the first draft.",
+            "Ask: 'In H₂ + O₂ → H₂O, which side has the reactants?'",
+            "Listen for: Left side / Hydrogen and Oxygen.",
+            "Board work: Write the word equation on board, then slowly convert it to symbols while explaining subscripts."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [
+              "Draw two H2 molecules and one O2 molecule on left",
+              "Arrow pointing right",
+              "Two H2O molecules on right"
+            ],
+            "svgCode": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 150\"><text x=\"20\" y=\"80\" font-family=\"sans-serif\" font-size=\"20\">H₂ + O₂</text><path d=\"M 160,70 L 240,70 M 230,60 L 245,70 L 230,80 Z\" stroke=\"#2C3E50\" fill=\"none\"/><text x=\"250\" y=\"80\" font-family=\"sans-serif\" font-size=\"20\">H₂O</text></svg>"
+          },
+          "animationHints": [
+            "Reveal reactants",
+            "Animate arrow",
+            "Reveal products"
+          ],
+          "timeEstimateMinutes": 7
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "core_concept",
+          "templateSlideTitle": "The Law of Conservation of Mass",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "core_concept",
+          "slideTitle": "Why Must Equations Be Balanced?",
+          "learningOutcomeIds": [
+            "LO-Balancing"
+          ],
+          "topicCoverage": [
+            "Law of Conservation of Mass",
+            "Balanced vs Unbalanced Equations"
+          ],
+          "teacherIntent": "Explain the necessity of balancing equations based on mass conservation.",
+          "studentTakeaway": "Atoms are neither created nor destroyed; therefore, reactant atoms must equal product atoms.",
+          "layout": "text-diagram",
+          "bulletPoints": [
+            "Law: Mass is conserved in chemical reactions",
+            "No atoms lost or gained",
+            "Reactants = Products (in terms of atom count)",
+            "Unbalanced Equation Example:",
+            "H₂ + O₂ → H₂O"
+          ],
+          "onSlideText": [
+            "Law of Conservation of Mass",
+            "- Atoms are rearranged, not created/destroyed.",
+            "- Total mass before = Total mass after.",
+            "Current Count:",
+            "Left: 2H, 2O | Right: 2H, 1O (Unbalanced!)"
+          ],
+          "speakerNotes": [
+            "Purpose: Connect the concept of balancing to a fundamental law of physics/chemistry.",
+            "Explain: State Lavoisier's Law. Use an analogy like 'You can't make more money by just rearranging your wallet.' Show that in H₂ + O₂ → H₂O, we have 2 oxygen atoms on the left but only 1 on the right. This violates conservation.",
+            "Ask: 'How many Oxygen atoms do we need on the product side to match?'",
+            "Listen for: Two / We need another one.",
+            "Correct: Guide them to realize they can't just add an O atom; they must change coefficients (multipliers).",
+            "Board work: Write '2H + 1O' vs '2H + 2O' on board."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "Atom Count Comparison",
+            "type": "comparison-table",
+            "instructions": [
+              "Left column: Reactants (2 H, 2 O)",
+              "Right column: Products (2 H, 1 O) marked with red X"
+            ],
+            "svgCode": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 150\"><rect x=\"10\" y=\"10\" width=\"180\" height=\"130\" fill=\"#F8F9FA\" stroke=\"#2C3E50\"/><text x=\"60\" y=\"40\" font-family=\"sans-serif\" font-weight=\"bold\">Reactants</text><circle cx=\"50\" cy=\"70\" r=\"10\" fill=\"#3498DB\"/><text x=\"70\" y=\"75\" font-size=\"20\">H₂</text><circle cx=\"100\" cy=\"70\" r=\"10\" fill=\"#E74C3C\"/><text x=" "y="75" font-size="20">O₂</text></svg>"
+          },
+          "animationHints": [
+            "Highlight mismatched atoms in red",
+            "Show 'X' over unbalanced side"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Balancing the Equation (Hit and Trial)",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "worked_example",
+          "slideTitle": "Step-by-Step Balancing: H₂ + O₂ → H₂O",
+          "learningOutcomeIds": [
+            "LO-Balancing"
+          ],
+          "topicCoverage": [
+            "Balancing Chemical Equations using Hit-and-Trial Method"
+          ],
+          "teacherIntent": "Walk through the hit-and-trial method to balance a simple equation.",
+          "studentTakeaway": "I can use coefficients (numbers in front) to make atom counts equal on both sides.",
+          "layout": "step-by-step",
+          "bulletPoints": [
+            "1. Count atoms: H=2, O=2 vs H=2, O=1",
+            "2. Fix Oxygen: Add coefficient 2 before H₂O (H₂ + O₂ → 2H₂O)",
+            "3. Re-count: Now H is unbalanced (4 on right).",
+            "4. Fix Hydrogen: Add coefficient 2 before H₂.",
+            "5. Final Check: 4H, 2O = 4H, 2O"
+          ],
+          "onSlideText": [
+            "Balancing Steps:",
+            "1. Unbalanced: H₂ + O₂ → H₂O",
+            "2. Balance O: H₂ + O₂ → 2H₂O (Now 4H, 2O)",
+            "3. Balance H: 2H₂ + O₂ → 2H₂O",
+            "= Balanced!"
+          ],
+          "speakerNotes": [
+            "Purpose: Demonstrate the algorithmic process of balancing.",
+            "Explain: Start with Oxygen as it appears in only one compound on each side. Explain that we place a '2' before H₂O to get 2 O atoms. Now count Hydrogen again (4 vs 2). Place a '2' before H₂. Verify all counts match.",
+            "Ask: 'Why did we change the coefficient of water first?'",
+            "Listen for: Because Oxygen was unbalanced and only appeared once on each side.",
+            "Board work: Write the equation large, then write coefficients above/below as you add them."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "Balancing Animation Sequence",
+            "type": "process-flow",
+            "instructions": [
+              "Show H2 + O2 -> H2O (Unbalanced)",
+              "Animate '2' appearing before H2O",
+              "Count update: 4H, 2O vs 2H, 1O",
+              "Animate '2' appearing before H2",
+              "Final state: Balanced"
+            ],
+            "svgCode": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 500 200\"><text x=\"10\" y=\"40\" font-family=\"sans-serif\">Step 1:</text><text x=" "y="60" font-size="20">H₂ + O₂ → H₂O</text></svg>"
+          },
+          "animationHints": [
+            "Animate coefficient appearance",
+            "Flash green checkmark on final balance"
+          ],
+          "timeEstimateMinutes": 10
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "guided_practice",
+          "templateSlideTitle": "Guided Practice: Balance This!",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "guided_practice",
+          "slideTitle": "Try It Yourself: Mg + O₂ → MgO",
+          "learningOutcomeIds": [
+            "LO-Balancing"
+          ],
+          "topicCoverage": [
+            "Practice Balancing Equations"
+          ],
+          "teacherIntent": "Provide a scaffolded practice problem for students to solve.",
+          "studentTakeaway": "I can apply the balancing steps independently.",
+          "layout": "problem-solution",
+          "bulletPoints": [
+            "Problem: Mg + O₂ → MgO",
+            "Step 1: Count atoms (Mg=1, O=2 vs Mg=1, O=1)",
+            "Step 2: Balance Oxygen by adding '2' to MgO.",
+            "Step 3: Re-count Magnesium. Add '2' before Mg."
+          ],
+          "onSlideText": [
+            "Equation:",
+            "Mg + O₂ → MgO",
+            "Your Turn:",
+            "- Balance Oxygen first?",
+            "- Then balance Magnesium?"
+          ],
+          "speakerNotes": [
+            "Purpose: Check understanding through active practice.",
+            "Explain: Give students 2 minutes to write the balanced equation on their notebooks. Walk around and check for common errors (e.g., changing subscripts instead of coefficients).",
+            "Ask: 'What is the coefficient in front of MgO?'",
+            "Listen for: 2.",
+            "Correct: If they wrote Mg + O₂ → Mg₂, correct them that we cannot change subscripts."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Reveal problem",
+            "Wait for student response before revealing steps"
+          ],
+          "timeEstimateMinutes": 8
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Session Summary & Bridge",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "summary",
+          "slideTitle": "What We Learned Today",
+          "learningOutcomeIds": [
+            "LO-Signs",
+            "LO-Equations",
+            "LO-Balancing"
+          ],
+          "topicCoverage": [
+            "Recap of Session 1 Content"
+          ],
+          "teacherIntent": "Summarize key takeaways and bridge to the next session.",
+          "studentTakeaway": "I know how to identify reactions, write equations, and balance them. Next: Types of Reactions.",
+          "layout": "list-summary",
+          "bulletPoints": [
+            "- Chemical changes create new substances (Gas, Color, Precipitate)",
+            "- Equations use symbols; Reactants → Products",
+            "- Balance using coefficients to satisfy Conservation of Mass"
+          ],
+          "onSlideText": [
+            "Key Takeaways:",
+            "1. Signs: Gas, Color, Solid, Heat",
+            "2. Writing: Symbols & Formulas",
+            "3. Balancing: Coefficients only!",
+            "Next Session: Types of Reactions (Combustion, Decomposition)"
+          ],
+          "speakerNotes": [
+            "Purpose: Consolidate learning and set up the next lesson.",
+            "Explain: Briefly recap the three main points. Emphasize that balancing is a skill they will use in every future chemistry topic.",
+            "Ask: 'What was the most challenging part of balancing today?'",
+            "Listen for: Keeping track of atoms / Deciding which to balance first.",
+            "Transition: Tomorrow we'll see specific types like combustion and decomposition."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": {
+            "title": "",
+            "type": "",
+            "instructions": [],
+            "svgCode": ""
+          },
+          "animationHints": [
+            "Fade in summary points",
+            "Highlight next session topic"
+          ],
+          "timeEstimateMinutes": 4
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Chemical Reactions and Equations - Session 1 Handout",
+      "keyInformation": [
+        "Signs of Chemical Change: Gas evolution, Color change, Precipitate formation, Temperature change.",
+        "Writing Equations: Reactants (Left) + Products (Right). Use symbols like H₂O for water.",
+        "Balancing Rule: Coefficients only. Never change subscripts. Atoms must be equal on both sides."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Chemical Reactions and Equations - Session 1",
+      "sections": [
+        "Introduction to Chemical Changes (Physical vs Chemical)",
+        "Observable Signs of a Reaction",
+        "Writing Word and Skeletal Equations",
+        "The Law of Conservation of Mass",
+        "Balancing Equations: Hit-and-Trial Method",
+        "Guided Practice Problems"
+      ]
+    }
+  }
+}

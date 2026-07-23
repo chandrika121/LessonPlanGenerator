@@ -1,0 +1,666 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "academic-split",
+      "templateName": "Academic Split Layout",
+      "themeId": "cbse-academic-blue",
+      "title": "Chemical Reactions and Equations - Session 1",
+      "presentationTitle": "Understanding Chemical Reactions: Signs, Types, and Balancing",
+      "presentationGoal": "To introduce students to the concept of chemical reactions, identify observable signs, distinguish between physical and chemical changes, understand word equations, learn symbol notation, and master the law of conservation of mass through balancing simple equations.",
+      "audience": "Grade 10 Science Students (CBSE Curriculum)",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab, serif",
+          "body": "Open Sans, sans-serif"
+        },
+        "colors": {
+          "primary": "#1a4d80",
+          "secondary": "#2c7da0",
+          "accent": "#e6b925",
+          "background": "#f8f9fa",
+          "surface": "#ffffff",
+          "text": "#333333",
+          "mutedText": "#666666"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary-with-accent-border",
+          "cardStyle": "clean-shadow-elevation-2",
+          "visualFrameStyle": "rounded-corners-blue-stroke"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Pixabay",
+          "Unsplash Education",
+          "Wikimedia Commons (Science)"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all images are CC0 or Creative Commons licensed for educational use.",
+          "Avoid copyrighted textbook diagrams; recreate as SVGs where possible."
+        ],
+        "fallbackStrategy": "Use high-contrast schematic line drawings if specific photos fail to load."
+      },
+      "licenseChecklist": [
+        "All images verified for non-commercial educational license",
+        "SVG diagrams created in-house or public domain"
+      ],
+      "presentationWarnings": [
+        "Do not attempt actual chemical experiments with reactive metals (e.g., Magnesium) during this presentation without strict safety supervision.",
+        "Ensure students understand that 'balancing' is a mathematical representation of physical conservation, not changing the substance."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Identify signs of chemical reactions",
+          "Differentiate between physical and chemical changes",
+          "Write word equations for given reactions",
+          "Convert word equations to balanced symbol equations",
+          "Apply the Law of Conservation of Mass"
+        ],
+        "topicsCovered": [
+          "Definition of Chemical Reaction",
+          "Observable Signs (Gas, Precipitate, Color Change)",
+          "Physical vs. Chemical Changes",
+          "Chemical Equations: Word and Symbol Forms",
+          "Balancing Chemical Equations"
+        ],
+        "taughtConceptsCovered": [
+          "Reactants and Products",
+          "Conservation of Mass Principle",
+          "Stoichiometric Coefficients",
+          "State Symbols (s, l, g, aq)"
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "title-slide",
+          "templateSlideTitle": "Chapter Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "Chemical Reactions and Equations",
+          "learningOutcomeIds": [
+            "LO-Intro"
+          ],
+          "topicCoverage": [
+            "Session Overview"
+          ],
+          "teacherIntent": "Set the stage for the chapter, establish authority, and engage students with a visual hook.",
+          "studentTakeaway": "We are starting a new journey into how matter changes its identity through chemical reactions.",
+          "layout": "split-vertical",
+          "bulletPoints": [
+            "Chapter: Chemical Reactions and Equations",
+            "Session 1 of 5",
+            "Key Focus: From Observation to Equation"
+          ],
+          "onSlideText": [
+            "Chemical Reactions & Equations",
+            "Grade 10 Science | Session 1"
+          ],
+          "speakerNotes": [
+            "Purpose: Introduce the chapter and session goals.",
+            "Explain: Welcome students to Chapter 1. Explain that today we move from just observing changes in matter (like melting ice) to understanding when a substance actually becomes something new.",
+            "Ask: 'Have you ever seen rust form on an old bike? Or noticed bread rise?' These are chemical reactions happening around us daily.",
+            "Listen for: Student examples of cooking, rusting, or burning.",
+            "Transition: Let's define exactly what a chemical reaction is before we look at how to write them down."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "High-quality split image: Left side shows raw ingredients (flour, eggs) or a shiny iron nail; Right side shows the transformed product (baked cake or rusty nail). The visual contrast should be sharp to symbolize 'Before' and 'After'.",
+          "assets": [
+            {
+              "purpose": "Visual hook for chemical change vs. no change",
+              "searchQuery": "split image raw ingredients versus baked cake high resolution educational",
+              "sourceSite": "Unsplash Education",
+              "sourceUrl": "",
+              "licenseType": "CC0 / Educational Use",
+              "attributionText": "Image by [Author] via Unsplash",
+              "altText": "Split visual showing raw ingredients on one side and a finished cake on the other to illustrate transformation.",
+              "placementHint": "Right half of slide"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in title",
+            "Slide up bullet points sequentially"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "concept-intro",
+          "templateSlideTitle": "What is a Chemical Reaction?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "core_concept",
+          "slideTitle": "Defining the Chemical Reaction",
+          "learningOutcomeIds": [
+            "LO-Definition"
+          ],
+          "topicCoverage": [
+            "Chemical Change Definition"
+          ],
+          "teacherIntent": "Provide a precise scientific definition and contrast it with physical changes.",
+          "studentTakeaway": "A chemical reaction involves the breaking of old bonds and formation of new ones, creating substances with different properties.",
+          "layout": "text-heavy-left",
+          "bulletPoints": [
+            "Chemical Reaction: Process where reactants transform into products.",
+            "Key Feature: New substance(s) formed with distinct chemical properties.",
+            "Contrast: Physical changes (melting, boiling) do NOT create new substances.",
+            "Example: Burning wood turns it to ash and smoke; Ice melting is just water changing state."
+          ],
+          "onSlideText": [
+            "Chemical Reaction",
+            "- Reactants → Products",
+            "- New substance formed",
+            "- Irreversible (usually)"
+          ],
+          "speakerNotes": [
+            "Purpose: Define the core concept clearly.",
+            "Explain: A chemical reaction is a process where one or more substances change into new substances. The atoms rearrange, but no atom is created or destroyed in this context yet—we focus on identity first.",
+            "Ask: 'If I melt an ice cube, did it become something new?' No, it's still water (H2O). If I burn paper, do I get paper back? No, I get ash and smoke. That's a chemical reaction.",
+            "Correct: Students often confuse melting with reacting. Emphasize that the *identity* of the substance changes in a chemical reaction.",
+            "Board work: Write 'Reactants → Products' on board."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Simple schematic diagram showing two molecules (A-A and B-B) colliding to form a new molecule structure (C-C-D). Use distinct colors for atoms before and after the reaction.",
+          "assets": [
+            {
+              "purpose": "Visualizing molecular rearrangement",
+              "searchQuery": "molecular collision chemical reaction schematic diagram educational illustration",
+              "sourceSite": "Wikimedia Commons Science",
+              "sourceUrl": "",
+              "licenseType": "Public Domain / CC-BY-SA",
+              "attributionText": "Diagram adapted from Wikimedia Commons",
+              "altText": "Schematic showing reactant molecules colliding and rearranging into product molecules.",
+              "placementHint": "Right side of slide"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate collision effect if possible",
+            "Highlight 'New Substance' in red"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "signs-of-reaction",
+          "templateSlideTitle": "Signs of a Chemical Reaction",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "visual_explainer",
+          "slideTitle": "How Do We Know? Observable Signs",
+          "learningOutcomeIds": [
+            "LO-Signs"
+          ],
+          "topicCoverage": [
+            "Observable Indicators"
+          ],
+          "teacherIntent": "List and illustrate the five key observable signs that indicate a chemical reaction has occurred.",
+          "studentTakeaway": "We can identify reactions by looking for color changes, gas production, temperature change, precipitate formation, or light emission.",
+          "layout": "grid-2x3",
+          "bulletPoints": [
+            "1. Change in State (Solid to Gas)",
+            "2. Color Change (Unexpected shift)",
+            "3. Evolution of a Gas (Bubbles/Fizzing)",
+            "4. Formation of a Precipitate (Cloudy solid)",
+            "5. Temperature/Heat Change"
+          ],
+          "onSlideText": [
+            "Observable Signs",
+            "- Color Change",
+            "- Gas Evolved",
+            "- Precipitate Formed",
+            "- Heat Absorbed/Evolved",
+            "- State Change (Chemical)"
+          ],
+          "speakerNotes": [
+            "Purpose: Connect theory to observation.",
+            "Explain: We can't always see atoms moving, but we see the effects. List each sign with a quick example.",
+            "Ask: 'What happens when you drop an antacid tablet in water?' Bubbles! That's gas evolution (CO2).",
+            "Listen for: Student confirmation of fizzing or bubbling.",
+            "Correct: Clarify that boiling is physical, but bubbles from a reaction are chemical. Boiling stops if heat stops; reaction continues until reactants run out.",
+            "Board work: Draw a beaker with bubbles and another with a cloudy mixture."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "A 2x3 grid of high-quality photos or illustrations representing each sign. Top-left: Color change (e.g., litmus paper). Top-right: Gas evolution (fizzing soda/antacid). Middle-left: Precipitate (cloudy mixture). Middle-right: Heat/Light (burning candle/firework). Bottom row: State change example.",
+          "assets": [
+            {
+              "purpose": "Visual examples of reaction signs",
+              "searchQuery": "chemical reactions color change gas evolution precipitate heat light educational collage",
+              "sourceSite": "Pixabay Education",
+              "sourceUrl": "",
+              "licenseType": "CC0 / Educational Use",
+              "attributionText": "Images via Pixabay",
+              "altText": "Collage showing color change, gas bubbles, precipitate formation, and heat/light emission.",
+              "placementHint": "Grid layout on right side"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in each icon one by one as discussed",
+            "Zoom effect on 'Gas Evolution' for emphasis"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "word-equation-intro",
+          "templateSlideTitle": "Writing Chemical Equations (Words)",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "worked_example",
+          "slideTitle": "From Words to Word Equations",
+          "learningOutcomeIds": [
+            "LO-WordEquation"
+          ],
+          "topicCoverage": [
+            "Writing Word Equations"
+          ],
+          "teacherIntent": "Teach students how to translate a verbal description of a reaction into a standard word equation format.",
+          "studentTakeaway": "A word equation lists reactants on the left, products on the right, separated by an arrow indicating direction.",
+          "layout": "text-heavy-left",
+          "bulletPoints": [
+            "Reactants → Products",
+            "Format: Name of Reactant + Name of Reactant → Name of Product(s)",
+            "Example: Magnesium burns in Oxygen to form Magnesium Oxide.",
+            "Word Equation: Magnesium + Oxygen → Magnesium Oxide"
+          ],
+          "onSlideText": [
+            "Writing Word Equations",
+            "- Left Side: Reactants (Start)",
+            "- Right Side: Products (End)",
+            "-> Arrow means 'yields' or 'forms'",
+            "Example:",
+            "Magnesium + Oxygen → Magnesium Oxide"
+          ],
+          "speakerNotes": [
+            "Purpose: Introduce the language of chemistry.",
+            "Explain: Just like English sentences have subjects and verbs, chemical reactions need a structure. We write what we start with (reactants) on the left, an arrow for 'becomes', and what we end up with (products) on the right.",
+            "Ask: 'In this sentence, which are the reactants?' Magnesium and Oxygen.",
+            "Listen for: Identification of starting materials.",
+            "Board work: Write the example clearly. Underline 'Magnesium' and 'Oxygen'. Circle '→'.",
+            "Transition: Now that we can write it in words, let's make it shorter using symbols."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "A large, clear text diagram showing the structure of a word equation. Use color coding: Reactants in Blue, Arrow in Green, Products in Red.",
+          "assets": [
+            {
+              "purpose": "Visualizing the structure of an equation",
+              "searchQuery": "chemical equation format reactant arrow product educational graphic text diagram",
+              "sourceSite": "Wikimedia Commons Science",
+              "sourceUrl": "",
+              "licenseType": "Public Domain / CC-BY-SA",
+              "attributionText": "Diagram adapted from Wikimedia Commons",
+              "altText": "Graphic showing the layout of a chemical word equation with color-coded components.",
+              "placementHint": "Right side, large font"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate arrow appearing after reactants",
+            "Highlight '→' as 'yields'"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "symbol-equation-intro",
+          "templateSlideTitle": "Symbol Equations and State Symbols",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "core_concept",
+          "slideTitle": "Chemical Symbol Equations",
+          "learningOutcomeIds": [
+            "LO-SymbolEquation"
+          ],
+          "topicCoverage": [
+            "Symbol Notation and State Symbols"
+          ],
+          "teacherIntent": "Introduce chemical symbols, formulas, and the importance of state symbols (s, l, g, aq).",
+          "studentTakeaway": "Chemical equations use element symbols to represent substances. We must include state symbols for precision.",
+          "layout": "split-vertical",
+          "bulletPoints": [
+            "- Use Chemical Symbols/Formulae instead of names.",
+            "- Example: Mg + O₂ → MgO (Unbalanced)",
+            "- State Symbols:",
+            "(s) = Solid, (l) = Liquid",
+            "(g) = Gas, (aq) = Aqueous (Dissolved in water)"
+          ],
+          "onSlideText": [
+            "Symbol Equations",
+            "- Mg + O₂ → MgO",
+            "- State Symbols:",
+            "- (s): Solid",
+            "- (l): Liquid",
+            "- (g): Gas",
+            "- (aq): Aqueous"
+          ],
+          "speakerNotes": [
+            "Purpose: Transition from words to symbols.",
+            "Explain: We use the Periodic Table letters. Mg for Magnesium, O for Oxygen. Note that oxygen gas is diatomic (O₂).",
+            "Ask: 'What does (aq) stand for?' Aqueous solution.",
+            "Listen for: Student recall of water solutions.",
+            "Correct: Emphasize that pure water is liquid (l), but salt dissolved in it is aqueous (aq). This distinction matters later when balancing and predicting reactions.",
+            "Board work: Write 'Mg(s) + O₂(g) → MgO(s)' on board."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "A comparison table or side-by-side text showing the word equation and its symbol equivalent. Use icons for states: a cube for solid, droplet for liquid, cloud for gas.",
+          "assets": [
+            {
+              "purpose": "Visualizing state symbols",
+              "searchQuery": "chemical state symbols s l g aq educational icon set diagram",
+              "sourceSite": "Wikimedia Commons Science",
+              "sourceUrl": "",
+              "licenseType": "Public Domain / CC-BY-SA",
+              "attributionText": "Icons adapted from Wikimedia Commons",
+              "altText": "Icon set representing solid, liquid, gas, and aqueous states for chemical equations.",
+              "placementHint": "Right side"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in state symbols one by one",
+            "Highlight 'O₂' to emphasize diatomic nature"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "balancing-intro",
+          "templateSlideTitle": "The Law of Conservation of Mass",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "core_concept",
+          "slideTitle": "Why We Balance Equations",
+          "learningOutcomeIds": [
+            "LO-Balancing"
+          ],
+          "topicCoverage": [
+            "Law of Conservation of Mass"
+          ],
+          "teacherIntent: Explain the fundamental law that necessitates balancing equations.",
+          "studentTakeaway": "Matter is neither created nor destroyed. The number of atoms on both sides must be equal.",
+          "layout": "text-heavy-left",
+          "bulletPoints": [
+            "- Law of Conservation of Mass (Lavoisier)",
+            "- Matter cannot be created or destroyed in a chemical reaction.",
+            "- Total mass of reactants = Total mass of products.",
+            "- Therefore: Number of atoms of each element must be equal on both sides."
+          ],
+          "onSlideText": [
+            "Law of Conservation of Mass",
+            "- Reactant Atoms = Product Atoms",
+            "- No atoms lost or gained",
+            "- Example:",
+            "- Unbalanced: H₂ + O₂ → H₂O (Wrong!)",
+            "- Balanced: 2H₂ + O₂ → 2H₂O"
+          ],
+          "speakerNotes": [
+            "Purpose: Justify the need for balancing.",
+            "Explain: If we start with 4 hydrogen atoms, we must end with 4. We can't just make them disappear or appear from nowhere.",
+            "Ask: 'In H₂ + O₂ → H₂O, how many oxygen atoms do we have on the left? How many on the right?'",
+            "Listen for: Student count (2 vs 1).",
+            "Correct: Point out that this equation is unbalanced. We need to fix it.",
+            "Board work: Write 'H₂ + O₂ → H₂O' and cross it out, then write the balanced version."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "A balance scale graphic. Left pan has 'Reactants', right pan has 'Products'. Both pans are level to symbolize equal mass.",
+          "assets": [
+            {
+              "purpose": "Visualizing conservation of mass",
+              "searchQuery": "balance scale chemical reaction law of conservation of mass educational illustration",
+              "sourceSite": "Pixabay Education",
+              "sourceUrl": "",
+              "licenseType": "CC0 / Educational Use",
+              "attributionText": "Image via Pixabay",
+              "altText": "Illustration of a balance scale showing equal weight on both sides representing reactants and products.",
+              "placementHint": "Right side"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate the scale tipping then leveling out",
+            "Highlight '2H₂' in red to show coefficient addition"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "worked-example-balancing",
+          "templateSlideTitle": "Balancing a Chemical Equation: Step-by-Step",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "guided_practice",
+          "slideTitle": "Example: Balancing Mg + O₂ → MgO",
+          "learningOutcomeIds": [
+            "LO-Balancing"
+          ],
+          "topicCoverage": [
+            "Balancing Techniques"
+          ],
+          "teacherIntent": "Demonstrate the step-by-step process of balancing a simple equation using coefficients.",
+          "studentTakeaway": "We use numbers (coefficients) in front of formulas to balance atoms, never changing subscripts.",
+          "layout": "split-vertical",
+          "bulletPoints": [
+            "- Step 1: Count atoms on both sides.",
+            "- Mg + O₂ → MgO (Mg=1/1, O=2/1)",
+            "- Step 2: Add coefficient to balance Oxygen.",
+            "- Mg + O₂ → 2MgO",
+            "- Step 3: Balance Magnesium now.",
+            "- 2Mg + O₂ → 2MgO (Balanced!)"
+          ],
+          "onSlideText": [
+            "Step-by-Step Balancing",
+            "1. Count Atoms:",
+            "   Mg=1, O=2 | Mg=1, O=1",
+            "2. Balance Oxygen:",
+            "   ... → 2MgO",
+            "3. Balance Magnesium:",
+            "   2Mg + O₂ → 2MgO"
+          ],
+          "speakerNotes": [
+            "Purpose: Walk through the balancing logic.",
+            "Explain: Start with the most complex molecule or element that appears once on each side. Here, Oxygen is tricky because it's a pair (O₂).",
+            "Ask: 'If I put a 2 in front of MgO, how many O atoms do I have now?' Two.",
+            "Listen for: Student confirmation.",
+            "Correct: Remind students NOT to change the subscript '2' in O₂. That changes the substance! Only add numbers *in front* (coefficients).",
+            "Board work: Perform this balancing live on the board, showing the counting process."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "A step-by-step flowchart or animated sequence showing the atom counts changing as coefficients are added. Use color coding for Mg and O atoms.",
+          "assets": [
+            {
+              "purpose": "Visualizing the balancing process",
+              "searchQuery": "chemical equation balancing steps visual aid educational diagram count atoms",
+              "sourceSite": "Wikimedia Commons Science",
+              "sourceUrl": "",
+              "licenseType": "Public Domain / CC-BY-SA",
+              "attributionText": "Diagram adapted from Wikimedia Commons",
+              "altText": "Step-by-step visual guide showing atom counting and coefficient adjustment for balancing equations.",
+              "placementHint": "Right side"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate the '2' appearing in front of MgO",
+            "Then animate the '2' before Mg",
+            "Checkmark appears when balanced"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "summary-recap",
+          "templateSlideTitle": "Session Summary & Key Takeaways",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 8,
+          "slideType": "summary",
+          "slideTitle": "What We Learned Today",
+          "learningOutcomeIds": [
+            "LO-Recap"
+          ],
+          "topicCoverage": [
+            "Session Review"
+          ],
+          "teacherIntent": "Consolidate the day's learning and prepare students for homework.",
+          "studentTakeaway": "Chemical reactions create new substances, have observable signs, are written as equations, and must be balanced to obey conservation of mass.",
+          "layout": "text-heavy-left",
+          "bulletPoints": [
+            "- Chemical Reactions: New substance formed.",
+            "- Signs: Color change, gas, precipitate, heat.",
+            "- Equations: Reactants → Products (Word & Symbol).",
+            "- Balancing: Atoms must be equal on both sides.",
+            "- Homework: Practice balancing 5 equations."
+          ],
+          "onSlideText": [
+            "Key Takeaways",
+            "- New Substance Formed",
+            "- Observable Signs Present",
+            "- Equations Must Be Balanced",
+            "- Conservation of Mass"
+          ],
+          "speakerNotes": [
+            "Purpose: Wrap up the session.",
+            "Explain: Recap the main points. Ask students to repeat one thing they learned today.",
+            "Ask: 'What is the most important rule for balancing equations?'",
+            "Listen for: 'Atoms must be equal' or 'Don't change subscripts'.",
+            "Transition: For homework, you will practice writing and balancing your own equations. See you next time!"
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "A clean checklist graphic with checkmarks next to each key takeaway point.",
+          "assets": [
+            {
+              "purpose": "Visual summary of learning points",
+              "searchQuery": "educational checklist icons chemical reaction concepts vector illustration",
+              "sourceSite": "Pixabay Education",
+              "sourceUrl": "",
+              "licenseType": "CC0 / Educational Use",
+              "attributionText": "Icons via Pixabay",
+              "altText": "Checklist graphic summarizing the key learning points of the session.",
+              "placementHint": "Right side"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in each bullet point with a checkmark animation",
+            "Final slide fade out to homework details"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "academic-split",
+          "templateSlideKey": "homework-next-session",
+          "templateSlideTitle": "Homework & Next Session Preview",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 9,
+          "slideType": "homework_next_session",
+          "slideTitle": "Next Steps: Types of Reactions",
+          "learningOutcomeIds": [
+            "LO-Homework"
+          ],
+          "topicCoverage": [
+            "Assignment & Preview"
+          ],
+          "teacherIntent": "Assign homework and provide a teaser for the next lesson.",
+          "studentTakeaway": "Complete balancing exercises; tomorrow we will categorize reactions into types (Combination, Decomposition).",
+          "layout": "text-heavy-left",
+          "bulletPoints": [
+            "- Homework: Balance 5 equations from worksheet.",
+            "- Read Section on 'Types of Reactions'.",
+            "- Next Session Preview:",
+            "- Combination vs. Decomposition",
+            "- Displacement & Double Displacement"
+          ],
+          "onSlideText": [
+            "Homework & Preview",
+            "- Complete Worksheet: Balancing Equations",
+            "- Read Ahead: Types of Reactions",
+            "- Next Class: Classification of Chemicals"
+          ],
+          "speakerNotes": [
+            "Purpose: Assign tasks and set expectations.",
+            "Explain: Hand out the worksheet. Remind them to show their work (counting atoms) for full credit.",
+            "Ask: 'What do you think a decomposition reaction is?'",
+            "Listen for: Guesses about breaking down or splitting apart.",
+            "Correct: Confirm that idea and say we will explore it in detail next time. Don't forget to bring your Periodic Table!",
+            "Transition: Class dismissed."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "A simple icon of a homework assignment or book, with a 'Next Up' arrow pointing to the next topic.",
+          "assets": [
+            {
+              "purpose": "Visual cue for homework and preview",
+              "searchQuery": "homework assignment educational icons study guide vector illustration",
+              "sourceSite": "Pixabay Education",
+              "sourceUrl": "",
+              "licenseType": "CC0 / Educational Use",
+              "attributionText": "Icons via Pixabay",
+              "altText": "Icon set representing homework and future learning topics.",
+              "placementHint": "Right side"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in homework details",
+            "Highlight 'Next Session' text"
+          ],
+          "timeEstimateMinutes": 2
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Chemical Reactions and Equations - Teacher Guide & Student Notes (Session 1)",
+      "keyInformation": [
+        "Chapter: Chemical Reactions and Equations",
+        "Topic: Introduction to Chemical Changes, Word/Symbol Equations, Balancing",
+        "Grade Level: 10 Science",
+        "Duration: 45 Minutes"
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Plan Outline: Chemical Reactions and Equations (Session 1)",
+      "sections": [
+        "I. Introduction & Hook (2 mins): Visual comparison of physical vs chemical changes.",
+        "II. Core Concept Definition (4 mins): What is a chemical reaction? New substance formation.",
+        "III. Observable Signs (5 mins): Color change, gas evolution, precipitate, heat/light.",
+        "IV. Writing Equations - Word Form (4 mins): Reactants to Products structure.",
+        "V. Symbol Equations & State Symbols (5 mins): Mg + O2 -> MgO notation and state symbols (s,l,g,aq).",
+        "VI. Law of Conservation of Mass (5 mins): Why balancing is necessary; atoms are conserved.",
+        "VII. Worked Example: Balancing Steps (6 mins): Step-by-step guide using Magnesium Oxide example.",
+        "VIII. Summary & Recap (3 mins): Key takeaways checklist.",
+        "IX. Homework Assignment & Preview (2 mins): Worksheet and next session topic."
+      ]
+    }
+  }
+}

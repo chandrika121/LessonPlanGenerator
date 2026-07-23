@@ -1,0 +1,485 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "visual-focus",
+      "templateName": "Visual Focus Classroom Deck",
+      "themeId": "cbse-academic-blue",
+      "title": "Refraction of Light - Session 1",
+      "presentationTitle": "Understanding Refraction: Bending of Light",
+      "presentationGoal": "To enable students to define refraction, explain the cause (speed change), and identify real-world examples through direct observation.",
+      "audience": "Grade 8 Science Students",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab",
+          "body": "Open Sans"
+        },
+        "colors": {
+          "primary": "#1a4d80",
+          "secondary": "#2c7da0",
+          "accent": "#f9ca24",
+          "background": "#ffffff",
+          "surface": "#f5f6fa",
+          "text": "#2d3436",
+          "mutedText": "#636e72"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary",
+          "cardStyle": "rounded-elevation",
+          "visualFrameStyle": "clean-border-accent"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "All assets must be under Creative Commons or Public Domain licenses suitable for educational use."
+        ],
+        "fallbackStrategy": "Use SVG diagrams with editable labels if specific Wikimedia images are unavailable."
+      },
+      "licenseChecklist": [
+        "Verify image license allows modification",
+        "Ensure attribution text is accurate"
+      ],
+      "presentationWarnings": [
+        "Do not introduce Snell's Law or mathematical calculations in this session.",
+        "Focus strictly on the concept of speed change causing bending."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define refraction",
+          "Explain why light bends (speed difference)",
+          "Identify everyday examples"
+        ],
+        "topicsCovered": [
+          "Definition of Refraction",
+          "Mediums and Speed of Light",
+          "Direction of Bending",
+          "Real-world Examples"
+        ],
+        "taughtConceptsCovered": [
+          "Refraction as bending at interface",
+          "Optical density vs physical thickness",
+          "Speed change mechanism"
+        ],
+        "omittedContent": [
+          "Snell's Law formula (n1 sin theta = n2 sin theta)",
+          "Critical angle and total internal reflection",
+          "Lateral displacement calculations"
+        ]
+      },
+      "slides": [
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Session Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "Refraction of Light: The Bending Effect",
+          "learningOutcomeIds": [
+            "LO-REFRAC-TOTAL"
+          ],
+          "topicCoverage": [
+            "Introduction to Refraction"
+          ],
+          "teacherIntent": "Set the stage for the lesson and capture student curiosity with a visual hook.",
+          "studentTakeaway": "Light does not always travel in straight lines; it can bend when changing materials.",
+          "layout": "hero-image-left",
+          "bulletPoints": [
+            "What happens to light entering water?",
+            "Why do objects look broken underwater?"
+          ],
+          "onSlideText": [
+            "Refraction of Light"
+          ],
+          "speakerNotes": [
+            "Purpose: Introduce the topic and engage students immediately.",
+            "Explain: Start by asking, 'Have you ever seen a straw in a glass of water look bent?' This is our hook. We are going to explore why this happens today.",
+            "Ask: Show an image or hold up a pencil in a beaker (if available). Ask students what they see that looks unusual.",
+            "Listen for: 'It looks broken', 'The straw bends'.",
+            "Transition: Today we call this phenomenon Refraction. Let's define it precisely."
+          ],
+          "visualAttribution": {
+            "visualPlan": "High-contrast close-up of a clear glass beaker half-filled with water, containing a straight pencil or straw that appears bent at the air-water interface.",
+            "svgDiagram": null
+          },
+          "visualPlan": "Close-up photograph of a transparent container filled with liquid and an object (like a ruler or stick) inserted vertically, clearly showing the optical illusion where the submerged part shifts position relative to the top part due to light bending at the surface boundary.",
+          "assets": [
+            {
+              "purpose": "Hook visual demonstrating refraction",
+              "searchQuery": "straw in water glass",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0 or Public Domain",
+              "attributionText": "Image by [Author Name] via Wikimedia Commons",
+              "altText": "A straight straw appearing bent inside a glass of water due to refraction.",
+              "placementHint": "Place on the left side, taking up 60% of slide height."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in title",
+            "Zoom slowly into the bent section of the straw"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept",
+          "templateSlideTitle": "What is Refraction?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "core_concept",
+          "slideTitle": "Definition: Bending of Light",
+          "learningOutcomeIds": [
+            "LO-REFRAC-TOTAL"
+          ],
+          "topicCoverage": [
+            "Definition and Cause"
+          ],
+          "teacherIntent": "Provide the formal definition and explain that refraction occurs at the interface between two media.",
+          "studentTakeaway": "Refraction is the bending of light when it passes from one transparent medium to another.",
+          "layout": "split-screen",
+          "bulletPoints": [
+            "Light travels in straight lines within a single medium.",
+            "When entering a new material, speed changes.",
+            "This change in speed causes the path to bend.",
+            "The boundary between materials is called an interface."
+          ],
+          "onSlideText": [
+            "Refraction: Bending of light at an interface"
+          ],
+          "speakerNotes": [
+            "Purpose: Define refraction clearly and distinguish it from reflection or absorption.",
+            "Explain: Emphasize that light travels straight in air, water, glass individually. The 'bend' only happens exactly where one material meets another (the interface).",
+            "Ask: Why do you think the speed changes? Does a car slow down when moving from asphalt to sand?",
+            "Listen for: Analogies about friction or resistance.",
+            "Correct misconception: It is not just 'density' in terms of heaviness, but optical density affecting light speed. A less dense material (like air) can be optically rarer than a denser one (like water).",
+            "Board work: Draw two boxes side-by-side labeled 'Air' and 'Water'. Mark the line between them as 'Interface'."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": {
+              "purpose": "Illustrate the interface concept",
+              "search": "",
+              "source": "",
+              "license": "",
+              "animation": ""
+            }
+          },
+          "visualPlan": "Simple schematic diagram showing two distinct regions labeled 'Medium 1 (Air)' and 'Medium 2 (Water/Glass)', separated by a bold horizontal line representing the interface.",
+          "assets": [],
+          "svgDiagram": {
+            "title": "Interface Diagram",
+            "type": "process-flow",
+            "instructions": [
+              "Draw two rectangles side-by-side or top-bottom to represent different media."
+            ],
+            "svgCode": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 150\"><rect x=\"0\" y=\"0\" width=\"200\" height=\"150\" fill=\"#e3f2fd\" stroke=\"#1a4d80\"/><text x=\"100\" y=\"75\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"16\">Medium 1 (Air)</text><rect x=\"200\" y=\"0\" width=\"200\" height=\"150\" fill=\"#e8f5e9\" stroke=\"#2d3436\"/><text x=\"300\" y=\"75\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"16\">Medium 2 (Water)</text><line x1=\"200\" y1=\"0\" x2=\"200\" y2=\"150\" stroke=\"#d32f2f\" stroke-width=\"4\"/><text x=\"200\" y=\"-10\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"14\">Interface</text></svg>"
+          },
+          "animationHints": [
+            "Animate the interface line appearing last"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept",
+          "templateSlideTitle": "Why Does Light Bend?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "core_concept",
+          "slideTitle": "The Cause: Change in Speed",
+          "learningOutcomeIds": [
+            "LO-REFRAC-TOTAL"
+          ],
+          "topicCoverage": [
+            "Speed of Light Mechanism"
+          ],
+          "teacherIntent": "Explain the physical mechanism behind refraction using an analogy.",
+          "studentTakeaway": "Light bends because its speed changes when moving between different materials.",
+          "layout": "text-heavy-left",
+          "bulletPoints": [
+            "Speed of light is fastest in vacuum/air (~3x10^8 m/s).",
+            "In denser media (water, glass), light slows down.",
+            "Change in speed = Change in direction.",
+            "Analogy: A car turning when one wheel hits mud."
+          ],
+          "onSlideText": [
+            "Speed Changes Cause Bending"
+          ],
+          "speakerNotes": [
+            "Purpose: Connect the abstract concept of light to a tangible physical cause (speed).",
+            "Explain: Light travels at different speeds in different materials. In air, it's very fast. In water or glass, it slows down significantly.",
+            "Analogy: Use the 'marching band' or 'car wheel' analogy. If a car driving on pavement hits mud with its right wheels first, those slow down while left wheels keep moving fast, causing the car to turn towards the mud. Light does exactly this at an angle of entry.",
+            "Ask: What happens if light enters perpendicular (straight in)?",
+            "Listen for: 'It doesn't bend'.",
+            "Correct: Correct! If it hits straight on (90 degrees), both sides slow down together, so no turning occurs. Only the speed changes."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Illustration of a marching band or a line of soldiers moving from pavement onto mud at an angle, showing how the formation bends as one side slows down before the other.",
+          "assets": [
+            {
+              "purpose": "Analogy visual for speed change",
+              "searchQuery": "marching band turning on grass",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0 or Public Domain",
+              "attributionText": "Image by [Author Name] via Wikimedia Commons",
+              "altText": "A marching band turning as they move from pavement to grass, illustrating refraction analogy.",
+              "placementHint": "Place on the right side of the slide."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in bullet points one by one"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Direction of Bending Rules",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "worked_example",
+          "slideTitle": "Which Way Does It Bend?",
+          "learningOutcomeIds": [
+            "LO-REFRAC-TOTAL"
+          ],
+          "topicCoverage": [
+            "Direction of Bending"
+          ],
+          "teacherIntent": "Teach the two fundamental rules for direction of bending based on optical density.",
+          "studentTakeaway": "Light bends towards normal when slowing down (rare to dense) and away from normal when speeding up (dense to rare).",
+          "layout": "comparison-table",
+          "bulletPoints": [
+            "Rare -> Dense (e.g., Air to Water): Slows Down, Bends TOWARDS Normal.",
+            "Dense -> Rare (e.g., Water to Air): Speeds Up, Bends AWAY FROM Normal.",
+            "Normal: An imaginary line perpendicular to the surface."
+          ],
+          "onSlideText": [
+            "Rule 1: Towards Normal",
+            "Rule 2: Away from Normal"
+          ],
+          "speakerNotes": [
+            "Purpose: Establish clear rules for predicting direction of bending.",
+            "Explain: Define 'Normal' first. It is an imaginary line at 90 degrees to the surface, not a physical object on the table.",
+            "Rule 1 (Rare to Dense): Light slows down -> Bends towards normal. Think 'slowing down pulls it in'.",
+            "Rule 2 (Dense to Rare): Light speeds up -> Bends away from normal. Think 'speeding up pushes it out'.",
+            "Ask: If light goes from glass back into air, does it bend towards or away?",
+            "Listen for: 'Away', because it's speeding up.",
+            "Board work: Draw a ray diagram showing both cases side-by-side with the normal line clearly marked."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": {
+              "purpose": "Show direction of bending",
+              "search": "",
+              "source": "",
+              "license": "",
+              "animation": ""
+            }
+          },
+          "visualPlan": "Split diagram showing two scenarios: Left side shows a ray entering water from air (bending towards normal). Right side shows a ray exiting water into air (bending away from normal), with the 'Normal' line clearly labeled.",
+          "assets": [],
+          "svgDiagram": {
+            "title": "Direction of Bending",
+            "type": "diagram-comparison",
+            "instructions": [
+              "Draw two separate ray diagrams side-by-side."
+            ],
+            "svgCode": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 600 150\"><!-- Left: Air to Water --><rect x=\"0\" y=\"75\" width=\"300\" height=\"75\" fill=\"#e8f5e9\"/><text x=\"150\" y=\"40\" text-anchor=\"middle\">Air (Rare)</text><line x1=\"200\" y1=\"75\" x2=\"200\" y2=\"150\" stroke=\"#d32f2f\" stroke-width=\"2\"/><path d=\"M 100 60 L 200 75 L 180 140\" fill=\"none\" stroke=\"#e67e22\" stroke-width=\"3\" marker-end=\"url(#arrow)\"/><text x=\"50\" y=\"90\">Towards Normal</text><!-- Right: Water to Air --><rect x=\"300\" y=\"0\" width=\"300\" height=\"150\" fill=\"#e8f5e9\"/><line x1=\"400\" y1=\"75\" x2=\"400\" y2="150" stroke="#d32f2f" stroke-width="2"/><path d="M 320 60 L 400 75 L 480 90" fill="none" stroke="#e67e22" stroke-width="3" marker-end="url(#arrow)"/><text x="350" y="110">Away from Normal</text><defs><marker id="arrow" orient="auto" refX="4" refY="2.5"><path d="M 0,0 L 8,2.5 L 0,5 Z"/></marker></defs></svg>"
+          },
+          "animationHints": [
+            "Animate the ray paths appearing sequentially"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "worked_example",
+          "templateSlideTitle": "Real World Examples",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "worked_example",
+          "slideTitle": "Refraction in Everyday Life",
+          "learningOutcomeIds": [
+            "LO-REFRAC-TOTAL"
+          ],
+          "topicCoverage": [
+            "Real-world Examples"
+          ],
+          "teacherIntent": "Connect the abstract concept to observable phenomena students encounter daily.",
+          "studentTakeaway": "Refraction explains why pools look shallower, stars twinkle, and lenses work.",
+          "layout": "grid-gallery",
+          "bulletPoints": [
+            "Apparent depth: Pools look shallower than they are.",
+            "Twinkling of stars due to atmospheric refraction.",
+            "Lenses in glasses/cameras use controlled refraction."
+          ],
+          "onSlideText": [
+            "Why pools look shallow",
+            "Star twinkling"
+          ],
+          "speakerNotes": [
+            "Purpose: Reinforce learning by connecting to real life.",
+            "Explain: Discuss the 'shallow pool' effect. Light from the bottom of a pool bends away from normal as it exits water into air, making the image appear higher (shallower) than reality. This is dangerous for swimmers!",
+            "Ask: Why do stars twinkle?",
+            "Listen for: 'Air movement', 'Bending'.",
+            "Explain: The atmosphere has layers of different densities that are constantly moving. Light from a star bends slightly and rapidly in random directions, causing the twinkling effect.",
+            "Board work: Sketch a simple diagram of light coming from a pool bottom to an eye above."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Collage or grid layout featuring three distinct images: 1) A person looking into a swimming pool with depth markers showing apparent vs actual depth. 2) A night sky photo of stars twinkling. 3) Close-up of eyeglasses focusing light.",
+          "assets": [
+            {
+              "purpose": "Visual for shallow water effect",
+              "searchQuery": "swimming pool bottom view refraction",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0 or Public Domain",
+              "attributionText": "Image by [Author Name] via Wikimedia Commons",
+              "altText": "Diagram showing apparent depth of a swimming pool.",
+              "placementHint": "Left panel."
+            },
+            {
+              "purpose": "Visual for star twinkling",
+              "searchQuery": "stars night sky twinkle",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0 or Public Domain",
+              "attributionText": "Image by [Author Name] via Wikimedia Commons",
+              "altText": "Stars twinkling in a night sky.",
+              "placementHint": "Right panel."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade images in one at a time"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Check: Understanding",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "quick_assessment",
+          "slideTitle": "Check Your Knowledge",
+          "learningOutcomeIds": [
+            "LO-REFRAC-TOTAL"
+          ],
+          "topicCoverage": [
+            "Assessment of Concepts"
+          ],
+          "teacherIntent": "Verify student understanding through targeted questions.",
+          "studentTakeaway": "Students can apply the rules to predict bending direction and explain causes.",
+          "layout": "question-card",
+          "bulletPoints": [
+            "1. Does light bend when entering water at 90 degrees?",
+            "2. Why does a pencil look broken in water?",
+            "3. If light goes from glass to air, which way does it bend?"
+          ],
+          "onSlideText": [
+            "Question 1: Straight entry",
+            "Question 2: Broken pencil"
+          ],
+          "speakerNotes": [
+            "Purpose: Formative assessment.",
+            "Ask Question 1: 'Does light bend if it hits the water straight on?' (Answer: No, only speed changes).",
+            "Ask Question 2: 'Why does a pencil look broken?' (Answer: Light bends at the interface changing its path to our eyes).",
+            "Ask Question 3: 'Glass to air? Towards or away from normal?' (Answer: Away, because it speeds up).",
+            "Listen for correct reasoning about speed changes.",
+            "Transition: Great job. We've covered what refraction is and why it happens."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Clean slide with three distinct question boxes or cards arranged vertically.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal questions one by one"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Lesson Summary & Bridge",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "summary",
+          "slideTitle": "Summary: Refraction Basics",
+          "learningOutcomeIds": [
+            "LO-REFRAC-TOTAL"
+          ],
+          "topicCoverage": [
+            "Recap and Next Steps"
+          ],
+          "teacherIntent": "Summarize key takeaways and bridge to the next session.",
+          "studentTakeaway": "Refraction is bending due to speed change; we will calculate it later.",
+          "layout": "list-summary",
+          "bulletPoints": [
+            "Light bends at interfaces between media.",
+            "Bending direction depends on speed (towards/away from normal).",
+            "Next: We will learn how to measure this bending mathematically."
+          ],
+          "onSlideText": [
+            "Key Takeaways"
+          ],
+          "speakerNotes": [
+            "Purpose: Consolidate learning and set expectations for the next class.",
+            "Summarize: Recap that refraction is about speed change causing bending. Mention 'Towards Normal' (slow down) vs 'Away from Normal' (speed up).",
+            "Bridge to Next Session: In our next lesson, we will introduce Snell's Law and learn how to calculate exactly *how much* the light bends using angles.",
+            "Homework Assignment: Observe a straw in water at home. Draw what you see and explain why it looks that way based on today's rules."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Simple checklist graphic with checkmarks next to key concepts.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in summary points"
+          ],
+          "timeEstimateMinutes": 2
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Refraction of Light - Session 1 Handout",
+      "keyInformation": [
+        "Definition: Refraction is the bending of light at an interface.",
+        "Cause: Change in speed when moving between media.",
+        "Rules: Towards normal (slow down), Away from normal (speed up).",
+        "Examples: Shallow pools, twinkling stars."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Plan: Refraction of Light - Session 1",
+      "sections": [
+        "Introduction and Hook (Straw in Water)",
+        "Definition and Interface Concept",
+        "Mechanism: Speed Change Analogy",
+        "Direction Rules (Towards/Away from Normal)",
+        "Real-world Applications",
+        "Formative Assessment Questions",
+        "Summary and Homework Assignment"
+      ]
+    }
+  }
+}

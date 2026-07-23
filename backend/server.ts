@@ -27,9 +27,13 @@ import { VisualAssetModel } from "./models/VisualAsset";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ENV_FILE_PATH = path.resolve(__dirname, "../.env");
+const BACKEND_ENV_FILE_PATH = path.resolve(__dirname, ".env");
+const LOCAL_ENV_FILE_PATH = path.resolve(process.cwd(), ".env");
 
 // Load environment variables
 dotenv.config({ path: ENV_FILE_PATH });
+dotenv.config({ path: BACKEND_ENV_FILE_PATH, override: false });
+dotenv.config({ path: LOCAL_ENV_FILE_PATH, override: false });
 
 // ======== GLOBAL FAULT TOLERANCE ========
 // A stray async error (unhandled promise rejection, uncaught exception from a
@@ -52,6 +56,13 @@ const FRONTEND_PORT = Number(process.env.FRONTEND_PORT) || 4173;
 const OLLAMA_NUM_PREDICT = Number(process.env.OLLAMA_NUM_PREDICT) || 8192;
 const OLLAMA_STAGE1_NUM_PREDICT = Number(process.env.OLLAMA_STAGE1_NUM_PREDICT) || 4096;
 const OLLAMA_TIMEOUT_MS = Number(process.env.OLLAMA_TIMEOUT_MS) || 600000;
+const OLLAMA_VISION_RERANK_TIMEOUT_MS = Number(process.env.OLLAMA_VISION_RERANK_TIMEOUT_MS) || Math.min(180000, OLLAMA_TIMEOUT_MS);
+const OLLAMA_VISION_RERANK_MODEL = String(process.env.OLLAMA_VISION_RERANK_MODEL || "qwen2.5vl:7b").trim();
+const PPT_IMAGE_RERANK_MIN_SCORE = Number(process.env.PPT_IMAGE_RERANK_MIN_SCORE) || 55;
+const PPT_IMAGE_METADATA_POOL_LIMIT = Math.max(3, Number(process.env.PPT_IMAGE_METADATA_POOL_LIMIT) || 10);
+const PPT_IMAGE_RERANK_MAX_CANDIDATES = Math.max(1, Math.min(PPT_IMAGE_METADATA_POOL_LIMIT, Number(process.env.PPT_IMAGE_RERANK_MAX_CANDIDATES) || 3));
+const PPT_IMAGE_RERANK_FETCH_LIMIT = Math.max(1, Math.min(PPT_IMAGE_RERANK_MAX_CANDIDATES, Number(process.env.PPT_IMAGE_RERANK_FETCH_LIMIT) || 3));
+const PPT_IMAGE_RERANK_METADATA_MARGIN = Number(process.env.PPT_IMAGE_RERANK_METADATA_MARGIN) || 5;
 const STAGE1_PROMPT_SAFE_BUDGET = Number(process.env.STAGE1_PROMPT_SAFE_BUDGET) || 14000;
 const OLLAMA_ASSESSMENT_TIMEOUT_MS = Number(process.env.OLLAMA_ASSESSMENT_TIMEOUT_MS) || Math.max(900000, OLLAMA_TIMEOUT_MS);
 const MAX_STUDENT_NOTE_VISUALS = Number(process.env.MAX_STUDENT_NOTE_VISUALS) || 3;
@@ -114,6 +125,17 @@ type OllamaGenerationKind =
   | "assignment"
   | "image";
 
+type SlideVisualRerankContext = {
+  slideTitle?: string;
+  wikimediaSearchLabel?: string;
+  teachingIntent?: string;
+  subject?: string;
+  gradeLevel?: string;
+  requestId?: string;
+  debugDir?: string;
+  usedVisualUrls?: Set<string>;
+};
+
 type AssessmentQuestionType =
   | "mcq"
   | "veryShortAnswer"
@@ -162,6 +184,15 @@ app.use(cors({
 // Set up body parsers
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+app.use("/api/ppt-assets", express.static(PPT_ASSET_STORAGE_DIR, {
+  fallthrough: false,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".svg")) {
+      res.setHeader("Content-Type", "image/svg+xml");
+    }
+    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+  },
+}));
 
 function resolvePromptPath(promptName: string) {
   return path.isAbsolute(promptName) ? promptName : path.join(PROMPTS_DIR, promptName);
@@ -2006,183 +2037,23 @@ function isTrivialCurriculumChunk(text: string) {
   return getChunkSignalText(normalized).length < 3;
 }
 
-async function generateImageWithOllama(
-  requestId: string,
-  debugDir: string,
-  stageName: string,
-  prompt: string,
-  options?: {
-    subject?: string;
-    gradeLevel?: string;
-    model?: string;
+async function ensureImageDataUrl(imageUrl: string, fallbackMimeType = "image/png"): Promise<{ imageDataUrl: string; mimeType: string }> {
+  const trimmed = String(imageUrl || "").trim();
+  if (!trimmed) {
+    throw new Error("Image generation returned an empty image URL.");
   }
-): Promise<{ imageDataUrl: string; mimeType: string; model: string }> {
-  const localImageConfig = getOllamaConfig("image");
-  const selectedModel = String(options?.model || localImageConfig.model || "x/flux2-klein:9b");
-  const requestPayload = {
-    model: selectedModel,
-    prompt,
-    negativePrompt: [
-      "text",
-      "labels",
-      "captions",
-      "numbers",
-      "watermark",
-      "decorative clutter",
-      "formula text",
-      "axis labels",
-      "diagram callouts",
-    ].join(", "),
-  };
-
-  await writeDebugFile(
-    debugDir,
-    `${safeStageName(stageName)}.image-attempt-1.request.json`,
-    {
-      provider: "local-ollama-image",
-      baseUrl: localImageConfig.baseUrl,
-      request: requestPayload,
-    }
-  );
-
-  try {
-    const data = await requestLocalImageGeneration(localImageConfig.baseUrl, requestPayload, {
-      requestId,
-      debugDir,
-      stageName,
-    });
-
-    await writeDebugFile(
-      debugDir,
-      `${safeStageName(stageName)}.image-attempt-1.response.json`,
-      {
-        provider: "local-ollama-image",
-        model: requestPayload.model,
-        mimeType: data.mimeType,
-        imageUrlPreview: typeof data.imageDataUrl === "string" ? data.imageDataUrl.slice(0, 120) : "",
-      }
-    );
-
+  if (trimmed.startsWith("data:image/")) {
     return {
-      imageDataUrl: data.imageDataUrl,
-      mimeType: data.mimeType,
-      model: requestPayload.model,
+      imageDataUrl: trimmed,
+      mimeType: trimmed.slice(5, trimmed.indexOf(";")),
     };
-  } catch (error: any) {
-    await writeDebugFile(
-      debugDir,
-      `${safeStageName(stageName)}.image-attempt-1.exception.txt`,
-      String(error?.message || error)
-    );
-    const message = String(error?.message || error || "Unknown image generation error");
-    throw new Error(`Unable to generate a local image with model ${requestPayload.model}: ${message}`);
-  }
-}
-
-async function requestLocalImageGeneration(
-  baseUrl: string,
-  payload: { model: string; prompt: string; negativePrompt: string },
-  context: { requestId: string; debugDir: string; stageName: string }
-): Promise<{ imageDataUrl: string; mimeType: string }> {
-  const attemptPayloads = [
-    {
-      endpoint: `${baseUrl}/api/generate`,
-      body: {
-        model: payload.model,
-        prompt: [payload.prompt, `Avoid: ${payload.negativePrompt}`].join("\n"),
-        stream: false,
-      },
-    },
-    {
-      endpoint: `${baseUrl}/api/chat`,
-      body: {
-        model: payload.model,
-        stream: false,
-        think: false,
-        messages: [
-          {
-            role: "system",
-            content: "Return a single classroom-safe image only. Do not include text in the image.",
-          },
-          {
-            role: "user",
-            content: `${payload.prompt}\nAvoid: ${payload.negativePrompt}`,
-          },
-        ],
-      },
-    },
-  ];
-
-  for (const [index, attempt] of attemptPayloads.entries()) {
-    const controller = new AbortController();
-    const timeoutHandle = setTimeout(() => controller.abort(), Math.min(180000, OLLAMA_TIMEOUT_MS));
-    try {
-      const response = await fetch(attempt.endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(attempt.body),
-        signal: controller.signal,
-        dispatcher: OLLAMA_FETCH_DISPATCHER,
-      } as any);
-      if (!response.ok) {
-        const text = await response.text();
-        await writeDebugFile(
-          context.debugDir,
-          `${safeStageName(context.stageName)}.local-image-endpoint-${index + 1}.error.txt`,
-          text
-        );
-        continue;
-      }
-
-      const data = await response.json();
-      const resolved = extractLocalImagePayload(data);
-      if (resolved) {
-        return resolved;
-      }
-    } catch (error: any) {
-      await writeDebugFile(
-        context.debugDir,
-        `${safeStageName(context.stageName)}.local-image-endpoint-${index + 1}.exception.txt`,
-        String(error?.message || error)
-      );
-    } finally {
-      clearTimeout(timeoutHandle);
-    }
   }
 
-  throw new Error("Local image endpoint returned no usable image payload.");
-}
-
-function extractLocalImagePayload(payload: any): { imageDataUrl: string; mimeType: string } | null {
-  const directCandidates = [
-    payload?.image,
-    payload?.image_url,
-    payload?.response,
-    payload?.message?.content,
-    payload?.data?.[0]?.b64_json ? `data:${payload?.data?.[0]?.mime_type || "image/png"};base64,${payload.data[0].b64_json}` : "",
-    payload?.images?.[0]?.b64_json ? `data:${payload?.images?.[0]?.mime_type || "image/png"};base64,${payload.images[0].b64_json}` : "",
-    payload?.images?.[0]?.url,
-    payload?.data?.[0]?.url,
-  ].filter(Boolean);
-
-  for (const candidate of directCandidates) {
-    const value = String(candidate || "").trim();
-    if (!value) continue;
-    if (value.startsWith("data:image/")) {
-      return {
-        imageDataUrl: value,
-        mimeType: value.slice(5, value.indexOf(";")),
-      };
-    }
-    if (/^[A-Za-z0-9+/=\s]+$/.test(value) && value.length > 256) {
-      return {
-        imageDataUrl: `data:image/png;base64,${value.replace(/\s+/g, "")}`,
-        mimeType: "image/png",
-      };
-    }
-  }
-
-  return null;
+  const fetched = await fetchBinaryAsset(trimmed);
+  return {
+    imageDataUrl: `data:${fetched.mimeType || fallbackMimeType};base64,${fetched.buffer.toString("base64")}`,
+    mimeType: fetched.mimeType || fallbackMimeType,
+  };
 }
 
 async function enrichStudentLessonNotesWithVisuals(
@@ -2303,6 +2174,24 @@ const KAMALANIKETAN_TEMPLATE_SLIDES = [
   { key: "quick_assessment", label: "Formative Check / Quick Assessment", slideType: "quick-assessment", optional: false },
   { key: "summary", label: "Recap / Key Takeaways", slideType: "summary", optional: false },
   { key: "homework_next_session", label: "Homework / Next Class Bridge", slideType: "homework", optional: false },
+] as const;
+
+const GENERIC_ADAPTIVE_SLIDE_KEYS = [
+  "title_identity",
+  "lesson_hook",
+  "learning_outcomes",
+  "prerequisite_knowledge",
+  "topic_introduction",
+  "core_concept",
+  "visual_explainer",
+  "comparison",
+  "board_derivation",
+  "worked_example",
+  "guided_practice",
+  "quick_assessment",
+  "summary",
+  "homework_next_session",
+  "exit_check",
 ] as const;
 
 const PPT_THEME_PRESETS: Record<string, {
@@ -3146,6 +3035,83 @@ function normalizeSessionIdentityText(value: any) {
     .trim();
 }
 
+function normalizeLooseIdentityText(value: any) {
+  return normalizeSessionIdentityText(value)
+    .replace(/[()/:,&-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function buildIdentityVariants(value: any) {
+  const raw = String(value || "").trim();
+  const normalized = normalizeSessionIdentityText(raw);
+  const loose = normalizeLooseIdentityText(raw);
+  const variants = new Set<string>();
+  const push = (candidate: any) => {
+    const exact = normalizeSessionIdentityText(candidate);
+    const relaxed = normalizeLooseIdentityText(candidate);
+    if (exact) variants.add(exact);
+    if (relaxed) variants.add(relaxed);
+  };
+
+  push(raw);
+  if (normalized.includes(":")) {
+    normalized.split(":").forEach(push);
+  }
+  if (raw.includes("(") && raw.includes(")")) {
+    push(raw.replace(/\([^)]*\)/g, " "));
+    const parentheticalParts = (raw.match(/\(([^)]*)\)/g) || []) as string[];
+    parentheticalParts.forEach((part) => push(part.replace(/[()]/g, "")));
+  }
+  if (loose.includes("  ")) {
+    push(loose);
+  }
+
+  return Array.from(variants).filter(Boolean);
+}
+
+function buildGradeNeedles(gradeLevel: string) {
+  const variants = new Set<string>();
+  const push = (value: any) => {
+    const normalized = normalizeSessionIdentityText(value);
+    const loose = normalizeLooseIdentityText(value);
+    if (normalized) variants.add(normalized);
+    if (loose) variants.add(loose);
+  };
+
+  push(gradeLevel);
+  const raw = String(gradeLevel || "");
+  raw
+    .split(/[\/,&]| and /i)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .forEach((part) => {
+      push(part);
+      const romanMatch = part.match(/class\s+(ix|iv|v?i{0,3}|x)\b/i);
+      if (romanMatch?.[1]) {
+        const roman = romanMatch[1].toUpperCase();
+        const arabicMap: Record<string, string> = { IX: "9", X: "10", VIII: "8", VII: "7", VI: "6", V: "5", IV: "4" };
+        if (arabicMap[roman]) {
+          push(`class ${arabicMap[roman]}`);
+          push(arabicMap[roman]);
+        }
+        push(`class ${roman.toLowerCase()}`);
+      }
+      const arabicMatch = part.match(/class\s+(\d{1,2})\b/i);
+      if (arabicMatch?.[1]) {
+        const arabic = arabicMatch[1];
+        const romanMap: Record<string, string> = { "4": "iv", "5": "v", "6": "vi", "7": "vii", "8": "viii", "9": "ix", "10": "x" };
+        if (romanMap[arabic]) {
+          push(`class ${romanMap[arabic]}`);
+          push(romanMap[arabic]);
+        }
+        push(`class ${arabic}`);
+      }
+    });
+
+  return Array.from(variants).filter(Boolean);
+}
+
 function slugifySessionIdentityPart(value: any) {
   return normalizeSessionIdentityText(value)
     .replace(/[^a-z0-9]+/g, "-")
@@ -3210,10 +3176,7 @@ function hasCrossSubjectSignals(subject: string, text: string) {
 function getEquivalentTopicNeedles(subject: string, chapterName: string, sessionTitle: string) {
   const needles = new Set<string>();
   const push = (value: any) => {
-    const normalized = normalizeSessionIdentityText(value);
-    if (normalized) {
-      needles.add(normalized);
-    }
+    buildIdentityVariants(value).forEach((variant) => needles.add(variant));
   };
 
   push(chapterName);
@@ -3247,14 +3210,24 @@ function coverageMatchesAnyNeedle(coverage: string, needles: string[]) {
   if (!coverage) {
     return false;
   }
-  return needles.some((needle) => needle && coverage.includes(needle));
+  const looseCoverage = normalizeLooseIdentityText(coverage);
+  return needles.some((needle) => {
+    if (!needle) return false;
+    const looseNeedle = normalizeLooseIdentityText(needle);
+    return coverage.includes(needle) || (looseNeedle && looseCoverage.includes(looseNeedle));
+  });
 }
 
 function findMatchingCoverageNeedle(coverage: string, needles: string[]) {
   if (!coverage) {
     return "";
   }
-  return needles.find((needle) => needle && coverage.includes(needle)) || "";
+  const looseCoverage = normalizeLooseIdentityText(coverage);
+  return needles.find((needle) => {
+    if (!needle) return false;
+    const looseNeedle = normalizeLooseIdentityText(needle);
+    return coverage.includes(needle) || (looseNeedle && looseCoverage.includes(looseNeedle));
+  }) || "";
 }
 
 function findMatchingGeneratedSessionEntry(
@@ -3293,6 +3266,22 @@ function findMatchingGeneratedSessionEntry(
     if (sessionPlanMatchesRequest(sessionPlan, request)) {
       return { key, sessionPlan };
     }
+  }
+
+  const fuzzyTitleMatches = candidates
+    .map(([key, sessionPlan]) => ({
+      key,
+      sessionPlan,
+      score: scoreGeneratedSessionMatch(sessionPlan, request),
+    }))
+    .filter((candidate) => candidate.score >= 3)
+    .sort((left, right) => right.score - left.score);
+
+  if (fuzzyTitleMatches[0]) {
+    return {
+      key: fuzzyTitleMatches[0].key,
+      sessionPlan: fuzzyTitleMatches[0].sessionPlan,
+    };
   }
 
   return { key: preferredKey, sessionPlan: null };
@@ -3545,7 +3534,7 @@ function sessionPlanMatchesRequest(
   const chapterNeedle = normalizeSessionIdentityText(request.chapterName);
   const titleNeedle = normalizeSessionIdentityText(request.sessionTitle);
   const subjectNeedle = normalizeSessionIdentityText(request.subject);
-  const gradeNeedle = normalizeSessionIdentityText(request.gradeLevel);
+  const gradeNeedles = buildGradeNeedles(request.gradeLevel);
   const topicNeedles = getEquivalentTopicNeedles(request.subject, request.chapterName, request.sessionTitle);
   const sessionTitle = normalizeSessionIdentityText(sessionPlan.title);
   const pptTitle = normalizeSessionIdentityText(sessionPlan?.materials?.ppt?.title || sessionPlan?.materials?.ppt?.presentationTitle);
@@ -3556,7 +3545,10 @@ function sessionPlanMatchesRequest(
   const contentCoverage = collectSessionPlanMatchText(sessionPlan);
   const slideCoverage = Array.isArray(sessionPlan?.materials?.ppt?.slides)
     ? sessionPlan.materials.ppt.slides
-        .flatMap((slide: any) => Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : [])
+        .flatMap((slide: any) => [
+          ...(Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : []),
+          ...(Array.isArray(slide?.onSlideText) ? slide.onSlideText : []),
+        ])
         .map(normalizeSessionIdentityText)
         .join(" ")
     : "";
@@ -3572,12 +3564,86 @@ function sessionPlanMatchesRequest(
     (titleNeedle && allCoverage.includes(titleNeedle));
 
   const subjectMatches = !subjectNeedle || allCoverage.includes(subjectNeedle);
-  const gradeMatches = !gradeNeedle || audience.includes(gradeNeedle) || contentCoverage.includes(gradeNeedle);
+  const gradeMatches =
+    gradeNeedles.length === 0 ||
+    gradeNeedles.some((needle) => audience.includes(needle) || slideCoverage.includes(needle) || contentCoverage.includes(needle));
   const sessionMatches =
     Number(sessionPlan?.sessionNumber || 0) === Number(request.sessionNumber || 0) ||
     Number(sessionPlan?.sessionNumber || 0) === 0;
+  const fuzzyTopicMatch =
+    titleOrTopicMatches &&
+    subjectMatches &&
+    (
+      sessionMatches ||
+      coverageMatchesAnyNeedle(contentCoverage, topicNeedles) ||
+      coverageMatchesAnyNeedle(slideCoverage, topicNeedles)
+    );
 
-  return Boolean(titleOrTopicMatches && subjectMatches && gradeMatches && sessionMatches);
+  return Boolean((titleOrTopicMatches && subjectMatches && gradeMatches && sessionMatches) || fuzzyTopicMatch);
+}
+
+function scoreGeneratedSessionMatch(
+  sessionPlan: any,
+  request: {
+    roadmapSessionNumber?: number;
+    chapterName: string;
+    sessionTitle: string;
+    subject: string;
+    gradeLevel: string;
+    sessionNumber: number;
+  }
+) {
+  if (!sessionPlan || typeof sessionPlan !== "object") {
+    return 0;
+  }
+
+  const chapterNeedle = normalizeSessionIdentityText(request.chapterName);
+  const titleNeedle = normalizeSessionIdentityText(request.sessionTitle);
+  const subjectNeedle = normalizeSessionIdentityText(request.subject);
+  const gradeNeedles = buildGradeNeedles(request.gradeLevel);
+  const topicNeedles = getEquivalentTopicNeedles(request.subject, request.chapterName, request.sessionTitle);
+  const sessionTitle = normalizeSessionIdentityText(sessionPlan.title);
+  const pptTitle = normalizeSessionIdentityText(sessionPlan?.materials?.ppt?.title || sessionPlan?.materials?.ppt?.presentationTitle);
+  const audience = normalizeSessionIdentityText(sessionPlan?.materials?.ppt?.audience);
+  const contentCoverage = collectSessionPlanMatchText(sessionPlan);
+  const slideCoverage = Array.isArray(sessionPlan?.materials?.ppt?.slides)
+    ? sessionPlan.materials.ppt.slides
+        .flatMap((slide: any) => [
+          slide?.slideTitle,
+          slide?.teachingBeat,
+          slide?.teacherIntent,
+          slide?.studentTakeaway,
+          ...(Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : []),
+          ...(Array.isArray(slide?.mustTeach) ? slide.mustTeach : []),
+        ])
+        .map(normalizeSessionIdentityText)
+        .join(" ")
+    : "";
+  const allCoverage = [sessionTitle, pptTitle, contentCoverage, slideCoverage].filter(Boolean).join(" ");
+
+  if (!allCoverage || hasCrossSubjectSignals(request.subject, allCoverage)) {
+    return 0;
+  }
+
+  let score = 0;
+  if (chapterNeedle && allCoverage.includes(chapterNeedle)) score += 2;
+  if (titleNeedle && allCoverage.includes(titleNeedle)) score += 2;
+  if (coverageMatchesAnyNeedle(allCoverage, topicNeedles)) score += 2;
+  if (!subjectNeedle || allCoverage.includes(subjectNeedle)) score += 1;
+  if (
+    gradeNeedles.length === 0 ||
+    gradeNeedles.some((needle) => audience.includes(needle) || slideCoverage.includes(needle) || contentCoverage.includes(needle))
+  ) {
+    score += 1;
+  }
+  if (
+    Number(sessionPlan?.sessionNumber || 0) === Number(request.sessionNumber || 0) ||
+    Number(sessionPlan?.sessionNumber || 0) === Number(request.roadmapSessionNumber || 0)
+  ) {
+    score += 1;
+  }
+
+  return score;
 }
 
 function pptMatchesRequest(
@@ -3596,7 +3662,7 @@ function pptMatchesRequest(
   const chapterNeedle = normalizeSessionIdentityText(request.chapterName);
   const titleNeedle = normalizeSessionIdentityText(request.sessionTitle);
   const subjectNeedle = normalizeSessionIdentityText(request.subject);
-  const gradeNeedle = normalizeSessionIdentityText(request.gradeLevel);
+  const gradeNeedles = buildGradeNeedles(request.gradeLevel);
   const topicNeedles = getEquivalentTopicNeedles(request.subject, request.chapterName, request.sessionTitle);
 
   const titleText = normalizeSessionIdentityText(ppt?.title || ppt?.presentationTitle);
@@ -3604,17 +3670,36 @@ function pptMatchesRequest(
   const topicCoverage = Array.isArray(ppt?.coverageSummary?.topicsCovered)
     ? ppt.coverageSummary.topicsCovered.map(normalizeSessionIdentityText).join(" ")
     : "";
+  const taughtConceptCoverage = Array.isArray(ppt?.coverageSummary?.taughtConceptsCovered)
+    ? ppt.coverageSummary.taughtConceptsCovered.map(normalizeSessionIdentityText).join(" ")
+    : "";
+  const outcomeCoverage = Array.isArray(ppt?.coverageSummary?.learningOutcomesCovered)
+    ? ppt.coverageSummary.learningOutcomesCovered.map(normalizeSessionIdentityText).join(" ")
+    : "";
   const slideCoverage = Array.isArray(ppt?.slides)
     ? ppt.slides
         .flatMap((slide: any) => [
           slide?.slideTitle,
+          slide?.teachingBeat,
+          slide?.teacherIntent,
+          slide?.studentTakeaway,
           ...(Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : []),
+          ...(Array.isArray(slide?.mustTeach) ? slide.mustTeach : []),
           ...(Array.isArray(slide?.bulletPoints) ? slide.bulletPoints : []),
+          ...(Array.isArray(slide?.onSlideText) ? slide.onSlideText : []),
+          ...(Array.isArray(slide?.speakerNotes) ? slide.speakerNotes : []),
         ])
         .map(normalizeSessionIdentityText)
         .join(" ")
     : "";
-  const allCoverage = [titleText, audienceText, topicCoverage, slideCoverage].filter(Boolean).join(" ");
+  const allCoverage = [
+    titleText,
+    audienceText,
+    topicCoverage,
+    taughtConceptCoverage,
+    outcomeCoverage,
+    slideCoverage,
+  ].filter(Boolean).join(" ");
 
   if (hasCrossSubjectSignals(request.subject, allCoverage)) {
     return false;
@@ -3624,8 +3709,17 @@ function pptMatchesRequest(
     coverageMatchesAnyNeedle(allCoverage, topicNeedles) ||
     (chapterNeedle && allCoverage.includes(chapterNeedle)) ||
     (titleNeedle && allCoverage.includes(titleNeedle));
-  const subjectMatches = !subjectNeedle || allCoverage.includes(subjectNeedle);
-  const gradeMatches = !gradeNeedle || audienceText.includes(gradeNeedle) || slideCoverage.includes(gradeNeedle);
+  const subjectMatches =
+    !subjectNeedle ||
+    allCoverage.includes(subjectNeedle) ||
+    (chapterOrTitleMatches && !hasCrossSubjectSignals(request.subject, allCoverage));
+  const strictGradeMatches =
+    gradeNeedles.length === 0 ||
+    gradeNeedles.some((needle) => audienceText.includes(needle) || slideCoverage.includes(needle));
+  const genericAudienceMentionsGrade = /\bgrade\b|\bclass\b|\bstudents\b|\bclassroom\b/.test(audienceText);
+  const gradeMatches =
+    strictGradeMatches ||
+    (chapterOrTitleMatches && subjectMatches && genericAudienceMentionsGrade);
 
   return Boolean(chapterOrTitleMatches && subjectMatches && gradeMatches);
 }
@@ -3849,6 +3943,10 @@ function buildAssessmentSourceSessionPayload(sessionPlan: any, fallback: Record<
   };
 }
 
+function hasMaterialsSourceContent(sessionPlan: any) {
+  return hasAssessmentSourceContent(sessionPlan);
+}
+
 function buildMaterialsSourceSessionPayload(sessionPlan: any, fallback: Record<string, unknown>) {
   if (!sessionPlan || typeof sessionPlan !== "object") {
     return fallback;
@@ -3869,12 +3967,12 @@ function buildMaterialsSourceSessionPayload(sessionPlan: any, fallback: Record<s
       ? {
           overview: limitString(sessionPlan.theory.overview, 700),
           keyPoints: limitStringList(sessionPlan.theory.keyPoints, 10, 220),
-          detailedContent: limitString(sessionPlan.theory.detailedContent, 1200),
+          detailedContent: limitString(sessionPlan.theory.detailedContent, 1600),
         }
       : null,
-    activities: (Array.isArray(sessionPlan.activities) ? sessionPlan.activities : []).slice(0, 8).map((item: any) => ({
-      name: limitString(item?.name, 160),
-      instructions: limitStringList(item?.instructions, 4, 220),
+    activities: (Array.isArray(sessionPlan.activities) ? sessionPlan.activities : []).slice(0, 10).map((item: any) => ({
+      name: limitString(item?.name, 180),
+      instructions: limitStringList(item?.instructions, 5, 240),
       durationMinutes: Number(item?.durationMinutes || 0) || undefined,
     })),
     teacherLessonNotes: compactTeacherLessonNotesForAssessment(sessionPlan.teacherLessonNotes),
@@ -3887,10 +3985,6 @@ function buildMaterialsSourceSessionPayload(sessionPlan: any, fallback: Record<s
       : null,
     topicCoverage: limitStringList(sessionPlan.topicCoverage, 12, 140),
   };
-}
-
-function hasMaterialsSourceContent(sessionPlan: any) {
-  return hasAssessmentSourceContent(sessionPlan);
 }
 
 function buildRenderableList(values: any[], maxItems: number, maxLengthPerItem: number) {
@@ -4039,15 +4133,30 @@ function buildLeanPresentationCopy(input: {
   const rawOnSlide = dedupeRenderableValues(input.onSlideText);
   const sourceLines = dedupeRenderableValues([...rawOnSlide, ...rawBullets]);
   const visualLed = input.visualResolved;
+  const depthHeavyPurpose = [
+    "topic_introduction",
+    "core_concept",
+    "core_concept_a",
+    "core_concept_b_visual",
+    "visual_explainer",
+    "comparison",
+    "worked_example",
+    "worked-example",
+    "board_derivation",
+  ].includes(purpose);
 
-  const chipLimit = visualLed ? 2 : 1;
+  const chipLimit = depthHeavyPurpose ? (visualLed ? 3 : 2) : visualLed ? 2 : 1;
   const bulletLimit = ["learning_outcomes", "summary", "quick_assessment", "guided_practice"].includes(purpose)
     ? 3
+    : depthHeavyPurpose
+    ? visualLed
+      ? 5
+      : 6
     : visualLed
     ? 3
     : 4;
-  const chipMaxLength = visualLed ? 88 : 96;
-  const bulletMaxLength = visualLed ? 118 : 132;
+  const chipMaxLength = depthHeavyPurpose ? (visualLed ? 104 : 118) : visualLed ? 88 : 96;
+  const bulletMaxLength = depthHeavyPurpose ? (visualLed ? 150 : 168) : visualLed ? 118 : 132;
 
   const condensedChips = dedupeRenderableValues(
     sourceLines.slice(0, chipLimit).map((item) => condenseRenderableSlideLine(item, chipMaxLength)).filter(Boolean)
@@ -4069,7 +4178,7 @@ function buildLeanPresentationCopy(input: {
 
   const overflowNotes = sourceLines
     .filter((item) => !consumedKeys.has(normalizeRenderableComparisonKey(item)))
-    .slice(0, 4)
+    .slice(0, depthHeavyPurpose ? 6 : 4)
     .map((item) => `Explain: ${renderableToExportPlainText(item)}`);
 
   const qualityFlags = [];
@@ -4086,6 +4195,373 @@ function buildLeanPresentationCopy(input: {
     speakerNotes: dedupeRenderableValues([...(Array.isArray(input.speakerNotes) ? input.speakerNotes : []), ...overflowNotes]),
     qualityFlags,
   };
+}
+
+type ResolvedVisualAssetRef = {
+  kind: "image" | "svg";
+  assetId: string;
+  fileName: string;
+  url: string;
+  mimeType: string;
+};
+
+type TeacherDeckSpec = {
+  title: string;
+  audience: string;
+  gradeLevel: string;
+  subject: string;
+  deliveryMode: string;
+  templateId: string;
+  presentonTemplate: string;
+  deckReadiness: string;
+  coverageStatus: string;
+  visualIntegrityStatus: string;
+  exportIntegrityStatus: string;
+  slides: Array<{
+    slideNumber: number;
+    slideTitle: string;
+    slidePurpose: string;
+    teachingBeat: string;
+    mustTeach: string[];
+    onSlideContent: string[];
+    speakerNotes: string[];
+    visualDecision: string;
+    visualResolved: boolean;
+    visualRelevanceStatus: string;
+    layoutIntent: "text-light-visual-first" | "concept-split" | "board-worked-example" | "text-led-minimal";
+    timeEstimate: number;
+    presentonTemplateHint: string;
+    presentonMarkdown: string;
+    resolvedVisualAssetRefs: ResolvedVisualAssetRef[];
+    sourceSlide: any;
+  }>;
+};
+
+type RenderedPresentationResult = {
+  presentationId: string;
+  pptxPath: string;
+  editPath: string;
+  renderDiagnostics: Record<string, any>;
+  buffer: Buffer;
+};
+
+function inferSlideLayoutIntent(slide: any) {
+  const purpose = String(slide?.slidePurpose || slide?.templateSlideKey || slide?.slideType || "").toLowerCase();
+  if (slide?.visualResolved && ["worked_example", "worked-example"].includes(purpose)) {
+    return "board-worked-example" as const;
+  }
+  if (slide?.visualResolved && ["lesson_hook", "hook", "core_concept_b_visual", "visual-explanation", "title_identity", "topic_introduction"].includes(purpose)) {
+    return "text-light-visual-first" as const;
+  }
+  if (slide?.visualResolved) {
+    return "concept-split" as const;
+  }
+  return "text-led-minimal" as const;
+}
+
+function mapPresentonTemplateHint(slide: any) {
+  switch (inferSlideLayoutIntent(slide)) {
+    case "text-light-visual-first":
+      return "visual-first";
+    case "board-worked-example":
+      return "board-example";
+    case "concept-split":
+      return "concept-split";
+    default:
+      return "text-light";
+  }
+}
+
+function getPublicBackendBaseUrl() {
+  refreshRuntimeEnv();
+  return (
+    process.env.PRESENTON_ASSET_BASE_URL ||
+    process.env.PUBLIC_BACKEND_BASE_URL ||
+    `http://host.docker.internal:${PORT}`
+  ).replace(/\/+$/, "");
+}
+
+function getPresentonConfig() {
+  refreshRuntimeEnv();
+  return {
+    enabled: String(process.env.PRESENTON_ENABLED || "true").trim().toLowerCase() !== "false",
+    versionTag: String(process.env.PRESENTON_VERSION_TAG || "v0.8.6-beta").trim(),
+    baseUrl: String(process.env.PRESENTON_BASE_URL || "http://127.0.0.1:5002").trim().replace(/\/+$/, ""),
+    username: String(process.env.PRESENTON_AUTH_USERNAME || "admin").trim(),
+    password: String(process.env.PRESENTON_AUTH_PASSWORD || "presenton").trim(),
+    timeoutMs: Math.max(30000, Number(process.env.PRESENTON_TIMEOUT_MS) || 300000),
+    assetBaseUrl: getPublicBackendBaseUrl(),
+    defaultTemplate: String(process.env.PRESENTON_TEMPLATE_DEFAULT || "general").trim(),
+    templateMap: {
+      "text-light-visual-first": String(process.env.PRESENTON_TEMPLATE_VISUAL_FIRST || "general").trim(),
+      "concept-split": String(process.env.PRESENTON_TEMPLATE_CONCEPT_SPLIT || "general").trim(),
+      "board-worked-example": String(process.env.PRESENTON_TEMPLATE_BOARD || "general").trim(),
+      "text-led-minimal": String(process.env.PRESENTON_TEMPLATE_TEXT_LIGHT || "general").trim(),
+    } as Record<string, string>,
+  };
+}
+
+function buildPresentonAuthHeader(config = getPresentonConfig()) {
+  return `Basic ${Buffer.from(`${config.username}:${config.password}`).toString("base64")}`;
+}
+
+async function ensurePersistedSvgVisualAsset(svgCode: string) {
+  const normalizedSvg = String(svgCode || "").trim();
+  if (!normalizedSvg) return { assetId: "", fileName: "", storagePath: "" };
+  await fs.mkdir(PPT_ASSET_STORAGE_DIR, { recursive: true });
+  const promptHash = createHash("sha1").update(normalizedSvg).digest("hex");
+  const fileName = `${promptHash}.svg`;
+  const outputPath = path.join(PPT_ASSET_STORAGE_DIR, fileName);
+  try {
+    await fs.access(outputPath);
+  } catch {
+    await fs.writeFile(outputPath, normalizedSvg, "utf8");
+  }
+  return {
+    assetId: promptHash,
+    fileName,
+    storagePath: outputPath,
+  };
+}
+
+async function buildResolvedVisualAssetRefsForSlide(slide: any) {
+  const config = getPresentonConfig();
+  const refs: ResolvedVisualAssetRef[] = [];
+  const primaryAsset = Array.isArray(slide?.assets) ? slide.assets.find((asset: any) => asset?.visualRelevanceStatus === "valid") : null;
+  if (primaryAsset?.storagePath) {
+    const fileName = path.basename(String(primaryAsset.storagePath));
+    refs.push({
+      kind: String(primaryAsset?.mimeType || "").includes("svg") ? "svg" : "image",
+      assetId: String(primaryAsset.assetId || primaryAsset.promptHash || fileName),
+      fileName,
+      url: `${config.assetBaseUrl}/api/ppt-assets/${encodeURIComponent(fileName)}`,
+      mimeType: String(primaryAsset.mimeType || "image/png"),
+    });
+  } else if (slide?.svgDiagram?.visualRelevanceStatus === "valid" && slide?.svgDiagram?.svgCode) {
+    const persisted = await ensurePersistedSvgVisualAsset(String(slide.svgDiagram.svgCode));
+    if (persisted.fileName) {
+      refs.push({
+        kind: "svg",
+        assetId: persisted.assetId,
+        fileName: persisted.fileName,
+        url: `${config.assetBaseUrl}/api/ppt-assets/${encodeURIComponent(persisted.fileName)}`,
+        mimeType: "image/svg+xml",
+      });
+    }
+  }
+  return refs;
+}
+
+function renderSpeakerNotesForPresenton(slide: any) {
+  return (Array.isArray(slide?.speakerNotes) ? slide.speakerNotes : [])
+    .map((note: any) => renderableToExportPlainText(note).trim())
+    .filter(Boolean)
+    .slice(0, 8);
+}
+
+function buildPresentonSlideMarkdown(slide: any) {
+  const title = renderableToExportPlainText(slide?.slideTitle || `Slide ${slide?.slideNumber || ""}`).trim();
+  const chips = (Array.isArray(slide?.onSlideText) ? slide.onSlideText : [])
+    .map((item: any) => renderableToExportPlainText(item).trim())
+    .filter(Boolean)
+    .slice(0, 2);
+  const bullets = (Array.isArray(slide?.bulletPoints) ? slide.bulletPoints : [])
+    .map((item: any) => renderableToExportPlainText(item).trim())
+    .filter(Boolean)
+    .slice(0, slide?.visualResolved ? 3 : 4);
+  const refs = Array.isArray(slide?.resolvedVisualAssetRefs) ? slide.resolvedVisualAssetRefs : [];
+  const visual = refs[0];
+  const noteLines = renderSpeakerNotesForPresenton(slide);
+  const layoutHint = String(slide?.presentonTemplateHint || mapPresentonTemplateHint(slide));
+  const markdownLines = [
+    `# ${title}`,
+    ...chips.map((chip: string) => `> ${chip}`),
+    ...bullets.map((bullet: string) => `- ${bullet}`),
+    visual?.url ? `![${title}](${visual.url})` : "",
+    "",
+    `<!-- layout: ${layoutHint} -->`,
+    `<!-- purpose: ${renderableToExportPlainText(slide?.slidePurpose || "")} -->`,
+    ...(noteLines.length ? ["", "<!-- speaker-notes", ...noteLines, "-->"] : []),
+  ].filter((line, index, arr) => !(line === "" && arr[index - 1] === ""));
+  return markdownLines.join("\n").trim();
+}
+
+async function buildTeacherDeckSpecFromNormalizedPpt(ppt: any, sessionContext: { subject?: string; gradeLevel?: string }) {
+  const config = getPresentonConfig();
+  const slides = Array.isArray(ppt?.slides) ? ppt.slides : [];
+  const teacherDeckSlides = [];
+  for (const slide of slides) {
+    const resolvedVisualAssetRefs = await buildResolvedVisualAssetRefsForSlide(slide);
+    const layoutIntent = inferSlideLayoutIntent(slide);
+    const presentonTemplateHint = mapPresentonTemplateHint({ ...slide, layoutIntent });
+    const enrichedSlide = {
+      ...slide,
+      layoutIntent,
+      presentonTemplateHint,
+      resolvedVisualAssetRefs,
+    };
+    const presentonMarkdown = buildPresentonSlideMarkdown(enrichedSlide);
+    teacherDeckSlides.push({
+      slideNumber: Number(slide?.slideNumber || teacherDeckSlides.length + 1),
+      slideTitle: renderableToExportPlainText(slide?.slideTitle || `Slide ${teacherDeckSlides.length + 1}`),
+      slidePurpose: renderableToExportPlainText(slide?.slidePurpose || slide?.templateSlideTitle || ""),
+      teachingBeat: renderableToExportPlainText(slide?.teachingBeat || ""),
+      mustTeach: (Array.isArray(slide?.mustTeach) ? slide.mustTeach : []).map((item: any) => renderableToExportPlainText(item)).filter(Boolean),
+      onSlideContent: [
+        ...(Array.isArray(slide?.onSlideText) ? slide.onSlideText : []),
+        ...(Array.isArray(slide?.bulletPoints) ? slide.bulletPoints : []),
+      ].map((item: any) => renderableToExportPlainText(item)).filter(Boolean),
+      speakerNotes: renderSpeakerNotesForPresenton(slide),
+      visualDecision: String(slide?.visualDecision || "none"),
+      visualResolved: Boolean(slide?.visualResolved),
+      visualRelevanceStatus: String(slide?.visualRelevanceStatus || "none"),
+      layoutIntent,
+      timeEstimate: Number(slide?.timeEstimateMinutes || 0) || 4,
+      presentonTemplateHint,
+      presentonMarkdown,
+      resolvedVisualAssetRefs,
+      sourceSlide: enrichedSlide,
+    });
+  }
+  const templateId = String(ppt?.templateId || "academic-split");
+  const leadLayoutIntent = teacherDeckSlides.find((slide) => slide.layoutIntent)?.layoutIntent || "text-light-visual-first";
+  return {
+    title: renderableToExportPlainText(ppt?.presentationTitle || ppt?.title || "Session Presentation"),
+    audience: renderableToExportPlainText(ppt?.audience || `${sessionContext.gradeLevel || "Grade"} classroom`),
+    gradeLevel: String(sessionContext.gradeLevel || ""),
+    subject: String(sessionContext.subject || ""),
+    deliveryMode: String(ppt?.deckMode || "teacher-delivery"),
+    templateId,
+    presentonTemplate: config.templateMap[leadLayoutIntent] || config.defaultTemplate,
+    deckReadiness: String(ppt?.deckReadiness || "needs-review"),
+    coverageStatus: String(ppt?.coverageStatus || "partial"),
+    visualIntegrityStatus: String(ppt?.visualIntegrityStatus || "needs-review"),
+    exportIntegrityStatus: String(ppt?.exportIntegrityStatus || "ready"),
+    slides: teacherDeckSlides,
+  } satisfies TeacherDeckSpec;
+}
+
+function buildPresentonGenerationInstructions(deckSpec: TeacherDeckSpec) {
+  const slideInstructions = deckSpec.slides.map((slide) =>
+    `Slide ${slide.slideNumber}: use ${slide.layoutIntent}; keep visible text concise; preserve slide order; prefer the provided image if markdown contains one; do not invent extra images; do not add stock imagery; keep classroom tone professional.`
+  );
+  return [
+    "Render this as an editable classroom PPTX.",
+    "Treat slides_markdown as the source of truth for slide order and visible content.",
+    "Do not use web search.",
+    "Do not invent new pedagogy or new sections.",
+    "Keep the deck concise and teacher-ready.",
+    "If an image is present in markdown, use it.",
+    "Do not replace provided images with stock imagery.",
+    "Favor low-density educational slide composition.",
+    ...slideInstructions,
+  ].join("\n");
+}
+
+async function fetchPresentonPptxBuffer(pathOrUrl: string, config = getPresentonConfig()) {
+  const normalized = String(pathOrUrl || "").trim();
+  if (!normalized) {
+    throw new Error("Presenton did not return a PPTX path.");
+  }
+  const targetUrl = /^https?:\/\//i.test(normalized) ? normalized : `${config.baseUrl}${normalized.startsWith("/") ? "" : "/"}${normalized}`;
+  const controller = new AbortController();
+  const timeoutHandle = setTimeout(() => controller.abort(), config.timeoutMs);
+  try {
+    const response = await fetch(targetUrl, {
+      headers: {
+        Authorization: buildPresentonAuthHeader(config),
+      },
+      signal: controller.signal,
+    } as any);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Presenton PPTX artifact: ${response.status}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  } finally {
+    clearTimeout(timeoutHandle);
+  }
+}
+
+async function renderPptxWithPresenton(deckSpec: TeacherDeckSpec) {
+  const config = getPresentonConfig();
+  if (!config.enabled) {
+    throw new Error("Presenton integration is disabled.");
+  }
+  const payload = {
+    content: `${deckSpec.title}\nSubject: ${deckSpec.subject}\nAudience: ${deckSpec.audience}`,
+    slides_markdown: deckSpec.slides.map((slide) => slide.presentonMarkdown),
+    instructions: buildPresentonGenerationInstructions(deckSpec),
+    tone: "educational",
+    verbosity: "concise",
+    web_search: false,
+    n_slides: deckSpec.slides.length,
+    language: "English",
+    template: deckSpec.presentonTemplate,
+    include_table_of_contents: false,
+    include_title_slide: false,
+    export_as: "pptx",
+  };
+
+  const controller = new AbortController();
+  const timeoutHandle = setTimeout(() => controller.abort(), config.timeoutMs);
+  try {
+    const response = await fetch(`${config.baseUrl}/api/v1/ppt/presentation/generate`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: buildPresentonAuthHeader(config),
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    } as any);
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(`Presenton render failed: ${response.status} ${text}`);
+    }
+    const json = await response.json();
+    const buffer = await fetchPresentonPptxBuffer(String(json?.path || ""), config);
+    return {
+      presentationId: String(json?.presentation_id || ""),
+      pptxPath: String(json?.path || ""),
+      editPath: String(json?.edit_path || ""),
+      renderDiagnostics: {
+        template: deckSpec.presentonTemplate,
+        slideCount: deckSpec.slides.length,
+        sidecarBaseUrl: config.baseUrl,
+      },
+      buffer,
+    } satisfies RenderedPresentationResult;
+  } finally {
+    clearTimeout(timeoutHandle);
+  }
+}
+
+async function checkPresentonHealth() {
+  const config = getPresentonConfig();
+  const controller = new AbortController();
+  const timeoutHandle = setTimeout(() => controller.abort(), Math.min(config.timeoutMs, 15000));
+  try {
+    const response = await fetch(`${config.baseUrl}/openapi.json`, {
+      signal: controller.signal,
+    } as any);
+    return {
+      ok: response.ok,
+      status: response.status,
+      baseUrl: config.baseUrl,
+      enabled: config.enabled,
+    };
+  } catch (error: any) {
+    return {
+      ok: false,
+      status: 0,
+      baseUrl: config.baseUrl,
+      enabled: config.enabled,
+      error: String(error?.message || error),
+    };
+  } finally {
+    clearTimeout(timeoutHandle);
+  }
 }
 
 function buildDeterministicMaterialsFromSessionPlan(
@@ -4143,15 +4619,19 @@ function buildDeterministicMaterialsFromSessionPlan(
   ], 4, 200);
 
   const makeSlide = (index: number, overrides: Record<string, any>) => {
-    const templateSlot = KAMALANIKETAN_TEMPLATE_SLIDES[index];
+    const inferredKey = GENERIC_ADAPTIVE_SLIDE_KEYS[index] || `adaptive_slide_${index + 1}`;
+    const inferredLabel = inferredKey
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
     return {
       templateId: templatePreset.templateId,
-      templateSlideKey: templateSlot.key,
-      templateSlideTitle: templateSlot.label,
+      templateSlideKey: inferredKey,
+      templateSlideTitle: inferredLabel,
       isOptionalSlotFilled: true,
       slideNumber: index + 1,
-      slideType: templateSlot.slideType,
-      slideTitle: templateSlot.label,
+      slideType: inferredKey.replace(/_/g, "-"),
+      slideTitle: inferredLabel,
       learningOutcomeIds: learningOutcomes.slice(0, 2),
       topicCoverage: context.selectedChapters,
       teacherIntent: "",
@@ -4236,8 +4716,13 @@ function buildDeterministicMaterialsFromSessionPlan(
     }),
     makeSlide(4, {
       slideTitle: "Topic Introduction",
-      bulletPoints: limitStringList([theory?.overview, studentNotes?.introduction, ...(studentNotes?.definitions || []).map((item: any) => `${item.term}: ${item.definition}`)], 5, 180),
-      onSlideText: limitStringList([theory?.overview, studentNotes?.introduction], 3, 140),
+      bulletPoints: limitStringList([
+        theory?.overview,
+        studentNotes?.introduction,
+        ...(Array.isArray(theory?.keyPoints) ? theory.keyPoints : []),
+        ...(studentNotes?.definitions || []).map((item: any) => `${item.term}: ${item.definition}`),
+      ], 6, 200),
+      onSlideText: limitStringList([theory?.overview, studentNotes?.introduction, ...(Array.isArray(theory?.keyPoints) ? theory.keyPoints.slice(0, 2) : [])], 4, 150),
       teacherIntent: "Introduce the central idea and vocabulary.",
       studentTakeaway: "Understand the main concept and basic terms.",
       speakerNotes: buildTeacherDeliverySpeakerNotes({
@@ -4255,12 +4740,15 @@ function buildDeterministicMaterialsFromSessionPlan(
         conceptFlow?.[0]?.definition,
         conceptFlow?.[0]?.coreExplanation,
         ...(conceptFlow?.[0]?.keywords || []),
+        ...(conceptFlow?.[0]?.examples || []),
         ...(lessonBlocks?.[0]?.explanation || []),
-      ], 5, 180),
+        ...(lessonBlocks?.[0]?.examples || []),
+      ], 6, 200),
       onSlideText: limitStringList([
         conceptFlow?.[0]?.definition,
         ...(conceptFlow?.[0]?.keywords || []),
-      ], 4, 120),
+        ...(conceptFlow?.[0]?.examples || []).slice(0, 1),
+      ], 4, 130),
       teacherIntent: "Build the first core concept clearly.",
       studentTakeaway: "Grasp the first major idea of the lesson.",
       speakerNotes: buildTeacherDeliverySpeakerNotes({
@@ -4285,8 +4773,12 @@ function buildDeterministicMaterialsFromSessionPlan(
         conceptFlow?.[1]?.definition,
         conceptFlow?.[1]?.coreExplanation,
         ...(conceptFlow?.[1]?.examples || []),
-      ], 4, 180),
-      onSlideText: limitStringList(conceptFlow?.[1]?.keywords || conceptFlow?.[0]?.keywords || [], 4, 100),
+        ...(lessonBlocks?.[1]?.explanation || []),
+      ], 5, 200),
+      onSlideText: limitStringList([
+        ...(conceptFlow?.[1]?.keywords || conceptFlow?.[0]?.keywords || []),
+        ...(conceptFlow?.[1]?.examples || []).slice(0, 1),
+      ], 4, 110),
       teacherIntent: "Explain the second concept with visual emphasis.",
       studentTakeaway: "See the idea in a more visual form.",
       speakerNotes: buildTeacherDeliverySpeakerNotes({
@@ -4310,8 +4802,17 @@ function buildDeterministicMaterialsFromSessionPlan(
     }),
     makeSlide(7, {
       slideTitle: limitString(workedExamples?.[0]?.title || "Worked Example", 80),
-      bulletPoints: limitStringList(workedExamples?.[0]?.steps || lessonBlocks?.[1]?.examples || [], 5, 180),
-      onSlideText: limitStringList(workedExamples?.[0]?.steps || [], 4, 120),
+      bulletPoints: limitStringList([
+        workedExamples?.[0]?.problem,
+        ...(workedExamples?.[0]?.steps || []),
+        ...(workedExamples?.[0]?.solutionSteps || []),
+        ...(lessonBlocks?.[1]?.examples || []),
+      ], 6, 200),
+      onSlideText: limitStringList([
+        workedExamples?.[0]?.title,
+        workedExamples?.[0]?.problem,
+        ...(workedExamples?.[0]?.steps || []).slice(0, 2),
+      ], 4, 140),
       teacherIntent: "Model the thinking process step by step.",
       studentTakeaway: "See how the concept is applied.",
       speakerNotes: buildTeacherDeliverySpeakerNotes({
@@ -4337,11 +4838,13 @@ function buildDeterministicMaterialsFromSessionPlan(
         activities?.[0]?.name,
         ...(activities?.[0]?.instructions || []),
         ...(lessonBlocks?.[0]?.activity || []),
-      ], 5, 180),
+        workedExamples?.[1]?.problem,
+      ], 6, 200),
       onSlideText: limitStringList([
         activities?.[0]?.name,
         ...(activities?.[0]?.instructions || []),
-      ], 4, 120),
+        workedExamples?.[1]?.title,
+      ], 4, 130),
       teacherIntent: "Help students practice with support.",
       studentTakeaway: "Try the skill with guidance.",
       speakerNotes: buildTeacherDeliverySpeakerNotes({
@@ -5509,7 +6012,18 @@ function slugifyFileNamePart(value: string) {
 }
 
 const pptAssetResolutionCache = new Map<string, any>();
+const remoteBinaryAssetCache = new Map<string, { buffer: Buffer; mimeType: string }>();
 const USE_REMOTE_PPT_ASSETS = true;
+const WIKIMEDIA_REQUEST_MIN_INTERVAL_MS = Number(process.env.WIKIMEDIA_REQUEST_MIN_INTERVAL_MS) || 5000;
+const WIKIMEDIA_MEDIA_REQUEST_MIN_INTERVAL_MS = Number(process.env.WIKIMEDIA_MEDIA_REQUEST_MIN_INTERVAL_MS) || 250;
+const WIKIMEDIA_MAX_RETRIES = 2;
+let lastWikimediaRequestAt = 0;
+let lastWikimediaMediaRequestAt = 0;
+let wikimediaGlobalCooldownUntil = 0;
+let wikimediaMediaCooldownUntil = 0;
+let wikimediaPreviewCooldownUntil = 0;
+let wikimediaRequestQueue: Promise<void> = Promise.resolve();
+let wikimediaMediaRequestQueue: Promise<void> = Promise.resolve();
 type ReusablePptAsset = {
   sourceSite?: string;
   sourceUrl?: string;
@@ -5517,7 +6031,60 @@ type ReusablePptAsset = {
   licenseType?: string;
   attributionText?: string;
   altText?: string;
+  mediaClass?: string;
+  mimeType?: string;
+  width?: number;
+  height?: number;
+  title?: string;
+  metadataScore?: number;
+  rerankScore?: number;
+  rerankReason?: string;
+  isTextHeavy?: boolean;
+  isDiagramPage?: boolean;
+  isChildFriendly?: boolean;
 };
+
+type RerankedVisualCandidate = ReusablePptAsset & {
+  candidateIndex: number;
+};
+
+function classifyReusableAsset(asset: ReusablePptAsset) {
+  const sourceUrl = String(asset.sourceUrl || "").toLowerCase();
+  const previewUrl = String(asset.previewUrl || "").toLowerCase();
+  const mimeType = String(asset.mimeType || "").toLowerCase();
+  const text = [
+    asset.altText,
+    asset.attributionText,
+    asset.title,
+    asset.licenseType,
+    asset.sourceSite,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const documentPattern = /\b(page|pages|cover title|bibliographic|journal|vol\.|volume|issue|paper no|digitized|scanned|scan|archive|proceedings|table of contents)\b/;
+  const chemistryPositivePattern = /\b(acid|acids|base|bases|indicator|litmus|phenolphthalein|methyl orange|chemical|chemistry|laboratory|lab|reaction|solution|beaker|test tube|ph scale)\b/;
+  const imageExtensionPattern = /\.(jpg|jpeg|png|webp|gif)(?:[?#]|$)/;
+  const documentExtensionPattern = /\.(pdf|djvu|tif|tiff|svg)(?:[?#]|$)/;
+
+  if (
+    mimeType.includes("svg")
+    || mimeType.includes("tiff")
+    || documentExtensionPattern.test(sourceUrl)
+    || documentExtensionPattern.test(previewUrl)
+    || documentPattern.test(text)
+  ) {
+    return "document-scan";
+  }
+  if (chemistryPositivePattern.test(text)) {
+    return "topic-relevant";
+  }
+  if (imageExtensionPattern.test(sourceUrl) || imageExtensionPattern.test(previewUrl)) {
+    return "generic-image";
+  }
+  return "unknown";
+}
 
 function scoreReusableAsset(query: string, asset: ReusablePptAsset) {
   const queryTokens = String(query || "")
@@ -5527,6 +6094,7 @@ function scoreReusableAsset(query: string, asset: ReusablePptAsset) {
   const haystack = [
     asset.altText,
     asset.attributionText,
+    asset.title,
     asset.licenseType,
     asset.sourceSite,
   ]
@@ -5535,12 +6103,22 @@ function scoreReusableAsset(query: string, asset: ReusablePptAsset) {
     .toLowerCase();
 
   let score = 0;
+  const mediaClass = classifyReusableAsset(asset);
   for (const token of queryTokens) {
     if (haystack.includes(token)) {
       score += token.length > 6 ? 3 : 2;
     }
   }
 
+  if (mediaClass === "document-scan") score -= 12;
+  if (mediaClass === "topic-relevant") score += 5;
+  if (mediaClass === "generic-image") score += 1;
+  if (mediaClass === "unknown") score -= 2;
+  if ((asset.width || 0) >= 1000) score += 3;
+  if ((asset.width || 0) >= 1400) score += 1;
+  if ((asset.height || 0) > 0 && (asset.width || 0) >= (asset.height || 0)) score += 3;
+  if ((asset.height || 0) > 0 && (asset.width || 0) / Math.max(1, asset.height || 1) >= 1.2) score += 2;
+  if ((asset.height || 0) > (asset.width || 0)) score -= 6;
   if (asset.previewUrl) score += 2;
   if (asset.sourceUrl) score += 1;
   if (String(asset.licenseType || "").toLowerCase().includes("cc")) score += 1;
@@ -5548,13 +6126,393 @@ function scoreReusableAsset(query: string, asset: ReusablePptAsset) {
 
   return score;
 }
+
+function getMeaningfulQueryTokens(query: string) {
+  const stopwords = new Set([
+    "green", "blue", "red", "science", "classroom", "students", "student", "activity",
+    "school", "clean", "simple", "field", "task", "tonight", "learning", "goals",
+    "summary", "homework", "question", "quiz", "card", "layout", "experiment"
+  ]);
+  return String(query || "")
+    .toLowerCase()
+    .split(/[^a-z0-9]+/g)
+    .filter((token) => token.length > 2 && !stopwords.has(token));
+}
+
+function isReusableAssetSemanticallyRelevant(query: string, asset: ReusablePptAsset) {
+  const meaningfulTokens = getMeaningfulQueryTokens(query);
+  if (meaningfulTokens.length === 0) return true;
+
+  const haystack = [
+    asset.altText,
+    asset.attributionText,
+    asset.title,
+    asset.licenseType,
+    asset.sourceSite,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const overlapCount = meaningfulTokens.filter((token) => haystack.includes(token)).length;
+  if (overlapCount >= Math.min(2, meaningfulTokens.length)) {
+    return true;
+  }
+
+  const mismatchPatterns: Array<{ query: RegExp; banned: RegExp }> = [
+    { query: /\b(mitochondria|cell|respiration|lungs)\b/, banned: /\b(thoracic|vital capacity|reserve air|residual air|breathing air)\b/ },
+    { query: /\b(plant|leaf|photosynthesis|autotroph)\b/, banned: /\b(building|architecture|office|campus|house|interior)\b/ },
+    { query: /\b(cow|grazing|heterotroph|animal)\b/, banned: /\b(bug|beetle|shield bug|insect)\b/ },
+  ];
+  for (const rule of mismatchPatterns) {
+    if (rule.query.test(query.toLowerCase()) && rule.banned.test(haystack)) {
+      return false;
+    }
+  }
+
+  return overlapCount >= 1 && meaningfulTokens.length <= 2;
+}
+
+function passesWikimediaMetadataPrefilter(asset: ReusablePptAsset) {
+  const width = Number(asset.width || 0);
+  const height = Number(asset.height || 0);
+  const mimeType = String(asset.mimeType || "").toLowerCase();
+  const sourceUrl = String(asset.sourceUrl || "").toLowerCase();
+  const previewUrl = String(asset.previewUrl || "").toLowerCase();
+  const bannedExtensionPattern = /\.(svg|tif|tiff)(?:[?#]|$)/;
+
+  if (!asset.previewUrl && !asset.sourceUrl) return false;
+  if (mimeType.includes("svg") || mimeType.includes("tiff")) return false;
+  if (bannedExtensionPattern.test(sourceUrl) || bannedExtensionPattern.test(previewUrl)) return false;
+  if (width > 0 && width < 1000) return false;
+  if (width > 0 && height > 0 && height > width) return false;
+  return true;
+}
+
+function buildWikimediaCandidateDebugRecord(asset: ReusablePptAsset, index: number) {
+  return {
+    candidateIndex: index,
+    title: String(asset.title || ""),
+    previewUrl: String(asset.previewUrl || ""),
+    sourceUrl: String(asset.sourceUrl || ""),
+    mimeType: String(asset.mimeType || ""),
+    width: Number(asset.width || 0),
+    height: Number(asset.height || 0),
+    metadataScore: Number(asset.metadataScore || 0),
+    rerankScore: Number(asset.rerankScore || 0),
+    rerankReason: String(asset.rerankReason || ""),
+    isTextHeavy: Boolean(asset.isTextHeavy),
+    isDiagramPage: Boolean(asset.isDiagramPage),
+    isChildFriendly: typeof asset.isChildFriendly === "boolean" ? asset.isChildFriendly : null,
+    mediaClass: String(asset.mediaClass || ""),
+  };
+}
+
+function shouldPreferMetadataOnlyForSlide(context: SlideVisualRerankContext) {
+  const normalized = normalizeSourceText([
+    context.slideTitle,
+    context.teachingIntent,
+    context.wikimediaSearchLabel,
+  ].filter(Boolean).join(" "));
+  return /\b(title|summary|homework|recap|classroom|students|task tonight|learning goals)\b/.test(normalized);
+}
+
+function isTopMetadataCandidateDominant(candidates: ReusablePptAsset[]) {
+  if (candidates.length < 2) return true;
+  const [first, second] = candidates;
+  const firstScore = Number(first?.metadataScore || 0);
+  const secondScore = Number(second?.metadataScore || 0);
+  const firstAspectBonus = Number(first?.width || 0) >= Number(first?.height || 0) ? 1 : 0;
+  const secondAspectBonus = Number(second?.width || 0) >= Number(second?.height || 0) ? 1 : 0;
+  return (firstScore + firstAspectBonus) - (secondScore + secondAspectBonus) >= PPT_IMAGE_RERANK_METADATA_MARGIN;
+}
+
+function getReusableAssetIdentity(asset: ReusablePptAsset | null | undefined) {
+  return String(asset?.sourceUrl || asset?.previewUrl || "").trim();
+}
+
+function filterUnusedVisualCandidates(
+  candidates: ReusablePptAsset[],
+  usedVisualUrls?: Set<string>
+) {
+  if (!usedVisualUrls?.size) {
+    return candidates;
+  }
+  const unusedCandidates = candidates.filter((candidate) => {
+    const identity = getReusableAssetIdentity(candidate);
+    return !identity || !usedVisualUrls.has(identity);
+  });
+  return unusedCandidates.length ? unusedCandidates : candidates;
+}
+
+async function rerankWikimediaCandidatesWithQwen(
+  candidates: ReusablePptAsset[],
+  context: SlideVisualRerankContext
+): Promise<{
+  rankedCandidates: RerankedVisualCandidate[];
+  modelOutput: any;
+  fallbackReason?: string;
+  previewFetchAttemptCount?: number;
+  rerankInvoked?: boolean;
+}> {
+  if (!candidates.length) {
+    return { rankedCandidates: [], modelOutput: { rankings: [] }, fallbackReason: "no-candidates", previewFetchAttemptCount: 0, rerankInvoked: false };
+  }
+
+  if (candidates.length < 2) {
+    return {
+      rankedCandidates: candidates.map((candidate, candidateIndex) => ({ ...candidate, candidateIndex })),
+      modelOutput: { rankings: [] },
+      fallbackReason: "single-candidate",
+      previewFetchAttemptCount: 0,
+      rerankInvoked: false,
+    };
+  }
+
+  if (wikimediaPreviewCooldownUntil > Date.now()) {
+    return {
+      rankedCandidates: candidates.map((candidate, candidateIndex) => ({ ...candidate, candidateIndex })),
+      modelOutput: { rankings: [] },
+      fallbackReason: "cooldown-active",
+      previewFetchAttemptCount: 0,
+      rerankInvoked: false,
+    };
+  }
+
+  if (shouldPreferMetadataOnlyForSlide(context) && isTopMetadataCandidateDominant(candidates)) {
+    return {
+      rankedCandidates: candidates.map((candidate, candidateIndex) => ({ ...candidate, candidateIndex })),
+      modelOutput: { rankings: [] },
+      fallbackReason: "top-candidate-dominant",
+      previewFetchAttemptCount: 0,
+      rerankInvoked: false,
+    };
+  }
+
+  if (isTopMetadataCandidateDominant(candidates)) {
+    return {
+      rankedCandidates: candidates.map((candidate, candidateIndex) => ({ ...candidate, candidateIndex })),
+      modelOutput: { rankings: [] },
+      fallbackReason: "top-candidate-dominant",
+      previewFetchAttemptCount: 0,
+      rerankInvoked: false,
+    };
+  }
+
+  const { baseUrl, model } = getOllamaVisionRerankConfig();
+  const prompt = [
+    "You are ranking slide image candidates for a school classroom PowerPoint.",
+    "Return strict JSON only.",
+    "Rank image candidates by how well they match the slide for children and classroom teaching.",
+    "Prefer colorful, clear, natural-looking images that explain the concept simply for school children.",
+    "Reject text-heavy images, scanned pages, poster-like diagrams, and images that are hard for children to understand.",
+    "",
+    `Slide title: ${String(context.slideTitle || "").trim() || "Untitled slide"}`,
+    `Wikimedia label: ${String(context.wikimediaSearchLabel || "").trim() || "general classroom visual"}`,
+    `Teaching intent: ${String(context.teachingIntent || "").trim() || "Support classroom explanation."}`,
+    `Subject/grade: ${[context.subject, context.gradeLevel].filter(Boolean).join(" / ") || "school classroom"}`,
+    "",
+    "Return this JSON shape:",
+    JSON.stringify({
+      rankings: [
+        {
+          candidateIndex: 0,
+          relevanceScore: 0,
+          reason: "short reason",
+          isTextHeavy: false,
+          isDiagramPage: false,
+          isChildFriendly: true,
+        },
+      ],
+    }, null, 2),
+  ].join("\n");
+
+  const messageImages: string[] = [];
+  const candidateRecords: any[] = [];
+  let previewFetchAttemptCount = 0;
+  for (let candidateIndex = 0; candidateIndex < Math.min(candidates.length, PPT_IMAGE_RERANK_FETCH_LIMIT); candidateIndex += 1) {
+    const candidate = candidates[candidateIndex];
+    try {
+      previewFetchAttemptCount += 1;
+      const imageData = await ensureImageDataUrl(String(candidate.previewUrl || candidate.sourceUrl || ""));
+      messageImages.push(imageData.imageDataUrl.replace(/^data:[^,]+,/, ""));
+      candidateRecords.push({
+        candidateIndex,
+        title: String(candidate.title || ""),
+        altText: String(candidate.altText || ""),
+        attributionText: String(candidate.attributionText || ""),
+        width: Number(candidate.width || 0),
+        height: Number(candidate.height || 0),
+        mimeType: String(candidate.mimeType || ""),
+        metadataScore: Number(candidate.metadataScore || 0),
+      });
+    } catch (error: any) {
+      console.warn(
+        `[PPT Assets] Skipping Qwen preview fetch for candidate ${candidateIndex} of "${String(context.wikimediaSearchLabel || context.slideTitle || "")}":`,
+        error
+      );
+      if (String(error?.message || "").includes("429")) {
+        wikimediaPreviewCooldownUntil = Math.max(
+          wikimediaPreviewCooldownUntil,
+          Date.now() + WIKIMEDIA_PREVIEW_COOLDOWN_MS
+        );
+        return {
+          rankedCandidates: candidates.map((item, index) => ({ ...item, candidateIndex: index })),
+          modelOutput: { rankings: [] },
+          fallbackReason: "preview-fetch-429",
+          previewFetchAttemptCount,
+          rerankInvoked: false,
+        };
+      }
+    }
+  }
+
+  if (candidateRecords.length === 0 || messageImages.length === 0) {
+    return {
+      rankedCandidates: candidates.map((candidate, candidateIndex) => ({
+        ...candidate,
+        candidateIndex,
+      })),
+      modelOutput: { rankings: [] },
+      fallbackReason: "candidate-image-fetch-failed",
+      previewFetchAttemptCount,
+      rerankInvoked: false,
+    };
+  }
+
+  const requestBody = {
+    model,
+    stream: false,
+    think: false,
+    format: "json",
+    options: {
+      temperature: 0,
+      num_predict: 2048,
+    },
+    messages: [
+      {
+        role: "system",
+        content: "Return only valid JSON. Do not include markdown.",
+      },
+      {
+        role: "user",
+        content: `${prompt}\n\nCandidates:\n${JSON.stringify(candidateRecords, null, 2)}`,
+        images: messageImages,
+      },
+    ],
+  };
+
+  const controller = new AbortController();
+  const timeoutHandle = setTimeout(() => controller.abort(), OLLAMA_VISION_RERANK_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${baseUrl}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+      signal: controller.signal,
+      dispatcher: OLLAMA_FETCH_DISPATCHER,
+    } as any);
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => "");
+      throw new Error(`Qwen rerank failed with status ${response.status}: ${errorText}`);
+    }
+    const data = await response.json();
+    const responseText = String(data?.message?.content || data?.response || "").trim();
+    if (!responseText) {
+      throw new Error("Qwen rerank returned empty content.");
+    }
+    const extracted = extractJsonText(responseText);
+    const parsed = JSON.parse(extracted);
+    const rankings = Array.isArray(parsed?.rankings) ? parsed.rankings : [];
+
+    const rankedCandidates = candidates.map((candidate, candidateIndex) => {
+      const ranking = rankings.find((item: any) => Number(item?.candidateIndex) === candidateIndex);
+      return {
+        ...candidate,
+        candidateIndex,
+        rerankScore: Math.max(0, Math.min(100, Number(ranking?.relevanceScore || 0))),
+        rerankReason: String(ranking?.reason || ""),
+        isTextHeavy: Boolean(ranking?.isTextHeavy),
+        isDiagramPage: Boolean(ranking?.isDiagramPage),
+        isChildFriendly: typeof ranking?.isChildFriendly === "boolean" ? ranking.isChildFriendly : true,
+      };
+    });
+
+    return {
+      rankedCandidates: rankedCandidates.sort((a, b) =>
+        (Number(b.rerankScore || 0) - Number(a.rerankScore || 0))
+        || (Number(b.width || 0) - Number(a.width || 0))
+        || (Number(b.metadataScore || 0) - Number(a.metadataScore || 0))
+      ),
+      modelOutput: parsed,
+      previewFetchAttemptCount,
+      rerankInvoked: true,
+    };
+  } finally {
+    clearTimeout(timeoutHandle);
+  }
+}
 const pptAssetRateLimitCooldowns = new Map<string, number>();
 const pptAssetResolutionInFlight = new Map<string, Promise<any>>();
 const PPT_ASSET_RATE_LIMIT_COOLDOWN_MS = 15 * 60 * 1000;
+const WIKIMEDIA_GLOBAL_RATE_LIMIT_COOLDOWN_MS = Number(process.env.WIKIMEDIA_GLOBAL_RATE_LIMIT_COOLDOWN_MS) || 120000;
+const WIKIMEDIA_PREVIEW_COOLDOWN_MS = Number(process.env.WIKIMEDIA_PREVIEW_COOLDOWN_MS) || 180000;
+const PPT_ASSET_MISS_CACHE_TTL_MS = Number(process.env.PPT_ASSET_MISS_CACHE_TTL_MS) || 10 * 60 * 1000;
+const PPT_ASSET_METADATA_ONLY_CACHE_TTL_MS = Number(process.env.PPT_ASSET_METADATA_ONLY_CACHE_TTL_MS) || 5 * 60 * 1000;
 
 function isHttpRateLimitError(error: unknown) {
   const message = String((error as any)?.message || "");
   return message.includes("429");
+}
+
+async function enqueueWikimediaRequest<T>(task: () => Promise<T>) {
+  let release = () => {};
+  const prior = wikimediaRequestQueue;
+  wikimediaRequestQueue = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+
+  await prior;
+  try {
+    const now = Date.now();
+    const waitMs = Math.max(
+      0,
+      lastWikimediaRequestAt + WIKIMEDIA_REQUEST_MIN_INTERVAL_MS - now,
+      wikimediaGlobalCooldownUntil - now
+    );
+    if (waitMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+    }
+    lastWikimediaRequestAt = Date.now();
+    return await task();
+  } finally {
+    release();
+  }
+}
+
+async function enqueueWikimediaMediaRequest<T>(task: () => Promise<T>) {
+  let release = () => {};
+  const prior = wikimediaMediaRequestQueue;
+  wikimediaMediaRequestQueue = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+
+  await prior;
+  try {
+    const now = Date.now();
+    const waitMs = Math.max(
+      0,
+      lastWikimediaMediaRequestAt + WIKIMEDIA_MEDIA_REQUEST_MIN_INTERVAL_MS - now,
+      wikimediaMediaCooldownUntil - now
+    );
+    if (waitMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, waitMs));
+    }
+    lastWikimediaMediaRequestAt = Date.now();
+    return await task();
+  } finally {
+    release();
+  }
 }
 
 async function resolveOpenverseImage(query: string) {
@@ -5594,57 +6552,109 @@ async function resolveOpenverseImage(query: string) {
     .sort((a, b) => scoreReusableAsset(query, b) - scoreReusableAsset(query, a))[0] || null;
 }
 
-async function resolveWikimediaImage(query: string) {
-  const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=1200&format=json&formatversion=2`;
-  const res = await fetch(url, {
-    redirect: "follow",
-    headers: {
-      Accept: "application/json",
-      "Accept-Encoding": "identity",
-      "User-Agent": "LessonPlanGenerator/1.0",
-    },
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`Wikimedia lookup failed with status ${res.status}${body ? `: ${body.slice(0, 160)}` : ""}`);
+async function resolveWikimediaImageCandidates(query: string) {
+  for (let attempt = 0; attempt <= WIKIMEDIA_MAX_RETRIES; attempt += 1) {
+    const retryDelay = attempt === 0 ? 0 : attempt * 2500;
+    if (retryDelay > 0) {
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+    }
+    const url = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(query)}&gsrnamespace=6&gsrlimit=${PPT_IMAGE_METADATA_POOL_LIMIT}&prop=imageinfo&iiprop=url|extmetadata|size|mime&iiurlwidth=1600&format=json&formatversion=2`;
+    const res = await enqueueWikimediaRequest(() => fetch(url, {
+      redirect: "follow",
+      headers: {
+        Accept: "application/json",
+        "Accept-Encoding": "identity",
+        "User-Agent": "LessonPlanGenerator/1.0",
+      },
+    }));
+    if (!res.ok) {
+      const body = await res.text().catch(() => "");
+      if (res.status === 429 && attempt < WIKIMEDIA_MAX_RETRIES) {
+        wikimediaGlobalCooldownUntil = Math.max(
+          wikimediaGlobalCooldownUntil,
+          Date.now() + WIKIMEDIA_GLOBAL_RATE_LIMIT_COOLDOWN_MS * (attempt + 1)
+        );
+        continue;
+      }
+      if (res.status === 429) {
+        wikimediaGlobalCooldownUntil = Math.max(
+          wikimediaGlobalCooldownUntil,
+          Date.now() + WIKIMEDIA_GLOBAL_RATE_LIMIT_COOLDOWN_MS * (attempt + 1)
+        );
+      }
+      throw new Error(`Wikimedia lookup failed with status ${res.status}${body ? `: ${body.slice(0, 160)}` : ""}`);
+    }
+    const responseText = await res.text();
+    let data: any = null;
+    try {
+      data = responseText ? JSON.parse(responseText) : null;
+    } catch {
+      throw new Error(`Wikimedia returned a non-JSON response: ${responseText.slice(0, 160)}`);
+    }
+    const pages = Object.values((data as any)?.query?.pages || {}) as any[];
+    const candidates = pages
+      .map((page: any) => {
+        const info = page?.imageinfo?.[0];
+        if (!info) return null;
+        const meta = info.extmetadata || {};
+        return {
+          sourceSite: "Wikimedia Commons",
+          sourceUrl: String(info.descriptionurl || info.url || ""),
+          previewUrl: String(info.thumburl || info.url || ""),
+          licenseType: stripHtmlTags(meta?.LicenseShortName?.value || meta?.UsageTerms?.value || "Reusable"),
+          attributionText: stripHtmlTags(meta?.Artist?.value || meta?.Credit?.value || page?.title || query),
+          altText: stripHtmlTags(meta?.ImageDescription?.value || page?.title || query),
+          mimeType: String(info.mime || ""),
+          width: Number(info.width || 0),
+          height: Number(info.height || 0),
+          title: String(page?.title || ""),
+          mediaClass: "unknown",
+        };
+      })
+      .filter(Boolean)
+      .map((asset: any) => ({
+        ...asset,
+        mediaClass: classifyReusableAsset(asset),
+      }))
+      .filter((asset: any) => asset.mediaClass !== "document-scan")
+      .filter((asset: any) => passesWikimediaMetadataPrefilter(asset))
+      .map((asset: any) => ({
+        ...asset,
+        metadataScore: scoreReusableAsset(query, asset),
+      }));
+    if (!candidates.length) {
+      return [];
+    }
+    return candidates
+      .sort((a: any, b: any) => Number(b.metadataScore || 0) - Number(a.metadataScore || 0))
+      .filter((asset: any) => isReusableAssetSemanticallyRelevant(query, asset))
+      .slice(0, PPT_IMAGE_METADATA_POOL_LIMIT);
   }
-  const responseText = await res.text();
-  let data: any = null;
-  try {
-    data = responseText ? JSON.parse(responseText) : null;
-  } catch {
-    throw new Error(`Wikimedia returned a non-JSON response: ${responseText.slice(0, 160)}`);
-  }
-  const pages = Object.values((data as any)?.query?.pages || {}) as any[];
-  const candidates = pages
-    .map((page: any) => {
-      const info = page?.imageinfo?.[0];
-      if (!info) return null;
-      const meta = info.extmetadata || {};
-      return {
-        sourceSite: "Wikimedia Commons",
-        sourceUrl: String(info.descriptionurl || info.url || ""),
-        previewUrl: String(info.thumburl || info.url || ""),
-        licenseType: stripHtmlTags(meta?.LicenseShortName?.value || meta?.UsageTerms?.value || "Reusable"),
-        attributionText: stripHtmlTags(meta?.Artist?.value || meta?.Credit?.value || page?.title || query),
-        altText: stripHtmlTags(meta?.ImageDescription?.value || page?.title || query),
-      };
-    })
-    .filter(Boolean);
-  if (!candidates.length) {
-    return null;
-  }
-  return candidates
-    .sort((a: any, b: any) => scoreReusableAsset(query, b) - scoreReusableAsset(query, a))[0] || null;
+  return [];
 }
 
-async function resolveReusableImageAsset(query: string) {
+async function resolveReusableImageAsset(query: string, context: SlideVisualRerankContext = {}) {
   const normalizedQuery = String(query || "").trim();
   if (!normalizedQuery) {
     return null;
   }
+  const cachedEntry = pptAssetResolutionCache.get(normalizedQuery);
+  if (cachedEntry && typeof cachedEntry === "object" && "expiresAt" in cachedEntry) {
+    if (Number(cachedEntry.expiresAt || 0) > Date.now()) {
+      const cachedIdentity = getReusableAssetIdentity(cachedEntry.value as ReusablePptAsset | null);
+      if (!cachedIdentity || !context.usedVisualUrls?.has(cachedIdentity)) {
+        return cachedEntry.value ?? null;
+      }
+    }
+    pptAssetResolutionCache.delete(normalizedQuery);
+  }
   if (pptAssetResolutionCache.has(normalizedQuery)) {
-    return pptAssetResolutionCache.get(normalizedQuery);
+    const cachedValue = pptAssetResolutionCache.get(normalizedQuery);
+    const cachedIdentity = getReusableAssetIdentity(cachedValue as ReusablePptAsset | null);
+    if (!cachedIdentity || !context.usedVisualUrls?.has(cachedIdentity)) {
+      return cachedValue;
+    }
+    pptAssetResolutionCache.delete(normalizedQuery);
   }
   if (pptAssetResolutionInFlight.has(normalizedQuery)) {
     return pptAssetResolutionInFlight.get(normalizedQuery);
@@ -5656,30 +6666,114 @@ async function resolveReusableImageAsset(query: string) {
   }
 
   const resolutionPromise = (async () => {
-    const candidates: any[] = [];
+    const candidates: ReusablePptAsset[] = [];
+    const metadataRankedCandidates: ReusablePptAsset[] = [];
+    const rerankDebug: Record<string, any> = {
+      query: normalizedQuery,
+      candidateCountBeforeFilter: 0,
+      candidateCountAfterFilter: 0,
+      candidateShortlistSize: 0,
+      metadataPoolLimit: PPT_IMAGE_METADATA_POOL_LIMIT,
+      qwenInputLimit: PPT_IMAGE_RERANK_MAX_CANDIDATES,
+      metadataCandidates: [],
+      qwenInputCandidates: [],
+      qwenRankings: null,
+      previewFetchAttemptCount: 0,
+      rerankInvoked: false,
+      rerankSkippedReason: "",
+      selectionMode: "metadata-heuristic",
+      fallbackReason: "",
+      finalSelectedCandidate: null,
+    };
     try {
-      const openverseResult = await resolveOpenverseImage(normalizedQuery);
-      if (openverseResult) {
-      candidates.push(openverseResult);
-    }
-  } catch (error) {
-      console.warn(`[PPT Assets] Openverse lookup failed for "${normalizedQuery}":`, error);
-    }
-
-      try {
-      const wikimediaResult = await resolveWikimediaImage(normalizedQuery);
-      if (wikimediaResult) {
-      candidates.push(wikimediaResult);
-    }
-  } catch (error) {
-        if (isHttpRateLimitError(error)) {
-          pptAssetRateLimitCooldowns.set(normalizedQuery, Date.now() + PPT_ASSET_RATE_LIMIT_COOLDOWN_MS);
-        }
-      console.warn(`[PPT Assets] Wikimedia lookup failed for "${normalizedQuery}":`, error);
+      const wikimediaResults = await resolveWikimediaImageCandidates(normalizedQuery);
+      rerankDebug.candidateCountBeforeFilter = wikimediaResults.length;
+      candidates.push(...wikimediaResults);
+      rerankDebug.candidateCountAfterFilter = candidates.length;
+      metadataRankedCandidates.push(...filterUnusedVisualCandidates(candidates
+        .slice()
+        .sort((a, b) =>
+          Number(b.metadataScore || scoreReusableAsset(normalizedQuery, b)) - Number(a.metadataScore || scoreReusableAsset(normalizedQuery, a))
+        )
+        .slice(0, PPT_IMAGE_RERANK_MAX_CANDIDATES), context.usedVisualUrls));
+      rerankDebug.candidateShortlistSize = metadataRankedCandidates.length;
+      rerankDebug.metadataCandidates = candidates.map((candidate, index) => buildWikimediaCandidateDebugRecord(candidate, index));
+      rerankDebug.qwenInputCandidates = metadataRankedCandidates.map((candidate, index) => buildWikimediaCandidateDebugRecord(candidate, index));
+    } catch (error) {
+      if (isHttpRateLimitError(error)) {
+        pptAssetRateLimitCooldowns.set(normalizedQuery, Date.now() + PPT_ASSET_RATE_LIMIT_COOLDOWN_MS);
       }
+      console.warn(`[PPT Assets] Wikimedia lookup failed for "${normalizedQuery}":`, error);
+    }
 
-    const resolved = candidates.sort((a, b) => scoreReusableAsset(normalizedQuery, b) - scoreReusableAsset(normalizedQuery, a))[0] || null;
-  pptAssetResolutionCache.set(normalizedQuery, resolved);
+    let resolved: ReusablePptAsset | null = null;
+    try {
+      const reranked = await rerankWikimediaCandidatesWithQwen(metadataRankedCandidates, {
+        ...context,
+        wikimediaSearchLabel: context.wikimediaSearchLabel || normalizedQuery,
+      });
+      rerankDebug.previewFetchAttemptCount = Number(reranked.previewFetchAttemptCount || 0);
+      rerankDebug.rerankInvoked = Boolean(reranked.rerankInvoked);
+      rerankDebug.rerankSkippedReason = reranked.rerankInvoked ? "" : String(reranked.fallbackReason || "");
+      rerankDebug.qwenRankings = reranked.rankedCandidates.map((candidate) => buildWikimediaCandidateDebugRecord(candidate, candidate.candidateIndex));
+      rerankDebug.qwenRawOutput = reranked.modelOutput;
+      rerankDebug.fallbackReason = reranked.fallbackReason || "";
+      resolved = reranked.rankedCandidates.find((candidate) =>
+        Number(candidate.rerankScore || 0) >= PPT_IMAGE_RERANK_MIN_SCORE
+        && !candidate.isTextHeavy
+        && !candidate.isDiagramPage
+        && candidate.isChildFriendly !== false
+        && (!getReusableAssetIdentity(candidate) || !context.usedVisualUrls?.has(getReusableAssetIdentity(candidate)))
+      ) || null;
+      if (!resolved) {
+        rerankDebug.fallbackReason = rerankDebug.fallbackReason || "qwen-below-threshold";
+      }
+      if (resolved && reranked.rerankInvoked) {
+        rerankDebug.selectionMode = "qwen-rerank";
+      }
+    } catch (error: any) {
+      rerankDebug.fallbackReason = `qwen-error:${String(error?.message || error)}`;
+      console.warn(`[PPT Assets] Qwen rerank failed for "${normalizedQuery}":`, error);
+    }
+
+    if (!resolved) {
+      resolved = metadataRankedCandidates.length
+        ? filterUnusedVisualCandidates(metadataRankedCandidates.slice().sort((a, b) =>
+          Number(b.metadataScore || scoreReusableAsset(normalizedQuery, b)) - Number(a.metadataScore || scoreReusableAsset(normalizedQuery, a))
+        ), context.usedVisualUrls)[0] || null
+        : filterUnusedVisualCandidates(candidates.slice().sort((a, b) =>
+        Number(b.metadataScore || scoreReusableAsset(normalizedQuery, b)) - Number(a.metadataScore || scoreReusableAsset(normalizedQuery, a))
+      ), context.usedVisualUrls)[0] || null;
+      rerankDebug.selectionMode = "metadata-heuristic";
+      if (!rerankDebug.rerankSkippedReason) {
+        rerankDebug.rerankSkippedReason = String(rerankDebug.fallbackReason || "metadata-only-fallback");
+      }
+      if (["cooldown-active", "preview-fetch-429", "top-candidate-dominant", "single-candidate", "candidate-image-fetch-failed"].includes(String(rerankDebug.rerankSkippedReason || ""))) {
+        pptAssetResolutionCache.set(normalizedQuery, {
+          value: resolved,
+          expiresAt: Date.now() + PPT_ASSET_METADATA_ONLY_CACHE_TTL_MS,
+        });
+      }
+    }
+
+    rerankDebug.finalSelectedCandidate = resolved
+      ? buildWikimediaCandidateDebugRecord(resolved, 0)
+      : null;
+    if (context.debugDir && context.requestId) {
+      await writeDebugFile(
+        context.debugDir,
+        `wikimedia-rerank-${slugifyFileNamePart(`${context.slideTitle || normalizedQuery}`)}.json`,
+        rerankDebug
+      );
+    }
+    if (resolved && !["cooldown-active", "preview-fetch-429", "top-candidate-dominant", "single-candidate", "candidate-image-fetch-failed"].includes(String(rerankDebug.rerankSkippedReason || ""))) {
+      pptAssetResolutionCache.set(normalizedQuery, resolved);
+    } else if (!pptAssetResolutionCache.has(normalizedQuery)) {
+      pptAssetResolutionCache.set(normalizedQuery, {
+        value: null,
+        expiresAt: Date.now() + PPT_ASSET_MISS_CACHE_TTL_MS,
+      });
+    }
     return resolved;
   })();
 
@@ -5718,7 +6812,7 @@ function inferTemplateSlideKey(slide: any, index: number) {
     return matched.key;
   }
 
-  return KAMALANIKETAN_TEMPLATE_SLIDES[index]?.key || `template_slot_${index + 1}`;
+  return GENERIC_ADAPTIVE_SLIDE_KEYS[index] || `adaptive_slide_${index + 1}`;
 }
 
 function buildTemplateThemeTokens(ppt: any) {
@@ -5764,36 +6858,7 @@ function getPptTemplatePreset(templateId?: string | null) {
 }
 
 function shouldPreferSvgVisual(slide: any) {
-  const type = String(slide?.slideType || "").toLowerCase();
-  const key = String(slide?.templateSlideKey || "").toLowerCase();
-  const mathHint = [
-    slide?.subject,
-    slide?.slideTitle,
-    ...(Array.isArray(slide?.bulletPoints) ? slide.bulletPoints : []),
-    ...(Array.isArray(slide?.onSlideText) ? slide.onSlideText : []),
-    ...(Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : []),
-    slide?.visualPlan,
-  ]
-    .map((item: any) => renderableToExportPlainText(item))
-    .join(" ");
-  if (isMathSubject(String(slide?.subject || "")) || inferMathDiagramTypeFromText(mathHint) || /\bnumber system|rational|irrational|integer|natural number\b/i.test(mathHint)) {
-    return true;
-  }
-  return [
-    "visual-explanation",
-    "concept",
-    "worked-example",
-    "guided-practice",
-    "quick-assessment",
-    "summary",
-  ].includes(type) || [
-    "core_concept_a",
-    "core_concept_b_visual",
-    "worked_example",
-    "guided_practice",
-    "quick_assessment",
-    "summary",
-  ].includes(key);
+  return false;
 }
 
 function normalizeVisualSemanticText(slide: any) {
@@ -5838,31 +6903,252 @@ function slideNeedsTextAccurateVisual(slide: any) {
   const normalized = normalizeVisualSemanticText(slide);
   return Boolean(
     shouldPreferSvgVisual(slide) ||
-    /\bformula\b|\bequation\b|\blabel\b|\bdiagram\b|\bchart\b|\btable\b|\bcompare\b|\btsa\b|\blsa\b|\bcsa\b|\bnet\b/.test(normalized)
+    /\bformula\b|\bequation\b|\blabel(?:led)?\b|\bchart\b|\btable\b|\bcompare\b|\btsa\b|\blsa\b|\bcsa\b|\bnet\b|\bderivation\b|\bsubstitute\b/.test(normalized)
   );
 }
 
 function shouldRenderVisualForSlide(slide: any) {
-  const purpose = String(slide?.slidePurpose || slide?.templateSlideKey || slide?.slideType || "").toLowerCase();
-  const conceptKey = inferSlideConceptKey(slide);
-  const explicitPlan = String(slide?.visualPlan || "").trim();
-
-  if (conceptKey && !["practice-or-recap"].includes(conceptKey)) {
-    return true;
-  }
-
-  if (["title_identity", "lesson_hook", "core_concept_b_visual", "visual-explanation", "hook"].includes(purpose)) {
-    return true;
-  }
-
-  return Boolean(explicitPlan);
+  return Boolean(slide && typeof slide === "object");
 }
 
 function getVisualContentIdentity(slide: any) {
   const conceptKey = inferSlideConceptKey(slide) || "general";
   const title = renderableToExportPlainText(slide?.slideTitle || "").trim().toLowerCase();
   const beat = renderableToExportPlainText(slide?.teachingBeat || "").trim().toLowerCase();
-  return `${conceptKey}::${title}::${beat}`;
+  const mustTeach = (Array.isArray(slide?.mustTeach) ? slide.mustTeach : [])
+    .map((item: any) => renderableToExportPlainText(item).trim().toLowerCase())
+    .filter(Boolean)
+    .join(" | ");
+  const visualPlan = renderableToExportPlainText(slide?.visualPlan || "").trim().toLowerCase();
+  return `${conceptKey}::${title}::${beat}::${mustTeach}::${visualPlan}`;
+}
+
+function buildSlideSpecificVisualQuery(
+  slide: any,
+  sessionContext: {
+    subject?: string;
+    gradeLevel?: string;
+    sessionTitle?: string;
+  }
+) {
+  const simplifyLabel = (value: any) =>
+    renderableToExportPlainText(value)
+      .replace(/\([^)]*\)/g, " ")
+      .replace(/\b(generate|generated|create|created|render|rendered|illustration|hero|full-slide|full slide|cinematic|poster|dramatic|designed to|showing|with visible|background)\b/gi, " ")
+      .replace(/\b(session|slide|lesson|introduction|review|recap|summary|understanding|check your understanding|quick check)\b/gi, " ")
+      .replace(/\b(what|why|how|when|where)\b/gi, " ")
+      .replace(/\b(definition|examples|example|raw materials|factors affecting|key concepts|content)\b/gi, " ")
+      .replace(/\d+[\.\)]/g, " ")
+      .replace(/[-–—]/g, " ")
+      .replace(/[,:;]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const explicitLabel = simplifyLabel(slide?.searchQuery || "");
+  if (explicitLabel) {
+    return limitString(explicitLabel, 48);
+  }
+
+  const title = simplifyLabel(slide?.slideTitle || slide?.title || "");
+  const mustTeach = (Array.isArray(slide?.mustTeach) ? slide.mustTeach : [])
+    .map((item: any) => simplifyLabel(item))
+    .filter(Boolean)
+    .slice(0, 1);
+  const topicCoverage = (Array.isArray(slide?.topicCoverage) ? slide.topicCoverage : [])
+    .map((item: any) => simplifyLabel(item))
+    .filter(Boolean)
+    .slice(0, 1);
+
+  const labelParts = [
+    title,
+    topicCoverage.join(" "),
+    mustTeach.join(" "),
+  ]
+    .map((part) => String(part || "").trim())
+    .filter(Boolean);
+
+  const label = limitString(uniqueStrings(labelParts).join(" "), 48);
+
+  if (label) {
+    return label;
+  }
+
+  const conceptKey = inferSlideConceptKey(slide);
+  const subjectHints = normalizeSourceText(String(sessionContext.subject || ""));
+  if (conceptKey === "comparison" && /\bnutrition\b/.test(subjectHints + " " + normalizeVisualSemanticText(slide))) {
+    return "autotroph heterotroph comparison";
+  }
+  if (/\bphotosynthesis\b/.test(normalizeVisualSemanticText(slide))) {
+    return "photosynthesis plant leaf";
+  }
+  if (/\bstomata\b/.test(normalizeVisualSemanticText(slide))) {
+    return "leaf stomata microscope";
+  }
+  if (/\blitmus\b/.test(normalizeVisualSemanticText(slide))) {
+    return "blue red litmus paper";
+  }
+  if (/\bturmeric\b/.test(normalizeVisualSemanticText(slide))) {
+    return "turmeric powder bowl";
+  }
+  if (/\bhibiscus\b|\bchina rose\b|\bgudhal\b/.test(normalizeVisualSemanticText(slide))) {
+    return "hibiscus rosa-sinensis flower";
+  }
+  return limitString(simplifyLabel(sessionContext.subject || slide?.slideTitle || "classroom science"), 48);
+}
+
+function simplifyWikimediaLabel(label: string, fallback = "science classroom experiment") {
+  const normalized = normalizeSourceText(String(label || ""))
+    .replace(/\b(session|lesson|slide|chapter|unit|topic|summary|homework|worksheet|question|activity)\b/g, " ")
+    .replace(/\b(generate|generated|create|created|render|rendered|illustration|poster|cinematic|vector|style|simple|colorful|beautiful|explainer|diagram)\b/g, " ")
+    .replace(/[^\p{L}\p{N}\s-]/gu, " ")
+    .replace(/[-–—]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const tokens = normalized
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((token) => token.length > 1)
+    .slice(0, 6);
+  const collapsed = tokens.join(" ").trim();
+  return collapsed || fallback;
+}
+
+function buildSubsetWikimediaLabelCandidates(label: string) {
+  const normalized = simplifyWikimediaLabel(label, "").trim();
+  if (!normalized) {
+    return [];
+  }
+  const tokens = normalized.split(/\s+/).filter(Boolean);
+  const unique = new Set<string>();
+  const candidates: string[] = [];
+  const push = (value: string) => {
+    const simplified = simplifyWikimediaLabel(value, "").trim();
+    if (!simplified || unique.has(simplified)) return;
+    unique.add(simplified);
+    candidates.push(simplified);
+  };
+
+  push(normalized);
+  if (tokens.length >= 3) {
+    push(tokens.slice(0, 3).join(" "));
+    push(tokens.slice(-3).join(" "));
+  }
+  if (tokens.length >= 2) {
+    push(tokens.slice(0, 2).join(" "));
+    push(tokens.slice(-2).join(" "));
+  }
+  tokens.forEach((token) => push(token));
+  return candidates;
+}
+
+function buildWikimediaLabelCandidates(
+  slide: any,
+  sessionContext: {
+    subject?: string;
+    gradeLevel?: string;
+    sessionTitle?: string;
+  },
+  labels: Array<string | undefined | null>
+) {
+  const unique = new Set<string>();
+  const candidates: string[] = [];
+
+  const push = (value: string | undefined | null) => {
+    const simplified = simplifyWikimediaLabel(String(value || ""), "");
+    if (!simplified || unique.has(simplified)) return;
+    unique.add(simplified);
+    candidates.push(simplified);
+  };
+
+  labels.forEach((label) => {
+    buildSubsetWikimediaLabelCandidates(String(label || "")).forEach(push);
+  });
+
+  return candidates.slice(0, 8);
+}
+
+function uniquifyWikimediaLabel(
+  label: string,
+  slide: any,
+  usedLabels: Map<string, number>
+) {
+  if (!String(label || "").trim()) {
+    return "";
+  }
+  const simplified = simplifyWikimediaLabel(label, "science classroom experiment");
+  const priorCount = usedLabels.get(simplified) || 0;
+  if (priorCount === 0) {
+    usedLabels.set(simplified, 1);
+    return simplified;
+  }
+
+  const conceptKey = inferSlideConceptKey(slide);
+  const variants = [
+    conceptKey === "comparison" ? `${simplified} chart` : "",
+    /\btitle\b/.test(normalizeSourceText(renderableToExportPlainText(slide?.slidePurpose || ""))) ? "school science class" : "",
+    /\bhook\b/.test(normalizeSourceText(renderableToExportPlainText(slide?.slidePurpose || ""))) ? "science lab activity" : "",
+    /\bsummary\b|\bhomework\b|\bquick_assessment\b/.test(normalizeSourceText(renderableToExportPlainText(slide?.slidePurpose || ""))) ? "students science activity" : "",
+    simplifyWikimediaLabel(renderableToExportPlainText(slide?.slideTitle || ""), ""),
+  ].filter(Boolean);
+
+  for (const variant of variants) {
+    if (!usedLabels.has(variant)) {
+      usedLabels.set(variant, 1);
+      return variant;
+    }
+  }
+
+  usedLabels.set(simplified, priorCount + 1);
+  return simplified;
+}
+
+function deriveFallbackWikimediaLabel(
+  slide: any,
+  sessionContext: {
+    subject?: string;
+    gradeLevel?: string;
+    sessionTitle?: string;
+  }
+) {
+  const normalized = normalizeVisualSemanticText(slide);
+  const purpose = normalizeSourceText(renderableToExportPlainText(slide?.slidePurpose || slide?.templateSlideKey || slide?.slideType || ""));
+  const conceptKey = inferSlideConceptKey(slide);
+
+  if (/\brefraction\b|\bbending of light\b/.test(normalized)) return "light refraction glass";
+  if (/\breflection\b/.test(normalized)) return "light reflection mirror";
+  if (/\bprism\b/.test(normalized)) return "glass prism rainbow";
+  if (/\blens\b/.test(normalized) && /\bconvex\b/.test(normalized)) return "convex lens";
+  if (/\blens\b/.test(normalized) && /\bconcave\b/.test(normalized)) return "concave lens";
+  if (/\blight ray\b|\bray diagram\b|\bincident ray\b|\brefracted ray\b|\bnormal line\b/.test(normalized)) return "light ray";
+  if (/\bphotosynthesis\b/.test(normalized)) return "green leaf sunlight";
+  if (/\bstomata\b/.test(normalized)) return "leaf stomata microscope";
+  if (/\brespiration\b/.test(normalized)) return "human lungs breathing";
+  if (/\blitmus\b/.test(normalized)) return "litmus paper colors";
+  if (/\bturmeric\b/.test(normalized)) return "turmeric powder bowl";
+  if (/\bhibiscus\b|\bchina rose\b|\bgudhal\b/.test(normalized)) return "hibiscus flower";
+  if (/\bonion\b/.test(normalized) || /\bvanilla\b/.test(normalized)) return "onion bulb vanilla";
+  if (/\bneutralization\b/.test(normalized) || /\bacid\b/.test(normalized) && /\bbase\b/.test(normalized)) return "acid base beaker";
+  if (/\bautotrophic\b/.test(normalized) || /\bheterotrophic\b/.test(normalized) || conceptKey === "comparison") return "plant leaf and cow";
+  if (/\bnutrition\b/.test(normalized) && /\bplant\b/.test(normalized)) return "green plant leaf";
+  if (/\bnutrition\b/.test(normalized) && /\banimal\b/.test(normalized)) return "animal eating food";
+  if (purpose.includes("title") || purpose.includes("hook") || purpose.includes("summary") || purpose.includes("quick_assessment") || purpose.includes("homework")) {
+    return "science classroom experiment";
+  }
+
+  return simplifyWikimediaLabel(buildSlideSpecificVisualQuery({
+    ...slide,
+    searchQuery: "",
+  }, sessionContext));
+}
+
+function isBadWikimediaLabel(label: string) {
+  const normalized = normalizeSourceText(String(label || ""));
+  if (!normalized) return true;
+  const tokenCount = normalized.split(/\s+/).filter(Boolean).length;
+  if (tokenCount < 2 || tokenCount > 8) return true;
+  if (normalized.length > 56) return true;
+
+  return /\b(educational|illustration|render|generated|cinematic|poster|split screen|white background|classroom diagram|process diagram|flowchart|vector style|icon|icons|session|lesson|slide|summary|quick check|check your understanding|beautiful|colorful|labeled|labelled|simple vector|checklist|notebook|pencil)\b/.test(normalized);
 }
 
 function validateResolvedSlideVisual(
@@ -6128,18 +7414,6 @@ function buildSolid3DMathSvgDiagram(slide: any, themeTokens: any) {
 }
 
 function slideRequiresVisual(slide: any) {
-  const explicitVisual = Boolean(
-    String(slide?.visualPlan || "").trim() ||
-    (Array.isArray(slide?.assets) && slide.assets.length > 0) ||
-    String(slide?.svgDiagram?.title || "").trim() ||
-    String(slide?.svgDiagram?.type || "").trim() ||
-    (Array.isArray(slide?.svgDiagram?.instructions) && slide.svgDiagram.instructions.length > 0) ||
-    String(slide?.visualAttribution?.visualPlan || "").trim() ||
-    String(slide?.visualAttribution?.svgDiagram?.search || "").trim()
-  );
-  if (explicitVisual) {
-    return shouldRenderVisualForSlide(slide);
-  }
   return shouldRenderVisualForSlide(slide);
 }
 
@@ -6197,7 +7471,6 @@ function buildFallbackSvgDiagram(slide: any, themeTokens: any) {
     if (mathSvg) {
       return mathSvg;
     }
-    return "";
   }
   const title = xmlEscape(renderableToExportPlainText(slide?.slideTitle || "Concept Diagram"));
   const rawItems = Array.isArray(slide?.onSlideText) && slide.onSlideText.length > 0
@@ -6299,27 +7572,11 @@ function inferAdaptiveSlidePurpose(slide: any, index: number) {
 }
 
 function shouldUseLocalGeneratedPptImage(slide: any) {
-  if (shouldPreferSvgVisual(slide)) return false;
-  const purpose = inferAdaptiveSlidePurpose(slide, Math.max(0, Number(slide?.slideNumber || 1) - 1));
-  const text = [
-    slide?.slideTitle,
-    slide?.visualPlan,
-    slide?.teacherIntent,
-    slide?.studentTakeaway,
-  ].map((item: any) => renderableToExportPlainText(item)).join(" ").toLowerCase();
-  return (
-    ["title_identity", "lesson_hook", "topic_introduction"].includes(purpose) ||
-    Boolean(String(slide?.visualDecision || "").trim() === "local-generated-image") ||
-    Boolean(String(slide?.visualPlan || "").trim()) ||
-    /\b(hero|scene|illustration|context|observation|real world|photo|classroom-safe image)\b/.test(text)
-  );
+  return false;
 }
 
 function chooseLocalPptImageModel(slide: any) {
-  const purpose = inferAdaptiveSlidePurpose(slide, Math.max(0, Number(slide?.slideNumber || 1) - 1));
-  return ["title_identity", "lesson_hook"].includes(purpose)
-    ? "x/z-image-turbo:bf16"
-    : "x/flux2-klein:9b";
+  return "";
 }
 
 async function persistPptVisualAsset(
@@ -6406,7 +7663,7 @@ function summarizePptDeckQuality(ppt: any) {
 
     if (slide?.visualResolved && slide?.visualRelevanceStatus === "valid") {
       const asset = Array.isArray(slide?.assets) ? slide.assets[0] : null;
-      const identity = String(asset?.promptHash || slide?.svgDiagram?.svgCode || "").trim();
+      const identity = String(asset?.sourceUrl || asset?.previewUrl || asset?.promptHash || slide?.svgDiagram?.svgCode || "").trim();
       const conceptKey = String(slide?.svgDiagram?.conceptKey || asset?.conceptKey || inferSlideConceptKey(slide) || "general");
       if (identity) {
         const priorConcept = seenVisualIdentities.get(identity);
@@ -6427,6 +7684,53 @@ function summarizePptDeckQuality(ppt: any) {
   };
 }
 
+function enforceResolvedPptVisualIntegrity(slides: any[]) {
+  const seenVisualIdentities = new Map<string, string>();
+
+  return slides.map((slide: any) => {
+    if (!slide?.visualResolved || slide?.visualRelevanceStatus !== "valid") {
+      return slide;
+    }
+
+    const asset = Array.isArray(slide?.assets) ? slide.assets[0] : null;
+    const identity = String(asset?.sourceUrl || asset?.previewUrl || asset?.promptHash || slide?.svgDiagram?.svgCode || "").trim();
+    const conceptKey = String(slide?.svgDiagram?.conceptKey || asset?.conceptKey || inferSlideConceptKey(slide) || "general");
+
+    if (!identity) {
+      return slide;
+    }
+
+    const priorConcept = seenVisualIdentities.get(identity);
+    if (priorConcept && priorConcept !== conceptKey) {
+      return {
+        ...slide,
+        visualDecision: "none",
+        visualResolved: false,
+        visualRelevanceStatus: "duplicate",
+        assets: Array.isArray(slide?.assets)
+          ? slide.assets.map((asset: any) => ({
+              ...asset,
+              imageDataUrl: "",
+              previewUrl: "",
+              sourceUrl: "",
+              mimeType: "",
+              model: "",
+              sourceKind: "none",
+            }))
+          : [],
+        svgDiagram: null,
+        qualityFlags: dedupeRenderableValues([
+          ...(Array.isArray(slide?.qualityFlags) ? slide.qualityFlags : []),
+          "visual-duplicate",
+        ]),
+      };
+    }
+
+    seenVisualIdentities.set(identity, conceptKey);
+    return slide;
+  });
+}
+
 async function resolvePptSlideAssets(
   requestId: string,
   debugDir: string,
@@ -6435,36 +7739,80 @@ async function resolvePptSlideAssets(
     subject?: string;
     gradeLevel?: string;
     sessionTitle?: string;
+  },
+  resolutionState?: {
+    usedVisualUrls?: Set<string>;
   }
 ) {
   const slideTitle = renderableToExportPlainText(slide?.slideTitle || slide?.title || "Slide visual");
   if (!slideRequiresVisual(slide)) {
     return [];
   }
+  const persistedLabel = renderableToExportPlainText(slide?.wikimediaSearchLabel || "").trim();
   const existingAssets = Array.isArray(slide?.assets) && slide.assets.length > 0
     ? slide.assets
     : [{
         purpose: `Support visual explanation for ${slideTitle}`,
-        searchQuery: `${sessionContext.subject || "classroom"} ${slideTitle} diagram`,
-        sourceSite: "Reusable web image",
+        searchQuery: persistedLabel,
+        sourceSite: "Wikimedia Commons",
         sourceUrl: "",
-        licenseType: "Internally generated",
+        licenseType: "Reusable Wikimedia asset",
         attributionText: "",
         altText: `Illustration or diagram for ${slideTitle}`,
         placementHint: "Right panel or supporting visual zone",
       }];
 
   const preferSvg = shouldPreferSvgVisual(slide);
-  const normalizedAssets = await Promise.all(existingAssets.map(async (asset: any) => {
-    const searchQuery = renderableToExportPlainText(asset?.searchQuery || `${sessionContext.subject || "classroom"} ${slideTitle} diagram`);
+  const assetDebugEntries: any[] = [];
+  const normalizedAssets: any[] = [];
+  for (let assetIndex = 0; assetIndex < existingAssets.length; assetIndex += 1) {
+    const asset = existingAssets[assetIndex];
+    const modelLabel = renderableToExportPlainText(asset?.searchQuery || "").trim();
+    const persistedLabelIsBad = isBadWikimediaLabel(persistedLabel);
+    const modelLabelIsBad = isBadWikimediaLabel(modelLabel);
+    const exactQuery = persistedLabel
+      ? persistedLabel
+      : modelLabel
+      ? modelLabel
+      : "";
+    const queryCandidates = exactQuery
+      ? buildWikimediaLabelCandidates(slide, sessionContext, [exactQuery])
+      : [];
+    const searchQuery = exactQuery;
     const needsResolution =
       !asset?.sourceUrl ||
       String(asset.sourceUrl).includes("example.com") ||
       !asset?.previewUrl;
 
     let resolved = null;
+    let resolvedQuery = searchQuery;
+    let retryQuery = "";
     if (USE_REMOTE_PPT_ASSETS && !preferSvg && needsResolution && !shouldUseLocalGeneratedPptImage(slide)) {
-      resolved = await resolveReusableImageAsset(searchQuery);
+      for (const candidateQuery of queryCandidates) {
+        const candidateResolved = await resolveReusableImageAsset(candidateQuery, {
+          slideTitle,
+          wikimediaSearchLabel: candidateQuery,
+          teachingIntent: renderableToExportPlainText(slide?.teacherIntent || slide?.teachingBeat || slide?.visualPlan || "").trim(),
+          subject: sessionContext.subject,
+          gradeLevel: sessionContext.gradeLevel,
+          requestId,
+          debugDir,
+          usedVisualUrls: resolutionState?.usedVisualUrls,
+        });
+        const candidateUrl = String(candidateResolved?.sourceUrl || candidateResolved?.previewUrl || "").trim();
+        if (candidateResolved && candidateUrl && resolutionState?.usedVisualUrls?.has(candidateUrl)) {
+          retryQuery = candidateQuery;
+          continue;
+        }
+        if (candidateResolved) {
+          resolved = candidateResolved;
+          resolvedQuery = candidateQuery;
+          break;
+        }
+        if (!retryQuery) {
+          retryQuery = candidateQuery;
+        }
+      }
     }
 
     const assetImageDataUrl = typeof asset?.imageDataUrl === "string" ? asset.imageDataUrl : "";
@@ -6473,10 +7821,10 @@ async function resolvePptSlideAssets(
     const finalAsset: Record<string, any> = {
       purpose: renderableToExportPlainText(asset?.purpose || `Support visual explanation for ${slideTitle}`),
       searchQuery,
-      sourceSite: renderableToExportPlainText(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "Reusable web image")),
+      sourceSite: renderableToExportPlainText(asset?.sourceSite || resolved?.sourceSite || (preferSvg ? "Internal SVG" : "Wikimedia Commons")),
       sourceUrl: "",
       previewUrl: assetImageDataUrl || "",
-      licenseType: renderableToExportPlainText(asset?.licenseType || resolved?.licenseType || (preferSvg ? "Internal SVG diagram" : "Reusable web image")),
+      licenseType: renderableToExportPlainText(asset?.licenseType || resolved?.licenseType || (preferSvg ? "Internal SVG diagram" : "Reusable Wikimedia asset")),
       attributionText: "",
       altText: renderableToExportPlainText(asset?.altText || resolved?.altText || `Illustration or diagram for ${slideTitle}`),
       placementHint: renderableToExportPlainText(asset?.placementHint || "Right panel or supporting visual zone"),
@@ -6487,7 +7835,7 @@ async function resolvePptSlideAssets(
       promptHash: typeof asset?.promptHash === "string" ? asset.promptHash : "",
       sourceKind: String(
         assetImageDataUrl
-          ? (asset?.sourceKind || "generated-image")
+          ? (asset?.sourceKind || "reusable-external")
           : preferSvg
           ? "svg-diagram"
           : "none"
@@ -6496,10 +7844,43 @@ async function resolvePptSlideAssets(
 
     const hasUsableVisual = Boolean(finalAsset.imageDataUrl);
     if (!preferSvg && hasUsableVisual) {
-      return finalAsset;
+      assetDebugEntries.push({
+        assetIndex,
+        modelSearchLabel: modelLabel,
+        persistedSearchLabel: persistedLabel,
+        persistedLabelIsBad,
+        modelLabelIsBad,
+        regeneratedSearchLabel: "",
+        shouldRegenerateLabel: false,
+        queryMode: "wikimedia-label-only",
+        effectiveSearchQuery: resolvedQuery,
+        retrySearchQuery: retryQuery,
+        preferSvg,
+        needsResolution,
+        resolution: "inline-image-data",
+        sourceKind: finalAsset.sourceKind,
+      });
+      normalizedAssets.push(finalAsset);
+      continue;
     }
     if (preferSvg) {
-      return {
+      assetDebugEntries.push({
+        assetIndex,
+        modelSearchLabel: modelLabel,
+        persistedSearchLabel: persistedLabel,
+        persistedLabelIsBad,
+        modelLabelIsBad,
+        regeneratedSearchLabel: "",
+        shouldRegenerateLabel: false,
+        queryMode: "wikimedia-label-only",
+        effectiveSearchQuery: resolvedQuery,
+        retrySearchQuery: retryQuery,
+        preferSvg,
+        needsResolution,
+        resolution: "svg-preferred",
+        sourceKind: "svg-diagram",
+      });
+      normalizedAssets.push({
         ...finalAsset,
         sourceSite: "Internal SVG",
         sourceUrl: "",
@@ -6509,72 +7890,68 @@ async function resolvePptSlideAssets(
         model: "",
         licenseType: "Internal SVG diagram",
         sourceKind: "svg-diagram",
-      };
-    }
-
-    if (shouldUseLocalGeneratedPptImage(slide)) {
-      try {
-        const generated = await generateImageWithOllama(
-          requestId,
-          debugDir,
-          `${safeStageName(slideTitle)}-local-ppt-visual`,
-          searchQuery,
-          {
-            subject: sessionContext.subject,
-            gradeLevel: sessionContext.gradeLevel,
-            model: chooseLocalPptImageModel(slide),
-          }
-        );
-        const persisted = await persistPptVisualAsset(
-          slide,
-          {
-            imageDataUrl: generated.imageDataUrl,
-            mimeType: generated.mimeType,
-            model: generated.model,
-            purpose: finalAsset.purpose,
-            altText: finalAsset.altText,
-            sourceKind: "generated-image",
-          },
-          sessionContext
-        );
-        return {
-          ...finalAsset,
-          assetId: persisted.assetId,
-          storagePath: persisted.storagePath,
-          promptHash: persisted.promptHash,
-          sourceSite: "Local PPT image generation",
-          sourceUrl: persisted.storagePath ? `file:${persisted.storagePath}` : "",
-          previewUrl: "",
-          imageDataUrl: generated.imageDataUrl,
-          mimeType: generated.mimeType,
-          model: generated.model,
-          licenseType: "Local generated asset",
-          attributionText: "",
-          generator: "local-ollama-image",
-          sourceKind: "generated-image",
-        };
-      } catch (error) {
-        console.warn(`[PPT Assets] Local image generation failed for "${slideTitle}". Returning no visual instead.`, error);
-      }
+      });
+      continue;
     }
 
     if (resolved?.previewUrl || resolved?.sourceUrl) {
-      return {
+      assetDebugEntries.push({
+        assetIndex,
+        modelSearchLabel: modelLabel,
+        persistedSearchLabel: persistedLabel,
+        persistedLabelIsBad,
+        modelLabelIsBad,
+        regeneratedSearchLabel: "",
+        shouldRegenerateLabel: false,
+        queryMode: "wikimedia-label-only",
+        effectiveSearchQuery: resolvedQuery,
+        retrySearchQuery: retryQuery,
+        preferSvg,
+        needsResolution,
+        resolution: "wikimedia-hit",
+        sourceKind: "reusable-external",
+        resolvedPreviewUrl: String(resolved.previewUrl || ""),
+        resolvedSourceUrl: String(resolved.sourceUrl || ""),
+        resolvedAltText: renderableToExportPlainText(resolved.altText || ""),
+      });
+      normalizedAssets.push({
         ...finalAsset,
-        sourceSite: renderableToExportPlainText(resolved.sourceSite || "Reusable web image"),
+        searchQuery: resolvedQuery,
+        sourceSite: renderableToExportPlainText(resolved.sourceSite || "Wikimedia Commons"),
         sourceUrl: String(resolved.sourceUrl || ""),
         previewUrl: String(resolved.previewUrl || resolved.sourceUrl || ""),
-        licenseType: renderableToExportPlainText(resolved.licenseType || "Reusable web image"),
+        licenseType: renderableToExportPlainText(resolved.licenseType || "Reusable Wikimedia asset"),
         attributionText: renderableToExportPlainText(resolved.attributionText || ""),
         altText: renderableToExportPlainText(resolved.altText || finalAsset.altText || `Illustration or diagram for ${slideTitle}`),
         imageDataUrl: "",
         mimeType: "",
-        model: "openverse-or-wikimedia",
+        model: "wikimedia-commons",
         sourceKind: "reusable-external",
-      };
+      });
+      const resolvedUrl = String(resolved.sourceUrl || resolved.previewUrl || "").trim();
+      if (resolvedUrl) {
+        resolutionState?.usedVisualUrls?.add(resolvedUrl);
+      }
+      continue;
     }
 
-    return {
+      assetDebugEntries.push({
+      assetIndex,
+      modelSearchLabel: modelLabel,
+      persistedSearchLabel: persistedLabel,
+      persistedLabelIsBad,
+      modelLabelIsBad,
+      regeneratedSearchLabel: "",
+      shouldRegenerateLabel: false,
+      queryMode: "wikimedia-label-only",
+      effectiveSearchQuery: resolvedQuery,
+      retrySearchQuery: retryQuery,
+      preferSvg,
+      needsResolution,
+      resolution: "wikimedia-miss",
+      sourceKind: "none",
+    });
+    normalizedAssets.push({
       ...finalAsset,
       qualityFlags: ["visual-missing"],
       sourceKind: "none",
@@ -6586,10 +7963,26 @@ async function resolvePptSlideAssets(
       previewUrl: "",
       mimeType: "",
       model: "",
-    };
-  }));
+    });
+  }
 
-  return normalizedAssets.filter((asset: any) => String(asset?.sourceKind || "") !== "none");
+  const filteredAssets = normalizedAssets.filter((asset: any) => String(asset?.sourceKind || "") !== "none");
+  const slideDebugLog = {
+    requestId,
+    slideTitle,
+    slidePurpose: renderableToExportPlainText(slide?.slidePurpose || slide?.templateSlideKey || ""),
+    assetCountFromModel: existingAssets.length,
+    keptAssetCount: filteredAssets.length,
+    assetDebugEntries,
+  };
+  console.log(`[PPT Assets][${requestId}] ${slideTitle} -> ${JSON.stringify(slideDebugLog)}`);
+  await writeDebugFile(
+    debugDir,
+    `ppt-assets-${slugifyFileNamePart(slideTitle || "slide-visual")}.json`,
+    slideDebugLog
+  );
+
+  return filteredAssets;
 }
 
 async function normalizePptMaterial(ppt: any, sessionContext: {
@@ -6600,6 +7993,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
   selectedChapters?: string[];
   requestId?: string;
   debugDir?: string;
+  resolveVisuals?: boolean;
   generationOptions?: {
     pptTemplateId?: string;
     pptThemeId?: string;
@@ -6655,6 +8049,9 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
   });
   const rawSlides = Array.isArray(ppt.slides) ? ppt.slides : [];
   const normalizedSlides: any[] = [];
+  const usedWikimediaLabels = new Map<string, number>();
+  const usedVisualUrls = new Set<string>();
+  const shouldResolveVisuals = sessionContext.resolveVisuals === true;
 
   for (let index = 0; index < rawSlides.length; index += 1) {
     const slide = rawSlides[index];
@@ -6676,6 +8073,20 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       ? slide.topicCoverage.map((item: any) => String(item))
       : (sessionContext.selectedChapters || []);
     const slideTitleText = renderableTextLabel(slideTitle, `Slide ${index + 1}`);
+    const persistedLabel = renderableTextLabel(slide?.wikimediaSearchLabel || "", "");
+    const modelPlanningLabel = Array.isArray(slide?.assets)
+      ? renderableTextLabel(slide.assets.find((asset: any) => asset?.searchQuery)?.searchQuery || "", "")
+      : "";
+    const baseChosenWikimediaLabel = !isBadWikimediaLabel(persistedLabel)
+      ? simplifyWikimediaLabel(persistedLabel, "")
+      : !isBadWikimediaLabel(modelPlanningLabel)
+      ? simplifyWikimediaLabel(modelPlanningLabel, "")
+      : "";
+    const chosenWikimediaLabel = uniquifyWikimediaLabel(baseChosenWikimediaLabel, {
+      ...slide,
+      slideTitle,
+      slidePurpose,
+    }, usedWikimediaLabels);
     const effectiveVisualPlan = String(slide?.visualPlan || "").trim() || (
       shouldRenderVisualForSlide({
         ...slide,
@@ -6692,31 +8103,52 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
           )
         : ""
     );
-    const normalizedAssets = await resolvePptSlideAssets(
-      sessionContext.requestId || makeRequestId("ppt-assets"),
-      sessionContext.debugDir || DEBUG_OUTPUT_DIR,
-      {
-        ...slide,
-        slideTitle,
-        slidePurpose,
-        visualPlan: effectiveVisualPlan,
-        templateSlideKey: preserveRenderableValue(slide?.templateSlideKey || slidePurpose, slidePurpose),
-        subject: sessionContext.subject,
-      },
-      sessionContext
-    );
+    const normalizedAssets = shouldResolveVisuals
+      ? await resolvePptSlideAssets(
+          sessionContext.requestId || makeRequestId("ppt-assets"),
+          sessionContext.debugDir || DEBUG_OUTPUT_DIR,
+          {
+            ...slide,
+            slideTitle,
+            slidePurpose,
+            visualPlan: effectiveVisualPlan,
+            templateSlideKey: preserveRenderableValue(slide?.templateSlideKey || slidePurpose, slidePurpose),
+            subject: sessionContext.subject,
+          },
+          sessionContext,
+          {
+            usedVisualUrls,
+          }
+        )
+      : (Array.isArray(slide?.assets) ? slide.assets : []).map((asset: any) => ({
+          ...asset,
+          conceptKey: inferSlideConceptKey(slide),
+          searchQuery: renderableTextLabel(asset?.searchQuery || chosenWikimediaLabel || "", chosenWikimediaLabel),
+          sourceKind: String(asset?.sourceKind || "none"),
+          previewUrl: String(asset?.previewUrl || ""),
+          sourceUrl: String(asset?.sourceUrl || ""),
+          imageDataUrl: String(asset?.imageDataUrl || ""),
+          mimeType: String(asset?.mimeType || ""),
+          model: String(asset?.model || ""),
+        }));
     const rawSvgCode = String(slide?.svgDiagram?.svgCode || "").trim();
-    const shouldUseSvg = shouldPreferSvgVisual({
-      ...slide,
-      templateSlideKey: preserveRenderableValue(slide?.templateSlideKey || slidePurpose, slidePurpose),
-      subject: sessionContext.subject,
-    });
-    const svgCode = rawSvgCode || (shouldUseSvg ? buildFallbackSvgDiagram({
+    const svgFallbackCode = rawSvgCode || buildFallbackSvgDiagram({
       ...slide,
       slideTitle,
       templateSlideKey: preserveRenderableValue(slide?.templateSlideKey || slidePurpose, slidePurpose),
       subject: sessionContext.subject,
-    }, themeTokens) : "");
+    }, themeTokens);
+    const shouldUseSvg = slideNeedsTextAccurateVisual({
+      ...slide,
+      templateSlideKey: preserveRenderableValue(slide?.templateSlideKey || slidePurpose, slidePurpose),
+      subject: sessionContext.subject,
+    });
+    const preferredImageAsset = normalizedAssets.find((asset: any) => ["reusable-external"].includes(String(asset?.sourceKind || ""))) || null;
+    const preferredVisualCandidate = preferredImageAsset
+      ? preferredImageAsset
+      : shouldUseSvg && svgFallbackCode
+      ? { svgCode: svgFallbackCode, sourceKind: "svg-diagram" }
+      : null;
     const initialVisualValidation = validateResolvedSlideVisual(
       {
         ...slide,
@@ -6728,9 +8160,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
         templateSlideKey: preserveRenderableValue(slide?.templateSlideKey || slidePurpose, slidePurpose),
         subject: sessionContext.subject,
       },
-      shouldUseSvg
-        ? { svgCode, sourceKind: "svg-diagram" }
-        : normalizedAssets.find((asset: any) => ["generated-image", "reusable-external"].includes(String(asset?.sourceKind || "")))
+      preferredVisualCandidate
     );
     const presentationCopy = buildLeanPresentationCopy({
       slide,
@@ -6751,6 +8181,13 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       ...presentationCopy.qualityFlags,
     ];
 
+    const planningAssets = normalizedAssets.map((asset: any) => ({
+      ...asset,
+      conceptKey: initialVisualValidation.conceptKey,
+      visualRelevanceStatus: initialVisualValidation.visualResolved
+        ? "valid"
+        : initialVisualValidation.visualRelevanceStatus || "none",
+    }));
     const resolvedAssets = initialVisualValidation.visualResolved
       ? normalizedAssets.map((asset: any) => ({
           ...asset,
@@ -6758,12 +8195,12 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
           visualRelevanceStatus: "valid",
         }))
       : [];
-    const resolvedSvgDiagram = initialVisualValidation.visualResolved && shouldUseSvg && svgCode
+    const resolvedSvgDiagram = initialVisualValidation.visualResolved && shouldUseSvg && !preferredImageAsset && svgFallbackCode
       ? (
           slide?.svgDiagram
             ? {
                 ...slide.svgDiagram,
-                svgCode,
+                svgCode: svgFallbackCode,
                 conceptKey: initialVisualValidation.conceptKey,
                 visualRelevanceStatus: "valid",
               }
@@ -6774,7 +8211,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
                   "Keep the slide visual uncluttered and instructionally precise.",
                   "Use SVG/native slide text whenever exact labels or formulas matter.",
                 ],
-                svgCode,
+                svgCode: svgFallbackCode,
                 conceptKey: initialVisualValidation.conceptKey,
                 visualRelevanceStatus: "valid",
               }
@@ -6793,16 +8230,22 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
         : bulletPoints.slice(0, 4),
       visualDecision: !initialVisualValidation.visualResolved
         ? "none"
-        : shouldUseSvg
+        : !preferredImageAsset
         ? "svg-programmatic"
-        : normalizedAssets.some((asset: any) => asset?.sourceKind === "generated-image")
-        ? "local-generated-image"
         : normalizedAssets.some((asset: any) => asset?.sourceKind === "reusable-external")
         ? "reusable-external"
         : "none",
       visualResolved: initialVisualValidation.visualResolved,
       visualRelevanceStatus: initialVisualValidation.visualRelevanceStatus,
       qualityFlags,
+      layoutIntent: inferSlideLayoutIntent({
+        ...slide,
+        slidePurpose,
+        visualResolved: initialVisualValidation.visualResolved,
+      }),
+      presentonTemplateHint: "",
+      presentonMarkdown: "",
+      resolvedVisualAssetRefs: [],
       templateId: choosePptSlideTemplateId(
         {
           ...slide,
@@ -6837,13 +8280,19 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       bulletPoints: presentationCopy.bulletPoints,
       onSlideText: presentationCopy.onSlideText,
       speakerNotes: presentationCopy.speakerNotes,
+      wikimediaSearchLabel: preserveRenderableValue(chosenWikimediaLabel),
       visualPlan: slideRequiresVisual(slide)
         ? preserveRenderableValue(
             effectiveVisualPlan ||
             `Use a precise classroom visual for ${slideTitleText} only when it materially improves understanding.`
           )
         : "",
-      assets: slideRequiresVisual(slide) ? resolvedAssets : [],
+      assets: slideRequiresVisual(slide)
+        ? (resolvedAssets.length > 0 ? resolvedAssets : planningAssets).map((asset: any) => ({
+            ...asset,
+            searchQuery: chosenWikimediaLabel,
+          }))
+        : [],
       svgDiagram: !slideRequiresVisual(slide)
         ? null
         : resolvedSvgDiagram,
@@ -6854,6 +8303,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     } as any;
 
     normalizedSlide.speakerNotes = buildDefaultPptSpeakerNotes(normalizedSlide);
+    normalizedSlide.presentonTemplateHint = mapPresentonTemplateHint(normalizedSlide);
     normalizedSlides.push(normalizedSlide);
   }
 
@@ -6863,7 +8313,13 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       teachingBeat: "Introduce the lesson clearly.",
       mustTeach: sessionContext.selectedChapters || [sessionContext.sessionTitle || "Session lesson"],
       visualDecision: "none",
+      visualResolved: false,
+      visualRelevanceStatus: "none",
       qualityFlags: ["generated-placeholder"],
+      layoutIntent: "text-led-minimal",
+      presentonTemplateHint: "text-light",
+      presentonMarkdown: "",
+      resolvedVisualAssetRefs: [],
       templateId: templatePreset.templateId,
       templateSlideKey: "title_identity",
       templateSlideTitle: "title identity",
@@ -6879,6 +8335,7 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
       bulletPoints: sessionContext.selectedChapters?.slice(0, 3) || [],
       onSlideText: [preserveRenderableValue(ppt?.presentationTitle || ppt?.title || sessionContext.sessionTitle || "Session Presentation")],
       speakerNotes: ["Open the lesson and state the learning purpose clearly."],
+      wikimediaSearchLabel: "",
       visualPlan: "",
       assets: [],
       svgDiagram: null,
@@ -6887,8 +8344,9 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     });
   }
 
-  const deckQuality = summarizePptDeckQuality({ slides: normalizedSlides });
-  return {
+  const integrityCheckedSlides = enforceResolvedPptVisualIntegrity(normalizedSlides);
+  const deckQuality = summarizePptDeckQuality({ slides: integrityCheckedSlides });
+  const normalizedPpt = {
     deckMode: "teacher-delivery",
     deckReadiness: deckQuality.deckReadiness,
     coverageStatus: deckQuality.coverageStatus,
@@ -6908,19 +8366,19 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
     audience: preserveRenderableValue(ppt?.audience || `${sessionContext.gradeLevel || "Grade-aligned"} classroom`),
     theme: preserveRenderableValue(ppt?.theme || themeTokens.themeName, themeTokens.themeName),
     assetSearchPlan: {
-      preferredSources: ["Internal SVG", "Local generated image"],
+      preferredSources: ["Wikimedia Commons", "Internal SVG fallback"],
       safeSearch: typeof ppt?.assetSearchPlan?.safeSearch === "boolean" ? ppt.assetSearchPlan.safeSearch : true,
-      licensingNotes: ["Use local generated images and in-app SVG/native slide text only."],
+      licensingNotes: ["Use Wikimedia Commons images by default and use in-app SVG/native slide text only as a fallback."],
       fallbackStrategy: preserveRenderableValue(
         ppt?.assetSearchPlan?.fallbackStrategy ||
-        "Prefer SVG diagrams for concept/process slides and use local generated images only for picture-based visuals that do not require exact text."
+        "Prefer Wikimedia Commons images for nearly all visual slides and fall back to SVG/native slide text only when no suitable Wikimedia image is available."
       ),
     },
     licenseChecklist: Array.isArray(ppt?.licenseChecklist) && ppt.licenseChecklist.length > 0
       ? ppt.licenseChecklist
       : [
-          "All visuals should be locally generated or rendered as in-app SVG diagrams.",
-          "Review generated visuals for classroom accuracy before export.",
+          "All non-SVG visuals should be selected from Wikimedia Commons unless an SVG fallback is unavoidable.",
+          "Review Wikimedia-selected visuals for classroom accuracy before export.",
           "Do not keep rasterized labels, formulas, or chart text in the final deck.",
         ],
     presentationWarnings: Array.isArray(ppt?.presentationWarnings) && ppt.presentationWarnings.length > 0
@@ -6943,8 +8401,20 @@ async function normalizePptMaterial(ppt: any, sessionContext: {
         ? ppt.coverageSummary.omittedContent
         : [],
     },
-    slides: normalizedSlides,
+    slides: integrityCheckedSlides,
   };
+  const deckSpec = await buildTeacherDeckSpecFromNormalizedPpt(normalizedPpt, {
+    subject: sessionContext.subject,
+    gradeLevel: sessionContext.gradeLevel,
+  });
+  normalizedPpt.slides = normalizedPpt.slides.map((slide: any, index: number) => ({
+    ...slide,
+    layoutIntent: deckSpec.slides[index]?.layoutIntent || slide.layoutIntent || "text-led-minimal",
+    presentonTemplateHint: deckSpec.slides[index]?.presentonTemplateHint || slide.presentonTemplateHint || "text-light",
+    presentonMarkdown: deckSpec.slides[index]?.presentonMarkdown || slide.presentonMarkdown || "",
+    resolvedVisualAssetRefs: deckSpec.slides[index]?.resolvedVisualAssetRefs || slide.resolvedVisualAssetRefs || [],
+  }));
+  return normalizedPpt;
 }
 
 const PPT_NOTES_MASTER_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -6989,15 +8459,46 @@ function decodeDataUrl(dataUrl: string) {
 }
 
 async function fetchBinaryAsset(url: string) {
-  const response = await fetch(url);
-  if (!response.ok) {
+  const normalizedUrl = String(url || "").trim();
+  if (!normalizedUrl) {
+    throw new Error("Unable to fetch asset: missing URL");
+  }
+  const cached = remoteBinaryAssetCache.get(normalizedUrl);
+  if (cached) {
+    return cached;
+  }
+  const isWikimediaAsset = /(^https?:\/\/)?upload\.wikimedia\.org\//i.test(normalizedUrl) || /(^https?:\/\/)?commons\.wikimedia\.org\//i.test(normalizedUrl);
+  const maxAttempts = isWikimediaAsset ? 3 : 1;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const response = isWikimediaAsset
+      ? await enqueueWikimediaMediaRequest(() => fetch(normalizedUrl))
+      : await fetch(normalizedUrl);
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer();
+      const fetched = {
+        buffer: Buffer.from(arrayBuffer),
+        mimeType: response.headers.get("content-type") || "image/jpeg",
+      };
+      remoteBinaryAssetCache.set(normalizedUrl, fetched);
+      return fetched;
+    }
+
+    if (isWikimediaAsset && response.status === 429) {
+      const cooldownMs = WIKIMEDIA_GLOBAL_RATE_LIMIT_COOLDOWN_MS * (attempt + 1);
+      wikimediaMediaCooldownUntil = Math.max(
+        wikimediaMediaCooldownUntil,
+        Date.now() + cooldownMs
+      );
+      if (attempt < maxAttempts - 1) {
+        continue;
+      }
+    }
+
     throw new Error(`Unable to fetch asset: ${response.status}`);
   }
-  const arrayBuffer = await response.arrayBuffer();
-  return {
-    buffer: Buffer.from(arrayBuffer),
-    mimeType: response.headers.get("content-type") || "image/jpeg",
-  };
+
+  throw new Error("Unable to fetch asset: exhausted retries");
 }
 
 function parsePngDimensions(buffer: Buffer) {
@@ -7079,25 +8580,59 @@ async function resolvePptVisualMedia(slide: any, slideIndex: number) {
     return null;
   }
 
-  const preferredAsset = Array.isArray(slide?.assets)
+  const preferredInlineAsset = Array.isArray(slide?.assets)
     ? slide.assets.find((asset: any) =>
         asset?.visualRelevanceStatus === "valid" && Boolean(asset?.imageDataUrl)
       )
     : null;
 
-  if (preferredAsset?.imageDataUrl) {
-    const decoded = decodeDataUrl(preferredAsset.imageDataUrl);
+  if (preferredInlineAsset?.imageDataUrl) {
+    const decoded = decodeDataUrl(preferredInlineAsset.imageDataUrl);
     if (decoded) {
       const dimensions = detectImageDimensions(decoded.buffer, decoded.mimeType);
       return {
         fileName: `generated-slide-${slideIndex + 1}.${mimeTypeToExtension(decoded.mimeType)}`,
         buffer: decoded.buffer,
         mimeType: decoded.mimeType,
-        altText: String(preferredAsset.altText || preferredAsset.purpose || slide?.slideTitle || "Slide visual"),
-        sourceKind: preferredAsset.sourceKind || "generated-image",
+        altText: String(preferredInlineAsset.altText || preferredInlineAsset.purpose || slide?.slideTitle || "Slide visual"),
+        sourceKind: preferredInlineAsset.sourceKind || "reusable-external",
         width: dimensions?.width,
         height: dimensions?.height,
       };
+    }
+  }
+
+  const preferredRemoteAsset = Array.isArray(slide?.assets)
+    ? slide.assets.find((asset: any) =>
+        asset?.visualRelevanceStatus === "valid" && Boolean(asset?.previewUrl || asset?.sourceUrl)
+      )
+    : null;
+
+  const remoteUrls = Array.from(new Set([
+    String(preferredRemoteAsset?.previewUrl || "").trim(),
+    String(preferredRemoteAsset?.sourceUrl || "").trim(),
+  ].filter(Boolean)));
+  if (USE_REMOTE_PPT_ASSETS && remoteUrls.length > 0) {
+    let lastRemoteError: unknown = null;
+    for (const remoteUrl of remoteUrls) {
+      try {
+        const fetched = await fetchBinaryAsset(remoteUrl);
+        const dimensions = detectImageDimensions(fetched.buffer, fetched.mimeType);
+        return {
+          fileName: `asset-slide-${slideIndex + 1}.${mimeTypeToExtension(fetched.mimeType)}`,
+          buffer: fetched.buffer,
+          mimeType: fetched.mimeType,
+          altText: String(preferredRemoteAsset?.altText || preferredRemoteAsset?.purpose || slide?.slideTitle || "Slide visual"),
+          sourceKind: preferredRemoteAsset?.sourceKind || "reusable-external",
+          width: dimensions?.width,
+          height: dimensions?.height,
+        };
+      } catch (error) {
+        lastRemoteError = error;
+      }
+    }
+    if (lastRemoteError) {
+      console.warn(`[PPTX Export] Remote visual fetch failed for slide ${slideIndex + 1}; trying SVG fallback:`, lastRemoteError);
     }
   }
 
@@ -7111,21 +8646,6 @@ async function resolvePptVisualMedia(slide: any, slideIndex: number) {
       mimeType: "image/svg+xml",
       altText: String(slide?.svgDiagram?.title || slide?.slideTitle || "Slide diagram"),
       sourceKind: "svg-diagram",
-      width: dimensions?.width,
-      height: dimensions?.height,
-    };
-  }
-
-  const remoteUrl = String(preferredAsset?.previewUrl || preferredAsset?.sourceUrl || "").trim();
-  if (USE_REMOTE_PPT_ASSETS && remoteUrl) {
-    const fetched = await fetchBinaryAsset(remoteUrl);
-    const dimensions = detectImageDimensions(fetched.buffer, fetched.mimeType);
-    return {
-      fileName: `asset-slide-${slideIndex + 1}.${mimeTypeToExtension(fetched.mimeType)}`,
-      buffer: fetched.buffer,
-      mimeType: fetched.mimeType,
-      altText: String(preferredAsset?.altText || preferredAsset?.purpose || slide?.slideTitle || "Slide visual"),
-      sourceKind: preferredAsset?.sourceKind || "generated-image",
       width: dimensions?.width,
       height: dimensions?.height,
     };
@@ -7327,6 +8847,12 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visual?: { w
   const surface = toHexColor(colors.surface, "#FFFFFF");
   const text = toHexColor(colors.text, "#1F2937");
   const muted = toHexColor(colors.mutedText, "#6B7280");
+  const softSurface = "F8FAFC";
+  const cardBorder = "CBD5E1";
+  const panelSurface = "F8FAFC";
+  const panelBorder = "E2E8F0";
+  const accentSoft = "ECFDF5";
+  const accentText = "0F766E";
   const headingFont = String(fonts.heading || "Cambria");
   const bodyFont = String(fonts.body || "Aptos");
   const hasVisual = Boolean(
@@ -7340,17 +8866,32 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visual?: { w
   const metaLine = [deckTitle, renderableToExportPlainText(slide?.templateSlideTitle || slide?.slideType || "Teacher deck")].filter(Boolean).join("  •  ");
   const notesCount = Array.isArray(slide?.speakerNotes) ? slide.speakerNotes.length : 0;
   const onSlideText = Array.isArray(slide?.onSlideText) ? slide.onSlideText.slice(0, 2).map((item: any) => renderableToExportPlainText(item)) : [];
-  const bulletPoints = Array.isArray(slide?.bulletPoints) ? slide.bulletPoints.slice(0, templateId === "visual-focus" ? 3 : 4).map((item: any) => renderableToExportPlainText(item)) : [];
-  const summaryParagraphs = hasVisual ? onSlideText.slice(0, 1) : onSlideText;
-  const bodyParagraphs = Array.from(new Set([
-    ...summaryParagraphs.filter(Boolean),
-    ...bulletPoints.filter(Boolean).map((item: string) => `• ${item}`),
-  ]));
-  const footerBits = [
-    slide?.studentTakeaway ? `Takeaway: ${renderableToExportPlainText(slide.studentTakeaway)}` : "",
-    slide?.timeEstimateMinutes != null ? `Timing: ${slide.timeEstimateMinutes} min` : "",
-    notesCount ? `Notes: ${notesCount} cues` : "",
-  ].filter(Boolean);
+  const bulletPoints = Array.isArray(slide?.bulletPoints) ? slide.bulletPoints.slice(0, templateId === "visual-focus" ? 4 : 5).map((item: any) => renderableToExportPlainText(item)) : [];
+  const takeawayText = slide?.studentTakeaway ? renderableToExportPlainText(slide.studentTakeaway) : "";
+  const timingText = slide?.timeEstimateMinutes != null ? `${slide.timeEstimateMinutes} minutes` : "";
+  const previewColumns = !hasVisual
+    ? [1, 0]
+    : templateId === "visual-focus"
+    ? [2, 3]
+    : templateId === "textbook-clean"
+    ? [3.2, 2]
+    : [3, 2];
+  const contentFrameX = emu(0.42);
+  const contentFrameY = emu(0.74);
+  const contentFrameW = emu(18.28);
+  const contentFrameH = emu(6.92);
+  const leftPanelX = contentFrameX;
+  const leftPanelY = contentFrameY;
+  const leftPanelW = !hasVisual
+    ? contentFrameW
+    : Math.round(contentFrameW * (previewColumns[0] / (previewColumns[0] + previewColumns[1])));
+  const leftPanelH = contentFrameH;
+  const rightPanelX = contentFrameX + leftPanelW;
+  const rightPanelW = !hasVisual ? 0 : contentFrameW - leftPanelW;
+  const titleBlockX = leftPanelX + emu(0.46);
+  const deckTitleY = contentFrameY + emu(0.48);
+  const slideTitleY = deckTitleY + emu(0.36);
+  const slideTitleW = hasVisual ? leftPanelW - emu(0.92) : emu(11.2);
 
   let shapeId = 2;
   const parts: string[] = [];
@@ -7359,52 +8900,150 @@ function buildPptSlideXml(ppt: any, slide: any, slideIndex: number, visual?: { w
     parts.push(buildSolidShapeXml(shapeId++, 0, 0, PPTX_SLIDE_CX, layout.bandHeight, primary));
   }
   parts.push(
-    buildTextBoxXml(shapeId++, layout.titleX, layout.titleY, layout.titleW, emu(0.72), [slideTitle], {
+    buildTextBoxXml(shapeId++, contentFrameX, contentFrameY, contentFrameW, contentFrameH, [], {
+      fontFace: bodyFont,
+      fontSize: 12,
+      color: text,
+      fillColor: surface,
+      lineColor: cardBorder,
+      roundRect: true,
+      inset: 0,
+    })
+  );
+  if (hasVisual) {
+    parts.push(buildSolidShapeXml(shapeId++, rightPanelX, contentFrameY, emu(0.01), contentFrameH, panelBorder));
+  }
+  parts.push(
+    buildTextBoxXml(shapeId++, titleBlockX, slideTitleY, slideTitleW, emu(templateId === "textbook-clean" ? 1.42 : 1.7), [slideTitle], {
       fontFace: headingFont,
-      fontSize: layout.titleSize,
+      fontSize: templateId === "textbook-clean" ? 25 : 30,
       color: text,
       bold: true,
     })
   );
   parts.push(
-    buildTextBoxXml(shapeId++, layout.metaX, layout.metaY, layout.metaW, emu(0.42), [metaLine], {
+    buildTextBoxXml(shapeId++, titleBlockX, deckTitleY, slideTitleW, emu(0.28), [deckTitle], {
       fontFace: bodyFont,
-      fontSize: 12,
+      fontSize: 11,
       color: muted,
+      bold: true,
     })
   );
-  parts.push(
-    buildTextBoxXml(shapeId++, layout.bodyX, layout.bodyY, layout.bodyW, layout.bodyH, bodyParagraphs.length ? bodyParagraphs : [renderableToExportPlainText(slide?.visualPlan || "Teacher-guided explanation slide.")], {
-      fontFace: bodyFont,
-      fontSize: layout.bodySize,
-      color: text,
-      fillColor: surface,
-      lineColor: primary,
-      roundRect: true,
-      inset: 160000,
-    })
-  );
+
+  let chipX = leftPanelX + emu(0.46);
+  const chipY = slideTitleY + emu(templateId === "textbook-clean" ? 1.05 : 1.18);
+  for (const chip of onSlideText.slice(0, 3)) {
+    const chipWidth = Math.min(emu(2.6), Math.max(emu(1.25), emu(0.14 * chip.length + 0.55)));
+    parts.push(
+      buildTextBoxXml(shapeId++, chipX, chipY, chipWidth, emu(0.32), [chip], {
+        fontFace: bodyFont,
+        fontSize: 10,
+        color: accentText,
+        bold: true,
+        fillColor: accentSoft,
+        lineColor: accentSoft,
+        roundRect: true,
+        inset: 50000,
+      })
+    );
+    chipX += chipWidth + emu(0.12);
+  }
+
+  const bulletStartY = chipX === leftPanelX + emu(0.46) ? slideTitleY + emu(1.18) : chipY + emu(0.52);
+  for (let index = 0; index < bulletPoints.length; index += 1) {
+    const y = bulletStartY + emu(index * 0.55);
+    parts.push(buildSolidShapeXml(shapeId++, leftPanelX + emu(0.38), y + emu(0.12), emu(0.11), emu(0.11), accent));
+    parts.push(
+      buildTextBoxXml(shapeId++, leftPanelX + emu(0.6), y, leftPanelW - emu(0.95), emu(0.42), [bulletPoints[index]], {
+        fontFace: bodyFont,
+        fontSize: 13,
+        color: text,
+      })
+    );
+  }
+
+  const infoCardY = contentFrameY + contentFrameH - emu(0.98);
+  const infoCardW = hasVisual ? (leftPanelW - emu(1.1)) / 2 : emu(4.6);
+  if (takeawayText) {
+    parts.push(
+      buildTextBoxXml(shapeId++, leftPanelX + emu(0.46), infoCardY, infoCardW, emu(0.84), ["TAKEAWAY", takeawayText], {
+        fontFace: bodyFont,
+        fontSize: 10,
+        color: muted,
+        bold: true,
+        fillColor: softSurface,
+        lineColor: panelBorder,
+        roundRect: true,
+        inset: 70000,
+      })
+    );
+  }
+  if (timingText) {
+    parts.push(
+      buildTextBoxXml(shapeId++, leftPanelX + leftPanelW - infoCardW - emu(0.46), infoCardY, infoCardW, emu(0.84), ["TIMING", timingText], {
+        fontFace: bodyFont,
+        fontSize: 10,
+        color: muted,
+        bold: true,
+        fillColor: softSurface,
+        lineColor: panelBorder,
+        roundRect: true,
+        inset: 70000,
+      })
+    );
+  }
+
   if (hasVisual && visualRelId) {
     const frameInset = emu(0.18);
+    const panelX = rightPanelX + emu(0.28);
+    const panelY = contentFrameY + emu(0.18);
+    const panelW = rightPanelW - emu(0.42);
+    const panelH = contentFrameH - emu(0.36);
+    parts.push(
+      buildTextBoxXml(shapeId++, panelX, panelY, panelW, panelH, [], {
+        fontFace: bodyFont,
+        fontSize: 12,
+        color: text,
+        fillColor: panelSurface,
+        lineColor: panelBorder,
+        roundRect: true,
+        inset: 0,
+      })
+    );
+    parts.push(
+      buildTextBoxXml(shapeId++, panelX + emu(0.28), panelY + emu(0.2), panelW - emu(0.56), emu(0.3), ["VISUAL PANEL"], {
+        fontFace: bodyFont,
+        fontSize: 10,
+        color: muted,
+        bold: true,
+      })
+    );
+    const visualCardY = panelY + emu(0.48);
+    const visualCardH = panelH - emu(0.64);
     const imageFit = fitImageWithinFrame(
-      layout.visualW - frameInset * 2,
-      layout.visualH - frameInset * 2,
+      panelW - frameInset * 2 - emu(0.12),
+      visualCardH - frameInset * 2,
       visual?.width,
       visual?.height
     );
-    parts.push(buildImageFrameXml(shapeId++, layout.visualX, layout.visualY, layout.visualW, layout.visualH, accent, surface));
+    parts.push(buildImageFrameXml(shapeId++, panelX + emu(0.16), visualCardY, panelW - emu(0.32), visualCardH, panelBorder, surface));
     parts.push(
       buildImageShapeXml(
         shapeId++,
         visualRelId,
-        layout.visualX + frameInset + imageFit.x,
-        layout.visualY + frameInset + imageFit.y,
+        panelX + emu(0.16) + frameInset + imageFit.x,
+        visualCardY + frameInset + imageFit.y,
         imageFit.w,
         imageFit.h
       )
     );
   }
-  if (footerBits.length > 0) {
+  if (!hasVisual && (takeawayText || timingText || notesCount)) {
+    const footerBits = [
+      takeawayText ? `Takeaway: ${takeawayText}` : "",
+      timingText ? `Timing: ${timingText}` : "",
+      notesCount ? `Notes: ${notesCount} cues` : "",
+    ].filter(Boolean);
     parts.push(
       buildTextBoxXml(shapeId++, emu(0.95), layout.footerY, emu(17.8), emu(0.48), [footerBits.join("   •   ")], {
         fontFace: bodyFont,
@@ -7552,6 +9191,99 @@ function injectAdaptiveSlideContentTypes(xml: string, slideCount: number) {
     }
   }
   return nextXml;
+}
+
+function injectNotesSlideRelationshipIntoSlideRels(xml: string, slideIndex: number) {
+  if (xml.includes(`notesSlide${slideIndex + 1}.xml`)) {
+    return xml;
+  }
+  const relationships = Array.from(xml.matchAll(/<Relationship\b[^>]*\/>/g)).map((match) => match[0]);
+  const usedIds = relationships
+    .map((entry) => {
+      const match = entry.match(/\bId="rId(\d+)"/);
+      return match ? Number(match[1]) : 0;
+    })
+    .filter((value) => value > 0);
+  const nextId = `rId${(usedIds.length ? Math.max(...usedIds) : 0) + 1}`;
+  const noteRelationship = `<Relationship Id="${nextId}" Target="../notesSlides/notesSlide${slideIndex + 1}.xml" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/notesSlide"/>`;
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${[...relationships, noteRelationship].join("")}</Relationships>`;
+}
+
+async function applyNotesToGeneratedPptxBuffer(
+  pptxBuffer: Buffer,
+  ppt: any,
+  sessionMeta: { sessionTitle?: string; sessionNumber?: number }
+) {
+  const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), "lessonplan-presenton-notes-"));
+  const workDir = path.join(tempRoot, "deck");
+  const inputPath = path.join(tempRoot, "input.pptx");
+  const outputPath = path.join(tempRoot, "deck-with-notes.pptx");
+  try {
+    await fs.mkdir(workDir, { recursive: true });
+    await fs.writeFile(inputPath, pptxBuffer);
+    await execFileAsync("unzip", ["-qq", inputPath, "-d", workDir]);
+
+    const slides = Array.isArray(ppt?.slides) ? ppt.slides : [];
+    const slideRelsDir = path.join(workDir, "ppt/slides/_rels");
+    const notesDir = path.join(workDir, "ppt/notesSlides");
+    const notesRelsDir = path.join(workDir, "ppt/notesSlides/_rels");
+    const notesMasterDir = path.join(workDir, "ppt/notesMasters");
+    const notesMasterRelsDir = path.join(workDir, "ppt/notesMasters/_rels");
+    const notesThemeDir = path.join(workDir, "ppt/notesMasters/theme");
+    await fs.mkdir(slideRelsDir, { recursive: true });
+    await fs.mkdir(notesDir, { recursive: true });
+    await fs.mkdir(notesRelsDir, { recursive: true });
+    await fs.mkdir(notesMasterDir, { recursive: true });
+    await fs.mkdir(notesMasterRelsDir, { recursive: true });
+    await fs.mkdir(notesThemeDir, { recursive: true });
+
+    for (let index = 0; index < slides.length; index += 1) {
+      const slideRelsPath = path.join(slideRelsDir, `slide${index + 1}.xml.rels`);
+      try {
+        const existingRels = await fs.readFile(slideRelsPath, "utf8");
+        await fs.writeFile(slideRelsPath, injectNotesSlideRelationshipIntoSlideRels(existingRels, index), "utf8");
+      } catch {
+        const baseSlideRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`;
+        await fs.writeFile(slideRelsPath, injectNotesSlideRelationshipIntoSlideRels(baseSlideRels, index), "utf8");
+      }
+      await fs.writeFile(path.join(notesDir, `notesSlide${index + 1}.xml`), buildNotesSlideXml(slides[index]), "utf8");
+      await fs.writeFile(path.join(notesRelsDir, `notesSlide${index + 1}.xml.rels`), buildNotesSlideRelsXml(index), "utf8");
+    }
+
+    await fs.writeFile(path.join(notesMasterDir, "notesMaster1.xml"), PPT_NOTES_MASTER_XML, "utf8");
+    await fs.writeFile(path.join(notesMasterRelsDir, "notesMaster1.xml.rels"), PPT_NOTES_MASTER_RELS_XML, "utf8");
+    await fs.writeFile(path.join(notesThemeDir, "theme3.xml"), PPT_NOTES_THEME_XML, "utf8");
+
+    const presentationXmlPath = path.join(workDir, "ppt/presentation.xml");
+    const presentationRelsPath = path.join(workDir, "ppt/_rels/presentation.xml.rels");
+    const contentTypesPath = path.join(workDir, "[Content_Types].xml");
+    await fs.writeFile(
+      presentationXmlPath,
+      injectNotesMasterIntoPresentationXml(await fs.readFile(presentationXmlPath, "utf8")),
+      "utf8"
+    );
+    await fs.writeFile(
+      presentationRelsPath,
+      injectNotesMasterIntoPresentationRels(await fs.readFile(presentationRelsPath, "utf8")),
+      "utf8"
+    );
+    await fs.writeFile(
+      contentTypesPath,
+      injectNotesContentTypes(await fs.readFile(contentTypesPath, "utf8"), slides.length),
+      "utf8"
+    );
+
+    const corePropsPath = path.join(workDir, "docProps/core.xml");
+    const nowIso = new Date().toISOString();
+    const title = xmlEscape(renderableToExportPlainText(ppt?.presentationTitle || ppt?.title || sessionMeta.sessionTitle || "Session Presentation"));
+    const corePropsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${title}</dc:title><dc:creator>Lesson Plan Generator + Presenton</dc:creator><cp:lastModifiedBy>Lesson Plan Generator + Presenton</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${nowIso}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${nowIso}</dcterms:modified></cp:coreProperties>`;
+    await fs.writeFile(corePropsPath, corePropsXml, "utf8");
+
+    await execFileAsync("zip", ["-qr", outputPath, "."], { cwd: workDir });
+    return await fs.readFile(outputPath);
+  } finally {
+    await fs.rm(tempRoot, { recursive: true, force: true });
+  }
 }
 
 async function buildEditablePptxBufferFromMaterial(ppt: any, sessionMeta: {
@@ -8097,6 +9829,29 @@ function removeDanglingJsonCommas(raw: string): { text: string; changed: boolean
   };
 }
 
+function repairMalformedJsonStringArrayItems(raw: string): string {
+  let repaired = String(raw || "");
+
+  repaired = repaired.replace(
+    /(\[\s*\n(?:[^\]]*\n)?)\s*-\s+([^"\n][^\n]*?)("?\s*,?\s*)$/gm,
+    (_match, prefix, itemText, suffix) => {
+      const cleaned = `- ${String(itemText || "").trim().replace(/^-\s*/, "").replace(/\s+/g, " ")}`;
+      const normalizedSuffix = String(suffix || "").includes(",") ? "," : "";
+      return `${prefix}            ${JSON.stringify(cleaned)}${normalizedSuffix}`;
+    }
+  );
+
+  repaired = repaired.replace(
+    /(\[\s*(?:"[^"]*"\s*,\s*)*)-\s+([^"\]\n][^,\]\n]*)(\s*[,|\]])/g,
+    (_match, prefix, itemText, suffix) => {
+      const cleaned = `- ${String(itemText || "").trim().replace(/^-\s*/, "").replace(/\s+/g, " ")}`;
+      return `${prefix}${JSON.stringify(cleaned)}${suffix}`;
+    }
+  );
+
+  return repaired;
+}
+
 function findLastBalancedJsonBoundary(raw: string): number {
   let inString = false;
   let escaped = false;
@@ -8173,6 +9928,21 @@ function tryRepairSessionJson(raw: string): string | null {
   if (sanitized.text !== raw) {
     candidates.push(sanitized.text);
   }
+  const repairedArrayItems = repairMalformedJsonStringArrayItems(sanitized.text || raw);
+  if (repairedArrayItems !== (sanitized.text || raw)) {
+    candidates.push(repairedArrayItems);
+  }
+  candidates.push(
+    String(raw || "")
+      .replace(/"([A-Za-z][A-Za-z0-9_]*)\s*:\s*([^"\n][^,\n}]*)",/g, (_match, key, value) => {
+        const cleanedValue = String(value || "").trim().replace(/\s+/g, " ");
+        return `"${key}": ${JSON.stringify(cleanedValue)},`;
+      })
+      .replace(/"([A-Za-z][A-Za-z0-9_]*)\s*:\s*([^"\n][^,\n}]*)"(\s*[}\]])/g, (_match, key, value, suffix) => {
+        const cleanedValue = String(value || "").trim().replace(/\s+/g, " ");
+        return `"${key}": ${JSON.stringify(cleanedValue)}${suffix}`;
+      })
+  );
 
   for (const candidate of candidates) {
     const withoutDanglingCommas = removeDanglingJsonCommas(candidate);
@@ -10276,6 +12046,15 @@ function normalizeMathMaterials(materials: any) {
         onSlideText: upgradeList(slide?.onSlideText || [], 8),
         speakerNotes: upgradeList(slide?.speakerNotes || [], 10),
         visualPlan: upgradeValue(slide?.visualPlan || ""),
+        wikimediaSearchLabel: upgradeValue(slide?.wikimediaSearchLabel || ""),
+        presentonTemplateHint: upgradeValue(slide?.presentonTemplateHint || ""),
+        presentonMarkdown: upgradeValue(slide?.presentonMarkdown || ""),
+        resolvedVisualAssetRefs: (Array.isArray(slide?.resolvedVisualAssetRefs) ? slide.resolvedVisualAssetRefs : []).map((asset: any) => ({
+          ...asset,
+          fileName: upgradeValue(asset?.fileName || ""),
+          url: upgradeValue(asset?.url || ""),
+          mimeType: upgradeValue(asset?.mimeType || ""),
+        })),
         animationHints: upgradeList(slide?.animationHints || [], 8),
         assets: (Array.isArray(slide?.assets) ? slide.assets : []).map((asset: any) => ({
           ...asset,
@@ -15787,6 +17566,8 @@ type OllamaRequestOptions = {
 
 function refreshRuntimeEnv() {
   dotenv.config({ path: ENV_FILE_PATH, override: true });
+  dotenv.config({ path: BACKEND_ENV_FILE_PATH, override: false });
+  dotenv.config({ path: LOCAL_ENV_FILE_PATH, override: false });
 }
 
 function normalizeSessionPptGenerationOptions(input: any): SessionPptGenerationOptions {
@@ -15849,6 +17630,14 @@ function getOllamaConfig(kind: OllamaGenerationKind): { baseUrl: string; model: 
     default:
       return { baseUrl: defaultBaseUrl, model: defaultModel };
   }
+}
+
+function getOllamaVisionRerankConfig() {
+  refreshRuntimeEnv();
+  return {
+    baseUrl: String(process.env.OLLAMA_VISION_RERANK_BASE_URL || process.env.OLLAMA_BASE_URL || "http://192.168.1.82:11434").trim().replace(/\/$/, ""),
+    model: String(process.env.OLLAMA_VISION_RERANK_MODEL || OLLAMA_VISION_RERANK_MODEL).trim() || "qwen2.5vl:7b",
+  };
 }
 
 class OllamaRequestError extends Error {
@@ -18069,6 +19858,9 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     const generatedSessionKey = existingSessionMatch.key;
     const existingSessionPlan = existingSessionMatch.sessionPlan;
     const assessmentOnly = selectedSections.length === 1 && selectedSections[0] === "assessment";
+    const materialsOnly = selectedSections.length === 1 && selectedSections[0] === "materials";
+    const workspaceSubject = String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || "");
+    const workspaceGradeLevel = String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || "");
 
     if (assessmentOnly) {
       if (!hasAssessmentSourceContent(existingSessionPlan)) {
@@ -18089,8 +19881,8 @@ app.post("/api/planning-workspaces/:id/generate-content", async (req, res) => {
     };
 
     const sessionPlan = await generateSessionDetailsArtifact({
-      subject: String(workspace.curriculumSnapshot?.subject || workspace.academicConfig?.subject || ""),
-      gradeLevel: String(workspace.curriculumSnapshot?.gradeLevel || workspace.academicConfig?.className || ""),
+      subject: workspaceSubject,
+      gradeLevel: workspaceGradeLevel,
       curriculumStructure: workspace.curriculumSnapshot?.normalizedStructure || workspace.curriculumSnapshot,
       selectedChapters: [chapterName],
       sessionNumber,
@@ -18185,6 +19977,7 @@ app.post("/api/export-pptx", async (req, res) => {
       sessionTitle: String(req.body?.sessionTitle || rawPpt?.presentationTitle || rawPpt?.title || "Session Presentation"),
       requestId,
       debugDir,
+      resolveVisuals: false,
     });
     if (!ppt || typeof ppt !== "object" || !Array.isArray(ppt.slides) || ppt.slides.length === 0) {
       return res.status(400).json({ error: "A generated PPT payload with slides is required." });
@@ -18192,7 +19985,15 @@ app.post("/api/export-pptx", async (req, res) => {
 
     const sessionTitle = String(req.body?.sessionTitle || ppt.presentationTitle || ppt.title || "session-presentation");
     const sessionNumber = Math.max(1, toNumberOrZero(req.body?.sessionNumber) || 1);
-    const buffer = await buildEditablePptxBufferFromMaterial(ppt, {
+    let buffer: Buffer;
+    await writeDebugFile(debugDir, "pptx-export-renderer.json", {
+      renderer: "in-app-template-locked",
+      templateId: String(ppt?.templateId || ""),
+      themeId: String(ppt?.themeId || ""),
+      themeName: String(ppt?.themeName || ""),
+      slideCount: Array.isArray(ppt?.slides) ? ppt.slides.length : 0,
+    });
+    buffer = await buildEditablePptxBufferFromMaterial(ppt, {
       sessionTitle,
       sessionNumber,
     });
@@ -18228,6 +20029,7 @@ app.post("/api/generate-slide-visuals", async (req, res) => {
       ].filter((value) => typeof value === "string" && value.trim().length > 0)),
       requestId,
       debugDir,
+      resolveVisuals: false,
     });
     const enrichedPlan = { ...sessionPlan, materials: { ...sessionPlan.materials, ppt: enrichedPpt } };
 
@@ -18235,6 +20037,15 @@ app.post("/api/generate-slide-visuals", async (req, res) => {
   } catch (error: any) {
     console.error("[Slide Visuals] Generation failed:", error);
     res.status(500).json({ error: error?.message || "Failed to generate slide visuals." });
+  }
+});
+
+app.get("/api/presenton/health", async (_req, res) => {
+  try {
+    const health = await checkPresentonHealth();
+    res.status(health.ok ? 200 : 503).json({ success: health.ok, ...health });
+  } catch (error: any) {
+    res.status(503).json({ success: false, error: error?.message || "Presenton health check failed." });
   }
 });
 
@@ -19517,9 +21328,9 @@ app.post("/api/generate-session-details", async (req, res) => {
       }],
       materials: {
         ppt: {
-          templateId: KAMALANIKETAN_TEMPLATE_ID,
-          templateName: "Kamalaniketan Session PPT Template",
-          themeId: "kamalaniketan-modern",
+          templateId: "adaptive-teacher-deck",
+          templateName: "Adaptive Teacher Deck",
+          themeId: "cbse-academic-blue",
           title: "Presentation title",
           presentationTitle: "Presentation title",
           presentationGoal: "What this PPT helps achieve in the session",
@@ -19543,12 +21354,22 @@ app.post("/api/generate-session-details", async (req, res) => {
             }
           },
           slides: [{
-            templateId: KAMALANIKETAN_TEMPLATE_ID,
-            templateSlideKey: "title_identity",
-            templateSlideTitle: "Title / Session Identity",
+            templateId: "adaptive-teacher-deck",
+            templateSlideKey: "adaptive_slide_1",
+            templateSlideTitle: "Adaptive Slide",
             isOptionalSlotFilled: true,
+            slideNumber: 1,
+            slidePurpose: "title_identity",
+            teachingBeat: "Open the lesson in a way that prepares students for the teaching flow.",
+            mustTeach: ["What the lesson is about", "Why it matters today"],
+            visualDecision: "none | svg-programmatic | reusable-external",
             slideTitle: "Slide title",
-            bulletPoints: ["Key point"]
+            bulletPoints: ["Key point"],
+            onSlideText: ["Exact concise on-slide text"],
+            speakerNotes: ["Teacher delivery cue"],
+            visualPlan: "Only include a slide-specific visual when it genuinely improves understanding.",
+            layoutIntent: "text-light-visual-first | concept-split | board-worked-example | text-led-minimal",
+            timeEstimateMinutes: 4
           }]
         },
         pdf: { documentTitle: "Student PDF / revision document title", keyInformation: ["Student-facing study note or revision point"] },
@@ -19882,16 +21703,16 @@ async function generateSessionDetailsArtifact({
       instructions: ["Step-by-step instructions for teachers & students"],
       durationMinutes: 10
     }],
-    materials: {
-      ppt: {
-        templateId: KAMALANIKETAN_TEMPLATE_ID,
-        templateName: "Kamalaniketan Session PPT Template",
-        themeId: "kamalaniketan-modern",
-        title: "Presentation title",
-        presentationTitle: "Presentation title",
-        presentationGoal: "What this PPT helps achieve in the session",
-        audience: "Grade-specific classroom audience",
-        theme: "Visual theme for the deck",
+      materials: {
+        ppt: {
+          templateId: "adaptive-teacher-deck",
+          templateName: "Adaptive Teacher Deck",
+          themeId: "cbse-academic-blue",
+          title: "Presentation title",
+          presentationTitle: "Presentation title",
+          presentationGoal: "What this PPT helps achieve in the session",
+          audience: "Grade-specific classroom audience",
+          theme: "Visual theme for the deck",
         themeTokens: {
           fonts: {
             heading: "Outfit",
@@ -19913,46 +21734,57 @@ async function generateSessionDetailsArtifact({
           }
         },
         assetSearchPlan: {
-          preferredSources: ["Internal SVG", "Reusable web image"],
+          preferredSources: ["Wikimedia Commons", "Internal SVG fallback"],
           safeSearch: true,
-          licensingNotes: ["Use internally generated images and in-app SVG diagrams only."],
-          fallbackStrategy: "Prefer SVG diagrams for concept/process slides and reusable web images for all picture-based visuals."
+          licensingNotes: ["Use Wikimedia Commons images by default and use in-app SVG/native slide text only as a fallback."],
+          fallbackStrategy: "Prefer SVG diagrams for concept/process slides and Wikimedia Commons images for all picture-based visuals."
         },
-        licenseChecklist: [
-          "Review generated visuals for classroom accuracy before final export.",
-          "Verify reusable license before final export."
-        ],
-        presentationWarnings: [
-          "Do not include untaught future-session content.",
-          "Do not include untaught future-session content (e.g., Mole concept details)."
-        ],
-        coverageSummary: {
-          learningOutcomesCovered: ["Learning outcome id or text"],
-          topicsCovered: ["Topic covered"],
-          taughtConceptsCovered: ["Concept covered"],
-          omittedContent: []
-        },
-        slides: [{
-          templateId: KAMALANIKETAN_TEMPLATE_ID,
-          templateSlideKey: "title_identity",
-          templateSlideTitle: "Title / Session Identity",
-          isOptionalSlotFilled: true,
-          slideNumber: 1,
-          slideType: "hook | concept | comparison | process | summary",
-          slideTitle: "Slide title",
-          learningOutcomeIds: ["LO1"],
-          topicCoverage: ["Topic"],
-          teacherIntent: "Why this slide exists",
-          studentTakeaway: "What students should leave with",
-          layout: "Title + 2-column visual explainer",
-          bulletPoints: ["Key point"],
-          onSlideText: ["Exact concise on-slide text"],
-          speakerNotes: ["Teacher delivery cue"],
-          visualAttribution: {
-            visualPlan: "A subject-appropriate teaching visual that clarifies the main idea without adding off-topic content.",
-            svgDiagram: {
-              purpose: "Concept visualization for classroom explanation",
-              search: "subject appropriate educational concept diagram",
+          licenseChecklist: [
+            "Review generated visuals for classroom accuracy before final export.",
+            "Verify reusable license before final export."
+          ],
+          presentationWarnings: [
+            "Do not include untaught future-session content.",
+            "Do not include untaught future-session content (e.g., Mole concept details)."
+          ],
+          deckReadiness: "teacher-ready | needs-review",
+          coverageStatus: "complete | partial",
+          visualIntegrityStatus: "valid | needs-review",
+          exportIntegrityStatus: "ready | needs-review",
+          coverageSummary: {
+            learningOutcomesCovered: ["Learning outcome id or text"],
+            topicsCovered: ["Topic covered"],
+            taughtConceptsCovered: ["Concept covered"],
+            omittedContent: []
+          },
+          slides: [{
+            templateId: "adaptive-teacher-deck",
+            templateSlideKey: "adaptive_slide_1",
+            templateSlideTitle: "Adaptive Slide",
+            isOptionalSlotFilled: true,
+            slideNumber: 1,
+            slidePurpose: "title_identity",
+            teachingBeat: "Open the lesson, orient the class, and prepare the first teaching move.",
+            mustTeach: ["Lesson identity", "Immediate classroom direction"],
+            visualDecision: "none | svg-programmatic | reusable-external",
+            visualResolved: false,
+            visualRelevanceStatus: "none | valid | generic | mismatch",
+            slideType: "hook | concept | comparison | process | summary",
+            slideTitle: "Slide title",
+            learningOutcomeIds: ["LO1"],
+            topicCoverage: ["Topic"],
+            teacherIntent: "Why this slide exists",
+            studentTakeaway: "What students should leave with",
+            layout: "Title + 2-column visual explainer",
+            bulletPoints: ["Key point"],
+            onSlideText: ["Exact concise on-slide text"],
+            speakerNotes: ["Teacher delivery cue"],
+            layoutIntent: "text-light-visual-first | concept-split | board-worked-example | text-led-minimal",
+            visualAttribution: {
+              visualPlan: "A subject-appropriate teaching visual that clarifies the main idea without adding off-topic content.",
+              svgDiagram: {
+                purpose: "Concept visualization for classroom explanation",
+                search: "subject appropriate educational concept diagram",
               source: "Internal SVG",
               license: "Internal SVG diagram",
               animation: "Reveal the visual step by step as the teacher explains it."
@@ -19961,10 +21793,10 @@ async function generateSessionDetailsArtifact({
           visualPlan: "What visual should appear and why",
           assets: [{
             purpose: "Why this asset is needed",
-            searchQuery: "precise visual search or generation intent",
-            sourceSite: "Reusable web image",
+            searchQuery: "short concrete Wikimedia Commons search label",
+            sourceSite: "Wikimedia Commons",
             sourceUrl: "",
-            licenseType: "Internally generated",
+            licenseType: "Reusable Wikimedia asset",
             attributionText: "",
             altText: "Accessible description",
             placementHint: "Right panel / full bleed / inset"
@@ -20327,20 +22159,8 @@ async function generateSessionDetailsArtifact({
           templateId: pptGenerationOptions?.pptTemplateId || "academic-split",
           templateDeck: "Kamalaniketan-pptx template.pptx",
           adaptiveSlideCount: true,
-          canonicalSlidePatterns: [
-            "title_identity",
-            "lesson_hook",
-            "learning_outcomes",
-            "prerequisite_knowledge",
-            "topic_introduction",
-            "core_concept",
-            "visual_explainer",
-            "worked_example",
-            "guided_practice",
-            "quick_assessment",
-            "summary",
-            "homework_next_session",
-          ],
+          teacherPreparationMode: "Author the deck the way a strong K-12 teacher would prepare to teach this exact class session.",
+          deckPlanningMode: "model_decides_full_slide_sequence",
           themeMode: "themeable_system",
           defaultThemeId: "cbse-academic-blue",
           selectedTemplateId: pptGenerationOptions?.pptTemplateId || "academic-split",
@@ -20353,8 +22173,8 @@ async function generateSessionDetailsArtifact({
             colors: preset.colors,
             visualStyle: preset.visualStyle,
           })),
-          assetPolicy: ["Internal SVG", "Reusable web image"],
-          imageFallbackPolicy: "svg first for explainers, reusable web images for all picture-based visuals",
+          assetPolicy: ["Wikimedia Commons", "Internal SVG fallback"],
+          imageFallbackPolicy: "svg first for explainers, Wikimedia Commons images for all picture-based visuals",
           deckRatio: "16:9",
           outputDepth: "full_slide_spec",
           diagrams: "svg_preferred_for_process_and_structure",
@@ -20363,22 +22183,15 @@ async function generateSessionDetailsArtifact({
             sourceDeck: "Kamalaniketan-pptx template.pptx",
             theme: "school-ready classroom instructional deck",
             layoutPatterns: [
-              "title slide with session identity",
-              "learning outcome board",
-              "prerequisite and recall prompt slide",
-              "opening hook slide",
-              "introduction slide",
-              "core concept teaching slide",
-              "visual explanation slide",
-              "worked example slide",
-              "guided practice slide",
-              "quick assessment slide",
-              "summary slide",
-              "homework and next-session slide",
+              "adaptive classroom teaching flow",
+              "teacher-led concept building",
+              "visual support only when it improves understanding",
+              "worked example and practice in natural teaching order",
             ],
             qualityBar: [
               "choose only the slides this lesson genuinely needs",
               "keep content session-faithful",
+              "decide slide count and sequence from pedagogy, not fixed patterns",
               "theme changes must not alter content structure",
             ],
           },
@@ -20541,25 +22354,12 @@ async function generateSessionDetailsArtifact({
       }
     );
   } catch (error: any) {
-    const shouldUseDeterministicMaterialsFallback =
-      materialsOnly &&
-      (
-        String(error?.code || "") === "OLLAMA_INCOMPLETE_RESPONSE" ||
-        String(error?.code || "") === "OLLAMA_EMPTY_RESPONSE"
-      );
-
-    if (!shouldUseDeterministicMaterialsFallback) {
+    if (!materialsOnly) {
       throw error;
     }
 
-    const deterministicSourceSession =
-      hasMaterialsSourceContent(sourceSessionPlan)
-        ? sourceSessionPlan
-        : {};
-    console.warn(`[Ollama][${requestId}] Falling back to deterministic PPT materials generation after incomplete Ollama response.`);
-    const fallbackSession = buildDeterministicMaterialsFromSessionPlan(
-      deterministicSourceSession,
-      {
+    if (hasMaterialsSourceContent(sourceSessionPlan)) {
+      const deterministicMaterials = buildDeterministicMaterialsFromSessionPlan(sourceSessionPlan, {
         subject,
         gradeLevel,
         sessionTitle: sessionTitle || `Session ${sessionNumber}`,
@@ -20568,34 +22368,21 @@ async function generateSessionDetailsArtifact({
         learningOutcomes,
         selectedChapters,
         generationOptions: pptGenerationOptions,
-      }
-    );
+      });
+      await writeDebugFile(debugDir, "materials-generation-decision.json", {
+        resolution: "deterministic_materials_fallback_after_ollama_generation_failure",
+        error: String(error?.message || error),
+        code: String(error?.code || ""),
+      });
+      return deterministicMaterials;
+    }
+
     await writeDebugFile(debugDir, "materials-generation-decision.json", {
-      resolution: "ollama_incomplete_fallback",
-      usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+      resolution: "ollama_generation_failed_no_fixed_fallback",
+      error: String(error?.message || error),
+      code: String(error?.code || ""),
     });
-    await writeDebugFile(debugDir, "ppt-materials-deterministic-fallback.json", {
-      usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
-      fallbackSession,
-    });
-    const normalizedFallbackPpt = await normalizePptMaterial(fallbackSession.materials.ppt, {
-      subject,
-      gradeLevel,
-      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
-      learningOutcomes,
-      selectedChapters,
-      requestId,
-      debugDir,
-      generationOptions: pptGenerationOptions,
-    });
-    const fallbackNormalizedSession = {
-      materials: {
-        ...fallbackSession.materials,
-        ppt: normalizedFallbackPpt,
-      },
-    };
-    await writeDebugFile(debugDir, "final-response.json", fallbackNormalizedSession);
-    return fallbackNormalizedSession;
+    throw new Error("PPT generation failed before a valid adaptive deck could be produced. Retry generation instead of using a fixed fallback deck.");
   }
   let responseText = response.text || "{}";
   if (response.doneReason === "length") {
@@ -20688,21 +22475,12 @@ async function generateSessionDetailsArtifact({
       }
     );
   } catch (error: any) {
-    const shouldUseDeterministicMaterialsFallback =
-      materialsOnly && String(error?.code || "") === "SESSION_JSON_INVALID";
-
-    if (!shouldUseDeterministicMaterialsFallback) {
+    if (!materialsOnly) {
       throw error;
     }
 
-    const deterministicSourceSession =
-      hasMaterialsSourceContent(sourceSessionPlan)
-        ? sourceSessionPlan
-        : {};
-    console.warn(`[Ollama][${requestId}] Falling back to deterministic PPT materials generation after invalid Ollama JSON.`);
-    const fallbackSession = buildDeterministicMaterialsFromSessionPlan(
-      deterministicSourceSession,
-      {
+    if (hasMaterialsSourceContent(sourceSessionPlan)) {
+      const deterministicMaterials = buildDeterministicMaterialsFromSessionPlan(sourceSessionPlan, {
         subject,
         gradeLevel,
         sessionTitle: sessionTitle || `Session ${sessionNumber}`,
@@ -20711,36 +22489,23 @@ async function generateSessionDetailsArtifact({
         learningOutcomes,
         selectedChapters,
         generationOptions: pptGenerationOptions,
-      }
-    );
+      });
+      await writeDebugFile(debugDir, "materials-generation-decision.json", {
+        resolution: "deterministic_materials_fallback_after_invalid_ppt_json",
+        parseStageName,
+        error: String(error?.message || error),
+        code: String(error?.code || ""),
+      });
+      return deterministicMaterials;
+    }
+
     await writeDebugFile(debugDir, "materials-generation-decision.json", {
-      resolution: "ollama_invalid_json_fallback",
+      resolution: "ollama_invalid_json_no_fixed_fallback",
       parseStageName,
-      usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+      error: String(error?.message || error),
+      code: String(error?.code || ""),
     });
-    await writeDebugFile(debugDir, "ppt-materials-invalid-json-fallback.json", {
-      parseStageName,
-      usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
-      fallbackSession,
-    });
-    const normalizedFallbackPpt = await normalizePptMaterial(fallbackSession.materials.ppt, {
-      subject,
-      gradeLevel,
-      sessionTitle: sessionTitle || `Session ${sessionNumber}`,
-      learningOutcomes,
-      selectedChapters,
-      requestId,
-      debugDir,
-      generationOptions: pptGenerationOptions,
-    });
-    const fallbackNormalizedSession = {
-      materials: {
-        ...fallbackSession.materials,
-        ppt: normalizedFallbackPpt,
-      },
-    };
-    await writeDebugFile(debugDir, "final-response.json", fallbackNormalizedSession);
-    return fallbackNormalizedSession;
+    throw new Error("PPT generation returned invalid deck JSON. Retry generation instead of using a fixed fallback deck.");
   }
   if (parsedSession?.studentLessonNotes && !isMathSubject(subject)) {
     const enrichedStudentNotesSession = await enrichStudentLessonNotesWithVisuals(requestId, debugDir, parsedSession, {
@@ -20783,28 +22548,9 @@ async function generateSessionDetailsArtifact({
       gradeLevel,
     });
     if (!pptLooksCompatible) {
-      console.warn(`[Ollama][${requestId}] PPT materials content did not match requested subject/session. Replacing with deterministic session-grounded deck.`);
-      const deterministicSourceSession =
-        hasMaterialsSourceContent(sourceSessionPlan)
-          ? sourceSessionPlan
-          : parsedSession;
-      const fallbackSession = buildDeterministicMaterialsFromSessionPlan(deterministicSourceSession, {
-        subject,
-        gradeLevel,
-        sessionTitle: sessionTitle || `Session ${sessionNumber}`,
-        sessionNumber,
-        durationMinutes,
-        learningOutcomes,
-        selectedChapters,
-        generationOptions: pptGenerationOptions,
-      });
-      parsedSession.materials = {
-        ...parsedSession.materials,
-        ...fallbackSession.materials,
-      };
+      console.warn(`[Ollama][${requestId}] PPT materials content did not match requested subject/session.`);
       await writeDebugFile(debugDir, "materials-generation-decision.json", {
-        resolution: "ollama_rejected_subject_mismatch",
-        usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
+        resolution: "ollama_rejected_subject_mismatch_no_fixed_fallback",
         matcher: {
           requestedChapterName,
           sessionTitle: sessionTitle || `Session ${sessionNumber}`,
@@ -20815,10 +22561,7 @@ async function generateSessionDetailsArtifact({
           coveragePreview: limitString(pptAllCoverage, 1200),
         },
       });
-      await writeDebugFile(debugDir, "ppt-materials-subject-mismatch-fallback.json", {
-        usedSourceSessionPlan: deterministicSourceSession === sourceSessionPlan,
-        materials: parsedSession.materials,
-      });
+      throw new Error("PPT generation produced a deck that does not match the requested lesson content. Retry generation instead of using a fixed fallback deck.");
     } else {
       await writeDebugFile(debugDir, "materials-generation-decision.json", {
         resolution: "ollama_valid",
@@ -20843,6 +22586,7 @@ async function generateSessionDetailsArtifact({
       selectedChapters,
       requestId,
       debugDir,
+      resolveVisuals: materialsOnly,
       generationOptions: pptGenerationOptions,
     });
   }

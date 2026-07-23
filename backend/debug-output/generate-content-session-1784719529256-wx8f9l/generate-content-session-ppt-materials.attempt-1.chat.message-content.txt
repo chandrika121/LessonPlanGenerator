@@ -1,0 +1,505 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "visual-focus",
+      "templateName": "Visual Focus Educational Template",
+      "themeId": "cbse-academic-blue",
+      "title": "Life Processes - Session 1",
+      "presentationTitle": "Understanding Life Processes: Nutrition and Respiration",
+      "presentationGoal": "To introduce the concept of life processes, define nutrition types, explain autotrophic nutrition with photosynthesis, and cover basic respiration mechanisms.",
+      "audience": "Grade 7-9 Science Students",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab",
+          "body": "Open Sans"
+        },
+        "colors": {
+          "primary": "#1a4d80",
+          "secondary": "#2e7d32",
+          "accent": "#f9a825",
+          "background": "#ffffff",
+          "surface": "#f5f5f5",
+          "text": "#212121",
+          "mutedText": "#616161"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary-with-accent-bar",
+          "cardStyle": "clean-shadow-elevation-2",
+          "visualFrameStyle": "rounded-corners-glass-morphism"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Unsplash Education",
+          "Wikimedia Commons Science",
+          "NASA Image Library"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "Ensure all images are CC0 or Creative Commons Attribution for educational use.",
+          "Avoid copyrighted textbook diagrams; recreate essential ones as SVGs."
+        ],
+        "fallbackStrategy": "Use high-contrast schematic line drawings if specific photos fail to load."
+      },
+      "licenseChecklist": [
+        "All student-facing images are royalty-free or open license.",
+        "No proprietary logos from commercial textbook publishers used without permission.",
+        "SVG diagrams created in-house for exact labeling control."
+      ],
+      "presentationWarnings": [
+        "Do not introduce cellular respiration details (Krebs cycle) as this is Session 1 focusing on basic gas exchange and photosynthesis overview only.",
+        "Ensure visual clarity of stomata diagram; do not use low-resolution clip art."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define life processes",
+          "Distinguish between autotrophic and heterotrophic nutrition",
+          "Explain the process of photosynthesis in plants",
+          "Describe basic respiration mechanisms"
+        ],
+        "topicsCovered": [
+          "Introduction to Life Processes",
+          "Nutrition: Autotrophs vs Heterotrophs",
+          "Photosynthesis Mechanism",
+          "Respiration Basics"
+        ],
+        "taughtConceptsCovered": [
+          "Metabolism definition",
+          "Chlorophyll role in photosynthesis",
+          "Stomata function",
+          "Aerobic vs Anaerobic distinction (basic)"
+        ],
+        "omittedContent": [
+          "Detailed chemical equations of glycolysis",
+          "Human digestive system anatomy details",
+          "Advanced plant transport mechanisms"
+        ]
+      },
+      "slides": [
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "title_identity",
+          "templateSlideTitle": "Session Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "Life Processes: Nutrition & Respiration",
+          "learningOutcomeIds": [
+            "LO-Intro"
+          ],
+          "topicCoverage": [
+            "Introduction to Life Processes"
+          ],
+          "teacherIntent": "Set the stage for the session, establish relevance of life processes in daily observation.",
+          "studentTakeaway": "Students understand that 'life' is defined by specific continuous biological activities.",
+          "layout": "hero-image-left",
+          "bulletPoints": [
+            "What makes something alive?",
+            "The 7 Essential Life Processes",
+            "Focus: Nutrition and Respiration"
+          ],
+          "onSlideText": [
+            "Life Processes",
+            "Session 1 of 5",
+            "Nutrition & Respiration Basics"
+          ],
+          "speakerNotes": [
+            "Purpose: Hook students with the fundamental question of life.",
+            "Explain: Life is not static; it involves continuous activities like eating, breathing, and growing. Without these, an organism dies.",
+            "Ask: 'If a rock doesn't eat or breathe, why isn't it alive? What about a plant?'",
+            "Listen for: Student mentions of growth, movement, reproduction.",
+            "Transition: Today we zoom in on two critical processes that keep us going every second."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "High-quality split composition: Left side shows a vibrant green leaf with sunlight rays and water droplets (representing plants/nutrition), Right side shows a human silhouette in profile with lungs highlighted subtly or a generic 'breathing' icon, set against a clean white background. The image should feel scientific yet accessible.",
+          "assets": [
+            {
+              "purpose": "Hero visual for title slide",
+              "searchQuery": "Close up green leaf with sunlight and water droplets macro photography educational style",
+              "sourceSite": "Unsplash Education",
+              "sourceUrl": "",
+              "licenseType": "CC0 / Creative Commons",
+              "attributionText": "Image by [Author]",
+              "altText": "Vibrant green leaf with sunlight and water droplets symbolizing photosynthesis.",
+              "placementHint": "Left half of slide, 60% width."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in title text",
+            "Slide up bullet points"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "lesson_hook",
+          "templateSlideTitle": "The Mystery of Life",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "lesson_hook",
+          "slideTitle": "What Defines 'Alive'?",
+          "learningOutcomeIds": [
+            "LO-Intro"
+          ],
+          "topicCoverage": [
+            "Introduction to Life Processes"
+          ],
+          "teacherIntent": "Activate prior knowledge and introduce the concept of metabolism.",
+          "studentTakeaway": "Students identify that living things perform specific functions non-living things do not.",
+          "layout": "split-screen",
+          "bulletPoints": [
+            "Living vs Non-Living Differences",
+            "Metabolism: The sum of all chemical reactions",
+            "Key Processes: Nutrition, Respiration, Transport"
+          ],
+          "onSlideText": [
+            "Is a car alive?",
+            "It moves. It consumes fuel.",
+            "But it doesn't grow or reproduce."
+          ],
+          "speakerNotes": [
+            "Purpose: Distinguish living from non-living through critical thinking.",
+            "Explain: A car 'eats' petrol and 'moves', but it cannot make its own parts, heal itself, or have offspring. Living things do all this automatically.",
+            "Ask: 'Does a fire breathe? Does a cloud grow?'",
+            "Listen for: Confusion about growth in clouds/fire vs biological growth.",
+            "Correct: Clarify that biological growth involves cell division and material synthesis (metabolism).",
+            "Board work: Write 'Metabolism = Sum of all chemical reactions' on board."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Comparison graphic showing a car and a plant side-by-side. The car has icons for 'Fuel', 'Movement'. The plant has icons for 'Sunlight', 'Water', 'Growth', 'Reproduction'. Use simple line art style.",
+          "assets": [
+            {
+              "purpose": "Visual comparison",
+              "searchQuery": "Car vs Plant diagram educational illustration side by side",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "Public Domain / CC-BY-SA",
+              "attributionText": "Diagram adapted from Wikimedia",
+              "altText": "Side-by-side comparison of a car and a plant highlighting biological vs mechanical functions.",
+              "placementHint": "Centered below title."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate icons appearing on the plant side only"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept",
+          "templateSlideTitle": "Types of Nutrition",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "core_concept",
+          "slideTitle": "Autotrophs vs Heterotrophs",
+          "learningOutcomeIds": [
+            "LO-Nutrition"
+          ],
+          "topicCoverage": [
+            "Nutrition: Autotrophs vs Heterotrophs"
+          ],
+          "teacherIntent": "Define the two fundamental modes of nutrition.",
+          "studentTakeaway": "Students can classify organisms based on how they obtain food.",
+          "layout": "two-column",
+          "bulletPoints": [
+            "Autotrophic: Make own food (Plants, Algae)",
+            "Heterotrophic: Depend on others (Animals, Fungi)",
+            "Key Difference: Source of Carbon"
+          ],
+          "onSlideText": [
+            "Self-Feeders vs Other-Feeders",
+            "Autotrophs = Producers",
+            "Heterotrophs = Consumers/Decomposers"
+          ],
+          "speakerNotes": [
+            "Purpose: Establish the classification of nutrition.",
+            "Explain: Autotrophs are 'producers' because they create organic food from inorganic sources. Heterotrophs must consume this pre-made food.",
+            "Ask: 'Are mushrooms autotrophs or heterotrophs? Why?'",
+            "Listen for: Confusion about fungi; clarify that fungi lack chlorophyll and absorb nutrients (heterotrophic).",
+            "Transition: Let's look closer at how the most important group, plants, do this."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Clean comparison table or split card design. Left side shows a green plant with sun icon (Autotroph). Right side shows diverse animals eating (Heterotroph). Use distinct color coding: Green for Autotrophs, Orange/Red for Heterotrophs.",
+          "assets": [
+            {
+              "purpose": "Visual classification",
+              "searchQuery": "Educational illustration autotroph vs heterotroph comparison chart plants animals",
+              "sourceSite": "Wikimedia Commons Science",
+              "sourceUrl": "",
+              "licenseType": "CC-BY-SA 4.0",
+              "attributionText": "Diagram adapted from Wikimedia",
+              "altText": "Comparison of autotrophs (plants) and heterotrophs (animals/fungi).",
+              "placementHint": "Full width below bullets."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in left column then right column"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept",
+          "templateSlideTitle": "Photosynthesis Process",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "core_concept",
+          "slideTitle": "How Plants Make Food: Photosynthesis",
+          "learningOutcomeIds": [
+            "LO-Photosynthesis"
+          ],
+          "topicCoverage": [
+            "Photosynthesis Mechanism"
+          ],
+          "teacherIntent": "Explain the inputs and outputs of photosynthesis.",
+          "studentTakeaway": "Students understand that sunlight, water, and CO2 are converted to food (glucose) and oxygen.",
+          "layout": "flow-diagram",
+          "bulletPoints": [
+            "Raw Materials: Water + Carbon Dioxide",
+            "Energy Source: Sunlight & Chlorophyll",
+            "Products: Glucose (Food) + Oxygen"
+          ],
+          "onSlideText": [
+            "Inputs -> Process -> Outputs",
+            "Water + CO2 + Light -> Food + O2",
+            "Chlorophyll is the Green Catalyst"
+          ],
+          "speakerNotes": [
+            "Purpose: Break down the photosynthesis equation conceptually.",
+            "Explain: Plants are like solar-powered factories. They take water from roots and CO2 from air, use sunlight captured by chlorophyll to combine them into sugar (glucose).",
+            "Ask: 'Where does the oxygen we breathe come from?'",
+            "Listen for: Student guesses.",
+            "Correct: It is a byproduct of splitting water molecules during photosynthesis. This is why plants are essential for life on Earth.",
+            "Board work: Write simplified equation: 6CO2 + 6H2O --(Sunlight/Chlorophyll)--> C6H12O6 + 6O2"
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Schematic diagram of a leaf cross-section showing arrows entering (Sunlight, CO2 from air via stomata, Water from roots) and exiting (Oxygen). Highlight chloroplasts inside cells as the site. Use bright green and yellow color palette.",
+          "assets": [
+            {
+              "purpose": "Process visualization",
+              "searchQuery": "Photosynthesis process diagram leaf cross section arrows sunlight water carbon dioxide oxygen educational illustration",
+              "sourceSite": "Wikimedia Commons Science",
+              "sourceUrl": "",
+              "licenseType": "CC-BY-SA 4.0",
+              "attributionText": "Diagram adapted from Wikimedia",
+              "altText": "Schematic diagram of photosynthesis showing inputs and outputs in a leaf.",
+              "placementHint": "Centered, large enough to read labels."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate arrows flowing into the leaf",
+            "Highlight chloroplasts on click"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "core_concept",
+          "templateSlideTitle": "Respiration Basics",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "core_concept",
+          "slideTitle": "Breathing vs Respiration",
+          "learningOutcomeIds": [
+            "LO-Respiration"
+          ],
+          "topicCoverage": [
+            "Respiration Basics"
+          ],
+          "teacherIntent": "Clarify the difference between breathing (physical) and respiration (chemical).",
+          "studentTakeaway": "Students understand that respiration releases energy from food.",
+          "layout": "split-screen",
+          "bulletPoints": [
+            "Breathing: Physical exchange of gases",
+            "Respiration: Chemical breakdown of glucose for Energy",
+            "Aerobic (with O2) vs Anaerobic (without)"
+          ],
+          "onSlideText": [
+            "Physical Act vs Cellular Process",
+            "Glucose + Oxygen -> CO2 + Water + ENERGY",
+            "Energy powers all life activities"
+          ],
+          "speakerNotes": [
+            "Purpose: Distinguish the physical act of breathing from cellular respiration.",
+            "Explain: Breathing is just moving air in and out. Respiration happens inside cells where glucose is burned with oxygen to release energy (ATP).",
+            "Ask: 'Why do we breathe faster after running?'",
+            "Listen for: Need more oxygen/energy.",
+            "Correct: Muscles need more ATP, so respiration rate increases, requiring more O2 intake via breathing.",
+            "Transition: Now let's check what you've learned."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Split visual. Left side shows lungs expanding/contracting (Breathing). Right side shows a cell with mitochondria glowing, releasing energy sparks (Respiration). Use contrasting colors: Blue for breathing, Orange/Yellow for cellular energy.",
+          "assets": [
+            {
+              "purpose": "Concept differentiation",
+              "searchQuery": "Human lungs diagram vs animal cell respiration mitochondria educational illustration split screen",
+              "sourceSite": "Wikimedia Commons Science",
+              "sourceUrl": "",
+              "licenseType": "Public Domain / CC-BY-SA",
+              "attributionText": "Diagram adapted from Wikimedia",
+              "altText": "Comparison of breathing (lungs) and cellular respiration (mitochondria).",
+              "placementHint": "Side-by-side, equal width."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate lungs expanding on click",
+            "Flash mitochondria to show energy release"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "quick_assessment",
+          "templateSlideTitle": "Quick Check",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "quick_assessment",
+          "slideTitle": "Check Your Understanding",
+          "learningOutcomeIds": [
+            "LO-Intro",
+            "LO-Nutrition",
+            "LO-Photosynthesis"
+          ],
+          "topicCoverage": [
+            "Review of Key Concepts"
+          ],
+          "teacherIntent": "Assess immediate retention of key concepts.",
+          "studentTakeaway": "Students self-assess their understanding of the session's core ideas.",
+          "layout": "question-card",
+          "bulletPoints": [
+            "1. What is the main pigment for photosynthesis?",
+            "2. Name one difference between autotrophs and heterotrophs.",
+            "3. Why do we need oxygen?"
+          ],
+          "onSlideText": [
+            "Quick Quiz",
+            "Think-Pair-Share Activity",
+            "1. Pigment?",
+            "2. Difference?",
+            "3. Oxygen purpose?"
+          ],
+          "speakerNotes": [
+            "Purpose: Formative assessment to gauge class understanding.",
+            "Explain: Give students 60 seconds to think, then discuss with a partner for 1 minute before sharing answers.",
+            "Ask: 'Who can tell me the pigment name?'",
+            "Listen for: Chlorophyll. Ask follow-up: 'Where is it found?'",
+            "Correct: In chloroplasts of plant cells.",
+            "Board work: Write correct answers on board after discussion."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Clean, minimalist slide with large question marks or a lightbulb icon. Use bold typography for the questions to make them stand out as prompts.",
+          "assets": [
+            {
+              "purpose": "Visual cue for quiz",
+              "searchQuery": "Light bulb icon educational illustration simple vector style white background",
+              "sourceSite": "Freepik / IconFinder (Educational License)",
+              "sourceUrl": "",
+              "licenseType": "Commercial/Educational Use Allowed",
+              "attributionText": "Icon by [Author]",
+              "altText": "Light bulb icon symbolizing ideas and questions.",
+              "placementHint": "Centered above the text."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal each question one by one"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "summary",
+          "templateSlideTitle": "Session Summary",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "summary",
+          "slideTitle": "What We Learned Today",
+          "learningOutcomeIds": [
+            "LO-Intro",
+            "LO-Nutrition",
+            "LO-Photosynthesis"
+          ],
+          "topicCoverage": [
+            "Summary of Session 1"
+          ],
+          "teacherIntent": "Consolidate learning and provide a clear takeaway.",
+          "studentTakeaway": "Students leave with a structured summary of the session's key points.",
+          "layout": "bullet-list",
+          "bulletPoints": [
+            "Life processes define living organisms (Metabolism).",
+            "Nutrition: Autotrophs make food; Heterotrophs consume it.",
+            "Photosynthesis uses sunlight to create glucose and oxygen.",
+            "Respiration releases energy from food using oxygen."
+          ],
+          "onSlideText": [
+            "Key Takeaways",
+            "- Metabolism is key to life",
+            "- Two types of nutrition: Auto & Hetero",
+            "- Photosynthesis = Food + Oxygen",
+            "- Respiration = Energy Release"
+          ],
+          "speakerNotes": [
+            "Purpose: Final wrap-up and reinforcement.",
+            "Explain: Recap the four main points. Emphasize that photosynthesis is the foundation of most food chains on Earth.",
+            "Ask: 'What would happen if all plants disappeared?'",
+            "Listen for: No oxygen, no food chain collapse.",
+            "Transition: For homework, observe a plant in your garden and note its color."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Clean summary slide with checkmarks next to each point. Use the theme's primary blue for headings and a subtle background pattern.",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Checkmarks appear as bullets are read"
+          ],
+          "timeEstimateMinutes": 2
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Life Processes - Session 1: Nutrition & Respiration",
+      "keyInformation": [
+        "Session Focus: Introduction to Life Processes, Autotrophic/Heterotrophic nutrition, Photosynthesis basics, and Respiration.",
+        "Target Audience: Grade 7-9 Science Students.",
+        "Key Concepts Covered: Metabolism definition, Chlorophyll role in photosynthesis, Stomata function (basic), Aerobic respiration distinction."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Plan Outline: Life Processes Session 1",
+      "sections": [
+        "I. Introduction to Life Processes and Metabolism",
+        "II. Classification of Nutrition (Autotrophs vs Heterotrophs)",
+        "III. Mechanism of Photosynthesis in Plants",
+        "IV. Basics of Respiration: Breathing vs Cellular Process",
+        "V. Assessment and Summary"
+      ]
+    }
+  }
+}

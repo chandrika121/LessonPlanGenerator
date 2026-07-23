@@ -1,0 +1,494 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "textbook-clean",
+      "templateName": "Textbook Clean Layout",
+      "themeId": "cbse-academic-blue",
+      "title": "Life Processes - Session 1",
+      "presentationTitle": "Understanding Life Processes: Nutrition and Respiration",
+      "presentationGoal": "To introduce the concept of life processes, define nutrition types, explain photosynthesis as an autotrophic process, and detail aerobic vs anaerobic respiration.",
+      "audience": "Grade 10 Science Students",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab",
+          "body": "Open Sans"
+        },
+        "colors": {
+          "primary": "#2C3E50",
+          "secondary": "#16A085",
+          "accent": "#F39C12",
+          "background": "#FFFFFF",
+          "surface": "#ECF0F1",
+          "text": "#2C3E50",
+          "mutedText": "#7F8C8D"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary",
+          "cardStyle": "shadow-elevation-2",
+          "visualFrameStyle": "rounded-corners-md"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "All images must be under Creative Commons or Public Domain licenses suitable for educational use."
+        ],
+        "fallbackStrategy": "Use SVG diagrams if specific Wikimedia image is not found within 30 seconds of search."
+      },
+      "licenseChecklist": [
+        "Verify all external assets are CC-BY-SA or Public Domain",
+        "Ensure no copyrighted textbook figures are used directly without transformation"
+      ],
+      "presentationWarnings": [
+        "Do not introduce cellular respiration details beyond aerobic/anaerobic distinction.",
+        "Avoid discussing complex biochemical pathways (Krebs cycle) as they belong to future sessions."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define life processes and their necessity",
+          "Differentiate between autotrophic and heterotrophic nutrition",
+          "Explain the process of photosynthesis including reactants, products, and conditions",
+          "Distinguish between aerobic and anaerobic respiration"
+        ],
+        "topicsCovered": [
+          "Introduction to Life Processes",
+          "Nutrition: Autotrophs vs Heterotrophs",
+          "Photosynthesis Mechanism",
+          "Respiration Types (Aerobic/Anaerobic)"
+        ],
+        "taughtConceptsCovered": [
+          "Definition of Nutrition, Respiration, Transport, Excretion",
+          "Chlorophyll and Stomata function in photosynthesis",
+          "Role of enzymes in respiration",
+          "By-products of aerobic vs anaerobic processes"
+        ],
+        "omittedContent": [
+          "Detailed steps of Glycolysis (beyond glucose breakdown)",
+          "Complex transport mechanisms (blood circulation details)",
+          "Excretion systems in humans and plants beyond basic definition"
+        ]
+      },
+      "slides": [
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "title-slide",
+          "templateSlideTitle": "Presentation Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "Life Processes: Nutrition & Respiration",
+          "learningOutcomeIds": [
+            "LO-Intro"
+          ],
+          "topicCoverage": [
+            "Introduction to Life Processes"
+          ],
+          "teacherIntent": "Set the stage for the chapter, establish relevance of life processes in daily existence.",
+          "studentTakeaway": "Students understand that 'life' is defined by specific continuous biological activities.",
+          "layout": "title-only-hero",
+          "bulletPoints": [
+            "What makes something alive?",
+            "The 4 Key Life Processes",
+            "Focus: Nutrition & Respiration"
+          ],
+          "onSlideText": [
+            "Chapter: Life Processes",
+            "Session 1 of 5",
+            "Grade 10 Science"
+          ],
+          "speakerNotes": [
+            "Purpose: Hook students by asking what distinguishes living from non-living.",
+            "Explain: We will explore the fundamental processes that keep organisms alive. Today focuses on how they get food and energy.",
+            "Ask: 'Can a rock eat? Can it breathe?' Listen for student responses about growth vs biological activity.",
+            "Transition: Let's define what we mean by Life Processes."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "High-contrast split image: Left side showing a vibrant green leaf with sunlight (representing autotrophs), Right side showing an animal eating or breathing air, symbolizing heterotrophic life. Clean white background.",
+          "assets": [
+            {
+              "purpose": "Hero visual for title slide",
+              "searchQuery": "green leaf photosynthesis close up nature",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Image by Nature Photographer (Public Domain)",
+              "altText": "Close-up of a green leaf with sunlight filtering through, symbolizing photosynthesis.",
+              "placementHint": "Background image behind title text"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in slide title",
+            "Slide up bullet points sequentially"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "learning-outcomes",
+          "templateSlideTitle": "Learning Outcomes Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "learning_outcomes",
+          "slideTitle": "What We Will Learn Today",
+          "learningOutcomeIds": [
+            "LO-1",
+            "LO-2"
+          ],
+          "topicCoverage": [
+            "Introduction to Life Processes",
+            "Nutrition Types"
+          ],
+          "teacherIntent": "Explicitly state the goals so students know what success looks like.",
+          "studentTakeaway": "Clear list of concepts they must master by end of class.",
+          "layout": "bullets-list",
+          "bulletPoints": [
+            "Define 'Life Processes' and their necessity for survival.",
+            "Differentiate between Autotrophic and Heterotrophic nutrition.",
+            "Explain the role of chlorophyll, sunlight, CO2, and water in photosynthesis.",
+            "Distinguish between Aerobic and Anaerobic respiration."
+          ],
+          "onSlideText": [
+            "1. Define Life Processes",
+            "2. Types of Nutrition: Auto vs Hetero",
+            "3. Photosynthesis Mechanism",
+            "4. Respiration: Aerobic & Anaerobic"
+          ],
+          "speakerNotes": [
+            "Purpose: Align student expectations with lesson goals.",
+            "Explain: We are not just memorizing terms; we understand the 'why' behind these processes.",
+            "Ask: 'Why do you think plants need sunlight?' Listen for answers about energy production.",
+            "Correct: If students say 'plants eat soil', correct that they make their own food using light, not eating dirt."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Bullet points appear one by one as discussed"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "concept-intro",
+          "templateSlideTitle": "What are Life Processes?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "topic_introduction",
+          "slideTitle": "The Four Essential Life Processes",
+          "learningOutcomeIds": [
+            "LO-1"
+          ],
+          "topicCoverage": [
+            "Introduction to Life Processes"
+          ],
+          "teacherIntent": "Introduce the four pillars of life processes that will be covered in this chapter.",
+          "studentTakeaway": "Students can list and briefly describe Nutrition, Respiration, Transport, Excretion.",
+          "layout": "grid-4-cards",
+          "bulletPoints": [
+            "Nutrition: Getting food/energy",
+            "Respiration: Releasing energy from food",
+            "Transport: Moving substances within body",
+            "Excretion: Removing waste products"
+          ],
+          "onSlideText": [
+            "1. Nutrition (Food Intake)",
+            "2. Respiration (Energy Release)",
+            "3. Transport (Movement of Materials)",
+            "4. Excretion (Waste Removal)"
+          ],
+          "speakerNotes": [
+            "Purpose: Define the scope of 'Life Processes'.",
+            "Explain: These are continuous processes that happen in all living organisms to maintain life.",
+            "Ask: 'Which process happens first? Eating or breathing?' Discuss interdependence.",
+            "Board work: Draw a simple cycle showing Food -> Energy -> Waste."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in each card sequentially"
+          ],
+          "timeEstimateMinutes": 4
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "concept-comparison",
+          "templateSlideTitle": "Types of Nutrition",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "core_concept",
+          "slideTitle": "Autotrophic vs Heterotrophic Nutrition",
+          "learningOutcomeIds": [
+            "LO-2"
+          ],
+          "topicCoverage": [
+            "Nutrition Types"
+          ],
+          "teacherIntent": "Clarify the fundamental difference in how organisms obtain food.",
+          "studentTakeaway": "Students can categorize organisms as Autotrophs or Heterotrophs based on their nutrition source.",
+          "layout": "split-comparison",
+          "bulletPoints": [
+            "Autotrophic: Make own food (e.g., Plants)",
+            "Heterotrophic: Depend on others for food (e.g., Animals, Fungi)",
+            "Key Difference: Source of Carbon and Energy"
+          ],
+          "onSlideText": [
+            "AUTOTROPHS",
+            "- Synthesize own organic compounds",
+            "- Use sunlight or chemicals",
+            "- Examples: Green plants, Algae",
+            "",
+            "HETEROTROPHS",
+            "- Cannot synthesize own food",
+            "- Depend on autotrophs/other organisms",
+            "- Examples: Humans, Lions, Bacteria"
+          ],
+          "speakerNotes": [
+            "Purpose: Establish the classification of nutrition.",
+            "Explain: Autotrophs are 'self-feeders'. Heterotrophs are 'others-feeders'.",
+            "Ask: 'Are mushrooms autotrophs or heterotrophs?' Listen for misconceptions about fungi.",
+            "Correct: Clarify that fungi lack chlorophyll and absorb nutrients, making them heterotrophs."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Side-by-side comparison diagram. Left side: A green plant with arrows showing Sunlight + CO2 -> Food. Right side: An animal eating a leaf or fruit, arrow pointing from food to mouth.",
+          "assets": [
+            {
+              "purpose": "Visual aid for autotrophs",
+              "searchQuery": "plant photosynthesis diagram simple",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Diagram by Science Educator (Public Domain)",
+              "altText": "Simple diagram showing a plant taking in sunlight and carbon dioxide.",
+              "placementHint": "Left side of slide"
+            },
+            {
+              "purpose": "Visual aid for heterotrophs",
+              "searchQuery": "animal eating food illustration simple",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Illustration by Educational Artist (Public Domain)",
+              "altText": "Simple illustration of an animal consuming food.",
+              "placementHint": "Right side of slide"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal Autotrophs section first",
+            "Then reveal Heterotrophs section"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "worked-example-diagram",
+          "templateSlideTitle": "Photosynthesis Process",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "visual_explainer",
+          "slideTitle": "How Plants Make Food: Photosynthesis",
+          "learningOutcomeIds": [
+            "LO-3"
+          ],
+          "topicCoverage": [
+            "Photosynthesis Mechanism"
+          ],
+          "teacherIntent": "Detail the inputs, conditions, and outputs of photosynthesis.",
+          "studentTakeaway": "Students can write the chemical equation and list requirements for photosynthesis.",
+          "layout": "diagram-focused",
+          "bulletPoints": [
+            "Reactants: Carbon Dioxide + Water",
+            "Conditions: Sunlight & Chlorophyll",
+            "Product: Glucose (Food) + Oxygen"
+          ],
+          "onSlideText": [
+            "Equation:",
+            "6CO2 + 6H2O --(Sunlight/Chlorophyll)--> C6H12O6 + 6O2",
+            "",
+            "Key Requirements:",
+            "- Sunlight (Energy Source)",
+            "- Chlorophyll (Pigment in leaves)",
+            "- Carbon Dioxide (from air via stomata)",
+            "- Water (absorbed by roots)"
+          ],
+          "speakerNotes": [
+            "Purpose: Deep dive into the mechanism of photosynthesis.",
+            "Explain: Break down each component. Chlorophyll is like a solar panel capturing light energy.",
+            "Ask: 'Where does CO2 enter?' Listen for answers about leaves/stomata.",
+            "Board work: Write the balanced chemical equation clearly on the board."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Detailed labeled diagram of a leaf cross-section showing stomata, chloroplasts inside cells, and arrows indicating CO2 entering from air and Water moving up from roots.",
+          "assets": [
+            {
+              "purpose": "Leaf structure for photosynthesis",
+              "searchQuery": "leaf anatomy photosynthesis stomata diagram",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Diagram by Biology Teacher (Public Domain)",
+              "altText": "Cross-section of a leaf showing stomata and chloroplasts.",
+              "placementHint": "Center or right side of slide"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Animate arrows for inputs (CO2, Water)",
+            "Highlight Chlorophyll box",
+            "Reveal Oxygen output last"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "concept-comparison-2",
+          "templateSlideTitle": "Respiration Types",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "core_concept",
+          "slideTitle": "Aerobic vs Anaerobic Respiration",
+          "learningOutcomeIds": [
+            "LO-4"
+          ],
+          "topicCoverage": [
+            "Respiration Types (Aerobic/Anaerobic)"
+          ],
+          "teacherIntent": "Distinguish between respiration with and without oxygen.",
+          "studentTakeaway": "Students understand the difference in energy yield and by-products of aerobic vs anaerobic processes.",
+          "layout": "split-comparison",
+          "bulletPoints": [
+            "Aerobic: Requires Oxygen, High Energy Yield",
+            "Anaerobic: No Oxygen, Low Energy Yield"
+          ],
+          "onSlideText": [
+            "AEROBIC RESPIRATION",
+            "- Needs Oxygen (O2)",
+            "- Complete breakdown of glucose",
+            "- Products: CO2 + H2O + Large Energy",
+            "",
+            "ANAEROBIC RESPIRATION",
+            "- No Oxygen required",
+            "- Incomplete breakdown of glucose",
+            "- Products: Ethanol/CO2 OR Lactic Acid + Small Energy"
+          ],
+          "speakerNotes": [
+            "Purpose: Clarify the role of oxygen in energy release.",
+            "Explain: Aerobic is efficient (like a full burn). Anaerobic is inefficient but fast (like smoldering or fermentation).",
+            "Ask: 'Why do we breathe heavily after running?' Listen for connection to anaerobic buildup and need for O2 repayment.",
+            "Correct: Ensure students know lactic acid causes muscle cramps."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "Comparison table or split graphic. Left side: Human running (Aerobic, Oxygen mask icon). Right side: Yeast in a jar with bubbles (Anaerobic) and muscle fibers cramping.",
+          "assets": [
+            {
+              "purpose": "Visual for anaerobic example",
+              "searchQuery": "yeast fermentation bubbling flask diagram",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Diagram by Science Lab (Public Domain)",
+              "altText": "Flask showing yeast fermentation producing bubbles.",
+              "placementHint": "Right side of slide"
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal Aerobic details first",
+            "Then reveal Anaerobic details with a contrasting color highlight"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "textbook-clean",
+          "templateSlideKey": "quick-assessment",
+          "templateSlideTitle": "Quick Check: Life Processes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 7,
+          "slideType": "quick_assessment",
+          "slideTitle": "Check Your Understanding",
+          "learningOutcomeIds": [
+            "LO-1",
+            "LO-2",
+            "LO-3"
+          ],
+          "topicCoverage": [
+            "All Topics Covered in Session 1"
+          ],
+          "teacherIntent": "Assess immediate retention of key concepts.",
+          "studentTakeaway": "Students can self-evaluate their grasp of the session's core ideas.",
+          "layout": "question-list",
+          "bulletPoints": [
+            "What is the main difference between autotrophs and heterotrophs?",
+            "Name two conditions necessary for photosynthesis.",
+            "Which type of respiration produces more energy?"
+          ],
+          "onSlideText": [
+            "1. What distinguishes Autotrophic from Heterotrophic nutrition?",
+            "2. List the reactants needed for Photosynthesis.",
+            "3. Compare Aerobic and Anaerobic Respiration regarding Oxygen."
+          ],
+          "speakerNotes": [
+            "Purpose: Formative assessment to gauge class understanding.",
+            "Ask: 'Who can answer question 1?' Encourage participation.",
+            "Listen for: Correct identification of food source difference.",
+            "Transition: Great job. Now let's wrap up and look at homework."
+          ],
+          "visualAttribution": {
+            "visualPlan": "",
+            "svgDiagram": null
+          },
+          "visualPlan": "",
+          "assets": [],
+          "svgDiagram": null,
+          "animationHints": [
+            "Reveal questions one by one to encourage discussion"
+          ],
+          "timeEstimateMinutes": 4
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Life Processes - Session 1: Nutrition and Respiration",
+      "keyInformation": [
+        "Session covers the definition of life processes, types of nutrition (autotrophic/heterotrophic), photosynthesis mechanism, and respiration types.",
+        "Key concepts include chlorophyll function, stomata role, aerobic vs anaerobic energy yield differences."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Plan: Life Processes (Session 1)",
+      "sections": [
+        "Introduction to Life Processes",
+        "Nutrition Types: Autotrophs and Heterotrophs",
+        "Photosynthesis Mechanism and Requirements",
+        "Respiration: Aerobic vs Anaerobic",
+        "Assessment and Summary"
+      ]
+    }
+  }
+}

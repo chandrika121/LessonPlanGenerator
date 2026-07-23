@@ -240,6 +240,7 @@ export interface WikimediaAsset {
 export interface AiImageRequest {
   prompt: string;
   negativePrompt?: string;
+  model?: string;
   style?: "illustration" | "photorealistic" | "cartoon" | "watercolor";
   aspectRatio?: "16:9" | "4:3" | "1:1";
   gradeLevel: number;

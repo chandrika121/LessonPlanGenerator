@@ -1,0 +1,9 @@
+{
+  "provider": "local-ollama-image",
+  "baseUrl": "http://192.168.1.82:11434",
+  "request": {
+    "model": "x/flux2-klein:9b",
+    "prompt": "Mathematics | Class IX / Class X | Example Calculation Steps (Cone/Sphere) | Demonstrate calculation involving slant height. | Problem: Cone, r=6 cm, h=8 cm. Find V and TSA. | Step 1: Find slant l = √(6²+8²) = √(36+64)=sqrt(100)=10 | Step 2: Volume = (1/3)(π)(36)(8) | Calculation: V ≈ 301.7 cm³ | Application of Cone and Sphere Formulas | A clean step-by-step mathematical diagram or board-style visual for Example C...",
+    "negativePrompt": "text, labels, captions, numbers, watermark, decorative clutter, formula text, axis labels, diagram callouts"
+  }
+}

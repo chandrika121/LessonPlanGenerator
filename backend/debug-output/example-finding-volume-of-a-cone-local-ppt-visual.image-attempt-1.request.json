@@ -1,0 +1,9 @@
+{
+  "provider": "local-ollama-image",
+  "baseUrl": "http://192.168.1.82:11434",
+  "request": {
+    "model": "x/flux2-klein:9b",
+    "prompt": "Mathematics | Class IX / Class X | Example: Finding Volume of a Cone | Reinforce the use of slant height vs vertical height in surface area, but only vertical height for volume. | Problem: Cone with r=6 cm, h=8 cm. | Find: Volume and Slant Height 'l'. | Step 1: Find l = √(r² + h²) | - l = √(36 + 64) = sqrt(100) = 10 cm | Application to Cones and Slant Height | A clean step-by-step mathematical diagram or board-sty...",
+    "negativePrompt": "text, labels, captions, numbers, watermark, decorative clutter, formula text, axis labels, diagram callouts"
+  }
+}

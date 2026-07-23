@@ -1,0 +1,456 @@
+{
+  "materials": {
+    "ppt": {
+      "templateId": "visual-focus",
+      "templateName": "Visual Focus Educational Template",
+      "themeId": "cbse-academic-blue",
+      "title": "Interconnectedness Between Organisms and Environment",
+      "presentationTitle": "Science: Interconnectedness of Life and Nature",
+      "presentationGoal": "To teach students how organisms depend on their environment for survival, resources, and ecological balance.",
+      "audience": "Middle School Science Students (Grades 6-8)",
+      "theme": "cbse-academic-blue",
+      "themeTokens": {
+        "fonts": {
+          "heading": "Roboto Slab",
+          "body": "Open Sans"
+        },
+        "colors": {
+          "primary": "#1a5f7a",
+          "secondary": "#48cae4",
+          "accent": "#ffb703",
+          "background": "#ffffff",
+          "surface": "#e9edc9",
+          "text": "#2b2d42",
+          "mutedText": "#6a7b8f"
+        },
+        "visualStyle": {
+          "topBarStyle": "solid-primary",
+          "cardStyle": "rounded-elevation",
+          "visualFrameStyle": "organic-border"
+        }
+      },
+      "assetSearchPlan": {
+        "preferredSources": [
+          "Wikimedia Commons",
+          "Unsplash Education"
+        ],
+        "safeSearch": true,
+        "licensingNotes": [
+          "All images must be Creative Commons or Public Domain.",
+          "Attribution required for CC-BY licenses."
+        ],
+        "fallbackStrategy": "Use SVG diagrams if specific Wikimedia assets are unavailable."
+      },
+      "licenseChecklist": [
+        "Verify image license before embedding",
+        "Ensure no copyrighted text in images"
+      ],
+      "presentationWarnings": [
+        "Do not introduce concepts from future sessions (e.g., complex food web dynamics beyond basic chains).",
+        "Focus strictly on the relationship between organisms and their immediate environment."
+      ],
+      "coverageSummary": {
+        "learningOutcomesCovered": [
+          "Define interconnectedness in ecosystems.",
+          "Identify biotic and abiotic factors.",
+          "Explain dependencies of organisms on environmental resources.",
+          "Analyze the impact of environmental changes on survival."
+        ],
+        "topicsCovered": [
+          "Biotic vs Abiotic Components",
+          "Resource Dependencies (Water, Air, Soil)",
+          "Habitat Requirements",
+          "Environmental Impact"
+        ],
+        "taughtConceptsCovered": [
+          "Interdependence of living and non-living things.",
+          "Survival needs of plants and animals.",
+          "Consequences of environmental disruption."
+        ],
+        "omittedContent": []
+      },
+      "slides": [
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "hero-slide",
+          "templateSlideTitle": "Lesson Title Slide",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 1,
+          "slideType": "title_identity",
+          "slideTitle": "Interconnectedness: Organisms & Environment",
+          "learningOutcomeIds": [
+            "LO-Intro"
+          ],
+          "topicCoverage": [
+            "Introduction to Interconnectedness"
+          ],
+          "teacherIntent": "Set the stage for understanding that life does not exist in isolation.",
+          "studentTakeaway": "Organisms and their environment are deeply linked.",
+          "layout": "hero-full",
+          "bulletPoints": [
+            "Science: Interconnectedness Between Organisms and Environment"
+          ],
+          "onSlideText": [
+            "How do living things rely on the world around them?"
+          ],
+          "speakerNotes": [
+            "Purpose: Introduce the core theme of interconnectedness.",
+            "Explain: Start by asking students to look out a window or imagine their backyard. Ask, 'Can you see anything that exists completely alone?'",
+            "Ask: 'What would happen if there were no water? No air?'",
+            "Listen for: Answers about survival needs.",
+            "Transition: Today we will explore exactly how organisms and the environment are tied together."
+          ],
+          "visualAttribution": {
+            "visualPlan": "A high-quality, split-composition image showing a vibrant forest ecosystem on one side (organisms) blending into soil layers and sky elements (environment).",
+            "svgDiagram": null
+          },
+          "visualPlan": "Full-slide hero illustration of a lush green forest canopy with sunlight filtering through leaves, transitioning at the bottom to visible roots in dark soil and clear blue sky above. The image should emphasize the connection between air, water, plants, and animals.",
+          "assets": [
+            {
+              "purpose": "Hero visual for engagement",
+              "searchQuery": "forest ecosystem sunlight",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Image by Wikimedia Commons contributor",
+              "altText": "A vibrant forest scene showing trees, sky, and soil layers to represent the environment.",
+              "placementHint": "Background image covering entire slide."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in title text after background loads"
+          ],
+          "timeEstimateMinutes": 2
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "concept-definition",
+          "templateSlideTitle": "What is Interconnectedness?",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 2,
+          "slideType": "core_concept",
+          "slideTitle": "Defining the Connection",
+          "learningOutcomeIds": [
+            "LO-1"
+          ],
+          "topicCoverage": [
+            "Biotic and Abiotic Factors"
+          ],
+          "teacherIntent": "Define key terms: Biotic (living) and Abiotic (non-living).",
+          "studentTakeaway": "The environment consists of living things and non-living factors that affect them.",
+          "layout": "split-screen",
+          "bulletPoints": [
+            "Biotic Factors: Living components (Plants, Animals, Bacteria)",
+            "Abiotic Factors: Non-living physical/chemical elements (Sunlight, Water, Soil, Air)"
+          ],
+          "onSlideText": [
+            "Living Things + Non-Living World = Ecosystem"
+          ],
+          "speakerNotes": [
+            "Purpose: Establish the vocabulary for the lesson.",
+            "Explain: Break down 'Biotic' (bios = life) and 'Abiotic' (a- = without). Use a simple analogy like a car engine (biotic parts moving) needing fuel and air (abiotic inputs).",
+            "Ask: 'Is water biotic or abiotic? What about the grass growing in it?'",
+            "Listen for: Confusion between living things that need water vs. water itself.",
+            "Correct: Clarify that while plants are alive, the water they drink is not a living organism; it's an environmental factor."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": {
+              "purpose": "Visual comparison of biotic vs abiotic",
+              "search": "",
+              "source": "",
+              "license": "",
+              "animation": ""
+            }
+          },
+          "visualPlan": "",
+          "assets": [
+            {
+              "purpose": "Supporting visual for definition",
+              "searchQuery": "plant and water droplet macro",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY 2.0",
+              "attributionText": "Macro photography of plant life",
+              "altText": "Close-up of a green leaf with water droplets.",
+              "placementHint": "Left side of slide."
+            }
+          ],
+          "svgDiagram": {
+            "title": "Biotic vs Abiotic Components",
+            "type": "comparison-table",
+            "instructions": [
+              "Create a two-column table with headers 'Living (Biotic)' and 'Non-Living (Abiotic)'.",
+              "List examples in each column: Plants/Animals for Biotic; Sun/Water/Air for Abiotic.",
+              "Use arrows to show interaction between the columns."
+            ],
+            "svgCode": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250'><rect width='400' height='250' fill='#f9f9f9'/><text x='200' y='30' font-family='sans-serif' font-size='18' text-anchor='middle' font-weight='bold'>Ecosystem Components</text><line x1='100' y1='60' x2='300' y2='60' stroke='#ccc'/><rect x='50' y='70' width='140' height='160' fill='#e9edc9' rx='5'/><text x='120' y='100' font-family='sans-serif' font-size='16' text-anchor='middle' font-weight='bold'>Biotic (Living)</text><circle cx='120' cy='130' r='15' fill='#48cae4'/><text x='120' y='170' font-family='sans-serif' font-size='14' text-anchor='middle'>Plants</text><rect x='210' y='70' width='140' height='160' fill='#e9edc9' rx='5'/><text x='280' y='100' font-family='sans-serif' font-size='16' text-anchor='middle' font-weight='bold'>Abiotic (Non-Living)</text><circle cx='280' cy='130' r='15' fill='#ffb703'/><text x='280' y='170' font-family='sans-serif' font-size='14' text-anchor='middle'>Water</text></svg>"
+          },
+          "animationHints": [
+            "Animate bullet points to appear one by one"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "dependency-examples",
+          "templateSlideTitle": "How Organisms Depend on Environment",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 3,
+          "slideType": "worked_example",
+          "slideTitle": "Survival Needs: The Essentials",
+          "learningOutcomeIds": [
+            "LO-2"
+          ],
+          "topicCoverage": [
+            "Resource Dependencies"
+          ],
+          "teacherIntent": "Demonstrate specific dependencies of organisms on environmental factors.",
+          "studentTakeaway": "Organisms cannot survive without specific abiotic resources like water, air, and soil nutrients.",
+          "layout": "grid-3",
+          "bulletPoints": [
+            "Water: Essential for hydration and photosynthesis.",
+            "Air (Oxygen/CO2): Needed for respiration and plant food production.",
+            "Soil/Nutrients: Provides anchorage and minerals for growth."
+          ],
+          "onSlideText": [
+            "No Water = No Life",
+            "No Air = Suffocation / Stunted Growth"
+          ],
+          "speakerNotes": [
+            "Purpose: Connect abstract concepts to concrete survival needs.",
+            "Explain: Use the 'Three Pillars of Survival' analogy. If you remove one pillar, the structure collapses.",
+            "Ask: 'Why do plants need soil? Can they grow in just water?' (Introduce hydroponics as an exception but emphasize natural dependency).",
+            "Listen for: Student ideas about food chains or breathing.",
+            "Board Work: Draw a simple plant and label where it gets its energy from the sun, air, and roots."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "Three distinct icons or small illustrations arranged horizontally: 1) A wilting plant next to a dry riverbed (Water), 2) An animal breathing air with wind lines (Air), 3) Roots in rich dark soil (Soil).",
+          "assets": [
+            {
+              "purpose": "Visual for water dependency",
+              "searchQuery": "dried cracked earth plant roots",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY 2.0",
+              "attributionText": "Image of dry soil conditions",
+              "altText": "Cracked dry earth showing lack of water.",
+              "placementHint": "Left panel."
+            },
+            {
+              "purpose": "Visual for air dependency",
+              "searchQuery": "wind blowing leaves trees",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Image of wind in nature",
+              "altText": "Trees swaying in the wind representing air movement.",
+              "placementHint": "Center panel."
+            },
+            {
+              "purpose": "Visual for soil dependency",
+              "searchQuery": "plant roots in soil cross section",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY 2.0",
+              "attributionText": "Diagram of plant root system",
+              "altText": "Cross-section showing plant roots absorbing nutrients from soil.",
+              "placementHint": "Right panel."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in each dependency pillar sequentially"
+          ],
+          "timeEstimateMinutes": 6
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "impact-analysis",
+          "templateSlideTitle": "Impact of Environmental Changes",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 4,
+          "slideType": "core_concept",
+          "slideTitle": "When the Environment Shifts",
+          "learningOutcomeIds": [
+            "LO-3"
+          ],
+          "topicCoverage": [
+            "Environmental Impact"
+          ],
+          "teacherIntent": "Show how changes in abiotic factors directly affect biotic survival.",
+          "studentTakeaway": "Changes in the environment (like drought or pollution) force organisms to adapt, move, or die.",
+          "layout": "split-screen",
+          "bulletPoints": [
+            "Drought: Lack of water leads to plant death and animal migration.",
+            "Pollution: Contaminated air/water harms health and reproduction.",
+            "Temperature Change: Affects metabolic rates and breeding cycles."
+          ],
+          "onSlideText": [
+            "Change in Environment -> Reaction by Organisms"
+          ],
+          "speakerNotes": [
+            "Purpose: Discuss the consequences of environmental disruption.",
+            "Explain: Use a cause-and-effect chain. 'If it stops raining (Cause), plants dry up (Effect 1), herbivores lose food and move or starve (Effect 2).'",
+            "Ask: 'Have you ever seen animals leave an area after heavy rain? Why?'",
+            "Listen for: Answers about flooding or finding new water sources.",
+            "Correct: Clarify that migration is a survival strategy, not just random movement."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "A split visual showing 'Before' and 'After'. Left side: A lush green field with animals. Right side: The same landscape but dry/dusty with fewer animals or signs of stress.",
+          "assets": [
+            {
+              "purpose": "Visual for environmental change",
+              "searchQuery": "drought impact on wildlife",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY-SA 3.0",
+              "attributionText": "Image showing drought effects",
+              "altText": "Dry landscape with sparse vegetation and animals.",
+              "placementHint": "Right side of split screen."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Slide in 'Before' image first, then overlay 'After' state"
+          ],
+          "timeEstimateMinutes": 5
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "summary-recap",
+          "templateSlideTitle": "Lesson Summary & Bridge",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 5,
+          "slideType": "recap_bridge",
+          "slideTitle": "Summary: The Web of Life",
+          "learningOutcomeIds": [
+            "LO-4"
+          ],
+          "topicCoverage": [
+            "Interconnectedness Review"
+          ],
+          "teacherIntent": "Consolidate learning and prepare for the next session.",
+          "studentTakeaway": "Organisms are not isolated; they rely on a delicate balance of living and non-living factors.",
+          "layout": "centered-list",
+          "bulletPoints": [
+            "Ecosystems = Biotic + Abiotic interactions.",
+            "Survival depends on Water, Air, Soil, Sunlight.",
+            "Environmental changes trigger survival responses."
+          ],
+          "onSlideText": [
+            "Next: How do organisms interact with each other?"
+          ],
+          "speakerNotes": [
+            "Purpose: Wrap up the session and reinforce key takeaways.",
+            "Explain: Summarize that just as a house needs bricks (abiotic) to build walls, life needs environmental factors. If you remove one part of the ecosystem, it affects everything else.",
+            "Ask: 'What is one thing in your home environment that helps you survive?'",
+            "Listen for: Answers like food, water, shelter.",
+            "Transition: Tomorrow we will look deeper at how animals and plants interact with each other directly."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "A simple circular diagram or web graphic connecting icons of Sun, Water, Plant, Animal in a loop to symbolize the cycle.",
+          "assets": [
+            {
+              "purpose": "Visual for summary",
+              "searchQuery": "ecosystem food chain circle",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY 2.0",
+              "attributionText": "Diagram of ecosystem cycle",
+              "altText": "Circular diagram showing the flow between sun, plants, and animals.",
+              "placementHint": "Center background."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in summary points one by one"
+          ],
+          "timeEstimateMinutes": 3
+        },
+        {
+          "templateId": "visual-focus",
+          "templateSlideKey": "homework-assignment",
+          "templateSlideTitle": "Homework & Next Steps",
+          "isOptionalSlotFilled": true,
+          "slideNumber": 6,
+          "slideType": "homework_next_session",
+          "slideTitle": "Your Turn: Observe Your Environment",
+          "learningOutcomeIds": [
+            "LO-4"
+          ],
+          "topicCoverage": [
+            "Application of Concepts"
+          ],
+          "teacherIntent": "Assign a practical observation task to reinforce learning.",
+          "studentTakeaway": "Students will identify biotic and abiotic factors in their immediate surroundings.",
+          "layout": "text-heavy",
+          "bulletPoints": [
+            "Task: List 5 Biotic and 3 Abiotic items you see outside your home or school today.",
+            "Question: How does one of these affect the others?",
+            "Due: Tomorrow's class."
+          ],
+          "onSlideText": [
+            "Observation Activity"
+          ],
+          "speakerNotes": [
+            "Purpose: Assign homework that connects classroom learning to real life.",
+            "Explain: Encourage students to look at a tree, the ground, or even insects. Ask them to think about how they depend on each other.",
+            "Ask: 'Can you find something non-living that is helping a living thing right now?'",
+            "Listen for: Examples like sunlight warming a rock where an insect sits."
+          ],
+          "visualAttribution": {
+            "visualPlan": null,
+            "svgDiagram": null
+          },
+          "visualPlan": "An icon of a notebook or clipboard with a checklist next to it.",
+          "assets": [
+            {
+              "purpose": "Visual for homework",
+              "searchQuery": "notebook and pencil outdoors",
+              "sourceSite": "Wikimedia Commons",
+              "sourceUrl": "",
+              "licenseType": "CC BY 2.0",
+              "attributionText": "Image of study materials",
+              "altText": "A notebook with a pen on an outdoor surface.",
+              "placementHint": "Right side."
+            }
+          ],
+          "svgDiagram": null,
+          "animationHints": [
+            "Fade in homework details"
+          ],
+          "timeEstimateMinutes": 2
+        }
+      ]
+    },
+    "pdf": {
+      "documentTitle": "Science: Interconnectedness Between Organisms and Environment - Session Notes",
+      "keyInformation": [
+        "Session Focus: Biotic vs Abiotic factors.",
+        "Key Concept: Survival dependencies on water, air, soil.",
+        "Activity: Observation of local environment."
+      ]
+    },
+    "docx": {
+      "outlineTitle": "Lesson Plan Outline",
+      "sections": [
+        "Introduction to Interconnectedness (Slide 1-2)",
+        "Defining Biotic and Abiotic Factors (Slide 3)",
+        "Resource Dependencies: Water, Air, Soil (Slide 4)",
+        "Impact of Environmental Changes (Slide 5)",
+        "Summary and Homework Assignment (Slide 6)"
+      ]
+    }
+  }
+}

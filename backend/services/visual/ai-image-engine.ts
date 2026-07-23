@@ -1,52 +1,22 @@
 /**
  * AI Image Engine
- * Generates images using OpenRouter image-capable chat models.
+ * Generates images using local Ollama image generation models.
  */
 
 import type { AiImageRequest } from "../../../src/types-visual.js";
 
-const OPENROUTER_API_URL = process.env.OPENROUTER_API_URL || "https://openrouter.ai/api/v1/chat/completions";
-const OPENROUTER_IMAGE_MODEL = process.env.OPENROUTER_IMAGE_MODEL || "sourceful/riverflow-v2.5-fast";
-const OPENROUTER_APP_TITLE = process.env.OPENROUTER_APP_TITLE || "AI PPT Generator";
-const OPENROUTER_TIMEOUT_MS = Number(process.env.OPENROUTER_TIMEOUT_MS) || 180000;
+const OLLAMA_API_KEY = "ollama";
+const OLLAMA_OPENAI_IMAGES_PATH = "/v1/images/generations";
+const OLLAMA_TIMEOUT_MS = Number(process.env.OLLAMA_IMAGE_TIMEOUT_MS || process.env.OLLAMA_TIMEOUT_MS) || 180000;
 
-type OpenRouterImageResponse = {
+type OllamaImageResponse = {
   error?: {
     message?: string;
   };
-  choices?: Array<{
-    message?: {
-      content?: string | Array<
-        | { type?: "text"; text?: string }
-        | { type?: "image_url"; image_url?: { url?: string } }
-        | { type?: string; [key: string]: unknown }
-      >;
-      images?: Array<{
-        image_url?: { url?: string };
-        url?: string;
-        b64_json?: string;
-        mime_type?: string;
-      }>;
-    };
-  }>;
-  images?: Array<{
-    image_url?: { url?: string };
-    url?: string;
-    b64_json?: string;
-    mime_type?: string;
-  }>;
   data?: Array<{
-    url?: string;
     b64_json?: string;
-    mime_type?: string;
+    url?: string;
   }>;
-};
-
-type OpenRouterImageCandidate = {
-  image_url?: { url?: string };
-  url?: string;
-  b64_json?: string;
-  mime_type?: string;
 };
 
 export async function generateAiImage(request: AiImageRequest): Promise<{
@@ -54,14 +24,9 @@ export async function generateAiImage(request: AiImageRequest): Promise<{
   width: number;
   height: number;
 }> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-
-  if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY is required for AI image generation");
-  }
-
   const {
     prompt,
+    model,
     negativePrompt,
     style = "illustration",
     aspectRatio = "16:9",
@@ -77,60 +42,24 @@ export async function generateAiImage(request: AiImageRequest): Promise<{
     subject,
     style,
     mustInclude,
-    avoid
+    avoid,
+    negativePrompt,
   );
 
   const { width, height } = getDimensionsForAspectRatio(aspectRatio);
+  const { baseUrl, primaryModel, fallbackModel } = resolveOllamaImageConfig(model);
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), OPENROUTER_TIMEOUT_MS);
+  const timeoutId = setTimeout(() => controller.abort(), OLLAMA_TIMEOUT_MS);
 
   try {
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "X-Title": OPENROUTER_APP_TITLE,
-        ...(process.env.OPENROUTER_SITE_URL ? { "HTTP-Referer": process.env.OPENROUTER_SITE_URL } : {}),
-      },
-      body: JSON.stringify({
-        model: OPENROUTER_IMAGE_MODEL,
-        modalities: ["image"],
-        messages: [
-          {
-            role: "user",
-            content: enhancedPrompt,
-          },
-        ],
-        reasoning: {
-          effort: "high",
-        },
-        image_config: {
-          width,
-          height,
-        },
-      }),
-      signal: controller.signal,
-    });
-
-    const responseText = await response.text();
-    let payload: OpenRouterImageResponse | null = null;
-
-    try {
-      payload = responseText ? JSON.parse(responseText) as OpenRouterImageResponse : null;
-    } catch {
-      payload = null;
-    }
-
-    if (!response.ok) {
-      const apiMessage = payload?.error?.message || responseText || `HTTP ${response.status}`;
-      throw new Error(`OpenRouter image generation failed: ${apiMessage}`);
-    }
-
-    const imageUrl = extractImageUrl(payload);
-    if (!imageUrl) {
-      throw new Error("OpenRouter returned no image payload");
-    }
+    const imageUrl =
+      await generateWithOllamaImageModel(baseUrl, primaryModel, enhancedPrompt, aspectRatio, controller.signal)
+        .catch(async (primaryError) => {
+          if (!fallbackModel || fallbackModel === primaryModel) {
+            throw primaryError;
+          }
+          return generateWithOllamaImageModel(baseUrl, fallbackModel, enhancedPrompt, aspectRatio, controller.signal);
+        });
 
     return {
       imageUrl,
@@ -139,13 +68,82 @@ export async function generateAiImage(request: AiImageRequest): Promise<{
     };
   } catch (error) {
     if (error instanceof Error && error.name === "AbortError") {
-      throw new Error(`OpenRouter image generation timed out after ${OPENROUTER_TIMEOUT_MS}ms`);
+      throw new Error(`Ollama image generation timed out after ${OLLAMA_TIMEOUT_MS}ms`);
     }
-
     throw error;
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+function resolveOllamaImageConfig(explicitModel?: string) {
+  const baseUrl =
+    String(process.env.OLLAMA_IMAGE_BASE_URL || process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434").trim().replace(/\/$/, "");
+  const primaryModel =
+    String(explicitModel || process.env.OLLAMA_IMAGE_MODEL || "x/z-image-turbo:bf16").trim();
+  const fallbackModel =
+    String(process.env.OLLAMA_IMAGE_FALLBACK_MODEL || "x/flux2-klein:9b").trim();
+
+  return {
+    baseUrl,
+    primaryModel,
+    fallbackModel,
+  };
+}
+
+async function generateWithOllamaImageModel(
+  baseUrl: string,
+  model: string,
+  prompt: string,
+  aspectRatio: "16:9" | "4:3" | "1:1",
+  signal: AbortSignal,
+) {
+  const response = await fetch(`${baseUrl}${OLLAMA_OPENAI_IMAGES_PATH}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${OLLAMA_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model,
+      prompt,
+      n: 1,
+      size: getOllamaImageSize(aspectRatio),
+      response_format: "b64_json",
+    }),
+    signal,
+  });
+
+  const responseText = await response.text();
+  let payload: OllamaImageResponse | null = null;
+
+  try {
+    payload = responseText ? JSON.parse(responseText) as OllamaImageResponse : null;
+  } catch {
+    payload = null;
+  }
+
+  if (!response.ok) {
+    const apiMessage = payload?.error?.message || responseText || `HTTP ${response.status}`;
+    throw new Error(`Ollama image generation failed for model ${model}: ${apiMessage}`);
+  }
+
+  const imageUrl = extractOllamaImageUrl(payload);
+  if (!imageUrl) {
+    throw new Error(`Ollama returned no image payload for model ${model}`);
+  }
+
+  return imageUrl;
+}
+
+function getOllamaImageSize(aspectRatio: "16:9" | "4:3" | "1:1") {
+  if (aspectRatio === "4:3") {
+    return "1536x1152";
+  }
+  if (aspectRatio === "1:1") {
+    return "1024x1024";
+  }
+  return "1792x1024";
 }
 
 function enhancePromptForEducation(
@@ -154,7 +152,8 @@ function enhancePromptForEducation(
   subject: string,
   style: string,
   mustInclude: string[],
-  avoid: string[]
+  avoid: string[],
+  negativePrompt?: string,
 ): string {
   const gradeSpecific = getGradeSpecificTerms(gradeLevel);
   const styleTerms = getStyleTerms(style);
@@ -165,16 +164,33 @@ function enhancePromptForEducation(
     `for ${gradeSpecific} grade`,
     subjectContext,
     styleTerms,
-    mustInclude.length ? `Must include: ${mustInclude.join(", ")}` : "",
-    negativeClause(avoid),
-    "K12 education, safe for children, educational content, large readable labels, clean composition",
+    mustInclude.length ? `Must include visually: ${mustInclude.join(", ")}` : "",
+    negativeClause(avoid, negativePrompt),
+    "K12 education, classroom safe, polished composition, visually clear, concept-focused",
+    "Do not include any text, letters, words, labels, captions, headings, equations, numbers, banners, watermarks, UI chrome, or slide layout inside the image.",
+    "Generate only the image scene, not a presentation slide.",
   ];
 
   return parts.filter(Boolean).join(". ");
 }
 
-function negativeClause(avoid: string[]): string {
-  return avoid.length ? `Avoid: ${avoid.join(", ")}` : "";
+function negativeClause(avoid: string[], negativePrompt?: string): string {
+  const combined = [
+    ...avoid,
+    negativePrompt || "",
+    "text",
+    "labels",
+    "captions",
+    "headings",
+    "poster layout",
+    "presentation slide",
+    "worksheet",
+    "infographic",
+  ]
+    .map((item) => String(item || "").trim())
+    .filter(Boolean);
+
+  return combined.length ? `Avoid: ${combined.join(", ")}` : "";
 }
 
 function getGradeSpecificTerms(gradeLevel: number): string {
@@ -187,76 +203,48 @@ function getGradeSpecificTerms(gradeLevel: number): string {
 
 function getStyleTerms(style: string): string {
   const styles: Record<string, string> = {
-    illustration: "modern textbook illustration, flat vector graphics, bright educational colors, white background",
-    photorealistic: "photorealistic, clean educational composition, high quality",
-    cartoon: "friendly cartoon illustration, clear educational composition",
-    watercolor: "watercolor illustration, soft classroom-safe palette",
+    illustration: "modern educational illustration, clean composition, presentation-quality visual",
+    photorealistic: "photorealistic, detailed, classroom-safe, clean educational composition",
+    cartoon: "friendly illustrated educational scene, simple but polished composition",
+    watercolor: "watercolor educational illustration, soft but clear classroom-safe palette",
   };
   return styles[style] || "educational illustration";
 }
 
 function getSubjectContext(subject: string): string {
   const contexts: Record<string, string> = {
-    mathematics: "mathematical concept, accurate numbers and relationships",
-    science: "scientific concept, accurate educational diagram",
-    "social studies": "historical or geographical context",
-    "language arts": "literary or reading context",
-    art: "artistic composition",
-    music: "musical notation or instruments",
-    physics: "physics concept, visually accurate motion and force cues",
+    mathematics: "mathematical concept visual, no in-image equations or labels",
+    science: "scientific concept visual, accurate and classroom-appropriate",
+    biology: "biological concept visual, accurate and classroom-appropriate",
+    chemistry: "chemical concept visual, accurate and classroom-appropriate",
+    physics: "physics concept visual, accurate and classroom-appropriate",
+    "social studies": "historical or geographical educational context",
+    "language arts": "reading or literary educational context",
+    art: "artistic educational context",
+    music: "music educational context",
   };
   return contexts[subject.toLowerCase()] || "educational content";
 }
 
 function getDimensionsForAspectRatio(aspectRatio: string): { width: number; height: number } {
   if (aspectRatio === "4:3") {
-    return { width: 2048, height: 1536 };
+    return { width: 1536, height: 1152 };
   }
-
   if (aspectRatio === "1:1") {
-    return { width: 2048, height: 2048 };
+    return { width: 1024, height: 1024 };
   }
-
-  return { width: 4096, height: 2304 };
+  return { width: 1792, height: 1024 };
 }
 
-function extractImageUrl(payload: OpenRouterImageResponse | null): string | null {
-  if (!payload) return null;
-
-  const candidateImages: OpenRouterImageCandidate[] = [
-    ...(payload.images || []),
-    ...(payload.data || []),
-    ...(payload.choices?.flatMap(choice => choice.message?.images || []) || []),
-  ];
-
-  for (const image of candidateImages) {
-    const directUrl = image.image_url?.url || image.url;
-    if (directUrl) {
-      return directUrl;
-    }
-
+function extractOllamaImageUrl(payload: OllamaImageResponse | null): string | null {
+  const images = payload?.data || [];
+  for (const image of images) {
     if (image.b64_json) {
-      return `data:${image.mime_type || "image/png"};base64,${image.b64_json}`;
+      return `data:image/png;base64,${image.b64_json}`;
+    }
+    if (image.url) {
+      return image.url;
     }
   }
-
-  const content = payload.choices?.[0]?.message?.content;
-  if (Array.isArray(content)) {
-    for (const part of content) {
-      if (isImageUrlPart(part) && part.image_url?.url) {
-        return part.image_url.url;
-      }
-    }
-  }
-
   return null;
-}
-
-function isImageUrlPart(part: unknown): part is { type: "image_url"; image_url?: { url?: string } } {
-  return Boolean(
-    part &&
-      typeof part === "object" &&
-      "type" in part &&
-      (part as { type?: unknown }).type === "image_url"
-  );
 }

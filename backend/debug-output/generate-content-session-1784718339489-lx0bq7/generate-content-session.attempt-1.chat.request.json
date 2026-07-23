@@ -1,0 +1,457 @@
+{
+  "model": "qwen3.5:35b",
+  "stream": false,
+  "think": false,
+  "format": {
+    "id": "unique-session-id",
+    "sessionNumber": 1,
+    "title": "Vibrant, educational title for this session",
+    "duration": 45,
+    "activities": [
+      {
+        "name": "Name of classroom task",
+        "instructions": [
+          "Step-by-step instructions for teachers & students"
+        ],
+        "durationMinutes": 10
+      }
+    ],
+    "materials": {
+      "ppt": {
+        "templateId": "adaptive-teacher-deck",
+        "templateName": "Adaptive Teacher Deck",
+        "themeId": "cbse-academic-blue",
+        "title": "Presentation title",
+        "presentationTitle": "Presentation title",
+        "presentationGoal": "What this PPT helps achieve in the session",
+        "audience": "Grade-specific classroom audience",
+        "theme": "Visual theme for the deck",
+        "themeTokens": {
+          "fonts": {
+            "heading": "Outfit",
+            "body": "Inter"
+          },
+          "colors": {
+            "primary": "#36ADAA",
+            "secondary": "#1EABDA",
+            "accent": "#DE8431",
+            "background": "#EEF4F7",
+            "surface": "#FFFFFF",
+            "text": "#0F172A",
+            "mutedText": "#64748B"
+          },
+          "visualStyle": {
+            "topBarStyle": "bold color band",
+            "cardStyle": "rounded modern educator cards",
+            "visualFrameStyle": "large clean visual panel"
+          }
+        },
+        "assetSearchPlan": {
+          "preferredSources": [
+            "Internal SVG",
+            "Reusable web image"
+          ],
+          "safeSearch": true,
+          "licensingNotes": [
+            "Use internally generated images and in-app SVG diagrams only."
+          ],
+          "fallbackStrategy": "Prefer SVG diagrams for concept/process slides and reusable web images for all picture-based visuals."
+        },
+        "licenseChecklist": [
+          "Review generated visuals for classroom accuracy before final export.",
+          "Verify reusable license before final export."
+        ],
+        "presentationWarnings": [
+          "Do not include untaught future-session content.",
+          "Do not include untaught future-session content (e.g., Mole concept details)."
+        ],
+        "deckReadiness": "teacher-ready | needs-review",
+        "coverageStatus": "complete | partial",
+        "visualIntegrityStatus": "valid | needs-review",
+        "exportIntegrityStatus": "ready | needs-review",
+        "coverageSummary": {
+          "learningOutcomesCovered": [
+            "Learning outcome id or text"
+          ],
+          "topicsCovered": [
+            "Topic covered"
+          ],
+          "taughtConceptsCovered": [
+            "Concept covered"
+          ],
+          "omittedContent": []
+        },
+        "slides": [
+          {
+            "templateId": "adaptive-teacher-deck",
+            "templateSlideKey": "adaptive_slide_1",
+            "templateSlideTitle": "Adaptive Slide",
+            "isOptionalSlotFilled": true,
+            "slideNumber": 1,
+            "slidePurpose": "title_identity",
+            "teachingBeat": "Open the lesson, orient the class, and prepare the first teaching move.",
+            "mustTeach": [
+              "Lesson identity",
+              "Immediate classroom direction"
+            ],
+            "visualDecision": "none | svg-programmatic | local-generated-image",
+            "visualResolved": false,
+            "visualRelevanceStatus": "none | valid | generic | mismatch",
+            "slideType": "hook | concept | comparison | process | summary",
+            "slideTitle": "Slide title",
+            "learningOutcomeIds": [
+              "LO1"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "teacherIntent": "Why this slide exists",
+            "studentTakeaway": "What students should leave with",
+            "layout": "Title + 2-column visual explainer",
+            "bulletPoints": [
+              "Key point"
+            ],
+            "onSlideText": [
+              "Exact concise on-slide text"
+            ],
+            "speakerNotes": [
+              "Teacher delivery cue"
+            ],
+            "layoutIntent": "text-light-visual-first | concept-split | board-worked-example | text-led-minimal",
+            "visualAttribution": {
+              "visualPlan": "A subject-appropriate teaching visual that clarifies the main idea without adding off-topic content.",
+              "svgDiagram": {
+                "purpose": "Concept visualization for classroom explanation",
+                "search": "subject appropriate educational concept diagram",
+                "source": "Internal SVG",
+                "license": "Internal SVG diagram",
+                "animation": "Reveal the visual step by step as the teacher explains it."
+              }
+            },
+            "visualPlan": "What visual should appear and why",
+            "assets": [
+              {
+                "purpose": "Why this asset is needed",
+                "searchQuery": "precise visual search or generation intent",
+                "sourceSite": "Reusable web image",
+                "sourceUrl": "",
+                "licenseType": "Internally generated",
+                "attributionText": "",
+                "altText": "Accessible description",
+                "placementHint": "Right panel / full bleed / inset"
+              }
+            ],
+            "svgDiagram": {
+              "title": "Diagram title",
+              "type": "flowchart | timeline | labelled diagram | comparison chart",
+              "instructions": [
+                "How the diagram should communicate the concept"
+              ],
+              "svgCode": "<svg><!-- optional compact svg --></svg>"
+            },
+            "animationHints": [
+              "Reveal arrows step-by-step"
+            ],
+            "timeEstimateMinutes": 5
+          }
+        ]
+      },
+      "pdf": {
+        "documentTitle": "Student PDF / revision document title",
+        "keyInformation": [
+          "Student-facing study note or revision point"
+        ]
+      },
+      "docx": {
+        "outlineTitle": "Teacher lesson note outline title",
+        "sections": [
+          "Teacher-facing section content"
+        ]
+      }
+    },
+    "homework": {
+      "task": "Interactive or practical homework task",
+      "estimatedTimeMinutes": 30
+    },
+    "assessment": {
+      "meta": {
+        "assessmentType": "Session assessment",
+        "totalMarks": 15,
+        "totalQuestions": 7,
+        "durationMinutes": 15,
+        "language": "English",
+        "preferredDifficulty": "Balanced",
+        "paperObjective": "Assess only the taught session content with the requested paper pattern.",
+        "requestSignature": "stable-customization-signature",
+        "requestedQuestionTypes": [
+          {
+            "type": "mcq",
+            "label": "MCQs",
+            "questionCount": 4,
+            "marksEach": 1
+          }
+        ]
+      },
+      "sessionAnalysis": {
+        "assessedLearningOutcomes": [
+          "Learning outcome text"
+        ],
+        "assessedConcepts": [
+          "Concept from the session"
+        ],
+        "conceptCoveragePriorities": [
+          "High-emphasis taught concept"
+        ],
+        "misconceptionTargets": [
+          "Likely misconception to check"
+        ],
+        "competencyFocus": [
+          "Application"
+        ]
+      },
+      "blueprint": {
+        "sectionPlan": [
+          {
+            "sectionId": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "focus": "Session-aligned assessment focus"
+          }
+        ],
+        "conceptDistribution": [
+          {
+            "concept": "Concept from the session",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ],
+            "competency": "Understanding",
+            "importance": "core"
+          }
+        ],
+        "learningOutcomeCoverage": [
+          {
+            "outcome": "Learning outcome text",
+            "questionRefs": [
+              "q1",
+              "q5"
+            ]
+          }
+        ],
+        "difficultyDistribution": {
+          "easy": 40,
+          "medium": 40,
+          "hard": 20
+        },
+        "bloomsDistribution": {
+          "recall": 20,
+          "understanding": 30,
+          "application": 25,
+          "analysis": 15,
+          "evaluation": 10
+        },
+        "competencyDistribution": {
+          "understanding": 2,
+          "application": 3,
+          "analysis": 2
+        },
+        "questionDistribution": {
+          "mcq": 4,
+          "shortAnswer": 2,
+          "longAnswer": 1
+        },
+        "timeAllocation": [
+          {
+            "section": "Assessment",
+            "minutes": 15
+          }
+        ]
+      },
+      "paper": {
+        "instructions": [
+          "Answer all questions using only the concepts taught in this session."
+        ],
+        "sections": [
+          {
+            "id": "section-assessment",
+            "title": "Assessment",
+            "marks": 15,
+            "questionCount": 7,
+            "questionRefs": [
+              "q1",
+              "q2",
+              "q3",
+              "q4",
+              "q5",
+              "q6",
+              "q7"
+            ],
+            "source": "fallback"
+          }
+        ],
+        "questions": [
+          {
+            "id": "q1",
+            "questionNumber": 1,
+            "sectionId": "section-assessment",
+            "sectionTitle": "Assessment",
+            "type": "mcq",
+            "subtype": "mcq",
+            "prompt": "MCQ question",
+            "options": [
+              "A. option",
+              "B. option",
+              "C. option",
+              "D. option"
+            ],
+            "marks": 1,
+            "expectedLength": "",
+            "learningOutcomeRefs": [
+              "LO1"
+            ],
+            "conceptRefs": [
+              "Concept"
+            ],
+            "topicCoverage": [
+              "Topic"
+            ],
+            "subtopicCoverage": [
+              "Subtopic"
+            ],
+            "bloomsLevel": "understanding",
+            "competencyTag": "Conceptual clarity",
+            "difficulty": "easy",
+            "sourceEvidence": [
+              "Teacher notes concept reference"
+            ]
+          }
+        ]
+      },
+      "evaluation": {
+        "answerKey": {
+          "items": [
+            {
+              "questionId": "q1",
+              "sectionId": "section-assessment",
+              "sectionTitle": "Assessment",
+              "answer": "Correct option",
+              "explanation": "Brief explanation",
+              "marks": 1,
+              "subtype": "mcq"
+            }
+          ]
+        },
+        "markingScheme": {
+          "items": [
+            {
+              "questionId": "q1",
+              "totalMarks": 1,
+              "markBreakdown": [
+                {
+                  "criterion": "Correct answer selected",
+                  "marks": 1
+                }
+              ],
+              "awardGuidance": [
+                "Award full marks only for the correct option."
+              ]
+            }
+          ]
+        },
+        "rubrics": {
+          "items": [
+            {
+              "questionId": "q5",
+              "totalMarks": 2,
+              "criteria": [
+                {
+                  "criterion": "First valid point",
+                  "marks": 1
+                },
+                {
+                  "criterion": "Second valid point",
+                  "marks": 1
+                }
+              ],
+              "sampleAnswer": "Point-wise short answer"
+            }
+          ]
+        },
+        "generalInstructions": [
+          "Award marks point-wise for each valid idea."
+        ],
+        "evaluatorInstructions": [
+          "Use only the taught session content when evaluating student responses."
+        ],
+        "moderationNotes": [
+          "Maintain consistency across equivalent answers."
+        ]
+      },
+      "summary": {
+        "coverageSummary": [
+          "Balanced coverage of the taught session concepts."
+        ],
+        "omittedContent": [],
+        "balanceNotes": [
+          "Paper progresses from easier to more demanding questions."
+        ]
+      },
+      "validation": {
+        "exactPatternChecks": {
+          "passed": true,
+          "details": [
+            "Question pattern matches the requested blueprint."
+          ]
+        },
+        "marksChecks": {
+          "passed": true,
+          "details": [
+            "Marks match the requested total."
+          ]
+        },
+        "sectionChecks": {
+          "passed": true,
+          "details": [
+            "Each question is assigned to a valid section."
+          ]
+        },
+        "alignmentChecks": {
+          "passed": true,
+          "details": [
+            "Question paper, answer key, and marking scheme are aligned."
+          ]
+        },
+        "scopeBoundaryChecks": {
+          "passed": true,
+          "details": [
+            "No untaught or future-session content included."
+          ]
+        }
+      }
+    }
+  },
+  "options": {
+    "temperature": 0.1,
+    "num_predict": 10240
+  },
+  "messages": [
+    {
+      "role": "system",
+      "content": "Return only valid JSON that matches the requested schema. Do not include markdown or explanations."
+    },
+    {
+      "role": "user",
+      "content": "# Science Subject Intelligence Layer (Active)\nApply this Science subject intelligence while completing: Session content generation.\n\nSCIENCE SUBJECT INTELLIGENCE LAYER\nYou are a Science Curriculum and Pedagogical Intelligence Engine responsible for understanding the complete structure, philosophy, progression and pedagogy of any Science curriculum before Curriculum Extraction, Term Division, Session Planning, Student Notes, Teacher Notes, PPTs, Classroom Activities, Homework, Worksheets, Practicals, Projects, Assessments, Answer Keys and Rubrics are generated.\nYour role is not to generate educational resources, but to build a complete understanding of the curriculum, preserve scientific learning progression, identify the appropriate pedagogy for every educational stage and subject, and ensure this intelligence guides the entire generation pipeline.\n\nPRIMARY OBJECTIVE\nScience is a progressive discipline that develops curiosity, observation, exploration, inquiry, experimentation, reasoning, evidence-based thinking, problem solving and real-world application.\nBefore any generation begins:\nUnderstand the curriculum completely.\nPreserve scientific progression and prerequisite relationships.\nAdapt pedagogy according to grade, learner development and subject.\nTreat Science as a connected learning journey rather than isolated chapters.\n\nCURRICULUM UNDERSTANDING\nUnderstand and preserve every meaningful curriculum component without omission, simplification or restructuring.\nIdentify and preserve:\nCurriculum Philosophy\nLearning Objectives\nCompetencies & Learning Outcomes\nCourse Structure\nThemes / Units / Chapters / Topics / Subtopics\nConcept Progression\nScientific Terminology\nPracticals, Experiments & Laboratory Work\nDemonstrations & Investigations\nProjects & Field Activities\nInternal Assessment & Subject Enrichment\nCompetency Framework\nAssessment Pattern & Question Paper Design\nExamination Blueprint\nPrescribed Resources\nFormative Components\nCross-disciplinary Connections\nMaintain every academic entity throughout the generation pipeline.\n\nCURRICULUM STRUCTURE INTELLIGENCE\nNever assume every Science curriculum follows the same hierarchy.\nA curriculum may be organized into:\nThemes\nUnits\nModules\nChapters\nDomains\nLearning Areas\nCompetencies\nStandards\nInvestigations\nPractical Sections\nProjects\nEnvironmental Studies\nIntegrated Science\nPhysics\nChemistry\nBiology\nEarth & Environmental Science\nAlways:\nIdentify the original structure.\nPreserve hierarchy.\nMaintain prerequisite dependencies.\nFollow logical scientific progression.\nNever force a fixed curriculum structure.\n\nSCIENTIFIC LEARNING INTELLIGENCE\nIdentify how every lesson should be learned before determining how it should be taught.\nInstructional Domain\nA lesson may involve one or more domains:\nEnvironmental Awareness\nObservation\nExploration\nScientific Inquiry\nInvestigation\nConcept Development\nExperimentation\nLaboratory Learning\nDemonstration\nScientific Reasoning\nMathematical Application\nDiagram & Data Interpretation\nModel-based Learning\nProblem Solving\nPractical Skills\nProject-based Learning\nSTEM Integration\nHealth, Life, Physical, Chemical & Earth Science\nRevision\nExamination Preparation\nLearning Objective\nIdentify the primary objective such as:\nCuriosity Development\nObservation\nConcept Formation\nConceptual Understanding\nScientific Thinking\nInvestigation\nPractical Skills\nLogical & Analytical Reasoning\nMathematical Reasoning\nScientific Communication\nCritical Thinking\nProblem Solving\nReal-world Application\nCompetency Development\nExamination Readiness\nThe identified instructional domain and learning objective must guide every downstream output.\n\nSESSION TYPE INTELLIGENCE\nNever use one common instructional approach for every Science lesson.\nAutomatically identify the appropriate session type.\nExamples include:\nObservation\nExploration\nActivity\nConcept Introduction\nConcept Development\nDemonstration\nInvestigation\nExperiment\nPractical\nLaboratory\nNumerical Practice\nDiagram Study\nDiscussion\nCase Study\nProject\nRevision\nAssessment\nRemedial Session\nEvery downstream resource must align with the identified session type.\n\nCLASS-WISE PEDAGOGICAL INTELLIGENCE\nAdapt pedagogy according to learner development.\n\nPRE-PRIMARY (Foundational Stage)\nFocus on developing:\nCuriosity\nObservation\nExploration\nSensory Learning\nNature Awareness\nEveryday Experiences\nPlay-based Learning\nStory-based Learning\nHands-on Activities\nQuestioning\nSimple Scientific Vocabulary\nEmphasize exploration over explanation.\nAvoid abstract concepts, formulas and memorization.\n\nPRIMARY (Environmental Studies)\nTreat the subject as Environmental Studies (EVS) rather than discipline-based Science.\nIntegrate learning around:\nSelf\nFamily\nSchool\nCommunity\nPlants\nAnimals\nFood\nWater\nAir\nWeather\nSeasons\nHealth\nHygiene\nEnvironment\nLocal Surroundings\nDevelop through:\nObservation\nExploration\nDiscussion\nEveryday Connections\nSimple Experiments\nField Activities\nDrawing\nStorytelling\nEnvironmental Responsibility\nDo not separate Physics, Chemistry and Biology.\n\nMIDDLE SCHOOL (Integrated Science)\nTreat Science as one integrated discipline connecting:\nPhysics\nChemistry\nBiology\nEarth Science\nEnvironmental Science\nDevelop:\nScientific Inquiry\nInvestigation\nObservation\nExperimentation\nConceptual Understanding\nScientific Reasoning\nPractical Skills\nData Recording\nScientific Communication\nReal-life Applications\nBalance theory, activities and laboratory exposure.\n\nSECONDARY (Integrated Science)\nStrengthen conceptual understanding through:\nScientific Principles\nScientific Laws\nInvestigation\nPractical Work\nLaboratory Skills\nAnalytical Thinking\nProblem Solving\nData Analysis\nCompetency-based Learning\nReal-world Applications\nExamination Readiness\nIntegrate experiments, diagrams, investigations and competency-based assessment throughout learning.\n\nSENIOR SECONDARY (Classes XI-XII)\nScience becomes discipline-specific.\nAutomatically activate the appropriate subject intelligence:\nPhysics\nChemistry\nBiology\nNever apply one common pedagogy across all three subjects.\n\n# Science Generation Policy Layer (Active)\nApply this science generation policy while completing: Session content generation.\n\nScience session profile:\n{\n  \"scienceMode\": \"Integrated Science\",\n  \"scienceSessionType\": \"concept_development\",\n  \"scienceContentModes\": [\n    \"conceptual\"\n  ],\n  \"scienceArtifact\": \"session_package\",\n  \"artifactEmphasis\": [\n    \"science_session_alignment\",\n    \"explanation\",\n    \"evidence\",\n    \"diagram\",\n    \"exam_readiness\"\n  ],\n  \"practicalMode\": \"contextual_only\",\n  \"assessmentBias\": \"n/a\",\n  \"pptStyle\": \"n/a\"\n}\n\nSCIENCE DOWNSTREAM GENERATION ENGINE\nYou are generating downstream classroom artifacts for Science.\n\nUse the science session profile as the source of truth for:\n- scienceMode\n- scienceSessionType\n- scienceContentModes\n- scienceArtifact\n- artifactEmphasis\n\nUniversal science rules:\n1. Stay strictly inside the taught session boundary.\n2. Preserve scientific accuracy, terminology, symbols, units, equations, and cause-effect relationships.\n3. Treat evidence, observation, reasoning, and real-world application as core science behaviors.\n4. Include practicals, demonstrations, experiments, and investigations only when contextually relevant to the session profile.\n5. Never flatten Physics, Chemistry, Biology, EVS-style Science, and integrated Science into one generic pedagogy.\n6. Prefer concept progression and prerequisite integrity over decorative verbosity.\n7. Surface formulas, equations, labeled diagrams, graphs, tables, observations, and inference language whenever the science content demands them.\n8. Avoid textbook dumping. Every output must remain session-bounded, usable, and pedagogy-aware.\n\nMode guidance:\n- EVS-style Science: observation, environment, daily life, local examples, simple explanation, curiosity\n- Integrated Science: connected concept building, investigation, explanation, observation, everyday application\n- Physics: units, laws, numericals, graphs, ray diagrams, stepwise reasoning, precision\n- Chemistry: symbols, formulas, equations, reactions, observations, particles, transformations, lab links\n- Biology: structure-function, processes, labeled diagrams, life examples, terminology, sequence clarity\n\nSCIENCE SESSION PACKAGE RULES\nWhen generating the broader session package:\n- keep all requested sections aligned to the same science session profile\n- make theory, notes, materials, homework, and assessment reinforce the same taught concepts\n- maintain a balanced science posture: conceptual understanding, explanation, application, diagram/data work, and practical reasoning when relevant\n- do not let one artifact contradict another on terminology, notation, units, or scientific conclusions\n\nYou are an expert CBSE curriculum designer, instructional strategist, lesson planner, teacher trainer, and classroom pedagogy specialist.\n\nGenerate ONE complete classroom-ready teaching session for Session #1 out of 1 total sessions.\n\nSession settings:\n- Duration: 45 minutes\n- Subject: Science (086)\n- Grade/Level: Class X / 10\n- Active chapter scope: [\"Life processes\"]\n\nGeneration preferences:\n- Include Learning Outcomes: NO\n- Include Introduction Hook: NO\n- Include Theory & Explanations: NO\n- Include Assessments with Keys: YES\n- Include Homework Exercises: NO\n- Include Materials Setup (PowerPoint slides, study guide nodes): YES\n- Prioritize these sections for generation: [\"activities\",\"materials\",\"homework\",\"assessment\"]\n- Output language: English\n- Language execution rule: Write every natural-language value in English. Keep JSON keys, ids, schema property names, enum-like structural labels, and DB-facing keys in English. Do not switch explanatory text, questions, answers, titles, instructions, speaker notes, or summaries back to English when English is required.\n\nNon-negotiable rules:\n1. Use only the provided curriculum scope.\n2. Do not introduce future-session content outside this scope.\n3. Produce teacher-facing explanation that is comprehensive, sequenced, and classroom-usable.\n4. Produce student-facing notes that are clearer and simpler than the teacher notes but still comprehensive.\n5. Teacher notes must follow a classroom-ready structure with:\n   - session overview\n   - learning outcomes\n   - teaching plan\n   - block-by-block lesson flow\n   - teacher prompts\n   - board work\n   - check-understanding questions\n   - expected answers\n   - misconceptions and corrections\n   - blackboard summary\n   - end-of-class recap\n6. Student notes must follow a beginner-friendly study-note structure with:\n   - session overview\n   - simple concept explanations\n   - memory aids\n   - comparison tables where useful\n   - quick summary\n   - key terms\n   - fill in the blanks\n   - MCQs\n   - very short answer questions\n   - remember points\n7. If learning pace or student level is weak, simplify the language, teach one concept at a time, repeat key terms, and use real-life analogies.\n8. Keep PPT content slide-wise and concise.\n9. Keep PDF / study-note content student-facing and revision-friendly.\n10. Assessments must be split into:\n   - MCQ\n   - Short Answer\n   - Long Answer\n11. The answer key must mirror the same structure:\n   - MCQ answers\n   - Short-answer answers\n   - Long-answer answers\n12. For short and long answers, include:\n   - expected answer depth\n   - mark value\n   - point-wise rubric\n13. Follow CBSE-style point-based marking:\n   - 1 mark: one precise idea\n   - 2 marks: two valid points / one complete short response\n   - 3 marks: three clear points with brief explanation\n   - 5 marks: well-structured answer with multiple points, explanation, and diagram/example when appropriate\n14. Prefer point-wise marking language over strict word counts.\n15. Populate every major block with usable content.\n16. Return valid JSON only.\n17. When only a subset of sections is requested, focus effort on those sections and keep unrequested sections minimal.\n\nUse these dedicated assessment-generation rules for the `assessment` block:\nAssessment block rules:\n- Use only taught session content.\n- Assess each learning outcome intentionally.\n- Assessment type: Session assessment.\n- Total marks: 15.\n- Duration: 15 minutes.\n- Preferred difficulty: Balanced.\n- Language: English.\n- Requested total questions: 0.\n- Requested question type mix: [].\n- Allowed assessment sections: [{\"id\":\"section-assessment\",\"title\":\"Assessment\",\"source\":\"fallback\"}].\n- Paper objective: Not specified..\n- Match the requested question counts and marks exactly.\n- Keep answer-key sections aligned one-to-one with the generated questions.\n- Return the assessment block as the canonical package with meta, sessionAnalysis, blueprint, paper, evaluation, summary, and validation.\n- Keep marks and duration exact.\n- Progress from easier to harder questions.\n- Add learningOutcomeCoverage, difficultyDistribution, bloomsDistribution, questionDistribution, and timeAllocation in blueprint.\n- Keep answer key items, rubrics, and marking-scheme items aligned one-to-one with the generated questions.\n\nReturn a session object that matches the requested schema exactly.\n\n\nReturn valid JSON only. Match this target schema shape exactly:\n{\n  \"id\": \"unique-session-id\",\n  \"sessionNumber\": 1,\n  \"title\": \"Vibrant, educational title for this session\",\n  \"duration\": 45,\n  \"activities\": [\n    {\n      \"name\": \"Name of classroom task\",\n      \"instructions\": [\n        \"Step-by-step instructions for teachers & students\"\n      ],\n      \"durationMinutes\": 10\n    }\n  ],\n  \"materials\": {\n    \"ppt\": {\n      \"templateId\": \"adaptive-teacher-deck\",\n      \"templateName\": \"Adaptive Teacher Deck\",\n      \"themeId\": \"cbse-academic-blue\",\n      \"title\": \"Presentation title\",\n      \"presentationTitle\": \"Presentation title\",\n      \"presentationGoal\": \"What this PPT helps achieve in the session\",\n      \"audience\": \"Grade-specific classroom audience\",\n      \"theme\": \"Visual theme for the deck\",\n      \"themeTokens\": {\n        \"fonts\": {\n          \"heading\": \"Outfit\",\n          \"body\": \"Inter\"\n        },\n        \"colors\": {\n          \"primary\": \"#36ADAA\",\n          \"secondary\": \"#1EABDA\",\n          \"accent\": \"#DE8431\",\n          \"background\": \"#EEF4F7\",\n          \"surface\": \"#FFFFFF\",\n          \"text\": \"#0F172A\",\n          \"mutedText\": \"#64748B\"\n        },\n        \"visualStyle\": {\n          \"topBarStyle\": \"bold color band\",\n          \"cardStyle\": \"rounded modern educator cards\",\n          \"visualFrameStyle\": \"large clean visual panel\"\n        }\n      },\n      \"assetSearchPlan\": {\n        \"preferredSources\": [\n          \"Internal SVG\",\n          \"Reusable web image\"\n        ],\n        \"safeSearch\": true,\n        \"licensingNotes\": [\n          \"Use internally generated images and in-app SVG diagrams only.\"\n        ],\n        \"fallbackStrategy\": \"Prefer SVG diagrams for concept/process slides and reusable web images for all picture-based visuals.\"\n      },\n      \"licenseChecklist\": [\n        \"Review generated visuals for classroom accuracy before final export.\",\n        \"Verify reusable license before final export.\"\n      ],\n      \"presentationWarnings\": [\n        \"Do not include untaught future-session content.\",\n        \"Do not include untaught future-session content (e.g., Mole concept details).\"\n      ],\n      \"deckReadiness\": \"teacher-ready | needs-review\",\n      \"coverageStatus\": \"complete | partial\",\n      \"visualIntegrityStatus\": \"valid | needs-review\",\n      \"exportIntegrityStatus\": \"ready | needs-review\",\n      \"coverageSummary\": {\n        \"learningOutcomesCovered\": [\n          \"Learning outcome id or text\"\n        ],\n        \"topicsCovered\": [\n          \"Topic covered\"\n        ],\n        \"taughtConceptsCovered\": [\n          \"Concept covered\"\n        ],\n        \"omittedContent\": []\n      },\n      \"slides\": [\n        {\n          \"templateId\": \"adaptive-teacher-deck\",\n          \"templateSlideKey\": \"adaptive_slide_1\",\n          \"templateSlideTitle\": \"Adaptive Slide\",\n          \"isOptionalSlotFilled\": true,\n          \"slideNumber\": 1,\n          \"slidePurpose\": \"title_identity\",\n          \"teachingBeat\": \"Open the lesson, orient the class, and prepare the first teaching move.\",\n          \"mustTeach\": [\n            \"Lesson identity\",\n            \"Immediate classroom direction\"\n          ],\n          \"visualDecision\": \"none | svg-programmatic | local-generated-image\",\n          \"visualResolved\": false,\n          \"visualRelevanceStatus\": \"none | valid | generic | mismatch\",\n          \"slideType\": \"hook | concept | comparison | process | summary\",\n          \"slideTitle\": \"Slide title\",\n          \"learningOutcomeIds\": [\n            \"LO1\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"teacherIntent\": \"Why this slide exists\",\n          \"studentTakeaway\": \"What students should leave with\",\n          \"layout\": \"Title + 2-column visual explainer\",\n          \"bulletPoints\": [\n            \"Key point\"\n          ],\n          \"onSlideText\": [\n            \"Exact concise on-slide text\"\n          ],\n          \"speakerNotes\": [\n            \"Teacher delivery cue\"\n          ],\n          \"layoutIntent\": \"text-light-visual-first | concept-split | board-worked-example | text-led-minimal\",\n          \"visualAttribution\": {\n            \"visualPlan\": \"A subject-appropriate teaching visual that clarifies the main idea without adding off-topic content.\",\n            \"svgDiagram\": {\n              \"purpose\": \"Concept visualization for classroom explanation\",\n              \"search\": \"subject appropriate educational concept diagram\",\n              \"source\": \"Internal SVG\",\n              \"license\": \"Internal SVG diagram\",\n              \"animation\": \"Reveal the visual step by step as the teacher explains it.\"\n            }\n          },\n          \"visualPlan\": \"What visual should appear and why\",\n          \"assets\": [\n            {\n              \"purpose\": \"Why this asset is needed\",\n              \"searchQuery\": \"precise visual search or generation intent\",\n              \"sourceSite\": \"Reusable web image\",\n              \"sourceUrl\": \"\",\n              \"licenseType\": \"Internally generated\",\n              \"attributionText\": \"\",\n              \"altText\": \"Accessible description\",\n              \"placementHint\": \"Right panel / full bleed / inset\"\n            }\n          ],\n          \"svgDiagram\": {\n            \"title\": \"Diagram title\",\n            \"type\": \"flowchart | timeline | labelled diagram | comparison chart\",\n            \"instructions\": [\n              \"How the diagram should communicate the concept\"\n            ],\n            \"svgCode\": \"<svg><!-- optional compact svg --></svg>\"\n          },\n          \"animationHints\": [\n            \"Reveal arrows step-by-step\"\n          ],\n          \"timeEstimateMinutes\": 5\n        }\n      ]\n    },\n    \"pdf\": {\n      \"documentTitle\": \"Student PDF / revision document title\",\n      \"keyInformation\": [\n        \"Student-facing study note or revision point\"\n      ]\n    },\n    \"docx\": {\n      \"outlineTitle\": \"Teacher lesson note outline title\",\n      \"sections\": [\n        \"Teacher-facing section content\"\n      ]\n    }\n  },\n  \"homework\": {\n    \"task\": \"Interactive or practical homework task\",\n    \"estimatedTimeMinutes\": 30\n  },\n  \"assessment\": {\n    \"meta\": {\n      \"assessmentType\": \"Session assessment\",\n      \"totalMarks\": 15,\n      \"totalQuestions\": 7,\n      \"durationMinutes\": 15,\n      \"language\": \"English\",\n      \"preferredDifficulty\": \"Balanced\",\n      \"paperObjective\": \"Assess only the taught session content with the requested paper pattern.\",\n      \"requestSignature\": \"stable-customization-signature\",\n      \"requestedQuestionTypes\": [\n        {\n          \"type\": \"mcq\",\n          \"label\": \"MCQs\",\n          \"questionCount\": 4,\n          \"marksEach\": 1\n        }\n      ]\n    },\n    \"sessionAnalysis\": {\n      \"assessedLearningOutcomes\": [\n        \"Learning outcome text\"\n      ],\n      \"assessedConcepts\": [\n        \"Concept from the session\"\n      ],\n      \"conceptCoveragePriorities\": [\n        \"High-emphasis taught concept\"\n      ],\n      \"misconceptionTargets\": [\n        \"Likely misconception to check\"\n      ],\n      \"competencyFocus\": [\n        \"Application\"\n      ]\n    },\n    \"blueprint\": {\n      \"sectionPlan\": [\n        {\n          \"sectionId\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"focus\": \"Session-aligned assessment focus\"\n        }\n      ],\n      \"conceptDistribution\": [\n        {\n          \"concept\": \"Concept from the session\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ],\n          \"competency\": \"Understanding\",\n          \"importance\": \"core\"\n        }\n      ],\n      \"learningOutcomeCoverage\": [\n        {\n          \"outcome\": \"Learning outcome text\",\n          \"questionRefs\": [\n            \"q1\",\n            \"q5\"\n          ]\n        }\n      ],\n      \"difficultyDistribution\": {\n        \"easy\": 40,\n        \"medium\": 40,\n        \"hard\": 20\n      },\n      \"bloomsDistribution\": {\n        \"recall\": 20,\n        \"understanding\": 30,\n        \"application\": 25,\n        \"analysis\": 15,\n        \"evaluation\": 10\n      },\n      \"competencyDistribution\": {\n        \"understanding\": 2,\n        \"application\": 3,\n        \"analysis\": 2\n      },\n      \"questionDistribution\": {\n        \"mcq\": 4,\n        \"shortAnswer\": 2,\n        \"longAnswer\": 1\n      },\n      \"timeAllocation\": [\n        {\n          \"section\": \"Assessment\",\n          \"minutes\": 15\n        }\n      ]\n    },\n    \"paper\": {\n      \"instructions\": [\n        \"Answer all questions using only the concepts taught in this session.\"\n      ],\n      \"sections\": [\n        {\n          \"id\": \"section-assessment\",\n          \"title\": \"Assessment\",\n          \"marks\": 15,\n          \"questionCount\": 7,\n          \"questionRefs\": [\n            \"q1\",\n            \"q2\",\n            \"q3\",\n            \"q4\",\n            \"q5\",\n            \"q6\",\n            \"q7\"\n          ],\n          \"source\": \"fallback\"\n        }\n      ],\n      \"questions\": [\n        {\n          \"id\": \"q1\",\n          \"questionNumber\": 1,\n          \"sectionId\": \"section-assessment\",\n          \"sectionTitle\": \"Assessment\",\n          \"type\": \"mcq\",\n          \"subtype\": \"mcq\",\n          \"prompt\": \"MCQ question\",\n          \"options\": [\n            \"A. option\",\n            \"B. option\",\n            \"C. option\",\n            \"D. option\"\n          ],\n          \"marks\": 1,\n          \"expectedLength\": \"\",\n          \"learningOutcomeRefs\": [\n            \"LO1\"\n          ],\n          \"conceptRefs\": [\n            \"Concept\"\n          ],\n          \"topicCoverage\": [\n            \"Topic\"\n          ],\n          \"subtopicCoverage\": [\n            \"Subtopic\"\n          ],\n          \"bloomsLevel\": \"understanding\",\n          \"competencyTag\": \"Conceptual clarity\",\n          \"difficulty\": \"easy\",\n          \"sourceEvidence\": [\n            \"Teacher notes concept reference\"\n          ]\n        }\n      ]\n    },\n    \"evaluation\": {\n      \"answerKey\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"sectionId\": \"section-assessment\",\n            \"sectionTitle\": \"Assessment\",\n            \"answer\": \"Correct option\",\n            \"explanation\": \"Brief explanation\",\n            \"marks\": 1,\n            \"subtype\": \"mcq\"\n          }\n        ]\n      },\n      \"markingScheme\": {\n        \"items\": [\n          {\n            \"questionId\": \"q1\",\n            \"totalMarks\": 1,\n            \"markBreakdown\": [\n              {\n                \"criterion\": \"Correct answer selected\",\n                \"marks\": 1\n              }\n            ],\n            \"awardGuidance\": [\n              \"Award full marks only for the correct option.\"\n            ]\n          }\n        ]\n      },\n      \"rubrics\": {\n        \"items\": [\n          {\n            \"questionId\": \"q5\",\n            \"totalMarks\": 2,\n            \"criteria\": [\n              {\n                \"criterion\": \"First valid point\",\n                \"marks\": 1\n              },\n              {\n                \"criterion\": \"Second valid point\",\n                \"marks\": 1\n              }\n            ],\n            \"sampleAnswer\": \"Point-wise short answer\"\n          }\n        ]\n      },\n      \"generalInstructions\": [\n        \"Award marks point-wise for each valid idea.\"\n      ],\n      \"evaluatorInstructions\": [\n        \"Use only the taught session content when evaluating student responses.\"\n      ],\n      \"moderationNotes\": [\n        \"Maintain consistency across equivalent answers.\"\n      ]\n    },\n    \"summary\": {\n      \"coverageSummary\": [\n        \"Balanced coverage of the taught session concepts.\"\n      ],\n      \"omittedContent\": [],\n      \"balanceNotes\": [\n        \"Paper progresses from easier to more demanding questions.\"\n      ]\n    },\n    \"validation\": {\n      \"exactPatternChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question pattern matches the requested blueprint.\"\n        ]\n      },\n      \"marksChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Marks match the requested total.\"\n        ]\n      },\n      \"sectionChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Each question is assigned to a valid section.\"\n        ]\n      },\n      \"alignmentChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"Question paper, answer key, and marking scheme are aligned.\"\n        ]\n      },\n      \"scopeBoundaryChecks\": {\n        \"passed\": true,\n        \"details\": [\n          \"No untaught or future-session content included.\"\n        ]\n      }\n    }\n  }\n}"
+    }
+  ]
+}

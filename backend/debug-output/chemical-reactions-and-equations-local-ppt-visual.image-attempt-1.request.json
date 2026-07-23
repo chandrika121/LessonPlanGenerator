@@ -1,9 +1,10 @@
 {
-  "provider": "local-ollama-image",
-  "baseUrl": "http://192.168.1.82:11434",
+  "provider": "openrouter-image",
+  "model": "sourceful/riverflow-v2.5-fast",
   "request": {
-    "model": "x/z-image-turbo:bf16",
-    "prompt": "Science (086) Chemical Reactions and Equations diagram",
-    "negativePrompt": "text, labels, captions, numbers, watermark, decorative clutter, formula text, axis labels, diagram callouts"
+    "prompt": "Science (086) | Class X / 10 | Chemical Reactions and Equations | Introduce the session and set the learning purpose. | Science (086) | Class X / 10 | Chemical Reactions and Equations | 45 minute session | Chemical Reactions and Equations | A labelled classroom diagram for Chemical Reactions and Equations that makes the process or structure visible while the teacher explains the opening hook. | Understand what tod...",
+    "negativePrompt": "text, labels, captions, numbers, watermark, decorative clutter, formula text, axis labels, diagram callouts",
+    "subject": "Science (086)",
+    "gradeLevel": "Class X / 10"
   }
 }

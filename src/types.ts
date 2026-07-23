@@ -733,10 +733,20 @@ export interface SessionPlan {
         slidePurpose?: RenderableMathText;
         teachingBeat?: RenderableMathText;
         mustTeach?: RenderableMathText[];
-        visualDecision?: "svg-programmatic" | "local-generated-image" | "reusable-external" | "none";
+        visualDecision?: "svg-programmatic" | "reusable-external" | "none";
         visualResolved?: boolean;
         visualRelevanceStatus?: "valid" | "generic" | "mismatch" | "none";
         qualityFlags?: string[];
+        layoutIntent?: "text-light-visual-first" | "concept-split" | "board-worked-example" | "text-led-minimal";
+        presentonTemplateHint?: string;
+        presentonMarkdown?: string;
+        resolvedVisualAssetRefs?: {
+          kind?: "image" | "svg";
+          assetId?: string;
+          fileName?: string;
+          url?: string;
+          mimeType?: string;
+        }[];
         templateId?: string;
         templateSlideKey?: string;
         templateSlideTitle?: string;
@@ -763,6 +773,7 @@ export interface SessionPlan {
           };
         };
         visualPlan?: RenderableMathText;
+        wikimediaSearchLabel?: RenderableMathText;
         assets?: {
           assetId?: string;
           storagePath?: RenderableMathText;
@@ -782,7 +793,7 @@ export interface SessionPlan {
           imageDataUrl?: string;
           mimeType?: string;
           model?: RenderableMathText;
-          sourceKind?: "reusable-external" | "generated-image" | "svg-diagram" | "none";
+          sourceKind?: "reusable-external" | "svg-diagram" | "none";
         }[];
         svgDiagram?: {
           title?: RenderableMathText;

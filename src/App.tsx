@@ -81,6 +81,16 @@ import {
 import { getBackendBaseUrl } from "./utils/api";
 import type { StudentPublicationKind } from "./types/student-content";
 
+declare global {
+  interface Window {
+    puter?: {
+      ai?: {
+        txt2img: (prompt: string, options?: Record<string, unknown>) => Promise<HTMLImageElement>;
+      };
+    };
+  }
+}
+
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 const PPT_TEMPLATE_OPTIONS = [
@@ -123,6 +133,45 @@ const PPT_THEME_OPTIONS = [
 ] as const;
 
 const LEGACY_PPT_TEMPLATE_ID = "kamalaniketan-session-12";
+const PUTER_SCRIPT_URL = "https://js.puter.com/v2/";
+const PUTER_IMAGE_MODEL = "x-ai/grok-imagine-image";
+let puterScriptLoadPromise: Promise<void> | null = null;
+
+const ensurePuterScript = () => {
+  if (typeof window === "undefined") {
+    return Promise.reject(new Error("Puter is only available in the browser."));
+  }
+
+  if (window.puter?.ai?.txt2img) {
+    return Promise.resolve();
+  }
+
+  if (puterScriptLoadPromise) {
+    return puterScriptLoadPromise;
+  }
+
+  puterScriptLoadPromise = new Promise<void>((resolve, reject) => {
+    const existingScript = document.querySelector(`script[src="${PUTER_SCRIPT_URL}"]`) as HTMLScriptElement | null;
+    if (existingScript) {
+      existingScript.addEventListener("load", () => resolve(), { once: true });
+      existingScript.addEventListener("error", () => reject(new Error("Failed to load Puter.js.")), { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = PUTER_SCRIPT_URL;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Failed to load Puter.js."));
+    document.head.appendChild(script);
+  }).finally(() => {
+    if (!window.puter?.ai?.txt2img) {
+      puterScriptLoadPromise = null;
+    }
+  });
+
+  return puterScriptLoadPromise;
+};
 
 const STUDENT_NOTES_PATTERN_DATA_URL = `data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns='http://www.w3.org/2000/svg' width='900' height='260' viewBox='0 0 900 260'>
@@ -502,6 +551,7 @@ export default function App() {
 
   // Step 4 State: Deep Sessions Plans
   const [generatedSessionsByKey, setGeneratedSessionsByKey] = useState<Record<string, SessionPlan>>({});
+  const [regeneratingVisualSessionKey, setRegeneratingVisualSessionKey] = useState<string>("");
   const [activeSessionNumber, setActiveSessionNumber] = useState<number>(1);
   const [activeSubTab, setActiveSubTab] = useState<"teacherNotes" | "studentNotes" | "materials" | "homework" | "assessments">("teacherNotes");
   const [activeMaterialTab, setActiveMaterialTab] = useState<"ppt" | "pdf" | "docx">("ppt");
@@ -771,6 +821,147 @@ export default function App() {
   };
 
   const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+
+  const blobToDataUrl = (blob: Blob) =>
+    new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          resolve(reader.result);
+          return;
+        }
+        reject(new Error("Failed to convert blob to data URL."));
+      };
+      reader.onerror = () => reject(reader.error || new Error("Failed to read blob."));
+      reader.readAsDataURL(blob);
+    });
+
+  const imageElementToDataUrl = async (image: HTMLImageElement) => {
+    const imageSrc = String(image.currentSrc || image.src || "").trim();
+    if (!imageSrc) {
+      throw new Error("Puter returned an empty image source.");
+    }
+    if (imageSrc.startsWith("data:image/")) {
+      return imageSrc;
+    }
+    const response = await fetch(imageSrc);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch Puter image asset (${response.status}).`);
+    }
+    const blob = await response.blob();
+    return blobToDataUrl(blob);
+  };
+
+  const getPuterPromptForSlide = (slide: NonNullable<SessionPlan["materials"]>["ppt"]["slides"][number]) => {
+    const primaryAsset = Array.isArray(slide.assets)
+      ? slide.assets.find((asset) => Boolean(asset?.searchQuery || asset?.purpose || asset?.altText))
+      : null;
+    const promptCandidates = [
+      primaryAsset?.searchQuery,
+      slide.visualPlan,
+      slide.visualAttribution?.visualPlan,
+      slide.studentTakeaway,
+      slide.teacherIntent,
+      slide.slideTitle,
+    ];
+
+    for (const candidate of promptCandidates) {
+      const text = typeof candidate === "string" ? candidate.trim() : String(candidate || "").trim();
+      if (text) {
+        return text;
+      }
+    }
+
+    return "";
+  };
+
+  const enrichSlideVisualsWithPuter = async (session: SessionPlan): Promise<SessionPlan> => {
+    const slides = session.materials?.ppt?.slides;
+    if (!slides || slides.length === 0) {
+      return session;
+    }
+    if (!session.materials) {
+      return session;
+    }
+    const materials: NonNullable<SessionPlan["materials"]> = session.materials;
+
+    await ensurePuterScript();
+    if (!window.puter?.ai?.txt2img) {
+      throw new Error("Puter.js did not initialize correctly.");
+    }
+
+    let generatedCount = 0;
+    const nextSlides = await Promise.all(
+      slides.map(async (slide) => {
+        const prompt = getPuterPromptForSlide(slide);
+        if (!prompt) {
+          return slide;
+        }
+
+        try {
+          const imageElement = await window.puter!.ai!.txt2img(prompt, {
+            model: PUTER_IMAGE_MODEL,
+          });
+          const imageDataUrl = await imageElementToDataUrl(imageElement);
+          generatedCount += 1;
+          const primaryAsset = Array.isArray(slide.assets) && slide.assets.length > 0 ? slide.assets[0] : {};
+
+          return {
+            ...slide,
+            visualResolved: true,
+            visualRelevanceStatus: "valid" as const,
+            generatedVisual: {
+              ...(slide.generatedVisual || {}),
+              visualPlan: slide.visualPlan || slide.visualAttribution?.visualPlan,
+              imageDataUrl,
+              mimeType: "image/png",
+              model: PUTER_IMAGE_MODEL,
+              sourceSite: "Puter.js",
+              licenseType: "User-paid Puter generation",
+            },
+            assets: [
+              {
+                ...primaryAsset,
+                purpose: primaryAsset?.purpose || slide.teacherIntent || "Support slide teaching visual",
+                searchQuery: primaryAsset?.searchQuery || prompt,
+                sourceSite: "Puter.js",
+                sourceUrl: imageDataUrl,
+                previewUrl: imageDataUrl,
+                licenseType: "User-paid Puter generation",
+                attributionText: "",
+                altText: primaryAsset?.altText || slide.visualPlan || slide.slideTitle || "Generated slide visual",
+                placementHint: primaryAsset?.placementHint || "Right panel or supporting visual zone",
+                imageDataUrl,
+                mimeType: "image/png",
+                model: PUTER_IMAGE_MODEL,
+                sourceKind: "reusable-external" as const,
+                generator: "ai_image" as const,
+              },
+            ],
+          };
+        } catch (error) {
+          console.warn(`[Puter] Failed to generate slide visual for "${String(slide.slideTitle || "Slide")}":`, error);
+          return slide;
+        }
+      })
+    );
+
+    if (generatedCount === 0) {
+      return session;
+    }
+
+    return {
+      ...session,
+      materials: {
+        ppt: {
+          ...materials.ppt,
+          slides: nextSlides,
+        },
+        pdf: materials.pdf,
+        docx: materials.docx,
+      },
+    };
+  };
 
   const isRetryableBootstrapFetchError = (error: unknown) => {
     const message = error instanceof Error ? error.message : String(error || "");
@@ -3723,7 +3914,11 @@ export default function App() {
   const getPrimaryPptAsset = (slide: NonNullable<ReturnType<typeof getPptSlides>>[number]) =>
     Array.isArray(slide.assets)
       ? slide.assets.find((asset) => Boolean(asset.imageDataUrl || asset.previewUrl || asset.sourceUrl))
+        || slide.assets.find((asset) => Boolean(asset.searchQuery || asset.altText || asset.purpose))
       : undefined;
+
+  const getSlideWikimediaLabel = (slide: NonNullable<ReturnType<typeof getPptSlides>>[number]) =>
+    formatRenderableText(slide.wikimediaSearchLabel || getPrimaryPptAsset(slide)?.searchQuery || "");
 
   const getRenderablePptSvgMarkup = (svgCode?: string | null) => {
     const raw = String(svgCode || "").trim();
@@ -7146,13 +7341,21 @@ export default function App() {
     }
   };
 
-  const ensureSlideVisuals = async (session: SessionPlan): Promise<SessionPlan> => {
+  const ensureSlideVisuals = async (
+    session: SessionPlan,
+    options?: {
+      forceRegenerate?: boolean;
+    }
+  ): Promise<SessionPlan> => {
+    if (!options?.forceRegenerate) {
+      return session;
+    }
     const slides = session.materials?.ppt?.slides;
     if (!slides || slides.length === 0) return session;
 
     const visualSlides = slides.filter((slide) =>
       Boolean(
-        slide.visualDecision === "local-generated-image" ||
+        slide.visualDecision === "reusable-external" ||
         slide.visualDecision === "svg-programmatic" ||
         slide.visualPlan ||
         slide.svgDiagram?.svgCode ||
@@ -7167,15 +7370,48 @@ export default function App() {
       Boolean(slide.generatedVisual?.imageDataUrl) ||
       hasBrowserRenderablePptVisual(slide)
     );
-    if (allVisualSlidesResolved) return session;
+    if (allVisualSlidesResolved && !options?.forceRegenerate) return session;
+    const sessionForGeneration = options?.forceRegenerate
+      ? {
+          ...session,
+          materials: session.materials ? {
+            ...session.materials,
+            ppt: session.materials.ppt ? {
+              ...session.materials.ppt,
+              slides: (session.materials.ppt.slides || []).map((slide) => ({
+                ...slide,
+                generatedVisual: slide.generatedVisual ? {
+                  ...slide.generatedVisual,
+                  imageDataUrl: "",
+                  mimeType: "",
+                  model: "",
+                  sourceSite: "",
+                  licenseType: "",
+                } : slide.generatedVisual,
+                assets: Array.isArray(slide.assets)
+                  ? slide.assets.map((asset) => ({
+                      ...asset,
+                      imageDataUrl: "",
+                      previewUrl: "",
+                      sourceUrl: "",
+                      mimeType: "",
+                      model: "",
+                      sourceKind: asset.sourceKind === "svg-diagram" ? "svg-diagram" : "none",
+                    }))
+                  : slide.assets,
+              })),
+            } : session.materials.ppt,
+          } : session.materials,
+        }
+      : session;
 
     const response = await fetch(apiUrl("/api/generate-slide-visuals"), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        sessionPlan: session,
-        sessionTitle: session.title,
-        sessionNumber: session.sessionNumber,
+        sessionPlan: sessionForGeneration,
+        sessionTitle: sessionForGeneration.title,
+        sessionNumber: sessionForGeneration.sessionNumber,
         subject: academicConfigDraft.subject,
         gradeLevel: academicConfigDraft.className,
       }),
@@ -7186,7 +7422,7 @@ export default function App() {
     }
 
     const data = await response.json();
-    return data?.sessionPlan || session;
+    return data?.sessionPlan || sessionForGeneration;
   };
 
   const buildSessionConfigFromWorkspace = (workspace?: PlanningWorkspace | null): SessionConfig => ({
@@ -7863,7 +8099,7 @@ export default function App() {
     }
 
     try {
-      const [res, workspace] = await Promise.all([
+      const [res, initialWorkspace] = await Promise.all([
         fetchWithBootstrapRetry(apiUrl(`/api/curriculums/${curriculumId}`), undefined, "curriculum restore"),
         ensurePlanningWorkspaceForCurriculum(curriculumId, { view: "planning" }),
       ]);
@@ -7883,15 +8119,19 @@ export default function App() {
       setExtractedData(curriculumRecord.extractedCurriculum);
       setEditingJsonText("");
       localStorage.setItem(LAST_CURRICULUM_ID_KEY, curriculumRecord._id);
-      if (workspace) {
-        syncWorkspaceState(workspace);
+      if (initialWorkspace) {
+        syncWorkspaceState(initialWorkspace);
       }
       setErrorHeader(null);
       void fetchSavedCurriculums().catch((refreshError) => {
         console.error("[Frontend] Saved curriculum refresh failed", refreshError);
       });
       try {
-        await ensurePlanningWorkspaceForCurriculum(curriculumRecord._id);
+        const restoreView = getWorkspaceRestoreView(initialWorkspace || null);
+        const restoredWorkspace = await ensurePlanningWorkspaceForCurriculum(curriculumRecord._id, { view: restoreView });
+        if (restoredWorkspace) {
+          syncWorkspaceState(restoredWorkspace);
+        }
       } catch (workspaceError: any) {
         console.error("[Frontend] Restore curriculum workspace sync failed", workspaceError);
         localStorage.removeItem(LAST_WORKSPACE_ID_KEY);
@@ -9491,6 +9731,48 @@ export default function App() {
     }
     setActiveSessionNumber(targetSessionNumber);
     await handleBuildSessionDeepDetails(targetSessionNumber, targetOutline, getSectionsForTab(tabId));
+  };
+
+  const handleRefreshDeckWithLocalImages = async (session: SessionPlan | undefined | null, outlineItem?: any) => {
+    if (!session?.materials?.ppt?.slides?.length) {
+      setErrorHeader("Generate the PPT content first before refreshing deck visuals with local Ollama models.");
+      return;
+    }
+
+    const targetSessionKey = session.sessionKey || getOutlineSessionKey(outlineItem);
+    try {
+      setErrorHeader(null);
+      setRegeneratingVisualSessionKey(targetSessionKey);
+      setLoading(true);
+      setLoadingMessage("Refreshing deck visuals with local Ollama models...");
+      const refreshedSession = await ensureSlideVisuals(session, { forceRegenerate: true });
+      const refreshedSlides = refreshedSession.materials?.ppt?.slides || [];
+      const resolvedVisualCount = refreshedSlides.filter((slide) =>
+        Boolean(
+          slide.generatedVisual?.imageDataUrl ||
+          slide.assets?.some((asset) => Boolean(asset?.imageDataUrl))
+        )
+      ).length;
+
+      if (resolvedVisualCount === 0) {
+        throw new Error("Wikimedia resolution did not return any slide images. Try a different slide search label or use the SVG fallback.");
+      }
+
+      const resolvedTargetSessionKey = refreshedSession.sessionKey || targetSessionKey;
+      setGeneratedSessionsByKey((prev) => ({
+        ...prev,
+        [resolvedTargetSessionKey]: mergeSessionPlanRecords(
+          prev[resolvedTargetSessionKey] || findGeneratedSessionForOutline(prev, outlineItem) || session,
+          refreshedSession
+        ),
+      }));
+    } catch (error: any) {
+      setErrorHeader(error?.message || "Failed to refresh deck visuals with local Ollama models.");
+    } finally {
+      setRegeneratingVisualSessionKey("");
+      setLoading(false);
+      setLoadingMessage("");
+    }
   };
 
   const handleGenerateFullSessionPack = async (sessionNum?: number, outlineItem?: any) => {
@@ -12938,46 +13220,61 @@ export default function App() {
                                             <div className="flex w-full max-w-xl flex-col gap-2">
                                               <div className="grid gap-2 sm:grid-cols-2">
                                                 <button
-                                                  onClick={() => void handleGenerateSessionTab("materials", activeSessionNumber, outlineItem)}
-                                                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                                  disabled={regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem))}
+                                                  onClick={() => void handleRefreshDeckWithLocalImages(session, outlineItem)}
+                                                  className={[
+                                                    "inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition",
+                                                    regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem))
+                                                      ? "cursor-wait border-[#36ADAA]/30 bg-[#36ADAA]/8 text-[#1f8d8a]"
+                                                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900",
+                                                  ].join(" ")}
                                                 >
-                                                  Generate deck
+                                                  {regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem)) ? (
+                                                    <>
+                                                      <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                                      Generating...
+                                                    </>
+                                                  ) : (
+                                                    "Generate deck"
+                                                  )}
                                                 </button>
                                                 <button
-                                                  onClick={() => {
-                                                    void (async () => {
-                                                      try {
-                                                        setLoading(true);
-                                                        setLoadingMessage("Refreshing slide visuals...");
-                                                        const refreshedSession = await ensureSlideVisuals(session);
-                                                        const targetSessionKey =
-                                                          refreshedSession.sessionKey ||
-                                                          session.sessionKey ||
-                                                          getOutlineSessionKey(outlineItem);
-                                                        setGeneratedSessionsByKey((prev) => ({
-                                                          ...prev,
-                                                          [targetSessionKey]: mergeSessionPlanRecords(
-                                                            prev[targetSessionKey] || findGeneratedSessionForOutline(prev, outlineItem) || session,
-                                                            refreshedSession
-                                                          ),
-                                                        }));
-                                                      } catch (error: any) {
-                                                        setErrorHeader(error?.message || "Failed to regenerate deck visuals.");
-                                                      } finally {
-                                                        setLoading(false);
-                                                        setLoadingMessage("");
-                                                      }
-                                                    })();
-                                                  }}
-                                                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                                                  disabled={regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem))}
+                                                  onClick={() => void handleRefreshDeckWithLocalImages(session, outlineItem)}
+                                                  className={[
+                                                    "inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition",
+                                                    regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem))
+                                                      ? "cursor-wait border-[#36ADAA]/30 bg-[#36ADAA]/8 text-[#1f8d8a]"
+                                                      : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900",
+                                                  ].join(" ")}
                                                 >
-                                                  Regenerate visuals
+                                                  {regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem)) ? (
+                                                    <>
+                                                      <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                                      Regenerating...
+                                                    </>
+                                                  ) : (
+                                                    "Regenerate visuals"
+                                                  )}
                                                 </button>
                                                 <button
-                                                  onClick={() => void handleGenerateSessionTab("materials", activeSessionNumber, outlineItem)}
-                                                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-100 hover:text-slate-900"
+                                                  disabled={regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem))}
+                                                  onClick={() => void handleRefreshDeckWithLocalImages(session, outlineItem)}
+                                                  className={[
+                                                    "inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition",
+                                                    regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem))
+                                                      ? "cursor-wait border-[#36ADAA]/30 bg-[#36ADAA]/8 text-[#1f8d8a]"
+                                                      : "border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900",
+                                                  ].join(" ")}
                                                 >
-                                                  Regenerate deck
+                                                  {regeneratingVisualSessionKey === (session.sessionKey || getOutlineSessionKey(outlineItem)) ? (
+                                                    <>
+                                                      <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                                                      Regenerating...
+                                                    </>
+                                                  ) : (
+                                                    "Regenerate deck"
+                                                  )}
                                                 </button>
                                                 <button
                                                   onClick={() => void handleExportPptx(session)}
@@ -13256,7 +13553,7 @@ export default function App() {
                                                             />
                                                           ) : (
                                                             <div className="flex min-h-[320px] items-center justify-center p-6 text-center text-sm leading-relaxed text-slate-500">
-                                                              {renderMixedMathLine(selectedSlide.visualResolved === false ? "This slide intentionally uses no visual because a trustworthy slide-specific visual was not resolved." : selectedSlide.visualPlan || "No visual is required for this slide.")}
+                                                              {renderMixedMathLine(selectedSlide.visualResolved === false ? "No Wikimedia or SVG visual was resolved for this slide yet." : "No visual is required for this slide.")}
                                                             </div>
                                                           )}
                                                         </div>
@@ -13266,7 +13563,8 @@ export default function App() {
                                                         <div className="mt-3 space-y-3 text-sm leading-relaxed text-slate-600">
                                                           <p><span className="font-bold text-slate-700">Decision:</span> {formatRenderableText(selectedSlide.visualDecision || "none")}</p>
                                                           <p><span className="font-bold text-slate-700">Relevance:</span> {formatRenderableText(selectedSlide.visualRelevanceStatus || "none")}</p>
-                                                          {selectedSlide.visualPlan && <p><span className="font-bold text-slate-700">Intent:</span> {renderMixedMathLine(selectedSlide.visualPlan)}</p>}
+                                                          {getSlideWikimediaLabel(selectedSlide) && <p><span className="font-bold text-slate-700">Wikimedia label:</span> {renderMixedMathLine(getSlideWikimediaLabel(selectedSlide))}</p>}
+                                                          {selectedSlide.visualResolved && selectedSlide.visualPlan && <p><span className="font-bold text-slate-700">Intent:</span> {renderMixedMathLine(selectedSlide.visualPlan)}</p>}
                                                           {selectedSlide.svgDiagram?.title && <p><span className="font-bold text-slate-700">Diagram:</span> {renderMixedMathLine(selectedSlide.svgDiagram.title)}</p>}
                                                           {!!selectedSlide.svgDiagram?.instructions?.length && (
                                                             <div>

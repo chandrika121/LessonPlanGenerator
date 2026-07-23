@@ -1,0 +1,24 @@
+services:
+  presenton:
+    image: ghcr.io/presenton/presenton:v0.8.6-beta
+    container_name: lessonplanner-presenton
+    restart: unless-stopped
+    ports:
+      - "${PRESENTON_HTTP_HOST_PORT:-5001}:80"
+      - "${PRESENTON_FASTAPI_HOST_PORT:-5002}:8000"
+    volumes:
+      - "./.presenton/app_data:/app_data"
+      - "./.presenton/overrides/fastapi-server.py:/app/servers/fastapi/server.py:ro"
+      - "./.presenton/overrides/presentation-layout.py:/app/servers/fastapi/templates/presentation_layout.py:ro"
+    environment:
+      AUTH_USERNAME: "${PRESENTON_AUTH_USERNAME:-admin}"
+      AUTH_PASSWORD: "${PRESENTON_AUTH_PASSWORD:-presenton}"
+      CAN_CHANGE_KEYS: "false"
+      LLM: "ollama"
+      OLLAMA_URL: "${PRESENTON_OLLAMA_URL:-http://host.docker.internal:11434}"
+      OLLAMA_MODEL: "${PRESENTON_OLLAMA_MODEL:-qwen3.5:35b}"
+      DISABLE_IMAGE_GENERATION: "true"
+      IMAGE_PROVIDER: "${PRESENTON_IMAGE_PROVIDER:-pexels}"
+      PRESENTON_FASTAPI_BIND_HOST: "0.0.0.0"
+      PRESENTON_FASTAPI_PUBLIC_HOST: "127.0.0.1"
+      MEM0_ENABLED: "false"

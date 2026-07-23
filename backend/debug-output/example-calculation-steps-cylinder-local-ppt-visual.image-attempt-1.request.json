@@ -1,0 +1,9 @@
+{
+  "provider": "local-ollama-image",
+  "baseUrl": "http://192.168.1.82:11434",
+  "request": {
+    "model": "x/flux2-klein:9b",
+    "prompt": "Mathematics | Class IX / Class X | Example Calculation Steps (Cylinder) | Demonstrate calculation with radius and height. | Problem: Cylinder, r=3 cm, h=7 cm. Find V and TSA. | Step 1: Volume = π(3)²(7) = (22/7)(9)(7) | Calculation: V = 198 cm³ | Step 2: TSA = 2πr(r+h) = 2(22/7)(3)(10) | Application of Cylinder Formulas | A clean step-by-step mathematical diagram or board-style visual for Example Calculation Steps...",
+    "negativePrompt": "text, labels, captions, numbers, watermark, decorative clutter, formula text, axis labels, diagram callouts"
+  }
+}
